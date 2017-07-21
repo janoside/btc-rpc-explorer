@@ -1,0 +1,19 @@
+extends layout
+
+block headContent
+	title Block #{blockHeight}
+
+block content
+	ol(class="breadcrumb")
+		li(class="breadcrumb-item")
+			a(href="/")
+				strong #{host}
+				span :#{port}
+		li(class="breadcrumb-item active")
+			a(href=("/block-height/" + blockHeight)) Block #{blockHeight}
+
+	h1(class="h2") Block 
+		small ##{blockHeight}
+	hr
+
+	include includes/block-content.pug

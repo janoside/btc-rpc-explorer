@@ -1,0 +1,46 @@
+extends layout
+
+block headContent
+	title Home
+	
+block content
+	ol(class="breadcrumb")
+		li(class="breadcrumb-item")
+			a(href="/")
+				strong #{host}
+				span :#{port}
+
+	h1 BTC RPC Explorer
+	hr
+
+	ul(class='nav nav-tabs')
+		li(class="nav-item")
+			a(data-toggle="tab", href="#tab-latest-tx", class="nav-link active", role="tab") Latest Blocks
+		li(class="nav-item")
+			a(data-toggle="tab", href="#tab-getinfo", class="nav-link", role="tab") Node Info
+
+	hr
+
+	div(class="tab-content")
+		div(id="tab-latest-tx", class="tab-pane active", role="tabpanel")
+			h3 Latest Blocks
+			table(class="table table-striped")
+				thead
+					tr
+						th Height
+						th Timestamp (utc)
+						th Transactions
+						th Size (bytes)
+				tbody
+					each block in latestBlocks
+						tr
+							td
+								a(href=("/block-height/" + block.getblock.height)) #{block.getblock.height}
+							td #{moment.utc(new Date(parseInt(block.getblock.time) * 1000)).format("Y-MM-DD HH:mm:ss")}
+							td #{block.getblock.tx.length.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+							td #{block.getblock.size.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+
+		div(id="tab-getinfo", class="tab-pane", role="tabpanel")
+			h3 Node Info (getinfo)
+			pre
+				code #{JSON.stringify(result, null, 4)}

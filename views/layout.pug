@@ -1,0 +1,63 @@
+doctype html
+html
+	head
+		meta(charset="utf-8")
+		meta(name="viewport", content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0, shrink-to-fit=no")
+		
+		//link(rel="stylesheet", href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css")
+		link(rel="stylesheet", href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css", integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ", crossorigin="anonymous")
+		link(rel="stylesheet", href="https://netdna.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css")
+		link(rel="stylesheet", href="https://fonts.googleapis.com/css?family=Lato|Open+Sans")
+		link(rel="stylesheet", href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/default.min.css")
+		link(rel='stylesheet', href='/css/styling.css')
+
+		link(rel="icon", type="image/png", sizes="32x32", href="/img/favicons/favicon-32x32.png")
+		link(rel="icon", type="image/png", sizes="96x96", href="/img/favicons/favicon-96x96.png")
+		link(rel="icon", type="image/png", sizes="16x16", href="/img/favicons/favicon-16x16.png")
+
+		block headContent
+			title BTC RPC Explorer
+		
+	body
+		nav(class="navbar navbar-toggleable-md navbar-inverse bg-inverse mb-4")
+			div(class="container")
+				div(class="navbar-header")
+					button(type="button", class="navbar-toggler navbar-toggler-right", data-toggle="collapse", data-target="#navbarNav")
+						span(class="navbar-toggler-icon")
+					a(class="navbar-brand", href="/")
+						span
+							img(src="/img/logo/logo-64.png", class="header-image")
+							span BTC RPC Explorer
+				div(class="collapse navbar-collapse", id="navbarNav")
+					if (client)
+						ul(class="navbar-nav")
+							li(class="nav-item")
+								a(href="/terminal", class="nav-link") RPC Terminal
+		
+		div(class="container")
+			if (userMessage)
+				div(class="alert", class=(userMessageType ? ("alert-"  + userMessageType) : "alert-info"), role="alert")
+					span !{userMessage}
+			
+			block content
+
+			div(style="margin-bottom: 30px;")
+		
+		script(src="https://code.jquery.com/jquery-3.2.1.min.js", integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=", crossorigin="anonymous")
+		script(src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js", integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb", crossorigin="anonymous")
+		script(src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js", integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn", crossorigin="anonymous")
+
+		script(src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js")
+		
+		script(src="https://cdn.ravenjs.com/3.9.1/raven.min.js")
+		script.
+			Raven.config('https://0bf20e8357a748cab8aa9d35c0f790dd@sentry.io/130800').install();
+			
+			$(document).ready(function() {
+				$('[data-toggle="tooltip"]').tooltip();
+				$('[data-toggle="popover"]').popover({html:true});
+			});
+
+			hljs.initHighlightingOnLoad();
+		
+		block endOfBody

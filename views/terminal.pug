@@ -1,0 +1,54 @@
+extends layout
+
+block content
+	h1 Terminal
+	hr
+
+	:markdown-it
+		Use this interactive terminal to send RPC commands to your node. Results will be shown inline.
+
+	div(class="card mb-3")
+		div(class="card-block")
+			form(id="terminal-form")
+				div(class="form-group")
+					label(for="input-cmd") Command
+					input(type="text", id="input-cmd", name="cmd", class="form-control")
+
+				input(type="submit", class="btn btn-primary btn-block", value="Send")
+
+	hr
+	
+	div(id="terminal-output")
+
+block endOfBody
+	script.
+		$(document).ready(function() {
+			$("#terminal-form").submit(function(e) {
+				e.preventDefault();
+
+				var cmd = $("#input-cmd").val()
+
+				var postData = {};
+				postData.cmd = cmd;
+				
+				$.post(
+					"/terminal",
+					postData,
+					function(response, textStatus, jqXHR) {
+						var t = new Date().getTime();
+
+						$("#terminal-output").prepend("<div id='output-" + t + "' class='card mb-3'><div class='card-block'><h5>" + cmd + "</h5><pre><code>" + response + "</code></pre></div></div>");
+						console.log(response);
+
+						$("#output-" + t + " pre code").each(function(i, block) {
+							hljs.highlightBlock(block);
+						});
+						
+						return false;
+					})
+					.done(function(data) {
+					});
+
+				return false;
+			});
+		});
