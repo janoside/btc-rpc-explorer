@@ -4,6 +4,7 @@ table(class="table table-striped")
 			th
 			th Height
 			th Timestamp (utc)
+			th Age
 			th Transactions
 			th Size (bytes)
 	tbody
@@ -13,5 +14,6 @@ table(class="table table-striped")
 				td
 					a(href=("/block-height/" + block.height)) #{block.height}
 				td #{moment.utc(new Date(parseInt(block.time) * 1000)).format("Y-MM-DD HH:mm:ss")}
+				td #{moment.utc(new Date(parseInt(block.time) * 1000)).fromNow(true)}
 				td #{block.tx.length.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
 				td #{block.size.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
