@@ -108,6 +108,22 @@ function getBlocksByHeight(blockHeights) {
 	});
 }
 
+function getBlockByHash(blockHash) {
+	console.log("getBlockByHash: " + blockHash);
+
+	return new Promise(function(resolve, reject) {
+		var client = global.client;
+		
+		client.cmd('getblock', blockHash, function(err, result, resHeaders) {
+			if (err) {
+				console.log("Error 0u2fgewue: " + err);
+			}
+
+			resolve(result);
+		});
+	});
+}
+
 function getTransactionInputs(rpcClient, transaction) {
 	console.log("getTransactionInputs: " + transaction.txid);
 
@@ -246,6 +262,7 @@ module.exports = {
 	getInfo: getInfo,
 	getBlockByHeight: getBlockByHeight,
 	getBlocksByHeight: getBlocksByHeight,
+	getBlockByHash: getBlockByHash,
 	getTransactionInputs: getTransactionInputs,
 	getBlockData: getBlockData,
 	getRawTransaction: getRawTransaction,

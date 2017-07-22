@@ -30,10 +30,13 @@ html
 							span BTC RPC Explorer
 				div(class="collapse navbar-collapse", id="navbarNav")
 					if (client)
-						ul(class="navbar-nav")
+						ul(class="navbar-nav mr-auto")
 							li(class="nav-item")
 								a(href="/terminal", class="nav-link") RPC Terminal
-		
+						form(method="post", action="/search", class="form-inline")
+							input(class="form-control form-control-sm mr-sm-2", type="text", name="query", placeholder="block height, block hash, txid", style="width: 300px;")
+							button(class="btn btn-primary btn-sm", type="submit") Search
+			
 		div(class="container")
 			if (userMessage)
 				div(class="alert", class=(userMessageType ? ("alert-"  + userMessageType) : "alert-info"), role="alert")

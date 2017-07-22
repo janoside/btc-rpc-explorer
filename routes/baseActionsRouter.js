@@ -125,6 +125,54 @@ router.get("/blocks", function(req, res) {
 	});
 });
 
+router.post("/search", function(req, res) {
+	if (!req.body.query) {
+		req.session.userMessage = "Enter a block height, block hash, or transaction id.";
+
+		res.redirect("/");
+
+		return;
+	}
+
+	var query = req.body.query;
+
+	rpcApi.getRawTransaction(query).then(function(tx) {
+		if (tx) {
+			res.redirect("/tx/" + query);
+
+			return;
+		}
+
+		rpcApi.getBlockByHash(query).then(function(blockByHash) {
+			if (blockByHash) {
+				res.redirect("/block/" + query);
+
+				return;
+			}
+
+			if (isNaN(query)) {
+				req.session.userMessage = "No results found for query: " + query;
+
+				res.redirect("/");
+
+				return;
+			}
+
+			rpcApi.getBlockByHeight(parseInt(query)).then(function(blockByHeight) {
+				if (blockByHeight) {
+					res.redirect("/block-height/" + query);
+
+					return;
+				}
+
+				req.session.userMessage = "No results found for query: " + query;
+
+				res.redirect("/");
+			});
+		});
+	});
+});
+
 router.get("/block-height/:blockHeight", function(req, res) {
 	var client = global.client;
 
