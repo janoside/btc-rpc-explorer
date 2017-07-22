@@ -33,6 +33,18 @@ var genesisCoinbaseTransaction = {
 	"blocktime": 1230988505
 };
 
+function getInfo() {
+	return new Promise(function(resolve, reject) {
+		client.cmd('getinfo', function(err, result, resHeaders) {
+			if (err) {
+				return console.log("Error 3207fh0f: " + err);
+			}
+
+			resolve(result);
+		});
+	});
+}
+
 function getBlockByHeight(blockHeight) {
 	console.log("getBlockByHeight: " + blockHeight);
 
@@ -51,6 +63,47 @@ function getBlockByHeight(blockHeight) {
 
 				resolve({ success:true, getblockhash:result, getblock:result2 });
 			});
+		});
+	});
+}
+
+function getBlocksByHeight(blockHeights) {
+	console.log("getBlocksByHeight: " + blockHeights);
+
+	return new Promise(function(resolve, reject) {
+		var batch = [];
+		for (var i = 0; i < blockHeights.length; i++) {
+			batch.push({
+				method: 'getblockhash',
+				params: [ blockHeights[i] ]
+			});
+		}
+
+		var blockHashes = [];
+		client.cmd(batch, function(err, result, resHeaders) {
+			blockHashes.push(result);
+
+			if (blockHashes.length == batch.length) {
+				var batch2 = [];
+				for (var i = 0; i < blockHashes.length; i++) {
+					batch2.push({
+						method: 'getblock',
+						params: [ blockHashes[i] ]
+					});
+				}
+
+				var blocks = [];
+				client.cmd(batch2, function(err2, result2, resHeaders2) {
+					if (err2) {
+						console.log("Error 138ryweufdf: " + err2);
+					}
+
+					blocks.push(result2);
+					if (blocks.length == batch2.length) {
+						resolve(blocks);
+					}
+				});
+			}
 		});
 	});
 }
@@ -190,7 +243,9 @@ function getBlockData(rpcClient, blockHash, txLimit, txOffset) {
 }
 
 module.exports = {
+	getInfo: getInfo,
 	getBlockByHeight: getBlockByHeight,
+	getBlocksByHeight: getBlocksByHeight,
 	getTransactionInputs: getTransactionInputs,
 	getBlockData: getBlockData,
 	getRawTransaction: getRawTransaction,

@@ -6,7 +6,7 @@ var utils = require('./../app/utils');
 var md5 = require("md5");
 var env = require("./../app/env");
 var bitcoin = require("bitcoin");
-var rpcApi = require("./../app/rpcApi")
+var rpcApi = require("./../app/rpcApi");
 
 router.get("/", function(req, res) {
 	if (!req.session.host) {
@@ -30,22 +30,18 @@ router.get("/", function(req, res) {
 
 	var client = global.client;
 
-	client.cmd('getinfo', function(err, result, resHeaders) {
-		if (err) {
-			return console.log(err);
-		}
+	rpcApi.getInfo().then(function(getinfo) {
+		res.locals.result = getinfo;
 
-		res.locals.result = result;
-
-		var promises = [];
-		if (result.blocks) {
+		var blockHeights = [];
+		if (getinfo.blocks) {
 			for (var i = 0; i < 10; i++) {
-				promises.push(rpcApi.getBlockByHeight(result.blocks - i));
+				blockHeights.push(getinfo.blocks - i);
 			}
 		}
 
-		Promise.all(promises).then(function() {
-			res.locals.latestBlocks = arguments[0];
+		rpcApi.getBlocksByHeight(blockHeights).then(function(latestBlocks) {
+			res.locals.latestBlocks = latestBlocks;
 
 			res.render("index");
 		});
@@ -82,6 +78,51 @@ router.post("/connect", function(req, res) {
 	req.session.userMessageType = "success";
 
 	res.redirect("/");
+});
+
+router.get("/blocks", function(req, res) {
+	var limit = 20;
+	var offset = 0;
+	var sort = "desc";
+
+	if (req.query.limit) {
+		limit = parseInt(req.query.limit);
+	}
+
+	if (req.query.offset) {
+		offset = parseInt(req.query.offset);
+	}
+
+	if (req.query.sort) {
+		sort = req.query.sort;
+	}
+
+	res.locals.limit = limit;
+	res.locals.offset = offset;
+	res.locals.sort = sort;
+	res.locals.paginationBaseUrl = "/blocks";
+
+	rpcApi.getInfo().then(function(getinfo) {
+		res.locals.blockCount = getinfo.blocks;
+		res.locals.blockOffset = offset;
+
+		var blockHeights = [];
+		if (sort == "desc") {
+			for (var i = (getinfo.blocks - offset); i > (getinfo.blocks - offset - limit); i--) {
+				blockHeights.push(i);
+			}
+		} else {
+			for (var i = offset; i < (offset + limit); i++) {
+				blockHeights.push(i);
+			}
+		}
+		
+		rpcApi.getBlocksByHeight(blockHeights).then(function(blocks) {
+			res.locals.blocks = blocks;
+
+			res.render("blocks");
+		});
+	});
 });
 
 router.get("/block-height/:blockHeight", function(req, res) {
@@ -181,7 +222,7 @@ router.get("/tx/:transactionId", function(req, res) {
 					txids.push(rawTxResult.vin[i].txid);
 				}
 			}
-			
+
 			rpcApi.getRawTransactions(txids).then(function(txInputs) {
 				res.locals.result.txInputs = txInputs;
 

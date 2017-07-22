@@ -1,0 +1,17 @@
+table(class="table table-striped")
+	thead
+		tr
+			th
+			th Height
+			th Timestamp (utc)
+			th Transactions
+			th Size (bytes)
+	tbody
+		each block, blockIndex in blocks
+			tr
+				th #{blockIndex + blockOffset + 1}
+				td
+					a(href=("/block-height/" + block.height)) #{block.height}
+				td #{moment.utc(new Date(parseInt(block.time) * 1000)).format("Y-MM-DD HH:mm:ss")}
+				td #{block.tx.length.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+				td #{block.size.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
