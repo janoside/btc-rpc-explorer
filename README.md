@@ -20,6 +20,14 @@ This tool is intended to be a simple, stateless, self-hosted explorer for the Bi
 5. Navigate to http://127.0.0.1:3002/
 6. Connect using the RPC credentials for your target bitcoin node (if you didn't edit [env.js](app/env.js) in Step 3)
 
+# Features
+
+* List of recent blocks
+* Browse blocks by height, in ascending or descending order
+* View block details
+* View transaction details, with navigation backward via spent outputs
+* View raw JSON output used to generate most pages
+
 # Screenshots
 
 ### Connect via RPC
@@ -37,5 +45,5 @@ This tool is intended to be a simple, stateless, self-hosted explorer for the Bi
 ### Transaction, Raw JSON
 # ![Connect](public/img/screenshots/transaction-raw.png)
 
-### List of all Blocks
+### List of Blocks by height (in ascending order)
 # ![Connect](public/img/screenshots/blocks.png)
