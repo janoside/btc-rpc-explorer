@@ -62,13 +62,21 @@ block content
 				tr
 					th(class="table-active properties-header") Included in Block
 					td
-						a(href=("/block/" + result.getrawtransaction.blockhash)) #{result.getrawtransaction.blockhash}
-						if (result.getblock && result.getblock.height)
-							span(class="text-muted")  (#{result.getblock.height})
+						if (result.getblock)
+							a(href=("/block/" + result.getrawtransaction.blockhash)) #{result.getrawtransaction.blockhash}
+							if (result.getblock.height)
+								span(class="text-muted")  (#{result.getblock.height})
+						else
+							span N/A
+							span(class="text-muted")  (unconfirmed)
 				
 				tr
 					th(class="table-active properties-header") Timestamp
-					td #{moment.utc(new Date(result.getrawtransaction["time"] * 1000)).format("Y-MM-DD HH:mm:ss")} (utc)
+					if (result.getrawtransaction.time)
+						td #{moment.utc(new Date(result.getrawtransaction["time"] * 1000)).format("Y-MM-DD HH:mm:ss")} (utc)
+					else
+						td N/A
+							span(class="text-muted")  (unconfirmed)
 				
 				//tr
 				//	th(class="table-active properties-header") Transaction ID
