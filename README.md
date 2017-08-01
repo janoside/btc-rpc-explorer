@@ -1,10 +1,16 @@
-# ![BTC RPC Explorer](public/img/logo/logo-64.png)
+# ![BTC RPC Explorer](public/img/logo/logo-64.png) BTC RPC Explorer
 
-# BTC RPC Explorer
-
-Simple, stateless Bitcoin blockchain explorer, via RPC. Build with Node.js, express, bootstrap-v4.
+Simple, stateless Bitcoin blockchain explorer, via RPC. Built with Node.js, express, bootstrap-v4.
 
 This tool is intended to be a simple, stateless, self-hosted explorer for the Bitcoin blockchain, driven by RPC calls to your own bitcoind node. Because it is stateless, it is easy to run but lacks some (many?) of the features of other explorers.
+
+# Features
+
+* List of recent blocks
+* Browse blocks by height, in ascending or descending order
+* View block details
+* View transaction details, with navigation backward via spent outputs
+* View raw JSON output used to generate most pages
 
 # Getting started
 
@@ -39,5 +45,5 @@ This tool is intended to be a simple, stateless, self-hosted explorer for the Bi
 ### Transaction, Raw JSON
 # ![Connect](public/img/screenshots/transaction-raw.png)
 
-### List of all Blocks
+### List of Blocks by height (in ascending order)
 # ![Connect](public/img/screenshots/blocks.png)

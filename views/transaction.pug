@@ -14,8 +14,10 @@ block content
 			a(href="/")
 				strong #{host}
 				span :#{port}
-		li(class="breadcrumb-item")
-			a(href=("/block/" + result.getrawtransaction.blockhash)) Block #{result.getblock.height}
+		
+		if (result.getrawtransaction.blockhash)
+			li(class="breadcrumb-item")
+				a(href=("/block/" + result.getrawtransaction.blockhash)) Block #{result.getblock.height}
 		li(class="breadcrumb-item active") Transaction 
 
 	h1(class="h2") Transaction
@@ -60,12 +62,21 @@ block content
 				tr
 					th(class="table-active properties-header") Included in Block
 					td
-						a(href=("/block/" + result.getrawtransaction.blockhash)) #{result.getrawtransaction.blockhash}
-						span(class="text-muted")  (#{result.getblock.height})
+						if (result.getblock)
+							a(href=("/block/" + result.getrawtransaction.blockhash)) #{result.getrawtransaction.blockhash}
+							if (result.getblock.height)
+								span(class="text-muted")  (#{result.getblock.height})
+						else
+							span N/A
+							span(class="text-muted")  (unconfirmed)
 				
 				tr
 					th(class="table-active properties-header") Timestamp
-					td #{moment.utc(new Date(result.getrawtransaction["time"] * 1000)).format("Y-MM-DD HH:mm:ss")} (utc)
+					if (result.getrawtransaction.time)
+						td #{moment.utc(new Date(result.getrawtransaction["time"] * 1000)).format("Y-MM-DD HH:mm:ss")} (utc)
+					else
+						td N/A
+							span(class="text-muted")  (unconfirmed)
 				
 				//tr
 				//	th(class="table-active properties-header") Transaction ID
@@ -107,8 +118,8 @@ block content
 				tr
 					th(class="table-active properties-header") Confirmations
 					td
-						if (result.getrawtransaction.confirmations == 0)
-							strong(class="text-danger") #{result.getrawtransaction.confirmations} (Unconfirmed!)
+						if (!result.getrawtransaction.confirmations || result.getrawtransaction.confirmations == 0)
+							strong(class="text-danger") 0 (unconfirmed)
 						else if (result.getrawtransaction.confirmations < 6)
 							strong(class="text-warning") #{result.getrawtransaction.confirmations}
 						else
