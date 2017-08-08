@@ -18,6 +18,8 @@ block content
 			a(data-toggle="tab", href="#tab-latest-tx", class="nav-link active", role="tab") Latest Blocks
 		li(class="nav-item")
 			a(data-toggle="tab", href="#tab-getinfo", class="nav-link", role="tab") Node Info
+		li(class="nav-item")
+			a(data-toggle="tab", href="#tab-getmempoolinfo", class="nav-link", role="tab") Mempool Info
 
 	div(class="tab-content")
 		div(id="tab-latest-tx", class="tab-pane active", role="tabpanel")
@@ -32,6 +34,11 @@ block content
 			a(href="/blocks", class="btn btn-primary btn-block") See more
 
 		div(id="tab-getinfo", class="tab-pane", role="tabpanel")
-			h3 Node Info (getinfo)
+			h3 Node Info
 			pre
-				code #{JSON.stringify(result, null, 4)}
+				code #{JSON.stringify(getinfo, null, 4)}
+
+		div(id="tab-getmempoolinfo", class="tab-pane", role="tabpanel")
+			h3 Mempool Info
+			pre
+				code #{JSON.stringify(getmempoolinfo, null, 4)}

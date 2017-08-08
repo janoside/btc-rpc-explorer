@@ -45,6 +45,18 @@ function getInfo() {
 	});
 }
 
+function getMempoolInfo() {
+	return new Promise(function(resolve, reject) {
+		client.cmd('getmempoolinfo', function(err, result, resHeaders) {
+			if (err) {
+				return console.log("Error 23407rhwe07fg: " + err);
+			}
+
+			resolve(result);
+		});
+	});
+}
+
 function getBlockByHeight(blockHeight) {
 	console.log("getBlockByHeight: " + blockHeight);
 
@@ -260,6 +272,7 @@ function getBlockData(rpcClient, blockHash, txLimit, txOffset) {
 
 module.exports = {
 	getInfo: getInfo,
+	getMempoolInfo: getMempoolInfo,
 	getBlockByHeight: getBlockByHeight,
 	getBlocksByHeight: getBlocksByHeight,
 	getBlockByHash: getBlockByHash,

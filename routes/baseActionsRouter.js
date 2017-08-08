@@ -31,19 +31,23 @@ router.get("/", function(req, res) {
 	var client = global.client;
 
 	rpcApi.getInfo().then(function(getinfo) {
-		res.locals.result = getinfo;
+		res.locals.getinfo = getinfo;
 
-		var blockHeights = [];
-		if (getinfo.blocks) {
-			for (var i = 0; i < 10; i++) {
-				blockHeights.push(getinfo.blocks - i);
+		rpcApi.getMempoolInfo().then(function(getmempoolinfo) {
+			res.locals.getmempoolinfo = getmempoolinfo;
+
+			var blockHeights = [];
+			if (getinfo.blocks) {
+				for (var i = 0; i < 10; i++) {
+					blockHeights.push(getinfo.blocks - i);
+				}
 			}
-		}
 
-		rpcApi.getBlocksByHeight(blockHeights).then(function(latestBlocks) {
-			res.locals.latestBlocks = latestBlocks;
+			rpcApi.getBlocksByHeight(blockHeights).then(function(latestBlocks) {
+				res.locals.latestBlocks = latestBlocks;
 
-			res.render("index");
+				res.render("index");
+			});
 		});
 	});
 });
