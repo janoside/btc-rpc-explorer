@@ -199,11 +199,19 @@ function getRawTransactions(txids) {
 		var batch = [];
 		for (var i = 0; i < txids.length; i++) {
 			var txid = txids[i];
+			
+			if (txid) {
+				batch.push({
+					method: 'getrawtransaction',
+					params: [ txid, 1 ]
+				});
+			}
+		}
 
-			batch.push({
-				method: 'getrawtransaction',
-				params: [ txid, 1 ]
-			});
+		if (batch.length == 0) {
+			resolve([]);
+
+			return;
 		}
 
 		var results = [];
