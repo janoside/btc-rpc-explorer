@@ -25,15 +25,13 @@ block content
 		small #{txid}
 	hr
 
-	ul(class='nav nav-tabs')
+	ul(class='nav nav-tabs mb-3')
 		li(class="nav-item")
 			a(data-toggle="tab", href="#tab-summary", class="nav-link active", role="tab") Summary
 		li(class="nav-item")
 			a(data-toggle="tab", href="#tab-scripts", class="nav-link", role="tab") Scripts
 		li(class="nav-item")
 			a(data-toggle="tab", href="#tab-raw", class="nav-link", role="tab") Raw
-
-	div(class="mb-3")
 
 	- DecimalRounded = Decimal.clone({ precision: 4, rounding: 2 })
 
