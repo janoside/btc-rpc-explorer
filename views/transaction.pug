@@ -140,7 +140,7 @@ block content
 				div(class="card mb-3")
 					div(class="card-header")
 						h2(class="h5 mb-0") Coinbase
-					div(class="card-block")
+					div(class="card-body")
 						h6 Hex
 						div(style="background-color: #f0f0f0; padding: 5px 10px;", class="mb-3")
 							span(class="monospace word-wrap") #{result.getrawtransaction.vin[0].coinbase}
@@ -156,7 +156,7 @@ block content
 							h2(class="h5 mb-0") Input (#{result.getrawtransaction.vin.length.toLocaleString()})
 						div(class="col-md-6") 
 							h2(class="h5 mb-0") Output (#{result.getrawtransaction.vout.length.toLocaleString()})
-				div(class="card-block")
+				div(class="card-body")
 					div(class="row")
 						div(class="col-md-6")
 							if (result.txInputs)
