@@ -269,6 +269,9 @@ block content
 							td
 								if (vout.scriptPubKey && vout.scriptPubKey.asm)
 									span(class="word-wrap monospace") #{vout.scriptPubKey.asm}
+									if (vout.scriptPubKey.asm.startsWith("OP_RETURN"))
+										br
+										span(class="word-wrap monospace text-muted") (decoded) #{utils.hex2ascii(vout.scriptPubKey.asm)}
 
 		div(id="tab-raw", class="tab-pane", role="tabpanel")
 			div(class="highlight")
