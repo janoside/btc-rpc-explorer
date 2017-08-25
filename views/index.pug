@@ -35,10 +35,10 @@ block content
 
 		div(id="tab-getinfo", class="tab-pane", role="tabpanel")
 			h3 Node Info
-			pre
-				code #{JSON.stringify(getinfo, null, 4)}
+
+			include includes/getinfo-table.pug
 
 		div(id="tab-getmempoolinfo", class="tab-pane", role="tabpanel")
 			h3 Mempool Info
-			pre
-				code #{JSON.stringify(getmempoolinfo, null, 4)}
+
+			include includes/getmempoolinfo-table.pug

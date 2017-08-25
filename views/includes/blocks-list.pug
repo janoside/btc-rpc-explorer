@@ -13,8 +13,8 @@ table(class="table table-striped")
 				tr
 					th #{blockIndex + blockOffset + 1}
 					td
-						a(href=("/block-height/" + block.height)) #{block.height}
+						a(href=("/block-height/" + block.height)) #{block.height.toLocaleString()}
 					td #{moment.utc(new Date(parseInt(block.time) * 1000)).format("Y-MM-DD HH:mm:ss")}
 					td #{moment.utc(new Date(parseInt(block.time) * 1000)).fromNow(true)}
-					td #{block.tx.length.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
-					td #{block.size.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+					td #{block.tx.length.toLocaleString()}
+					td #{block.size.toLocaleString()}

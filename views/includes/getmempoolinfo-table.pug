@@ -1,0 +1,30 @@
+if (false)
+	pre
+		code #{JSON.stringify(getmempoolinfo, null, 4)}
+
+if (true)
+	table(class="table")
+		tr
+			th(class="table-active properties-header") Transaction Count
+			td #{getmempoolinfo.size.toLocaleString()}
+		tr
+			- var scales = [ {val:1000000000, name:"GB"}, {val:1000000, name:"MB"}, {val:1000, name:"kB"} ];
+			- var scaleDone = false;
+			th(class="table-active properties-header") Size
+			td
+				span #{getmempoolinfo.bytes.toLocaleString()} bytes
+				each item in scales
+					if (!scaleDone)
+						- var fraction = Math.floor(getmempoolinfo.bytes / item.val);
+						if (fraction >= 1)
+							- scaleDone = true;
+							span(class="text-muted")  (#{fraction} #{item.name})
+		tr
+			th(class="table-active properties-header") Total Memory Usage
+			td #{getmempoolinfo.usage.toLocaleString()}
+		tr
+			th(class="table-active properties-header") Max Size
+			td #{getmempoolinfo.maxmempool.toLocaleString()}
+		tr
+			th(class="table-active properties-header") Min Fee
+			td #{getmempoolinfo.mempoolminfee.toLocaleString()}
