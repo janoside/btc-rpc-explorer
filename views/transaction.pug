@@ -91,7 +91,7 @@ block content
 						if (result.getrawtransaction.vsize != result.getrawtransaction.size)
 							span  (
 							a(href="https://github.com/bitcoin/bips/blob/master/bip-0141.mediawiki#Transaction_size_calculations") virtual size
-							span : #{result.getrawtransaction.vsize})
+							span : #{result.getrawtransaction.vsize.toLocaleString()} bytes)
 				
 				if (result.getrawtransaction.locktime > 0)
 					tr
@@ -224,6 +224,9 @@ block content
 														span(class="monospace") Segregated Witness committment - 
 														a(href="https://github.com/bitcoin/bips/blob/master/bip-0141.mediawiki#commitment-structure") docs
 															i(class="fa fa-external-link")
+													else if (vout.scriptPubKey.hex && vout.scriptPubKey.hex.startsWith('6a4b'))
+														span(class="monospace") OP_RETURN: 
+														span(class="monospace text-muted") #{utils.hex2ascii(vout.scriptPubKey.hex.substring(4))}
 											td
 												span(class="monospace") #{vout.value}
 
