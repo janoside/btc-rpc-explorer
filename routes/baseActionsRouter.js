@@ -138,7 +138,7 @@ router.post("/search", function(req, res) {
 		return;
 	}
 
-	var query = req.body.query;
+	var query = req.body.query.toLowerCase();
 
 	rpcApi.getRawTransaction(query).then(function(tx) {
 		if (tx) {
