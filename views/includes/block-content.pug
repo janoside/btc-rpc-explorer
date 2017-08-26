@@ -163,7 +163,8 @@ div(class="tab-content")
 															- totalInputValue = totalInputValue.plus(new Decimal(vout.value));
 															span(class="monospace") #{vout.value}
 
-										if (tx.vin.length > result.txInputsByTransaction[tx.txid].length)
+										- var coinbaseCount = tx.vin[0].coinbase ? 1 : 0;
+										if ((tx.vin.length - coinbaseCount) > result.txInputsByTransaction[tx.txid].length)
 											tr
 												td
 												td
