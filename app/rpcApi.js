@@ -1,3 +1,5 @@
+var utils = require("./utils.js");
+
 var genesisCoinbaseTransactionTxid = "4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b";
 var genesisCoinbaseTransaction = {
 	"hex": "01000000010000000000000000000000000000000000000000000000000000000000000000ffffffff0804ffff001d02fd04ffffffff0100f2052a01000000434104f5eeb2b10c944c6b9fbcfff94c35bdeecd93df977882babc7f3a2cf7f5c81d3b09a68db7f0e04f21de5d4230e75e6dbe7ad16eefe0d4325a62067dc6f369446aac00000000",
@@ -196,41 +198,60 @@ function getRawTransactions(txids) {
 			return;
 		}
 
-		var batch = [];
+		var requests = [];
 		for (var i = 0; i < txids.length; i++) {
 			var txid = txids[i];
 			
 			if (txid) {
-				batch.push({
+				requests.push({
 					method: 'getrawtransaction',
 					params: [ txid, 1 ]
 				});
 			}
 		}
 
-		if (batch.length == 0) {
-			resolve([]);
+		var requestBatches = utils.splitArrayIntoChunks(requests, 20);
+
+		executeBatchesSequentially(requestBatches, function(results) {
+			resolve(results);
+		});
+	});
+}
+
+function executeBatchesSequentially(batches, resultFunc) {
+	var batchId = utils.getRandomString(20, 'aA#');
+
+	console.log("Starting " + batches.length + "-item batch " + batchId + "...");
+
+	executeBatchesSequentiallyInternal(batchId, batches, 0, [], resultFunc);
+}
+
+function executeBatchesSequentiallyInternal(batchId, batches, currentIndex, accumulatedResults, resultFunc) {
+	if (currentIndex == batches.length) {
+		console.log("Finishing batch " + batchId + "...");
+
+		resultFunc(accumulatedResults);
 
 			return;
 		}
 
-		var results = [];
+	console.log("Executing item #" + (currentIndex + 1) + " (of " + batches.length + ") for batch " + batchId);
 
-		var count = batch.length;
-		client.cmd(batch, function(err, result, resHeaders) {
+	var count = batches[currentIndex].length;
+
+	client.cmd(batches[currentIndex], function(err, result, resHeaders) {
 			if (err) {
-				console.log("Error 10238rhwefyhd: " + err);
+			console.log("Error f83024hf4: " + err);
 			}
 
-			results.push(result);
+		accumulatedResults.push(result);
 
 			count--;
 
 			if (count == 0) {
-				resolve(results);
+			executeBatchesSequentiallyInternal(batchId, batches, currentIndex + 1, accumulatedResults, resultFunc);
 			}
 		});
-	});
 }
 
 function getBlockData(rpcClient, blockHash, txLimit, txOffset) {
