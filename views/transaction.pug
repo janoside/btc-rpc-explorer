@@ -63,7 +63,7 @@ block content
 						if (result.getblock)
 							a(href=("/block/" + result.getrawtransaction.blockhash)) #{result.getrawtransaction.blockhash}
 							if (result.getblock.height)
-								span(class="text-muted")  (#{result.getblock.height})
+								span(class="text-muted")  (#{result.getblock.height.toLocaleString()})
 						else
 							span N/A
 							span(class="text-muted")  (unconfirmed)
