@@ -163,11 +163,18 @@ div(class="tab-content")
 															- totalInputValue = totalInputValue.plus(new Decimal(vout.value));
 															span(class="monospace") #{vout.value}
 
-										tr
-											td
-											td
-											td
-												strong(class="monospace") #{totalInputValue}
+										if (tx.vin.length > result.txInputsByTransaction[tx.txid].length)
+											tr
+												td
+												td
+													span(class="monospace text-muted") #{(tx.vin.length - result.txInputsByTransaction[tx.txid].length).toLocaleString()} more...
+												td
+										else
+											tr
+												td
+												td
+												td
+													strong(class="monospace") #{totalInputValue}
 									
 
 							div(class="col-md-6")

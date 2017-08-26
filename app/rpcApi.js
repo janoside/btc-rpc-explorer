@@ -138,13 +138,15 @@ function getBlockByHash(blockHash) {
 	});
 }
 
-function getTransactionInputs(rpcClient, transaction) {
+function getTransactionInputs(rpcClient, transaction, inputLimit=0) {
 	console.log("getTransactionInputs: " + transaction.txid);
 
 	return new Promise(function(resolve, reject) {
 		var txids = [];
 		for (var i = 0; i < transaction.vin.length; i++) {
+			if (i < inputLimit || inputLimit == 0) {
 			txids.push(transaction.vin[i].txid);
+		}
 		}
 
 		getRawTransactions(txids).then(function(inputTransactions) {
@@ -280,7 +282,7 @@ function getBlockData(rpcClient, blockHash, txLimit, txOffset) {
 					var transaction = transactions[i];
 
 					if (transaction) {
-						promises.push(getTransactionInputs(client, transaction));
+						promises.push(getTransactionInputs(client, transaction, 10));
 					}
 				}
 
