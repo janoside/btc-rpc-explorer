@@ -285,10 +285,22 @@ router.get("/tx/:transactionId", function(req, res) {
 });
 
 router.get("/terminal", function(req, res) {
+	if (!env.debug) {
+		res.send("Debug mode is off.");
+
+		return;
+	}
+
 	res.render("terminal");
 });
 
 router.post("/terminal", function(req, res) {
+	if (!env.debug) {
+		res.send("Debug mode is off.");
+
+		return;
+	}
+
 	client.cmd(req.body.cmd, function(err, result, resHeaders) {
 		console.log(result);
 		console.log(err);

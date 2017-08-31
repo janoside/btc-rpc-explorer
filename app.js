@@ -44,6 +44,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(function(req, res, next) {
 	// make session available in templates
 	res.locals.session = req.session;
+	res.locals.debug = env.debug;
 
 	if (env.bitcoind && env.bitcoind.rpc) {
 		req.session.host = env.bitcoind.host;
