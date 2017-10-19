@@ -36,6 +36,14 @@ html
 						form(method="post", action="/search", class="form-inline")
 							input(class="form-control form-control-sm mr-sm-2", type="text", name="query", placeholder="block height, block hash, txid", style="width: 300px;")
 							button(class="btn btn-primary btn-sm", type="submit") Search
+
+		div(id="subheader", style="background: red; margin-top: -25px; margin-bottom: 25px; padding: 10px 0;", class="bg-light")
+			div(class="container")
+				a(href="/") Home
+				a(href="/node-info") Node Info
+				a(href="/mempool-info") Mempool Info
+							
+
 			
 		div(class="container")
 			if (userMessage)

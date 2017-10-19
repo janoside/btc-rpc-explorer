@@ -35,3 +35,7 @@ img.header-image {
 	padding: 2px 5px;
 	margin-right: 4px;
 }
+
+#subheader a {
+	margin-right: 20px;
+}
