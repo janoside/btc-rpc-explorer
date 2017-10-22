@@ -58,13 +58,17 @@ router.get("/node-info", function(req, res) {
 	});
 });
 
-router.get("/mempool-info", function(req, res) {
+router.get("/mempool", function(req, res) {
 	var client = global.client;
 
 	rpcApi.getMempoolInfo().then(function(getmempoolinfo) {
 		res.locals.getmempoolinfo = getmempoolinfo;
 
-		res.render("mempool-info");
+		rpcApi.getMempoolStats().then(function(mempoolstats) {
+			res.locals.mempoolstats = mempoolstats;
+
+			res.render("mempool");
+		});
 	});
 });
 

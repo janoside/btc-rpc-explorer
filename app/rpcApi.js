@@ -59,6 +59,67 @@ function getMempoolInfo() {
 	});
 }
 
+function getMempoolStats() {
+	return new Promise(function(resolve, reject) {
+		client.cmd('getrawmempool', true, function(err, result, resHeaders) {
+			if (err) {
+				return console.log("Error 428thwre0ufg: " + err);
+			}
+
+			console.log("abc: " + JSON.stringify(result).substring(0, 100));
+
+			var compiledResult = {};
+			compiledResult.count = 0;
+			compiledResult.fee_0_5 = 0;
+			compiledResult.fee_6_10 = 0;
+			compiledResult.fee_11_25 = 0;
+			compiledResult.fee_26_50 = 0;
+			compiledResult.fee_51_75 = 0;
+			compiledResult.fee_76_100 = 0;
+			compiledResult.fee_101_150 = 0;
+			compiledResult.fee_151_max = 0;
+
+			var totalFee = 0;
+			for (var txid in result) {
+				var txMempoolInfo = result[txid];
+				totalFee += txMempoolInfo.modifiedfee;
+				var feeRate = Math.round(txMempoolInfo.modifiedfee * 100000000 / txMempoolInfo.size);
+
+				if (feeRate <= 5) {
+					compiledResult.fee_0_5++;
+
+				} else if (feeRate <= 10) {
+					compiledResult.fee_6_10++;
+
+				} else if (feeRate <= 25) {
+					compiledResult.fee_11_25++;
+
+				} else if (feeRate <= 50) {
+					compiledResult.fee_26_50++;
+
+				} else if (feeRate <= 75) {
+					compiledResult.fee_51_75++;
+
+				} else if (feeRate <= 100) {
+					compiledResult.fee_76_100++;
+
+				} else if (feeRate <= 150) {
+					compiledResult.fee_101_150++;
+
+				} else {
+					compiledResult.fee_151_max++;
+				}
+
+				compiledResult.count++;
+			}
+
+			compiledResult.totalFee = totalFee;
+
+			resolve(compiledResult);
+		});
+	});
+}
+
 function getBlockByHeight(blockHeight) {
 	console.log("getBlockByHeight: " + blockHeight);
 
@@ -310,5 +371,6 @@ module.exports = {
 	getTransactionInputs: getTransactionInputs,
 	getBlockData: getBlockData,
 	getRawTransaction: getRawTransaction,
-	getRawTransactions: getRawTransactions
+	getRawTransactions: getRawTransactions,
+	getMempoolStats: getMempoolStats
 };
