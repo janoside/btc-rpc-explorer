@@ -39,3 +39,12 @@ img.header-image {
 #subheader a {
 	margin-right: 20px;
 }
+
+.data-header {
+	text-align: right;
+}
+
+.data-cell {
+	text-align: right;
+	font-family: monospace;
+}

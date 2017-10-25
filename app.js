@@ -16,6 +16,7 @@ var utils = require("./app/utils.js");
 var moment = require("moment");
 var Decimal = require('decimal.js');
 var bitcoin = require("bitcoin");
+var momentDurationFormat = require("moment-duration-format");
 
 
 var baseActionsRouter = require('./routes/baseActionsRouter');

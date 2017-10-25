@@ -2,19 +2,21 @@ table(class="table table-striped")
 	thead
 		tr
 			th
-			th Height
-			th Timestamp (utc)
-			th Age
-			th Transactions
-			th Size (bytes)
+			th(class="data-header") Height
+			th(class="data-header") Timestamp (utc)
+			th(class="data-header") Age
+			th(class="data-header") Transactions
+			th(class="data-header") Size (bytes)
 	tbody
 		each block, blockIndex in blocks
 			if (block)
 				tr
-					th #{blockIndex + blockOffset + 1}
-					td
+					th #{(blockIndex + blockOffset + 1).toLocaleString()}
+					td(class="data-cell")
 						a(href=("/block-height/" + block.height)) #{block.height.toLocaleString()}
-					td #{moment.utc(new Date(parseInt(block.time) * 1000)).format("Y-MM-DD HH:mm:ss")}
-					td #{moment.utc(new Date(parseInt(block.time) * 1000)).fromNow(true)}
-					td #{block.tx.length.toLocaleString()}
-					td #{block.size.toLocaleString()}
+					td(class="data-cell") #{moment.utc(new Date(parseInt(block.time) * 1000)).format("Y-MM-DD HH:mm:ss")}
+
+					- var timeAgo = moment.duration(moment.utc(new Date()).diff(moment.utc(new Date(parseInt(block.time) * 1000))));
+					td(class="data-cell") #{timeAgo.format()}
+					td(class="data-cell") #{block.tx.length.toLocaleString()}
+					td(class="data-cell") #{block.size.toLocaleString()}
