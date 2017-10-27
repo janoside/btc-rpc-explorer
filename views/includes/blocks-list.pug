@@ -12,11 +12,11 @@ table(class="table table-striped")
 			if (block)
 				tr
 					th #{(blockIndex + blockOffset + 1).toLocaleString()}
-					td(class="data-cell")
+					td(class="data-cell monospace")
 						a(href=("/block-height/" + block.height)) #{block.height.toLocaleString()}
-					td(class="data-cell") #{moment.utc(new Date(parseInt(block.time) * 1000)).format("Y-MM-DD HH:mm:ss")}
+					td(class="data-cell monospace") #{moment.utc(new Date(parseInt(block.time) * 1000)).format("Y-MM-DD HH:mm:ss")}
 
 					- var timeAgo = moment.duration(moment.utc(new Date()).diff(moment.utc(new Date(parseInt(block.time) * 1000))));
-					td(class="data-cell") #{timeAgo.format()}
-					td(class="data-cell") #{block.tx.length.toLocaleString()}
-					td(class="data-cell") #{block.size.toLocaleString()}
+					td(class="data-cell monospace") #{timeAgo.format()}
+					td(class="data-cell monospace") #{block.tx.length.toLocaleString()}
+					td(class="data-cell monospace") #{block.size.toLocaleString()}

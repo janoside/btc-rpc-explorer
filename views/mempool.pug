@@ -23,7 +23,7 @@ block content
 			- var scales = [ {val:1000000000, name:"GB"}, {val:1000000, name:"MB"}, {val:1000, name:"kB"} ];
 			- var scaleDone = false;
 			th(class="table-active properties-header") Size
-			td
+			td(class="monospace")
 				span #{getmempoolinfo.bytes.toLocaleString()} bytes
 				each item in scales
 					if (!scaleDone)
@@ -35,7 +35,7 @@ block content
 			- var scales = [ {val:1000000000, name:"GB"}, {val:1000000, name:"MB"}, {val:1000, name:"kB"} ];
 			- var scaleDone = false;
 			th(class="table-active properties-header") Size
-			td
+			td(class="monospace")
 				span #{getmempoolinfo.usage.toLocaleString()} bytes
 				each item in scales
 					if (!scaleDone)
@@ -45,13 +45,13 @@ block content
 							span(class="text-muted")  (#{fraction} #{item.name})
 		tr
 			th(class="table-active properties-header") Max Size
-			td #{getmempoolinfo.maxmempool.toLocaleString()}
+			td(class="monospace") #{getmempoolinfo.maxmempool.toLocaleString()}
 		tr
 			th(class="table-active properties-header") Min Fee
-			td #{getmempoolinfo.mempoolminfee.toLocaleString()}
+			td(class="monospace") #{getmempoolinfo.mempoolminfee.toLocaleString()}
 		tr
 			th(class="table-active properties-header") Total Fees
-			td #{mempoolstats.totalFee.toLocaleString()}
+			td(class="monospace") #{mempoolstats.totalFee.toLocaleString()}
 
 
 	h4 Transaction count by fee level
@@ -63,25 +63,26 @@ block content
 	table(class="table")
 		tr
 			th(class="table-active properties-header") 0 - 5 sat/B
-			td #{mempoolstats.fee_0_5.toLocaleString()}
+			td(class="monospace") #{mempoolstats.fee_0_5.toLocaleString()}
 		tr
 			th(class="table-active properties-header") 6 - 10 sat/B
-			td #{mempoolstats.fee_6_10.toLocaleString()}
+			td(class="monospace") #{mempoolstats.fee_6_10.toLocaleString()}
 		tr
 			th(class="table-active properties-header") 11 - 25 sat/B
-			td #{mempoolstats.fee_11_25.toLocaleString()}
+			td(class="monospace") #{mempoolstats.fee_11_25.toLocaleString()}
 		tr
 			th(class="table-active properties-header") 26 - 50 sat/B
-			td #{mempoolstats.fee_26_50.toLocaleString()}
+			td(class="monospace") #{mempoolstats.fee_26_50.toLocaleString()}
 		tr
 			th(class="table-active properties-header") 51 - 75 sat/B
-			td #{mempoolstats.fee_51_75.toLocaleString()}
+			td(class="monospace") #{mempoolstats.fee_51_75.toLocaleString()}
 		tr
 			th(class="table-active properties-header") 76 - 100 sat/B
-			td #{mempoolstats.fee_76_100.toLocaleString()}
+			td(class="monospace") #{mempoolstats.fee_76_100.toLocaleString()}
 		tr
 			th(class="table-active properties-header") 101 - 150 sat/B
-			td #{mempoolstats.fee_101_150.toLocaleString()}
+			td(class="monospace") #{mempoolstats.fee_101_150.toLocaleString()}
 		tr
 			th(class="table-active properties-header") 151+ sat/B
-			td #{mempoolstats.fee_151_max.toLocaleString()}
+			td(class="monospace") #{mempoolstats.fee_151_max.toLocaleString()}
+			

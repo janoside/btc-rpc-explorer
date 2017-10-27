@@ -17,12 +17,12 @@ div(class="tab-content")
 		table(class="table")
 			tr
 				th(class="table-active properties-header") Block Hash
-				td
+				td(class="monospace")
 					a(href=("/block/" + result.getblock.hash)) #{result.getblock.hash}
 
 			tr
 				th(class="table-active properties-header") Previous Block Hash
-				td
+				td(class="monospace")
 					if (result.getblock.previousblockhash)
 						a(href=("/block/" + result.getblock.previousblockhash)) #{result.getblock.previousblockhash}
 
@@ -32,7 +32,7 @@ div(class="tab-content")
 
 			tr
 				th(class="table-active properties-header") Next Block Hash
-				td
+				td(class="monospace")
 					if (result.getblock.nextblockhash)
 						a(href=("/block/" + result.getblock.nextblockhash)) #{result.getblock.nextblockhash}
 					else
@@ -41,27 +41,27 @@ div(class="tab-content")
 
 			tr
 				th(class="table-active properties-header") Block Height
-				td
-					a(href=("/block-height/" + result.getblock.height)) #{result.getblock.height}
+				td(class="monospace")
+					a(href=("/block-height/" + result.getblock.height)) #{result.getblock.height.toLocaleString()}
 
 			tr
 				th(class="table-active properties-header") Timestamp
-				td #{moment.utc(new Date(result.getblock.time * 1000)).format("Y-MM-DD HH:mm:ss")} (utc)
+				td(class="monospace") #{moment.utc(new Date(result.getblock.time * 1000)).format("Y-MM-DD HH:mm:ss")} (utc)
 
 			tr
 				th(class="table-active properties-header") Transaction Count
-				td #{result.getblock.tx.length.toLocaleString()}
+				td(class="monospace") #{result.getblock.tx.length.toLocaleString()}
 
 			tr
 				th(class="table-active properties-header") Size
-				td
+				td(class="monospace")
 					span #{result.getblock.size.toLocaleString()} bytes
 					br
 					span(class="text-muted") (weight: #{result.getblock.weight.toLocaleString()})
 
 			tr
 				th(class="table-active properties-header") Confirmations
-				td
+				td(class="monospace")
 					if (result.getblock.confirmations < 6)
 						strong(class="text-warning") #{result.getblock.confirmations}
 					else
@@ -71,7 +71,7 @@ div(class="tab-content")
 				- var scales = [ {val:1000000000000000, name:"quadrillion"}, {val:1000000000000, name:"trillion"}, {val:1000000000, name:"billion"}, {val:1000000, name:"million"} ];
 				- var scaleDone = false;
 				th(class="table-active properties-header") Difficulty
-				td
+				td(class="monospace")
 					span #{result.getblock.difficulty.toLocaleString()}
 					each item in scales
 						if (!scaleDone)
@@ -83,24 +83,24 @@ div(class="tab-content")
 
 			tr
 				th(class="table-active text-right") Version
-				td 0x#{result.getblock.versionHex}
+				td(class="monospace") 0x#{result.getblock.versionHex}
 					span(class="text-muted")  (decimal: #{result.getblock.version})
 
 			tr
 				th(class="table-active text-right") Nonce
-				td #{result.getblock.nonce}
+				td(class="monospace") #{result.getblock.nonce}
 
 			tr
 				th(class="table-active text-right") Bits
-				td #{result.getblock.bits}
+				td(class="monospace") #{result.getblock.bits}
 
 			tr
 				th(class="table-active text-right") Merkle Root
-				td #{result.getblock.merkleroot}
+				td(class="monospace") #{result.getblock.merkleroot}
 
 			tr
 				th(class="table-active text-right") Chainwork
-				td #{result.getblock.chainwork}
+				td(class="monospace") #{result.getblock.chainwork}
 
 		hr
 		h2(class="h4") Transactions (#{txCount.toLocaleString()})

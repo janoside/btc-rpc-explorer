@@ -14,8 +14,8 @@ img.header-image {
 	margin-right: 10px;
 }
 
-.monospace {
-	font-family: monospace;
+code, .monospace {
+	font-family: "Cousine", monospace;
 }
 
 .properties-header {
@@ -40,11 +40,6 @@ img.header-image {
 	margin-right: 20px;
 }
 
-.data-header {
+.data-cell, .data-header {
 	text-align: right;
-}
-
-.data-cell {
-	text-align: right;
-	font-family: monospace;
 }

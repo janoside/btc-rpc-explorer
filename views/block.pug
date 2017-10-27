@@ -10,10 +10,10 @@ block content
 				strong #{host}
 				span :#{port}
 		li(class="breadcrumb-item active")
-			a(href=("/block/" + blockHash)) Block #{result.getblock.height}
+			a(href=("/block/" + blockHash)) Block #{result.getblock.height.toLocaleString()}
 
 	h1(class="h2") Block 
-		small(style="width: 100%;") ##{result.getblock.height}
+		small(style="width: 100%;", class="monospace") ##{result.getblock.height.toLocaleString()}
 	hr
 
 	include includes/block-content.pug

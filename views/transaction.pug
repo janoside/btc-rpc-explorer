@@ -22,7 +22,7 @@ block content
 
 	h1(class="h2") Transaction
 		br
-		small #{txid}
+		small(class="monospace") #{txid}
 	hr
 
 	ul(class='nav nav-tabs mb-3')
@@ -59,7 +59,7 @@ block content
 			table(class="table")
 				tr
 					th(class="table-active properties-header") Included in Block
-					td
+					td(class="monospace")
 						if (result.getblock)
 							a(href=("/block/" + result.getrawtransaction.blockhash)) #{result.getrawtransaction.blockhash}
 							if (result.getblock.height)
@@ -71,9 +71,9 @@ block content
 				tr
 					th(class="table-active properties-header") Timestamp
 					if (result.getrawtransaction.time)
-						td #{moment.utc(new Date(result.getrawtransaction["time"] * 1000)).format("Y-MM-DD HH:mm:ss")} (utc)
+						td(class="monospace") #{moment.utc(new Date(result.getrawtransaction["time"] * 1000)).format("Y-MM-DD HH:mm:ss")} (utc)
 					else
-						td N/A
+						td(class="monospace") N/A
 							span(class="text-muted")  (unconfirmed)
 				
 				//tr
@@ -82,11 +82,11 @@ block content
 				
 				tr
 					th(class="table-active properties-header") Version
-					td #{result.getrawtransaction.version}
+					td(class="monospace") #{result.getrawtransaction.version}
 				
 				tr
 					th(class="table-active properties-header") Size
-					td
+					td(class="monospace")
 						span #{result.getrawtransaction.size.toLocaleString()} bytes
 						if (result.getrawtransaction.vsize != result.getrawtransaction.size)
 							span  (
@@ -97,7 +97,7 @@ block content
 					tr
 						th(class="table-active properties-header")
 							span Locktime
-						td
+						td(class="monospace")
 							if (result.getrawtransaction.locktime < 500000000)
 								span Spendable in block 
 								a(href=("/block-height/" + result.getrawtransaction.locktime)) #{result.getrawtransaction.locktime}
@@ -115,7 +115,7 @@ block content
 
 				tr
 					th(class="table-active properties-header") Confirmations
-					td
+					td(class="monospace")
 						if (!result.getrawtransaction.confirmations || result.getrawtransaction.confirmations == 0)
 							strong(class="text-danger") 0 (unconfirmed)
 						else if (result.getrawtransaction.confirmations < 6)
@@ -126,11 +126,11 @@ block content
 				if (result.getrawtransaction.vin[0].coinbase)
 					tr
 						th(class="table-active properties-header") Total Network Fees
-						td #{new Decimal(totalOutputValue).minus(totalInputValue)}
+						td(class="monospace") #{new Decimal(totalOutputValue).minus(totalInputValue)}
 				else
 					tr
 						th(class="table-active properties-header") Network Fee Paid
-						td
+						td(class="monospace")
 							strong #{new Decimal(totalInputValue).minus(totalOutputValue)}
 							span(class="text-muted")  (#{totalInputValue} - #{totalOutputValue})
 							br
