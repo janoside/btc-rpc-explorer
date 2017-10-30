@@ -60,29 +60,20 @@ block content
 	if (false)
 		#{JSON.stringify(mempoolstats)}
 
+	- var feeBucketLabels = [ "0 - 5 sat/B", "6 - 10 sat/B", "11 - 25 sat/B", "26 - 50 sat/B", "51 - 75 sat/B", "76 - 100 sat/B", "101 - 150 sat/B", "151+ sat/B" ];
+	- var feeBucketTxCounts = [ mempoolstats.fee_0_5, mempoolstats.fee_6_10, mempoolstats.fee_11_25, mempoolstats.fee_26_50, mempoolstats.fee_51_75, mempoolstats.fee_76_100, mempoolstats.fee_101_150, mempoolstats.fee_151_max ];
+	- var bgColors = [ "bg-primary", "bg-success", "bg-info", "bg-warning", "bg-danger", "bg-primary progress-bar-striped", "bg-success progress-bar-striped", "bg-info progress-bar-striped" ];
+
 	table(class="table")
-		tr
-			th(class="table-active properties-header") 0 - 5 sat/B
-			td(class="monospace") #{mempoolstats.fee_0_5.toLocaleString()}
-		tr
-			th(class="table-active properties-header") 6 - 10 sat/B
-			td(class="monospace") #{mempoolstats.fee_6_10.toLocaleString()}
-		tr
-			th(class="table-active properties-header") 11 - 25 sat/B
-			td(class="monospace") #{mempoolstats.fee_11_25.toLocaleString()}
-		tr
-			th(class="table-active properties-header") 26 - 50 sat/B
-			td(class="monospace") #{mempoolstats.fee_26_50.toLocaleString()}
-		tr
-			th(class="table-active properties-header") 51 - 75 sat/B
-			td(class="monospace") #{mempoolstats.fee_51_75.toLocaleString()}
-		tr
-			th(class="table-active properties-header") 76 - 100 sat/B
-			td(class="monospace") #{mempoolstats.fee_76_100.toLocaleString()}
-		tr
-			th(class="table-active properties-header") 101 - 150 sat/B
-			td(class="monospace") #{mempoolstats.fee_101_150.toLocaleString()}
-		tr
-			th(class="table-active properties-header") 151+ sat/B
-			td(class="monospace") #{mempoolstats.fee_151_max.toLocaleString()}
+		each feeBucketLabel, index in feeBucketLabels
+			tr
+				th(class=("properties-header " + bgColors[index])) #{feeBucketLabel}
+				td(class="monospace") #{feeBucketTxCounts[index].toLocaleString()}
+
+	div(class="progress")
+		each txCount, index in feeBucketTxCounts
+			- var percent = 100 * txCount / getmempoolinfo.size;
+
+			div(class=("progress-bar " + bgColors[index]), role="progressbar", style=("width: " + percent + "%;"), aria-valuenow=percent, aria-valuemin="0", aria-valuemax="100")
+				span #{txCount}
 			
