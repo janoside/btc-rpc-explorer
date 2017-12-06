@@ -1,4 +1,4 @@
-# ![BTC RPC Explorer](public/img/logo/logo-64.png) BTC RPC Explorer
+# ![BTC Explorer](public/img/logo/logo-64.png) BTC Explorer
 
 Simple, stateless Bitcoin blockchain explorer, via RPC. Built with Node.js, express, bootstrap-v4.
 
