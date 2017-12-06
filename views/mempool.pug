@@ -15,6 +15,8 @@ block content
 	h1 Mempool Info
 	hr
 
+	p Data from RPC command  
+		a(href="https://bitcoin.org/en/developer-reference#getmempoolinfo") getmempoolinfo
 	table(class="table")
 		tr
 			th(class="table-active properties-header") Transaction Count
@@ -22,7 +24,7 @@ block content
 		tr
 			- var scales = [ {val:1000000000, name:"GB"}, {val:1000000, name:"MB"}, {val:1000, name:"kB"} ];
 			- var scaleDone = false;
-			th(class="table-active properties-header") Size
+			th(class="table-active properties-header") Tx Size
 			td(class="monospace")
 				span #{getmempoolinfo.bytes.toLocaleString()} bytes
 				each item in scales
@@ -34,7 +36,7 @@ block content
 		tr
 			- var scales = [ {val:1000000000, name:"GB"}, {val:1000000, name:"MB"}, {val:1000, name:"kB"} ];
 			- var scaleDone = false;
-			th(class="table-active properties-header") Size
+			th(class="table-active properties-header") Total Size
 			td(class="monospace")
 				span #{getmempoolinfo.usage.toLocaleString()} bytes
 				each item in scales
