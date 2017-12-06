@@ -20,30 +20,29 @@ html
 	body
 		nav(class="navbar navbar-expand-lg navbar-dark bg-dark mb-4")
 			div(class="container")
-				div(class="navbar-header")
-					button(type="button", class="navbar-toggler navbar-toggler-right", data-toggle="collapse", data-target="#navbarNav")
-						span(class="navbar-toggler-icon")
-					a(class="navbar-brand", href="/")
-						span
-							img(src="/img/logo/logo-64.png", class="header-image")
-							span BTC RPC Explorer
+				a(class="navbar-brand", href="/")
+					span
+						img(src="/img/logo/logo-64.png", class="header-image")
+						span BTC RPC Explorer
+						
+				button(type="button", class="navbar-toggler navbar-toggler-right", data-toggle="collapse", data-target="#navbarNav")
+					span(class="navbar-toggler-icon")
+					
 				div(class="collapse navbar-collapse", id="navbarNav")
 					if (client)
 						ul(class="navbar-nav mr-auto")
-							li(class="nav-item")
-								if (debug)
+							if (debug)
+								li(class="nav-item")
 									a(href="/terminal", class="nav-link") RPC Terminal
+							li(class="nav-item")
+								a(href="/node-info", class="nav-link") Node Info
+							li(class="nav-item")
+								a(href="/mempool", class="nav-link") Mempool Info
 						form(method="post", action="/search", class="form-inline")
-							input(class="form-control form-control-sm mr-sm-2", type="text", name="query", placeholder="block height, block hash, txid", style="width: 300px;")
-							button(class="btn btn-primary btn-sm", type="submit") Search
-
-		div(id="subheader", style="background: red; margin-top: -25px; margin-bottom: 25px; padding: 10px 0;", class="bg-light")
-			div(class="container")
-				a(href="/") Home
-				a(href="/node-info") Node Info
-				a(href="/mempool") Mempool Info
-							
-
+							div(class="input-group")
+								input(type="text", class="form-control form-control-sm", name="query", placeholder="block height, block hash, txid", style="width: 250px;")
+								span(class="input-group-btn")
+									input(type="submit", class="btn btn-primary", value="Search")
 			
 		div(class="container")
 			if (userMessage)
@@ -55,7 +54,7 @@ html
 			div(style="margin-bottom: 30px;")
 
 		a(href="https://github.com/janoside/btc-rpc-explorer")
-			img(style="position: absolute; top: 0; right: 0; border: 0;", src="https://camo.githubusercontent.com/365986a132ccd6a44c23a9169022c0b5c890c387/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f7265645f6161303030302e706e67", alt="Fork me on GitHub", data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_red_aa0000.png")
+			img(style="position: absolute; top: 0; left: 0; border: 0;", src="https://camo.githubusercontent.com/82b228a3648bf44fc1163ef44c62fcc60081495e/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f6c6566745f7265645f6161303030302e706e67", alt="Fork me on GitHub", data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_left_red_aa0000.png")
 		
 		script(src="https://code.jquery.com/jquery-3.2.1.min.js", integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=", crossorigin="anonymous")
 		script(src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js", integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh", crossorigin="anonymous")
