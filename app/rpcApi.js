@@ -295,26 +295,26 @@ function executeBatchesSequentiallyInternal(batchId, batches, currentIndex, accu
 
 		resultFunc(accumulatedResults);
 
-			return;
-		}
+		return;
+	}
 
 	console.log("Executing item #" + (currentIndex + 1) + " (of " + batches.length + ") for batch " + batchId);
 
 	var count = batches[currentIndex].length;
 
 	client.cmd(batches[currentIndex], function(err, result, resHeaders) {
-			if (err) {
+		if (err) {
 			console.log("Error f83024hf4: " + err);
-			}
+		}
 
 		accumulatedResults.push(result);
 
-			count--;
+		count--;
 
-			if (count == 0) {
+		if (count == 0) {
 			executeBatchesSequentiallyInternal(batchId, batches, currentIndex + 1, accumulatedResults, resultFunc);
-			}
-		});
+		}
+	});
 }
 
 function getBlockData(rpcClient, blockHash, txLimit, txOffset) {
