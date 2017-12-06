@@ -10,7 +10,6 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var session = require("express-session");
 var env = require("./app/env.js");
-var md5 = require("md5");
 var simpleGit = require('simple-git');
 var utils = require("./app/utils.js");
 var moment = require("moment");

@@ -3,7 +3,6 @@ var router = express.Router();
 var util = require('util');
 var moment = require('moment');
 var utils = require('./../app/utils');
-var md5 = require("md5");
 var env = require("./../app/env");
 var bitcoin = require("bitcoin");
 var rpcApi = require("./../app/rpcApi");
