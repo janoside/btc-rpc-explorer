@@ -9,17 +9,6 @@ block headContent
 		
 
 block content
-	ol(class="breadcrumb")
-		li(class="breadcrumb-item")
-			a(href="/")
-				strong #{host}
-				span :#{port}
-		
-		if (result.getrawtransaction.blockhash)
-			li(class="breadcrumb-item")
-				a(href=("/block/" + result.getrawtransaction.blockhash)) Block #{result.getblock.height}
-		li(class="breadcrumb-item active") Transaction 
-
 	h1(class="h2") Transaction
 		br
 		small(class="monospace") #{txid}
