@@ -141,7 +141,7 @@ div(class="tab-content")
 												td
 													span(class="tag monospace") coinbase
 													span(class="monospace")  Newly minted BTC
-												td #{utils.getBlockReward(result.getblock.height)}
+												td(class="monospace") #{utils.getBlockReward(result.getblock.height)}
 
 										each txInput, txInputIndex in result.txInputsByTransaction[tx.txid]
 											if (txInput)
