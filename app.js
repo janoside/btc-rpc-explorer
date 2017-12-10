@@ -56,7 +56,7 @@ app.use(function(req, res, next) {
 			port: env.bitcoind.port,
 			user: env.bitcoind.rpc.username,
 			pass: env.bitcoind.rpc.password,
-			timeout: 30000
+			timeout: 5000
 		});
 	}
 
