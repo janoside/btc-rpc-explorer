@@ -11,13 +11,25 @@ block content
 		**BTC Explorer** is [open-source](https://github.com/janoside/btc-rpc-explorer). If you run your own [Bitcoin Full Node](https://bitcoin.org/en/full-node), **BTC Explorer** can easily run alongside it, communicating via RPC calls. See the project [ReadMe](https://github.com/janoside/btc-rpc-explorer) for a list of features and instructions for running.
 
 	
+	if (latestBlocks)
+		h3 Latest Blocks
 
-	h3 Latest Blocks
+		- var blocks = latestBlocks;
+		- var blockOffset = 0;
 
-	- var blocks = latestBlocks;
-	- var blockOffset = 0;
+		include includes/blocks-list.pug
 
-	include includes/blocks-list.pug
+		hr
+		a(href="/blocks", class="btn btn-primary btn-block") See more
 
 	hr
-	a(href="/blocks", class="btn btn-primary btn-block") See more
+
+	div(class="text-center")
+		:markdown-it
+			Public instance maintained at [https://btc-explorer.com](https://btc-explorer.com)
+			
+			Donate bitcoin: [3NPGpNyLLmVKCEcuipBs7G4KpQJoJXjDGe](bitcoin:3NPGpNyLLmVKCEcuipBs7G4KpQJoJXjDGe) / zCash: [t1bEGh8eABmZu8Ned3awCgBdkAhz2mKzJxP](zcash:t1bEGh8eABmZu8Ned3awCgBdkAhz2mKzJxP)
+
+			Source code available on github: [https://github.com/janoside/btc-rpc-explorer](https://github.com/janoside/btc-rpc-explorer)
+			
+			&copy; 2017 Dan Janosik

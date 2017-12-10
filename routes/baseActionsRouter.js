@@ -44,6 +44,10 @@ router.get("/", function(req, res) {
 
 			res.render("index");
 		});
+	}).catch(function(err) {
+		res.locals.userMessage = "Unable to connect to Bitcoin Node at " + env.bitcoind.host + ":" + env.bitcoind.port;
+
+		res.render("index");
 	});
 });
 
@@ -52,6 +56,11 @@ router.get("/node-info", function(req, res) {
 
 	rpcApi.getInfo().then(function(getinfo) {
 		res.locals.getinfo = getinfo;
+
+		res.render("node-info");
+
+	}).catch(function(err) {
+		res.locals.userMessage = "Unable to connect to Bitcoin Node at " + env.bitcoind.host + ":" + env.bitcoind.port;
 
 		res.render("node-info");
 	});
@@ -68,6 +77,10 @@ router.get("/mempool", function(req, res) {
 
 			res.render("mempool");
 		});
+	}).catch(function(err) {
+		res.locals.userMessage = "Unable to connect to Bitcoin Node at " + env.bitcoind.host + ":" + env.bitcoind.port;
+
+		res.render("mempool");
 	});
 });
 
@@ -145,6 +158,10 @@ router.get("/blocks", function(req, res) {
 
 			res.render("blocks");
 		});
+	}).catch(function(err) {
+		res.locals.userMessage = "Unable to connect to Bitcoin Node at " + env.bitcoind.host + ":" + env.bitcoind.port;
+
+		res.render("blocks");
 	});
 });
 
@@ -193,6 +210,10 @@ router.post("/search", function(req, res) {
 				res.redirect("/");
 			});
 		});
+	}).catch(function(err) {
+		res.locals.userMessage = "Unable to connect to Bitcoin Node at " + env.bitcoind.host + ":" + env.bitcoind.port;
+
+		res.render("index");
 	});
 });
 

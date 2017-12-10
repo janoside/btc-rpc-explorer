@@ -39,7 +39,11 @@ function getInfo() {
 	return new Promise(function(resolve, reject) {
 		client.cmd('getinfo', function(err, result, resHeaders) {
 			if (err) {
-				return console.log("Error 3207fh0f: " + err);
+				console.log("Error 3207fh0f: " + err);
+
+				reject(err);
+
+				return;
 			}
 
 			resolve(result);
@@ -51,7 +55,11 @@ function getMempoolInfo() {
 	return new Promise(function(resolve, reject) {
 		client.cmd('getmempoolinfo', function(err, result, resHeaders) {
 			if (err) {
-				return console.log("Error 23407rhwe07fg: " + err);
+				console.log("Error 23407rhwe07fg: " + err);
+
+				reject(err);
+
+				return;
 			}
 
 			resolve(result);
@@ -63,10 +71,12 @@ function getMempoolStats() {
 	return new Promise(function(resolve, reject) {
 		client.cmd('getrawmempool', true, function(err, result, resHeaders) {
 			if (err) {
-				return console.log("Error 428thwre0ufg: " + err);
-			}
+				console.log("Error 428thwre0ufg: " + err);
 
-			console.log("abc: " + JSON.stringify(result).substring(0, 100));
+				reject(err);
+
+				return;
+			}
 
 			var compiledResult = {};
 			compiledResult.count = 0;
@@ -128,12 +138,20 @@ function getBlockByHeight(blockHeight) {
 		
 		client.cmd('getblockhash', blockHeight, function(err, result, resHeaders) {
 			if (err) {
-				return console.log("Error 0928317yr3w: " + err);
+				console.log("Error 0928317yr3w: " + err);
+
+				reject(err);
+
+				return;
 			}
 
 			client.cmd('getblock', result, function(err2, result2, resHeaders2) {
 				if (err2) {
-					return console.log("Error 320fh7e0hg: " + err2);
+					console.log("Error 320fh7e0hg: " + err2);
+
+					reject(err2);
+
+					return;
 				}
 
 				resolve({ success:true, getblockhash:result, getblock:result2 });
@@ -192,6 +210,10 @@ function getBlockByHash(blockHash) {
 		client.cmd('getblock', blockHash, function(err, result, resHeaders) {
 			if (err) {
 				console.log("Error 0u2fgewue: " + err);
+
+				reject(err);
+
+				return;
 			}
 
 			resolve(result);
@@ -206,8 +228,8 @@ function getTransactionInputs(rpcClient, transaction, inputLimit=0) {
 		var txids = [];
 		for (var i = 0; i < transaction.vin.length; i++) {
 			if (i < inputLimit || inputLimit == 0) {
-			txids.push(transaction.vin[i].txid);
-		}
+				txids.push(transaction.vin[i].txid);
+			}
 		}
 
 		getRawTransactions(txids).then(function(inputTransactions) {
@@ -232,6 +254,10 @@ function getRawTransaction(txid) {
 		client.cmd('getrawtransaction', txid, 1, function(err, result, resHeaders) {
 			if (err) {
 				console.log("Error 329813yre823: " + err);
+
+				reject(err);
+
+				return;
 			}
 
 			resolve(result);
@@ -256,6 +282,11 @@ function getRawTransactions(txids) {
 				result.confirmations = blockZeroResult.getblock.confirmations;
 
 				resolve([result]);
+
+			}).catch(function(err) {
+				reject(err);
+
+				return;
 			});
 
 			return;
