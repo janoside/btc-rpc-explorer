@@ -243,6 +243,7 @@ router.get("/block-height/:blockHeight", function(req, res) {
 
 	client.cmd('getblockhash', blockHeight, function(err, result, resHeaders) {
 		if (err) {
+			// TODO handle RPC error
 			return console.log(err);
 		}
 
@@ -280,6 +281,7 @@ router.get("/block/:blockHash", function(req, res) {
 	res.locals.offset = offset;
 	res.locals.paginationBaseUrl = "/block/" + blockHash;
 
+	// TODO handle RPC error
 	rpcApi.getBlockData(client, blockHash, limit, offset).then(function(result) {
 		res.locals.result.getblock = result.getblock;
 		res.locals.result.transactions = result.transactions;
@@ -302,6 +304,7 @@ router.get("/tx/:transactionId", function(req, res) {
 
 	res.locals.result = {};
 
+	// TODO handle RPC error
 	rpcApi.getRawTransaction(txid).then(function(rawTxResult) {
 		res.locals.result.getrawtransaction = rawTxResult;
 

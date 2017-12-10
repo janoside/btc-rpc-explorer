@@ -7,68 +7,69 @@ block content
 	h1 Mempool Info
 	hr
 
-	p Data from RPC command  
-		a(href="https://bitcoin.org/en/developer-reference#getmempoolinfo") getmempoolinfo
-		
-	table(class="table")
-		tr
-			th(class="table-active properties-header") Transaction Count
-			td #{getmempoolinfo.size.toLocaleString()}
-		tr
-			- var scales = [ {val:1000000000, name:"GB"}, {val:1000000, name:"MB"}, {val:1000, name:"kB"} ];
-			- var scaleDone = false;
-			th(class="table-active properties-header") Tx Size
-			td(class="monospace")
-				span #{getmempoolinfo.bytes.toLocaleString()} bytes
-				each item in scales
-					if (!scaleDone)
-						- var fraction = Math.floor(getmempoolinfo.bytes / item.val);
-						if (fraction >= 1)
-							- scaleDone = true;
-							span(class="text-muted")  (#{fraction} #{item.name})
-		tr
-			- var scales = [ {val:1000000000, name:"GB"}, {val:1000000, name:"MB"}, {val:1000, name:"kB"} ];
-			- var scaleDone = false;
-			th(class="table-active properties-header") Total Size
-			td(class="monospace")
-				span #{getmempoolinfo.usage.toLocaleString()} bytes
-				each item in scales
-					if (!scaleDone)
-						- var fraction = Math.floor(getmempoolinfo.usage / item.val);
-						if (fraction >= 1)
-							- scaleDone = true;
-							span(class="text-muted")  (#{fraction} #{item.name})
-		tr
-			th(class="table-active properties-header") Max Size
-			td(class="monospace") #{getmempoolinfo.maxmempool.toLocaleString()}
-		tr
-			th(class="table-active properties-header") Min Fee
-			td(class="monospace") #{getmempoolinfo.mempoolminfee.toLocaleString()}
-		tr
-			th(class="table-active properties-header") Total Fees
-			td(class="monospace") #{mempoolstats.totalFee.toLocaleString()}
-
-
-	h4 Transaction count by fee level
-	hr
-
-	if (false)
-		#{JSON.stringify(mempoolstats)}
-
-	- var feeBucketLabels = [ "0 - 5 sat/B", "6 - 10 sat/B", "11 - 25 sat/B", "26 - 50 sat/B", "51 - 75 sat/B", "76 - 100 sat/B", "101 - 150 sat/B", "151+ sat/B" ];
-	- var feeBucketTxCounts = [ mempoolstats.fee_0_5, mempoolstats.fee_6_10, mempoolstats.fee_11_25, mempoolstats.fee_26_50, mempoolstats.fee_51_75, mempoolstats.fee_76_100, mempoolstats.fee_101_150, mempoolstats.fee_151_max ];
-	- var bgColors = [ "bg-primary", "bg-success", "bg-info", "bg-warning", "bg-danger", "bg-primary progress-bar-striped", "bg-success progress-bar-striped", "bg-info progress-bar-striped" ];
-
-	table(class="table")
-		each feeBucketLabel, index in feeBucketLabels
-			tr
-				th(class=("properties-header " + bgColors[index])) #{feeBucketLabel}
-				td(class="monospace") #{feeBucketTxCounts[index].toLocaleString()}
-
-	div(class="progress")
-		each txCount, index in feeBucketTxCounts
-			- var percent = 100 * txCount / getmempoolinfo.size;
-
-			div(class=("progress-bar " + bgColors[index]), role="progressbar", style=("width: " + percent + "%;"), aria-valuenow=percent, aria-valuemin="0", aria-valuemax="100")
-				span #{txCount}
+	if (mempoolinfo)
+		p Data from RPC command  
+			a(href="https://bitcoin.org/en/developer-reference#getmempoolinfo") getmempoolinfo
 			
+		table(class="table")
+			tr
+				th(class="table-active properties-header") Transaction Count
+				td #{getmempoolinfo.size.toLocaleString()}
+			tr
+				- var scales = [ {val:1000000000, name:"GB"}, {val:1000000, name:"MB"}, {val:1000, name:"kB"} ];
+				- var scaleDone = false;
+				th(class="table-active properties-header") Tx Size
+				td(class="monospace")
+					span #{getmempoolinfo.bytes.toLocaleString()} bytes
+					each item in scales
+						if (!scaleDone)
+							- var fraction = Math.floor(getmempoolinfo.bytes / item.val);
+							if (fraction >= 1)
+								- scaleDone = true;
+								span(class="text-muted")  (#{fraction} #{item.name})
+			tr
+				- var scales = [ {val:1000000000, name:"GB"}, {val:1000000, name:"MB"}, {val:1000, name:"kB"} ];
+				- var scaleDone = false;
+				th(class="table-active properties-header") Total Size
+				td(class="monospace")
+					span #{getmempoolinfo.usage.toLocaleString()} bytes
+					each item in scales
+						if (!scaleDone)
+							- var fraction = Math.floor(getmempoolinfo.usage / item.val);
+							if (fraction >= 1)
+								- scaleDone = true;
+								span(class="text-muted")  (#{fraction} #{item.name})
+			tr
+				th(class="table-active properties-header") Max Size
+				td(class="monospace") #{getmempoolinfo.maxmempool.toLocaleString()}
+			tr
+				th(class="table-active properties-header") Min Fee
+				td(class="monospace") #{getmempoolinfo.mempoolminfee.toLocaleString()}
+			tr
+				th(class="table-active properties-header") Total Fees
+				td(class="monospace") #{mempoolstats.totalFee.toLocaleString()}
+
+
+		h4 Transaction count by fee level
+		hr
+
+		if (false)
+			#{JSON.stringify(mempoolstats)}
+
+		- var feeBucketLabels = [ "0 - 5 sat/B", "6 - 10 sat/B", "11 - 25 sat/B", "26 - 50 sat/B", "51 - 75 sat/B", "76 - 100 sat/B", "101 - 150 sat/B", "151+ sat/B" ];
+		- var feeBucketTxCounts = [ mempoolstats.fee_0_5, mempoolstats.fee_6_10, mempoolstats.fee_11_25, mempoolstats.fee_26_50, mempoolstats.fee_51_75, mempoolstats.fee_76_100, mempoolstats.fee_101_150, mempoolstats.fee_151_max ];
+		- var bgColors = [ "bg-primary", "bg-success", "bg-info", "bg-warning", "bg-danger", "bg-primary progress-bar-striped", "bg-success progress-bar-striped", "bg-info progress-bar-striped" ];
+
+		table(class="table")
+			each feeBucketLabel, index in feeBucketLabels
+				tr
+					th(class=("properties-header " + bgColors[index])) #{feeBucketLabel}
+					td(class="monospace") #{feeBucketTxCounts[index].toLocaleString()}
+
+		div(class="progress")
+			each txCount, index in feeBucketTxCounts
+				- var percent = 100 * txCount / getmempoolinfo.size;
+
+				div(class=("progress-bar " + bgColors[index]), role="progressbar", style=("width: " + percent + "%;"), aria-valuenow=percent, aria-valuemin="0", aria-valuemax="100")
+					span #{txCount}
+				
