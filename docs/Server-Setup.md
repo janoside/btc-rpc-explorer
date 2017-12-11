@@ -2,10 +2,9 @@
 
     apt update
     apt upgrade
-    apt install git python-software-properties
+    apt install git python-software-properties software-properties-common nginx
     curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash -
     npm install pm2 --global
-    apt install nginx
     add-apt-repository ppa:certbot/certbot
     apt update
     apt upgrade
