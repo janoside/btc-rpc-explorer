@@ -24,12 +24,21 @@ block content
 
 	hr
 
-	div(class="text-center")
-		:markdown-it
-			Public instance maintained at [https://btc-explorer.com](https://btc-explorer.com)
-			
-			Donate bitcoin: [3NPGpNyLLmVKCEcuipBs7G4KpQJoJXjDGe](bitcoin:3NPGpNyLLmVKCEcuipBs7G4KpQJoJXjDGe) / zCash: [t1bEGh8eABmZu8Ned3awCgBdkAhz2mKzJxP](zcash:t1bEGh8eABmZu8Ned3awCgBdkAhz2mKzJxP)
+	div(class="")
+		ul
+			li MIT-licensed source code available on github: 
+				a(href="https://github.com/janoside/btc-rpc-explorer") janoside/btc-rpc-explorer
+				if (sourcecodeVersion)
+					span  (@
+					a(href=("https://github.com/janoside/btc-rpc-explorer/commit/" + sourcecodeVersion)) #{sourcecodeVersion}
+					span )
 
-			Source code available on github: [https://github.com/janoside/btc-rpc-explorer](https://github.com/janoside/btc-rpc-explorer)
+			li Public instance maintained at 
+				a(href="https://btc-explorer.com") https://btc-explorer.com
 			
-			&copy; 2017 Dan Janosik
+			li Donate: 
+				a(href="bitcoin:3NPGpNyLLmVKCEcuipBs7G4KpQJoJXjDGe") BTC
+				span  - 3NPGpNyLLmVKCEcuipBs7G4KpQJoJXjDGe
+
+			li &copy; 2017 
+				a(href="https://danjanosik.com") Dan Janosik
