@@ -15,6 +15,7 @@ var utils = require("./app/utils.js");
 var moment = require("moment");
 var Decimal = require('decimal.js');
 var bitcoin = require("bitcoin");
+var pug = require("pug");
 var momentDurationFormat = require("moment-duration-format");
 
 
@@ -24,6 +25,13 @@ var app = express();
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
+
+// ref: https://blog.stigok.com/post/disable-pug-debug-output-with-expressjs-web-app
+app.engine('pug', (path, options, fn) => {
+  options.debug = false;
+  return pug.__express.call(null, path, options, fn);
+});
+
 app.set('view engine', 'pug');
 
 // uncomment after placing your favicon in /public
@@ -40,7 +48,8 @@ app.use(session({
 app.use(express.static(path.join(__dirname, 'public')));
 
 
-// Make our db accessible to our router
+app.locals.sourcecodeVersion = null;
+
 app.use(function(req, res, next) {
 	// make session available in templates
 	res.locals.session = req.session;
@@ -67,6 +76,12 @@ app.use(function(req, res, next) {
 		if (utils.redirectToConnectPageIfNeeded(req, res)) {
 			return;
 		}
+	}
+
+	if (!req.session.sourcecodeVersion) {
+		simpleGit(".").log(["-n 1"], function(err, log) {
+			app.locals.sourcecodeVersion = log.all[0].hash.substring(0, 10);
+		});
 	}
 	
 	if (req.session.userMessage) {
