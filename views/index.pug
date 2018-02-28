@@ -13,6 +13,9 @@ block content
 	
 	if (latestBlocks)
 		h3 Latest Blocks
+			if (getblockchaininfo.initialblockdownload)
+				small  (#{(getblockchaininfo.headers - getblockchaininfo.blocks).toLocaleString()} behind)
+
 
 		- var blocks = latestBlocks;
 		- var blockOffset = 0;

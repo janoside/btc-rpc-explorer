@@ -7,9 +7,11 @@ block content
 	h1 Node Info
 	hr
 
-	if (getinfo)
-		p Data from RPC command 
-			a(href="https://bitcoin.org/en/developer-reference#getinfo") getinfo
+	if (getblockchaininfo)
+		p Data from RPC commands 
+			a(href="https://bitcoin.org/en/developer-reference#getblockchaininfo") getblockchaininfo
+			span  and 
+			a(href="https://bitcoin.org/en/developer-reference#getnetworkinfo") getnetworkinfo
 
 		if (false)
 			pre
@@ -18,33 +20,44 @@ block content
 		if (true)
 			table(class="table")
 				tr
+					th(class="table-active properties-header") Chain
+					td(class="monospace") #{getblockchaininfo.chain}
+				tr
 					th(class="table-active properties-header") Version
-					td(class="monospace") #{getinfo.version}
+					td(class="monospace") #{getnetworkinfo.version}
 				tr
 					th(class="table-active properties-header") Protocol Version
-					td(class="monospace") #{getinfo.protocolversion}
+					td(class="monospace") #{getnetworkinfo.protocolversion}
 				tr
 					th(class="table-active properties-header") Connections
-					td(class="monospace") #{getinfo.connections.toLocaleString()}
+					td(class="monospace") #{getnetworkinfo.connections.toLocaleString()}
 				tr
 					th(class="table-active properties-header") Block Count
-					td(class="monospace") #{getinfo.blocks.toLocaleString()}
+					td(class="monospace") #{getblockchaininfo.blocks.toLocaleString()}
 				tr
-					th(class="table-active properties-header") Testnet?
-					td(class="monospace") #{getinfo.testnet}
-				tr
-					th(class="table-active properties-header") Errors
-					td(class="monospace") #{getinfo.errors}
+					th(class="table-active properties-header") Header Count
+					td(class="monospace") #{getblockchaininfo.headers.toLocaleString()}
 				tr
 					- var scales = [ {val:1000000000000000, name:"quadrillion"}, {val:1000000000000, name:"trillion"}, {val:1000000000, name:"billion"}, {val:1000000, name:"million"} ];
 					- var scaleDone = false;
 					th(class="table-active properties-header") Difficulty
 					td(class="monospace")
-						span #{getinfo.difficulty.toLocaleString()}
+						span #{getblockchaininfo.difficulty.toLocaleString()}
 						each item in scales
 							if (!scaleDone)
-								- var fraction = Math.floor(getinfo.difficulty / item.val);
+								- var fraction = Math.floor(getblockchaininfo.difficulty / item.val);
 								if (fraction >= 1)
 									- scaleDone = true;
 									span(class="text-muted")  (#{fraction} #{item.name})
+
+				tr
+					th(class="table-active properties-header") Status
+					td(class="monospace")
+						if (getblockchaininfo.initialblockdownload)
+							span Initial block download progress #{(100 * getblockchaininfo.verificationprogress).toLocaleString()}%
+						else
+							span Up-to-date
+				tr
+					th(class="table-active properties-header") Warnings
+					td(class="monospace") #{getblockchaininfo.warnings}
 										

@@ -29,13 +29,13 @@ router.get("/", function(req, res) {
 
 	var client = global.client;
 
-	rpcApi.getInfo().then(function(getinfo) {
-		res.locals.getinfo = getinfo;
+	rpcApi.getBlockchainInfo().then(function(getblockchaininfo) {
+		res.locals.getblockchaininfo = getblockchaininfo;
 
 		var blockHeights = [];
-		if (getinfo.blocks) {
+		if (getblockchaininfo.blocks) {
 			for (var i = 0; i < 10; i++) {
-				blockHeights.push(getinfo.blocks - i);
+				blockHeights.push(getblockchaininfo.blocks - i);
 			}
 		}
 
@@ -54,10 +54,21 @@ router.get("/", function(req, res) {
 router.get("/node-info", function(req, res) {
 	var client = global.client;
 
-	rpcApi.getInfo().then(function(getinfo) {
-		res.locals.getinfo = getinfo;
+	rpcApi.getBlockchainInfo().then(function(getblockchaininfo) {
+		res.locals.getblockchaininfo = getblockchaininfo;
 
-		res.render("node-info");
+		rpcApi.getNetworkInfo().then(function(getnetworkinfo) {
+			res.locals.getnetworkinfo = getnetworkinfo;
+
+			res.render("node-info");
+
+		}).catch(function(err) {
+			res.locals.userMessage = "Unable to connect to Bitcoin Node at " + env.bitcoind.host + ":" + env.bitcoind.port;
+
+			res.render("node-info");
+		});
+
+		
 
 	}).catch(function(err) {
 		res.locals.userMessage = "Unable to connect to Bitcoin Node at " + env.bitcoind.host + ":" + env.bitcoind.port;

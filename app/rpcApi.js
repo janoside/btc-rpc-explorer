@@ -35,11 +35,29 @@ var genesisCoinbaseTransaction = {
 	"blocktime": 1230988505
 };
 
-function getInfo() {
+
+
+function getBlockchainInfo() {
 	return new Promise(function(resolve, reject) {
-		client.cmd('getinfo', function(err, result, resHeaders) {
+		client.cmd('getblockchaininfo', function(err, result, resHeaders) {
 			if (err) {
 				console.log("Error 3207fh0f: " + err);
+
+				reject(err);
+
+				return;
+			}
+
+			resolve(result);
+		});
+	});
+}
+
+function getNetworkInfo() {
+	return new Promise(function(resolve, reject) {
+		client.cmd('getnetworkinfo', function(err, result, resHeaders) {
+			if (err) {
+				console.log("Error 239r7ger7gy: " + err);
 
 				reject(err);
 
@@ -394,7 +412,8 @@ function getBlockData(rpcClient, blockHash, txLimit, txOffset) {
 }
 
 module.exports = {
-	getInfo: getInfo,
+	getBlockchainInfo: getBlockchainInfo,
+	getNetworkInfo: getNetworkInfo,
 	getMempoolInfo: getMempoolInfo,
 	getBlockByHeight: getBlockByHeight,
 	getBlocksByHeight: getBlocksByHeight,
