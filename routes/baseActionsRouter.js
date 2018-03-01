@@ -149,13 +149,13 @@ router.get("/blocks", function(req, res) {
 	res.locals.sort = sort;
 	res.locals.paginationBaseUrl = "/blocks";
 
-	rpcApi.getInfo().then(function(getinfo) {
-		res.locals.blockCount = getinfo.blocks;
+	rpcApi.getBlockchainInfo().then(function(getblockchaininfo) {
+		res.locals.blockCount = getblockchaininfo.blocks;
 		res.locals.blockOffset = offset;
 
 		var blockHeights = [];
 		if (sort == "desc") {
-			for (var i = (getinfo.blocks - offset); i > (getinfo.blocks - offset - limit); i--) {
+			for (var i = (getblockchaininfo.blocks - offset); i > (getblockchaininfo.blocks - offset - limit); i--) {
 				blockHeights.push(i);
 			}
 		} else {
