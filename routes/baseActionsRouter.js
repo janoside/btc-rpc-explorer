@@ -187,13 +187,11 @@ router.post("/search", function(req, res) {
 
 	var query = req.body.query.toLowerCase();
 
-	rpcApi.getRawTransaction(query).then(function(tx) {
-		if (tx) {
-			res.redirect("/tx/" + query);
+	req.session.query = req.body.query;
 
-			return;
-		}
+	console.log("query.hex = " + utils.isHex(query));
 
+	if (query.length == 64) {
 		rpcApi.getBlockByHash(query).then(function(blockByHash) {
 			if (blockByHash) {
 				res.redirect("/block/" + query);
@@ -201,31 +199,59 @@ router.post("/search", function(req, res) {
 				return;
 			}
 
-			if (isNaN(query)) {
+			if (utils.isHex(query)) {
+				rpcApi.getRawTransaction(query).then(function(tx) {
+					if (tx) {
+						res.redirect("/tx/" + query);
+
+						return;
+					}
+
+					req.session.userMessage = "No results found for hash: " + query;
+
+					res.redirect("/");
+
+					return;
+
+				}).catch(function(err) {
+					res.locals.userMessage = "Error: " + err;
+
+					res.render("index");
+				});
+			} else {
 				req.session.userMessage = "No results found for query: " + query;
 
 				res.redirect("/");
+			}
+			
+		}).catch(function(err) {
+			res.locals.userMessage = "Error: " + err;
+
+			res.render("index");
+		});
+
+		
+	} else if (!isNaN(query)) {
+		rpcApi.getBlockByHeight(parseInt(query)).then(function(blockByHeight) {
+			if (blockByHeight) {
+				res.redirect("/block-height/" + query);
 
 				return;
 			}
 
-			rpcApi.getBlockByHeight(parseInt(query)).then(function(blockByHeight) {
-				if (blockByHeight) {
-					res.redirect("/block-height/" + query);
+			req.session.userMessage = "No results found for query: " + query;
 
-					return;
-				}
-
-				req.session.userMessage = "No results found for query: " + query;
-
-				res.redirect("/");
-			});
+			res.redirect("/");
 		});
-	}).catch(function(err) {
-		res.locals.userMessage = "Unable to connect to Bitcoin Node at " + env.bitcoind.host + ":" + env.bitcoind.port;
+	} else {
+		req.session.userMessage = "Invalid query: " + query;
 
-		res.render("index");
-	});
+		res.redirect("/");
+
+		return;
+	}
+
+	
 });
 
 router.get("/block-height/:blockHeight", function(req, res) {
