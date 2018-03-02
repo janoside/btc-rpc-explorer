@@ -25,6 +25,7 @@ block content
 				tr
 					th(class="table-active properties-header") Version
 					td(class="monospace") #{getnetworkinfo.version}
+						span(class="monospace")  (#{getnetworkinfo.subversion})
 				tr
 					th(class="table-active properties-header") Protocol Version
 					td(class="monospace") #{getnetworkinfo.protocolversion}
@@ -56,7 +57,18 @@ block content
 						if (getblockchaininfo.initialblockdownload)
 							span Initial block download progress #{(100 * getblockchaininfo.verificationprogress).toLocaleString()}%
 						else
-							span Up-to-date
+							span Synchronized with network
+
+				- var startTimeAgo = moment.duration(uptimeSeconds * 1000);
+				tr
+					th(class="table-active properties-header") Uptime
+					td(class="monospace") #{startTimeAgo.format()}
+
+				tr
+					th(class="table-active properties-header") Blockchain Size on Disk
+					td(class="monospace") #{getblockchaininfo.size_on_disk.toLocaleString()}
+						span  (pruned: #{getblockchaininfo.pruned})
+
 				tr
 					th(class="table-active properties-header") Warnings
 					td(class="monospace") #{getblockchaininfo.warnings}

@@ -85,6 +85,22 @@ function getMempoolInfo() {
 	});
 }
 
+function getUptimeSeconds() {
+	return new Promise(function(resolve, reject) {
+		client.cmd('uptime', function(err, result, resHeaders) {
+			if (err) {
+				console.log("Error 3218y6gr3986sdd: " + err);
+
+				reject(err);
+
+				return;
+			}
+
+			resolve(result);
+		});
+	});
+}
+
 function getMempoolStats() {
 	return new Promise(function(resolve, reject) {
 		client.cmd('getrawmempool', true, function(err, result, resHeaders) {
@@ -97,6 +113,7 @@ function getMempoolStats() {
 			}
 
 			var compiledResult = {};
+
 			compiledResult.count = 0;
 			compiledResult.fee_0_5 = 0;
 			compiledResult.fee_6_10 = 0;
@@ -107,35 +124,53 @@ function getMempoolStats() {
 			compiledResult.fee_101_150 = 0;
 			compiledResult.fee_151_max = 0;
 
+			compiledResult.totalfee_0_5 = 0;
+			compiledResult.totalfee_6_10 = 0;
+			compiledResult.totalfee_11_25 = 0;
+			compiledResult.totalfee_26_50 = 0;
+			compiledResult.totalfee_51_75 = 0;
+			compiledResult.totalfee_76_100 = 0;
+			compiledResult.totalfee_101_150 = 0;
+			compiledResult.totalfee_151_max = 0;
+
 			var totalFee = 0;
 			for (var txid in result) {
 				var txMempoolInfo = result[txid];
 				totalFee += txMempoolInfo.modifiedfee;
+
 				var feeRate = Math.round(txMempoolInfo.modifiedfee * 100000000 / txMempoolInfo.size);
 
 				if (feeRate <= 5) {
 					compiledResult.fee_0_5++;
+					compiledResult.totalfee_0_5 += txMempoolInfo.modifiedfee;
 
 				} else if (feeRate <= 10) {
 					compiledResult.fee_6_10++;
+					compiledResult.totalfee_6_10 += txMempoolInfo.modifiedfee;
 
 				} else if (feeRate <= 25) {
 					compiledResult.fee_11_25++;
+					compiledResult.totalfee_11_25 += txMempoolInfo.modifiedfee;
 
 				} else if (feeRate <= 50) {
 					compiledResult.fee_26_50++;
+					compiledResult.totalfee_26_50 += txMempoolInfo.modifiedfee;
 
 				} else if (feeRate <= 75) {
 					compiledResult.fee_51_75++;
+					compiledResult.totalfee_51_75 += txMempoolInfo.modifiedfee;
 
 				} else if (feeRate <= 100) {
 					compiledResult.fee_76_100++;
+					compiledResult.totalfee_76_100 += txMempoolInfo.modifiedfee;
 
 				} else if (feeRate <= 150) {
 					compiledResult.fee_101_150++;
+					compiledResult.totalfee_101_150 += txMempoolInfo.modifiedfee;
 
 				} else {
 					compiledResult.fee_151_max++;
+					compiledResult.totalfee_151_max += txMempoolInfo.modifiedfee;
 				}
 
 				compiledResult.count++;
@@ -422,5 +457,6 @@ module.exports = {
 	getBlockData: getBlockData,
 	getRawTransaction: getRawTransaction,
 	getRawTransactions: getRawTransactions,
-	getMempoolStats: getMempoolStats
+	getMempoolStats: getMempoolStats,
+	getUptimeSeconds: getUptimeSeconds
 };
