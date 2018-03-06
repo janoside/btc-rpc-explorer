@@ -93,11 +93,17 @@ app.use(function(req, res, next) {
 		} else {
 			res.locals.userMessageType = "info";
 		}
+
+		req.session.userMessage = null;
+		req.session.userMessageType = null;
 	}
 
-	req.session.userMessage = null;
-	req.session.userMessageType = null;
-	
+	if (req.session.query) {
+		res.locals.query = req.session.query;
+
+		req.session.query = null;
+	}
+
 	// make some var available to all request
 	// ex: req.cheeseStr = "cheese";
 
