@@ -154,8 +154,7 @@ div(class="tab-content")
 
 													td
 														if (vout.scriptPubKey && vout.scriptPubKey.addresses)
-															span(class="monospace") #{vout.scriptPubKey.addresses[0]}
-															br
+															div(class="monospace", style="word-break: break-word;") #{vout.scriptPubKey.addresses[0]}
 															span(class="monospace text-muted") via tx 
 															a(href=("/tx/" + txInput.txid + "#output-" + tx.vin[txInputIndex].vout), class="monospace") #{txInput.txid.substring(0, 14)}..., Output ##{tx.vin[txInputIndex].vout + 1}
 													td
@@ -196,7 +195,7 @@ div(class="tab-content")
 													if (vout.scriptPubKey)
 														if (vout.scriptPubKey.addresses)
 															a(id="output-" + voutIndex)
-																span(class="monospace") #{vout.scriptPubKey.addresses[0]}
+																div(class="monospace", style="word-break: break-word;") #{vout.scriptPubKey.addresses[0]}
 
 														else if (vout.scriptPubKey.hex && vout.scriptPubKey.hex.startsWith('6a24aa21a9ed'))
 															span(class="monospace") Segregated Witness committment - 
