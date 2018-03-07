@@ -85,11 +85,6 @@ function getRandomString(length, chars) {
     return result;
 }
 
-function isHex(h) {
-	var a = parseInt(h, 16);
-	return (a.toString(16) === h.toLowerCase());
-}
-
 
 module.exports = {
 	doSmartRedirect: doSmartRedirect,
@@ -97,6 +92,5 @@ module.exports = {
 	hex2ascii: hex2ascii,
 	getBlockReward: getBlockReward,
 	splitArrayIntoChunks: splitArrayIntoChunks,
-	getRandomString: getRandomString,
-	isHex: isHex
+	getRandomString: getRandomString
 };

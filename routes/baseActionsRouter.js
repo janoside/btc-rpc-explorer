@@ -194,48 +194,50 @@ router.post("/search", function(req, res) {
 
 	req.session.query = req.body.query;
 
-	console.log("query.hex = " + utils.isHex(query));
-
 	if (query.length == 64) {
-		rpcApi.getBlockByHash(query).then(function(blockByHash) {
-			if (blockByHash) {
-				res.redirect("/block/" + query);
+		rpcApi.getRawTransaction(query).then(function(tx) {
+			if (tx) {
+				res.redirect("/tx/" + query);
 
 				return;
 			}
 
-			if (utils.isHex(query)) {
-				rpcApi.getRawTransaction(query).then(function(tx) {
-					if (tx) {
-						res.redirect("/tx/" + query);
-
-						return;
-					}
-
-					req.session.userMessage = "No results found for hash: " + query;
-
-					res.redirect("/");
+			rpcApi.getBlockByHash(query).then(function(blockByHash) {
+				if (blockByHash) {
+					res.redirect("/block/" + query);
 
 					return;
+				}
 
-				}).catch(function(err) {
-					res.locals.userMessage = "Error: " + err;
-
-					res.render("index");
-				});
-			} else {
 				req.session.userMessage = "No results found for query: " + query;
 
 				res.redirect("/");
-			}
-			
-		}).catch(function(err) {
-			res.locals.userMessage = "Error: " + err;
 
-			res.render("index");
+			}).catch(function(err) {
+				req.session.userMessage = "No results found for query: " + query;
+
+				res.redirect("/");
+			});
+
+		}).catch(function(err) {
+			rpcApi.getBlockByHash(query).then(function(blockByHash) {
+				if (blockByHash) {
+					res.redirect("/block/" + query);
+
+					return;
+				}
+
+				req.session.userMessage = "No results found for query: " + query;
+
+				res.redirect("/");
+				
+			}).catch(function(err) {
+				req.session.userMessage = "No results found for query: " + query;
+
+				res.redirect("/");
+			});
 		});
 
-		
 	} else if (!isNaN(query)) {
 		rpcApi.getBlockByHeight(parseInt(query)).then(function(blockByHeight) {
 			if (blockByHeight) {
@@ -346,7 +348,6 @@ router.get("/tx/:transactionId", function(req, res) {
 
 	res.locals.result = {};
 
-	// TODO handle RPC error
 	rpcApi.getRawTransaction(txid).then(function(rawTxResult) {
 		res.locals.result.getrawtransaction = rawTxResult;
 
@@ -366,6 +367,10 @@ router.get("/tx/:transactionId", function(req, res) {
 				res.render("transaction");
 			});
 		});
+	}).catch(function(err) {
+		res.locals.userMessage = "Failed to load transaction with txid=" + txid + " (" + err + ")";
+
+		res.render("transaction");
 	});
 });
 
