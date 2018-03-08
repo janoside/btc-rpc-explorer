@@ -230,7 +230,7 @@ router.post("/search", function(req, res) {
 				req.session.userMessage = "No results found for query: " + query;
 
 				res.redirect("/");
-				
+
 			}).catch(function(err) {
 				req.session.userMessage = "No results found for query: " + query;
 
@@ -391,12 +391,41 @@ router.post("/terminal", function(req, res) {
 		return;
 	}
 
-	client.cmd(req.body.cmd, function(err, result, resHeaders) {
-		console.log(result);
-		console.log(err);
-		console.log(resHeaders);
+	var params = req.body.cmd.split(" ");
+	var cmd = params.shift();
+	var parsedParams = [];
+	
+	params.forEach(function(param, i) {
+		if (!isNaN(param)) {
+			parsedParams.push(parseInt(param));
 
-		res.send(JSON.stringify(result, null, 4));
+		} else {
+			parsedParams.push(param);
+		}
+	});
+
+	client.cmd([{method:cmd, params:parsedParams}], function(err, result, resHeaders) {
+		console.log("Result[1]: " + JSON.stringify(result, null, 4));
+		console.log("Error[2]: " + JSON.stringify(err, null, 4));
+		console.log("Headers[3]: " + JSON.stringify(resHeaders, null, 4));
+
+		if (err) {
+			console.log(JSON.stringify(err, null, 4));
+
+			res.write(JSON.stringify(err, null, 4), function() {
+				res.end();
+			});
+
+		} else if (result) {
+			res.write(JSON.stringify(result, null, 4), function() {
+				res.end();
+			});
+
+		} else {
+			res.write(JSON.stringify({"Error":"No response from node"}, null, 4), function() {
+				res.end();
+			});
+		}
 	});
 });
 
