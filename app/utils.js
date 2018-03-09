@@ -82,7 +82,21 @@ function getRandomString(length, chars) {
 		result += mask[Math.floor(Math.random() * mask.length)];
 	}
 	
-    return result;
+	return result;
+}
+
+function formatBytes(bytesInt) {
+	var scales = [ {val:1000000000000000, name:"PB"}, {val:1000000000000, name:"TB"}, {val:1000000000, name:"GB"}, {val:1000000, name:"MB"}, {val:1000, name:"KB"} ];
+	for (var i = 0; i < scales.length; i++) {
+		var item = scales[i];
+
+		var fraction = Math.floor(bytesInt / item.val);
+		if (fraction >= 1) {
+			return fraction.toLocaleString() + " " + item.name;
+		}
+	}
+
+	return bytesInt + " B";
 }
 
 
@@ -92,5 +106,6 @@ module.exports = {
 	hex2ascii: hex2ascii,
 	getBlockReward: getBlockReward,
 	splitArrayIntoChunks: splitArrayIntoChunks,
-	getRandomString: getRandomString
+	getRandomString: getRandomString,
+	formatBytes: formatBytes
 };

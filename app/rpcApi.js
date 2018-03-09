@@ -69,6 +69,22 @@ function getNetworkInfo() {
 	});
 }
 
+function getNetTotals() {
+	return new Promise(function(resolve, reject) {
+		client.cmd('getnettotals', function(err, result, resHeaders) {
+			if (err) {
+				console.log("Error as07uthf40ghew: " + err);
+
+				reject(err);
+
+				return;
+			}
+
+			resolve(result);
+		});
+	});
+}
+
 function getMempoolInfo() {
 	return new Promise(function(resolve, reject) {
 		client.cmd('getmempoolinfo', function(err, result, resHeaders) {
@@ -449,6 +465,7 @@ function getBlockData(rpcClient, blockHash, txLimit, txOffset) {
 module.exports = {
 	getBlockchainInfo: getBlockchainInfo,
 	getNetworkInfo: getNetworkInfo,
+	getNetTotals: getNetTotals,
 	getMempoolInfo: getMempoolInfo,
 	getBlockByHeight: getBlockByHeight,
 	getBlocksByHeight: getBlocksByHeight,

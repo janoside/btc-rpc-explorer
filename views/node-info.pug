@@ -30,6 +30,10 @@ block content
 					th(class="table-active properties-header") Protocol Version
 					td(class="monospace") #{getnetworkinfo.protocolversion}
 				tr
+					th(class="table-active properties-header") Blockchain Size on Disk
+					td(class="monospace") #{getblockchaininfo.size_on_disk.toLocaleString()}
+						span  (pruned: #{getblockchaininfo.pruned})
+				tr
 					th(class="table-active properties-header") Connections
 					td(class="monospace") #{getnetworkinfo.connections.toLocaleString()}
 				tr
@@ -65,9 +69,13 @@ block content
 					td(class="monospace") #{startTimeAgo.format()}
 
 				tr
-					th(class="table-active properties-header") Blockchain Size on Disk
-					td(class="monospace") #{getblockchaininfo.size_on_disk.toLocaleString()}
-						span  (pruned: #{getblockchaininfo.pruned})
+					th(class="table-active properties-header") Network Traffic
+					td(class="monospace")
+						span Total Download: #{utils.formatBytes(getnettotals.totalbytesrecv)}
+						span(class="text-muted")  (avg #{utils.formatBytes(getnettotals.totalbytesrecv / uptimeSeconds)}/s)
+						br
+						span Total Upload: #{utils.formatBytes(getnettotals.totalbytessent)}
+						span(class="text-muted")  (avg #{utils.formatBytes(getnettotals.totalbytessent / uptimeSeconds)}/s)
 
 				tr
 					th(class="table-active properties-header") Warnings
