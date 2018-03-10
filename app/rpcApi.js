@@ -462,6 +462,80 @@ function getBlockData(rpcClient, blockHash, txLimit, txOffset) {
 	});
 }
 
+function getHelp() {
+	return new Promise(function(resolve, reject) {
+		client.cmd('help', function(err, result, resHeaders) {
+			if (err) {
+				console.log("Error 32907th429ghf: " + err);
+
+				reject(err);
+
+				return;
+			}
+
+			var lines = result.split("\n");
+			var sections = [];
+
+			lines.forEach(function(line) {
+				if (line.startsWith("==")) {
+					var sectionName = line.substring(2);
+					sectionName = sectionName.substring(0, sectionName.length - 2).trim();
+
+					sections.push({name:sectionName, methods:[]});
+
+				} else if (line.trim().length > 0) {
+					var methodName = line.trim();
+
+					if (methodName.includes(" ")) {
+						methodName = methodName.substring(0, methodName.indexOf(" "));
+					}
+
+					sections[sections.length - 1].methods.push({name:methodName, content:line.trim()});
+				}
+			});
+
+			resolve(sections);
+		});
+	});
+}
+
+function getRpcMethodHelp(methodName) {
+	return new Promise(function(resolve, reject) {
+		client.cmd('help', methodName, function(err, result, resHeaders) {
+			if (err) {
+				console.log("Error 237hwerf07wehg: " + err);
+
+				reject(err);
+
+				return;
+			}
+
+			var str = result;
+
+			var lines = str.split("\n");
+			var argumentLines = [];
+			var catchArgs = false;
+			lines.forEach(function(line) {
+				if (line.trim().length == 0) {
+					catchArgs = false;
+				}
+
+				if (catchArgs) {
+					argumentLines.push(line);
+				}
+
+				if (line.trim() == "Arguments:") {
+					catchArgs = true;
+				}
+			});
+
+			console.log("argLines: " + argumentLines);
+
+			resolve(result);
+		});
+	});
+}
+
 module.exports = {
 	getBlockchainInfo: getBlockchainInfo,
 	getNetworkInfo: getNetworkInfo,
@@ -475,5 +549,7 @@ module.exports = {
 	getRawTransaction: getRawTransaction,
 	getRawTransactions: getRawTransactions,
 	getMempoolStats: getMempoolStats,
-	getUptimeSeconds: getUptimeSeconds
+	getUptimeSeconds: getUptimeSeconds,
+	getHelp: getHelp,
+	getRpcMethodHelp: getRpcMethodHelp
 };

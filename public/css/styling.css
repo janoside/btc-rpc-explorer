@@ -3,7 +3,7 @@ body {
 }
 
 hr {
-	margin: 15px 0;
+	margin: 5px 0 15px 0;
 }
 
 img.header-image {
@@ -40,6 +40,6 @@ code, .monospace {
 	margin-right: 20px;
 }
 
-.data-cell, .data-header {
-	text-align: right;
+.nav-link {
+	padding: 0.5rem 1rem 0.5rem 0;
 }

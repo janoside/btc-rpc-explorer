@@ -1,22 +1,22 @@
-table(class="table table-striped")
+table(class="table table-striped table-responsive-sm")
 	thead
 		tr
-			th
+			//th
 			th(class="data-header") Height
 			th(class="data-header") Timestamp (utc)
-			th(class="data-header") Age
-			th(class="data-header") Transactions
-			th(class="data-header") Size (bytes)
+			th(class="data-header text-right") Age
+			th(class="data-header text-right") Transactions
+			th(class="data-header text-right") Size (bytes)
 	tbody
 		each block, blockIndex in blocks
 			if (block)
 				tr
-					th #{(blockIndex + blockOffset + 1).toLocaleString()}
+					//th #{(blockIndex + blockOffset + 1).toLocaleString()}
 					td(class="data-cell monospace")
 						a(href=("/block-height/" + block.height)) #{block.height.toLocaleString()}
 					td(class="data-cell monospace") #{moment.utc(new Date(parseInt(block.time) * 1000)).format("Y-MM-DD HH:mm:ss")}
 
 					- var timeAgo = moment.duration(moment.utc(new Date()).diff(moment.utc(new Date(parseInt(block.time) * 1000))));
-					td(class="data-cell monospace") #{timeAgo.format()}
-					td(class="data-cell monospace") #{block.tx.length.toLocaleString()}
-					td(class="data-cell monospace") #{block.size.toLocaleString()}
+					td(class="data-cell monospace text-right") #{timeAgo.format()}
+					td(class="data-cell monospace text-right") #{block.tx.length.toLocaleString()}
+					td(class="data-cell monospace text-right") #{block.size.toLocaleString()}

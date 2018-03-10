@@ -1,0 +1,56 @@
+extends layout
+
+block headContent
+	title RPC Browser
+
+	style.
+		pre {
+			white-space: pre-wrap;       /* Since CSS 2.1 */
+			word-wrap: break-word;       /* Internet Explorer 5.5+ */
+		}
+
+block content
+	h1 RPC Browser
+	hr
+
+	
+
+	div(class="row")
+		div(class="col-md-3")
+			each section, sectionIndex in gethelp
+				h4 #{section.name}
+					small  (#{section.methods.length})
+				hr
+				
+				div(class="mb-4")
+					ol(style="padding-left: 30px;")
+						each methodX, methodIndex in section.methods
+							li
+								a(href=("/rpc-browser?method=" + methodX.name), style=(methodX.name == method ? "font-weight: bold; font-style: italic;" : false)) #{methodX.name}
+
+		div(class="col-md-9")
+			if (methodhelp)
+				div(class="row")
+					div(class="col-md-6")
+						h4(style="display: inline-block;") Command: #{method}
+					div(class="col-md-6")
+						a(href=("https://bitcoin.org/en/developer-reference#" + method), class="float-md-right") See developer docs &raquo;
+							
+							
+				
+				hr
+
+				pre #{methodhelp}
+
+				hr
+
+				form(method="get")
+					input(type="hidden", name="method", value=method)
+					input(type="submit", name="execute", value="Execute", class="btn btn-primary btn-block")
+
+				if (methodResult)
+					h5(class="mt-3") Result
+
+					pre
+						code #{JSON.stringify(methodResult, null, 4)}
+

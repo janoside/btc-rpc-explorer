@@ -1,7 +1,7 @@
 extends layout
 
 block content
-	h1 Terminal
+	h1 RPC Terminal
 	hr
 
 	:markdown-it
@@ -32,7 +32,7 @@ block endOfBody
 				postData.cmd = cmd;
 				
 				$.post(
-					"/terminal",
+					"/rpc-terminal",
 					postData,
 					function(response, textStatus, jqXHR) {
 						var t = new Date().getTime();

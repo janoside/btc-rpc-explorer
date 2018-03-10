@@ -16,14 +16,14 @@ block content
 			if (getblockchaininfo.initialblockdownload)
 				small  (#{(getblockchaininfo.headers - getblockchaininfo.blocks).toLocaleString()} behind)
 
+			span(style="float: right; font-size: 75%;")
+				a(href="/blocks") Browse Blocks &raquo;
+
 
 		- var blocks = latestBlocks;
 		- var blockOffset = 0;
 
 		include includes/blocks-list.pug
-
-		hr
-		a(href="/blocks", class="btn btn-primary btn-block") See more
 
 	hr
 

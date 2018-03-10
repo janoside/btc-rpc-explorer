@@ -382,7 +382,7 @@ router.get("/tx/:transactionId", function(req, res) {
 	});
 });
 
-router.get("/terminal", function(req, res) {
+router.get("/rpc-terminal", function(req, res) {
 	if (!env.debug) {
 		res.send("Debug mode is off.");
 
@@ -392,7 +392,7 @@ router.get("/terminal", function(req, res) {
 	res.render("terminal");
 });
 
-router.post("/terminal", function(req, res) {
+router.post("/rpc-terminal", function(req, res) {
 	if (!env.debug) {
 		res.send("Debug mode is off.");
 
@@ -434,6 +434,68 @@ router.post("/terminal", function(req, res) {
 				res.end();
 			});
 		}
+	});
+});
+
+router.get("/rpc-browser", function(req, res) {
+	if (!env.debug) {
+		res.send("Debug mode is off.");
+
+		return;
+	}
+
+	rpcApi.getHelp().then(function(result) {
+		res.locals.gethelp = result;
+
+		if (req.query.method) {
+			res.locals.method = req.query.method;
+
+			rpcApi.getRpcMethodHelp(req.query.method.trim()).then(function(result2) {
+				res.locals.methodhelp = result2;
+
+				var lines = result2.split("\n");
+				
+				var params = [];
+				var line1Parts = lines[0].trim().split(" ");
+				line1Parts.shift();
+
+				params = line1Parts;
+
+				res.locals.methodParams = params;
+
+				console.log("params: " + params);
+
+				if (req.query.execute) {
+					client.cmd([{method:req.query.method, params:[]}], function(err3, result3, resHeaders3) {
+						if (err3) {
+							res.locals.methodResult = err3;
+
+						} else if (result3) {
+							res.locals.methodResult = result3;
+
+						} else {
+							res.locals.methodResult = {"Error":"No response from node."};
+						}
+
+						res.render("browser");
+					});
+				} else {
+					res.render("browser");
+				}
+			}).catch(function(err) {
+				res.locals.userMessage = "Error loading help content for method " + req.query.method + ": " + err;
+
+				res.render("browser");
+			});
+
+		} else {
+			res.render("browser");
+		}
+
+	}).catch(function(err) {
+		res.locals.userMessage = "Error loading help content: " + err;
+
+		res.render("browser");
 	});
 });
 

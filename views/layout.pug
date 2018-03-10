@@ -33,17 +33,26 @@ html
 						ul(class="navbar-nav mr-auto")
 							if (debug)
 								li(class="nav-item")
-									a(href="/terminal", class="nav-link") RPC Terminal
+									a(href="/rpc-terminal", class="nav-link") RPC Terminal
 							li(class="nav-item")
-								a(href="/node-info", class="nav-link") Node Info
-							li(class="nav-item")
-								a(href="/mempool", class="nav-link") Mempool Info
+								a(href="/node-info", class="nav-link") Node Details
 						form(method="post", action="/search", class="form-inline")
 							div(class="input-group")
 								input(type="text", class="form-control form-control-sm", name="query", placeholder="block height, block hash, txid", value=(query), style="width: 250px;")
 								span(class="input-group-btn")
 									input(type="submit", class="btn btn-primary", value="Search")
-			
+
+		div(class="container", style="margin-top: -1.0rem;")
+			ul(class="nav")
+				li(class="nav-item")
+					a(href="/rpc-browser", class="nav-link") RPC Browser
+				li(class="nav-item")
+					a(href="/rpc-terminal", class="nav-link") RPC Terminal
+				li(class="nav-item")
+					a(href="/mempool", class="nav-link") Mempool Summary
+
+			hr
+				
 		div(class="container")
 			if (userMessage)
 				div(class="alert", class=(userMessageType ? ("alert-"  + userMessageType) : "alert-info"), role="alert")
