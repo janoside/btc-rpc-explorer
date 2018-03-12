@@ -51,7 +51,7 @@ router.get("/", function(req, res) {
 	});
 });
 
-router.get("/node-info", function(req, res) {
+router.get("/node-details", function(req, res) {
 	var client = global.client;
 
 	rpcApi.getBlockchainInfo().then(function(getblockchaininfo) {
@@ -66,27 +66,27 @@ router.get("/node-info", function(req, res) {
 				rpcApi.getNetTotals().then(function(getnettotals) {
 					res.locals.getnettotals = getnettotals;
 
-					res.render("node-info");
+					res.render("node-details");
 
 				}).catch(function(err) {
 					res.locals.userMessage = "Unable to connect to Bitcoin Node at " + env.bitcoind.host + ":" + env.bitcoind.port;
 
-					res.render("node-info");
+					res.render("node-details");
 				});
 			}).catch(function(err) {
 				res.locals.userMessage = "Unable to connect to Bitcoin Node at " + env.bitcoind.host + ":" + env.bitcoind.port;
 
-				res.render("node-info");
+				res.render("node-details");
 			});
 		}).catch(function(err) {
 			res.locals.userMessage = "Unable to connect to Bitcoin Node at " + env.bitcoind.host + ":" + env.bitcoind.port;
 
-			res.render("node-info");
+			res.render("node-details");
 		});
 	}).catch(function(err) {
 		res.locals.userMessage = "Unable to connect to Bitcoin Node at " + env.bitcoind.host + ":" + env.bitcoind.port;
 
-		res.render("node-info");
+		res.render("node-details");
 	});
 });
 
