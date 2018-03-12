@@ -1,7 +1,7 @@
 extends layout
 
 block headContent
-	title RPC Browser
+	title RPC Browser #{(method ? (" - " + method) : false)}
 
 	style.
 		pre {
@@ -13,9 +13,66 @@ block content
 	h1 RPC Browser
 	hr
 
-	
-
 	div(class="row")
+		div(class="col-md-9")
+			if (methodhelp)
+				div(class="row")
+					div(class="col")
+						h4(style="display: inline-block;")
+							span(class="text-muted") Command: 
+							span  #{method}
+					div(class="col")
+						a(href=("https://bitcoin.org/en/developer-reference#" + method), class="float-md-right") See developer docs &raquo;
+							
+				
+				hr
+
+				div(class="card bg-light mb-3")
+					div(class="card-header") Help Content for
+						strong  #{method}
+					div(class="card-body")
+						pre #{methodhelp.string}
+				
+				div(class="card bg-light mb-3")
+					div(class="card-header") Execute Command: 
+						strong  #{method}
+					div(class="card-body")
+						form(method="get")
+							input(type="hidden", name="method", value=method)
+
+							each argX, index in methodhelp.args
+								div(class="form-group")
+									label(for=("arg_" + argX.name))
+										strong #{argX.name}
+										span  (#{argX.properties.join(", ")})
+										if (argX.description)
+											span  - #{argX.description}
+
+									- var valX = false;
+									if (argValues != null)
+										if (argValues[index] != null)
+											if (("" + argValues[index]) != NaN)
+												- valX = argValues[index];
+
+									input(id=("arg_" + argX.name), type="text", name=("args[" + index + "]"), placeholder=argX.name, class="form-control", value=valX)
+
+							input(type="submit", name="execute", value="Execute", class="btn btn-primary btn-block")
+
+						if (methodResult)
+							
+
+							div(class="mt-4")
+								hr
+
+								h5(class="mt-3") Result
+
+								pre(style="border: solid 1px #ccc;")
+									code #{JSON.stringify(methodResult, null, 4)}
+
+			else
+				:markdown-it
+					Browse RPC commands from the list. The list is built from the results of the `help` command and organized into sections accordingly.
+
 		div(class="col-md-3")
 			each section, sectionIndex in gethelp
 				h4 #{section.name}
@@ -26,31 +83,5 @@ block content
 					ol(style="padding-left: 30px;")
 						each methodX, methodIndex in section.methods
 							li
-								a(href=("/rpc-browser?method=" + methodX.name), style=(methodX.name == method ? "font-weight: bold; font-style: italic;" : false)) #{methodX.name}
-
-		div(class="col-md-9")
-			if (methodhelp)
-				div(class="row")
-					div(class="col-md-6")
-						h4(style="display: inline-block;") Command: #{method}
-					div(class="col-md-6")
-						a(href=("https://bitcoin.org/en/developer-reference#" + method), class="float-md-right") See developer docs &raquo;
-							
-							
-				
-				hr
-
-				pre #{methodhelp}
-
-				hr
-
-				form(method="get")
-					input(type="hidden", name="method", value=method)
-					input(type="submit", name="execute", value="Execute", class="btn btn-primary btn-block")
-
-				if (methodResult)
-					h5(class="mt-3") Result
-
-					pre
-						code #{JSON.stringify(methodResult, null, 4)}
+								a(href=("/rpc-browser?method=" + methodX.name), style=(methodX.name == method ? "font-weight: bold; font-style: italic;" : false), class="monospace") #{methodX.name}
 

@@ -510,6 +510,9 @@ function getRpcMethodHelp(methodName) {
 				return;
 			}
 
+			var output = {};
+			output.string = result;
+
 			var str = result;
 
 			var lines = str.split("\n");
@@ -529,9 +532,48 @@ function getRpcMethodHelp(methodName) {
 				}
 			});
 
-			console.log("argLines: " + argumentLines);
+			var args = [];
+			var argX = null;
+			// looking for line starting with "N. " where N is an integer (1-2 digits)
+			argumentLines.forEach(function(line) {
+				var regex = /^([0-9]+)\.\s*"?(\w+)"?\s*\((\w+),?\s*(\w+),?\s*(.+)?\s*\)\s*(.+)?$/;
 
-			resolve(result);
+				var match = regex.exec(line);
+
+				if (match) {
+					argX = {};
+					argX.name = match[2];
+					argX.detailsLines = [];
+
+					argX.properties = [];
+
+					if (match[3]) {
+						argX.properties.push(match[3]);
+					}
+
+					if (match[4]) {
+						argX.properties.push(match[4]);
+					}
+
+					if (match[5]) {
+						argX.properties.push(match[5]);
+					}
+
+					if (match[6]) {
+						argX.description = match[6];
+					}
+
+					args.push(argX);
+				}
+
+				if (!match && argX) {
+					argX.detailsLines.push(line);
+				}
+			});
+
+			output.args = args;
+
+			resolve(output);
 		});
 	});
 }

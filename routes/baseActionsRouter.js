@@ -453,20 +453,41 @@ router.get("/rpc-browser", function(req, res) {
 			rpcApi.getRpcMethodHelp(req.query.method.trim()).then(function(result2) {
 				res.locals.methodhelp = result2;
 
-				var lines = result2.split("\n");
-				
-				var params = [];
-				var line1Parts = lines[0].trim().split(" ");
-				line1Parts.shift();
-
-				params = line1Parts;
-
-				res.locals.methodParams = params;
-
-				console.log("params: " + params);
-
 				if (req.query.execute) {
-					client.cmd([{method:req.query.method, params:[]}], function(err3, result3, resHeaders3) {
+					var argDetails = result2.args;
+					var argValues = [];
+
+					console.log("argA: " + JSON.stringify(result2.args, null, 4));
+					console.log("argB: " + JSON.stringify(req.query.args, null, 4));
+
+					if (req.query.args) {
+						for (var i = 0; i < req.query.args.length; i++) {
+							var argProperties = argDetails[i].properties;
+
+							for (var j = 0; j < argProperties.length; j++) {
+								if (argProperties[j] == "numeric") {
+									if (req.query.args[i] == null || req.query.args[i] == "") {
+										argValues.push(null);
+
+									} else {
+										argValues.push(parseInt(req.query.args[i]));
+									}
+
+									break;
+
+								} else if (argProperties[j] == "string") {
+									argValues.push(req.query.args[i]);
+
+									break;
+								}
+							}
+						}
+					}
+
+					res.locals.argValues = argValues;
+					console.log("argV: " + JSON.stringify(argValues, null, 4));
+
+					client.cmd([{method:req.query.method, params:argValues}], function(err3, result3, resHeaders3) {
 						if (err3) {
 							res.locals.methodResult = err3;
 
