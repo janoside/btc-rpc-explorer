@@ -36,20 +36,39 @@ I built this tool because I wanted to use it myself. Whatever reasons one might 
 
 # Screenshots
 
-### Connect via RPC
-# ![Connect](public/img/screenshots/connect.png)
-
-### Homepage (list of recent blocks)
-# ![Connect](public/img/screenshots/home.png)
-
-### Block Details
-# ![Connect](public/img/screenshots/block.png)
-
-### Transaction Details
-# ![Connect](public/img/screenshots/transaction.png)
-
-### Transaction, Raw JSON
-# ![Connect](public/img/screenshots/transaction-raw.png)
-
-### List of Blocks by height (in ascending order)
-# ![Connect](public/img/screenshots/blocks.png)
+<table>
+  <tr>
+    <td valign="top">
+      <h4>Connect via RPC</h4>
+      <hr/>
+      <img src="public/img/screenshots/connect.png" style="margin-right:5px; border: 1px solid #ccc;" />
+    </td>
+    <td valign="top">
+      <h4>Homepage (list of recent blocks)</h4>
+      <hr/>
+      <img src="public/img/screenshots/home.png" style="margin-right:5px; border: 1px solid #ccc;" />
+    </td>
+    <td valign="top">
+      <h4>Block Details</h4>
+      <hr/>
+      <img src="public/img/screenshots/block.png" style="margin-right:5px; border: 1px solid #ccc;" />
+    </td>
+  </tr>
+  <tr>
+    <td valign="top">
+      <h4>Transaction Details</h4>
+      <hr/>
+      <img src="public/img/screenshots/transaction.png" style="margin-right:5px; border: 1px solid #ccc;" />
+    </td>
+    <td valign="top">
+      <h4>Transaction, Raw JSON</h4>
+      <hr/>
+      <img src="public/img/screenshots/transaction-raw.png" style="margin-right:5px; border: 1px solid #ccc;" />
+    </td>
+    <td valign="top">
+      <h4>Browse Blocks</h4>
+      <hr/>
+      <img src="public/img/screenshots/blocks.png" style="margin-right:5px; border: 1px solid #ccc;" />
+    </td>
+  </tr>
+</table>
