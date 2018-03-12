@@ -49,7 +49,7 @@ html
 				li(class="nav-item")
 					a(href="/rpc-terminal", class="nav-link") RPC Terminal
 				li(class="nav-item")
-					a(href="/mempool", class="nav-link") Mempool Summary
+					a(href="/mempool-summary", class="nav-link") Mempool Summary
 
 			hr
 				
@@ -61,6 +61,26 @@ html
 			block content
 
 			div(style="margin-bottom: 30px;")
+
+			footer(class="pt-4 my-md-5 pt-md-5 border-top")
+				ul
+					li MIT-licensed source code available on github: 
+						a(href="https://github.com/janoside/btc-rpc-explorer") janoside/btc-rpc-explorer
+						if (sourcecodeVersion)
+							span  (@
+							a(href=("https://github.com/janoside/btc-rpc-explorer/commit/" + sourcecodeVersion)) #{sourcecodeVersion}
+							span )
+
+					li Public instance maintained at 
+						a(href="https://btc-explorer.com") https://btc-explorer.com
+					
+					li Donate: 
+						a(href="bitcoin:3NPGpNyLLmVKCEcuipBs7G4KpQJoJXjDGe") BTC
+						span  - 3NPGpNyLLmVKCEcuipBs7G4KpQJoJXjDGe
+
+					li &copy; 2018 
+						a(href="https://danjanosik.com") Dan Janosik
+				
 
 		div(class="d-none d-md-block")
 			a(href="https://github.com/janoside/btc-rpc-explorer")

@@ -9,39 +9,20 @@ block content
 
 	if (getmempoolinfo)
 		p Data from RPC command  
-			a(href="https://bitcoin.org/en/developer-reference#getmempoolinfo") getmempoolinfo
+			a(href="/rpc-browser?method=getmempoolinfo") getmempoolinfo
 			
 		table(class="table")
 			tr
 				th(class="table-active properties-header") Transaction Count
 				td #{getmempoolinfo.size.toLocaleString()}
 			tr
-				- var scales = [ {val:1000000000, name:"GB"}, {val:1000000, name:"MB"}, {val:1000, name:"kB"} ];
-				- var scaleDone = false;
-				th(class="table-active properties-header") Tx Size
+				th(class="table-active properties-header") Memory Usage
 				td(class="monospace")
-					span #{getmempoolinfo.bytes.toLocaleString()} bytes
-					each item in scales
-						if (!scaleDone)
-							- var fraction = Math.floor(getmempoolinfo.bytes / item.val);
-							if (fraction >= 1)
-								- scaleDone = true;
-								span(class="text-muted")  (#{fraction} #{item.name})
-			tr
-				- var scales = [ {val:1000000000, name:"GB"}, {val:1000000, name:"MB"}, {val:1000, name:"kB"} ];
-				- var scaleDone = false;
-				th(class="table-active properties-header") Total Size
-				td(class="monospace")
-					span #{getmempoolinfo.usage.toLocaleString()} bytes
-					each item in scales
-						if (!scaleDone)
-							- var fraction = Math.floor(getmempoolinfo.usage / item.val);
-							if (fraction >= 1)
-								- scaleDone = true;
-								span(class="text-muted")  (#{fraction} #{item.name})
+					span #{utils.formatBytes(getmempoolinfo.usage)}
+					span(class="text-muted")  (virtual size: #{utils.formatBytes(getmempoolinfo.bytes)})
 			tr
 				th(class="table-active properties-header") Max Size
-				td(class="monospace") #{getmempoolinfo.maxmempool.toLocaleString()}
+				td(class="monospace") #{utils.formatBytes(getmempoolinfo.maxmempool)}
 			tr
 				th(class="table-active properties-header") Min Fee
 				td(class="monospace") #{getmempoolinfo.mempoolminfee.toLocaleString()}

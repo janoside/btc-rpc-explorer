@@ -9,9 +9,11 @@ block content
 
 	if (getblockchaininfo)
 		p Data from RPC commands 
-			a(href="https://bitcoin.org/en/developer-reference#getblockchaininfo") getblockchaininfo
-			span  and 
-			a(href="https://bitcoin.org/en/developer-reference#getnetworkinfo") getnetworkinfo
+			a(href="/rpc-browser?method=getblockchaininfo") getblockchaininfo
+			span , 
+			a(href="/rpc-browser?method=getnetworkinfo") getnetworkinfo
+			span , and 
+			a(href="/rpc-browser?method=getnettotals") getnettotals
 
 		if (false)
 			pre
@@ -32,16 +34,14 @@ block content
 				tr
 					th(class="table-active properties-header") Blockchain Size on Disk
 					td(class="monospace") #{getblockchaininfo.size_on_disk.toLocaleString()}
-						span  (pruned: #{getblockchaininfo.pruned})
+						span(class="text-muted")  (pruned: #{getblockchaininfo.pruned})
 				tr
 					th(class="table-active properties-header") Connections
 					td(class="monospace") #{getnetworkinfo.connections.toLocaleString()}
 				tr
 					th(class="table-active properties-header") Block Count
 					td(class="monospace") #{getblockchaininfo.blocks.toLocaleString()}
-				tr
-					th(class="table-active properties-header") Header Count
-					td(class="monospace") #{getblockchaininfo.headers.toLocaleString()}
+						span(class="text-muted")  (header count: #{getblockchaininfo.headers.toLocaleString()})
 				tr
 					- var scales = [ {val:1000000000000000, name:"quadrillion"}, {val:1000000000000, name:"trillion"}, {val:1000000000, name:"billion"}, {val:1000000, name:"million"} ];
 					- var scaleDone = false;
@@ -79,5 +79,9 @@ block content
 
 				tr
 					th(class="table-active properties-header") Warnings
-					td(class="monospace") #{getblockchaininfo.warnings}
+					td(class="monospace")
+						if (getblockchaininfo.warnings && getblockchaininfo.warnings.trim().length > 0)
+							span #{getblockchaininfo.warnings}
+						else
+							span None
 										

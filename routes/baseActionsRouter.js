@@ -90,7 +90,7 @@ router.get("/node-info", function(req, res) {
 	});
 });
 
-router.get("/mempool", function(req, res) {
+router.get("/mempool-summary", function(req, res) {
 	var client = global.client;
 
 	rpcApi.getMempoolInfo().then(function(getmempoolinfo) {
@@ -99,12 +99,12 @@ router.get("/mempool", function(req, res) {
 		rpcApi.getMempoolStats().then(function(mempoolstats) {
 			res.locals.mempoolstats = mempoolstats;
 
-			res.render("mempool");
+			res.render("mempool-summary");
 		});
 	}).catch(function(err) {
 		res.locals.userMessage = "Unable to connect to Bitcoin Node at " + env.bitcoind.host + ":" + env.bitcoind.port;
 
-		res.render("mempool");
+		res.render("mempool-summary");
 	});
 });
 

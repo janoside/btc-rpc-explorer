@@ -24,24 +24,3 @@ block content
 		- var blockOffset = 0;
 
 		include includes/blocks-list.pug
-
-	hr
-
-	div(class="")
-		ul
-			li MIT-licensed source code available on github: 
-				a(href="https://github.com/janoside/btc-rpc-explorer") janoside/btc-rpc-explorer
-				if (sourcecodeVersion)
-					span  (@
-					a(href=("https://github.com/janoside/btc-rpc-explorer/commit/" + sourcecodeVersion)) #{sourcecodeVersion}
-					span )
-
-			li Public instance maintained at 
-				a(href="https://btc-explorer.com") https://btc-explorer.com
-			
-			li Donate: 
-				a(href="bitcoin:3NPGpNyLLmVKCEcuipBs7G4KpQJoJXjDGe") BTC
-				span  - 3NPGpNyLLmVKCEcuipBs7G4KpQJoJXjDGe
-
-			li &copy; 2018 
-				a(href="https://danjanosik.com") Dan Janosik
