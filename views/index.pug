@@ -12,12 +12,14 @@ block content
 
 	
 	if (latestBlocks)
-		h3 Latest Blocks
-			if (getblockchaininfo.initialblockdownload)
-				small  (#{(getblockchaininfo.headers - getblockchaininfo.blocks).toLocaleString()} behind)
-
-			span(style="float: right; font-size: 75%;")
-				a(href="/blocks") Browse Blocks &raquo;
+		div(class="row mt-5")
+			div(class="col")
+				h3 Latest Blocks
+					if (getblockchaininfo.initialblockdownload)
+						small  (#{(getblockchaininfo.headers - getblockchaininfo.blocks).toLocaleString()} behind)
+			div(class="col")
+				span(style="float: right;")
+					a(href="/blocks") Browse Blocks &raquo;
 
 
 		- var blocks = latestBlocks;
