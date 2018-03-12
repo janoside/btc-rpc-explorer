@@ -1,37 +1,26 @@
 extends layout
 
 block content
-	h1 BTC RPC Explorer
+	h1 RPC Connect
 	hr
 
-	:markdown-it
-		This tool is intended to be a simple, stateless, self-hosted explorer for the Bitcoin blockchain, driven by RPC calls to your own bitcoind node. Because it is stateless, it is easy to run but lacks some (many?) of the features of other explorers.
-
-		Start by connecting to your full, archiving bitcoind node. Make sure that the node you'll be connecting to has `txindex=1` set.
-
 	form(method="post", action="/connect")
-		div(class="card")
-			div(class="card-body")
-				h4(class="card-title") RPC Connect
+		div(class="form-group")
+			label(for="input-host") Host / IP
+			input(id="input-host", type="text", name="host", class="form-control", placeholder="Host / IP", value=host)
 
-				hr
+		div(class="form-group")
+			label(for="input-port") Port
+			input(id="input-port", type="text", name="port", class="form-control", placeholder="Port", value=port)
 
-				div(class="form-group")
-					label(for="input-host") Host / IP
-					input(type="text", name="host", class="form-control", value=host)
+		div(class="form-group")
+			label(for="input-username") Username
+			input(id="input-username", type="text", name="username", class="form-control", placeholder="Username", value=username)
 
-				div(class="form-group")
-					label(for="input-host") Port
-					input(type="text", name="port", class="form-control", value=port)
+		div(class="form-group")
+			label(for="input-password") Password
+			input(id="input-password", type="password", name="password", class="form-control", placeholder="Password")
 
-				div(class="form-group")
-					label(for="input-host") Username
-					input(type="text", name="username", class="form-control", value=username)
-
-				div(class="form-group")
-					label(for="input-host") Password
-					input(type="password", name="password", class="form-control")
-
-				hr
-
-				input(type="submit", class="btn btn-primary btn-block" value="Connect")
+		div(class="form-group")
+			input(type="submit", class="btn btn-primary btn-block" value="Connect")
+				
