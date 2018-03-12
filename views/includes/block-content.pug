@@ -8,7 +8,7 @@ ul(class='nav nav-tabs mb-3')
 
 div(class="tab-content")
 	div(id="tab-summary", class="tab-pane active", role="tabpanel")
-		if (result.getblock.hash == "000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f")
+		if (result.getblock.hash == genesisBlockHash)
 			div(class="alert alert-success", style="padding-bottom: 0;")
 				h4(class="alert-heading h5") This is the Bitcoin Genesis Block!
 				:markdown-it
@@ -26,7 +26,7 @@ div(class="tab-content")
 					if (result.getblock.previousblockhash)
 						a(href=("/block/" + result.getblock.previousblockhash)) #{result.getblock.previousblockhash}
 
-					else if (result.getblock.hash == "000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f")
+					else if (result.getblock.hash == genesisBlockHash)
 						span N/A - This is the 
 						a(href="https://en.bitcoin.it/wiki/Genesis_block") Bitcoin Genesis Block
 
@@ -56,8 +56,7 @@ div(class="tab-content")
 				th(class="table-active properties-header") Size
 				td(class="monospace")
 					span #{result.getblock.size.toLocaleString()} bytes
-					br
-					span(class="text-muted") (weight: #{result.getblock.weight.toLocaleString()})
+					span(class="text-muted")  (weight: #{result.getblock.weight.toLocaleString()})
 
 			tr
 				th(class="table-active properties-header") Confirmations
@@ -234,4 +233,3 @@ div(class="tab-content")
 		pre
 			code #{JSON.stringify(result.getblock, null, 4)}
 
-	

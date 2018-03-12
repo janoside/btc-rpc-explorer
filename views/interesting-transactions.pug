@@ -1,0 +1,28 @@
+extends layout
+
+block headContent
+	title Interesting Transactions
+
+block content
+	h1(class="h2") Interesting Transactions
+	hr
+	
+	table(class="table table-striped table-responsive-sm mt-4")
+		thead
+			tr
+				th(class="data-header") Note
+				th(class="data-header") TxID
+				th(class="data-header") Read More
+		tbody
+			each tx, index in interestingTransactions
+				tr
+					td(class="data-cell") #{tx.note}
+
+					td(class="data-cell monospace")
+						a(href=("/tx/" + tx.txid)) #{tx.txid.substring(0, 25)}...
+					
+					td(class="data-cell")
+						if (tx.referenceUrl && tx.referenceUrl.trim().length > 0)
+							a(href=tx.referenceUrl) Read More
+						else
+							span -

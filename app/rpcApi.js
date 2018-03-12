@@ -1,6 +1,8 @@
 var utils = require("./utils.js");
 
-var genesisCoinbaseTransactionTxid = "4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b";
+var genesisBlockHash = "000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f";
+var genesisCoinbaseTransactionId = "4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b";
+
 var genesisCoinbaseTransaction = {
 	"hex": "01000000010000000000000000000000000000000000000000000000000000000000000000ffffffff0804ffff001d02fd04ffffffff0100f2052a01000000434104f5eeb2b10c944c6b9fbcfff94c35bdeecd93df977882babc7f3a2cf7f5c81d3b09a68db7f0e04f21de5d4230e75e6dbe7ad16eefe0d4325a62067dc6f369446aac00000000",
 	"txid": "4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b",
@@ -30,12 +32,51 @@ var genesisCoinbaseTransaction = {
 			}
 		}
 	],
-	"blockhash": "000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f",
+	"blockhash": genesisBlockHash,
 	"time": 1230988505,
 	"blocktime": 1230988505
 };
 
+var interestingTx = [
+	{
+		txid: genesisCoinbaseTransactionId,
+		note: "The coinbase transaction of the genesis block.",
+		referenceUrl: ""
+	},
+	{
+		txid: "7dff938918f07619abd38e4510890396b1cef4fbeca154fb7aafba8843295ea2",
+		note: "First bitcoin traded for fiat currency.",
+		referenceUrl: ""
+	},
+	{
+		txid: "8f907925d2ebe48765103e6845C06f1f2bb77c6adc1cc002865865eb5cfd5c1c",
+		note: "First SegWit transaction.",
+		referenceUrl: ""
+	},
+	{
+		txid: "143a3d7e7599557f9d63e7f224f34d33e9251b2c23c38f95631b3a54de53f024",
+		note: "Star Wars: A New Hope",
+		referenceUrl: ""
+	},
+	{
+		txid: "a1075db55d416d3ca199f55b6084e2115b9345e16c5cf302fc80e9d5fbf5d48d",
+		note: "Bitcoin Pizza Transaction",
+		referenceUrl: ""
+	},
+	{
+		txid: "5d80a29be1609db91658b401f85921a86ab4755969729b65257651bb9fd2c10d",
+		note: "Destroyed bitcoin",
+		referenceUrl: "https://www.reddit.com/r/Bitcoin/comments/7mhoks/til_in_2011_a_user_running_a_modified_mining/"
+	}
+];
 
+function getGenesisBlockHash() {
+	return genesisBlockHash;
+}
+
+function getGenesisCoinbaseTransactionId() {
+	return genesisCoinbaseTransactionId;
+}
 
 function getBlockchainInfo() {
 	return new Promise(function(resolve, reject) {
@@ -309,7 +350,7 @@ function getTransactionInputs(rpcClient, transaction, inputLimit=0) {
 
 function getRawTransaction(txid) {
 	return new Promise(function(resolve, reject) {
-		if (txid == genesisCoinbaseTransactionTxid) {
+		if (txid == genesisCoinbaseTransactionId) {
 			getBlockByHeight(0).then(function(blockZeroResult) {
 				var result = genesisCoinbaseTransaction;
 				result.confirmations = blockZeroResult.getblock.confirmations;
@@ -578,7 +619,13 @@ function getRpcMethodHelp(methodName) {
 	});
 }
 
+function getInterestingTransactions() {
+	return interestingTx;
+}
+
 module.exports = {
+	getGenesisBlockHash: getGenesisBlockHash,
+	getGenesisCoinbaseTransactionId: getGenesisCoinbaseTransactionId,
 	getBlockchainInfo: getBlockchainInfo,
 	getNetworkInfo: getNetworkInfo,
 	getNetTotals: getNetTotals,
@@ -593,5 +640,6 @@ module.exports = {
 	getMempoolStats: getMempoolStats,
 	getUptimeSeconds: getUptimeSeconds,
 	getHelp: getHelp,
-	getRpcMethodHelp: getRpcMethodHelp
+	getRpcMethodHelp: getRpcMethodHelp,
+	getInterestingTransactions: getInterestingTransactions
 };

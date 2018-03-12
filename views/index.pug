@@ -17,10 +17,12 @@ block content
 				h3 Latest Blocks
 					if (getblockchaininfo.initialblockdownload)
 						small  (#{(getblockchaininfo.headers - getblockchaininfo.blocks).toLocaleString()} behind)
+
 			div(class="col")
 				span(style="float: right;")
 					a(href="/blocks") Browse Blocks &raquo;
 
+		hr
 
 		- var blocks = latestBlocks;
 		- var blockOffset = 0;

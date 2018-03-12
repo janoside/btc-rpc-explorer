@@ -19,7 +19,7 @@ code, .monospace {
 }
 
 .properties-header {
-	width: 180px;
+	width: 190px;
 	text-align: right;
 }
 
@@ -38,4 +38,8 @@ code, .monospace {
 
 #subheader a {
 	margin-right: 20px;
+}
+
+.table th {
+	border-top: none;
 }

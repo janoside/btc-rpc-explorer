@@ -457,9 +457,6 @@ router.get("/rpc-browser", function(req, res) {
 					var argDetails = result2.args;
 					var argValues = [];
 
-					console.log("argA: " + JSON.stringify(result2.args, null, 4));
-					console.log("argB: " + JSON.stringify(req.query.args, null, 4));
-
 					if (req.query.args) {
 						for (var i = 0; i < req.query.args.length; i++) {
 							var argProperties = argDetails[i].properties;
@@ -485,7 +482,6 @@ router.get("/rpc-browser", function(req, res) {
 					}
 
 					res.locals.argValues = argValues;
-					console.log("argV: " + JSON.stringify(argValues, null, 4));
 
 					client.cmd([{method:req.query.method, params:argValues}], function(err3, result3, resHeaders3) {
 						if (err3) {
@@ -520,5 +516,10 @@ router.get("/rpc-browser", function(req, res) {
 	});
 });
 
+router.get("/interesting-transactions", function(req, res) {
+	res.locals.interestingTransactions = rpcApi.getInterestingTransactions();
+	
+	res.render("interesting-transactions");
+});
 
 module.exports = router;

@@ -17,6 +17,7 @@ var Decimal = require('decimal.js');
 var bitcoin = require("bitcoin");
 var pug = require("pug");
 var momentDurationFormat = require("moment-duration-format");
+var rpcApi = require("./app/rpcApi.js");
 
 
 var baseActionsRouter = require('./routes/baseActionsRouter');
@@ -71,6 +72,9 @@ app.use(function(req, res, next) {
 
 	res.locals.host = req.session.host;
 	res.locals.port = req.session.port;
+
+	res.locals.genesisBlockHash = rpcApi.getGenesisBlockHash();
+	res.locals.genesisCoinbaseTransactionId = rpcApi.getGenesisCoinbaseTransactionId();
 
 	if (!["/", "/connect"].includes(req.originalUrl)) {
 		if (utils.redirectToConnectPageIfNeeded(req, res)) {
