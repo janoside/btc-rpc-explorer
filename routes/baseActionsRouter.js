@@ -412,6 +412,14 @@ router.post("/rpc-terminal", function(req, res) {
 		}
 	});
 
+	if (env.rpcBlacklist.includes(cmd)) {
+		res.write("Sorry, that RPC command is blacklisted. If this is your server, you may allow this command by removing it from the 'rpcBlacklist' setting in env.js.", function() {
+			res.end();
+		});
+
+		return;
+	}
+
 	client.cmd([{method:cmd, params:parsedParams}], function(err, result, resHeaders) {
 		console.log("Result[1]: " + JSON.stringify(result, null, 4));
 		console.log("Error[2]: " + JSON.stringify(err, null, 4));
@@ -482,6 +490,14 @@ router.get("/rpc-browser", function(req, res) {
 					}
 
 					res.locals.argValues = argValues;
+
+					if (env.rpcBlacklist.includes(req.query.method)) {
+						res.locals.methodResult = "Sorry, that RPC command is blacklisted. If this is your server, you may allow this command by removing it from the 'rpcBlacklist' setting in env.js.";
+
+						res.render("browser");
+
+						return;
+					}
 
 					client.cmd([{method:req.query.method, params:argValues}], function(err3, result3, resHeaders3) {
 						if (err3) {
