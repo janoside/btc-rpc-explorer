@@ -37,36 +37,76 @@ var genesisCoinbaseTransaction = {
 	"blocktime": 1230988505
 };
 
-var interestingTx = [
+var historicalData = [
 	{
+		type: "block",
+		date: "2009-01-03",
+		blockHash: genesisBlockHash,
+		note: "The bitcoin genesis block.",
+		referenceUrl: "https://en.bitcoin.it/wiki/Genesis_block"
+	},
+	{
+		type: "tx",
+		date: "2009-01-03",
 		txid: genesisCoinbaseTransactionId,
 		note: "The coinbase transaction of the genesis block.",
-		referenceUrl: ""
+		referenceUrl: "https://github.com/bitcoin/bitcoin/issues/3303"
 	},
 	{
+		type: "tx",
+		date: "2009-10-12",
 		txid: "7dff938918f07619abd38e4510890396b1cef4fbeca154fb7aafba8843295ea2",
 		note: "First bitcoin traded for fiat currency.",
-		referenceUrl: ""
+		referenceUrl: "https://twitter.com/marttimalmi/status/423455561703624704"
 	},
 	{
+		type: "block",
+		date: "2017-08-24",
+		blockHash: "0000000000000000001c8018d9cb3b742ef25114f27563e3fc4a1902167f9893",
+		note: "First SegWit block.",
+		referenceUrl: "https://twitter.com/conio/status/900722226911219712"
+	},
+	{
+		type: "tx",
+		date: "2017-08-24",
 		txid: "8f907925d2ebe48765103e6845C06f1f2bb77c6adc1cc002865865eb5cfd5c1c",
 		note: "First SegWit transaction.",
-		referenceUrl: ""
+		referenceUrl: "https://twitter.com/KHS9NE/status/900553902923362304"
 	},
 	{
+		type: "tx",
+		date: "2014-06-16",
 		txid: "143a3d7e7599557f9d63e7f224f34d33e9251b2c23c38f95631b3a54de53f024",
 		note: "Star Wars: A New Hope",
 		referenceUrl: ""
 	},
 	{
+		type: "tx",
+		date: "2010-05-22",
 		txid: "a1075db55d416d3ca199f55b6084e2115b9345e16c5cf302fc80e9d5fbf5d48d",
-		note: "Bitcoin Pizza Transaction",
-		referenceUrl: ""
+		note: "The 'Bitcoin Pizza' transaction.",
+		referenceUrl: "https://bitcointalk.org/index.php?topic=137.0"
 	},
 	{
+		type: "tx",
+		date: "2011-05-18",
 		txid: "5d80a29be1609db91658b401f85921a86ab4755969729b65257651bb9fd2c10d",
-		note: "Destroyed bitcoin",
+		note: "Destroyed bitcoin.",
 		referenceUrl: "https://www.reddit.com/r/Bitcoin/comments/7mhoks/til_in_2011_a_user_running_a_modified_mining/"
+	},
+	{
+		type: "block",
+		date: "2009-01-12",
+		blockHash: "00000000d1145790a8694403d4063f323d499e655c83426834d4ce2f8dd4a2ee",
+		note: "First block containing a (non-coinbase) transaction.",
+		referenceUrl: "https://bitcointalk.org/index.php?topic=91806.msg1012234#msg1012234"
+	},
+	{
+		type: "block",
+		date: "2017-08-25",
+		blockHash: "00000000000000000139cb443e16442fcd07a4a0e0788dd045ee3cf268982016",
+		note: "First block mined that was greater than 1MB.",
+		referenceUrl: "https://en.bit.news/bitfury-mined-first-segwit-block-size-1-mb/"
 	}
 ];
 
@@ -619,8 +659,13 @@ function getRpcMethodHelp(methodName) {
 	});
 }
 
-function getInterestingTransactions() {
-	return interestingTx;
+function getHistoricalData() {
+	var sortedList = historicalData;
+	sortedList.sort(function(a, b){
+		return ((a.date > b.date) ? 1 : -1);
+	});
+
+	return sortedList;
 }
 
 module.exports = {
@@ -641,5 +686,5 @@ module.exports = {
 	getUptimeSeconds: getUptimeSeconds,
 	getHelp: getHelp,
 	getRpcMethodHelp: getRpcMethodHelp,
-	getInterestingTransactions: getInterestingTransactions
+	getHistoricalData: getHistoricalData
 };

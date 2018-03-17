@@ -532,10 +532,10 @@ router.get("/rpc-browser", function(req, res) {
 	});
 });
 
-router.get("/interesting-transactions", function(req, res) {
-	res.locals.interestingTransactions = rpcApi.getInterestingTransactions();
+router.get("/fun", function(req, res) {
+	res.locals.historicalData = rpcApi.getHistoricalData();
 	
-	res.render("interesting-transactions");
+	res.render("fun");
 });
 
 module.exports = router;
