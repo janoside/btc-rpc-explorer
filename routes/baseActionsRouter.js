@@ -8,7 +8,7 @@ var bitcoin = require("bitcoin");
 var rpcApi = require("./../app/rpcApi");
 
 router.get("/", function(req, res) {
-	if (!req.session.host) {
+	if (req.session.host == null || req.session.host.trim() == "") {
 		if (req.cookies['rpc-host']) {
 			res.locals.host = req.cookies['rpc-host'];
 		}
@@ -135,6 +135,25 @@ router.post("/connect", function(req, res) {
 	global.client = client;
 
 	req.session.userMessage = "<strong>Connected via RPC</strong>: " + username + " @ " + host + ":" + port;
+	req.session.userMessageType = "success";
+
+	res.redirect("/");
+});
+
+router.get("/disconnect", function(req, res) {
+	res.cookie('rpc-host', "");
+	res.cookie('rpc-port', "");
+	res.cookie('rpc-username', "");
+
+	req.session.host = "";
+	req.session.port = "";
+	req.session.username = "";
+
+	console.log("destroyed client.");
+
+	global.client = null;
+
+	req.session.userMessage = "Disconnected from node.";
 	req.session.userMessageType = "success";
 
 	res.redirect("/");

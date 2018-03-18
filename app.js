@@ -70,6 +70,8 @@ app.use(function(req, res, next) {
 		});
 	}
 
+	res.locals.env = env;
+	
 	res.locals.host = req.session.host;
 	res.locals.port = req.session.port;
 
