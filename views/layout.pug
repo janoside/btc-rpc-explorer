@@ -15,7 +15,7 @@ html
 		link(rel="icon", type="image/png", sizes="16x16", href="/img/favicons/favicon-16x16.png")
 
 		block headContent
-			title BTC Explorer
+			title Bitcoin Atom Block Explorer
 		
 	body
 		nav(class="navbar navbar-expand-lg navbar-dark bg-dark mb-4")
@@ -23,7 +23,7 @@ html
 				a(class="navbar-brand", href="/")
 					span
 						img(src="/img/logo/logo-64.png", class="header-image")
-						span BTC Explorer
+						span BCA Block Explorer
 						
 				button(type="button", class="navbar-toggler navbar-toggler-right", data-toggle="collapse", data-target="#navbarNav")
 					span(class="navbar-toggler-icon")
@@ -50,8 +50,6 @@ html
 					a(href="/rpc-terminal", class="nav-link") RPC Terminal
 				li(class="nav-item")
 					a(href="/mempool-summary", class="nav-link") Mempool Summary
-				li(class="nav-item")
-					a(href="/fun", class="nav-link") Bitcoin Fun
 
 			hr
 				
@@ -66,27 +64,15 @@ html
 
 			footer(class="pt-4 my-md-5 pt-md-5 border-top")
 				ul
-					li MIT-licensed source code available on github: 
-						a(href="https://github.com/janoside/btc-rpc-explorer") janoside/btc-rpc-explorer
-						if (sourcecodeVersion)
-							span  (@
-							a(href=("https://github.com/janoside/btc-rpc-explorer/commit/" + sourcecodeVersion)) #{sourcecodeVersion}
-							span )
+					li MIT-licensed source code available on GitHub: 
+						a(href="https://github.com/bitcoin-atom") bitcoin-atom
 
 					li Public instance maintained at 
-						a(href="https://btc-explorer.com") https://btc-explorer.com
-					
-					li Donate: 
-						a(href="bitcoin:3NPGpNyLLmVKCEcuipBs7G4KpQJoJXjDGe") BTC
-						span  - 3NPGpNyLLmVKCEcuipBs7G4KpQJoJXjDGe
+						a(href="https://mainnet.bitcoinatom.io") https://mainnet.bitcoinatom.io
 
 					li &copy; 2018 
-						a(href="https://danjanosik.com") Dan Janosik
-				
-
-		div(class="d-none d-md-block")
-			a(href="https://github.com/janoside/btc-rpc-explorer")
-				img(style="position: absolute; top: 0; left: 0; border: 0;", src="https://camo.githubusercontent.com/82b228a3648bf44fc1163ef44c62fcc60081495e/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f6c6566745f7265645f6161303030302e706e67", alt="Fork me on GitHub", data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_left_red_aa0000.png")
+						a(href="https://danjanosik.com") Dan Janosik, 
+						a(href="https://github.com/bitcoin-atom") Bitcoin Atom developers
 		
 		script(src="https://code.jquery.com/jquery-3.2.1.min.js", integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=", crossorigin="anonymous")
 		script(src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js", integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q", crossorigin="anonymous")
