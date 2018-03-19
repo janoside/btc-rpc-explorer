@@ -1,10 +1,15 @@
-# ![BTC Explorer](public/img/logo/logo-64.png) BTC Explorer
 
-Simple, database-free Bitcoin blockchain explorer, via RPC. Built with Node.js, express, bootstrap-v4.
+<p align="center">
+<img src="https://user-images.githubusercontent.com/34191200/35906968-0a422cb8-0c1f-11e8-85e4-7be0ccb6019d.png" />
+</p>
 
-This tool is intended to be a simple, self-hosted explorer for the Bitcoin blockchain, driven by RPC calls to your own bitcoind node. This tool is easy to run but lacks features compared to full-fledged (stateful) explorers.
+# BCA Explorer
 
-I built this tool because I wanted to use it myself. Whatever reasons one might have for running a full node (trustlessness, technical curiosity, etc) it's helpful to appreciate the "fullness" of a node. With this explorer, one can not only explore the blockchain (in the traditional sense of the term "explorer"), but also explore the capabilities of one's own node.
+Simple, database-free Bitcoin Atom blockchain explorer, via RPC. Built with Node.js, express, bootstrap-v4.
+
+This tool is intended to be a simple, self-hosted explorer for the Bitcoin Atom blockchain, driven by RPC calls to your own atomd node. This tool is easy to run but lacks features compared to full-fledged (stateful) explorers.
+
+It is a fork of the open-source [BTC Explorer](https://github.com/janoside/btc-rpc-explorer). If you run your own [Atom Full Node](https://github.com/bitcoin-atom/bitcoin-atom), this explorer can easily run alongside it, communicating via RPC calls.
 
 # Features
 
@@ -22,8 +27,8 @@ I built this tool because I wanted to use it myself. Whatever reasons one might 
 
 ## Prerequisites
 
-1. Install and run a full, archiving node - [instructions](https://bitcoin.org/en/full-node). Ensure that your node has full transaction indexing enabled (`txindex=1`) and the RPC server enabled (`server=1`).
-2. Synchronize your node with the Bitcoin network.
+1. Install and run a full, archiving node - [Atom Downloads](https://github.com/bitcoin-atom/bitcoin-atom/releases). Ensure that your node has full transaction indexing enabled (`txindex=1`) and the RPC server enabled (`server=1`).
+2. Synchronize your node with the Bitcoin Atom network.
 
 ## Instructions
 
@@ -32,60 +37,4 @@ I built this tool because I wanted to use it myself. Whatever reasons one might 
 3. Optional: Uncomment the "bitcoind" section in [env.js](app/env.js) to automatically connect to the target node.
 4. `npm start` to start the local server
 5. Navigate to http://127.0.0.1:3002/
-6. Connect using the RPC credentials for your target bitcoin node (if you didn't edit [env.js](app/env.js) in Step 3)
-
-# Screenshots
-
-<table>
-  <tr>
-    <td valign="top">
-      <h4>Connect via RPC</h4>
-      <hr/>
-      <img src="public/img/screenshots/connect.png" style="margin-right:5px; border: 1px solid #ccc;" />
-    </td>
-    <td valign="top">
-      <h4>Homepage (list of recent blocks)</h4>
-      <hr/>
-      <img src="public/img/screenshots/home.png" style="margin-right:5px; border: 1px solid #ccc;" />
-    </td>
-    <td valign="top">
-      <h4>Node Details</h4>
-      <hr/>
-      <img src="public/img/screenshots/node-details.png" style="margin-right:5px; border: 1px solid #ccc;" />
-    </td>
-  </tr>
-  <tr>
-    <td valign="top">
-      <h4>Browse Blocks</h4>
-      <hr/>
-      <img src="public/img/screenshots/blocks.png" style="margin-right:5px; border: 1px solid #ccc;" />
-    </td>
-    <td valign="top">
-      <h4>Block Details</h4>
-      <hr/>
-      <img src="public/img/screenshots/block.png" style="margin-right:5px; border: 1px solid #ccc;" />
-    </td>
-    <td valign="top">
-      <h4>Mempool Summary</h4>
-      <hr/>
-      <img src="public/img/screenshots/mempool-summary.png" style="margin-right:5px; border: 1px solid #ccc;" />
-    </td>
-  </tr>
-  <tr>
-    <td valign="top">
-      <h4>Transaction Details</h4>
-      <hr/>
-      <img src="public/img/screenshots/transaction.png" style="margin-right:5px; border: 1px solid #ccc;" />
-    </td>
-    <td valign="top">
-      <h4>Transaction, Raw JSON</h4>
-      <hr/>
-      <img src="public/img/screenshots/transaction-raw.png" style="margin-right:5px; border: 1px solid #ccc;" />
-    </td>
-    <td valign="top">
-      <h4>RPC Browser</h4>
-      <hr/>
-      <img src="public/img/screenshots/rpc-browser.png" style="margin-right:5px; border: 1px solid #ccc;" />
-    </td>
-  </tr>
-</table>
+6. Connect using the RPC credentials for your target BCA node (if you didn't edit [env.js](app/env.js) in Step 3)
