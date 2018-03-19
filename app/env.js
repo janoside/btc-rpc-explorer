@@ -3,18 +3,33 @@ module.exports = {
 	debug: true,
 
 	rpcBlacklist:[
-		"stop"
+		"stop",
+		"savemempool",
+		"addnode",
+		"disconnectnode",
+		"setban",
+		"setnetworkactive",
+		"lockunspent",
+		"move",
+		"removeprunedfunds",
+		"rescanblockchain",
+		"encryptwallet",
+		"backupwallet",
+		"importwallet",
+		"walletlock",
+		"walletpassphrase",
+		"walletpassphrasechange"
 	],
 
 	// Uncomment "bitcoind" below to automatically connect via RPC.
 	// Otherwise, you can manually connect via the UI.
 
-	bitcoind:{
-		host:"127.0.0.1",
-		port:17332,
-		rpc: {
-			username:"123",
-			password:"123"
-		}
-	}
+	//bitcoind:{
+	//	host:"127.0.0.1",
+	//	port:17332,
+	//	rpc: {
+	//		username:"123",
+	//		password:"123"
+	//	}
+	//}
 };
