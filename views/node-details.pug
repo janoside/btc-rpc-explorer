@@ -47,10 +47,10 @@ block content
 					- var scaleDone = false;
 					th(class="table-active properties-header") Difficulty
 					td(class="monospace")
-						span #{getblockchaininfo.difficulty.toLocaleString()}
+						span #{getblockchaininfo.difficulty['proof-of-work'].toLocaleString()}
 						each item in scales
 							if (!scaleDone)
-								- var fraction = Math.floor(getblockchaininfo.difficulty / item.val);
+								- var fraction = Math.floor(getblockchaininfo.difficulty['proof-of-work'] / item.val);
 								if (fraction >= 1)
 									- scaleDone = true;
 									span(class="text-muted")  (#{fraction} #{item.name})
