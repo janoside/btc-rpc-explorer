@@ -14,7 +14,7 @@ var simpleGit = require('simple-git');
 var utils = require("./app/utils.js");
 var moment = require("moment");
 var Decimal = require('decimal.js');
-var bitcoin = require("bitcoin");
+var bitcoin = require("bitcoin-core");
 var pug = require("pug");
 var momentDurationFormat = require("moment-duration-format");
 var rpcApi = require("./app/rpcApi.js");
@@ -61,17 +61,17 @@ app.use(function(req, res, next) {
 		req.session.port = env.bitcoind.port;
 		req.session.username = env.bitcoind.rpc.username;
 
-		global.client = new bitcoin.Client({
-			host: env.bitcoind.host,
-			port: env.bitcoind.port,
-			user: env.bitcoind.rpc.username,
-			pass: env.bitcoind.rpc.password,
-			timeout: 5000
-		});
+		global.client = new bitcoin({
+  		host: host,
+  		port: port,
+  		username: username,
+  		password: password,
+  		timeout: 5000
+    });
 	}
 
 	res.locals.env = env;
-	
+
 	res.locals.host = req.session.host;
 	res.locals.port = req.session.port;
 
@@ -89,13 +89,13 @@ app.use(function(req, res, next) {
 			app.locals.sourcecodeVersion = log.all[0].hash.substring(0, 10);
 		});
 	}
-	
+
 	if (req.session.userMessage) {
 		res.locals.userMessage = req.session.userMessage;
-		
+
 		if (req.session.userMessageType) {
 			res.locals.userMessageType = req.session.userMessageType;
-			
+
 		} else {
 			res.locals.userMessageType = "info";
 		}
