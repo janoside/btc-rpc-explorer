@@ -217,7 +217,7 @@ router.post("/search", function(req, res) {
 		return;
 	}
 
-	var query = req.body.query.toLowerCase();
+	var query = req.body.query.toLowerCase().trim();
 
 	req.session.query = req.body.query;
 
