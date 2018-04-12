@@ -413,7 +413,6 @@ function getRawTransactions(txids) {
 	return new Promise(function(resolve, reject) {
 		if (!txids || txids.length == 0) {
 			resolve([]);
-
 			return;
 		}
 
@@ -437,17 +436,15 @@ function getRawTransactions(txids) {
 		var requests = [];
 		for (var i = 0; i < txids.length; i++) {
 			var txid = txids[i];
-
 			if (txid) {
 				requests.push({
 					method: 'getrawtransaction',
-					parameters: [ txid, 1 ]
+					parameters: [ txid, 1]
 				});
 			}
 		}
 
 		var requestBatches = utils.splitArrayIntoChunks(requests, 20);
-
 		executeBatchesSequentially(requestBatches, function(results) {
 			resolve(results);
 		});
@@ -455,11 +452,8 @@ function getRawTransactions(txids) {
 }
 
 function executeBatchesSequentially(batches, resultFunc) {
-	var batchId = utils.getRandomString(20, 'aA#');
-
-	console.log("Starting " + batches.length + "-item batch " + batchId + "...");
-
-	executeBatchesSequentiallyInternal(batchId, batches, 0, [], resultFunc);
+	console.log("Starting " + batches.length + "batches");
+	executeBatchesSequentiallyInternal(0, batches, 0, [], resultFunc);
 }
 
 function executeBatchesSequentiallyInternal(batchId, batches, currentIndex, accumulatedResults, resultFunc) {
@@ -467,13 +461,11 @@ function executeBatchesSequentiallyInternal(batchId, batches, currentIndex, accu
 		console.log("Finishing batch " + batchId + "...");
 
 		resultFunc(accumulatedResults);
-
 		return;
 	}
 
-	console.log("Executing item #" + (currentIndex + 1) + " (of " + batches.length + ") for batch " + batchId);
-
-	var count = batches[currentIndex].length;
+	var batchId = utils.getRandomString(20, 'aA#');
+	console.log("Executing batch #" + (currentIndex + 1) + " (of " + batches.length + ") with id " + batchId);
 
 	client.command(batches[currentIndex], function(err, result, resHeaders) {
 		if (err) {
@@ -481,12 +473,7 @@ function executeBatchesSequentiallyInternal(batchId, batches, currentIndex, accu
 		}
 
 		accumulatedResults.push(...result);
-
-		count--;
-
-		if (count == 0) {
-			executeBatchesSequentiallyInternal(batchId, batches, currentIndex + 1, accumulatedResults, resultFunc);
-		}
+		executeBatchesSequentiallyInternal(batchId, batches, currentIndex + 1, accumulatedResults, resultFunc);
 	});
 }
 

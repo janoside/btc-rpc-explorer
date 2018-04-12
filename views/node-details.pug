@@ -2,17 +2,17 @@ extends layout
 
 block headContent
 	title Node Details
-	
+
 block content
 	h1 Node Details
 	hr
 
 	if (getblockchaininfo)
-		p Data from RPC commands 
+		p Data from RPC commands
 			a(href="/rpc-browser?method=getblockchaininfo") getblockchaininfo
-			span , 
+			span ,
 			a(href="/rpc-browser?method=getnetworkinfo") getnetworkinfo
-			span , and 
+			span , and
 			a(href="/rpc-browser?method=getnettotals") getnettotals
 
 		if (false)
@@ -33,8 +33,9 @@ block content
 					td(class="monospace") #{getnetworkinfo.protocolversion}
 				tr
 					th(class="table-active properties-header") Blockchain Size on Disk
-					td(class="monospace") #{getblockchaininfo.size_on_disk.toLocaleString()}
-						span(class="text-muted")  (pruned: #{getblockchaininfo.pruned})
+					if (getblockchaininfo.size_on_disk)
+						td(class="monospace") #{getblockchaininfo.size_on_disk.toLocaleString()}
+							span(class="text-muted")  (pruned: #{getblockchaininfo.pruned})
 				tr
 					th(class="table-active properties-header") Connections
 					td(class="monospace") #{getnetworkinfo.connections.toLocaleString()}
@@ -84,4 +85,3 @@ block content
 							span #{getblockchaininfo.warnings}
 						else
 							span None
-										
