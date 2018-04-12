@@ -47,26 +47,40 @@ router.get("/", function(req, res) {
 });
 
 router.get("/node-details", function(req, res) {
+	var client = global.client;
+
 	rpcApi.getBlockchainInfo().then(function(getblockchaininfo) {
 		res.locals.getblockchaininfo = getblockchaininfo;
 
 		rpcApi.getNetworkInfo().then(function(getnetworkinfo) {
 			res.locals.getnetworkinfo = getnetworkinfo;
 
+			rpcApi.getUptimeSeconds().then(function(uptimeSeconds) {
+				res.locals.uptimeSeconds = uptimeSeconds;
+
 				rpcApi.getNetTotals().then(function(getnettotals) {
 					res.locals.getnettotals = getnettotals;
+
 					res.render("node-details");
 
 				}).catch(function(err) {
-					res.locals.userMessage = "Unable to connect to Bitcoin Node at " + client.host + ":" + client.port;
+					res.locals.userMessage = "Unable to connect to Bitcoin Node at " + env.bitcoind.host + ":" + env.bitcoind.port;
+
 					res.render("node-details");
 				});
+			}).catch(function(err) {
+				res.locals.userMessage = "Unable to connect to Bitcoin Node at " + env.bitcoind.host + ":" + env.bitcoind.port;
+
+				res.render("node-details");
+			});
 		}).catch(function(err) {
-			res.locals.userMessage = "Unable to connect to Bitcoin Node at " + client.host + ":" + client.port;
+			res.locals.userMessage = "Unable to connect to Bitcoin Node at " + env.bitcoind.host + ":" + env.bitcoind.port;
+
 			res.render("node-details");
 		});
 	}).catch(function(err) {
-		res.locals.userMessage = "Unable to connect to Bitcoin Node at " + client.host + ":" + client.port;
+		res.locals.userMessage = "Unable to connect to Bitcoin Node at " + env.bitcoind.host + ":" + env.bitcoind.port;
+
 		res.render("node-details");
 	});
 });
