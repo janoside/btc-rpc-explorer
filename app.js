@@ -78,6 +78,37 @@ app.use(function(req, res, next) {
 	res.locals.genesisBlockHash = rpcApi.getGenesisBlockHash();
 	res.locals.genesisCoinbaseTransactionId = rpcApi.getGenesisCoinbaseTransactionId();
 
+
+	// currency format type
+	if (!req.session.currencyFormatType) {
+		var cookieValue = req.cookies['user-setting-currencyFormatType'];
+
+		if (cookieValue) {
+			req.session.currencyFormatType = cookieValue;
+
+		} else {
+			req.session.currencyFormatType = "";
+		}
+	}
+
+	res.locals.currencyFormatType = req.session.currencyFormatType;
+
+
+	// display width
+	if (!req.session.displayWidth) {
+		var cookieValue = req.cookies['user-setting-displayWidth'];
+
+		if (cookieValue) {
+			req.session.displayWidth = cookieValue;
+			
+		} else {
+			req.session.displayWidth = "container";
+		}
+	}
+
+	res.locals.displayWidth = req.session.displayWidth;
+
+
 	if (!["/", "/connect"].includes(req.originalUrl)) {
 		if (utils.redirectToConnectPageIfNeeded(req, res)) {
 			return;

@@ -159,6 +159,16 @@ router.get("/disconnect", function(req, res) {
 	res.redirect("/");
 });
 
+router.get("/changeSetting", function(req, res) {
+	if (req.query.name) {
+		req.session[req.query.name] = req.query.value;
+
+		res.cookie('user-setting-' + req.query.name, req.query.value);
+	}
+
+	res.redirect(req.headers.referer);
+});
+
 router.get("/blocks", function(req, res) {
 	var limit = 20;
 	var offset = 0;

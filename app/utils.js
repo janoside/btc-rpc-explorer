@@ -99,6 +99,21 @@ function formatBytes(bytesInt) {
 	return bytesInt + " B";
 }
 
+function formatBtcAmount(amountBtc, formatType) {
+	if (formatType == "btc" || formatType == "") {
+		return amountBtc + " " + formatType;
+
+	} else if (formatType == "mbtc") {
+		return (amountBtc * 1000.0).toLocaleString() + " " + formatType;
+
+	} else if (formatType == "ubtc") {
+		return (amountBtc * 1000000.0).toLocaleString() + " " + formatType;
+
+	} else if (formatType == "bits") {
+		return (amountBtc * 1000000.0).toLocaleString() + " " + formatType;
+	}
+}
+
 
 module.exports = {
 	doSmartRedirect: doSmartRedirect,
@@ -107,5 +122,6 @@ module.exports = {
 	getBlockReward: getBlockReward,
 	splitArrayIntoChunks: splitArrayIntoChunks,
 	getRandomString: getRandomString,
-	formatBytes: formatBytes
+	formatBytes: formatBytes,
+	formatBtcAmount: formatBtcAmount
 };

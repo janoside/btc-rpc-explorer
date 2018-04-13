@@ -19,7 +19,7 @@ html
 		
 	body
 		nav(class="navbar navbar-expand-lg navbar-dark bg-dark mb-4")
-			div(class="container")
+			div(class=displayWidth)
 				a(class="navbar-brand", href="/")
 					span
 						img(src="/img/logo/logo-64.png", class="header-image")
@@ -31,18 +31,46 @@ html
 				div(class="collapse navbar-collapse", id="navbarNav")
 					if (client)
 						ul(class="navbar-nav mr-auto")
-							if (debug)
-								li(class="nav-item")
-									a(href="/rpc-terminal", class="nav-link") RPC Terminal
 							li(class="nav-item")
-								a(href="/node-details", class="nav-link") Node Details
+								a(href="/node-details", class="nav-link")
+									i(class="fas fa-info-circle")
+									span  Node Details
+							li(class="nav-item dropdown")
+								a(class="nav-link dropdown-toggle", href="javascript:void(0)", id="navbarDropdown", role="button", data-toggle="dropdown", aria-haspopup="true", aria-expanded="false") 
+									i(class="fas fa-cog")
+									span  Settings
+								div(class="dropdown-menu", aria-labelledby="navbarDropdown")
+									span(class="dropdown-header") Currency Units
+									a(class="dropdown-item", href="/changeSetting?name=currencyFormatType&value=")
+										if (currencyFormatType == "btc" || currencyFormatType == "")
+											i(class="fas fa-check")
+										span  BTC
+									a(class="dropdown-item", href="/changeSetting?name=currencyFormatType&value=mbtc")
+										if (currencyFormatType == "mbtc")
+											i(class="fas fa-check")
+										span  mbtc
+									a(class="dropdown-item", href="/changeSetting?name=currencyFormatType&value=bits")
+										if (currencyFormatType == "bits")
+											i(class="fas fa-check")
+										span  bits
+									div(class="dropdown-divider")
+									span(class="dropdown-header") Display Width
+									a(class="dropdown-item", href="/changeSetting?name=displayWidth&value=container")
+										if (displayWidth == "container")
+											i(class="fas fa-check")
+										span  Centered
+									a(class="dropdown-item", href="/changeSetting?name=displayWidth&value=container-fluid")
+										if (displayWidth == "container-fluid")
+											i(class="fas fa-check")
+										span  Full Width
+
 						form(method="post", action="/search", class="form-inline")
 							div(class="input-group")
 								input(type="text", class="form-control form-control-sm", name="query", placeholder="block height, block hash, txid", value=(query), style="width: 250px;")
 								span(class="input-group-btn")
 									input(type="submit", class="btn btn-primary", value="Search")
 
-		div(class="container mb-4", style="margin-top: -1.0rem;")
+		div(class=(displayWidth + " mb-4"), style="margin-top: -1.0rem;")
 			ul(class="nav")
 				li(class="nav-item")
 					a(href="/rpc-browser", class="nav-link") RPC Browser
@@ -55,7 +83,7 @@ html
 
 			hr
 				
-		div(class="container")
+		div(class=displayWidth)
 			if (userMessage)
 				div(class="alert", class=(userMessageType ? ("alert-"  + userMessageType) : "alert-info"), role="alert")
 					span !{userMessage}
@@ -84,9 +112,9 @@ html
 						a(href="https://danjanosik.com") Dan Janosik
 				
 		if (env.showForkBanner)
-		div(class="d-none d-md-block")
-			a(href="https://github.com/janoside/btc-rpc-explorer")
-				img(style="position: absolute; top: 0; left: 0; border: 0;", src="https://camo.githubusercontent.com/82b228a3648bf44fc1163ef44c62fcc60081495e/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f6c6566745f7265645f6161303030302e706e67", alt="Fork me on GitHub", data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_left_red_aa0000.png")
+			div(class="d-none d-md-block")
+				a(href="https://github.com/janoside/btc-rpc-explorer")
+					img(style="position: absolute; top: 0; left: 0; border: 0;", src="https://camo.githubusercontent.com/82b228a3648bf44fc1163ef44c62fcc60081495e/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f6c6566745f7265645f6161303030302e706e67", alt="Fork me on GitHub", data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_left_red_aa0000.png")
 		
 		script(src="https://code.jquery.com/jquery-3.2.1.min.js", integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=", crossorigin="anonymous")
 		script(src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js", integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q", crossorigin="anonymous")

@@ -116,13 +116,13 @@ block content
 					if (result.getrawtransaction.vin[0].coinbase)
 						tr
 							th(class="table-active properties-header") Total Network Fees
-							td(class="monospace") #{new Decimal(totalOutputValue).minus(totalInputValue)}
+							td(class="monospace") #{utils.formatBtcAmount(new Decimal(totalOutputValue).minus(totalInputValue), currencyFormatType)}
 					else
 						tr
 							th(class="table-active properties-header") Network Fee Paid
 							td(class="monospace")
-								strong #{new Decimal(totalInputValue).minus(totalOutputValue)}
-								span(class="text-muted")  (#{totalInputValue} - #{totalOutputValue})
+								strong #{utils.formatBtcAmount(new Decimal(totalInputValue).minus(totalOutputValue), currencyFormatType)}
+								span(class="text-muted")  (#{utils.formatBtcAmount(totalInputValue, currencyFormatType)} - #{utils.formatBtcAmount(totalOutputValue, currencyFormatType)})
 								br
 								span ~#{new DecimalRounded(totalInputValue).minus(totalOutputValue).dividedBy(result.getrawtransaction.size).times(100000000)} sat/B
 
@@ -163,8 +163,8 @@ block content
 												th 1
 												td
 													span(class="tag monospace") coinbase
-													span(class="monospace") Newly minted BTC
-												td(class="monospace") #{utils.getBlockReward(result.getblock.height)}
+													span(class="monospace") Newly minted coins
+												td(class="monospace") #{utils.formatBtcAmount(utils.getBlockReward(result.getblock.height), currencyFormatType)}
 
 										each txInput, txInputIndex in result.txInputs
 											if (txInput)
@@ -182,13 +182,13 @@ block content
 															a(href=("/tx/" + txInput.txid + "#output-" + result.getrawtransaction.vin[txInputIndex].vout), class="monospace") #{txInput.txid.substring(0, 14)}..., Output ##{result.getrawtransaction.vin[txInputIndex].vout + 1}
 													td
 														if (vout.value)
-															span(class="monospace") #{vout.value}
+															span(class="monospace") #{utils.formatBtcAmount(vout.value, currencyFormatType)}
 
 										tr
 											td
 											td
 											td
-												strong(class="monospace") #{totalInputValue}
+												strong(class="monospace") #{utils.formatBtcAmount(totalInputValue, currencyFormatType)}
 									
 
 							div(class="col-md-6")
@@ -217,13 +217,13 @@ block content
 															span(class="monospace") OP_RETURN: 
 															span(class="monospace text-muted") #{utils.hex2ascii(vout.scriptPubKey.asm.substring("OP_RETURN ".length))}
 												td
-													span(class="monospace") #{vout.value}
+													span(class="monospace") #{utils.formatBtcAmount(vout.value, currencyFormatType)}
 
 										tr
 											td
 											td
 											td
-												strong(class="monospace") #{totalOutputValue}
+												strong(class="monospace") #{utils.formatBtcAmount(totalOutputValue, currencyFormatType)}
 
 			div(id="tab-scripts", class="tab-pane", role="tabpanel")
 				h3 Input Scripts
