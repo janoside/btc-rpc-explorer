@@ -4,7 +4,23 @@ module.exports = {
 	showForkBanner: false,
 
 	rpcBlacklist:[
-		"stop"
+		"stop",
+		"stop",
+		"savemempool",
+		"addnode",
+		"disconnectnode",
+		"setban",
+		"setnetworkactive",
+		"lockunspent",
+		"move",
+		"removeprunedfunds",
+		"rescanblockchain",
+		"encryptwallet",
+		"backupwallet",
+		"importwallet",
+		"walletlock",
+		"walletpassphrase",
+		"walletpassphrasechange"
 	],
 
 	// Uncomment "bitcoind" below to automatically connect via RPC.
