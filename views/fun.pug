@@ -38,7 +38,8 @@ block content
 							- var domain = matches && matches[1];
 
 							if (domain)
-								a(href=item.referenceUrl, rel="nofollow") #{domain}
+								a(href=item.referenceUrl, rel="nofollow") #{domain} 
+									i(class="fas fa-external-link-alt")
 							else
 								a(href=item.referenceUrl, rel="nofollow") Reference
 						else
