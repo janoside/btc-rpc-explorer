@@ -18,6 +18,7 @@ var bitcoin = require("bitcoin");
 var pug = require("pug");
 var momentDurationFormat = require("moment-duration-format");
 var rpcApi = require("./app/rpcApi.js");
+var coins = require("./app/coins.js");
 
 
 var baseActionsRouter = require('./routes/baseActionsRouter');
@@ -71,6 +72,7 @@ app.use(function(req, res, next) {
 	}
 
 	res.locals.env = env;
+	res.locals.coinConfig = coins[env.coin];
 	
 	res.locals.host = req.session.host;
 	res.locals.port = req.session.port;

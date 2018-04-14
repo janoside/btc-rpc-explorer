@@ -22,8 +22,9 @@ html
 			div(class=displayWidth)
 				a(class="navbar-brand", href="/")
 					span
-						img(src="/img/logo/logo-64.png", class="header-image")
-						span BTC Explorer
+						if (coinConfig.logoUrl)
+							img(src=coinConfig.logoUrl, class="header-image")
+						span #{coinConfig.siteTitle}
 						
 				button(type="button", class="navbar-toggler navbar-toggler-right", data-toggle="collapse", data-target="#navbarNav")
 					span(class="navbar-toggler-icon")
@@ -40,19 +41,15 @@ html
 									i(class="fas fa-cog")
 									span  Settings
 								div(class="dropdown-menu", aria-labelledby="navbarDropdown")
-									span(class="dropdown-header") Currency Units
-									a(class="dropdown-item", href="/changeSetting?name=currencyFormatType&value=")
-										if (currencyFormatType == "btc" || currencyFormatType == "")
-											i(class="fas fa-check")
-										span  BTC
-									a(class="dropdown-item", href="/changeSetting?name=currencyFormatType&value=mbtc")
-										if (currencyFormatType == "mbtc")
-											i(class="fas fa-check")
-										span  mbtc
-									a(class="dropdown-item", href="/changeSetting?name=currencyFormatType&value=bits")
-										if (currencyFormatType == "bits")
-											i(class="fas fa-check")
-										span  bits
+									if (coinConfig.currencyUnits)
+										span(class="dropdown-header") Currency Units
+										each item in coinConfig.currencyUnits
+											a(class="dropdown-item", href=("/changeSetting?name=currencyFormatType&value=" + item.values[0]))
+												each valueName in item.values
+													if (currencyFormatType == valueName)
+														i(class="fas fa-check")
+												span  #{item.name}
+									
 									div(class="dropdown-divider")
 									span(class="dropdown-header") Display Width
 									a(class="dropdown-item", href="/changeSetting?name=displayWidth&value=container")
@@ -78,8 +75,9 @@ html
 					a(href="/rpc-terminal", class="nav-link") RPC Terminal
 				li(class="nav-item")
 					a(href="/mempool-summary", class="nav-link") Mempool Summary
-				li(class="nav-item")
-					a(href="/fun", class="nav-link") Bitcoin Fun
+				if (coinConfig.historicalData && coinConfig.historicalData.length > 0)
+					li(class="nav-item")
+						a(href="/fun", class="nav-link") #{coinConfig.name} Fun
 
 			hr
 				
@@ -104,9 +102,15 @@ html
 					li Public instance maintained at 
 						a(href="https://btc-explorer.com") https://btc-explorer.com
 					
-					li Donate: 
-						a(href="bitcoin:3NPGpNyLLmVKCEcuipBs7G4KpQJoJXjDGe") BTC
-						span  - 3NPGpNyLLmVKCEcuipBs7G4KpQJoJXjDGe
+					li Donate
+						ul
+							li
+								a(href="bitcoin:3NPGpNyLLmVKCEcuipBs7G4KpQJoJXjDGe") BTC
+								span  - 3NPGpNyLLmVKCEcuipBs7G4KpQJoJXjDGe
+							li
+								a(href="litecoin:ME4pXiXuWfEi1ANBDo9irUJVcZBhsTx14i") LTC
+								span  - ME4pXiXuWfEi1ANBDo9irUJVcZBhsTx14i
+								
 
 					li &copy; 2018 
 						a(href="https://danjanosik.com") Dan Janosik

@@ -1,6 +1,9 @@
 var Decimal = require("decimal.js");
 Decimal8 = Decimal.clone({ precision:8, rounding:8 });
 
+var env = require("./env.js");
+var coins = require("./coins.js");
+
 function doSmartRedirect(req, res, defaultUrl) {
 	if (req.session.redirectUrl) {
 		res.redirect(req.session.redirectUrl);
@@ -99,19 +102,28 @@ function formatBytes(bytesInt) {
 	return bytesInt + " B";
 }
 
+var formatBtcMap = {};
+
 function formatBtcAmount(amountBtc, formatType) {
-	if (formatType == "btc" || formatType == "") {
-		return amountBtc + " " + formatType;
-
-	} else if (formatType == "mbtc") {
-		return (amountBtc * 1000.0).toLocaleString() + " " + formatType;
-
-	} else if (formatType == "ubtc") {
-		return (amountBtc * 1000000.0).toLocaleString() + " " + formatType;
-
-	} else if (formatType == "bits") {
-		return (amountBtc * 1000000.0).toLocaleString() + " " + formatType;
+	if (formatBtcMap[formatType]) {
+		return (amountBtc * formatBtcMap[formatType].multiplier).toLocaleString() + " " + formatBtcMap[formatType].name;
 	}
+
+	for (var x = 0; x < coins[env.coin].currencyUnits.length; x++) {
+		var currencyUnit = coins[env.coin].currencyUnits[x];
+
+		for (var y = 0; y < currencyUnit.values.length; y++) {
+			var currencyUnitValue = currencyUnit.values[y];
+
+			if (currencyUnitValue == formatType) {
+				formatBtcMap[formatType] = currencyUnit;
+
+				return (amountBtc * currencyUnit.multiplier).toLocaleString() + " " + currencyUnit.name;
+			}
+		}
+	}
+	
+	return amountBtc;
 }
 
 

@@ -31,10 +31,12 @@ block content
 				tr
 					th(class="table-active properties-header") Protocol Version
 					td(class="monospace") #{getnetworkinfo.protocolversion}
-				tr
-					th(class="table-active properties-header") Blockchain Size on Disk
-					td(class="monospace") #{getblockchaininfo.size_on_disk.toLocaleString()}
-						span(class="text-muted")  (pruned: #{getblockchaininfo.pruned})
+
+				if (getblockchaininfo.size_on_disk)
+					tr
+						th(class="table-active properties-header") Blockchain Size on Disk
+						td(class="monospace") #{getblockchaininfo.size_on_disk.toLocaleString()}
+							span(class="text-muted")  (pruned: #{getblockchaininfo.pruned})
 				tr
 					th(class="table-active properties-header") Connections
 					td(class="monospace") #{getnetworkinfo.connections.toLocaleString()}

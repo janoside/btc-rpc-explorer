@@ -8,11 +8,11 @@ ul(class='nav nav-tabs mb-3')
 
 div(class="tab-content")
 	div(id="tab-summary", class="tab-pane active", role="tabpanel")
-		if (result.getblock.hash == genesisBlockHash)
-			div(class="alert alert-success", style="padding-bottom: 0;")
-				h4(class="alert-heading h5") This is the Bitcoin Genesis Block!
-				:markdown-it
-					This is the first block in the Bitcoin blockchain. This block was mined by Bitcoin's anonymous/pseudonymous creator Satoshi Nakamoto. If you're interested, you can [read more about the genesis block](https://en.bitcoin.it/wiki/Genesis_block).
+		if (coinConfig.specialBlocks && coinConfig.specialBlocks[result.getblock.hash])
+			div(class="alert alert-info", style="padding-bottom: 0;")
+				h4(class="alert-heading h5") #{coinConfig.specialBlocks[result.getblock.hash].noteTitle}
+				if (coinConfig.specialBlocks[result.getblock.hash].noteBodyHtml)
+					p !{coinConfig.specialBlocks[result.getblock.hash].noteBodyHtml}
 		
 		table(class="table")
 			tr
@@ -27,8 +27,7 @@ div(class="tab-content")
 						a(href=("/block/" + result.getblock.previousblockhash)) #{result.getblock.previousblockhash}
 
 					else if (result.getblock.hash == genesisBlockHash)
-						span N/A - This is the 
-						a(href="https://en.bitcoin.it/wiki/Genesis_block") Bitcoin Genesis Block
+						span None
 
 			tr
 				th(class="table-active properties-header") Next Block Hash
@@ -102,6 +101,7 @@ div(class="tab-content")
 				td(class="monospace") #{result.getblock.chainwork}
 
 		hr
+
 		h2(class="h4") Transactions (#{txCount.toLocaleString()})
 			small  - Showing 
 				if (txCount <= limit)

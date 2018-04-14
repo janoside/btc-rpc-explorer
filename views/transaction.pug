@@ -40,11 +40,11 @@ block content
 
 		div(class="tab-content")
 			div(id="tab-summary", class="tab-pane active", role="tabpanel")
-				if (txid == genesisCoinbaseTransactionId)
-					div(class="alert alert-warning", style="padding-bottom: 0;")
-						h4(class="alert-heading h5") This transaction doesn't really exist!
-						:markdown-it
-							This is the coinbase transaction of the [Bitcoin Genesis Block](/block/000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f). For more background about this special-case transaction, you can read [this brief discussion](https://github.com/bitcoin/bitcoin/issues/3303) among some of the [Bitcoin Core](https://bitcoin.org) developers.
+				if (coinConfig.specialTransactions && coinConfig.specialTransactions[txid])
+					div(class="alert alert-info", style="padding-bottom: 0;")
+						h4(class="alert-heading h5") #{coinConfig.specialTransactions[txid].noteTitle}
+						if (coinConfig.specialTransactions[txid].noteBodyHtml)
+							p !{coinConfig.specialTransactions[txid].noteBodyHtml}
 
 				table(class="table")
 					tr

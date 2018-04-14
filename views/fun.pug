@@ -1,14 +1,13 @@
 extends layout
 
 block headContent
-	title Bitcoin Fun
+	title #{coinConfig.name} Fun
 
 block content
-	h1(class="h2") Bitcoin Fun
+	h1(class="h2") #{coinConfig.name} Fun
 	hr
 
-	:markdown-it
-		Below is a list of fun/interesting things in the Bitcoin blockchain. Some are historical firsts, others are just fun or cool.
+	p Below is a list of fun/interesting things in the #{coinConfig.name} blockchain. Some are historical firsts, others are just fun or cool.
 	
 	table(class="table table-striped table-responsive-sm mt-4")
 		thead
@@ -18,7 +17,7 @@ block content
 				th(class="data-header") Link
 				th(class="data-header") Reference
 		tbody
-			each item, index in historicalData
+			each item, index in coinConfig.historicalData
 				tr
 					td(class="data-cell") #{item.date}
 
