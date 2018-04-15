@@ -94,7 +94,7 @@ A live demo of the tool is available at https://btc-explorer.com
 
 # Donate
 
-To support continued development of this tool and/or to support the hosting of the live demos:
+To support continued development of this tool and/or to support the hosting of the live demo site:
 
 * [Bitcoin](bitcoin:3NPGpNyLLmVKCEcuipBs7G4KpQJoJXjDGe): 3NPGpNyLLmVKCEcuipBs7G4KpQJoJXjDGe
 * [Litecoin](litecoin:ME4pXiXuWfEi1ANBDo9irUJVcZBhsTx14i): ME4pXiXuWfEi1ANBDo9irUJVcZBhsTx14i
