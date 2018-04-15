@@ -55,7 +55,8 @@ div(class="tab-content")
 				th(class="table-active properties-header") Size
 				td(class="monospace")
 					span #{result.getblock.size.toLocaleString()} bytes
-					span(class="text-muted")  (weight: #{result.getblock.weight.toLocaleString()})
+					if (result.getblock.weight)
+						span(class="text-muted")  (weight: #{result.getblock.weight.toLocaleString()})
 
 			tr
 				th(class="table-active properties-header") Confirmations
