@@ -1,5 +1,3 @@
-# ![BTC Explorer](public/img/logo/btc-64.png) BTC Explorer
-
 Simple, database-free Bitcoin blockchain explorer, via RPC. Built with Node.js, express, bootstrap-v4.
 
 This tool is intended to be a simple, self-hosted explorer for the Bitcoin blockchain, driven by RPC calls to your own bitcoind node. This tool is easy to run but lacks features compared to full-fledged (stateful) explorers.
@@ -18,9 +16,12 @@ A live demo of the tool is available at https://btc-explorer.com
 * Search to directly navigate to transactions or blocks
 * Mempool summary, showing unconfirmed transaction counts by fee level
 * RPC Browser to explore all of the RPC commands available from your node
-* RPC Terminal to send arbitrary commands to your node
+* RPC Terminal to send commands to your node
+* Currently supports BTC, LTC. Support for any Bitcoin-RPC-protocol-compliant coin can be added easily.
 
 # Getting started
+
+The below instructions are geared toward BTC, but can be adapted easily to other coins.
 
 ## Prerequisites
 
@@ -32,9 +33,10 @@ A live demo of the tool is available at https://btc-explorer.com
 1. Clone this repo
 2. `npm install` to install all required dependencies
 3. Optional: Uncomment the "bitcoind" section in [env.js](app/env.js) to automatically connect to the target node.
-4. `npm start` to start the local server
-5. Navigate to http://127.0.0.1:3002/
-6. Connect using the RPC credentials for your target bitcoin node (if you didn't edit [env.js](app/env.js) in Step 3)
+4. Optional: Change the "coin" value in [env.js](app/env.js). Currently supported values are "BTC" and "LTC".
+5. `npm start` to start the local server
+6. Navigate to http://127.0.0.1:3002/
+7. Connect using the RPC credentials for your target bitcoin node (if you didn't edit [env.js](app/env.js) in Step 3)
 
 # Screenshots
 
