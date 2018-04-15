@@ -28,7 +28,7 @@ block content
 				td(class="monospace") #{getmempoolinfo.mempoolminfee.toLocaleString()}
 			tr
 				th(class="table-active properties-header") Total Fees
-				td(class="monospace") #{mempoolstats.totalFee.toLocaleString()}
+				td(class="monospace") #{utils.formatBtcAmount(mempoolstats.totalFee, currencyFormatType)}
 
 
 		h4 Transaction count by fee level
@@ -49,7 +49,7 @@ block content
 		script var feeBucketLabels = [];
 		each feeBucketLabel, index in feeBucketLabels
 			- var percentTx = Math.round(100 * feeBucketTxCounts[index] / getmempoolinfo.size).toLocaleString();
-			script feeBucketLabels.push(["#{feeBucketLabel}","#{feeBucketTxCounts[index]} tx (#{percentTx}%)","#{totalfeeBuckets[index].toLocaleString()} BTC"]);
+			script feeBucketLabels.push(["#{feeBucketLabel}","#{feeBucketTxCounts[index]} tx (#{percentTx}%)","#{utils.formatBtcAmount(totalfeeBuckets[index], currencyFormatType)}"]);
 
 		script var feeBucketTxCounts = [#{feeBucketTxCounts}];
 

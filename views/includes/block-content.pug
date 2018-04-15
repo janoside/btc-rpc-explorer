@@ -8,11 +8,11 @@ ul(class='nav nav-tabs mb-3')
 
 div(class="tab-content")
 	div(id="tab-summary", class="tab-pane active", role="tabpanel")
-		if (result.getblock.hash == genesisBlockHash)
-			div(class="alert alert-success", style="padding-bottom: 0;")
-				h4(class="alert-heading h5") This is the Bitcoin Genesis Block!
-				:markdown-it
-					This is the first block in the Bitcoin blockchain. This block was mined by Bitcoin's anonymous/pseudonymous creator Satoshi Nakamoto. If you're interested, you can [read more about the genesis block](https://en.bitcoin.it/wiki/Genesis_block).
+		if (coinConfig.specialBlocks && coinConfig.specialBlocks[result.getblock.hash])
+			div(class="alert alert-info", style="padding-bottom: 0;")
+				h4(class="alert-heading h5") #{coinConfig.specialBlocks[result.getblock.hash].noteTitle}
+				if (coinConfig.specialBlocks[result.getblock.hash].noteBodyHtml)
+					p !{coinConfig.specialBlocks[result.getblock.hash].noteBodyHtml}
 		
 		table(class="table")
 			tr
@@ -27,8 +27,7 @@ div(class="tab-content")
 						a(href=("/block/" + result.getblock.previousblockhash)) #{result.getblock.previousblockhash}
 
 					else if (result.getblock.hash == genesisBlockHash)
-						span N/A - This is the 
-						a(href="https://en.bitcoin.it/wiki/Genesis_block") Bitcoin Genesis Block
+						span None
 
 			tr
 				th(class="table-active properties-header") Next Block Hash
@@ -102,6 +101,7 @@ div(class="tab-content")
 				td(class="monospace") #{result.getblock.chainwork}
 
 		hr
+
 		h2(class="h4") Transactions (#{txCount.toLocaleString()})
 			small  - Showing 
 				if (txCount <= limit)
@@ -139,8 +139,8 @@ div(class="tab-content")
 												th 1
 												td
 													span(class="tag monospace") coinbase
-													span(class="monospace")  Newly minted BTC
-												td(class="monospace") #{utils.getBlockReward(result.getblock.height)}
+													span(class="monospace")  Newly minted coins
+												td(class="monospace") #{utils.formatBtcAmount(utils.getBlockReward(result.getblock.height), currencyFormatType)}
 
 										each txInput, txInputIndex in result.txInputsByTransaction[tx.txid]
 											if (txInput)
@@ -159,7 +159,7 @@ div(class="tab-content")
 													td
 														if (vout.value)
 															- totalInputValue = totalInputValue.plus(new Decimal(vout.value));
-															span(class="monospace") #{vout.value}
+															span(class="monospace") #{utils.formatBtcAmount(vout.value, currencyFormatType)}
 
 										- var coinbaseCount = tx.vin[0].coinbase ? 1 : 0;
 										if ((tx.vin.length - coinbaseCount) > result.txInputsByTransaction[tx.txid].length)
@@ -173,7 +173,7 @@ div(class="tab-content")
 												td
 												td
 												td
-													strong(class="monospace") #{totalInputValue}
+													strong(class="monospace") #{utils.formatBtcAmount(totalInputValue, currencyFormatType)}
 									
 
 							div(class="col-md-6")
@@ -198,20 +198,20 @@ div(class="tab-content")
 
 														else if (vout.scriptPubKey.hex && vout.scriptPubKey.hex.startsWith('6a24aa21a9ed'))
 															span(class="monospace") Segregated Witness committment - 
-															a(href="https://github.com/bitcoin/bips/blob/master/bip-0141.mediawiki#commitment-structure") docs
-																i(class="fa fa-external-link")
+															a(href="https://github.com/bitcoin/bips/blob/master/bip-0141.mediawiki#commitment-structure") docs 
+																i(class="fas fa-external-link-alt")
 														else if (vout.scriptPubKey.asm && vout.scriptPubKey.asm.startsWith('OP_RETURN '))
 															span(class="monospace") OP_RETURN: 
 															span(class="monospace text-muted") #{utils.hex2ascii(vout.scriptPubKey.asm.substring("OP_RETURN ".length))}
 												td
-													span(class="monospace") #{vout.value}
+													span(class="monospace") #{utils.formatBtcAmount(vout.value, currencyFormatType)}
 													- totalOutputValue = totalOutputValue.plus(vout.value);
 
 										tr
 											td
 											td
 											td
-												strong(class="monospace") #{totalOutputValue}
+												strong(class="monospace") #{utils.formatBtcAmount(totalOutputValue, currencyFormatType)}
 			//pre
 			//	code #{JSON.stringify(tx, null, 4)}
 

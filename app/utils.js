@@ -1,6 +1,9 @@
 var Decimal = require("decimal.js");
 Decimal8 = Decimal.clone({ precision:8, rounding:8 });
 
+var env = require("./env.js");
+var coins = require("./coins.js");
+
 function doSmartRedirect(req, res, defaultUrl) {
 	if (req.session.redirectUrl) {
 		res.redirect(req.session.redirectUrl);
@@ -99,6 +102,30 @@ function formatBytes(bytesInt) {
 	return bytesInt + " B";
 }
 
+var formatBtcMap = {};
+
+function formatBtcAmount(amountBtc, formatType) {
+	if (formatBtcMap[formatType]) {
+		return (amountBtc * formatBtcMap[formatType].multiplier).toLocaleString() + " " + formatBtcMap[formatType].name;
+	}
+
+	for (var x = 0; x < coins[env.coin].currencyUnits.length; x++) {
+		var currencyUnit = coins[env.coin].currencyUnits[x];
+
+		for (var y = 0; y < currencyUnit.values.length; y++) {
+			var currencyUnitValue = currencyUnit.values[y];
+
+			if (currencyUnitValue == formatType) {
+				formatBtcMap[formatType] = currencyUnit;
+
+				return (amountBtc * currencyUnit.multiplier).toLocaleString() + " " + currencyUnit.name;
+			}
+		}
+	}
+	
+	return amountBtc;
+}
+
 
 module.exports = {
 	doSmartRedirect: doSmartRedirect,
@@ -107,5 +134,6 @@ module.exports = {
 	getBlockReward: getBlockReward,
 	splitArrayIntoChunks: splitArrayIntoChunks,
 	getRandomString: getRandomString,
-	formatBytes: formatBytes
+	formatBytes: formatBytes,
+	formatBtcAmount: formatBtcAmount
 };

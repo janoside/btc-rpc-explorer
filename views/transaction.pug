@@ -40,11 +40,11 @@ block content
 
 		div(class="tab-content")
 			div(id="tab-summary", class="tab-pane active", role="tabpanel")
-				if (txid == genesisCoinbaseTransactionId)
-					div(class="alert alert-warning", style="padding-bottom: 0;")
-						h4(class="alert-heading h5") This transaction doesn't really exist!
-						:markdown-it
-							This is the coinbase transaction of the [Bitcoin Genesis Block](/block/000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f). For more background about this special-case transaction, you can read [this brief discussion](https://github.com/bitcoin/bitcoin/issues/3303) among some of the [Bitcoin Core](https://bitcoin.org) developers.
+				if (coinConfig.specialTransactions && coinConfig.specialTransactions[txid])
+					div(class="alert alert-info", style="padding-bottom: 0;")
+						h4(class="alert-heading h5") #{coinConfig.specialTransactions[txid].noteTitle}
+						if (coinConfig.specialTransactions[txid].noteBodyHtml)
+							p !{coinConfig.specialTransactions[txid].noteBodyHtml}
 
 				table(class="table")
 					tr
@@ -116,13 +116,13 @@ block content
 					if (result.getrawtransaction.vin[0].coinbase)
 						tr
 							th(class="table-active properties-header") Total Network Fees
-							td(class="monospace") #{new Decimal(totalOutputValue).minus(totalInputValue)}
+							td(class="monospace") #{utils.formatBtcAmount(new Decimal(totalOutputValue).minus(totalInputValue), currencyFormatType)}
 					else
 						tr
 							th(class="table-active properties-header") Network Fee Paid
 							td(class="monospace")
-								strong #{new Decimal(totalInputValue).minus(totalOutputValue)}
-								span(class="text-muted")  (#{totalInputValue} - #{totalOutputValue})
+								strong #{utils.formatBtcAmount(new Decimal(totalInputValue).minus(totalOutputValue), currencyFormatType)}
+								span(class="text-muted")  (#{utils.formatBtcAmount(totalInputValue, currencyFormatType)} - #{utils.formatBtcAmount(totalOutputValue, currencyFormatType)})
 								br
 								span ~#{new DecimalRounded(totalInputValue).minus(totalOutputValue).dividedBy(result.getrawtransaction.size).times(100000000)} sat/B
 
@@ -163,8 +163,8 @@ block content
 												th 1
 												td
 													span(class="tag monospace") coinbase
-													span(class="monospace") Newly minted BTC
-												td(class="monospace") #{utils.getBlockReward(result.getblock.height)}
+													span(class="monospace") Newly minted coins
+												td(class="monospace") #{utils.formatBtcAmount(utils.getBlockReward(result.getblock.height), currencyFormatType)}
 
 										each txInput, txInputIndex in result.txInputs
 											if (txInput)
@@ -182,13 +182,13 @@ block content
 															a(href=("/tx/" + txInput.txid + "#output-" + result.getrawtransaction.vin[txInputIndex].vout), class="monospace") #{txInput.txid.substring(0, 14)}..., Output ##{result.getrawtransaction.vin[txInputIndex].vout + 1}
 													td
 														if (vout.value)
-															span(class="monospace") #{vout.value}
+															span(class="monospace") #{utils.formatBtcAmount(vout.value, currencyFormatType)}
 
 										tr
 											td
 											td
 											td
-												strong(class="monospace") #{totalInputValue}
+												strong(class="monospace") #{utils.formatBtcAmount(totalInputValue, currencyFormatType)}
 									
 
 							div(class="col-md-6")
@@ -211,19 +211,19 @@ block content
 
 														else if (vout.scriptPubKey.hex && vout.scriptPubKey.hex.startsWith('6a24aa21a9ed'))
 															span(class="monospace") Segregated Witness committment - 
-															a(href="https://github.com/bitcoin/bips/blob/master/bip-0141.mediawiki#commitment-structure") docs
-																i(class="fa fa-external-link")
+															a(href="https://github.com/bitcoin/bips/blob/master/bip-0141.mediawiki#commitment-structure") docs 
+																i(class="fas fa-external-link-alt")
 														else if (vout.scriptPubKey.asm && vout.scriptPubKey.asm.startsWith('OP_RETURN '))
 															span(class="monospace") OP_RETURN: 
 															span(class="monospace text-muted") #{utils.hex2ascii(vout.scriptPubKey.asm.substring("OP_RETURN ".length))}
 												td
-													span(class="monospace") #{vout.value}
+													span(class="monospace") #{utils.formatBtcAmount(vout.value, currencyFormatType)}
 
 										tr
 											td
 											td
 											td
-												strong(class="monospace") #{totalOutputValue}
+												strong(class="monospace") #{utils.formatBtcAmount(totalOutputValue, currencyFormatType)}
 
 			div(id="tab-scripts", class="tab-pane", role="tabpanel")
 				h3 Input Scripts

@@ -18,6 +18,7 @@ var bitcoin = require("bitcoin-core");
 var pug = require("pug");
 var momentDurationFormat = require("moment-duration-format");
 var rpcApi = require("./app/rpcApi.js");
+var coins = require("./app/coins.js");
 
 
 var baseActionsRouter = require('./routes/baseActionsRouter');
@@ -71,12 +72,43 @@ app.use(function(req, res, next) {
 	}
 
 	res.locals.env = env;
-
+	res.locals.coinConfig = coins[env.coin];
 	res.locals.host = req.session.host;
 	res.locals.port = req.session.port;
 
 	res.locals.genesisBlockHash = rpcApi.getGenesisBlockHash();
 	res.locals.genesisCoinbaseTransactionId = rpcApi.getGenesisCoinbaseTransactionId();
+
+
+	// currency format type
+	if (!req.session.currencyFormatType) {
+		var cookieValue = req.cookies['user-setting-currencyFormatType'];
+
+		if (cookieValue) {
+			req.session.currencyFormatType = cookieValue;
+
+		} else {
+			req.session.currencyFormatType = "";
+		}
+	}
+
+	res.locals.currencyFormatType = req.session.currencyFormatType;
+
+
+	// display width
+	if (!req.session.displayWidth) {
+		var cookieValue = req.cookies['user-setting-displayWidth'];
+
+		if (cookieValue) {
+			req.session.displayWidth = cookieValue;
+			
+		} else {
+			req.session.displayWidth = "container";
+		}
+	}
+
+	res.locals.displayWidth = req.session.displayWidth;
+
 
 	if (!["/", "/connect"].includes(req.originalUrl)) {
 		if (utils.redirectToConnectPageIfNeeded(req, res)) {
