@@ -6,6 +6,8 @@ This tool is intended to be a simple, self-hosted explorer for the Bitcoin block
 
 I built this tool because I wanted to use it myself. Whatever reasons one might have for running a full node (trustlessness, technical curiosity, etc) it's helpful to appreciate the "fullness" of a node. With this explorer, one can not only explore the blockchain (in the traditional sense of the term "explorer"), but also explore the capabilities of one's own node.
 
+A live demo of the tool is available at https://btc-explorer.com
+
 # Features
 
 * List of recent blocks
@@ -89,3 +91,11 @@ I built this tool because I wanted to use it myself. Whatever reasons one might 
     </td>
   </tr>
 </table>
+
+# Donate
+
+To support continued development of this tool and/or to support the hosting of the live demos:
+
+* [Bitcoin](bitcoin:3NPGpNyLLmVKCEcuipBs7G4KpQJoJXjDGe): 3NPGpNyLLmVKCEcuipBs7G4KpQJoJXjDGe
+* [Litecoin](litecoin:ME4pXiXuWfEi1ANBDo9irUJVcZBhsTx14i): ME4pXiXuWfEi1ANBDo9irUJVcZBhsTx14i
+
