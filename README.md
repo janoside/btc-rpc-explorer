@@ -1,4 +1,4 @@
-# ![BTC Explorer](public/img/logo/logo-64.png) BTC Explorer
+# ![BTC Explorer](public/img/logo/btc-64.png) BTC Explorer
 
 Simple, database-free Bitcoin blockchain explorer, via RPC. Built with Node.js, express, bootstrap-v4.
 
