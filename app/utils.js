@@ -106,7 +106,10 @@ var formatBtcMap = {};
 
 function formatBtcAmount(amountBtc, formatType) {
 	if (formatBtcMap[formatType]) {
-		return (amountBtc * formatBtcMap[formatType].multiplier).toLocaleString() + " " + formatBtcMap[formatType].name;
+		var dec = new Decimal(amountBtc);
+		dec = dec.times(formatBtcMap[formatType].multiplier);
+
+		return addThousandsSeparators(dec.toDecimalPlaces(8)) + " " + formatBtcMap[formatType].name;
 	}
 
 	for (var x = 0; x < coins[env.coin].currencyUnits.length; x++) {
@@ -118,12 +121,23 @@ function formatBtcAmount(amountBtc, formatType) {
 			if (currencyUnitValue == formatType) {
 				formatBtcMap[formatType] = currencyUnit;
 
-				return (amountBtc * currencyUnit.multiplier).toLocaleString() + " " + currencyUnit.name;
+				var dec = new Decimal(amountBtc);
+				dec = dec.times(currencyUnit.multiplier);
+
+				return addThousandsSeparators(dec.toDecimalPlaces(8)) + " " + currencyUnit.name;
 			}
 		}
 	}
 	
 	return amountBtc;
+}
+
+// ref: https://stackoverflow.com/a/2901298/673828
+function addThousandsSeparators(x) {
+	var parts = x.toString().split(".");
+	parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+
+	return parts.join(".");
 }
 
 
