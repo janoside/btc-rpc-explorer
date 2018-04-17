@@ -14,7 +14,7 @@ var simpleGit = require('simple-git');
 var utils = require("./app/utils.js");
 var moment = require("moment");
 var Decimal = require('decimal.js');
-var bitcoin = require("bitcoin");
+var bitcoin = require("bitcoin-core");
 var pug = require("pug");
 var momentDurationFormat = require("moment-duration-format");
 var rpcApi = require("./app/rpcApi.js");
@@ -73,7 +73,6 @@ app.use(function(req, res, next) {
 
 	res.locals.env = env;
 	res.locals.coinConfig = coins[env.coin];
-	
 	res.locals.host = req.session.host;
 	res.locals.port = req.session.port;
 
@@ -122,13 +121,13 @@ app.use(function(req, res, next) {
 			app.locals.sourcecodeVersion = log.all[0].hash.substring(0, 10);
 		});
 	}
-	
+
 	if (req.session.userMessage) {
 		res.locals.userMessage = req.session.userMessage;
-		
+
 		if (req.session.userMessageType) {
 			res.locals.userMessageType = req.session.userMessageType;
-			
+
 		} else {
 			res.locals.userMessageType = "info";
 		}

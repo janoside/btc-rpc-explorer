@@ -15,7 +15,7 @@ function getGenesisCoinbaseTransactionId() {
 
 function getBlockchainInfo() {
 	return new Promise(function(resolve, reject) {
-		client.cmd('getblockchaininfo', function(err, result, resHeaders) {
+		client.command('getblockchaininfo', function(err, result, resHeaders) {
 			if (err) {
 				console.log("Error 3207fh0f: " + err);
 
@@ -31,7 +31,7 @@ function getBlockchainInfo() {
 
 function getNetworkInfo() {
 	return new Promise(function(resolve, reject) {
-		client.cmd('getnetworkinfo', function(err, result, resHeaders) {
+		client.command('getnetworkinfo', function(err, result, resHeaders) {
 			if (err) {
 				console.log("Error 239r7ger7gy: " + err);
 
@@ -47,7 +47,7 @@ function getNetworkInfo() {
 
 function getNetTotals() {
 	return new Promise(function(resolve, reject) {
-		client.cmd('getnettotals', function(err, result, resHeaders) {
+		client.command('getnettotals', function(err, result, resHeaders) {
 			if (err) {
 				console.log("Error as07uthf40ghew: " + err);
 
@@ -63,7 +63,7 @@ function getNetTotals() {
 
 function getMempoolInfo() {
 	return new Promise(function(resolve, reject) {
-		client.cmd('getmempoolinfo', function(err, result, resHeaders) {
+		client.command('getmempoolinfo', function(err, result, resHeaders) {
 			if (err) {
 				console.log("Error 23407rhwe07fg: " + err);
 
@@ -79,7 +79,7 @@ function getMempoolInfo() {
 
 function getUptimeSeconds() {
 	return new Promise(function(resolve, reject) {
-		client.cmd('uptime', function(err, result, resHeaders) {
+		client.command('uptime', function(err, result, resHeaders) {
 			if (err) {
 				console.log("Error 3218y6gr3986sdd: " + err);
 
@@ -95,7 +95,7 @@ function getUptimeSeconds() {
 
 function getMempoolStats() {
 	return new Promise(function(resolve, reject) {
-		client.cmd('getrawmempool', true, function(err, result, resHeaders) {
+		client.command('getrawmempool', true, function(err, result, resHeaders) {
 			if (err) {
 				console.log("Error 428thwre0ufg: " + err);
 
@@ -179,9 +179,7 @@ function getBlockByHeight(blockHeight) {
 	console.log("getBlockByHeight: " + blockHeight);
 
 	return new Promise(function(resolve, reject) {
-		var client = global.client;
-		
-		client.cmd('getblockhash', blockHeight, function(err, result, resHeaders) {
+		client.command('getblockhash', blockHeight, function(err, result, resHeaders) {
 			if (err) {
 				console.log("Error 0928317yr3w: " + err);
 
@@ -190,7 +188,7 @@ function getBlockByHeight(blockHeight) {
 				return;
 			}
 
-			client.cmd('getblock', result, function(err2, result2, resHeaders2) {
+			client.command('getblock', result, function(err2, result2, resHeaders2) {
 				if (err2) {
 					console.log("Error 320fh7e0hg: " + err2);
 
@@ -213,30 +211,26 @@ function getBlocksByHeight(blockHeights) {
 		for (var i = 0; i < blockHeights.length; i++) {
 			batch.push({
 				method: 'getblockhash',
-				params: [ blockHeights[i] ]
+				parameters: [ blockHeights[i] ]
 			});
 		}
 
-		var blockHashes = [];
-		client.cmd(batch, function(err, result, resHeaders) {
-			blockHashes.push(result);
-
+		client.command(batch, function(err, result, resHeaders) {
+			var blockHashes = result.slice();
 			if (blockHashes.length == batch.length) {
 				var batch2 = [];
 				for (var i = 0; i < blockHashes.length; i++) {
 					batch2.push({
 						method: 'getblock',
-						params: [ blockHashes[i] ]
+						parameters: [ blockHashes[i] ]
 					});
 				}
 
-				var blocks = [];
-				client.cmd(batch2, function(err2, result2, resHeaders2) {
+				client.command(batch2, function(err2, result2, resHeaders2) {
 					if (err2) {
 						console.log("Error 138ryweufdf: " + err2);
 					}
-
-					blocks.push(result2);
+					var blocks = result2.slice();
 					if (blocks.length == batch2.length) {
 						resolve(blocks);
 					}
@@ -250,9 +244,7 @@ function getBlockByHash(blockHash) {
 	console.log("getBlockByHash: " + blockHash);
 
 	return new Promise(function(resolve, reject) {
-		var client = global.client;
-		
-		client.cmd('getblock', blockHash, function(err, result, resHeaders) {
+		client.command('getblock', blockHash, function(err, result, resHeaders) {
 			if (err) {
 				console.log("Error 0u2fgewue: " + err);
 
@@ -292,11 +284,11 @@ function getRawTransaction(txid) {
 
 				resolve(result);
 			});
-			
+
 			return;
 		}
 
-		client.cmd('getrawtransaction', txid, 1, function(err, result, resHeaders) {
+		client.command('getrawtransaction', txid, 1, function(err, result, resHeaders) {
 			if (err) {
 				console.log("Error 329813yre823: " + err);
 
@@ -316,7 +308,6 @@ function getRawTransactions(txids) {
 	return new Promise(function(resolve, reject) {
 		if (!txids || txids.length == 0) {
 			resolve([]);
-
 			return;
 		}
 
@@ -340,17 +331,15 @@ function getRawTransactions(txids) {
 		var requests = [];
 		for (var i = 0; i < txids.length; i++) {
 			var txid = txids[i];
-			
 			if (txid) {
 				requests.push({
 					method: 'getrawtransaction',
-					params: [ txid, 1 ]
+					parameters: [ txid, 1]
 				});
 			}
 		}
 
 		var requestBatches = utils.splitArrayIntoChunks(requests, 20);
-
 		executeBatchesSequentially(requestBatches, function(results) {
 			resolve(results);
 		});
@@ -358,11 +347,8 @@ function getRawTransactions(txids) {
 }
 
 function executeBatchesSequentially(batches, resultFunc) {
-	var batchId = utils.getRandomString(20, 'aA#');
-
-	console.log("Starting " + batches.length + "-item batch " + batchId + "...");
-
-	executeBatchesSequentiallyInternal(batchId, batches, 0, [], resultFunc);
+	console.log("Starting " + batches.length + "batches");
+	executeBatchesSequentiallyInternal(0, batches, 0, [], resultFunc);
 }
 
 function executeBatchesSequentiallyInternal(batchId, batches, currentIndex, accumulatedResults, resultFunc) {
@@ -370,26 +356,19 @@ function executeBatchesSequentiallyInternal(batchId, batches, currentIndex, accu
 		console.log("Finishing batch " + batchId + "...");
 
 		resultFunc(accumulatedResults);
-
 		return;
 	}
 
-	console.log("Executing item #" + (currentIndex + 1) + " (of " + batches.length + ") for batch " + batchId);
+	var batchId = utils.getRandomString(20, 'aA#');
+	console.log("Executing batch #" + (currentIndex + 1) + " (of " + batches.length + ") with id " + batchId);
 
-	var count = batches[currentIndex].length;
-
-	client.cmd(batches[currentIndex], function(err, result, resHeaders) {
+	client.command(batches[currentIndex], function(err, result, resHeaders) {
 		if (err) {
 			console.log("Error f83024hf4: " + err);
 		}
 
-		accumulatedResults.push(result);
-
-		count--;
-
-		if (count == 0) {
-			executeBatchesSequentiallyInternal(batchId, batches, currentIndex + 1, accumulatedResults, resultFunc);
-		}
+		accumulatedResults.push(...result);
+		executeBatchesSequentiallyInternal(batchId, batches, currentIndex + 1, accumulatedResults, resultFunc);
 	});
 }
 
@@ -397,7 +376,7 @@ function getBlockData(rpcClient, blockHash, txLimit, txOffset) {
 	console.log("getBlockData: " + blockHash);
 
 	return new Promise(function(resolve, reject) {
-		client.cmd('getblock', blockHash, function(err2, result2, resHeaders2) {
+		client.command('getblock', blockHash, function(err2, result2, resHeaders2) {
 			if (err2) {
 				console.log("Error 3017hfwe0f: " + err2);
 
@@ -440,7 +419,7 @@ function getBlockData(rpcClient, blockHash, txLimit, txOffset) {
 
 function getHelp() {
 	return new Promise(function(resolve, reject) {
-		client.cmd('help', function(err, result, resHeaders) {
+		client.command('help', function(err, result, resHeaders) {
 			if (err) {
 				console.log("Error 32907th429ghf: " + err);
 
@@ -477,7 +456,7 @@ function getHelp() {
 
 function getRpcMethodHelp(methodName) {
 	return new Promise(function(resolve, reject) {
-		client.cmd('help', methodName, function(err, result, resHeaders) {
+		client.command('help', methodName, function(err, result, resHeaders) {
 			if (err) {
 				console.log("Error 237hwerf07wehg: " + err);
 
