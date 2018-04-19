@@ -141,7 +141,7 @@ div(class="tab-content")
 												td
 													span(class="tag monospace") coinbase
 													span(class="monospace")  Newly minted coins
-												td(class="monospace") #{utils.formatBtcAmount(utils.getBlockReward(result.getblock.height), currencyFormatType)}
+												td(class="monospace") #{utils.formatCurrencyAmount(utils.getBlockReward(result.getblock.height), currencyFormatType)}
 
 										each txInput, txInputIndex in result.txInputsByTransaction[tx.txid]
 											if (txInput)
@@ -160,7 +160,7 @@ div(class="tab-content")
 													td
 														if (vout.value)
 															- totalInputValue = totalInputValue.plus(new Decimal(vout.value));
-															span(class="monospace") #{utils.formatBtcAmount(vout.value, currencyFormatType)}
+															span(class="monospace") #{utils.formatCurrencyAmount(vout.value, currencyFormatType)}
 
 										- var coinbaseCount = tx.vin[0].coinbase ? 1 : 0;
 										if ((tx.vin.length - coinbaseCount) > result.txInputsByTransaction[tx.txid].length)
@@ -174,7 +174,7 @@ div(class="tab-content")
 												td
 												td
 												td
-													strong(class="monospace") #{utils.formatBtcAmount(totalInputValue, currencyFormatType)}
+													strong(class="monospace") #{utils.formatCurrencyAmount(totalInputValue, currencyFormatType)}
 									
 
 							div(class="col-md-6")
@@ -205,14 +205,14 @@ div(class="tab-content")
 															span(class="monospace") OP_RETURN: 
 															span(class="monospace text-muted") #{utils.hex2ascii(vout.scriptPubKey.asm.substring("OP_RETURN ".length))}
 												td
-													span(class="monospace") #{utils.formatBtcAmount(vout.value, currencyFormatType)}
+													span(class="monospace") #{utils.formatCurrencyAmount(vout.value, currencyFormatType)}
 													- totalOutputValue = totalOutputValue.plus(vout.value);
 
 										tr
 											td
 											td
 											td
-												strong(class="monospace") #{utils.formatBtcAmount(totalOutputValue, currencyFormatType)}
+												strong(class="monospace") #{utils.formatCurrencyAmount(totalOutputValue, currencyFormatType)}
 			//pre
 			//	code #{JSON.stringify(tx, null, 4)}
 

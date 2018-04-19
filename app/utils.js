@@ -102,14 +102,16 @@ function formatBytes(bytesInt) {
 	return bytesInt + " B";
 }
 
-var formatBtcMap = {};
+var formatCurrencyCache = {};
 
-function formatBtcAmount(amountBtc, formatType) {
-	if (formatBtcMap[formatType]) {
-		var dec = new Decimal(amountBtc);
-		dec = dec.times(formatBtcMap[formatType].multiplier);
+function formatCurrencyAmount(amount, formatType) {
+	if (formatCurrencyCache[formatType]) {
+		var dec = new Decimal(amount);
+		dec = dec.times(formatCurrencyCache[formatType].multiplier);
 
-		return addThousandsSeparators(dec.toDecimalPlaces(8)) + " " + formatBtcMap[formatType].name;
+		var decimalPlaces = formatCurrencyCache[formatType].decimalPlaces;
+
+		return addThousandsSeparators(dec.toDecimalPlaces(decimalPlaces)) + " " + formatCurrencyCache[formatType].name;
 	}
 
 	for (var x = 0; x < coins[env.coin].currencyUnits.length; x++) {
@@ -119,17 +121,19 @@ function formatBtcAmount(amountBtc, formatType) {
 			var currencyUnitValue = currencyUnit.values[y];
 
 			if (currencyUnitValue == formatType) {
-				formatBtcMap[formatType] = currencyUnit;
+				formatCurrencyCache[formatType] = currencyUnit;
 
-				var dec = new Decimal(amountBtc);
+				var dec = new Decimal(amount);
 				dec = dec.times(currencyUnit.multiplier);
 
-				return addThousandsSeparators(dec.toDecimalPlaces(8)) + " " + currencyUnit.name;
+				var decimalPlaces = currencyUnit.decimalPlaces;
+
+				return addThousandsSeparators(dec.toDecimalPlaces(decimalPlaces)) + " " + currencyUnit.name;
 			}
 		}
 	}
 	
-	return amountBtc;
+	return amount;
 }
 
 // ref: https://stackoverflow.com/a/2901298/673828
@@ -149,5 +153,5 @@ module.exports = {
 	splitArrayIntoChunks: splitArrayIntoChunks,
 	getRandomString: getRandomString,
 	formatBytes: formatBytes,
-	formatBtcAmount: formatBtcAmount
+	formatCurrencyAmount: formatCurrencyAmount,
 };

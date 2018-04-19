@@ -9,12 +9,14 @@ module.exports = {
 			name:"LTC",
 			multiplier:1,
 			default:true,
-			values:["", "btc", "BTC"]
+			values:["", "btc", "BTC"],
+			decimalPlaces:8
 		},
 		{
 			name:"mLTC",
 			multiplier:1000,
-			values:["mltc"]
+			values:["mltc"],
+			decimalPlaces:5
 		}
 	],
 	genesisBlockHash: "12a765e31ffd4059bada1e25190f6e98c99d9714d334efa41a195a7e7e04bfe2",

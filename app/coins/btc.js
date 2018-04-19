@@ -11,17 +11,26 @@ module.exports = {
 			name:"BTC",
 			multiplier:1,
 			default:true,
-			values:["", "btc", "BTC"]
+			values:["", "btc", "BTC"],
+			decimalPlaces:8
 		},
 		{
 			name:"mBTC",
 			multiplier:1000,
-			values:["mbtc"]
+			values:["mbtc"],
+			decimalPlaces:5
 		},
 		{
 			name:"bits",
 			multiplier:1000000,
-			values:["bits"]
+			values:["bits"],
+			decimalPlaces:2
+		},
+		{
+			name:"sat",
+			multiplier:100000000,
+			values:["sat"],
+			decimalPlaces:0
 		}
 	],
 	genesisBlockHash: "000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f",
