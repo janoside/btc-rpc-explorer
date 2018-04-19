@@ -44,3 +44,9 @@ code, .monospace {
 .table th {
 	border-top: none;
 }
+
+@media (min-width: 1920px) {
+	.container {
+		max-width: 1800px;
+	}
+}

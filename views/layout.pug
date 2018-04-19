@@ -19,7 +19,7 @@ html
 		
 	body
 		nav(class="navbar navbar-expand-lg navbar-dark bg-dark mb-4")
-			div(class=displayWidth)
+			div(class="container")
 				a(class="navbar-brand", href="/")
 					span
 						if (coinConfig.logoUrl)
@@ -49,17 +49,6 @@ html
 													if (currencyFormatType == valueName)
 														i(class="fas fa-check")
 												span  #{item.name}
-									
-									div(class="dropdown-divider")
-									span(class="dropdown-header") Display Width
-									a(class="dropdown-item", href="/changeSetting?name=displayWidth&value=container")
-										if (displayWidth == "container")
-											i(class="fas fa-check")
-										span  Centered
-									a(class="dropdown-item", href="/changeSetting?name=displayWidth&value=container-fluid")
-										if (displayWidth == "container-fluid")
-											i(class="fas fa-check")
-										span  Full Width
 
 						form(method="post", action="/search", class="form-inline")
 							div(class="input-group")
@@ -67,7 +56,7 @@ html
 								span(class="input-group-btn")
 									input(type="submit", class="btn btn-primary", value="Search")
 
-		div(class=(displayWidth + " mb-4"), style="margin-top: -1.0rem;")
+		div(class="container mb-4", style="margin-top: -1.0rem;")
 			ul(class="nav")
 				li(class="nav-item")
 					a(href="/rpc-browser", class="nav-link") RPC Browser
@@ -81,7 +70,7 @@ html
 
 			hr
 				
-		div(class=displayWidth)
+		div(class="container")
 			if (userMessage)
 				div(class="alert", class=(userMessageType ? ("alert-"  + userMessageType) : "alert-info"), role="alert")
 					span !{userMessage}
