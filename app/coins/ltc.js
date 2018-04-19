@@ -71,5 +71,16 @@ module.exports = {
 			note: "The Litecoin genesis block.",
 			referenceUrl: "https://medium.com/@SatoshiLite/satoshilite-1e2dad89a017"
 		}
-	]
+	],
+	exchangeRateData:{
+		jsonUrl:"https://api.coinmarketcap.com/v1/ticker/Litecoin/",
+		exchangedCurrencyName:"usd",
+		responseBodySelectorFunction:function(responseBody) {
+			if (responseBody[0] && responseBody[0].price_usd) {
+				return responseBody[0].price_usd;
+			}
+			
+			return -1;
+		}
+	}
 };

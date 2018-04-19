@@ -19,6 +19,7 @@ var pug = require("pug");
 var momentDurationFormat = require("moment-duration-format");
 var rpcApi = require("./app/rpcApi.js");
 var coins = require("./app/coins.js");
+var request = require("request");
 
 
 var baseActionsRouter = require('./routes/baseActionsRouter');
@@ -48,6 +49,41 @@ app.use(session({
 	saveUninitialized: false
 }));
 app.use(express.static(path.join(__dirname, 'public')));
+
+
+function refreshExchangeRate() {
+	if (coins[env.coin].exchangeRateData) {
+		request(coins[env.coin].exchangeRateData.jsonUrl, function(error, response, body) {
+			if (!error && response.statusCode == 200) {
+				var responseBody = JSON.parse(body);
+
+				var exchangeRate = coins[env.coin].exchangeRateData.responseBodySelectorFunction(responseBody);
+				if (exchangeRate > 0) {
+					global.exchangeRate = exchangeRate;
+					global.exchangeRateUpdateTime = new Date();
+
+					console.log("Using exchange rate: " + global.exchangeRate + " USD/" + coins[env.coin].name + " starting at " + global.exchangeRateUpdateTime);
+
+				} else {
+					console.log("Unable to get exchange rate data");
+				}
+			} else {
+				console.log("Error " + response.statusCode)
+			}
+		});
+	}
+}
+
+
+
+app.runOnStartup = function() {
+	if (global.exchangeRate == null) {
+		refreshExchangeRate();
+	}
+
+	// refresh exchange rate periodically
+	setInterval(refreshExchangeRate, 1800000);
+};
 
 
 app.locals.sourcecodeVersion = null;

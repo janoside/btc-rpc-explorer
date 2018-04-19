@@ -144,6 +144,17 @@ function addThousandsSeparators(x) {
 	return parts.join(".");
 }
 
+function formatExchangedCurrency(amount) {
+	if (global.exchangeRate != null) {
+		var dec = new Decimal(amount);
+		dec = dec.times(global.exchangeRate);
+
+		return addThousandsSeparators(dec.toDecimalPlaces(2)) + " " + coins[env.coin].exchangeRateData.exchangedCurrencyName;
+	}
+
+	return "";
+}
+
 
 module.exports = {
 	doSmartRedirect: doSmartRedirect,
@@ -154,4 +165,5 @@ module.exports = {
 	getRandomString: getRandomString,
 	formatBytes: formatBytes,
 	formatCurrencyAmount: formatCurrencyAmount,
+	formatExchangedCurrency: formatExchangedCurrency
 };

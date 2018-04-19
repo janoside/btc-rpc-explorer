@@ -116,12 +116,21 @@ block content
 					if (result.getrawtransaction.vin[0].coinbase)
 						tr
 							th(class="table-active properties-header") Total Network Fees
-							td(class="monospace") #{utils.formatCurrencyAmount(new Decimal(totalOutputValue).minus(totalInputValue), currencyFormatType)} (#{global.exchangeRate})
+							td(class="monospace")
+								span #{utils.formatCurrencyAmount(new Decimal(totalOutputValue).minus(totalInputValue), currencyFormatType)}
+									if (global.exchangeRate)
+										span  
+										span(data-toggle="tooltip", title=utils.formatExchangedCurrency(new Decimal(totalOutputValue).minus(totalInputValue)))
+											i(class="fas fa-exchange-alt")
 					else
 						tr
 							th(class="table-active properties-header") Network Fee Paid
 							td(class="monospace")
 								strong #{utils.formatCurrencyAmount(new Decimal(totalInputValue).minus(totalOutputValue), currencyFormatType)}
+								if (global.exchangeRate)
+									span  
+									span(data-toggle="tooltip", title=utils.formatExchangedCurrency(new Decimal(totalInputValue).minus(totalOutputValue)))
+										i(class="fas fa-exchange-alt")
 								span(class="text-muted")  (#{utils.formatCurrencyAmount(totalInputValue, currencyFormatType)} - #{utils.formatCurrencyAmount(totalOutputValue, currencyFormatType)})
 								br
 								span ~#{new DecimalRounded(totalInputValue).minus(totalOutputValue).dividedBy(result.getrawtransaction.size).times(100000000)} sat/B
@@ -165,6 +174,10 @@ block content
 													span(class="tag monospace") coinbase
 													span(class="monospace") Newly minted coins
 												td(class="monospace") #{utils.formatCurrencyAmount(utils.getBlockReward(result.getblock.height), currencyFormatType)}
+													if (global.exchangeRate)
+														span  
+														span(data-toggle="tooltip", title=utils.formatExchangedCurrency(utils.getBlockReward(result.getblock.height)))
+															i(class="fas fa-exchange-alt")
 
 										each txInput, txInputIndex in result.txInputs
 											if (txInput)
@@ -183,12 +196,20 @@ block content
 													td
 														if (vout.value)
 															span(class="monospace") #{utils.formatCurrencyAmount(vout.value, currencyFormatType)}
+																if (global.exchangeRate)
+																	span  
+																	span(data-toggle="tooltip", title=utils.formatExchangedCurrency(vout.value))
+																		i(class="fas fa-exchange-alt")
 
 										tr
 											td
 											td
 											td
 												strong(class="monospace") #{utils.formatCurrencyAmount(totalInputValue, currencyFormatType)}
+													if (global.exchangeRate)
+														span  
+														span(data-toggle="tooltip", title=utils.formatExchangedCurrency(totalInputValue))
+															i(class="fas fa-exchange-alt")
 									
 
 							div(class="col-md-6")
@@ -218,12 +239,20 @@ block content
 															span(class="monospace text-muted") #{utils.hex2ascii(vout.scriptPubKey.asm.substring("OP_RETURN ".length))}
 												td
 													span(class="monospace") #{utils.formatCurrencyAmount(vout.value, currencyFormatType)}
+														if (global.exchangeRate)
+															span  
+															span(data-toggle="tooltip", title=utils.formatExchangedCurrency(vout.value))
+																i(class="fas fa-exchange-alt")
 
 										tr
 											td
 											td
 											td
 												strong(class="monospace") #{utils.formatCurrencyAmount(totalOutputValue, currencyFormatType)}
+													if (global.exchangeRate)
+														span  
+														span(data-toggle="tooltip", title=utils.formatExchangedCurrency(totalOutputValue))
+															i(class="fas fa-exchange-alt")
 
 			div(id="tab-scripts", class="tab-pane", role="tabpanel")
 				h3 Input Scripts

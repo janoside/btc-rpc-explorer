@@ -151,5 +151,16 @@ module.exports = {
 			note: "First block mined that was greater than 1MB.",
 			referenceUrl: "https://en.bit.news/bitfury-mined-first-segwit-block-size-1-mb/"
 		}
-	]
+	],
+	exchangeRateData:{
+		jsonUrl:"https://api.coinmarketcap.com/v1/ticker/Bitcoin/",
+		exchangedCurrencyName:"usd",
+		responseBodySelectorFunction:function(responseBody) {
+			if (responseBody[0] && responseBody[0].price_usd) {
+				return responseBody[0].price_usd;
+			}
+			
+			return -1;
+		}
+	}
 };
