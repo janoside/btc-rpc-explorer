@@ -91,17 +91,13 @@ block content
 								if (result.getrawtransaction.locktime < 500000000)
 									span Spendable in block 
 									a(href=("/block-height/" + result.getrawtransaction.locktime)) #{result.getrawtransaction.locktime}
-									span  or later - (
-									a(href="https://bitcoin.org/en/developer-guide#locktime-and-sequence-number", title="Locktime documentation")
-										span docs 
-										i(class="fas fa-external-link-alt")
-									span )
+									span  or later 
+									a(href="https://bitcoin.org/en/developer-guide#locktime-and-sequence-number", data-toggle="tooltip", title="More info about locktime", target="_blank") 
+										i(class="fas fa-info-circle")
 								else
-									span Spendable after #{moment.utc(new Date(result.getrawtransaction.locktime * 1000)).format("Y-MM-DD HH:mm:ss")} (utc) - (
-									a(href="https://bitcoin.org/en/developer-guide#locktime-and-sequence-number", title="Locktime documentation")
-										span docs 
-										i(class="fas fa-external-link-alt")
-									span )
+									span Spendable after #{moment.utc(new Date(result.getrawtransaction.locktime * 1000)).format("Y-MM-DD HH:mm:ss")} (utc) 
+									a(href="https://bitcoin.org/en/developer-guide#locktime-and-sequence-number", data-toggle="tooltip", title="More info about locktime", target="_blank") 
+										i(class="fas fa-info-circle")
 
 					tr
 						th(class="table-active properties-header") Confirmations
@@ -138,7 +134,7 @@ block content
 				if (result.getrawtransaction.vin[0].coinbase)
 					div(class="card mb-3")
 						div(class="card-header")
-							h2(class="h5 mb-0") Coinbase
+							h2(class="h6 mb-0") Coinbase
 						div(class="card-body")
 							h6 Hex
 							div(style="background-color: #f0f0f0; padding: 5px 10px;", class="mb-3")
@@ -152,9 +148,9 @@ block content
 					div(class="card-header")
 						div(class="row")
 							div(class="col-md-6")
-								h2(class="h5 mb-0") Input (#{result.getrawtransaction.vin.length.toLocaleString()})
+								h2(class="h6 mb-0") Input (#{result.getrawtransaction.vin.length.toLocaleString()})
 							div(class="col-md-6") 
-								h2(class="h5 mb-0") Output (#{result.getrawtransaction.vout.length.toLocaleString()})
+								h2(class="h6 mb-0") Output (#{result.getrawtransaction.vout.length.toLocaleString()})
 					div(class="card-body")
 						div(class="row")
 							div(class="col-md-6")
@@ -231,9 +227,9 @@ block content
 																div(class="monospace", style="word-break: break-word;") #{vout.scriptPubKey.addresses[0]}
 
 														else if (vout.scriptPubKey.hex && vout.scriptPubKey.hex.startsWith('6a24aa21a9ed'))
-															span(class="monospace") Segregated Witness committment - 
-															a(href="https://github.com/bitcoin/bips/blob/master/bip-0141.mediawiki#commitment-structure") docs 
-																i(class="fas fa-external-link-alt")
+															span(class="monospace") Segregated Witness committment 
+															a(href="https://github.com/bitcoin/bips/blob/master/bip-0141.mediawiki#commitment-structure", data-toggle="tooltip", title="View developer docs", target="_blank")  
+																i(class="fas fa-info-circle")
 														else if (vout.scriptPubKey.asm && vout.scriptPubKey.asm.startsWith('OP_RETURN '))
 															span(class="monospace") OP_RETURN: 
 															span(class="monospace text-muted") #{utils.hex2ascii(vout.scriptPubKey.asm.substring("OP_RETURN ".length))}

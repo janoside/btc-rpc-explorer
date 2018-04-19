@@ -123,7 +123,7 @@ div(class="tab-content")
 					if (true)
 						div(class="row")
 							div(class="col-md-6")
-								h6 Input (#{tx.vin.length.toLocaleString()})
+								//h6 Input (#{tx.vin.length.toLocaleString()})
 								if (result.txInputsByTransaction[tx.txid])
 									- var totalInputValue = new Decimal(0);
 									table(class="table mb-0")
@@ -190,7 +190,7 @@ div(class="tab-content")
 									
 
 							div(class="col-md-6")
-								h6 Output (#{tx.vout.length.toLocaleString()})
+								//h6 Output (#{tx.vout.length.toLocaleString()})
 								- var totalOutputValue = new Decimal(0);
 								table(class="table mb-0")
 									thead
@@ -210,9 +210,9 @@ div(class="tab-content")
 																div(class="monospace", style="word-break: break-word;") #{vout.scriptPubKey.addresses[0]}
 
 														else if (vout.scriptPubKey.hex && vout.scriptPubKey.hex.startsWith('6a24aa21a9ed'))
-															span(class="monospace") Segregated Witness committment - 
-															a(href="https://github.com/bitcoin/bips/blob/master/bip-0141.mediawiki#commitment-structure") docs 
-																i(class="fas fa-external-link-alt")
+															span(class="monospace") Segregated Witness committment 
+															a(href="https://github.com/bitcoin/bips/blob/master/bip-0141.mediawiki#commitment-structure", data-toggle="tooltip", title="View developer docs", target="_blank") 
+																i(class="fas fa-info-circle")
 														else if (vout.scriptPubKey.asm && vout.scriptPubKey.asm.startsWith('OP_RETURN '))
 															span(class="monospace") OP_RETURN: 
 															span(class="monospace text-muted") #{utils.hex2ascii(vout.scriptPubKey.asm.substring("OP_RETURN ".length))}
