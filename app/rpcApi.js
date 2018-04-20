@@ -503,7 +503,7 @@ function getRpcMethodHelp(methodName) {
 					argumentLines.push(line);
 				}
 
-				if (line.trim() == "Arguments:") {
+				if (line.trim() == "Arguments:" || line.trim() == "Arguments") {
 					catchArgs = true;
 				}
 			});
@@ -512,7 +512,7 @@ function getRpcMethodHelp(methodName) {
 			var argX = null;
 			// looking for line starting with "N. " where N is an integer (1-2 digits)
 			argumentLines.forEach(function(line) {
-				var regex = /^([0-9]+)\.\s*"?(\w+)"?\s*\((\w+),?\s*(\w+),?\s*(.+)?\s*\)\s*(.+)?$/;
+				var regex = /^([0-9]+)\.\s*"?(\w+)"?\s*\(([^,)]*),?\s*([^,)]*),?\s*([^,)]*),?\s*([^,)]*)?\s*\)\s*(.+)?$/;
 
 				var match = regex.exec(line);
 
@@ -536,7 +536,11 @@ function getRpcMethodHelp(methodName) {
 					}
 
 					if (match[6]) {
-						argX.description = match[6];
+						argX.properties.push(match[6]);
+					}
+
+					if (match[7]) {
+						argX.description = match[7];
 					}
 
 					args.push(argX);

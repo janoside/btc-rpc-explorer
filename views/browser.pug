@@ -52,15 +52,13 @@ block content
 									if (argValues != null)
 										if (argValues[index] != null)
 											if (("" + argValues[index]) != NaN)
-												- valX = argValues[index];
+												- valX = argValues[index].toString();
 
 									input(id=("arg_" + argX.name), type="text", name=("args[" + index + "]"), placeholder=argX.name, class="form-control", value=valX)
 
 							input(type="submit", name="execute", value="Execute", class="btn btn-primary btn-block")
 
 						if (methodResult)
-							
-
 							div(class="mt-4")
 								hr
 

@@ -509,8 +509,17 @@ router.get("/rpc-browser", function(req, res) {
 
 									break;
 
+								} else if (argProperties[j] == "boolean") {
+									if (req.query.args[i]) {
+										argValues.push(req.query.args[i] == "true");
+									}
+
+									break;
+
 								} else if (argProperties[j] == "string") {
-									argValues.push(req.query.args[i]);
+									if (req.query.args[i]) {
+										argValues.push(req.query.args[i]);
+									}
 
 									break;
 								}
@@ -528,10 +537,18 @@ router.get("/rpc-browser", function(req, res) {
 						return;
 					}
 
-					client.cmd([{method:req.query.method, params:argValues}], function(err3, result3, resHeaders3) {
-						if (err3) {
-							res.locals.methodResult = err3;
+					console.log("Executing RPC '" + req.query.method + "' with params: [" + argValues + "]");
 
+					client.cmd([{method:req.query.method, params:argValues}], function(err3, result3, resHeaders3) {
+						console.log("RPC Response: err=" + err3 + ", result=" + result3 + ", headers=" + resHeaders3);
+
+						if (err3) {
+							if (result3) {
+								res.locals.methodResult = {error:("" + err3), result:result3};
+								
+							} else {
+								res.locals.methodResult = {error:("" + err3)};
+							}
 						} else if (result3) {
 							res.locals.methodResult = result3;
 
