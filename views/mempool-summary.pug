@@ -29,6 +29,10 @@ block content
 			tr
 				th(class="table-active properties-header") Total Fees
 				td(class="monospace") #{utils.formatCurrencyAmount(mempoolstats.totalFee, currencyFormatType)}
+					if (global.exchangeRate)
+						span  
+						span(data-toggle="tooltip", title=utils.formatExchangedCurrency(mempoolstats.totalFee))
+							i(class="fas fa-exchange-alt")
 
 
 		h4 Transaction count by fee level
