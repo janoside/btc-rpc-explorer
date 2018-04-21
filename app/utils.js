@@ -1,6 +1,4 @@
 var Decimal = require("decimal.js");
-Decimal8 = Decimal.clone({ precision:8, rounding:8 });
-
 var env = require("./env.js");
 var coins = require("./coins.js");
 
@@ -36,18 +34,6 @@ function hex2ascii(hex) {
 	}
 	
 	return str;
-}
-
-function getBlockReward(blockHeight) {
-	var eras = [ new Decimal8(50) ];
-	for (var i = 1; i < 34; i++) {
-		var previous = eras[i - 1];
-		eras.push(new Decimal8(previous).dividedBy(2));
-	}
-
-	var index = Math.floor(blockHeight / 210000);
-
-	return eras[index];
 }
 
 function splitArrayIntoChunks(array, chunkSize) {
@@ -160,7 +146,6 @@ module.exports = {
 	doSmartRedirect: doSmartRedirect,
 	redirectToConnectPageIfNeeded: redirectToConnectPageIfNeeded,
 	hex2ascii: hex2ascii,
-	getBlockReward: getBlockReward,
 	splitArrayIntoChunks: splitArrayIntoChunks,
 	getRandomString: getRandomString,
 	formatBytes: formatBytes,

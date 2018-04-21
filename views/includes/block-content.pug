@@ -135,14 +135,14 @@ div(class="tab-content")
 										tbody
 										
 										if (tx.vin[0].coinbase)
-											- totalInputValue = totalInputValue.plus(new Decimal(utils.getBlockReward(result.getblock.height)));
+											- totalInputValue = totalInputValue.plus(new Decimal(coinConfig.blockRewardFunction(result.getblock.height)));
 											tr
 												th 1
 												td
 													span(class="tag monospace") coinbase
 													span(class="monospace")  Newly minted coins
 												td
-													- var currencyValue = utils.getBlockReward(result.getblock.height);
+													- var currencyValue = coinConfig.blockRewardFunction(result.getblock.height);
 													include ./value-display.pug
 
 										each txInput, txInputIndex in result.txInputsByTransaction[tx.txid]

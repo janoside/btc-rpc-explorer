@@ -1,3 +1,6 @@
+var Decimal = require("decimal.js");
+Decimal8 = Decimal.clone({ precision:8, rounding:8 });
+
 module.exports = {
 	name:"Bitcoin",
 	logoUrl:"/img/logo/btc.svg",
@@ -161,5 +164,16 @@ module.exports = {
 			
 			return -1;
 		}
+	},
+	blockRewardFunction:function(blockHeight) {
+		var eras = [ new Decimal8(50) ];
+		for (var i = 1; i < 34; i++) {
+			var previous = eras[i - 1];
+			eras.push(new Decimal8(previous).dividedBy(2));
+		}
+
+		var index = Math.floor(blockHeight / 210000);
+
+		return eras[index];
 	}
 };

@@ -27,7 +27,7 @@ block content
 
 		- var totalInputValue = new Decimal(0);
 		if (result.getrawtransaction.vin[0].coinbase)
-			- totalInputValue = totalInputValue.plus(new Decimal(utils.getBlockReward(result.getblock.height)));
+			- totalInputValue = totalInputValue.plus(new Decimal(coinConfig.blockRewardFunction(result.getblock.height)));
 		each txInput, txInputIndex in result.txInputs
 			if (txInput)
 				- var vout = txInput.vout[result.getrawtransaction.vin[txInputIndex].vout];
@@ -166,7 +166,7 @@ block content
 													span(class="tag monospace") coinbase
 													span(class="monospace") Newly minted coins
 												td
-													- var currencyValue = utils.getBlockReward(result.getblock.height);
+													- var currencyValue = coinConfig.blockRewardFunction(result.getblock.height);
 													include includes/value-display.pug
 
 										each txInput, txInputIndex in result.txInputs
