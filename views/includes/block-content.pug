@@ -141,11 +141,9 @@ div(class="tab-content")
 												td
 													span(class="tag monospace") coinbase
 													span(class="monospace")  Newly minted coins
-												td(class="monospace") #{utils.formatCurrencyAmount(utils.getBlockReward(result.getblock.height), currencyFormatType)}
-													if (global.exchangeRate)
-														span  
-														span(data-toggle="tooltip", title=utils.formatExchangedCurrency(utils.getBlockReward(result.getblock.height)))
-															i(class="fas fa-exchange-alt")
+												td
+													- var currencyValue = utils.getBlockReward(result.getblock.height);
+													include ./value-display.pug
 
 										each txInput, txInputIndex in result.txInputsByTransaction[tx.txid]
 											if (txInput)
@@ -164,11 +162,9 @@ div(class="tab-content")
 													td
 														if (vout.value)
 															- totalInputValue = totalInputValue.plus(new Decimal(vout.value));
-															span(class="monospace") #{utils.formatCurrencyAmount(vout.value, currencyFormatType)}
-																if (global.exchangeRate)
-																	span  
-																	span(data-toggle="tooltip", title=utils.formatExchangedCurrency(vout.value))
-																		i(class="fas fa-exchange-alt")
+
+															- var currencyValue = vout.value;
+															include ./value-display.pug
 
 										- var coinbaseCount = tx.vin[0].coinbase ? 1 : 0;
 										if ((tx.vin.length - coinbaseCount) > result.txInputsByTransaction[tx.txid].length)
@@ -182,11 +178,9 @@ div(class="tab-content")
 												td
 												td
 												td
-													strong(class="monospace") #{utils.formatCurrencyAmount(totalInputValue, currencyFormatType)}
-														if (global.exchangeRate)
-															span  
-															span(data-toggle="tooltip", title=utils.formatExchangedCurrency(totalInputValue))
-																i(class="fas fa-exchange-alt")
+													strong
+														- var currencyValue = totalInputValue;
+														include ./value-display.pug
 									
 
 							div(class="col-md-6")
@@ -217,11 +211,8 @@ div(class="tab-content")
 															span(class="monospace") OP_RETURN: 
 															span(class="monospace text-muted") #{utils.hex2ascii(vout.scriptPubKey.asm.substring("OP_RETURN ".length))}
 												td
-													span(class="monospace") #{utils.formatCurrencyAmount(vout.value, currencyFormatType)}
-														if (global.exchangeRate)
-															span  
-															span(data-toggle="tooltip", title=utils.formatExchangedCurrency(vout.value))
-																i(class="fas fa-exchange-alt")
+													- var currencyValue = vout.value;
+													include ./value-display.pug
 
 													- totalOutputValue = totalOutputValue.plus(vout.value);
 
@@ -229,11 +220,9 @@ div(class="tab-content")
 											td
 											td
 											td
-												strong(class="monospace") #{utils.formatCurrencyAmount(totalOutputValue, currencyFormatType)}
-													if (global.exchangeRate)
-														span  
-														span(data-toggle="tooltip", title=utils.formatExchangedCurrency(totalOutputValue))
-															i(class="fas fa-exchange-alt")
+												strong
+													- var currencyValue = totalOutputValue;
+													include ./value-display.pug
 			//pre
 			//	code #{JSON.stringify(tx, null, 4)}
 
