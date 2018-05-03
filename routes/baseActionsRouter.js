@@ -45,7 +45,7 @@ router.get("/", function(req, res) {
 			res.render("index");
 		});
 	}).catch(function(err) {
-		res.locals.userMessage = "Unable to connect to Bitcoin Node at " + env.rpc.host + ":" + env.rpc.port;
+		res.locals.userMessage = "Unable to connect to node at " + env.rpc.host + ":" + env.rpc.port;
 
 		res.render("index");
 	});
@@ -69,22 +69,22 @@ router.get("/node-details", function(req, res) {
 					res.render("node-details");
 
 				}).catch(function(err) {
-					res.locals.userMessage = "Unable to connect to Bitcoin Node at " + env.rpc.host + ":" + env.rpc.port;
+					res.locals.userMessage = "Unable to connect to node at " + env.rpc.host + ":" + env.rpc.port;
 
 					res.render("node-details");
 				});
 			}).catch(function(err) {
-				res.locals.userMessage = "Unable to connect to Bitcoin Node at " + env.rpc.host + ":" + env.rpc.port;
+				res.locals.userMessage = "Unable to connect to node at " + env.rpc.host + ":" + env.rpc.port;
 
 				res.render("node-details");
 			});
 		}).catch(function(err) {
-			res.locals.userMessage = "Unable to connect to Bitcoin Node at " + env.rpc.host + ":" + env.rpc.port;
+			res.locals.userMessage = "Unable to connect to node at " + env.rpc.host + ":" + env.rpc.port;
 
 			res.render("node-details");
 		});
 	}).catch(function(err) {
-		res.locals.userMessage = "Unable to connect to Bitcoin Node at " + env.rpc.host + ":" + env.rpc.port;
+		res.locals.userMessage = "Unable to connect to node at " + env.rpc.host + ":" + env.rpc.port;
 
 		res.render("node-details");
 	});
