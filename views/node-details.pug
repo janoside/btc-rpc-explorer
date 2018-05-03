@@ -22,6 +22,10 @@ block content
 		if (true)
 			table(class="table")
 				tr
+					th(class="table-active properties-header") Host : Port
+					td(class="monospace") #{env.rpc.host + " : " + env.rpc.port}
+
+				tr
 					th(class="table-active properties-header") Chain
 					td(class="monospace") #{getblockchaininfo.chain}
 				tr

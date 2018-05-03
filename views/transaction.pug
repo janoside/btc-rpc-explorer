@@ -125,7 +125,7 @@ block content
 								
 								span(class="text-muted")  (#{utils.formatCurrencyAmount(totalInputValue, currencyFormatType)} - #{utils.formatCurrencyAmount(totalOutputValue, currencyFormatType)})
 								br
-								span ~#{new DecimalRounded(totalInputValue).minus(totalOutputValue).dividedBy(result.getrawtransaction.size).times(100000000)} sat/B
+								span ~#{utils.addThousandsSeparators(new DecimalRounded(totalInputValue).minus(totalOutputValue).dividedBy(result.getrawtransaction.size).times(100000000))} sat/B
 
 				if (result.getrawtransaction.vin[0].coinbase)
 					div(class="card mb-3")

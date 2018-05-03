@@ -325,21 +325,23 @@ function getRawTransactions(txids) {
 			return;
 		}
 
-		if (txids.length == 1 && txids[0] == coins[env.coin].genesisCoinbaseTransactionId) {
-			// copy the "confirmations" field from genesis block to the genesis-coinbase tx
-			getBlockByHeight(0).then(function(blockZeroResult) {
-				var result = coins[env.coin].genesisCoinbaseTransaction;
-				result.confirmations = blockZeroResult.getblock.confirmations;
+		if (coins[env.coin].genesisCoinbaseTransactionId) {
+			if (txids.length == 1 && txids[0] == coins[env.coin].genesisCoinbaseTransactionId) {
+				// copy the "confirmations" field from genesis block to the genesis-coinbase tx
+				getBlockByHeight(0).then(function(blockZeroResult) {
+					var result = coins[env.coin].genesisCoinbaseTransaction;
+					result.confirmations = blockZeroResult.getblock.confirmations;
 
-				resolve([result]);
+					resolve([result]);
 
-			}).catch(function(err) {
-				reject(err);
+				}).catch(function(err) {
+					reject(err);
+
+					return;
+				});
 
 				return;
-			});
-
-			return;
+			}
 		}
 
 		var requests = [];
@@ -387,7 +389,7 @@ function executeBatchesSequentiallyInternal(batchId, batches, currentIndex, accu
 		results.forEach((item) => {
 			accumulatedResults.push(item);
 
-		count--;
+			count--;
 		});
 
 		if (count == 0) {

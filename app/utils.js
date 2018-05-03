@@ -150,5 +150,6 @@ module.exports = {
 	getRandomString: getRandomString,
 	formatBytes: formatBytes,
 	formatCurrencyAmount: formatCurrencyAmount,
-	formatExchangedCurrency: formatExchangedCurrency
+	formatExchangedCurrency: formatExchangedCurrency,
+	addThousandsSeparators: addThousandsSeparators
 };
