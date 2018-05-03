@@ -24,15 +24,13 @@ module.exports = {
 		"walletpassphrasechange"
 	],
 
-	// Uncomment "bitcoind" below to automatically connect via RPC.
+	// Uncomment "rpc" below to automatically connect via RPC.
 	// Otherwise, you can manually connect via the UI.
 
-	//bitcoind:{
-	//	host:"192.168.1.100",
-	//	port:8332,
-	//	rpc: {
-	//		username:"username",
-	//		password:"password"
-	//	}
-	//}
+	/*rpc: {
+		host:"127.0.0.1",
+		port:8332,
+		username:"rpc-username",
+		password:"rpc-password"
+	}*/
 };

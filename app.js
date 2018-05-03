@@ -98,16 +98,16 @@ app.use(function(req, res, next) {
 	res.locals.session = req.session;
 	res.locals.debug = env.debug;
 
-	if (env.bitcoind && env.bitcoind.rpc) {
-		req.session.host = env.bitcoind.host;
-		req.session.port = env.bitcoind.port;
-		req.session.username = env.bitcoind.rpc.username;
+	if (env.rpc) {
+		req.session.host = env.rpc.host;
+		req.session.port = env.rpc.port;
+		req.session.username = env.rpc.username;
 
 		global.client = new bitcoinCore({
-			host: env.bitcoind.host,
-			port: env.bitcoind.port,
-			username: env.bitcoind.rpc.username,
-			password: env.bitcoind.rpc.password,
+			host: env.rpc.host,
+			port: env.rpc.port,
+			username: env.rpc.username,
+			password: env.rpc.password,
 			timeout: 5000
 		});
 	}

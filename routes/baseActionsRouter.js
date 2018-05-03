@@ -45,7 +45,7 @@ router.get("/", function(req, res) {
 			res.render("index");
 		});
 	}).catch(function(err) {
-		res.locals.userMessage = "Unable to connect to Bitcoin Node at " + env.bitcoind.host + ":" + env.bitcoind.port;
+		res.locals.userMessage = "Unable to connect to Bitcoin Node at " + env.rpc.host + ":" + env.rpc.port;
 
 		res.render("index");
 	});
@@ -69,22 +69,22 @@ router.get("/node-details", function(req, res) {
 					res.render("node-details");
 
 				}).catch(function(err) {
-					res.locals.userMessage = "Unable to connect to Bitcoin Node at " + env.bitcoind.host + ":" + env.bitcoind.port;
+					res.locals.userMessage = "Unable to connect to Bitcoin Node at " + env.rpc.host + ":" + env.rpc.port;
 
 					res.render("node-details");
 				});
 			}).catch(function(err) {
-				res.locals.userMessage = "Unable to connect to Bitcoin Node at " + env.bitcoind.host + ":" + env.bitcoind.port;
+				res.locals.userMessage = "Unable to connect to Bitcoin Node at " + env.rpc.host + ":" + env.rpc.port;
 
 				res.render("node-details");
 			});
 		}).catch(function(err) {
-			res.locals.userMessage = "Unable to connect to Bitcoin Node at " + env.bitcoind.host + ":" + env.bitcoind.port;
+			res.locals.userMessage = "Unable to connect to Bitcoin Node at " + env.rpc.host + ":" + env.rpc.port;
 
 			res.render("node-details");
 		});
 	}).catch(function(err) {
-		res.locals.userMessage = "Unable to connect to Bitcoin Node at " + env.bitcoind.host + ":" + env.bitcoind.port;
+		res.locals.userMessage = "Unable to connect to Bitcoin Node at " + env.rpc.host + ":" + env.rpc.port;
 
 		res.render("node-details");
 	});
@@ -102,7 +102,7 @@ router.get("/mempool-summary", function(req, res) {
 			res.render("mempool-summary");
 		});
 	}).catch(function(err) {
-		res.locals.userMessage = "Unable to connect to Bitcoin Node at " + env.bitcoind.host + ":" + env.bitcoind.port;
+		res.locals.userMessage = "Unable to connect to Bitcoin Node at " + env.rpc.host + ":" + env.rpc.port;
 
 		res.render("mempool-summary");
 	});
@@ -212,7 +212,7 @@ router.get("/blocks", function(req, res) {
 			res.render("blocks");
 		});
 	}).catch(function(err) {
-		res.locals.userMessage = "Unable to connect to Bitcoin Node at " + env.bitcoind.host + ":" + env.bitcoind.port;
+		res.locals.userMessage = "Unable to connect to Bitcoin Node at " + env.rpc.host + ":" + env.rpc.port;
 
 		res.render("blocks");
 	});
