@@ -15,7 +15,7 @@ function getGenesisCoinbaseTransactionId() {
 
 function getBlockchainInfo() {
 	return new Promise(function(resolve, reject) {
-		client.cmd('getblockchaininfo', function(err, result, resHeaders) {
+		client.command('getblockchaininfo', function(err, result, resHeaders) {
 			if (err) {
 				console.log("Error 3207fh0f: " + err);
 
@@ -31,7 +31,7 @@ function getBlockchainInfo() {
 
 function getNetworkInfo() {
 	return new Promise(function(resolve, reject) {
-		client.cmd('getnetworkinfo', function(err, result, resHeaders) {
+		client.command('getnetworkinfo', function(err, result, resHeaders) {
 			if (err) {
 				console.log("Error 239r7ger7gy: " + err);
 
@@ -47,7 +47,7 @@ function getNetworkInfo() {
 
 function getNetTotals() {
 	return new Promise(function(resolve, reject) {
-		client.cmd('getnettotals', function(err, result, resHeaders) {
+		client.command('getnettotals', function(err, result, resHeaders) {
 			if (err) {
 				console.log("Error as07uthf40ghew: " + err);
 
@@ -63,7 +63,7 @@ function getNetTotals() {
 
 function getMempoolInfo() {
 	return new Promise(function(resolve, reject) {
-		client.cmd('getmempoolinfo', function(err, result, resHeaders) {
+		client.command('getmempoolinfo', function(err, result, resHeaders) {
 			if (err) {
 				console.log("Error 23407rhwe07fg: " + err);
 
@@ -79,7 +79,7 @@ function getMempoolInfo() {
 
 function getUptimeSeconds() {
 	return new Promise(function(resolve, reject) {
-		client.cmd('uptime', function(err, result, resHeaders) {
+		client.command('uptime', function(err, result, resHeaders) {
 			if (err) {
 				console.log("Error 3218y6gr3986sdd: " + err);
 
@@ -95,7 +95,7 @@ function getUptimeSeconds() {
 
 function getMempoolStats() {
 	return new Promise(function(resolve, reject) {
-		client.cmd('getrawmempool', true, function(err, result, resHeaders) {
+		client.command('getrawmempool', true, function(err, result, resHeaders) {
 			if (err) {
 				console.log("Error 428thwre0ufg: " + err);
 
@@ -181,7 +181,7 @@ function getBlockByHeight(blockHeight) {
 	return new Promise(function(resolve, reject) {
 		var client = global.client;
 		
-		client.cmd('getblockhash', blockHeight, function(err, result, resHeaders) {
+		client.command('getblockhash', blockHeight, function(err, result, resHeaders) {
 			if (err) {
 				console.log("Error 0928317yr3w: " + err);
 
@@ -190,7 +190,7 @@ function getBlockByHeight(blockHeight) {
 				return;
 			}
 
-			client.cmd('getblock', result, function(err2, result2, resHeaders2) {
+			client.command('getblock', result, function(err2, result2, resHeaders2) {
 				if (err2) {
 					console.log("Error 320fh7e0hg: " + err2);
 
@@ -213,31 +213,36 @@ function getBlocksByHeight(blockHeights) {
 		for (var i = 0; i < blockHeights.length; i++) {
 			batch.push({
 				method: 'getblockhash',
-				params: [ blockHeights[i] ]
+				parameters: [ blockHeights[i] ]
 			});
 		}
 
 		var blockHashes = [];
-		client.cmd(batch, function(err, result, resHeaders) {
-			blockHashes.push(result);
+		client.command(batch).then((responses) => {
+			responses.forEach((item) => {
+				blockHashes.push(item);
+			});
 
 			if (blockHashes.length == batch.length) {
 				var batch2 = [];
 				for (var i = 0; i < blockHashes.length; i++) {
 					batch2.push({
 						method: 'getblock',
-						params: [ blockHashes[i] ]
+						parameters: [ blockHashes[i] ]
 					});
 				}
 
 				var blocks = [];
-				client.cmd(batch2, function(err2, result2, resHeaders2) {
-					if (err2) {
+				client.command(batch2).then((responses2) => {
+					//console.log(responses2);
+					if (false) {
 						console.log("Error 138ryweufdf: " + err2);
-					}
 
-					blocks.push(result2);
-					if (blocks.length == batch2.length) {
+					} else {
+						responses2.forEach((item) => {
+							blocks.push(item);
+						});
+						
 						resolve(blocks);
 					}
 				});
@@ -252,7 +257,7 @@ function getBlockByHash(blockHash) {
 	return new Promise(function(resolve, reject) {
 		var client = global.client;
 		
-		client.cmd('getblock', blockHash, function(err, result, resHeaders) {
+		client.command('getblock', blockHash, function(err, result, resHeaders) {
 			if (err) {
 				console.log("Error 0u2fgewue: " + err);
 
@@ -296,7 +301,7 @@ function getRawTransaction(txid) {
 			return;
 		}
 
-		client.cmd('getrawtransaction', txid, 1, function(err, result, resHeaders) {
+		client.command('getrawtransaction', txid, 1, function(err, result, resHeaders) {
 			if (err) {
 				console.log("Error 329813yre823: " + err);
 
@@ -344,7 +349,7 @@ function getRawTransactions(txids) {
 			if (txid) {
 				requests.push({
 					method: 'getrawtransaction',
-					params: [ txid, 1 ]
+					parameters: [ txid, 1 ]
 				});
 			}
 		}
@@ -378,14 +383,12 @@ function executeBatchesSequentiallyInternal(batchId, batches, currentIndex, accu
 
 	var count = batches[currentIndex].length;
 
-	client.cmd(batches[currentIndex], function(err, result, resHeaders) {
-		if (err) {
-			console.log("Error f83024hf4: " + err);
-		}
-
-		accumulatedResults.push(result);
+	client.command(batches[currentIndex]).then(function(results) {
+		results.forEach((item) => {
+			accumulatedResults.push(item);
 
 		count--;
+		});
 
 		if (count == 0) {
 			executeBatchesSequentiallyInternal(batchId, batches, currentIndex + 1, accumulatedResults, resultFunc);
@@ -397,7 +400,7 @@ function getBlockData(rpcClient, blockHash, txLimit, txOffset) {
 	console.log("getBlockData: " + blockHash);
 
 	return new Promise(function(resolve, reject) {
-		client.cmd('getblock', blockHash, function(err2, result2, resHeaders2) {
+		client.command('getblock', blockHash, function(err2, result2, resHeaders2) {
 			if (err2) {
 				console.log("Error 3017hfwe0f: " + err2);
 
@@ -440,7 +443,7 @@ function getBlockData(rpcClient, blockHash, txLimit, txOffset) {
 
 function getHelp() {
 	return new Promise(function(resolve, reject) {
-		client.cmd('help', function(err, result, resHeaders) {
+		client.command('help', function(err, result, resHeaders) {
 			if (err) {
 				console.log("Error 32907th429ghf: " + err);
 
@@ -477,7 +480,7 @@ function getHelp() {
 
 function getRpcMethodHelp(methodName) {
 	return new Promise(function(resolve, reject) {
-		client.cmd('help', methodName, function(err, result, resHeaders) {
+		client.command('help', methodName, function(err, result, resHeaders) {
 			if (err) {
 				console.log("Error 237hwerf07wehg: " + err);
 

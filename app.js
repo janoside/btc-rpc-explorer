@@ -14,7 +14,7 @@ var simpleGit = require('simple-git');
 var utils = require("./app/utils.js");
 var moment = require("moment");
 var Decimal = require('decimal.js');
-var bitcoin = require("bitcoin");
+var bitcoinCore = require("bitcoin-core");
 var pug = require("pug");
 var momentDurationFormat = require("moment-duration-format");
 var rpcApi = require("./app/rpcApi.js");
@@ -77,6 +77,11 @@ function refreshExchangeRate() {
 
 
 app.runOnStartup = function() {
+	global.env = env;
+	global.coinConfig = coins[env.coin];
+
+	console.log("Running RPC Explorer for coin: " + global.coinConfig.name);
+
 	if (global.exchangeRate == null) {
 		refreshExchangeRate();
 	}
@@ -98,17 +103,17 @@ app.use(function(req, res, next) {
 		req.session.port = env.bitcoind.port;
 		req.session.username = env.bitcoind.rpc.username;
 
-		global.client = new bitcoin.Client({
+		global.client = new bitcoinCore({
 			host: env.bitcoind.host,
 			port: env.bitcoind.port,
-			user: env.bitcoind.rpc.username,
-			pass: env.bitcoind.rpc.password,
+			username: env.bitcoind.rpc.username,
+			password: env.bitcoind.rpc.password,
 			timeout: 5000
 		});
 	}
 
-	res.locals.env = env;
-	res.locals.coinConfig = coins[env.coin];
+	res.locals.env = global.env;
+	res.locals.coinConfig = global.coinConfig;
 	
 	res.locals.host = req.session.host;
 	res.locals.port = req.session.port;

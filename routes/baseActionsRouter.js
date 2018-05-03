@@ -4,7 +4,7 @@ var util = require('util');
 var moment = require('moment');
 var utils = require('./../app/utils');
 var env = require("./../app/env");
-var bitcoin = require("bitcoin");
+var bitcoinCore = require("bitcoin-core");
 var rpcApi = require("./../app/rpcApi");
 
 router.get("/", function(req, res) {
@@ -122,11 +122,11 @@ router.post("/connect", function(req, res) {
 	req.session.port = port;
 	req.session.username = username;
 
-	var client = new bitcoin.Client({
+	var client = new bitcoinCore({
 		host: host,
 		port: port,
-		user: username,
-		pass: password,
+		username: username,
+		password: password,
 		timeout: 30000
 	});
 
@@ -322,7 +322,7 @@ router.get("/block-height/:blockHeight", function(req, res) {
 	res.locals.offset = offset;
 	res.locals.paginationBaseUrl = "/block-height/" + blockHeight;
 
-	client.cmd('getblockhash', blockHeight, function(err, result, resHeaders) {
+	client.command('getblockhash', blockHeight, function(err, result, resHeaders) {
 		if (err) {
 			// TODO handle RPC error
 			return console.log(err);
@@ -388,7 +388,7 @@ router.get("/tx/:transactionId", function(req, res) {
 	rpcApi.getRawTransaction(txid).then(function(rawTxResult) {
 		res.locals.result.getrawtransaction = rawTxResult;
 
-		client.cmd('getblock', rawTxResult.blockhash, function(err3, result3, resHeaders3) {
+		client.command('getblock', rawTxResult.blockhash, function(err3, result3, resHeaders3) {
 			res.locals.result.getblock = result3;
 
 			var txids = [];
@@ -449,7 +449,7 @@ router.post("/rpc-terminal", function(req, res) {
 		return;
 	}
 
-	client.cmd([{method:cmd, params:parsedParams}], function(err, result, resHeaders) {
+	client.command([{method:cmd, parameters:parsedParams}], function(err, result, resHeaders) {
 		console.log("Result[1]: " + JSON.stringify(result, null, 4));
 		console.log("Error[2]: " + JSON.stringify(err, null, 4));
 		console.log("Headers[3]: " + JSON.stringify(resHeaders, null, 4));
@@ -539,7 +539,7 @@ router.get("/rpc-browser", function(req, res) {
 
 					console.log("Executing RPC '" + req.query.method + "' with params: [" + argValues + "]");
 
-					client.cmd([{method:req.query.method, params:argValues}], function(err3, result3, resHeaders3) {
+					client.command([{method:req.query.method, parameters:argValues}], function(err3, result3, resHeaders3) {
 						console.log("RPC Response: err=" + err3 + ", result=" + result3 + ", headers=" + resHeaders3);
 
 						if (err3) {

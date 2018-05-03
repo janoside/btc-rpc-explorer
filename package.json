@@ -8,7 +8,7 @@
   "dependencies": {
     "body-parser": "~1.18.2",
     "cookie-parser": "~1.4.3",
-    "bitcoin": "3.0.1",
+    "bitcoin-core": "2.0.0",
     "crypto-js": "3.1.9-1",
     "debug": "~2.6.0",
     "decimal.js":"7.2.3",
@@ -17,7 +17,6 @@
     "jstransformer-markdown-it": "^2.0.0",
     "moment": "^2.21.0",
     "moment-duration-format": "2.2.2",
-    "monk": "^4.0.0",
     "morgan": "~1.9.0",
     "pug": "2.0.1",
     "request": "2.85.0",
