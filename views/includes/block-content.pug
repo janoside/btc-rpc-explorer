@@ -71,7 +71,7 @@ div(class="tab-content")
 				- var scaleDone = false;
 				th(class="table-active properties-header") Difficulty
 				td(class="monospace")
-					span #{result.getblock.difficulty.toLocaleString()}
+					span #{parseFloat(result.getblock.difficulty).toLocaleString()}
 					each item in scales
 						if (!scaleDone)
 							- var fraction = Math.floor(result.getblock.difficulty / item.val);
