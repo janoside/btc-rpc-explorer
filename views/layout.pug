@@ -10,9 +10,7 @@ html
 		link(rel="stylesheet", href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/default.min.css")
 		link(rel='stylesheet', href='/css/styling.css')
 
-		link(rel="icon", type="image/png", sizes="32x32", href="/img/favicons/favicon-32x32.png")
-		link(rel="icon", type="image/png", sizes="96x96", href="/img/favicons/favicon-96x96.png")
-		link(rel="icon", type="image/png", sizes="16x16", href="/img/favicons/favicon-16x16.png")
+		link(rel="icon", type="image/png", href=("/img/logo/" + env.coin.toLowerCase() + ".png"))
 
 		block headContent
 			title Explorer
