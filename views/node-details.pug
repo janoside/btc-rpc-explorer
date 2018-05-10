@@ -64,7 +64,7 @@ block content
 				tr
 					th(class="table-active properties-header") Status
 					td(class="monospace")
-						if (getblockchaininfo.initialblockdownload)
+						if (getblockchaininfo.initialblockdownload || getblockchaininfo.headers > getblockchaininfo.blocks)
 							span Initial block download progress #{(100 * getblockchaininfo.verificationprogress).toLocaleString()}%
 						else
 							span Synchronized with network
