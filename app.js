@@ -137,21 +137,6 @@ app.use(function(req, res, next) {
 	res.locals.currencyFormatType = req.session.currencyFormatType;
 
 
-	// display width
-	if (!req.session.displayWidth) {
-		var cookieValue = req.cookies['user-setting-displayWidth'];
-
-		if (cookieValue) {
-			req.session.displayWidth = cookieValue;
-			
-		} else {
-			req.session.displayWidth = "container";
-		}
-	}
-
-	res.locals.displayWidth = req.session.displayWidth;
-
-
 	if (!["/", "/connect"].includes(req.originalUrl)) {
 		if (utils.redirectToConnectPageIfNeeded(req, res)) {
 			return;
