@@ -7,7 +7,7 @@ block content
 	h1 #{coinConfig.siteTitle}
 	hr
 
-	p
+	p(class="lead")
 		strong #{coinConfig.siteTitle}
 		span  is 
 		a(href="https://github.com/janoside/btc-rpc-explorer") open-source
@@ -15,8 +15,8 @@ block content
 		a(href=coinConfig.nodeUrl) #{coinConfig.name} Full Node
 		span ,
 		strong  #{coinConfig.siteTitle}
-		span  can easily run alongside it, communicating via RPC calls. See the
-		a(href="https://github.com/janoside/btc-rpc-explorer")  project description
+		span  can easily run alongside it, communicating via RPC calls. See the 
+		a(href="https://github.com/janoside/btc-rpc-explorer") project description
 		span  for a list of features and instructions for running.
 
 	
@@ -29,7 +29,7 @@ block content
 
 			div(class="col")
 				span(style="float: right;")
-					a(href="/blocks") Browse Blocks &raquo;
+					a(href="/blocks", class="btn btn-primary") Browse Blocks &raquo;
 
 		hr
 
