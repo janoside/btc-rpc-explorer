@@ -4,7 +4,7 @@ block headContent
 	title Home
 	
 block content
-	h1 #{coinConfig.siteTitle}
+	h1(class="h2") #{coinConfig.siteTitle}
 	hr
 
 	p(class="lead")
@@ -23,7 +23,7 @@ block content
 	if (latestBlocks)
 		div(class="row mt-5")
 			div(class="col")
-				h3 Latest Blocks
+				h2(class="h3") Latest Blocks
 					if (getblockchaininfo.initialblockdownload)
 						small  (#{(getblockchaininfo.headers - getblockchaininfo.blocks).toLocaleString()} behind)
 

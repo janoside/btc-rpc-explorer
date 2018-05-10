@@ -3,12 +3,12 @@ extends layout
 block content
 	div(class="row mt-5")
 		div(class="col")
-			h1 RPC Terminal
+			h1(class="h2") RPC Terminal
 
 		div(class="col")
 			if (!env.rpc || !env.rpc.rpc)
 				span(style="float: right;")
-					a(href="/disconnect") Disconnect from node
+					a(href="/disconnect", class="btn btn-secondary") Disconnect from node
 	
 	hr
 
