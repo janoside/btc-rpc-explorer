@@ -31,9 +31,19 @@ html
 					if (client)
 						ul(class="navbar-nav mr-auto")
 							li(class="nav-item")
-								a(href="/node-details", class="nav-link")
-									i(class="fas fa-info-circle")
-									span  Node Details
+								a(href="/about", class="nav-link")
+									span About
+
+							if (env.headerDropdownLinks)
+								li(class="nav-item dropdown")
+									a(class="nav-link dropdown-toggle", href="javascript:void(0)", id="navbarDropdown", role="button", data-toggle="dropdown", aria-haspopup="true", aria-expanded="false") 
+										span  #{env.headerDropdownLinks.title}
+									div(class="dropdown-menu", aria-labelledby="navbarDropdown")
+										each item in env.headerDropdownLinks.links
+											a(class="dropdown-item", href=item.url)
+												img(src=item.imgUrl, style="width: 24px; height: 24px;")
+												span  #{item.name}
+
 							li(class="nav-item dropdown")
 								a(class="nav-link dropdown-toggle", href="javascript:void(0)", id="navbarDropdown", role="button", data-toggle="dropdown", aria-haspopup="true", aria-expanded="false") 
 									i(class="fas fa-cog")
@@ -56,6 +66,8 @@ html
 
 		div(id="sub-menu", class="container mb-4", style="margin-top: -1.0rem;")
 			ul(class="nav")
+				li(class="nav-item")
+					a(href="/node-details", class="nav-link") Node Details
 				li(class="nav-item")
 					a(href="/rpc-browser", class="nav-link") RPC Browser
 				li(class="nav-item")

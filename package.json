@@ -19,6 +19,7 @@
     "moment-duration-format": "2.2.2",
     "morgan": "~1.9.0",
     "pug": "2.0.1",
+    "qrcode": "1.2.0",
     "request": "2.85.0",
     "serve-favicon": "~2.3.2",
     "simple-git": "1.92.0"

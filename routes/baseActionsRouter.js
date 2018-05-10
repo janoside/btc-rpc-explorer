@@ -6,6 +6,7 @@ var utils = require('./../app/utils');
 var env = require("./../app/env");
 var bitcoinCore = require("bitcoin-core");
 var rpcApi = require("./../app/rpcApi");
+var qrcode = require('qrcode');
 
 router.get("/", function(req, res) {
 	if (req.session.host == null || req.session.host.trim() == "") {
@@ -575,6 +576,18 @@ router.get("/rpc-browser", function(req, res) {
 		res.locals.userMessage = "Error loading help content: " + err;
 
 		res.render("browser");
+	});
+});
+
+router.get("/about", function(req, res) {
+	qrcode.toDataURL('3NPGpNyLLmVKCEcuipBs7G4KpQJoJXjDGe', function(err, url) {
+		res.locals.bitcoinDonationQrCodeUrl = url;
+
+		qrcode.toDataURL('ME4pXiXuWfEi1ANBDo9irUJVcZBhsTx14i', function(err, url) {
+			res.locals.litecoinDonationQrCodeUrl = url;
+
+			res.render("about");
+		});
 	});
 });
 
