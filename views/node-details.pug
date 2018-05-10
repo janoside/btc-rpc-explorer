@@ -38,8 +38,8 @@ block content
 
 				if (getblockchaininfo.size_on_disk)
 					tr
-						th(class="table-active properties-header") Blockchain Size on Disk
-						td(class="monospace") #{getblockchaininfo.size_on_disk.toLocaleString()}
+						th(class="table-active properties-header") Blockchain Size
+						td(class="monospace") #{utils.formatBytes(getblockchaininfo.size_on_disk)}
 							span(class="text-muted")  (pruned: #{getblockchaininfo.pruned})
 				tr
 					th(class="table-active properties-header") Connections
@@ -53,7 +53,7 @@ block content
 					- var scaleDone = false;
 					th(class="table-active properties-header") Difficulty
 					td(class="monospace")
-						span #{getblockchaininfo.difficulty.toLocaleString()}
+						span #{parseFloat(getblockchaininfo.difficulty).toLocaleString()}
 						each item in scales
 							if (!scaleDone)
 								- var fraction = Math.floor(getblockchaininfo.difficulty / item.val);
