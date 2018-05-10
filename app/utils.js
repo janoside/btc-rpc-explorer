@@ -85,7 +85,7 @@ function formatBytes(bytesInt) {
 		}
 	}
 
-	return bytesInt + " B";
+	return Math.floor(bytesInt) + " B";
 }
 
 var formatCurrencyCache = {};
