@@ -4,7 +4,7 @@ Decimal8 = Decimal.clone({ precision:8, rounding:8 });
 module.exports = {
 	name:"Litecoin",
 	logoUrl:"/img/logo/ltc.svg",
-	siteTitle:"LTC Explorer",
+	siteTitle:"LTC RPC Explorer",
 	nodeTitle:"Litecoin Full Node",
 	nodeUrl:"https://litecoin.org/",
 	currencyUnits:[
