@@ -1,5 +1,6 @@
 body {
 	font-size: 14px;
+	font-family: "Ubuntu", sans-serif;
 	/*font: 14px 'Open Sans', "Lucida Grande", Helvetica, Arial, sans-serif;*/
 }
 
@@ -43,6 +44,10 @@ code, .monospace {
 
 .table th {
 	border-top: none;
+}
+
+#sub-menu a:hover {
+	text-decoration: underline;
 }
 
 @media (min-width: 1920px) {
