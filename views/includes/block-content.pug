@@ -44,8 +44,11 @@ div(class="tab-content")
 					a(href=("/block-height/" + result.getblock.height)) #{result.getblock.height.toLocaleString()}
 
 			tr
-				th(class="table-active properties-header") Timestamp
-				td(class="monospace") #{moment.utc(new Date(result.getblock.time * 1000)).format("Y-MM-DD HH:mm:ss")} (utc)
+				th(class="table-active properties-header") Timestamp (utc)
+
+				- var timeAgo = moment.duration(moment.utc(new Date()).diff(moment.utc(new Date(parseInt(result.getblock.time) * 1000))));
+				td(class="monospace") #{moment.utc(new Date(result.getblock.time * 1000)).format("Y-MM-DD HH:mm:ss")}
+					span(class="text-muted")  (#{timeAgo.format()})
 
 			tr
 				th(class="table-active properties-header") Transaction Count
