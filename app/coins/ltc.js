@@ -73,6 +73,13 @@ module.exports = {
 			blockHash: "12a765e31ffd4059bada1e25190f6e98c99d9714d334efa41a195a7e7e04bfe2",
 			note: "The Litecoin genesis block.",
 			referenceUrl: "https://medium.com/@SatoshiLite/satoshilite-1e2dad89a017"
+		},
+		{
+			type: "tx",
+			date: "2017-05-10",
+			txid: "ce385e55fb2a73fa438426145b074f08314812fa3396472dc572b3079e26e0f9",
+			note: "First SegWit transaction.",
+			referenceUrl: "https://twitter.com/satoshilite/status/862345830082138113"
 		}
 	],
 	exchangeRateData:{
