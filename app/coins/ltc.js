@@ -12,7 +12,7 @@ module.exports = {
 			name:"LTC",
 			multiplier:1,
 			default:true,
-			values:["", "btc", "BTC"],
+			values:["", "ltc", "LTC"],
 			decimalPlaces:8
 		},
 		{
