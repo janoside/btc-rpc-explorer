@@ -1,6 +1,6 @@
 module.exports = {
 	cookiePassword: "0x000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f",
-	debug: false,
+	demoSite: true,
 	showForkBanner: false,
 	coin: "BTC",
 
@@ -33,6 +33,9 @@ module.exports = {
 		username:"rpc-username",
 		password:"rpc-password"
 	},
+
+	// Edit "ipWhitelistForRpcCommands" regex to limit access to RPC Browser / Terminal to matching IPs
+	ipWhitelistForRpcCommands:/^(127\.0\.0\.1)?(\:\:1)?$/,
 
 	donationAddresses:{
 		coins:["BTC", "LTC"],

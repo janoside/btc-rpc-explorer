@@ -413,20 +413,30 @@ router.get("/tx/:transactionId", function(req, res) {
 });
 
 router.get("/rpc-terminal", function(req, res) {
-	if (!env.debug) {
-		res.send("Debug mode is off.");
+	if (!env.demoSite) {
+		var ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+		var match = env.ipWhitelistForRpcCommands.exec(ip);
 
-		return;
+		if (!match) {
+			res.send("RPC Terminal / Browser may not be accessed from '" + ip + "'. This restriction can be modified in your env.js file.");
+
+			return;
+		}
 	}
 
 	res.render("terminal");
 });
 
 router.post("/rpc-terminal", function(req, res) {
-	if (!env.debug) {
-		res.send("Debug mode is off.");
+	if (!env.demoSite) {
+		var ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+		var match = env.ipWhitelistForRpcCommands.exec(ip);
 
-		return;
+		if (!match) {
+			res.send("RPC Terminal / Browser may not be accessed from '" + ip + "'. This restriction can be modified in your env.js file.");
+
+			return;
+		}
 	}
 
 	var params = req.body.cmd.split(" ");
@@ -476,10 +486,15 @@ router.post("/rpc-terminal", function(req, res) {
 });
 
 router.get("/rpc-browser", function(req, res) {
-	if (!env.debug) {
-		res.send("Debug mode is off.");
+	if (!env.demoSite) {
+		var ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+		var match = env.ipWhitelistForRpcCommands.exec(ip);
 
-		return;
+		if (!match) {
+			res.send("RPC Terminal / Browser may not be accessed from '" + ip + "'. This restriction can be modified in your env.js file.");
+
+			return;
+		}
 	}
 
 	rpcApi.getHelp().then(function(result) {
