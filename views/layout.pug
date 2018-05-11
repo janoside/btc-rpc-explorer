@@ -116,7 +116,7 @@ html
 								dd
 									div
 										each coin, index in env.donationAddresses.coins
-											div(style="display: inline-block;", class="text-center", class=(index > 0 ? "ml-3" : false))
+											div(style="display: inline-block;", class="text-center mb-3", class=(index > 0 ? "ml-md-3" : false))
 												img(src=donationAddressQrCodeUrls[coin], alt=env.donationAddresses[coin].address, style="border: solid 1px #ccc;")
 												br
 												if (env.donationAddresses[coin].urlPrefix)
