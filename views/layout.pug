@@ -59,11 +59,12 @@ html
 												span  #{item.name}
 
 						form(method="post", action="/search", class="form-inline")
-							div(class="input-group")
+							div(class="input-group input-group-sm")
 								input(type="text", class="form-control form-control-sm", name="query", placeholder="block height, block hash, txid", value=(query), style="width: 300px;")
-								span(class="input-group-btn")
-									input(type="submit", class="btn btn-primary", value="Search")
-
+								div(class="input-group-append")
+									button(type="submit", class="btn btn-primary")
+										i(class="fas fa-search")
+										
 		div(id="sub-menu", class="container mb-4", style="margin-top: -1.0rem;")
 			ul(class="nav")
 				li(class="nav-item")
