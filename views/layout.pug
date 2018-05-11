@@ -103,12 +103,19 @@ html
 								dd
 									a(href=("https://github.com/janoside/btc-rpc-explorer/commit/" + sourcecodeVersion)) #{sourcecodeVersion}
 
-								dt Public Demo
-								dd
-									if (coinConfig.demoSiteUrl)
-										a(href=coinConfig.demoSiteUrl) #{coinConfig.demoSiteUrl}
-									else
-										a(href="https://btc-explorer.chaintools.io") https://btc-explorer.chaintools.io
+								if (env.demoSite)
+									dt Public Demos
+									dd
+										if (coinConfig.demoSiteUrl)
+											a(href=coinConfig.demoSiteUrl) #{coinConfig.demoSiteUrl}
+										else
+											a(href="https://btc-explorer.chaintools.io") https://btc-explorer.chaintools.io
+										
+										div(class="mt-2")
+											a(href="https://btc-explorer.chaintools.io", class="mr-2")
+												img(src="/img/logo/btc.svg")
+											a(href="https://ltc-explorer.chaintools.io")
+												img(src="/img/logo/ltc.svg")
 
 						div(class="col-md-6 text-md-right")
 							dl
