@@ -24,15 +24,15 @@ module.exports = {
 		"walletpassphrasechange"
 	],
 
-	// Uncomment "rpc" below to automatically connect via RPC.
-	// Otherwise, you can manually connect via the UI.
+	// Edit "rpc" below to target your node.
+	// You may delete this section if you wish to connect manually via the UI.
 
-	/*rpc: {
+	rpc: {
 		host:"127.0.0.1",
 		port:8332,
 		username:"rpc-username",
 		password:"rpc-password"
-	}*/
+	},
 
 	donationAddresses:{
 		coins:["BTC", "LTC"],
