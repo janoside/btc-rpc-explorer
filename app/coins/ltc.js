@@ -7,6 +7,7 @@ module.exports = {
 	siteTitle:"Litecoin Explorer",
 	nodeTitle:"Litecoin Full Node",
 	nodeUrl:"https://litecoin.org/",
+	demoSiteUrl: "https://ltc-explorer.chaintools.io",
 	currencyUnits:[
 		{
 			name:"LTC",

@@ -7,21 +7,31 @@ block content
 	h1(class="h2") #{coinConfig.siteTitle}
 	hr
 
-	p(class="lead")
-		strong #{coinConfig.siteTitle}
-		span  is 
-		a(href="https://github.com/janoside/btc-rpc-explorer") open-source
-		span . If you run your own 
-		a(href=coinConfig.nodeUrl) #{coinConfig.name} Full Node
-		span ,
-		strong  #{coinConfig.siteTitle}
-		span  can easily run alongside it, communicating via RPC calls. See the 
-		a(href="https://github.com/janoside/btc-rpc-explorer") project description
-		span  for a list of features and instructions for running.
+	if (env.demoSite)
+		div(class="alert alert-primary", role="alert")
+			p(class="lead")
+				strong #{coinConfig.siteTitle}
+				span  is 
+				a(href="https://github.com/janoside/btc-rpc-explorer") open-source
+				span . If you run your own 
+				a(href=coinConfig.nodeUrl) #{coinConfig.name} Full Node
+				span ,
+				strong  #{coinConfig.siteTitle}
+				span  can easily run alongside it, communicating via RPC calls.
+				br
+				span See the 
+				a(href="https://github.com/janoside/btc-rpc-explorer") project description
+				span  for a list of features and instructions for running.
+
+			div
+				a(class="github-button", href="https://github.com/janoside/btc-rpc-explorer", data-icon="octicon-star", data-size="large", data-show-count="true", aria-label="Star janoside/btc-rpc-explorer on GitHub", style="padding-right: 10px;") Star
+				
+				span    
+				a(class="github-button", href="https://github.com/janoside/btc-rpc-explorer/fork", data-icon="octicon-repo-forked", data-size="large", data-show-count="true", aria-label="Fork janoside/btc-rpc-explorer on GitHub") Fork
 
 	
 	if (latestBlocks)
-		div(class="row mt-5")
+		div(class="row mt-4")
 			div(class="col")
 				h2(class="h3") Latest Blocks
 					if (getblockchaininfo.initialblockdownload)
@@ -37,3 +47,6 @@ block content
 		- var blockOffset = 0;
 
 		include includes/blocks-list.pug
+
+block endOfBody
+	script(async, defer, src="https://buttons.github.io/buttons.js")
