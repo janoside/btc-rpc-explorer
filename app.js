@@ -54,7 +54,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 function refreshExchangeRate() {
 	if (coins[env.coin].exchangeRateData) {
 		request(coins[env.coin].exchangeRateData.jsonUrl, function(error, response, body) {
-			if (!error && response.statusCode == 200) {
+			if (!error && response && response.statusCode && response.statusCode == 200) {
 				var responseBody = JSON.parse(body);
 
 				var exchangeRate = coins[env.coin].exchangeRateData.responseBodySelectorFunction(responseBody);
@@ -68,7 +68,10 @@ function refreshExchangeRate() {
 					console.log("Unable to get exchange rate data");
 				}
 			} else {
-				console.log("Error " + response.statusCode)
+				console.log("Error:");
+				console.log(error);
+				console.log("Response:");
+				console.log(response);
 			}
 		});
 	}
