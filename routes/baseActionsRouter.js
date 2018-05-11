@@ -52,7 +52,7 @@ router.get("/", function(req, res) {
 	});
 });
 
-router.get("/node-details", function(req, res) {
+router.get("/node-status", function(req, res) {
 	var client = global.client;
 
 	rpcApi.getBlockchainInfo().then(function(getblockchaininfo) {
@@ -67,27 +67,27 @@ router.get("/node-details", function(req, res) {
 				rpcApi.getNetTotals().then(function(getnettotals) {
 					res.locals.getnettotals = getnettotals;
 
-					res.render("node-details");
+					res.render("node-status");
 
 				}).catch(function(err) {
 					res.locals.userMessage = "Unable to connect to node at " + env.rpc.host + ":" + env.rpc.port;
 
-					res.render("node-details");
+					res.render("node-status");
 				});
 			}).catch(function(err) {
 				res.locals.userMessage = "Unable to connect to node at " + env.rpc.host + ":" + env.rpc.port;
 
-				res.render("node-details");
+				res.render("node-status");
 			});
 		}).catch(function(err) {
 			res.locals.userMessage = "Unable to connect to node at " + env.rpc.host + ":" + env.rpc.port;
 
-			res.render("node-details");
+			res.render("node-status");
 		});
 	}).catch(function(err) {
 		res.locals.userMessage = "Unable to connect to node at " + env.rpc.host + ":" + env.rpc.port;
 
-		res.render("node-details");
+		res.render("node-status");
 	});
 });
 
