@@ -6,7 +6,7 @@ html
 		
 		link(rel="stylesheet", href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css", integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4", crossorigin="anonymous")
 		link(rel="stylesheet", href="https://netdna.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css")
-		link(rel="stylesheet", href="https://fonts.googleapis.com/css?family=Lato|Open+Sans|Cousine|Ubuntu")
+		link(rel="stylesheet", href="https://fonts.googleapis.com/css?family=Lato|Open+Sans|Cousine|Ubuntu:400,500,700")
 		link(rel="stylesheet", href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/default.min.css")
 		link(rel='stylesheet', href='/css/styling.css')
 
@@ -90,30 +90,41 @@ html
 
 			div(style="margin-bottom: 30px;")
 
-			footer(class="pt-4 my-md-5 pt-md-5 border-top")
-				ul
-					li MIT-licensed source code available on github: 
-						a(href="https://github.com/janoside/btc-rpc-explorer") janoside/btc-rpc-explorer
-						if (sourcecodeVersion)
-							span  (@
-							a(href=("https://github.com/janoside/btc-rpc-explorer/commit/" + sourcecodeVersion)) #{sourcecodeVersion}
-							span )
+			footer(class="footer bg-dark text-light pt-3 pb-1 px-3", style="margin-top: 50px;")
+				div(class="container")
+					div(class="row")
+						div(class="col-md-6")
+							dl
+								dt Source
+								dd
+									a(href="https://github.com/janoside/btc-rpc-explorer") github.com/janoside/btc-rpc-explorer
 
-					li Public instance maintained at 
-						a(href="https://btc-explorer.com") https://btc-explorer.com
-					
-					li Donate
-						ul
-							li
-								a(href="bitcoin:3NPGpNyLLmVKCEcuipBs7G4KpQJoJXjDGe") BTC
-								span  - 3NPGpNyLLmVKCEcuipBs7G4KpQJoJXjDGe
-							li
-								a(href="litecoin:ME4pXiXuWfEi1ANBDo9irUJVcZBhsTx14i") LTC
-								span  - ME4pXiXuWfEi1ANBDo9irUJVcZBhsTx14i
-								
+								dt Running Version
+								dd
+									a(href=("https://github.com/janoside/btc-rpc-explorer/commit/" + sourcecodeVersion)) #{sourcecodeVersion}
 
-					li &copy; 2018 
-						a(href="https://danjanosik.com") Dan Janosik
+								dt Public Demo
+								dd
+									if (coinConfig.demoSiteUrl)
+										a(href=coinConfig.demoSiteUrl) #{coinConfig.demoSiteUrl}
+									else
+										a(href="https://btc-explorer.chaintools.io") https://btc-explorer.chaintools.io
+
+						div(class="col-md-6 text-md-right")
+							dl
+								dt Support Development of #{coinConfig.siteTitle}
+								dd
+									div
+										each coin, index in env.donationAddresses.coins
+											div(style="display: inline-block;", class="text-center", class=(index > 0 ? "ml-3" : false))
+												img(src=donationAddressQrCodeUrls[coin], alt=env.donationAddresses[coin].address, style="border: solid 1px #ccc;")
+												br
+												if (env.donationAddresses[coin].urlPrefix)
+													span #{coin}: 
+													a(href=(env.donationAddresses[coin].urlPrefix + donationAddressQrCodeUrls[coin])) #{env.donationAddresses[coin].address.substring(0, 10)}...
+												else
+													span #{coin}
+
 				
 		if (env.showForkBanner)
 			div(class="d-none d-md-block")

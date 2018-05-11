@@ -50,8 +50,26 @@ code, .monospace {
 	text-decoration: underline;
 }
 
+strong {
+	font-weight: 500;
+}
+
 @media (min-width: 1920px) {
 	.container {
 		max-width: 1800px;
 	}
+}
+
+footer {
+	border-top: solid 5px #597FA5;
+	border-bottom: solid 5px #597FA5;
+}
+
+footer a {
+	color: #ccc;
+	text-decoration: underline;
+}
+
+footer a:hover {
+	color: white;
 }

@@ -580,15 +580,7 @@ router.get("/rpc-browser", function(req, res) {
 });
 
 router.get("/about", function(req, res) {
-	qrcode.toDataURL('3NPGpNyLLmVKCEcuipBs7G4KpQJoJXjDGe', function(err, url) {
-		res.locals.bitcoinDonationQrCodeUrl = url;
-
-		qrcode.toDataURL('ME4pXiXuWfEi1ANBDo9irUJVcZBhsTx14i', function(err, url) {
-			res.locals.litecoinDonationQrCodeUrl = url;
-
-			res.render("about");
-		});
-	});
+	res.render("about");
 });
 
 router.get("/fun", function(req, res) {

@@ -33,4 +33,11 @@ module.exports = {
 		username:"rpc-username",
 		password:"rpc-password"
 	}*/
+
+	donationAddresses:{
+		coins:["BTC", "LTC"],
+		
+		"BTC":{address:"3NPGpNyLLmVKCEcuipBs7G4KpQJoJXjDGe", urlPrefix:"bitcoin:"},
+		"LTC":{address:"ME4pXiXuWfEi1ANBDo9irUJVcZBhsTx14i", urlPrefix:"litecoin:"}
+	},
 };

@@ -11,23 +11,25 @@ block content
 
 	p I built this tool because I wanted to use it myself. Whatever reasons one might have for running a full node (trustlessness, technical curiosity, supporting the network, etc) it's helpful to appreciate the "fullness" of your own node. With this explorer, you can not only explore the blockchain (in the traditional sense of the term "explorer"), but also explore the functional capabilities of your own node.
 
-	p If you'd like to support my continued work on this project, please consider a small donation:
+	span Pull requests are welcome! 
+		a(href="https://github.com/janoside/btc-rpc-explorer") github.com/janoside/btc-rpc-explorer
 
+	if (env.donationAddresses)
+		hr
 
-	div(class="row")
-		div(class="col-md-6 text-center")
-			a(href="bitcoin:3NPGpNyLLmVKCEcuipBs7G4KpQJoJXjDGe") Bitcoin (BTC)
-			br
-			span 3NPGpNyLLmVKCEcuipBs7G4KpQJoJXjDGe
-			br
-			img(src=bitcoinDonationQrCodeUrl, alt="3NPGpNyLLmVKCEcuipBs7G4KpQJoJXjDGe", style="border: solid 1px #ccc;")
-			br
+		p If you value this tool and want to support my work on this project, please consider a small donation. Anything is appreciated!
 
-		div(class="col-md-6 text-center")
-			a(href="litecoin:ME4pXiXuWfEi1ANBDo9irUJVcZBhsTx14i") Litecoin (LTC)
-			br
-			span ME4pXiXuWfEi1ANBDo9irUJVcZBhsTx14i
-			br
-			img(src=litecoinDonationQrCodeUrl, alt="ME4pXiXuWfEi1ANBDo9irUJVcZBhsTx14i", style="border: solid 1px #ccc;")
-			br
-	
+		div(class="row mb-5")
+			each coin, index in env.donationAddresses.coins
+				div(class="col text-center")
+					if (env.donationAddresses[coin].urlPrefix)
+						a(href=("bitcoin:" + env.donationAddresses["BTC"])) #{coinConfigs[coin].name} (#{coin})
+					else
+						span #{coinConfigs[coin].name} (#{coin})
+
+					br
+					span #{env.donationAddresses[coin].address}
+					br
+					img(src=donationAddressQrCodeUrls[coin], alt=env.donationAddresses[coin].address, style="border: solid 1px #ccc;")
+					br
+		

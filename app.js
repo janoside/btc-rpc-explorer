@@ -20,6 +20,7 @@ var momentDurationFormat = require("moment-duration-format");
 var rpcApi = require("./app/rpcApi.js");
 var coins = require("./app/coins.js");
 var request = require("request");
+var qrcode = require("qrcode");
 
 
 var baseActionsRouter = require('./routes/baseActionsRouter');
@@ -82,8 +83,25 @@ function refreshExchangeRate() {
 app.runOnStartup = function() {
 	global.env = env;
 	global.coinConfig = coins[env.coin];
+	global.coinConfigs = coins;
 
 	console.log("Running RPC Explorer for coin: " + global.coinConfig.name);
+
+	if (env.donationAddresses) {
+		var getDonationAddressQrCode = function(coinId) {
+			qrcode.toDataURL(env.donationAddresses[coinId].address, function(err, url) {
+				console.log("coinId: " + coinId + ", url: " + url);
+
+				global.donationAddressQrCodeUrls[coinId] = url;
+			});
+		};
+
+		global.donationAddressQrCodeUrls = {};
+
+		env.donationAddresses.coins.forEach(function(item) {
+			getDonationAddressQrCode(item);
+		});
+	}
 
 	if (global.exchangeRate == null) {
 		refreshExchangeRate();
