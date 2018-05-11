@@ -90,8 +90,6 @@ app.runOnStartup = function() {
 	if (env.donationAddresses) {
 		var getDonationAddressQrCode = function(coinId) {
 			qrcode.toDataURL(env.donationAddresses[coinId].address, function(err, url) {
-				console.log("coinId: " + coinId + ", url: " + url);
-
 				global.donationAddressQrCodeUrls[coinId] = url;
 			});
 		};
