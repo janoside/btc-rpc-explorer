@@ -1,4 +1,4 @@
-# BTC Explorer
+# BTC RPC Explorer
 
 Simple, database-free Bitcoin blockchain explorer, via RPC. Built with Node.js, express, bootstrap-v4.
 
