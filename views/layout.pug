@@ -41,7 +41,7 @@ html
 									div(class="dropdown-menu", aria-labelledby="navbarDropdown")
 										each item in env.headerDropdownLinks.links
 											a(class="dropdown-item", href=item.url)
-												img(src=item.imgUrl, style="width: 24px; height: 24px;")
+												img(src=item.imgUrl, style="width: 24px; height: 24px; margin-right: 8px;")
 												span  #{item.name}
 
 							li(class="nav-item dropdown")
@@ -83,7 +83,7 @@ html
 				
 		div(class="container")
 			if (userMessage)
-				div(class="alert", class=(userMessageType ? ("alert-"  + userMessageType) : "alert-info"), role="alert")
+				div(class="alert", class=(userMessageType ? ("alert-"  + userMessageType) : "alert-warning"), role="alert")
 					span !{userMessage}
 			
 			block content
