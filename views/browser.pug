@@ -27,16 +27,23 @@ block content
 				
 				hr
 
-				div(class="card bg-light mb-3")
-					div(class="card-header") Help Content for
-						strong  #{method}
-					div(class="card-body")
-						pre #{methodhelp.string}
-				
-				div(class="card bg-light mb-3")
-					div(class="card-header") Execute Command: 
-						strong  #{method}
-					div(class="card-body")
+				ul(class='nav nav-tabs mb-3')
+					li(class="nav-item")
+						a(data-toggle="tab", href="#tab-execute", class="nav-link active", role="tab") Execute
+					li(class="nav-item")
+						a(data-toggle="tab", href="#tab-help-content", class="nav-link", role="tab") Help Content
+
+				div(class="tab-content")
+					div(id="tab-execute", class="tab-pane active py-3", role="tabpanel")
+						if (methodResult)
+							div(class="mt-4")
+								h5(class="mt-3") Result
+
+								pre(style="border: solid 1px #ccc;")
+									code #{JSON.stringify(methodResult, null, 4)}
+
+							hr
+
 						form(method="get")
 							input(type="hidden", name="method", value=method)
 
@@ -47,6 +54,13 @@ block content
 										span  (#{argX.properties.join(", ")})
 										if (argX.description)
 											span  - #{argX.description}
+										if (false && argX.detailsLines && argX.detailsLines.length > 0)
+											- var detailsLines = "";
+											each detailsLine in argX.detailsLines
+												- detailsLines = (detailsLines + "<br/>" + detailsLine);
+											i(class="fas fa-info-circle", data-toggle="tooltip", title=detailsLines)
+												
+
 
 									- var valX = false;
 									if (argValues != null)
@@ -56,16 +70,18 @@ block content
 
 									input(id=("arg_" + argX.name), type="text", name=("args[" + index + "]"), placeholder=argX.name, class="form-control", value=valX)
 
+							if (!methodhelp.args || methodhelp.args.length == 0)
+								span(class="text-muted") No arguments
+
+							hr
+
 							input(type="submit", name="execute", value="Execute", class="btn btn-primary btn-block")
 
-						if (methodResult)
-							div(class="mt-4")
-								hr
+					div(id="tab-help-content", class="tab-pane", role="tabpanel")
+						pre #{methodhelp.string}
 
-								h5(class="mt-3") Result
-
-								pre(style="border: solid 1px #ccc;")
-									code #{JSON.stringify(methodResult, null, 4)}
+				
+						
 
 			else
 				:markdown-it
