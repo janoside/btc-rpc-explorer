@@ -315,6 +315,22 @@ function getRawTransaction(txid) {
 	});
 }
 
+function getAddress(address) {
+	return new Promise(function(resolve, reject) {
+		client.command('validateaddress', address, function(err, result, resHeaders) {
+			if (err) {
+				console.log("Error 9234ygf0weg: " + err);
+
+				reject(err);
+
+				return;
+			}
+
+			resolve(result);
+		});
+	});
+}
+
 function getRawTransactions(txids) {
 	console.log("getRawTransactions: " + txids);
 
@@ -590,5 +606,6 @@ module.exports = {
 	getUptimeSeconds: getUptimeSeconds,
 	getHelp: getHelp,
 	getRpcMethodHelp: getRpcMethodHelp,
-	getHistoricalData: getHistoricalData
+	getHistoricalData: getHistoricalData,
+	getAddress: getAddress
 };

@@ -7,6 +7,7 @@ var env = require("./../app/env");
 var bitcoinCore = require("bitcoin-core");
 var rpcApi = require("./../app/rpcApi");
 var qrcode = require('qrcode');
+var bitcoinjs = require('bitcoinjs-lib');
 
 router.get("/", function(req, res) {
 	if (req.session.host == null || req.session.host.trim() == "") {
@@ -229,6 +230,7 @@ router.post("/search", function(req, res) {
 	}
 
 	var query = req.body.query.toLowerCase().trim();
+	var rawCaseQuery = req.body.query.trim();
 
 	req.session.query = req.body.query;
 
@@ -246,6 +248,14 @@ router.post("/search", function(req, res) {
 
 					return;
 				}
+
+				rpcApi.getAddress(rawCaseQuery).then(function(validateaddress) {
+					if (validateaddress && validateaddress.isvalid) {
+						res.redirect("/address/" + rawCaseQuery);
+
+						return;
+					}
+				});
 
 				req.session.userMessage = "No results found for query: " + query;
 
@@ -289,14 +299,18 @@ router.post("/search", function(req, res) {
 			res.redirect("/");
 		});
 	} else {
-		req.session.userMessage = "Invalid query: " + query;
+		rpcApi.getAddress(rawCaseQuery).then(function(validateaddress) {
+			if (validateaddress && validateaddress.isvalid) {
+				res.redirect("/address/" + rawCaseQuery);
 
-		res.redirect("/");
+				return;
+			}
 
-		return;
+			req.session.userMessage = "No results found for query: " + rawCaseQuery;
+
+			res.redirect("/");
+		});
 	}
-
-	
 });
 
 router.get("/block-height/:blockHeight", function(req, res) {
@@ -409,6 +423,39 @@ router.get("/tx/:transactionId", function(req, res) {
 		res.locals.userMessage = "Failed to load transaction with txid=" + txid + " (" + err + ")";
 
 		res.render("transaction");
+	});
+});
+
+router.get("/address/:address", function(req, res) {
+	var address = req.params.address;
+
+	res.locals.address = address;
+	
+	res.locals.result = {};
+
+	if (address.startsWith("1") || address.startsWith("3")) {
+		res.locals.addressObj = bitcoinjs.address.fromBase58Check(address);
+
+	} else {
+		res.locals.addressObj = bitcoinjs.address.fromBech32(address);
+	}
+	
+	rpcApi.getAddress(address).then(function(result) {
+		res.locals.result.validateaddress = result;
+
+		qrcode.toDataURL(address, function(err, url) {
+			if (err) {
+				console.log("Error 93ygfew0ygf2gf2: " + err);
+			}
+
+			res.locals.addressQrCodeUrl = url;
+
+			res.render("address");
+		});
+	}).catch(function(err) {
+		res.locals.userMessage = "Failed to load address " + address + " (" + err + ")";
+
+		res.render("address");
 	});
 });
 

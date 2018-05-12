@@ -183,9 +183,10 @@ block content
 
 													td
 														if (vout.scriptPubKey && vout.scriptPubKey.addresses)
-															div(class="monospace", style="word-break: break-word;") #{vout.scriptPubKey.addresses[0]}
-															span(class="monospace text-muted") via tx 
-															a(href=("/tx/" + txInput.txid + "#output-" + result.getrawtransaction.vin[txInputIndex].vout), class="monospace") #{txInput.txid.substring(0, 14)}..., Output ##{result.getrawtransaction.vin[txInputIndex].vout + 1}
+															div(class="monospace", style="word-break: break-word;")
+																a(href=("/address/" + vout.scriptPubKey.addresses[0])) #{vout.scriptPubKey.addresses[0]}
+															span(class="monospace") via 
+															a(href=("/tx/" + txInput.txid + "#output-" + result.getrawtransaction.vin[txInputIndex].vout), class="monospace") #{txInput.txid.substring(0, 14)}...[#{result.getrawtransaction.vin[txInputIndex].vout}]
 													td
 														if (vout.value)
 															- var currencyValue = vout.value;
@@ -215,7 +216,7 @@ block content
 												td
 													if (vout.scriptPubKey)
 														if (vout.scriptPubKey.addresses)
-															a(id="output-" + voutIndex)
+															a(id=("output-" + voutIndex), href=("/address/" + vout.scriptPubKey.addresses[0]))
 																div(class="monospace", style="word-break: break-word;") #{vout.scriptPubKey.addresses[0]}
 
 														else if (vout.scriptPubKey.hex && vout.scriptPubKey.hex.startsWith('6a24aa21a9ed'))

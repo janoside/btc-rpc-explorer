@@ -9,6 +9,7 @@
     "body-parser": "~1.18.2",
     "cookie-parser": "~1.4.3",
     "bitcoin-core": "2.0.0",
+    "bitcoinjs-lib": "3.3.2",
     "crypto-js": "3.1.9-1",
     "debug": "~2.6.0",
     "decimal.js":"7.2.3",

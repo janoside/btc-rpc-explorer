@@ -1,0 +1,104 @@
+extends layout
+
+block headContent
+	title Address #{address}
+
+block content
+	if (result && result.validateaddress)
+		if (!result.validateaddress.isvalid)
+			h1(class="h2 text-danger") Invalid Address
+				br
+				small(class="monospace") #{address}
+		else
+			h1(class="h2") Address
+				br
+				small(class="monospace") #{address}
+			
+			hr
+
+			if (false)
+				pre
+					code #{JSON.stringify(addressObj, null, 4)}
+			
+			ul(class='nav nav-tabs mb-3')
+				li(class="nav-item")
+					a(data-toggle="tab", href="#tab-summary", class="nav-link active", role="tab") Summary
+				li(class="nav-item")
+					a(data-toggle="tab", href="#tab-raw", class="nav-link", role="tab") Raw
+
+
+			div(class="tab-content")
+				div(id="tab-summary", class="tab-pane active", role="tabpanel")
+					table(class="table")
+						if (addressObj.hash)
+							tr
+								th(class="table-active properties-header") Hash 160
+								td(class="monospace") #{addressObj.hash.toString("hex")}
+
+						if (result.validateaddress.scriptPubKey)
+							tr
+								th(class="table-active properties-header") Script Public Key
+								td(class="monospace") #{result.validateaddress.scriptPubKey}
+
+						if (addressObj.hasOwnProperty("version"))
+							tr
+								th(class="table-active properties-header") Version
+								td(class="monospace") #{addressObj.version}
+
+						if (result.validateaddress.hasOwnProperty("witness_version"))
+							tr
+								th(class="table-active properties-header") Witness Version
+								td(class="monospace") #{result.validateaddress.witness_version}
+
+						if (result.validateaddress.witness_program)
+							tr
+								th(class="table-active properties-header") Witness Program
+								td(class="monospace") #{result.validateaddress.witness_program}
+
+						tr
+							th(class="table-active properties-header") QR Code
+							td(class="monospace")
+								img(src=addressQrCodeUrl, alt=address)
+
+					div(class="card mb-3")
+						div(class="card-header")
+							span(class="h6") Flags
+						div(class="card-body")
+							table(class="table text-center")
+								thead
+									tr
+										th Is Valid?
+										th Is Script?
+										th Is Witness?
+										th Is Mine?
+										th Is Watch-Only?
+								tbody
+									tr
+										- var x = result.validateaddress;
+										- var flags = [x.isvalid, x.isscript, x.iswitness, x.ismine, x.iswatchonly];
+
+										each flag in flags
+											td
+												if (flag)
+													i(class="fas fa-check text-success")
+												else
+													i(class="fas fa-times text-danger")
+
+					div(class="card")
+						div(class="card-header")
+							span(class="h6") Transactions
+						div(class="card-body")
+							table(class="table")
+								strong
+									p(class="text-warning") This is a work-in-progress
+								p Since this app is database-free, displaying a list of transactions involving the current address is tricky. I'm actively researching the best way to implement this.
+
+								a(href="https://github.com/janoside/btc-rpc-explorer/issues/8") Suggestions and/or pull requests are welcome!
+				
+
+				div(id="tab-raw", class="tab-pane", role="tabpanel")
+					div(class="highlight")
+						pre
+							code(class="language-json", data-lang="json") #{JSON.stringify(result.validateaddress, null, 4)}
+
+		
