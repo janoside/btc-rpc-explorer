@@ -175,7 +175,7 @@ app.use(function(req, res, next) {
 			res.locals.userMessageType = req.session.userMessageType;
 			
 		} else {
-			res.locals.userMessageType = "info";
+			res.locals.userMessageType = "warning";
 		}
 
 		req.session.userMessage = null;
