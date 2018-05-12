@@ -113,10 +113,10 @@ html
 											a(href="https://btc-explorer.chaintools.io") https://btc-explorer.chaintools.io
 										
 										div(class="mt-2")
-											a(href="https://btc-explorer.chaintools.io", class="mr-2")
-												img(src="/img/logo/btc.svg")
-											a(href="https://ltc-explorer.chaintools.io")
-												img(src="/img/logo/ltc.svg")
+											- var demoSiteCoins = ["BTC", "LTC"];
+											each demoSiteCoin in demoSiteCoins
+												a(href=coinConfigs[demoSiteCoin].demoSiteUrl, class="mr-2")
+													img(src=("/img/logo/" + demoSiteCoin.toLowerCase() + ".svg"))
 
 						div(class="col-md-6 text-md-right")
 							dl
