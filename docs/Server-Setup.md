@@ -2,8 +2,9 @@
 
     apt update
     apt upgrade
-    apt install git python-software-properties software-properties-common nginx
+    apt install git python-software-properties software-properties-common nginx gcc g++ make
     curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash -
+    apt install -y nodejs
     npm install pm2 --global
     add-apt-repository ppa:certbot/certbot
     apt update
