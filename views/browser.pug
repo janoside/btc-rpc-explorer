@@ -34,7 +34,7 @@ block content
 						a(data-toggle="tab", href="#tab-help-content", class="nav-link", role="tab") Help Content
 
 				div(class="tab-content")
-					div(id="tab-execute", class="tab-pane active py-3", role="tabpanel")
+					div(id="tab-execute", class="tab-pane active pb-3", role="tabpanel")
 						if (methodResult)
 							div(class="mt-4")
 								h5(class="mt-3") Result
@@ -47,31 +47,34 @@ block content
 						form(method="get")
 							input(type="hidden", name="method", value=method)
 
-							each argX, index in methodhelp.args
-								div(class="form-group")
-									label(for=("arg_" + argX.name))
-										strong #{argX.name}
-										span  (#{argX.properties.join(", ")})
-										if (argX.description)
-											span  - #{argX.description}
-										if (false && argX.detailsLines && argX.detailsLines.length > 0)
-											- var detailsLines = "";
-											each detailsLine in argX.detailsLines
-												- detailsLines = (detailsLines + "<br/>" + detailsLine);
-											i(class="fas fa-info-circle", data-toggle="tooltip", title=detailsLines)
-												
+							div(class="h5 mb-3") Arguments
+							
+							div(class="ml-3")
+								each argX, index in methodhelp.args
+									div(class="form-group")
+										label(for=("arg_" + argX.name))
+											strong #{argX.name}
+											span  (#{argX.properties.join(", ")})
+											if (argX.description)
+												span  - #{argX.description}
+											if (false && argX.detailsLines && argX.detailsLines.length > 0)
+												- var detailsLines = "";
+												each detailsLine in argX.detailsLines
+													- detailsLines = (detailsLines + "<br/>" + detailsLine);
+												i(class="fas fa-info-circle", data-toggle="tooltip", title=detailsLines)
+													
 
 
-									- var valX = false;
-									if (argValues != null)
-										if (argValues[index] != null)
-											if (("" + argValues[index]) != NaN)
-												- valX = argValues[index].toString();
+										- var valX = false;
+										if (argValues != null)
+											if (argValues[index] != null)
+												if (("" + argValues[index]) != NaN)
+													- valX = argValues[index].toString();
 
-									input(id=("arg_" + argX.name), type="text", name=("args[" + index + "]"), placeholder=argX.name, class="form-control", value=valX)
+										input(id=("arg_" + argX.name), type="text", name=("args[" + index + "]"), placeholder=argX.name, class="form-control", value=valX)
 
-							if (!methodhelp.args || methodhelp.args.length == 0)
-								span(class="text-muted") No arguments
+								if (!methodhelp.args || methodhelp.args.length == 0)
+									span(class="text-muted") None
 
 							hr
 
