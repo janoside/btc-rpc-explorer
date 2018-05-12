@@ -101,6 +101,13 @@ app.runOnStartup = function() {
 		});
 	}
 
+	if (global.sourcecodeVersion == null) {
+		simpleGit(".").log(["-n 1"], function(err, log) {
+			global.sourcecodeVersion = log.all[0].hash.substring(0, 10);
+			global.sourcecodeDate = log.all[0].date.substring(0, "0000-00-00".length);
+		});
+	}
+
 	if (global.exchangeRate == null) {
 		refreshExchangeRate();
 	}
@@ -108,9 +115,6 @@ app.runOnStartup = function() {
 	// refresh exchange rate periodically
 	setInterval(refreshExchangeRate, 1800000);
 };
-
-
-app.locals.sourcecodeVersion = null;
 
 app.use(function(req, res, next) {
 	// make session available in templates
@@ -162,12 +166,6 @@ app.use(function(req, res, next) {
 		}
 	}
 
-	if (!req.session.sourcecodeVersion) {
-		simpleGit(".").log(["-n 1"], function(err, log) {
-			app.locals.sourcecodeVersion = log.all[0].hash.substring(0, 10);
-		});
-	}
-	
 	if (req.session.userMessage) {
 		res.locals.userMessage = req.session.userMessage;
 		
