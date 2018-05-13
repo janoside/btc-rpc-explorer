@@ -46,6 +46,10 @@ code, .monospace {
 	border-top: none;
 }
 
+.dropdown-item:focus, .dropdown-item:hover {
+	background-color: #e3e3e3;
+}
+
 #sub-menu a:hover {
 	text-decoration: underline;
 }
