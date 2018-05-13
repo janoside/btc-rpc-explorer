@@ -132,7 +132,7 @@ html
 												br
 												if (env.donationAddresses[coin].urlPrefix)
 													span #{coin}: 
-													a(href=(env.donationAddresses[coin].urlPrefix + donationAddressQrCodeUrls[coin])) #{env.donationAddresses[coin].address.substring(0, 10)}...
+													a(href=(env.donationAddresses[coin].urlPrefix + env.donationAddresses[coin].address)) #{env.donationAddresses[coin].address.substring(0, 10)}...
 												else
 													span #{coin}
 		
