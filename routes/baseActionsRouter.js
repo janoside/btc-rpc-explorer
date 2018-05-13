@@ -433,11 +433,18 @@ router.get("/address/:address", function(req, res) {
 	
 	res.locals.result = {};
 
-	if (address.startsWith("1") || address.startsWith("3")) {
+	try {
 		res.locals.addressObj = bitcoinjs.address.fromBase58Check(address);
 
-	} else {
-		res.locals.addressObj = bitcoinjs.address.fromBech32(address);
+	} catch (err) {
+		console.log("Error u3gr02gwef: " + err);
+
+		try {
+			res.locals.addressObj = bitcoinjs.address.fromBech32(address);
+
+		} catch (err2) {
+			console.log("Error u02qg02yqge: " + err2);
+		}
 	}
 	
 	rpcApi.getAddress(address).then(function(result) {
