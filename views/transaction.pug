@@ -41,7 +41,7 @@ block content
 		div(class="tab-content")
 			div(id="tab-summary", class="tab-pane active", role="tabpanel")
 				if (coinConfig.specialTransactions && coinConfig.specialTransactions[txid])
-					div(class="alert alert-info", style="padding-bottom: 0;")
+					div(class="alert alert-primary", style="padding-bottom: 0;")
 						h4(class="alert-heading h5") #{coinConfig.specialTransactions[txid].noteTitle}
 						if (coinConfig.specialTransactions[txid].noteBodyHtml)
 							p !{coinConfig.specialTransactions[txid].noteBodyHtml}

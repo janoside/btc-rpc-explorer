@@ -9,7 +9,7 @@ ul(class='nav nav-tabs mb-3')
 div(class="tab-content")
 	div(id="tab-summary", class="tab-pane active", role="tabpanel")
 		if (coinConfig.specialBlocks && coinConfig.specialBlocks[result.getblock.hash])
-			div(class="alert alert-info", style="padding-bottom: 0;")
+			div(class="alert alert-primary", style="padding-bottom: 0;")
 				h4(class="alert-heading h5") #{coinConfig.specialBlocks[result.getblock.hash].noteTitle}
 				if (coinConfig.specialBlocks[result.getblock.hash].noteBodyHtml)
 					p !{coinConfig.specialBlocks[result.getblock.hash].noteBodyHtml}
