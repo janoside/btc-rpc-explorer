@@ -37,11 +37,10 @@ The below instructions are geared toward BTC, but can be adapted easily to other
 
 1. Clone this repo
 2. `npm install` to install all required dependencies
-3. Optional: Uncomment the "bitcoind" section in [env.js](app/env.js) to automatically connect to the target node.
+3. Edit the "rpc" settings in [env.js](app/env.js) to target your node
 4. Optional: Change the "coin" value in [env.js](app/env.js). Currently supported values are "BTC" and "LTC".
 5. `npm start` to start the local server
-6. Navigate to http://127.0.0.1:3002/
-7. Connect using the RPC credentials for your target bitcoin node (if you didn't edit [env.js](app/env.js) in Step 3)
+6. Visit http://127.0.0.1:3002/
 
 # Screenshots
 
