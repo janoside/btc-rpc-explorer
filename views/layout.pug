@@ -144,15 +144,27 @@ html
 
 		script(src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js")
 		
-		script(src="https://cdn.ravenjs.com/3.22.4/raven.min.js", crossorigin="anonymous")
 		script.
-			Raven.config('https://0bf20e8357a748cab8aa9d35c0f790dd@sentry.io/130800').install();
-			
 			$(document).ready(function() {
 				$('[data-toggle="tooltip"]').tooltip();
 				$('[data-toggle="popover"]').popover({html:true});
 			});
 
 			hljs.initHighlightingOnLoad();
+
+		if (env.sentryUrl && env.sentryUrl.length > 0)
+			script(src="https://cdn.ravenjs.com/3.25.2/raven.min.js", crossorigin="anonymous")
+			script.
+				Raven.config("#{env.sentryUrl}").install();
+
+		if (env.googleAnalyticsTrackingId && env.googleAnalyticsTrackingId.length > 0)
+			script(async, src=("https://www.googletagmanager.com/gtag/js?id=#{env.googleAnalyticsTrackingId}"))
+			script.
+				window.dataLayer = window.dataLayer || [];
+				function gtag(){dataLayer.push(arguments);}
+				gtag('js', new Date());
+
+				gtag('config', '#{env.googleAnalyticsTrackingId}');
+
 		
 		block endOfBody

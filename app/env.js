@@ -36,6 +36,9 @@ module.exports = {
 	// Edit "ipWhitelistForRpcCommands" regex to limit access to RPC Browser / Terminal to matching IPs
 	ipWhitelistForRpcCommands:/^(127\.0\.0\.1)?(\:\:1)?$/,
 
+	googleAnalyticsTrackingId:"",
+	sentryUrl:"",
+
 	donationAddresses:{
 		coins:["BTC", "LTC"],
 		
