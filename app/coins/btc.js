@@ -85,8 +85,9 @@ module.exports = {
 	},
 	historicalData: [
 		{
-			type: "block",
+			type: "blockheight",
 			date: "2009-01-03",
+			blockHeight: 0,
 			blockHash: "000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f",
 			note: "The bitcoin genesis block.",
 			referenceUrl: "https://en.bitcoin.it/wiki/Genesis_block"
@@ -106,8 +107,9 @@ module.exports = {
 			referenceUrl: "https://twitter.com/marttimalmi/status/423455561703624704"
 		},
 		{
-			type: "block",
+			type: "blockheight",
 			date: "2017-08-24",
+			blockHeight: 481824,
 			blockHash: "0000000000000000001c8018d9cb3b742ef25114f27563e3fc4a1902167f9893",
 			note: "First SegWit block.",
 			referenceUrl: "https://twitter.com/conio/status/900722226911219712"
@@ -141,15 +143,17 @@ module.exports = {
 			referenceUrl: "https://www.reddit.com/r/Bitcoin/comments/7mhoks/til_in_2011_a_user_running_a_modified_mining/"
 		},
 		{
-			type: "block",
+			type: "blockheight",
 			date: "2009-01-12",
+			blockHeight: 170,
 			blockHash: "00000000d1145790a8694403d4063f323d499e655c83426834d4ce2f8dd4a2ee",
 			note: "First block containing a (non-coinbase) transaction.",
 			referenceUrl: "https://bitcointalk.org/index.php?topic=91806.msg1012234#msg1012234"
 		},
 		{
-			type: "block",
+			type: "blockheight",
 			date: "2017-08-25",
+			blockHeight: 481947,
 			blockHash: "00000000000000000139cb443e16442fcd07a4a0e0788dd045ee3cf268982016",
 			note: "First block mined that was greater than 1MB.",
 			referenceUrl: "https://en.bit.news/bitfury-mined-first-segwit-block-size-1-mb/"
