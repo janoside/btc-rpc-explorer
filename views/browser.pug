@@ -13,92 +13,93 @@ block content
 	h1(class="h2") RPC Browser
 	hr
 
-	div(class="row")
-		div(class="col-md-9")
-			if (methodhelp)
-				div(class="row")
-					div(class="col")
-						h4(style="display: inline-block;")
-							span(class="text-muted") Command: 
-							span  #{method}
-					div(class="col")
-						a(href=("https://bitcoin.org/en/developer-reference#" + method), class="btn btn-primary float-md-right") See developer docs &raquo;
+	if (gethelp)
+		div(class="row")
+			div(class="col-md-9")
+				if (methodhelp)
+					div(class="row")
+						div(class="col")
+							h4(style="display: inline-block;")
+								span(class="text-muted") Command: 
+								span  #{method}
+						div(class="col")
+							a(href=("https://bitcoin.org/en/developer-reference#" + method), class="btn btn-primary float-md-right") See developer docs &raquo;
+								
+					
+					hr
+
+					ul(class='nav nav-tabs mb-3')
+						li(class="nav-item")
+							a(data-toggle="tab", href="#tab-execute", class="nav-link active", role="tab") Execute
+						li(class="nav-item")
+							a(data-toggle="tab", href="#tab-help-content", class="nav-link", role="tab") Help Content
+
+					div(class="tab-content")
+						div(id="tab-execute", class="tab-pane active pb-3", role="tabpanel")
+							if (methodResult)
+								div(class="mt-4")
+									h5(class="mt-3") Result
+
+									pre(style="border: solid 1px #ccc;")
+										code #{JSON.stringify(methodResult, null, 4)}
+
+								hr
+
+							form(method="get")
+								input(type="hidden", name="method", value=method)
+
+								div(class="h5 mb-3") Arguments
+								
+								div(class="ml-3")
+									each argX, index in methodhelp.args
+										div(class="form-group")
+											label(for=("arg_" + argX.name))
+												strong #{argX.name}
+												span  (#{argX.properties.join(", ")})
+												if (argX.description)
+													span  - #{argX.description}
+												if (false && argX.detailsLines && argX.detailsLines.length > 0)
+													- var detailsLines = "";
+													each detailsLine in argX.detailsLines
+														- detailsLines = (detailsLines + "<br/>" + detailsLine);
+													i(class="fas fa-info-circle", data-toggle="tooltip", title=detailsLines)
+														
+
+
+											- var valX = false;
+											if (argValues != null)
+												if (argValues[index] != null)
+													if (("" + argValues[index]) != NaN)
+														- valX = argValues[index].toString();
+
+											input(id=("arg_" + argX.name), type="text", name=("args[" + index + "]"), placeholder=argX.name, class="form-control", value=valX)
+
+									if (!methodhelp.args || methodhelp.args.length == 0)
+										span(class="text-muted") None
+
+								hr
+
+								input(type="submit", name="execute", value="Execute", class="btn btn-primary btn-block")
+
+						div(id="tab-help-content", class="tab-pane", role="tabpanel")
+							pre #{methodhelp.string}
+
+					
 							
-				
-				hr
 
-				ul(class='nav nav-tabs mb-3')
-					li(class="nav-item")
-						a(data-toggle="tab", href="#tab-execute", class="nav-link active", role="tab") Execute
-					li(class="nav-item")
-						a(data-toggle="tab", href="#tab-help-content", class="nav-link", role="tab") Help Content
+				else
+					:markdown-it
+						Browse RPC commands from the list. The list is built from the results of the `help` command and organized into sections accordingly.
 
-				div(class="tab-content")
-					div(id="tab-execute", class="tab-pane active pb-3", role="tabpanel")
-						if (methodResult)
-							div(class="mt-4")
-								h5(class="mt-3") Result
-
-								pre(style="border: solid 1px #ccc;")
-									code #{JSON.stringify(methodResult, null, 4)}
-
-							hr
-
-						form(method="get")
-							input(type="hidden", name="method", value=method)
-
-							div(class="h5 mb-3") Arguments
-							
-							div(class="ml-3")
-								each argX, index in methodhelp.args
-									div(class="form-group")
-										label(for=("arg_" + argX.name))
-											strong #{argX.name}
-											span  (#{argX.properties.join(", ")})
-											if (argX.description)
-												span  - #{argX.description}
-											if (false && argX.detailsLines && argX.detailsLines.length > 0)
-												- var detailsLines = "";
-												each detailsLine in argX.detailsLines
-													- detailsLines = (detailsLines + "<br/>" + detailsLine);
-												i(class="fas fa-info-circle", data-toggle="tooltip", title=detailsLines)
-													
-
-
-										- var valX = false;
-										if (argValues != null)
-											if (argValues[index] != null)
-												if (("" + argValues[index]) != NaN)
-													- valX = argValues[index].toString();
-
-										input(id=("arg_" + argX.name), type="text", name=("args[" + index + "]"), placeholder=argX.name, class="form-control", value=valX)
-
-								if (!methodhelp.args || methodhelp.args.length == 0)
-									span(class="text-muted") None
-
-							hr
-
-							input(type="submit", name="execute", value="Execute", class="btn btn-primary btn-block")
-
-					div(id="tab-help-content", class="tab-pane", role="tabpanel")
-						pre #{methodhelp.string}
-
-				
-						
-
-			else
-				:markdown-it
-					Browse RPC commands from the list. The list is built from the results of the `help` command and organized into sections accordingly.
-
-		div(class="col-md-3")
-			each section, sectionIndex in gethelp
-				h4 #{section.name}
-					small  (#{section.methods.length})
-				hr
-				
-				div(class="mb-4")
-					ol(style="padding-left: 30px;")
-						each methodX, methodIndex in section.methods
-							li
-								a(href=("/rpc-browser?method=" + methodX.name), style=(methodX.name == method ? "font-weight: bold; font-style: italic;" : false), class="monospace") #{methodX.name}
+			div(class="col-md-3")
+				each section, sectionIndex in gethelp
+					h4 #{section.name}
+						small  (#{section.methods.length})
+					hr
+					
+					div(class="mb-4")
+						ol(style="padding-left: 30px;")
+							each methodX, methodIndex in section.methods
+								li
+									a(href=("/rpc-browser?method=" + methodX.name), style=(methodX.name == method ? "font-weight: bold; font-style: italic;" : false), class="monospace") #{methodX.name}
 
