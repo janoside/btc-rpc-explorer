@@ -5,7 +5,6 @@ module.exports = {
 
 	rpcBlacklist:[
 		"stop",
-		"stop",
 		"savemempool",
 		"addnode",
 		"disconnectnode",
