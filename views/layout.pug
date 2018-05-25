@@ -93,7 +93,7 @@ html
 			footer(class="footer bg-dark text-light pt-3 pb-1 px-3", style="margin-top: 50px;")
 				div(class="container")
 					div(class="row")
-						div(class="col-md-6")
+						div(class="col-md-5")
 							dl
 								dt Source
 								dd
@@ -121,11 +121,11 @@ html
 											a(href="https://lightning.chaintools.io", class="mr-2")
 												img(src=("/img/logo/lightning.svg"), style="width: 32px; height: 32px;")
 
-						div(class="col-md-6 text-md-right")
+						div(class="col-md-7 text-md-right")
 							dl
 								dt Support Development of #{coinConfig.siteTitle}
 								dd
-									div
+									div(class="text-md-right text-center")
 										each coin, index in env.donationAddresses.coins
 											div(style="display: inline-block;", class="text-center mb-3", class=(index > 0 ? "ml-md-3" : false))
 												img(src=donationAddressQrCodeUrls[coin], alt=env.donationAddresses[coin].address, style="border: solid 1px #ccc;")

@@ -16,24 +16,23 @@ div(class="tab-content")
 		
 		table(class="table")
 			tr
-				th(class="table-active properties-header") Block Hash
-				td(class="monospace")
-					a(href=("/block/" + result.getblock.hash)) #{result.getblock.hash}
-
-			tr
-				th(class="table-active properties-header") Previous Block Hash
-				td(class="monospace")
+				th(class="table-active properties-header") Previous Block
+				td(class="monospace word-wrap")
 					if (result.getblock.previousblockhash)
-						a(href=("/block/" + result.getblock.previousblockhash)) #{result.getblock.previousblockhash}
+						a(class="word-wrap", href=("/block/" + result.getblock.previousblockhash)) #{result.getblock.previousblockhash}
+						br
+						span(class="text-muted") (#{(result.getblock.height - 1).toLocaleString()})
 
 					else if (result.getblock.hash == genesisBlockHash)
 						span None
 
 			tr
-				th(class="table-active properties-header") Next Block Hash
-				td(class="monospace")
+				th(class="table-active properties-header") Next Block
+				td(class="monospace word-wrap")
 					if (result.getblock.nextblockhash)
 						a(href=("/block/" + result.getblock.nextblockhash)) #{result.getblock.nextblockhash}
+						br
+						span(class="text-muted") (#{(result.getblock.height + 1).toLocaleString()})
 					else
 						span None
 						span(class="text-muted")  (latest block)
@@ -48,6 +47,7 @@ div(class="tab-content")
 
 				- var timeAgo = moment.duration(moment.utc(new Date()).diff(moment.utc(new Date(parseInt(result.getblock.time) * 1000))));
 				td(class="monospace") #{moment.utc(new Date(result.getblock.time * 1000)).format("Y-MM-DD HH:mm:ss")}
+					br
 					span(class="text-muted")  (#{timeAgo.format()})
 
 			tr
@@ -59,6 +59,7 @@ div(class="tab-content")
 				td(class="monospace")
 					span #{result.getblock.size.toLocaleString()} bytes
 					if (result.getblock.weight)
+						br
 						span(class="text-muted")  (weight: #{result.getblock.weight.toLocaleString()})
 
 			tr
@@ -80,6 +81,7 @@ div(class="tab-content")
 							- var fraction = Math.floor(result.getblock.difficulty / item.val);
 							if (fraction >= 1)
 								- scaleDone = true;
+								br
 								span(class="text-muted")  (#{fraction} #{item.name})
 
 
@@ -98,11 +100,11 @@ div(class="tab-content")
 
 			tr
 				th(class="table-active text-right") Merkle Root
-				td(class="monospace") #{result.getblock.merkleroot}
+				td(class="monospace word-wrap") #{result.getblock.merkleroot}
 
 			tr
 				th(class="table-active text-right") Chainwork
-				td(class="monospace") #{result.getblock.chainwork}
+				td(class="monospace word-wrap") #{result.getblock.chainwork}
 
 		hr
 

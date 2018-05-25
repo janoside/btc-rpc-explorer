@@ -10,7 +10,7 @@ block headContent
 
 block content
 	if (result && result.getrawtransaction)
-		h1(class="h2") Transaction
+		h1(class="h2 word-wrap") Transaction
 			br
 			small(class="monospace") #{txid}
 		hr
@@ -49,7 +49,7 @@ block content
 				table(class="table")
 					tr
 						th(class="table-active properties-header") Included in Block
-						td(class="monospace")
+						td(class="monospace word-wrap")
 							if (result.getblock)
 								a(href=("/block/" + result.getrawtransaction.blockhash)) #{result.getrawtransaction.blockhash}
 								if (result.getblock.height)
@@ -64,9 +64,11 @@ block content
 						if (result.getrawtransaction.time)
 							td(class="monospace") #{moment.utc(new Date(result.getrawtransaction["time"] * 1000)).format("Y-MM-DD HH:mm:ss")}
 								- var timeAgo = moment.duration(moment.utc(new Date()).diff(moment.utc(new Date(parseInt(result.getrawtransaction["time"]) * 1000))));
+								br
 								span(class="text-muted")  (#{timeAgo.format()})
 						else
 							td(class="monospace") N/A
+								br
 								span(class="text-muted")  (unconfirmed)
 					
 					//tr
@@ -114,7 +116,7 @@ block content
 
 					if (result.getrawtransaction.vin[0].coinbase)
 						tr
-							th(class="table-active properties-header") Total Network Fees
+							th(class="table-active properties-header") Network Fees Collected
 							td
 								- var currencyValue = new Decimal(totalOutputValue).minus(totalInputValue);
 								include includes/value-display.pug
