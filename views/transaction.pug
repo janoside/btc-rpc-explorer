@@ -40,11 +40,26 @@ block content
 
 		div(class="tab-content")
 			div(id="tab-summary", class="tab-pane active", role="tabpanel")
-				if (coinConfig.specialTransactions && coinConfig.specialTransactions[txid])
+				if (global.specialTransactions && global.specialTransactions[txid])
 					div(class="alert alert-primary", style="padding-bottom: 0;")
-						h4(class="alert-heading h5") #{coinConfig.specialTransactions[txid].noteTitle}
-						if (coinConfig.specialTransactions[txid].noteBodyHtml)
-							p !{coinConfig.specialTransactions[txid].noteBodyHtml}
+						h4(class="alert-heading h5") #{coinConfig.name} Fun
+
+						// special transaction info
+						- var stInfo = global.specialTransactions[txid];
+						if (stInfo.alertBodyHtml)
+							p
+								span !{stInfo.alertBodyHtml}
+
+								if (stInfo.referenceUrl && stInfo.referenceUrl.trim().length > 0 && stInfo.alertBodyHtml.indexOf(stInfo.referenceUrl) == -1)
+									span  
+										a(href=stInfo.referenceUrl) Read more
+						else
+							p
+								span #{stInfo.summary}
+
+								if (stInfo.referenceUrl && stInfo.referenceUrl.trim().length > 0)
+									span  
+										a(href=stInfo.referenceUrl) Read more
 
 				table(class="table")
 					tr

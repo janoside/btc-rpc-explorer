@@ -101,6 +101,20 @@ app.runOnStartup = function() {
 		});
 	}
 
+	global.specialTransactions = {};
+	global.specialBlocks = {};
+
+	if (global.coinConfig.historicalData) {
+		global.coinConfig.historicalData.forEach(function(item) {
+			if (item.type == "blockheight") {
+				global.specialBlocks[item.blockHash] = item;
+
+			} else if (item.type == "tx") {
+				global.specialTransactions[item.txid] = item;
+			}
+		});
+	}
+
 	if (global.sourcecodeVersion == null) {
 		simpleGit(".").log(["-n 1"], function(err, log) {
 			global.sourcecodeVersion = log.all[0].hash.substring(0, 10);
