@@ -71,22 +71,22 @@ router.get("/node-status", function(req, res) {
 					res.render("node-status");
 
 				}).catch(function(err) {
-					res.locals.userMessage = "Unable to connect to node at " + env.rpc.host + ":" + env.rpc.port;
+					res.locals.userMessage = "Error getting node status: (id=0), err=" + err;
 
 					res.render("node-status");
 				});
 			}).catch(function(err) {
-				res.locals.userMessage = "Unable to connect to node at " + env.rpc.host + ":" + env.rpc.port;
+				res.locals.userMessage = "Error getting node status: (id=1), err=" + err;
 
 				res.render("node-status");
 			});
 		}).catch(function(err) {
-			res.locals.userMessage = "Unable to connect to node at " + env.rpc.host + ":" + env.rpc.port;
+			res.locals.userMessage = "Error getting node status: (id=2), err=" + err;
 
 			res.render("node-status");
 		});
 	}).catch(function(err) {
-		res.locals.userMessage = "Unable to connect to node at " + env.rpc.host + ":" + env.rpc.port;
+		res.locals.userMessage = "Error getting node status: (id=3), err=" + err;
 
 		res.render("node-status");
 	});
