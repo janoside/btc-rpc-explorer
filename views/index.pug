@@ -9,18 +9,13 @@ block content
 
 	if (env.demoSite)
 		div(class="alert alert-primary", role="alert")
-			p(class="lead")
+			p
 				strong #{coinConfig.siteTitle}
 				span  is 
 				a(href="https://github.com/janoside/btc-rpc-explorer") open-source
-				span . If you run your own 
+				span  and easy to set up. It can communicate with your 
 				a(href=coinConfig.nodeUrl) #{coinConfig.name} Full Node
-				span ,
-				strong  #{coinConfig.siteTitle}
-				span  can easily run alongside it, communicating via RPC calls.
-			
-			p(class="lead")
-				span See the 
+				span  via RPC. See the 
 				a(href="https://github.com/janoside/btc-rpc-explorer") project description
 				span  for a list of features and instructions for running.
 
