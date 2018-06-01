@@ -7,10 +7,11 @@ block content
 	h1(class="h2") Mempool Summary
 	hr
 
-	if (getmempoolinfo)
-		p Data from RPC command  
-			a(href="/rpc-browser?method=getmempoolinfo") getmempoolinfo
-			
+	if (false)
+		pre
+			code #{JSON.stringify(mempoolstats, null, 4)}
+
+	if (true)
 		table(class="table")
 			tr
 				th(class="table-active properties-header") Transaction Count
@@ -21,84 +22,94 @@ block content
 					span #{utils.formatBytes(getmempoolinfo.usage)}
 					span(class="text-muted")  (virtual size: #{utils.formatBytes(getmempoolinfo.bytes)})
 			tr
-				th(class="table-active properties-header") Max Size
-				td(class="monospace") #{utils.formatBytes(getmempoolinfo.maxmempool)}
-			tr
-				th(class="table-active properties-header") Min Fee
-				td(class="monospace") #{getmempoolinfo.mempoolminfee.toLocaleString()}
-			tr
 				th(class="table-active properties-header") Total Fees
-				td(class="monospace") #{utils.formatCurrencyAmount(mempoolstats.totalFee, currencyFormatType)}
+				td(class="monospace") #{utils.formatCurrencyAmount(mempoolstats["totalFees"], currencyFormatType)}
 					if (global.exchangeRate)
 						span  
-						span(data-toggle="tooltip", title=utils.formatExchangedCurrency(mempoolstats.totalFee))
+						span(data-toggle="tooltip", title=utils.formatExchangedCurrency(mempoolstats["totalFees"]))
 							i(class="fas fa-exchange-alt")
 
+			tr
+				th(class="table-active properties-header") Average Fee
+				td(class="monospace") #{utils.formatCurrencyAmount(mempoolstats["averageFee"], currencyFormatType)}
+					if (global.exchangeRate)
+						span  
+						span(data-toggle="tooltip", title=utils.formatExchangedCurrency(mempoolstats["averageFee"]))
+							i(class="fas fa-exchange-alt")
 
-		h4 Transaction count by fee level
+			tr
+				th(class="table-active properties-header") Average Fee per Byte
+				td(class="monospace") #{(mempoolstats["averageFeePerByte"] * 100000000).toFixed(6)} sat/B
+
+		h4 Transactions by fee rate
 		hr
 
 		if (false)
 			#{JSON.stringify(mempoolstats)}
 
-		- var feeBucketLabels = [ "0 - 5 sat/B", "6 - 10 sat/B", "11 - 25 sat/B", "26 - 50 sat/B", "51 - 75 sat/B", "76 - 100 sat/B", "101 - 150 sat/B", "151+ sat/B" ];
-		- var feeBucketTxCounts = [ mempoolstats.fee_0_5, mempoolstats.fee_6_10, mempoolstats.fee_11_25, mempoolstats.fee_26_50, mempoolstats.fee_51_75, mempoolstats.fee_76_100, mempoolstats.fee_101_150, mempoolstats.fee_151_max ];
-		- var totalfeeBuckets = [ mempoolstats.totalfee_0_5, mempoolstats.totalfee_6_10, mempoolstats.totalfee_11_25, mempoolstats.totalfee_26_50, mempoolstats.totalfee_51_75, mempoolstats.totalfee_76_100, mempoolstats.totalfee_101_150, mempoolstats.totalfee_151_max ];
-		- var bgColors = [ "bg-primary", "bg-success", "bg-info", "bg-warning", "bg-danger", "bg-primary progress-bar-striped", "bg-success progress-bar-striped", "bg-info progress-bar-striped" ];
+		if (true)
+			- var feeBucketLabels = [("[0 - " + mempoolstats["satoshiPerByteBucketMaxima"][0] + ")")];
+			each item, index in mempoolstats["satoshiPerByteBuckets"]
+				if (index > 0 && index < mempoolstats["satoshiPerByteBuckets"].length - 1)
+					- feeBucketLabels.push(("[" + mempoolstats["satoshiPerByteBucketMaxima"][index - 1] + " - " + mempoolstats["satoshiPerByteBucketMaxima"][index] + ")"));
+			
+			- feeBucketLabels.push((mempoolstats.satoshiPerByteBucketMaxima[mempoolstats.satoshiPerByteBucketMaxima.length - 1] + "+"));
+			
+			- var feeBucketTxCounts = mempoolstats["satoshiPerByteBucketCounts"];
+			- var totalfeeBuckets = mempoolstats["satoshiPerByteBucketTotalFees"];
+			
+			canvas(id="mempoolBarChart", height="100", class="mb-4")
 
-		canvas(id="mempoolBarChart", height="100")
+			script(src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.bundle.min.js")
 
-		script(src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.bundle.min.js")
+			script var feeBucketLabels = [];
+			script var bgColors = [];
+			each feeBucketLabel, index in feeBucketLabels
+				- var percentTx = Math.round(100 * feeBucketTxCounts[index] / getmempoolinfo.size).toLocaleString();
+				script feeBucketLabels.push(["#{feeBucketLabel}","#{feeBucketTxCounts[index]} tx (#{percentTx}%)"]);
+				script bgColors.push("hsl(#{(333 * index / feeBucketLabels.length)}, 100%, 50%)");
 
-		script var feeBucketLabels = [];
-		each feeBucketLabel, index in feeBucketLabels
-			- var percentTx = Math.round(100 * feeBucketTxCounts[index] / getmempoolinfo.size).toLocaleString();
-			script feeBucketLabels.push(["#{feeBucketLabel}","#{feeBucketTxCounts[index]} tx (#{percentTx}%)","#{utils.formatCurrencyAmount(totalfeeBuckets[index], currencyFormatType)}"]);
+			script var feeBucketTxCounts = [#{feeBucketTxCounts}];
 
-		script var feeBucketTxCounts = [#{feeBucketTxCounts}];
+			script.
+				var ctx = document.getElementById("mempoolBarChart").getContext('2d');
+				var mempoolBarChart = new Chart(ctx, {
+				    type: 'bar',
+				    data: {
+				        labels: feeBucketLabels,
+				        datasets: [{
+				            data: feeBucketTxCounts,
+				            backgroundColor: bgColors
+				        }]
+				    },
+				    options: {
+				    	legend: {
+				    		display: false
+				    	},
+				        scales: {
+				            yAxes: [{
+				                ticks: {
+				                    beginAtZero:true
+				                }
+				            }]
+				        }
+				    }
+				});
 
-		script.
-			var ctx = document.getElementById("mempoolBarChart").getContext('2d');
-			var mempoolBarChart = new Chart(ctx, {
-			    type: 'bar',
-			    data: {
-			        labels: feeBucketLabels,
-			        datasets: [{
-			            data: feeBucketTxCounts,
-			            backgroundColor: [
-			                'rgba(255, 99,  132, 0.3)',
-			                'rgba(255, 159, 64,  0.3)',
-			                'rgba(255, 206, 86,  0.3)',
-			                'rgba(55,  212, 140, 0.3)',
-			                'rgba(75,  192, 192, 0.3)',
-			                'rgba(54,  162, 235, 0.3)',
-			                'rgba(153, 102, 255, 0.3)',
-			                'rgba(0,   0,   0,   0.3)',
-			            ],
-			            borderColor: [
-			                'rgba(255, 99,  132, 1)',
-			                'rgba(255, 159, 64,  1)',
-			                'rgba(255, 206, 86,  1)',
-			                'rgba(55,  212, 140, 1)',
-			                'rgba(75,  192, 192, 1)',
-			                'rgba(54,  162, 235, 1)',
-			                'rgba(153, 102, 255, 1)',
-			                'rgba(0,   0,   0,   1)',
-			            ],
-			            borderWidth: 2
-			        }]
-			    },
-			    options: {
-			    	legend: {
-			    		display: false
-			    	},
-			        scales: {
-			            yAxes: [{
-			                ticks: {
-			                    beginAtZero:true
-			                }
-			            }]
-			        }
-			    }
-			});
-				
+		table(class="table table-striped table-responsive-sm")
+			thead
+				tr
+					th Fee Rate
+					th(class="text-right") Tx Count
+					th(class="text-right") Total Fees
+					th(class="text-right") Average Fee Rate
+			tbody
+				each item, index in mempoolstats["satoshiPerByteBuckets"]
+					tr
+						td #{mempoolstats["satoshiPerByteBucketLabels"][index]}
+						td(class="text-right monospace") #{item["count"].toLocaleString()}
+						td(class="text-right monospace") #{utils.formatCurrencyAmount(item["totalFees"], currencyFormatType)}
+
+						- var avgFeeRate = item["totalFees"] * 100000000 / item["totalBytes"];
+						td(class="text-right monospace") #{avgFeeRate.toFixed(2)} sat/B
+					
