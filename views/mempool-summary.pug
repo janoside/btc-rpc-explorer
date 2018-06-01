@@ -39,7 +39,7 @@ block content
 
 			tr
 				th(class="table-active properties-header") Average Fee per Byte
-				td(class="monospace") #{(mempoolstats["averageFeePerByte"] * 100000000).toFixed(6)} sat/B
+				td(class="monospace") #{utils.formatCurrencyAmountInSmallestUnits(mempoolstats["averageFeePerByte"])}/B
 
 		h4 Transactions by fee rate
 		hr
@@ -110,6 +110,9 @@ block content
 						td(class="text-right monospace") #{item["count"].toLocaleString()}
 						td(class="text-right monospace") #{utils.formatCurrencyAmount(item["totalFees"], currencyFormatType)}
 
-						- var avgFeeRate = item["totalFees"] * 100000000 / item["totalBytes"];
-						td(class="text-right monospace") #{avgFeeRate.toFixed(2)} sat/B
+						if (item["totalBytes"] > 0)
+							- var avgFeeRate = item["totalFees"] / item["totalBytes"];
+							td(class="text-right monospace") #{utils.formatCurrencyAmountInSmallestUnits(avgFeeRate)}/B
+						else
+							td(class="text-right monospace") -
 					

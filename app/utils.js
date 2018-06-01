@@ -96,6 +96,9 @@ function formatCurrencyAmount(amount, formatType) {
 		dec = dec.times(formatCurrencyCache[formatType].multiplier);
 
 		var decimalPlaces = formatCurrencyCache[formatType].decimalPlaces;
+		if (decimalPlaces == 0 && dec < 1) {
+			decimalPlaces = 5;
+		}
 
 		return addThousandsSeparators(dec.toDecimalPlaces(decimalPlaces)) + " " + formatCurrencyCache[formatType].name;
 	}
@@ -113,6 +116,9 @@ function formatCurrencyAmount(amount, formatType) {
 				dec = dec.times(currencyUnit.multiplier);
 
 				var decimalPlaces = currencyUnit.decimalPlaces;
+				if (decimalPlaces == 0 && dec < 1) {
+					decimalPlaces = 5;
+				}
 
 				return addThousandsSeparators(dec.toDecimalPlaces(decimalPlaces)) + " " + currencyUnit.name;
 			}
@@ -120,6 +126,10 @@ function formatCurrencyAmount(amount, formatType) {
 	}
 	
 	return amount;
+}
+
+function formatCurrencyAmountInSmallestUnits(amount) {
+	return formatCurrencyAmount(amount, coins[env.coin].currencyUnits[coins[env.coin].currencyUnits.length - 1].name);
 }
 
 // ref: https://stackoverflow.com/a/2901298/673828
@@ -151,5 +161,6 @@ module.exports = {
 	formatBytes: formatBytes,
 	formatCurrencyAmount: formatCurrencyAmount,
 	formatExchangedCurrency: formatExchangedCurrency,
-	addThousandsSeparators: addThousandsSeparators
+	addThousandsSeparators: addThousandsSeparators,
+	formatCurrencyAmountInSmallestUnits: formatCurrencyAmountInSmallestUnits
 };
