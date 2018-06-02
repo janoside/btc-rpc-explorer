@@ -17,12 +17,25 @@ module.exports = {
 			decimalPlaces:8
 		},
 		{
-			name:"mLTC",
+			name:"lite",
 			multiplier:1000,
-			values:["mltc"],
+			values:["lite"],
 			decimalPlaces:5
+		},
+		{
+			name:"photon",
+			multiplier:1000000,
+			values:["photon"],
+			decimalPlaces:2
+		},
+		{
+			name:"litoshi",
+			multiplier:100000000,
+			values:["litoshi", "lit"],
+			decimalPlaces:0
 		}
 	],
+	feeSatoshiPerByteBucketMaxima: [5, 10, 25, 50, 100, 150, 200, 250],
 	genesisBlockHash: "12a765e31ffd4059bada1e25190f6e98c99d9714d334efa41a195a7e7e04bfe2",
 	genesisCoinbaseTransactionId: "97ddfbbae6be97fd6cdf3e7ca13232a3afff2353e29badfab7f73011edd4ced9",
 	genesisCoinbaseTransaction: {

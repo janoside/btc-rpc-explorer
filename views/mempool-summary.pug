@@ -29,90 +29,102 @@ block content
 						span(data-toggle="tooltip", title=utils.formatExchangedCurrency(mempoolstats["totalFees"]))
 							i(class="fas fa-exchange-alt")
 
-			tr
-				th(class="table-active properties-header") Average Fee
-				td(class="monospace") #{utils.formatCurrencyAmount(mempoolstats["averageFee"], currencyFormatType)}
-					if (global.exchangeRate)
-						span  
-						span(data-toggle="tooltip", title=utils.formatExchangedCurrency(mempoolstats["averageFee"]))
-							i(class="fas fa-exchange-alt")
-
-			tr
-				th(class="table-active properties-header") Average Fee per Byte
-				td(class="monospace") #{utils.formatCurrencyAmountInSmallestUnits(mempoolstats["averageFeePerByte"])}/B
-
-		h4 Transactions by fee rate
-		hr
-
-		if (false)
-			#{JSON.stringify(mempoolstats)}
-
-		if (true)
-			- var feeBucketLabels = [("[0 - " + mempoolstats["satoshiPerByteBucketMaxima"][0] + ")")];
-			each item, index in mempoolstats["satoshiPerByteBuckets"]
-				if (index > 0 && index < mempoolstats["satoshiPerByteBuckets"].length - 1)
-					- feeBucketLabels.push(("[" + mempoolstats["satoshiPerByteBucketMaxima"][index - 1] + " - " + mempoolstats["satoshiPerByteBucketMaxima"][index] + ")"));
-			
-			- feeBucketLabels.push((mempoolstats.satoshiPerByteBucketMaxima[mempoolstats.satoshiPerByteBucketMaxima.length - 1] + "+"));
-			
-			- var feeBucketTxCounts = mempoolstats["satoshiPerByteBucketCounts"];
-			- var totalfeeBuckets = mempoolstats["satoshiPerByteBucketTotalFees"];
-			
-			canvas(id="mempoolBarChart", height="100", class="mb-4")
-
-			script(src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.bundle.min.js")
-
-			script var feeBucketLabels = [];
-			script var bgColors = [];
-			each feeBucketLabel, index in feeBucketLabels
-				- var percentTx = Math.round(100 * feeBucketTxCounts[index] / getmempoolinfo.size).toLocaleString();
-				script feeBucketLabels.push(["#{feeBucketLabel}","#{feeBucketTxCounts[index]} tx (#{percentTx}%)"]);
-				script bgColors.push("hsl(#{(333 * index / feeBucketLabels.length)}, 100%, 50%)");
-
-			script var feeBucketTxCounts = [#{feeBucketTxCounts}];
-
-			script.
-				var ctx = document.getElementById("mempoolBarChart").getContext('2d');
-				var mempoolBarChart = new Chart(ctx, {
-				    type: 'bar',
-				    data: {
-				        labels: feeBucketLabels,
-				        datasets: [{
-				            data: feeBucketTxCounts,
-				            backgroundColor: bgColors
-				        }]
-				    },
-				    options: {
-				    	legend: {
-				    		display: false
-				    	},
-				        scales: {
-				            yAxes: [{
-				                ticks: {
-				                    beginAtZero:true
-				                }
-				            }]
-				        }
-				    }
-				});
-
-		table(class="table table-striped table-responsive-sm")
-			thead
+			if (getmempoolinfo.size > 0)
 				tr
-					th Fee Rate
-					th(class="text-right") Tx Count
-					th(class="text-right") Total Fees
-					th(class="text-right") Average Fee Rate
-			tbody
-				each item, index in mempoolstats["satoshiPerByteBuckets"]
-					tr
-						td #{mempoolstats["satoshiPerByteBucketLabels"][index]}
-						td(class="text-right monospace") #{item["count"].toLocaleString()}
-						td(class="text-right monospace") #{utils.formatCurrencyAmount(item["totalFees"], currencyFormatType)}
+					th(class="table-active properties-header") Average Fee
+					td(class="monospace") #{utils.formatCurrencyAmount(mempoolstats["averageFee"], currencyFormatType)}
+						if (global.exchangeRate)
+							span  
+							span(data-toggle="tooltip", title=utils.formatExchangedCurrency(mempoolstats["averageFee"]))
+								i(class="fas fa-exchange-alt")
 
-						if (item["totalBytes"] > 0)
-							- var avgFeeRate = item["totalFees"] / item["totalBytes"];
-							td(class="text-right monospace") #{utils.formatCurrencyAmountInSmallestUnits(avgFeeRate)}/B
-						else
-							td(class="text-right monospace") -
-					
+				tr
+					th(class="table-active properties-header") Average Fee per Byte
+					td(class="monospace") #{utils.formatCurrencyAmountInSmallestUnits(mempoolstats["averageFeePerByte"])}/B
+
+		if (getmempoolinfo.size > 0)
+			h4 Transactions by fee rate
+			hr
+
+			if (false)
+				#{JSON.stringify(mempoolstats)}
+
+			if (true)
+				- var feeBucketLabels = [("[0 - " + mempoolstats["satoshiPerByteBucketMaxima"][0] + ")")];
+				each item, index in mempoolstats["satoshiPerByteBuckets"]
+					if (index > 0 && index < mempoolstats["satoshiPerByteBuckets"].length - 1)
+						- feeBucketLabels.push(("[" + mempoolstats["satoshiPerByteBucketMaxima"][index - 1] + " - " + mempoolstats["satoshiPerByteBucketMaxima"][index] + ")"));
+				
+				- feeBucketLabels.push((mempoolstats.satoshiPerByteBucketMaxima[mempoolstats.satoshiPerByteBucketMaxima.length - 1] + "+"));
+				
+				- var feeBucketTxCounts = mempoolstats["satoshiPerByteBucketCounts"];
+				- var totalfeeBuckets = mempoolstats["satoshiPerByteBucketTotalFees"];
+				
+				canvas(id="mempoolBarChart", height="100", class="mb-4")
+
+				script(src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.bundle.min.js")
+
+				script var feeBucketLabels = [];
+				script var bgColors = [];
+				each feeBucketLabel, index in feeBucketLabels
+					- var percentTx = Math.round(100 * feeBucketTxCounts[index] / getmempoolinfo.size).toLocaleString();
+					script feeBucketLabels.push(["#{feeBucketLabel}","#{feeBucketTxCounts[index]} tx (#{percentTx}%)"]);
+					script bgColors.push("hsl(#{(333 * index / feeBucketLabels.length)}, 100%, 50%)");
+
+				script var feeBucketTxCounts = [#{feeBucketTxCounts}];
+
+				script.
+					var ctx = document.getElementById("mempoolBarChart").getContext('2d');
+					var mempoolBarChart = new Chart(ctx, {
+					    type: 'bar',
+					    data: {
+					        labels: feeBucketLabels,
+					        datasets: [{
+					            data: feeBucketTxCounts,
+					            backgroundColor: bgColors
+					        }]
+					    },
+					    options: {
+					    	legend: {
+					    		display: false
+					    	},
+					        scales: {
+					            yAxes: [{
+					                ticks: {
+					                    beginAtZero:true
+					                }
+					            }]
+					        }
+					    }
+					});
+
+			table(class="table table-striped table-responsive-sm")
+				thead
+					tr
+						th Fee Rate
+						th(class="text-right") Tx Count
+						th(class="text-right") Total Fees
+						th(class="text-right") Average Fee
+						th(class="text-right") Average Fee Rate
+				tbody
+					each item, index in mempoolstats["satoshiPerByteBuckets"]
+						tr
+							td #{mempoolstats["satoshiPerByteBucketLabels"][index]}
+							td(class="text-right monospace") #{item["count"].toLocaleString()}
+							td(class="text-right monospace") #{utils.formatCurrencyAmount(item["totalFees"], currencyFormatType)}
+
+							if (item["totalBytes"] > 0)
+								- var avgFee = item["totalFees"] / item["count"];
+								- var avgFeeRate = item["totalFees"] / item["totalBytes"];
+
+								td(class="text-right monospace") #{utils.formatCurrencyAmount(avgFee, currencyFormatType)}
+									if (global.exchangeRate)
+										span  
+										span(data-toggle="tooltip", title=utils.formatExchangedCurrency(avgFee))
+											i(class="fas fa-exchange-alt")
+												
+								td(class="text-right monospace") #{utils.formatCurrencyAmountInSmallestUnits(avgFeeRate)}/B
+							else
+								td(class="text-right monospace") -
+								td(class="text-right monospace") -
+						

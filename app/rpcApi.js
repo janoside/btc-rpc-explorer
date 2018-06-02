@@ -120,7 +120,7 @@ function getMempoolStats() {
 				}
 			}
 
-			var satoshiPerByteBucketMaxima = [1, 5, 10, 15, 20, 25, 50, 75, 100, 150];
+			var satoshiPerByteBucketMaxima = coins[env.coin].feeSatoshiPerByteBucketMaxima;
 			var bucketCount = satoshiPerByteBucketMaxima.length + 1;
 
 			var satoshiPerByteBuckets = [];
