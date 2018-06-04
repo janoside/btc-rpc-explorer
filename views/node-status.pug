@@ -19,7 +19,7 @@ block content
 			pre
 				code #{JSON.stringify(getblockchaininfo, null, 4)}
 
-		if (true)
+		if (global.client)
 			table(class="table")
 				tr
 					th(class="table-active properties-header") Host : Port
@@ -90,4 +90,7 @@ block content
 							span #{getblockchaininfo.warnings}
 						else
 							span None
+							
+		else
+			div(class="alert alert-warning") No active RPC connection
 										
