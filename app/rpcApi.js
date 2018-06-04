@@ -288,7 +288,7 @@ function getBlockByHash(blockHash) {
 	});
 }
 
-function getTransactionInputs(rpcClient, transaction, inputLimit=0) {
+function getTransactionInputs(transaction, inputLimit=0) {
 	console.log("getTransactionInputs: " + transaction.txid);
 
 	return new Promise(function(resolve, reject) {
@@ -431,7 +431,7 @@ function executeBatchesSequentiallyInternal(batchId, batches, currentIndex, accu
 	});
 }
 
-function getBlockData(rpcClient, blockHash, txLimit, txOffset) {
+function getBlockData(blockHash, txLimit, txOffset) {
 	console.log("getBlockData: " + blockHash);
 
 	return new Promise(function(resolve, reject) {
@@ -457,7 +457,7 @@ function getBlockData(rpcClient, blockHash, txLimit, txOffset) {
 					var transaction = transactions[i];
 
 					if (transaction) {
-						promises.push(getTransactionInputs(client, transaction, 10));
+						promises.push(getTransactionInputs(transaction, 10));
 					}
 				}
 
