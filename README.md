@@ -42,6 +42,23 @@ The below instructions are geared toward BTC, but can be adapted easily to other
 5. `npm start` to start the local server
 6. Visit http://127.0.0.1:3002/
 
+# Run it via Docker
+
+Build it yourself 
+```
+docker build -t btc-rpc-explorer .
+```
+or pull the already built image 
+
+```
+docker pull oktapodia/btc-rpc-explorer
+```
+
+Launch command: 
+```
+docker run -p 3002:3002 -e "RPC_USER=rpc-username" -e "RPC_PASSWORD=rpc-password" -e "RPC_HOST=127.0.0.1" -e "RPC_PORT=8332" -it btc-rpc-explorer
+```
+
 # Screenshots
 
 <table>
