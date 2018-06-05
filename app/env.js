@@ -26,10 +26,10 @@ module.exports = {
 	// You may delete this section if you wish to connect manually via the UI.
 
 	rpc: {
-		host:"127.0.0.1",
-		port:8332,
-		username:"rpc-username",
-		password:"rpc-password"
+		host: process.env.RPC_HOST,
+		port: process.env.RPC_PORT,
+		username: process.env.RPC_USER,
+		password: process.env.RPC_PASSWORD
 	},
 
 	// Edit "ipWhitelistForRpcCommands" regex to limit access to RPC Browser / Terminal to matching IPs
