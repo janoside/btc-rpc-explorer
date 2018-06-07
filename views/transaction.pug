@@ -162,23 +162,23 @@ block content
 
 				div(class="card mb-3")
 					div(class="card-header")
-						div(class="row")
-							div(class="col-md-6")
-								h2(class="h6 mb-0") Input (#{result.getrawtransaction.vin.length.toLocaleString()})
-							div(class="col-md-6") 
-								h2(class="h6 mb-0") Output (#{result.getrawtransaction.vout.length.toLocaleString()})
+						h2(class="h6 mb-0")
+							span #{result.getrawtransaction.vin.length.toLocaleString()} 
+							if (result.getrawtransaction.vin.length == 1)
+								span Input, 
+							else
+								span Inputs, 
+
+							span #{result.getrawtransaction.vout.length.toLocaleString()} 
+							if (result.getrawtransaction.vout.length == 1)
+								span Output
+							else
+								span Outputs
 					div(class="card-body")
 						div(class="row")
 							div(class="col-md-6")
 								if (result.txInputs)
 									table(class="table mb-0")
-										thead
-											tr
-												th(style="width: 40px;")
-												th Input
-												th Amount
-										tbody
-										
 										if (result.getrawtransaction.vin[0].coinbase)
 											tr
 												th 1
@@ -210,7 +210,7 @@ block content
 															include includes/value-display.pug
 
 										tr
-											td
+											th
 											td
 											td
 												strong
@@ -220,12 +220,6 @@ block content
 
 							div(class="col-md-6")
 								table(class="table mb-0")
-									thead
-										tr
-											th
-											th Output
-											th Amount
-
 									tbody
 										each vout, voutIndex in result.getrawtransaction.vout
 											tr
@@ -248,7 +242,7 @@ block content
 													include includes/value-display.pug
 
 										tr
-											td
+											th
 											td
 											td
 												strong

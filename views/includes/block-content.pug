@@ -173,13 +173,6 @@ div(class="tab-content")
 								if (result.txInputsByTransaction[tx.txid])
 									- var totalInputValue = new Decimal(0);
 									table(class="table mb-0")
-										thead
-											tr
-												th(style="width: 40px;")
-												th Input
-												th Amount
-										tbody
-										
 										if (tx.vin[0].coinbase)
 											- totalInputValue = totalInputValue.plus(new Decimal(coinConfig.blockRewardFunction(result.getblock.height)));
 											tr
@@ -194,19 +187,17 @@ div(class="tab-content")
 										each txInput, txInputIndex in result.txInputsByTransaction[tx.txid]
 											if (txInput)
 												- var vout = txInput.vout[tx.vin[txInputIndex].vout];
-												
+
 												tr
 													th #{(txInputIndex + 1)}
-													//pre
-													//	code #{JSON.stringify(txInput)}
 
 													td
 														if (vout.scriptPubKey && vout.scriptPubKey.addresses)
 															div(class="monospace", style="word-break: break-word;")
 																a(href=("/address/" + vout.scriptPubKey.addresses[0])) #{vout.scriptPubKey.addresses[0]}
 
-															span(class="monospace") via 
-															a(href=("/tx/" + txInput.txid + "#output-" + tx.vin[txInputIndex].vout), class="monospace") tx:#{txInput.txid.substring(0, 14)}...[#{tx.vin[txInputIndex].vout}]
+															span(class="monospace small") via 
+																a(href=("/tx/" + txInput.txid + "#output-" + tx.vin[txInputIndex].vout), class="monospace") tx:#{txInput.txid.substring(0, 20)}...[#{tx.vin[txInputIndex].vout}]
 													td
 														if (vout.value)
 															- totalInputValue = totalInputValue.plus(new Decimal(vout.value));
@@ -223,7 +214,7 @@ div(class="tab-content")
 												td
 										else
 											tr
-												td
+												th
 												td
 												td
 													strong
@@ -235,12 +226,6 @@ div(class="tab-content")
 								//h6 Output (#{tx.vout.length.toLocaleString()})
 								- var totalOutputValue = new Decimal(0);
 								table(class="table mb-0")
-									thead
-										tr
-											th
-											th Output
-											th Amount
-
 									tbody
 										each vout, voutIndex in tx.vout
 											tr
@@ -265,7 +250,7 @@ div(class="tab-content")
 													- totalOutputValue = totalOutputValue.plus(vout.value);
 
 										tr
-											td
+											th
 											td
 											td
 												strong
