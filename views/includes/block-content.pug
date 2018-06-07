@@ -125,20 +125,44 @@ div(class="tab-content")
 
 		hr
 
-		h2(class="h4") Transactions (#{txCount.toLocaleString()})
-			small  - Showing 
-				if (txCount <= limit)
-					span all
-				else
-					span #{(offset + 1)} - #{Math.min(offset + limit, txCount)}
+		div(class="card mb-3")
+			div(class="card-header")
+				div(class="row")
+					div(class="col-md-4")
+						h2(class="h4 mb-0") #{txCount.toLocaleString()} 
+							if (txCount == 1)
+								span Transaction
+							else
+								span Transactions
+
+					if (txCount > 20)
+						div(class="col-md-8 text-right")
+							span(class="mr-2") Show
+							div(class="btn-group", role="group")
+								a(href=(paginationBaseUrl + "?limit=20"), class="btn btn-sm btn-primary px-2", class=((limit == 20 && txCount > limit) ? "active" : false)) 20
+								a(href=(paginationBaseUrl + "?limit=50"), class="btn btn-sm btn-primary px-2", class=(limit == 50 ? "active" : false)) 50
+								a(href=(paginationBaseUrl + "?limit=100"), class="btn btn-sm btn-primary px-2", class=(limit == 100 ? "active" : false)) 100
+								a(href=(paginationBaseUrl + "?limit=3000"), class="btn btn-sm btn-primary px-2", class=(limit >= txCount ? "active" : false)) all
+
+		if (false)
+			h2(class="h4") Transactions (#{txCount.toLocaleString()})
+				small  - Showing 
+					if (txCount <= limit)
+						span all
+					else
+						span #{(offset + 1)} - #{Math.min(offset + limit, txCount)}
 		
 		each tx, txIndex in result.transactions
 			//pre
 			//	code #{JSON.stringify(tx, null, 4)}
 			div(class="card mb-3")
 				div(class="card-header")
-					if (tx && tx.txid)
-						a(href=("/tx/" + tx.txid), class="monospace") #{tx.txid}
+					div(class="row")
+						div(class="col-md-10")
+							if (tx && tx.txid)
+								a(href=("/tx/" + tx.txid), class="monospace") #{tx.txid}
+						div(class="col-md-2 text-right")
+							span ##{(txIndex + offset).toLocaleString()}
 				div(class="card-body")
 					//pre
 					//	code #{JSON.stringify(result.txInputsByTransaction[tx.txid], null, 4)}
@@ -170,7 +194,7 @@ div(class="tab-content")
 										each txInput, txInputIndex in result.txInputsByTransaction[tx.txid]
 											if (txInput)
 												- var vout = txInput.vout[tx.vin[txInputIndex].vout];
-
+												
 												tr
 													th #{(txInputIndex + 1)}
 													//pre
