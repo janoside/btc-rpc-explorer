@@ -389,7 +389,7 @@ function getRawTransactions(txids) {
 			}
 		}
 
-		var requestBatches = utils.splitArrayIntoChunks(requests, 20);
+		var requestBatches = utils.splitArrayIntoChunks(requests, 100);
 
 		executeBatchesSequentially(requestBatches, function(results) {
 			resolve(results);
@@ -449,27 +449,44 @@ function getBlockData(blockHash, txLimit, txOffset) {
 				txids.push(result2.tx[i]);
 			}
 
+			var maxInputsTracked = 10;
 			getRawTransactions(txids).then(function(transactions) {
 				var txInputsByTransaction = {};
 
+				var vinTxids = [];
 				var promises = [];
 				for (var i = 0; i < transactions.length; i++) {
 					var transaction = transactions[i];
 
 					if (transaction) {
-						promises.push(getTransactionInputs(transaction, 10));
+						//console.log("xyz: " + JSON.stringify(transaction.vin));
+
+						for (var j = 0; j < Math.min(maxInputsTracked, transaction.vin.length); j++) {
+							if (transaction.vin[j].txid) {
+								vinTxids.push(transaction.vin[j].txid);
+							}
+						}
 					}
 				}
 
-				Promise.all(promises).then(function() {
-					var results = arguments[0];
-					for (var i = 0; i < results.length; i++) {
-						var resultX = results[i];
+				getRawTransactions(vinTxids).then(function(vinTransactions) {
+					var vinTxById = {};
 
-						txInputsByTransaction[resultX.txid] = resultX.inputTransactions;
-					}
+					vinTransactions.forEach(function(tx) {
+						vinTxById[tx.txid] = tx;
+					});
 
-					resolve({ getblock:result2, transactions:transactions, txInputsByTransaction:txInputsByTransaction });
+					transactions.forEach(function(tx) {
+						txInputsByTransaction[tx.txid] = [];
+
+						for (var i = 0; i < Math.min(maxInputsTracked, tx.vin.length); i++) {
+							if (vinTxById[tx.vin[i].txid]) {
+								txInputsByTransaction[tx.txid].push(vinTxById[tx.vin[i].txid]);
+							}
+						}
+
+						resolve({ getblock:result2, transactions:transactions, txInputsByTransaction:txInputsByTransaction });
+					});
 				});
 			});
 		});
