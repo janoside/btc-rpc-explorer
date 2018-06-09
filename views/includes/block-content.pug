@@ -140,8 +140,13 @@ div(class="tab-content")
 							span(class="mr-2") Show
 							div(class="btn-group", role="group")
 								a(href=(paginationBaseUrl + "?limit=20"), class="btn btn-sm btn-primary px-2", class=((limit == 20 && txCount > limit) ? "active" : false)) 20
-								a(href=(paginationBaseUrl + "?limit=50"), class="btn btn-sm btn-primary px-2", class=(limit == 50 ? "active" : false)) 50
-								a(href=(paginationBaseUrl + "?limit=100"), class="btn btn-sm btn-primary px-2", class=(limit == 100 ? "active" : false)) 100
+								
+								if (txCount > 50)
+									a(href=(paginationBaseUrl + "?limit=50"), class="btn btn-sm btn-primary px-2", class=(limit == 50 ? "active" : false)) 50
+								
+								if (txCount > 100)
+									a(href=(paginationBaseUrl + "?limit=100"), class="btn btn-sm btn-primary px-2", class=(limit == 100 ? "active" : false)) 100
+								
 								a(href=(paginationBaseUrl + "?limit=3000"), class="btn btn-sm btn-primary px-2", class=(limit >= txCount ? "active" : false)) all
 
 		if (false)
@@ -177,10 +182,10 @@ div(class="tab-content")
 											- totalInputValue = totalInputValue.plus(new Decimal(coinConfig.blockRewardFunction(result.getblock.height)));
 											tr
 												th 1
-												td
+												td(class="border-top-0")
 													span(class="tag monospace") coinbase
 													span(class="monospace")  Newly minted coins
-												td
+												td(class="border-top-0")
 													- var currencyValue = coinConfig.blockRewardFunction(result.getblock.height);
 													include ./value-display.pug
 
@@ -191,14 +196,14 @@ div(class="tab-content")
 												tr
 													th #{(txInputIndex + 1)}
 
-													td
+													td(class=(txInputIndex == 0 ? "border-top-0" : false))
 														if (vout.scriptPubKey && vout.scriptPubKey.addresses)
 															div(class="monospace", style="word-break: break-word;")
 																a(href=("/address/" + vout.scriptPubKey.addresses[0])) #{vout.scriptPubKey.addresses[0]}
 
 															span(class="monospace small") via 
 																a(href=("/tx/" + txInput.txid + "#output-" + tx.vin[txInputIndex].vout), class="monospace") tx:#{txInput.txid.substring(0, 20)}...[#{tx.vin[txInputIndex].vout}]
-													td
+													td(class=(txInputIndex == 0 ? "border-top-0" : false))
 														if (vout.value)
 															- totalInputValue = totalInputValue.plus(new Decimal(vout.value));
 
@@ -230,7 +235,7 @@ div(class="tab-content")
 										each vout, voutIndex in tx.vout
 											tr
 												th #{(voutIndex + 1)}
-												td
+												td(class=(voutIndex == 0 ? "border-top-0" : false))
 													if (vout.scriptPubKey)
 														if (vout.scriptPubKey.addresses)
 															a(id=("output-" + voutIndex), href=("/address/" + vout.scriptPubKey.addresses[0]))
@@ -243,7 +248,7 @@ div(class="tab-content")
 														else if (vout.scriptPubKey.asm && vout.scriptPubKey.asm.startsWith('OP_RETURN '))
 															span(class="monospace") OP_RETURN: 
 															span(class="monospace text-muted") #{utils.hex2ascii(vout.scriptPubKey.asm.substring("OP_RETURN ".length))}
-												td
+												td(class=(voutIndex == 0 ? "border-top-0" : false))
 													- var currencyValue = vout.value;
 													include ./value-display.pug
 

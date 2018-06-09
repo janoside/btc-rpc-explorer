@@ -183,10 +183,10 @@ block content
 										if (result.getrawtransaction.vin[0].coinbase)
 											tr
 												th 1
-												td
+												td(class="border-top-0")
 													span(class="tag monospace") coinbase
 													span(class="monospace") Newly minted coins
-												td
+												td(class="border-top-0")
 													- var currencyValue = coinConfig.blockRewardFunction(result.getblock.height);
 													include includes/value-display.pug
 
@@ -199,13 +199,13 @@ block content
 													//pre
 													//	code #{JSON.stringify(txInput)}
 
-													td
+													td(class=(txInputIndex == 0 ? "border-top-0" : false))
 														if (vout.scriptPubKey && vout.scriptPubKey.addresses)
 															div(class="monospace", style="word-break: break-word;")
 																a(href=("/address/" + vout.scriptPubKey.addresses[0])) #{vout.scriptPubKey.addresses[0]}
 															span(class="monospace") via 
 															a(href=("/tx/" + txInput.txid + "#output-" + result.getrawtransaction.vin[txInputIndex].vout), class="monospace") #{txInput.txid.substring(0, 14)}...[#{result.getrawtransaction.vin[txInputIndex].vout}]
-													td
+													td(class=(txInputIndex == 0 ? "border-top-0" : false))
 														if (vout.value)
 															- var currencyValue = vout.value;
 															include includes/value-display.pug
@@ -225,7 +225,7 @@ block content
 										each vout, voutIndex in result.getrawtransaction.vout
 											tr
 												th #{(voutIndex + 1)}
-												td
+												td(class=(voutIndex == 0 ? "border-top-0" : false))
 													if (vout.scriptPubKey)
 														if (vout.scriptPubKey.addresses)
 															a(id=("output-" + voutIndex), href=("/address/" + vout.scriptPubKey.addresses[0]))
@@ -238,7 +238,7 @@ block content
 														else if (vout.scriptPubKey.asm && vout.scriptPubKey.asm.startsWith('OP_RETURN '))
 															span(class="monospace") OP_RETURN: 
 															span(class="monospace text-muted") #{utils.hex2ascii(vout.scriptPubKey.asm.substring("OP_RETURN ".length))}
-												td
+												td(class=(voutIndex == 0 ? "border-top-0" : false))
 													- var currencyValue = vout.value;
 													include includes/value-display.pug
 
