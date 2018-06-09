@@ -8,6 +8,8 @@ module.exports = {
 		"savemempool",
 		"addnode",
 		"disconnectnode",
+		"dumpprivkey",
+		"dumpwallet",
 		"setban",
 		"setnetworkactive",
 		"lockunspent",
