@@ -144,6 +144,7 @@ block content
 									- var currencyValue = new Decimal(totalInputValue).minus(totalOutputValue);
 									include includes/value-display.pug
 								
+								br
 								span(class="text-muted")  (#{utils.formatCurrencyAmount(totalInputValue, currencyFormatType)} - #{utils.formatCurrencyAmount(totalOutputValue, currencyFormatType)})
 								br
 								span ~#{utils.addThousandsSeparators(new DecimalRounded(totalInputValue).minus(totalOutputValue).dividedBy(result.getrawtransaction.size).times(100000000))} sat/B
