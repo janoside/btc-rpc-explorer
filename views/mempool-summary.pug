@@ -23,12 +23,10 @@ block content
 					span(class="text-muted")  (virtual size: #{utils.formatBytes(getmempoolinfo.bytes)})
 			tr
 				th(class="table-active properties-header") Total Fees
-				td(class="monospace") #{utils.formatCurrencyAmount(mempoolstats["totalFees"], currencyFormatType)}
-					if (global.exchangeRate)
-						span  
-						span(data-toggle="tooltip", title=utils.formatExchangedCurrency(mempoolstats["totalFees"]))
-							i(class="fas fa-exchange-alt")
-
+				td(class="monospace")
+					- var currencyValue = mempoolstats["totalFees"];
+					include includes/value-display.pug
+					
 			if (getmempoolinfo.size > 0)
 				tr
 					th(class="table-active properties-header") Average Fee
