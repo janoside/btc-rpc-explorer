@@ -203,8 +203,8 @@ block content
 														if (vout.scriptPubKey && vout.scriptPubKey.addresses)
 															div(class="monospace", style="word-break: break-word;")
 																a(href=("/address/" + vout.scriptPubKey.addresses[0])) #{vout.scriptPubKey.addresses[0]}
-															span(class="monospace") via 
-															a(href=("/tx/" + txInput.txid + "#output-" + result.getrawtransaction.vin[txInputIndex].vout), class="monospace") #{txInput.txid.substring(0, 14)}...[#{result.getrawtransaction.vin[txInputIndex].vout}]
+															span(class="small monospace") via 
+																a(href=("/tx/" + txInput.txid + "#output-" + result.getrawtransaction.vin[txInputIndex].vout), class="monospace") #{txInput.txid.substring(0, 20)}...[#{result.getrawtransaction.vin[txInputIndex].vout}]
 													td(class=(txInputIndex == 0 ? "border-top-0" : false))
 														if (vout.value)
 															- var currencyValue = vout.value;
