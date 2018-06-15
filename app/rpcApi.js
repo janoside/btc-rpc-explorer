@@ -13,11 +13,11 @@ function getGenesisCoinbaseTransactionId() {
 	return coins[env.coin].genesisCoinbaseTransactionId;
 }
 
-function getBlockchainInfo() {
+function getRpcData(cmd) {
 	return new Promise(function(resolve, reject) {
-		client.command('getblockchaininfo', function(err, result, resHeaders) {
+		client.command(cmd, function(err, result, resHeaders) {
 			if (err) {
-				console.log("Error 3207fh0f: " + err);
+				console.log("Error for RPC command '" + cmd + "': " + err);
 
 				reject(err);
 
@@ -27,70 +27,42 @@ function getBlockchainInfo() {
 			resolve(result);
 		});
 	});
+}
+
+function getRpcDataWithParams(cmd, params) {
+	return new Promise(function(resolve, reject) {
+		client.command(cmd, params, function(err, result, resHeaders) {
+			if (err) {
+				console.log("Error for RPC command '" + cmd + "': " + err);
+
+				reject(err);
+
+				return;
+			}
+
+			resolve(result);
+		});
+	});
+}
+
+function getBlockchainInfo() {
+	return getRpcData("getblockchaininfo");
 }
 
 function getNetworkInfo() {
-	return new Promise(function(resolve, reject) {
-		client.command('getnetworkinfo', function(err, result, resHeaders) {
-			if (err) {
-				console.log("Error 239r7ger7gy: " + err);
-
-				reject(err);
-
-				return;
-			}
-
-			resolve(result);
-		});
-	});
+	return getRpcData("getnetworkinfo");
 }
 
 function getNetTotals() {
-	return new Promise(function(resolve, reject) {
-		client.command('getnettotals', function(err, result, resHeaders) {
-			if (err) {
-				console.log("Error as07uthf40ghew: " + err);
-
-				reject(err);
-
-				return;
-			}
-
-			resolve(result);
-		});
-	});
+	return getRpcData("getnettotals");
 }
 
 function getMempoolInfo() {
-	return new Promise(function(resolve, reject) {
-		client.command('getmempoolinfo', function(err, result, resHeaders) {
-			if (err) {
-				console.log("Error 23407rhwe07fg: " + err);
-
-				reject(err);
-
-				return;
-			}
-
-			resolve(result);
-		});
-	});
+	return getRpcData("getmempoolinfo");
 }
 
 function getUptimeSeconds() {
-	return new Promise(function(resolve, reject) {
-		client.command('uptime', function(err, result, resHeaders) {
-			if (err) {
-				console.log("Error 3218y6gr3986sdd: " + err);
-
-				reject(err);
-
-				return;
-			}
-
-			resolve(result);
-		});
-	});
+	return getRpcData("uptime");
 }
 
 function getMempoolStats() {
@@ -269,23 +241,7 @@ function getBlocksByHeight(blockHeights) {
 }
 
 function getBlockByHash(blockHash) {
-	console.log("getBlockByHash: " + blockHash);
-
-	return new Promise(function(resolve, reject) {
-		var client = global.client;
-		
-		client.command('getblock', blockHash, function(err, result, resHeaders) {
-			if (err) {
-				console.log("Error 0u2fgewue: " + err);
-
-				reject(err);
-
-				return;
-			}
-
-			resolve(result);
-		});
-	});
+	return getRpcDataWithParams("getblock", blockHash);
 }
 
 function getTransactionInputs(transaction, inputLimit=0) {
@@ -333,19 +289,7 @@ function getRawTransaction(txid) {
 }
 
 function getAddress(address) {
-	return new Promise(function(resolve, reject) {
-		client.command('validateaddress', address, function(err, result, resHeaders) {
-			if (err) {
-				console.log("Error 9234ygf0weg: " + err);
-
-				reject(err);
-
-				return;
-			}
-
-			resolve(result);
-		});
-	});
+	return getRpcDataWithParams("validateaddress", address);
 }
 
 function getRawTransactions(txids) {
