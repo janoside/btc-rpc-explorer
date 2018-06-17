@@ -64,22 +64,23 @@ html
 								div(class="input-group-append")
 									button(type="submit", class="btn btn-primary")
 										i(class="fas fa-search")
-										
-		div(id="sub-menu", class="container mb-4", style="margin-top: -1.0rem;")
-			ul(class="nav")
-				li(class="nav-item")
-					a(href="/node-status", class="nav-link") Node Status
-				li(class="nav-item")
-					a(href="/rpc-browser", class="nav-link") RPC Browser
-				li(class="nav-item")
-					a(href="/rpc-terminal", class="nav-link") RPC Terminal
-				li(class="nav-item")
-					a(href="/mempool-summary", class="nav-link") Mempool Summary
-				if (coinConfig.historicalData && coinConfig.historicalData.length > 0)
+		
+		if (host && port)				
+			div(id="sub-menu", class="container mb-4", style="margin-top: -1.0rem;")
+				ul(class="nav")
 					li(class="nav-item")
-						a(href="/fun", class="nav-link") #{coinConfig.name} Fun
+						a(href="/node-status", class="nav-link") Node Status
+					li(class="nav-item")
+						a(href="/rpc-browser", class="nav-link") RPC Browser
+					li(class="nav-item")
+						a(href="/rpc-terminal", class="nav-link") RPC Terminal
+					li(class="nav-item")
+						a(href="/mempool-summary", class="nav-link") Mempool Summary
+					if (coinConfig.historicalData && coinConfig.historicalData.length > 0)
+						li(class="nav-item")
+							a(href="/fun", class="nav-link") #{coinConfig.name} Fun
 
-			hr
+				hr
 				
 		div(class="container")
 			if (userMessage)
