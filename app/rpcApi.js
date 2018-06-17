@@ -263,27 +263,15 @@ function getTransactionInputs(transaction, inputLimit=0) {
 
 function getRawTransaction(txid) {
 	return new Promise(function(resolve, reject) {
-		if (txid == coins[config.coin].genesisCoinbaseTransactionId) {
-			getBlockByHeight(0).then(function(blockZeroResult) {
-				var result = coins[config.coin].genesisCoinbaseTransaction;
-				result.confirmations = blockZeroResult.getblock.confirmations;
+		getRawTransactions([txid]).then(function(results) {
+			if (results && results.length > 0) {
+				resolve(results[0]);
 
-				resolve(result);
-			});
-			
-			return;
-		}
-
-		client.command('getrawtransaction', txid, 1, function(err, result, resHeaders) {
-			if (err) {
-				console.log("Error 329813yre823: " + err);
-
-				reject(err);
-
-				return;
+			} else {
+				resolve(null);
 			}
-
-			resolve(result);
+		}).catch(function(err) {
+			reject(err);
 		});
 	});
 }
