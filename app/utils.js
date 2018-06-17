@@ -2,18 +2,6 @@ var Decimal = require("decimal.js");
 var config = require("./config.js");
 var coins = require("./coins.js");
 
-function doSmartRedirect(req, res, defaultUrl) {
-	if (req.session.redirectUrl) {
-		res.redirect(req.session.redirectUrl);
-		req.session.redirectUrl = null;
-		
-	} else {
-		res.redirect(defaultUrl);
-	}
-	
-	res.end();
-}
-
 function redirectToConnectPageIfNeeded(req, res) {
 	if (!req.session.host) {
 		req.session.redirectUrl = req.originalUrl;
@@ -153,7 +141,6 @@ function formatExchangedCurrency(amount) {
 
 
 module.exports = {
-	doSmartRedirect: doSmartRedirect,
 	redirectToConnectPageIfNeeded: redirectToConnectPageIfNeeded,
 	hex2ascii: hex2ascii,
 	splitArrayIntoChunks: splitArrayIntoChunks,
