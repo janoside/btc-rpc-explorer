@@ -1,3 +1,5 @@
+var credentials = require("./credentials.js");
+
 module.exports = {
 	cookiePassword: "0x000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f",
 	demoSite: true,
@@ -24,15 +26,7 @@ module.exports = {
 		"walletpassphrasechange"
 	],
 
-	// Edit "rpc" below to target your node.
-	// You may delete this section if you wish to connect manually via the UI.
-
-	rpc: {
-		host:"127.0.0.1",
-		port:8332,
-		username:"rpc-username",
-		password:"rpc-password"
-	},
+	credentials: credentials,
 
 	// Edit "ipWhitelistForRpcCommands" regex to limit access to RPC Browser / Terminal to matching IPs
 	ipWhitelistForRpcCommands:/^(127\.0\.0\.1)?(\:\:1)?$/,
@@ -40,10 +34,21 @@ module.exports = {
 	googleAnalyticsTrackingId:"",
 	sentryUrl:"",
 
+	miningPoolsConfigUrl:"https://raw.githubusercontent.com/blockchain/Blockchain-Known-Pools/master/pools.json",
+
 	donationAddresses:{
 		coins:["BTC", "LTC"],
-		
+
 		"BTC":{address:"3NPGpNyLLmVKCEcuipBs7G4KpQJoJXjDGe", urlPrefix:"bitcoin:"},
 		"LTC":{address:"ME4pXiXuWfEi1ANBDo9irUJVcZBhsTx14i", urlPrefix:"litecoin:"}
 	},
+
+	headerDropdownLinks: {
+		title:"Related Tools",
+		links:[
+			{name: "Bitcoin Explorer", url:"https://btc-explorer.chaintools.io", imgUrl:"/img/logo/btc.svg"},
+			{name: "Litecoin Explorer", url:"https://ltc-explorer.chaintools.io", imgUrl:"/img/logo/ltc.svg"},
+			{name: "Lightning Explorer", url:"https://lightning-explorer.chaintools.io", imgUrl:"/img/logo/lightning.svg"},
+		]
+	}
 };

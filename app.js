@@ -9,7 +9,7 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var session = require("express-session");
-var env = require("./app/env.js");
+var config = require("./app/config.js");
 var simpleGit = require('simple-git');
 var utils = require("./app/utils.js");
 var moment = require("moment");
@@ -45,7 +45,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(session({
-	secret: env.cookiePassword,
+	secret: config.cookiePassword,
 	resave: false,
 	saveUninitialized: false
 }));
@@ -53,17 +53,17 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 
 function refreshExchangeRate() {
-	if (coins[env.coin].exchangeRateData) {
-		request(coins[env.coin].exchangeRateData.jsonUrl, function(error, response, body) {
+	if (coins[config.coin].exchangeRateData) {
+		request(coins[config.coin].exchangeRateData.jsonUrl, function(error, response, body) {
 			if (!error && response && response.statusCode && response.statusCode == 200) {
 				var responseBody = JSON.parse(body);
 
-				var exchangeRate = coins[env.coin].exchangeRateData.responseBodySelectorFunction(responseBody);
+				var exchangeRate = coins[config.coin].exchangeRateData.responseBodySelectorFunction(responseBody);
 				if (exchangeRate > 0) {
 					global.exchangeRate = exchangeRate;
 					global.exchangeRateUpdateTime = new Date();
 
-					console.log("Using exchange rate: " + global.exchangeRate + " USD/" + coins[env.coin].name + " starting at " + global.exchangeRateUpdateTime);
+					console.log("Using exchange rate: " + global.exchangeRate + " USD/" + coins[config.coin].name + " starting at " + global.exchangeRateUpdateTime);
 
 				} else {
 					console.log("Unable to get exchange rate data");
@@ -81,34 +81,34 @@ function refreshExchangeRate() {
 
 
 app.runOnStartup = function() {
-	global.env = env;
-	global.coinConfig = coins[env.coin];
+	global.config = config;
+	global.coinConfig = coins[config.coin];
 	global.coinConfigs = coins;
 
 	console.log("Running RPC Explorer for coin: " + global.coinConfig.name);
 
-	if (env.rpc) {
-		console.log("Connecting via RPC to node at " + env.rpc.host + ":" + env.rpc.port);
+	if (config.credentials.rpc) {
+		console.log("Connecting via RPC to node at " + config.credentials.rpc.host + ":" + config.credentials.rpc.port);
 
 		global.client = new bitcoinCore({
-			host: env.rpc.host,
-			port: env.rpc.port,
-			username: env.rpc.username,
-			password: env.rpc.password,
+			host: config.credentials.rpc.host,
+			port: config.credentials.rpc.port,
+			username: config.credentials.rpc.username,
+			password: config.credentials.rpc.password,
 			timeout: 5000
 		});
 	}
 
-	if (env.donationAddresses) {
+	if (config.donationAddresses) {
 		var getDonationAddressQrCode = function(coinId) {
-			qrcode.toDataURL(env.donationAddresses[coinId].address, function(err, url) {
+			qrcode.toDataURL(config.donationAddresses[coinId].address, function(err, url) {
 				global.donationAddressQrCodeUrls[coinId] = url;
 			});
 		};
 
 		global.donationAddressQrCodeUrls = {};
 
-		env.donationAddresses.coins.forEach(function(item) {
+		config.donationAddresses.coins.forEach(function(item) {
 			getDonationAddressQrCode(item);
 		});
 	}
@@ -145,15 +145,14 @@ app.runOnStartup = function() {
 app.use(function(req, res, next) {
 	// make session available in templates
 	res.locals.session = req.session;
-	res.locals.debug = env.debug;
 
-	if (env.rpc && req.session.host == null) {
-		req.session.host = env.rpc.host;
-		req.session.port = env.rpc.port;
-		req.session.username = env.rpc.username;
+	if (config.credentials.rpc && req.session.host == null) {
+		req.session.host = config.credentials.rpc.host;
+		req.session.port = config.credentials.rpc.port;
+		req.session.username = config.credentials.rpc.username;
 	}
 
-	res.locals.env = global.env;
+	res.locals.config = global.config;
 	res.locals.coinConfig = global.coinConfig;
 	
 	res.locals.host = req.session.host;

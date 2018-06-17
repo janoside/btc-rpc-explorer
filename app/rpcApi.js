@@ -1,16 +1,16 @@
 var utils = require("./utils.js");
-var env = require("./env.js");
+var config = require("./config.js");
 var coins = require("./coins.js");
 
 
 
 
 function getGenesisBlockHash() {
-	return coins[env.coin].genesisBlockHash;
+	return coins[config.coin].genesisBlockHash;
 }
 
 function getGenesisCoinbaseTransactionId() {
-	return coins[env.coin].genesisCoinbaseTransactionId;
+	return coins[config.coin].genesisCoinbaseTransactionId;
 }
 
 function getRpcData(cmd) {
@@ -92,7 +92,7 @@ function getMempoolStats() {
 				}
 			}
 
-			var satoshiPerByteBucketMaxima = coins[env.coin].feeSatoshiPerByteBucketMaxima;
+			var satoshiPerByteBucketMaxima = coins[config.coin].feeSatoshiPerByteBucketMaxima;
 			var bucketCount = satoshiPerByteBucketMaxima.length + 1;
 
 			var satoshiPerByteBuckets = [];
@@ -263,9 +263,9 @@ function getTransactionInputs(transaction, inputLimit=0) {
 
 function getRawTransaction(txid) {
 	return new Promise(function(resolve, reject) {
-		if (txid == coins[env.coin].genesisCoinbaseTransactionId) {
+		if (txid == coins[config.coin].genesisCoinbaseTransactionId) {
 			getBlockByHeight(0).then(function(blockZeroResult) {
-				var result = coins[env.coin].genesisCoinbaseTransaction;
+				var result = coins[config.coin].genesisCoinbaseTransaction;
 				result.confirmations = blockZeroResult.getblock.confirmations;
 
 				resolve(result);
@@ -302,11 +302,11 @@ function getRawTransactions(txids) {
 			return;
 		}
 
-		if (coins[env.coin].genesisCoinbaseTransactionId) {
-			if (txids.length == 1 && txids[0] == coins[env.coin].genesisCoinbaseTransactionId) {
+		if (coins[config.coin].genesisCoinbaseTransactionId) {
+			if (txids.length == 1 && txids[0] == coins[config.coin].genesisCoinbaseTransactionId) {
 				// copy the "confirmations" field from genesis block to the genesis-coinbase tx
 				getBlockByHeight(0).then(function(blockZeroResult) {
-					var result = coins[env.coin].genesisCoinbaseTransaction;
+					var result = coins[config.coin].genesisCoinbaseTransaction;
 					result.confirmations = blockZeroResult.getblock.confirmations;
 
 					resolve([result]);
@@ -558,7 +558,7 @@ function getRpcMethodHelp(methodName) {
 }
 
 function getHistoricalData() {
-	var sortedList = coins[env.coin].historicalData;
+	var sortedList = coins[config.coin].historicalData;
 	sortedList.sort(function(a, b){
 		return ((a.date > b.date) ? 1 : -1);
 	});

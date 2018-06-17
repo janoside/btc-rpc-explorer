@@ -6,7 +6,7 @@ block content
 			h1(class="h2") RPC Terminal
 
 		div(class="col")
-			if (!env.demoSite && (!env.rpc || !env.rpc.rpc))
+			if (!config.demoSite && (!config.credentials.rpc || !config.credentials.rpc.rpc))
 				span(style="float: right;")
 					a(href="/disconnect", class="btn btn-secondary") Disconnect from node
 	

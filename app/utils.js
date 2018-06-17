@@ -1,5 +1,5 @@
 var Decimal = require("decimal.js");
-var env = require("./env.js");
+var config = require("./config.js");
 var coins = require("./coins.js");
 
 function doSmartRedirect(req, res, defaultUrl) {
@@ -103,8 +103,8 @@ function formatCurrencyAmount(amount, formatType) {
 		return addThousandsSeparators(dec.toDecimalPlaces(decimalPlaces)) + " " + formatCurrencyCache[formatType].name;
 	}
 
-	for (var x = 0; x < coins[env.coin].currencyUnits.length; x++) {
-		var currencyUnit = coins[env.coin].currencyUnits[x];
+	for (var x = 0; x < coins[config.coin].currencyUnits.length; x++) {
+		var currencyUnit = coins[config.coin].currencyUnits[x];
 
 		for (var y = 0; y < currencyUnit.values.length; y++) {
 			var currencyUnitValue = currencyUnit.values[y];
@@ -129,7 +129,7 @@ function formatCurrencyAmount(amount, formatType) {
 }
 
 function formatCurrencyAmountInSmallestUnits(amount) {
-	return formatCurrencyAmount(amount, coins[env.coin].currencyUnits[coins[env.coin].currencyUnits.length - 1].name);
+	return formatCurrencyAmount(amount, coins[config.coin].currencyUnits[coins[config.coin].currencyUnits.length - 1].name);
 }
 
 // ref: https://stackoverflow.com/a/2901298/673828
@@ -145,7 +145,7 @@ function formatExchangedCurrency(amount) {
 		var dec = new Decimal(amount);
 		dec = dec.times(global.exchangeRate);
 
-		return addThousandsSeparators(dec.toDecimalPlaces(2)) + " " + coins[env.coin].exchangeRateData.exchangedCurrencyName;
+		return addThousandsSeparators(dec.toDecimalPlaces(2)) + " " + coins[config.coin].exchangeRateData.exchangedCurrencyName;
 	}
 
 	return "";

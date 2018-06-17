@@ -14,21 +14,21 @@ block content
 	p Pull requests are welcome! 
 		a(href="https://github.com/janoside/btc-rpc-explorer") github.com/janoside/btc-rpc-explorer
 
-	if (env.donationAddresses)
+	if (config.donationAddresses)
 		hr
 
 		p If you value this tool and want to support my work on this project, please consider a small donation. Anything is appreciated!
 
-		each coin, index in env.donationAddresses.coins
+		each coin, index in config.donationAddresses.coins
 			div(style="display: inline-block;", class="text-md-center mb-3", class=(index > 0 ? "ml-md-5" : false))
-				if (env.donationAddresses[coin].urlPrefix)
-					a(href=("bitcoin:" + env.donationAddresses["BTC"])) #{coinConfigs[coin].name} (#{coin})
+				if (config.donationAddresses[coin].urlPrefix)
+					a(href=("bitcoin:" + config.donationAddresses["BTC"])) #{coinConfigs[coin].name} (#{coin})
 				else
 					span #{coinConfigs[coin].name} (#{coin})
 
 				br
-				span #{env.donationAddresses[coin].address}
+				span #{config.donationAddresses[coin].address}
 				br
-				img(src=donationAddressQrCodeUrls[coin], alt=env.donationAddresses[coin].address, style="border: solid 1px #ccc;")
+				img(src=donationAddressQrCodeUrls[coin], alt=config.donationAddresses[coin].address, style="border: solid 1px #ccc;")
 				br
 		

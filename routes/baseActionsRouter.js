@@ -3,7 +3,7 @@ var router = express.Router();
 var util = require('util');
 var moment = require('moment');
 var utils = require('./../app/utils');
-var env = require("./../app/env");
+var config = require("./../app/config.js");
 var bitcoinCore = require("bitcoin-core");
 var rpcApi = require("./../app/rpcApi");
 var qrcode = require('qrcode');
@@ -104,7 +104,7 @@ router.get("/mempool-summary", function(req, res) {
 			res.render("mempool-summary");
 		});
 	}).catch(function(err) {
-		res.locals.userMessage = "Unable to connect to Bitcoin Node at " + env.rpc.host + ":" + env.rpc.port;
+		res.locals.userMessage = "Error: " + err;
 
 		res.render("mempool-summary");
 	});
@@ -214,7 +214,7 @@ router.get("/blocks", function(req, res) {
 			res.render("blocks");
 		});
 	}).catch(function(err) {
-		res.locals.userMessage = "Unable to connect to Bitcoin Node at " + env.rpc.host + ":" + env.rpc.port;
+		res.locals.userMessage = "Error: " + err;
 
 		res.render("blocks");
 	});
@@ -467,12 +467,12 @@ router.get("/address/:address", function(req, res) {
 });
 
 router.get("/rpc-terminal", function(req, res) {
-	if (!env.demoSite) {
+	if (!config.demoSite) {
 		var ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
-		var match = env.ipWhitelistForRpcCommands.exec(ip);
+		var match = config.ipWhitelistForRpcCommands.exec(ip);
 
 		if (!match) {
-			res.send("RPC Terminal / Browser may not be accessed from '" + ip + "'. This restriction can be modified in your env.js file.");
+			res.send("RPC Terminal / Browser may not be accessed from '" + ip + "'. This restriction can be modified in your config.js file.");
 
 			return;
 		}
@@ -482,12 +482,12 @@ router.get("/rpc-terminal", function(req, res) {
 });
 
 router.post("/rpc-terminal", function(req, res) {
-	if (!env.demoSite) {
+	if (!config.demoSite) {
 		var ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
-		var match = env.ipWhitelistForRpcCommands.exec(ip);
+		var match = config.ipWhitelistForRpcCommands.exec(ip);
 
 		if (!match) {
-			res.send("RPC Terminal / Browser may not be accessed from '" + ip + "'. This restriction can be modified in your env.js file.");
+			res.send("RPC Terminal / Browser may not be accessed from '" + ip + "'. This restriction can be modified in your config.js file.");
 
 			return;
 		}
@@ -506,8 +506,8 @@ router.post("/rpc-terminal", function(req, res) {
 		}
 	});
 
-	if (env.rpcBlacklist.includes(cmd.toLowerCase())) {
-		res.write("Sorry, that RPC command is blacklisted. If this is your server, you may allow this command by removing it from the 'rpcBlacklist' setting in env.js.", function() {
+	if (config.rpcBlacklist.includes(cmd.toLowerCase())) {
+		res.write("Sorry, that RPC command is blacklisted. If this is your server, you may allow this command by removing it from the 'rpcBlacklist' setting in config.js.", function() {
 			res.end();
 		});
 
@@ -540,12 +540,12 @@ router.post("/rpc-terminal", function(req, res) {
 });
 
 router.get("/rpc-browser", function(req, res) {
-	if (!env.demoSite) {
+	if (!config.demoSite) {
 		var ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
-		var match = env.ipWhitelistForRpcCommands.exec(ip);
+		var match = config.ipWhitelistForRpcCommands.exec(ip);
 
 		if (!match) {
-			res.send("RPC Terminal / Browser may not be accessed from '" + ip + "'. This restriction can be modified in your env.js file.");
+			res.send("RPC Terminal / Browser may not be accessed from '" + ip + "'. This restriction can be modified in your config.js file.");
 
 			return;
 		}
@@ -599,8 +599,8 @@ router.get("/rpc-browser", function(req, res) {
 
 					res.locals.argValues = argValues;
 
-					if (env.rpcBlacklist.includes(req.query.method.toLowerCase())) {
-						res.locals.methodResult = "Sorry, that RPC command is blacklisted. If this is your server, you may allow this command by removing it from the 'rpcBlacklist' setting in env.js.";
+					if (config.rpcBlacklist.includes(req.query.method.toLowerCase())) {
+						res.locals.methodResult = "Sorry, that RPC command is blacklisted. If this is your server, you may allow this command by removing it from the 'rpcBlacklist' setting in config.js.";
 
 						res.render("browser");
 

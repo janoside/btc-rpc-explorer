@@ -10,7 +10,7 @@ html
 		link(rel="stylesheet", href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/default.min.css")
 		link(rel='stylesheet', href='/css/styling.css')
 
-		link(rel="icon", type="image/png", href=("/img/logo/" + env.coin.toLowerCase() + ".png"))
+		link(rel="icon", type="image/png", href=("/img/logo/" + config.coin.toLowerCase() + ".png"))
 
 		block headContent
 			title Explorer
@@ -34,12 +34,12 @@ html
 								a(href="/about", class="nav-link")
 									span About
 
-							if (env.headerDropdownLinks)
+							if (config.headerDropdownLinks)
 								li(class="nav-item dropdown")
 									a(class="nav-link dropdown-toggle", href="javascript:void(0)", id="navbarDropdown", role="button", data-toggle="dropdown", aria-haspopup="true", aria-expanded="false") 
-										span  #{env.headerDropdownLinks.title}
+										span  #{config.headerDropdownLinks.title}
 									div(class="dropdown-menu", aria-labelledby="navbarDropdown")
-										each item in env.headerDropdownLinks.links
+										each item in config.headerDropdownLinks.links
 											a(class="dropdown-item", href=item.url)
 												img(src=item.imgUrl, style="width: 24px; height: 24px; margin-right: 8px;")
 												span  #{item.name}
@@ -104,7 +104,7 @@ html
 									a(href=("https://github.com/janoside/btc-rpc-explorer/commit/" + sourcecodeVersion)) #{sourcecodeVersion}
 									span(style="color: #ccc;")  (#{sourcecodeDate})
 
-								if (env.demoSite)
+								if (config.demoSite)
 									dt Public Demos
 									dd
 										if (coinConfig.demoSiteUrl)
@@ -126,13 +126,13 @@ html
 								dt Support Development of #{coinConfig.siteTitle}
 								dd
 									div(class="text-md-right text-center")
-										each coin, index in env.donationAddresses.coins
+										each coin, index in config.donationAddresses.coins
 											div(style="display: inline-block;", class="text-center mb-3", class=(index > 0 ? "ml-md-3" : false))
-												img(src=donationAddressQrCodeUrls[coin], alt=env.donationAddresses[coin].address, style="border: solid 1px #ccc;")
+												img(src=donationAddressQrCodeUrls[coin], alt=config.donationAddresses[coin].address, style="border: solid 1px #ccc;")
 												br
-												if (env.donationAddresses[coin].urlPrefix)
+												if (config.donationAddresses[coin].urlPrefix)
 													span #{coin}: 
-													a(href=(env.donationAddresses[coin].urlPrefix + env.donationAddresses[coin].address)) #{env.donationAddresses[coin].address.substring(0, 10)}...
+													a(href=(config.donationAddresses[coin].urlPrefix + config.donationAddresses[coin].address)) #{config.donationAddresses[coin].address.substring(0, 10)}...
 												else
 													span #{coin}
 		
@@ -152,19 +152,19 @@ html
 
 			hljs.initHighlightingOnLoad();
 
-		if (env.sentryUrl && env.sentryUrl.length > 0)
+		if (config.sentryUrl && config.sentryUrl.length > 0)
 			script(src="https://cdn.ravenjs.com/3.25.2/raven.min.js", crossorigin="anonymous")
 			script.
-				Raven.config("#{env.sentryUrl}").install();
+				Raven.config("#{config.sentryUrl}").install();
 
-		if (env.googleAnalyticsTrackingId && env.googleAnalyticsTrackingId.length > 0)
-			script(async, src=("https://www.googletagmanager.com/gtag/js?id=#{env.googleAnalyticsTrackingId}"))
+		if (config.googleAnalyticsTrackingId && config.googleAnalyticsTrackingId.length > 0)
+			script(async, src=("https://www.googletagmanager.com/gtag/js?id=#{config.googleAnalyticsTrackingId}"))
 			script.
 				window.dataLayer = window.dataLayer || [];
 				function gtag(){dataLayer.push(arguments);}
 				gtag('js', new Date());
 
-				gtag('config', '#{env.googleAnalyticsTrackingId}');
+				gtag('config', '#{config.googleAnalyticsTrackingId}');
 
 		
 		block endOfBody
