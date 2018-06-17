@@ -165,31 +165,16 @@ function getMempoolStats() {
 }
 
 function getBlockByHeight(blockHeight) {
-	console.log("getBlockByHeight: " + blockHeight);
-
 	return new Promise(function(resolve, reject) {
-		var client = global.client;
-		
-		client.command('getblockhash', blockHeight, function(err, result, resHeaders) {
-			if (err) {
-				console.log("Error 0928317yr3w: " + err);
+		getBlocksByHeight([blockHeight]).then(function(results) {
+			if (results && results.length > 0) {
+				resolve({ success:true, getblock:results[0] });
 
-				reject(err);
-
-				return;
+			} else {
+				resolve({ success:false });
 			}
-
-			client.command('getblock', result, function(err2, result2, resHeaders2) {
-				if (err2) {
-					console.log("Error 320fh7e0hg: " + err2);
-
-					reject(err2);
-
-					return;
-				}
-
-				resolve({ success:true, getblockhash:result, getblock:result2 });
-			});
+		}).catch(function(err) {
+			reject(err);
 		});
 	});
 }
