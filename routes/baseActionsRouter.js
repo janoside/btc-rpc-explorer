@@ -30,8 +30,6 @@ router.get("/", function(req, res) {
 		return;
 	}
 
-	var client = global.client;
-
 	rpcApi.getBlockchainInfo().then(function(getblockchaininfo) {
 		res.locals.getblockchaininfo = getblockchaininfo;
 
@@ -55,8 +53,6 @@ router.get("/", function(req, res) {
 });
 
 router.get("/node-status", function(req, res) {
-	var client = global.client;
-
 	rpcApi.getBlockchainInfo().then(function(getblockchaininfo) {
 		res.locals.getblockchaininfo = getblockchaininfo;
 
@@ -94,8 +90,6 @@ router.get("/node-status", function(req, res) {
 });
 
 router.get("/mempool-summary", function(req, res) {
-	var client = global.client;
-
 	rpcApi.getMempoolInfo().then(function(getmempoolinfo) {
 		res.locals.getmempoolinfo = getmempoolinfo;
 
@@ -315,8 +309,6 @@ router.post("/search", function(req, res) {
 });
 
 router.get("/block-height/:blockHeight", function(req, res) {
-	var client = global.client;
-
 	var blockHeight = parseInt(req.params.blockHeight);
 
 	res.locals.blockHeight = blockHeight;
