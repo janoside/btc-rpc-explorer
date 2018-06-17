@@ -3,6 +3,7 @@ var router = express.Router();
 var util = require('util');
 var moment = require('moment');
 var utils = require('./../app/utils');
+var coins = require("./../app/coins.js");
 var config = require("./../app/config.js");
 var bitcoinCore = require("bitcoin-core");
 var rpcApi = require("./../app/rpcApi");
@@ -653,7 +654,12 @@ router.get("/about", function(req, res) {
 });
 
 router.get("/fun", function(req, res) {
-	res.locals.historicalData = rpcApi.getHistoricalData();
+	var sortedList = coins[config.coin].historicalData;
+	sortedList.sort(function(a, b){
+		return ((a.date > b.date) ? 1 : -1);
+	});
+
+	res.locals.historicalData = sortedList;
 	
 	res.render("fun");
 });

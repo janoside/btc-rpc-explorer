@@ -530,15 +530,6 @@ function getRpcMethodHelp(methodName) {
 	});
 }
 
-function getHistoricalData() {
-	var sortedList = coins[config.coin].historicalData;
-	sortedList.sort(function(a, b){
-		return ((a.date > b.date) ? 1 : -1);
-	});
-
-	return sortedList;
-}
-
 module.exports = {
 	getGenesisBlockHash: getGenesisBlockHash,
 	getGenesisCoinbaseTransactionId: getGenesisCoinbaseTransactionId,
@@ -557,6 +548,5 @@ module.exports = {
 	getUptimeSeconds: getUptimeSeconds,
 	getHelp: getHelp,
 	getRpcMethodHelp: getRpcMethodHelp,
-	getHistoricalData: getHistoricalData,
 	getAddress: getAddress
 };
