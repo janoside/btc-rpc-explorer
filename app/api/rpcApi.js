@@ -1,6 +1,6 @@
-var utils = require("./utils.js");
-var config = require("./config.js");
-var coins = require("./coins.js");
+var utils = require("../utils.js");
+var config = require("../config.js");
+var coins = require("../coins.js");
 
 
 
@@ -198,27 +198,8 @@ function getBlocksByHeight(blockHeights) {
 			});
 
 			if (blockHashes.length == batch.length) {
-				var batch2 = [];
-				for (var i = 0; i < blockHashes.length; i++) {
-					batch2.push({
-						method: 'getblock',
-						parameters: [ blockHashes[i] ]
-					});
-				}
-
-				var blocks = [];
-				client.command(batch2).then((responses2) => {
-					//console.log(responses2);
-					if (false) {
-						console.log("Error 138ryweufdf: " + err2);
-
-					} else {
-						responses2.forEach((item) => {
-							blocks.push(item);
-						});
-						
-						resolve(blocks);
-					}
+				getBlocksByHash(blockHashes).then(function(blocks) {
+					resolve(blocks);
 				});
 			}
 		});
@@ -226,22 +207,49 @@ function getBlocksByHeight(blockHeights) {
 }
 
 function getBlockByHash(blockHash) {
-	return getRpcDataWithParams("getblock", blockHash);
+	return new Promise(function(resolve, reject) {
+		getBlocksByHash([blockHash]).then(function(results) {
+			if (results && results.length > 0) {
+				resolve(results[0]);
+
+			} else {
+				resolve(null);
+			}
+		}).catch(function(err) {
+			reject(err);
+		});
+	});
 }
 
-function getTransactionInputs(transaction, inputLimit=0) {
-	console.log("getTransactionInputs: " + transaction.txid);
-
+function getBlocksByHash(blockHashes) {
 	return new Promise(function(resolve, reject) {
-		var txids = [];
-		for (var i = 0; i < transaction.vin.length; i++) {
-			if (i < inputLimit || inputLimit == 0) {
-				txids.push(transaction.vin[i].txid);
-			}
+		var batch = [];
+		for (var i = 0; i < blockHashes.length; i++) {
+			batch.push({
+				method: 'getblock',
+				parameters: [ blockHashes[i] ]
+			});
 		}
 
-		getRawTransactions(txids).then(function(inputTransactions) {
-			resolve({ txid:transaction.txid, inputTransactions:inputTransactions });
+		var blocks = [];
+		client.command(batch).then((responses) => {
+			responses.forEach((item) => {
+				blocks.push(item);
+			});
+
+			var coinbaseTxids = [];
+			for (var i = 0; i < blocks.length; i++) {
+				coinbaseTxids.push(blocks[i].tx[0])
+			}
+
+			getRawTransactions(coinbaseTxids).then(function(coinbaseTxs) {
+				for (var i = 0; i < blocks.length; i++) {
+					blocks[i].coinbaseTx = coinbaseTxs[i];
+					blocks[i].miner = getMinerFromCoinbaseTx(coinbaseTxs[i]);
+				}
+
+				resolve(blocks);
+			});
 		});
 	});
 }
@@ -348,27 +356,64 @@ function executeBatchesSequentiallyInternal(batchId, batches, currentIndex, accu
 	});
 }
 
-function getBlockData(blockHash, txLimit, txOffset) {
-	console.log("getBlockData: " + blockHash);
+function getMinerFromCoinbaseTx(tx) {
+	if (global.miningPoolsConfig) {
+		for (var coinbaseTag in global.miningPoolsConfig.coinbase_tags) {
+			if (global.miningPoolsConfig.coinbase_tags.hasOwnProperty(coinbaseTag)) {
+				if (utils.hex2ascii(tx.vin[0].coinbase).indexOf(coinbaseTag) != -1) {
+					return global.miningPoolsConfig.coinbase_tags[coinbaseTag];
+				}
+			}
+		}
+
+		for (var payoutAddress in global.miningPoolsConfig.payout_addresses) {
+			if (global.miningPoolsConfig.payout_addresses.hasOwnProperty(payoutAddress)) {
+				return global.miningPoolsConfig.payout_addresses[payoutAddress];
+			}
+		}
+	}
+
+	return null;
+}
+
+function getBlockByHashWithTransactions(blockHash, txLimit, txOffset) {
+	console.log("getBlockByHashWithTransactions: " + blockHash);
 
 	return new Promise(function(resolve, reject) {
-		client.command('getblock', blockHash, function(err2, result2, resHeaders2) {
-			if (err2) {
-				console.log("Error 3017hfwe0f: " + err2);
+		client.command('getblock', blockHash, function(errGetblock, resultGetblock, resHeadersGetblock) {
+			if (errGetblock) {
+				console.log("Error 3017hfwe0f: " + errGetblock);
 
-				reject(err2);
+				reject(errGetblock);
 
 				return;
 			}
 
 			var txids = [];
-			for (var i = txOffset; i < Math.min(txOffset + txLimit, result2.tx.length); i++) {
-				txids.push(result2.tx[i]);
+
+			// make sure we have the coinbase transaction since it can indicate
+			// "block" info that we might want to display (miner)
+			if (txOffset > 0) {
+				txids.push(resultGetblock.tx[0]);
+			}
+
+			for (var i = txOffset; i < Math.min(txOffset + txLimit, resultGetblock.tx.length); i++) {
+				txids.push(resultGetblock.tx[i]);
 			}
 
 			var maxInputsTracked = 10;
 			getRawTransactions(txids).then(function(transactions) {
 				var txInputsByTransaction = {};
+
+				// even if we're on "page 2" of transactions we pull the coinbase
+				// tx first so that we can store it
+				resultGetblock.coinbaseTx = transactions[0];
+				resultGetblock.miner = getMinerFromCoinbaseTx(transactions[0]);
+
+				// if we're on page 2, we don't really want it anymore...
+				if (txOffset > 0) {
+					transactions.shift();
+				}
 
 				var vinTxids = [];
 				var promises = [];
@@ -402,7 +447,7 @@ function getBlockData(blockHash, txLimit, txOffset) {
 							}
 						}
 
-						resolve({ getblock:result2, transactions:transactions, txInputsByTransaction:txInputsByTransaction });
+						resolve({ getblock:resultGetblock, transactions:transactions, txInputsByTransaction:txInputsByTransaction });
 					});
 				});
 			});
@@ -540,8 +585,7 @@ module.exports = {
 	getBlockByHeight: getBlockByHeight,
 	getBlocksByHeight: getBlocksByHeight,
 	getBlockByHash: getBlockByHash,
-	getTransactionInputs: getTransactionInputs,
-	getBlockData: getBlockData,
+	getBlockByHashWithTransactions: getBlockByHashWithTransactions,
 	getRawTransaction: getRawTransaction,
 	getRawTransactions: getRawTransactions,
 	getMempoolStats: getMempoolStats,

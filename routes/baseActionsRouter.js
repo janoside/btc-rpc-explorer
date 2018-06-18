@@ -6,7 +6,7 @@ var utils = require('./../app/utils');
 var coins = require("./../app/coins.js");
 var config = require("./../app/config.js");
 var bitcoinCore = require("bitcoin-core");
-var rpcApi = require("./../app/rpcApi");
+var rpcApi = require("./../app/api/rpcApi.js");
 var qrcode = require('qrcode');
 var bitcoinjs = require('bitcoinjs-lib');
 
@@ -338,7 +338,7 @@ router.get("/block-height/:blockHeight", function(req, res) {
 
 		res.locals.result.getblockhash = result;
 
-		rpcApi.getBlockData(result, limit, offset).then(function(result) {
+		rpcApi.getBlockByHashWithTransactions(result, limit, offset).then(function(result) {
 			res.locals.result.getblock = result.getblock;
 			res.locals.result.transactions = result.transactions;
 			res.locals.result.txInputsByTransaction = result.txInputsByTransaction;
@@ -371,7 +371,7 @@ router.get("/block/:blockHash", function(req, res) {
 	res.locals.paginationBaseUrl = "/block/" + blockHash;
 
 	// TODO handle RPC error
-	rpcApi.getBlockData(blockHash, limit, offset).then(function(result) {
+	rpcApi.getBlockByHashWithTransactions(blockHash, limit, offset).then(function(result) {
 		res.locals.result.getblock = result.getblock;
 		res.locals.result.transactions = result.transactions;
 		res.locals.result.txInputsByTransaction = result.txInputsByTransaction;
@@ -413,7 +413,7 @@ router.get("/tx/:transactionId", function(req, res) {
 			});
 		});
 	}).catch(function(err) {
-		res.locals.userMessage = "Failed to load transaction with txid=" + txid + " (" + err + ")";
+		res.locals.userMessage = "Failed to load transaction with txid=" + txid + ": " + err;
 
 		res.render("transaction");
 	});

@@ -17,7 +17,7 @@ var Decimal = require('decimal.js');
 var bitcoinCore = require("bitcoin-core");
 var pug = require("pug");
 var momentDurationFormat = require("moment-duration-format");
-var rpcApi = require("./app/rpcApi.js");
+var rpcApi = require("./app/api/rpcApi.js");
 var coins = require("./app/coins.js");
 var request = require("request");
 var qrcode = require("qrcode");
@@ -123,6 +123,22 @@ app.runOnStartup = function() {
 
 			} else if (item.type == "tx") {
 				global.specialTransactions[item.txid] = item;
+			}
+		});
+	}
+
+	if (config.miningPoolsConfigUrl) {
+		request(config.miningPoolsConfigUrl, function(error, response, body) {
+			if (!error && response && response.statusCode && response.statusCode == 200) {
+				var responseBody = JSON.parse(body);
+
+				global.miningPoolsConfig = responseBody;
+				
+			} else {
+				console.log("Error:");
+				console.log(error);
+				console.log("Response:");
+				console.log(response);
 			}
 		});
 	}

@@ -123,6 +123,11 @@ div(class="tab-content")
 				th(class="table-active text-right") Chainwork
 				td(class="monospace word-wrap") #{result.getblock.chainwork}
 
+			if (result.getblock.miner)
+				tr
+					th(class="table-active text-right") Miner
+					td(class="monospace word-wrap") #{result.getblock.miner.name}
+
 		hr
 
 		div(class="card mb-3")
