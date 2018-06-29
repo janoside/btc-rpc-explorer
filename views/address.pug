@@ -21,8 +21,11 @@ block content
 					h4(class="alert-heading h5") #{coinConfig.name} Fun
 
 					p
-						span This looks like a miner payout address for #{payoutAddressForMiner.name}. 
-						a(href=coinConfig.miningPoolsConfigUrl) Read more
+						span This looks like a miner payout address for the pool 
+						strong #{payoutAddressForMiner.name}
+						span  (see the configuration 
+						a(href=coinConfig.miningPoolsConfigUrl) here
+						span )
 
 			if (false)
 				pre
