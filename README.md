@@ -42,6 +42,11 @@ The below instructions are geared toward BTC, but can be adapted easily to other
 5. `npm start` to start the local server
 6. Visit http://127.0.0.1:3002/
 
+## Run via Docker
+
+1. `docker build -t btc-rpc-explorer .`
+2. `docker run -p 3002:3002 -it btc-rpc-explorer`
+
 # Screenshots
 
 <table>
