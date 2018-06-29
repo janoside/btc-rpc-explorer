@@ -38,6 +38,9 @@ function tryCacheThenRpcApi(cache, cacheKey, cacheMaxAge, rpcApiFunction) {
 					cache.set(cacheKey, result, cacheMaxAge);
 
 					resolve(result);
+
+				} else {
+					resolve(result);
 				}
 			});
 		}
@@ -181,7 +184,6 @@ function getBlocksByHeight(blockHeights) {
 		var combinedBlocks = [];
 		if (blockHeightsNotInCache.length > 0) {
 			rpcApi.getBlocksByHeight(blockHeightsNotInCache).then(function(queriedBlocks) {
-				console.log("qbs: " + queriedBlocks);
 				var queriedBlocksCurrentIndex = 0;
 				for (var i = 0; i < blockHeights.length; i++) {
 					if (blocksByIndex.hasOwnProperty(i)) {

@@ -31,10 +31,10 @@ function getBlockByHeight(blockHeight) {
 	return new Promise(function(resolve, reject) {
 		getBlocksByHeight([blockHeight]).then(function(results) {
 			if (results && results.length > 0) {
-				resolve({ success:true, getblock:results[0] });
+				resolve(results[0]);
 
 			} else {
-				resolve({ success:false });
+				resolve(null);
 			}
 		}).catch(function(err) {
 			reject(err);
@@ -85,6 +85,8 @@ function getBlockByHash(blockHash) {
 }
 
 function getBlocksByHash(blockHashes) {
+	console.log("rpc.getBlocksByHash: " + blockHashes);
+
 	return new Promise(function(resolve, reject) {
 		var batch = [];
 		for (var i = 0; i < blockHashes.length; i++) {
@@ -121,8 +123,12 @@ function getRawTransaction(txid) {
 	return new Promise(function(resolve, reject) {
 		getRawTransactions([txid]).then(function(results) {
 			if (results && results.length > 0) {
-				resolve(results[0]);
+				if (results[0].txid) {
+					resolve(results[0]);
 
+				} else {
+					resolve(null);
+				}
 			} else {
 				resolve(null);
 			}
