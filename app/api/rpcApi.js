@@ -149,9 +149,9 @@ function getRawTransactions(txids) {
 		if (coins[config.coin].genesisCoinbaseTransactionId) {
 			if (txids.length == 1 && txids[0] == coins[config.coin].genesisCoinbaseTransactionId) {
 				// copy the "confirmations" field from genesis block to the genesis-coinbase tx
-				getBlockByHeight(0).then(function(blockZeroResult) {
+				getBlockchainInfo().then(function(blockchainInfoResult) {
 					var result = coins[config.coin].genesisCoinbaseTransaction;
-					result.confirmations = blockZeroResult.getblock.confirmations;
+					result.confirmations = blockchainInfoResult.blocks;
 
 					resolve([result]);
 
