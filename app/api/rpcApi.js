@@ -193,17 +193,21 @@ function getRawTransactions(txids) {
 
 function getMinerFromCoinbaseTx(tx) {
 	if (global.miningPoolsConfig) {
+		for (var payoutAddress in global.miningPoolsConfig.payout_addresses) {
+			if (global.miningPoolsConfig.payout_addresses.hasOwnProperty(payoutAddress)) {
+				if (tx.vout && tx.vout.length > 0 && tx.vout[0].scriptPubKey && tx.vout[0].scriptPubKey.addresses && tx.vout[0].scriptPubKey.addresses.length > 0) {
+					if (tx.vout[0].scriptPubKey.addresses[0] == payoutAddress) {
+						return global.miningPoolsConfig.payout_addresses[payoutAddress];
+					}
+				}
+			}
+		}
+
 		for (var coinbaseTag in global.miningPoolsConfig.coinbase_tags) {
 			if (global.miningPoolsConfig.coinbase_tags.hasOwnProperty(coinbaseTag)) {
 				if (utils.hex2ascii(tx.vin[0].coinbase).indexOf(coinbaseTag) != -1) {
 					return global.miningPoolsConfig.coinbase_tags[coinbaseTag];
 				}
-			}
-		}
-
-		for (var payoutAddress in global.miningPoolsConfig.payout_addresses) {
-			if (global.miningPoolsConfig.payout_addresses.hasOwnProperty(payoutAddress)) {
-				return global.miningPoolsConfig.payout_addresses[payoutAddress];
 			}
 		}
 	}
