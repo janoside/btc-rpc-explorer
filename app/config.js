@@ -34,8 +34,6 @@ module.exports = {
 	googleAnalyticsTrackingId:"",
 	sentryUrl:"",
 
-	miningPoolsConfigUrl:"https://raw.githubusercontent.com/blockchain/Blockchain-Known-Pools/master/pools.json",
-
 	donationAddresses:{
 		coins:["BTC", "LTC"],
 

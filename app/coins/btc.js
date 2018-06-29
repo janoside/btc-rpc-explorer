@@ -9,6 +9,7 @@ module.exports = {
 	nodeTitle:"Bitcoin Full Node",
 	nodeUrl:"https://bitcoin.org/en/full-node",
 	demoSiteUrl: "https://btc.chaintools.io",
+	miningPoolsConfigUrl:"https://raw.githubusercontent.com/blockchain/Blockchain-Known-Pools/master/pools.json",
 	currencyUnits:[
 		{
 			name:"BTC",

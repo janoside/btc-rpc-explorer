@@ -140,8 +140,8 @@ app.runOnStartup = function() {
 		});
 	}
 
-	if (config.miningPoolsConfigUrl) {
-		request(config.miningPoolsConfigUrl, function(error, response, body) {
+	if (global.coinConfig.miningPoolsConfigUrl) {
+		request(global.coinConfig.miningPoolsConfigUrl, function(error, response, body) {
 			if (!error && response && response.statusCode && response.statusCode == 200) {
 				var responseBody = JSON.parse(body);
 
