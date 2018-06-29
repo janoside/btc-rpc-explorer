@@ -17,7 +17,7 @@ var Decimal = require('decimal.js');
 var bitcoinCore = require("bitcoin-core");
 var pug = require("pug");
 var momentDurationFormat = require("moment-duration-format");
-var rpcApi = require("./app/api/rpcApi.js");
+var coreApi = require("./app/api/coreApi.js");
 var coins = require("./app/coins.js");
 var request = require("request");
 var qrcode = require("qrcode");
@@ -174,8 +174,8 @@ app.use(function(req, res, next) {
 	res.locals.host = req.session.host;
 	res.locals.port = req.session.port;
 
-	res.locals.genesisBlockHash = rpcApi.getGenesisBlockHash();
-	res.locals.genesisCoinbaseTransactionId = rpcApi.getGenesisCoinbaseTransactionId();
+	res.locals.genesisBlockHash = coreApi.getGenesisBlockHash();
+	res.locals.genesisCoinbaseTransactionId = coreApi.getGenesisCoinbaseTransactionId();
 
 
 	// currency format type

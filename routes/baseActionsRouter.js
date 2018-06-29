@@ -2,13 +2,14 @@ var express = require('express');
 var router = express.Router();
 var util = require('util');
 var moment = require('moment');
-var utils = require('./../app/utils');
-var coins = require("./../app/coins.js");
-var config = require("./../app/config.js");
 var bitcoinCore = require("bitcoin-core");
-var rpcApi = require("./../app/api/rpcApi.js");
 var qrcode = require('qrcode');
 var bitcoinjs = require('bitcoinjs-lib');
+
+var utils = require('./../app/utils.js');
+var coins = require("./../app/coins.js");
+var config = require("./../app/config.js");
+var coreApi = require("./../app/api/coreApi.js");
 
 router.get("/", function(req, res) {
 	if (req.session.host == null || req.session.host.trim() == "") {
@@ -30,7 +31,7 @@ router.get("/", function(req, res) {
 		return;
 	}
 
-	rpcApi.getBlockchainInfo().then(function(getblockchaininfo) {
+	coreApi.getBlockchainInfo().then(function(getblockchaininfo) {
 		res.locals.getblockchaininfo = getblockchaininfo;
 
 		var blockHeights = [];
@@ -40,7 +41,7 @@ router.get("/", function(req, res) {
 			}
 		}
 
-		rpcApi.getBlocksByHeight(blockHeights).then(function(latestBlocks) {
+		coreApi.getBlocksByHeight(blockHeights).then(function(latestBlocks) {
 			res.locals.latestBlocks = latestBlocks;
 
 			res.render("index");
@@ -53,16 +54,16 @@ router.get("/", function(req, res) {
 });
 
 router.get("/node-status", function(req, res) {
-	rpcApi.getBlockchainInfo().then(function(getblockchaininfo) {
+	coreApi.getBlockchainInfo().then(function(getblockchaininfo) {
 		res.locals.getblockchaininfo = getblockchaininfo;
 
-		rpcApi.getNetworkInfo().then(function(getnetworkinfo) {
+		coreApi.getNetworkInfo().then(function(getnetworkinfo) {
 			res.locals.getnetworkinfo = getnetworkinfo;
 
-			rpcApi.getUptimeSeconds().then(function(uptimeSeconds) {
+			coreApi.getUptimeSeconds().then(function(uptimeSeconds) {
 				res.locals.uptimeSeconds = uptimeSeconds;
 
-				rpcApi.getNetTotals().then(function(getnettotals) {
+				coreApi.getNetTotals().then(function(getnettotals) {
 					res.locals.getnettotals = getnettotals;
 
 					res.render("node-status");
@@ -90,10 +91,10 @@ router.get("/node-status", function(req, res) {
 });
 
 router.get("/mempool-summary", function(req, res) {
-	rpcApi.getMempoolInfo().then(function(getmempoolinfo) {
+	coreApi.getMempoolInfo().then(function(getmempoolinfo) {
 		res.locals.getmempoolinfo = getmempoolinfo;
 
-		rpcApi.getMempoolStats().then(function(mempoolstats) {
+		coreApi.getMempoolStats().then(function(mempoolstats) {
 			res.locals.mempoolstats = mempoolstats;
 
 			res.render("mempool-summary");
@@ -188,7 +189,7 @@ router.get("/blocks", function(req, res) {
 	res.locals.sort = sort;
 	res.locals.paginationBaseUrl = "/blocks";
 
-	rpcApi.getBlockchainInfo().then(function(getblockchaininfo) {
+	coreApi.getBlockchainInfo().then(function(getblockchaininfo) {
 		res.locals.blockCount = getblockchaininfo.blocks;
 		res.locals.blockOffset = offset;
 
@@ -203,7 +204,7 @@ router.get("/blocks", function(req, res) {
 			}
 		}
 		
-		rpcApi.getBlocksByHeight(blockHeights).then(function(blocks) {
+		coreApi.getBlocksByHeight(blockHeights).then(function(blocks) {
 			res.locals.blocks = blocks;
 
 			res.render("blocks");
@@ -230,21 +231,21 @@ router.post("/search", function(req, res) {
 	req.session.query = req.body.query;
 
 	if (query.length == 64) {
-		rpcApi.getRawTransaction(query).then(function(tx) {
+		coreApi.getRawTransaction(query).then(function(tx) {
 			if (tx) {
 				res.redirect("/tx/" + query);
 
 				return;
 			}
 
-			rpcApi.getBlockByHash(query).then(function(blockByHash) {
+			coreApi.getBlockByHash(query).then(function(blockByHash) {
 				if (blockByHash) {
 					res.redirect("/block/" + query);
 
 					return;
 				}
 
-				rpcApi.getAddress(rawCaseQuery).then(function(validateaddress) {
+				coreApi.getAddress(rawCaseQuery).then(function(validateaddress) {
 					if (validateaddress && validateaddress.isvalid) {
 						res.redirect("/address/" + rawCaseQuery);
 
@@ -263,7 +264,7 @@ router.post("/search", function(req, res) {
 			});
 
 		}).catch(function(err) {
-			rpcApi.getBlockByHash(query).then(function(blockByHash) {
+			coreApi.getBlockByHash(query).then(function(blockByHash) {
 				if (blockByHash) {
 					res.redirect("/block/" + query);
 
@@ -282,7 +283,7 @@ router.post("/search", function(req, res) {
 		});
 
 	} else if (!isNaN(query)) {
-		rpcApi.getBlockByHeight(parseInt(query)).then(function(blockByHeight) {
+		coreApi.getBlockByHeight(parseInt(query)).then(function(blockByHeight) {
 			if (blockByHeight) {
 				res.redirect("/block-height/" + query);
 
@@ -294,7 +295,7 @@ router.post("/search", function(req, res) {
 			res.redirect("/");
 		});
 	} else {
-		rpcApi.getAddress(rawCaseQuery).then(function(validateaddress) {
+		coreApi.getAddress(rawCaseQuery).then(function(validateaddress) {
 			if (validateaddress && validateaddress.isvalid) {
 				res.redirect("/address/" + rawCaseQuery);
 
@@ -330,15 +331,10 @@ router.get("/block-height/:blockHeight", function(req, res) {
 	res.locals.offset = offset;
 	res.locals.paginationBaseUrl = "/block-height/" + blockHeight;
 
-	client.command('getblockhash', blockHeight, function(err, result, resHeaders) {
-		if (err) {
-			// TODO handle RPC error
-			return console.log(err);
-		}
+	coreApi.getBlockByHeight(blockHeight).then(function(result) {
+		res.locals.result.getblockbyheight = result;
 
-		res.locals.result.getblockhash = result;
-
-		rpcApi.getBlockByHashWithTransactions(result, limit, offset).then(function(result) {
+		coreApi.getBlockByHashWithTransactions(result.hash, limit, offset).then(function(result) {
 			res.locals.result.getblock = result.getblock;
 			res.locals.result.transactions = result.transactions;
 			res.locals.result.txInputsByTransaction = result.txInputsByTransaction;
@@ -371,7 +367,7 @@ router.get("/block/:blockHash", function(req, res) {
 	res.locals.paginationBaseUrl = "/block/" + blockHash;
 
 	// TODO handle RPC error
-	rpcApi.getBlockByHashWithTransactions(blockHash, limit, offset).then(function(result) {
+	coreApi.getBlockByHashWithTransactions(blockHash, limit, offset).then(function(result) {
 		res.locals.result.getblock = result.getblock;
 		res.locals.result.transactions = result.transactions;
 		res.locals.result.txInputsByTransaction = result.txInputsByTransaction;
@@ -393,7 +389,7 @@ router.get("/tx/:transactionId", function(req, res) {
 
 	res.locals.result = {};
 
-	rpcApi.getRawTransaction(txid).then(function(rawTxResult) {
+	coreApi.getRawTransaction(txid).then(function(rawTxResult) {
 		res.locals.result.getrawtransaction = rawTxResult;
 
 		client.command('getblock', rawTxResult.blockhash, function(err3, result3, resHeaders3) {
@@ -406,7 +402,7 @@ router.get("/tx/:transactionId", function(req, res) {
 				}
 			}
 
-			rpcApi.getRawTransactions(txids).then(function(txInputs) {
+			coreApi.getRawTransactions(txids).then(function(txInputs) {
 				res.locals.result.txInputs = txInputs;
 
 				res.render("transaction");
@@ -440,7 +436,7 @@ router.get("/address/:address", function(req, res) {
 		}
 	}
 	
-	rpcApi.getAddress(address).then(function(result) {
+	coreApi.getAddress(address).then(function(result) {
 		res.locals.result.validateaddress = result;
 
 		qrcode.toDataURL(address, function(err, url) {
@@ -544,13 +540,13 @@ router.get("/rpc-browser", function(req, res) {
 		}
 	}
 
-	rpcApi.getHelp().then(function(result) {
+	coreApi.getHelp().then(function(result) {
 		res.locals.gethelp = result;
 
 		if (req.query.method) {
 			res.locals.method = req.query.method;
 
-			rpcApi.getRpcMethodHelp(req.query.method.trim()).then(function(result2) {
+			coreApi.getRpcMethodHelp(req.query.method.trim()).then(function(result2) {
 				res.locals.methodhelp = result2;
 
 				if (req.query.execute) {

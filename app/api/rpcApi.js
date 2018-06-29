@@ -3,48 +3,6 @@ var config = require("../config.js");
 var coins = require("../coins.js");
 
 
-
-
-function getGenesisBlockHash() {
-	return coins[config.coin].genesisBlockHash;
-}
-
-function getGenesisCoinbaseTransactionId() {
-	return coins[config.coin].genesisCoinbaseTransactionId;
-}
-
-function getRpcData(cmd) {
-	return new Promise(function(resolve, reject) {
-		client.command(cmd, function(err, result, resHeaders) {
-			if (err) {
-				console.log("Error for RPC command '" + cmd + "': " + err);
-
-				reject(err);
-
-				return;
-			}
-
-			resolve(result);
-		});
-	});
-}
-
-function getRpcDataWithParams(cmd, params) {
-	return new Promise(function(resolve, reject) {
-		client.command(cmd, params, function(err, result, resHeaders) {
-			if (err) {
-				console.log("Error for RPC command '" + cmd + "': " + err);
-
-				reject(err);
-
-				return;
-			}
-
-			resolve(result);
-		});
-	});
-}
-
 function getBlockchainInfo() {
 	return getRpcData("getblockchaininfo");
 }
@@ -65,103 +23,8 @@ function getUptimeSeconds() {
 	return getRpcData("uptime");
 }
 
-function getMempoolStats() {
-	return new Promise(function(resolve, reject) {
-		client.command('getrawmempool', true, function(err, result, resHeaders) {
-			if (err) {
-				console.log("Error 428thwre0ufg: " + err);
-
-				reject(err);
-
-				return;
-			}
-
-			var maxFee = 0;
-			var maxFeePerByte = 0;
-			for (var txid in result) {
-				var txMempoolInfo = result[txid];
-				var fee = txMempoolInfo.modifiedfee;
-				var feePerByte = txMempoolInfo.modifiedfee / txMempoolInfo.size;
-
-				if (fee > maxFee) {
-					maxFee = txMempoolInfo.modifiedfee;
-				}
-
-				if (feePerByte > maxFeePerByte) {
-					maxFeePerByte = txMempoolInfo.modifiedfee / txMempoolInfo.size;
-				}
-			}
-
-			var satoshiPerByteBucketMaxima = coins[config.coin].feeSatoshiPerByteBucketMaxima;
-			var bucketCount = satoshiPerByteBucketMaxima.length + 1;
-
-			var satoshiPerByteBuckets = [];
-			var satoshiPerByteBucketLabels = [];
-
-			satoshiPerByteBucketLabels[0] = ("[0 - " + satoshiPerByteBucketMaxima[0] + ")");
-			for (var i = 0; i < bucketCount; i++) {
-				satoshiPerByteBuckets[i] = {"count":0, "totalFees":0, "totalBytes":0};
-
-				if (i > 0 && i < bucketCount - 1) {
-					satoshiPerByteBucketLabels[i] = ("[" + satoshiPerByteBucketMaxima[i - 1] + " - " + satoshiPerByteBucketMaxima[i] + ")");
-				}
-			}
-
-			satoshiPerByteBucketLabels[bucketCount - 1] = (satoshiPerByteBucketMaxima[satoshiPerByteBucketMaxima.length - 1] + "+");
-
-			var summary = {
-				"count":0,
-				"totalFees":0,
-				"totalBytes":0,
-				"satoshiPerByteBuckets":satoshiPerByteBuckets,
-				"satoshiPerByteBucketLabels":satoshiPerByteBucketLabels
-			};
-
-			for (var txid in result) {
-				var txMempoolInfo = result[txid];
-				var fee = txMempoolInfo.modifiedfee;
-				var feePerByte = txMempoolInfo.modifiedfee / txMempoolInfo.size;
-				var satoshiPerByte = feePerByte * 100000000;
-
-				var addedToBucket = false;
-				for (var i = 0; i < satoshiPerByteBucketMaxima.length; i++) {
-					if (satoshiPerByteBucketMaxima[i] > satoshiPerByte) {
-						satoshiPerByteBuckets[i]["count"]++;
-						satoshiPerByteBuckets[i]["totalFees"] += fee;
-						satoshiPerByteBuckets[i]["totalBytes"] += txMempoolInfo.size;
-
-						addedToBucket = true;
-
-						break;
-					}
-				}
-
-				if (!addedToBucket) {
-					satoshiPerByteBuckets[bucketCount - 1]["count"]++;
-					satoshiPerByteBuckets[bucketCount - 1]["totalFees"] += fee;
-					satoshiPerByteBuckets[bucketCount - 1]["totalBytes"] += txMempoolInfo.size;
-				}
-
-				summary["count"]++;
-				summary["totalFees"] += txMempoolInfo.modifiedfee;
-				summary["totalBytes"] += txMempoolInfo.size;
-			}
-
-			summary["averageFee"] = summary["totalFees"] / summary["count"];
-			summary["averageFeePerByte"] = summary["totalFees"] / summary["totalBytes"];
-
-			summary["satoshiPerByteBucketMaxima"] = satoshiPerByteBucketMaxima;
-			summary["satoshiPerByteBucketCounts"] = [];
-			summary["satoshiPerByteBucketTotalFees"] = [];
-
-			for (var i = 0; i < bucketCount; i++) {
-				summary["satoshiPerByteBucketCounts"].push(summary["satoshiPerByteBuckets"][i]["count"]);
-				summary["satoshiPerByteBucketTotalFees"].push(summary["satoshiPerByteBuckets"][i]["totalFees"]);
-			}
-
-			resolve(summary);
-		});
-	});
+function getRawMempool() {
+	return getRpcDataWithParams("getrawmempool", true);
 }
 
 function getBlockByHeight(blockHeight) {
@@ -319,40 +182,6 @@ function getRawTransactions(txids) {
 		executeBatchesSequentially(requestBatches, function(results) {
 			resolve(results);
 		});
-	});
-}
-
-function executeBatchesSequentially(batches, resultFunc) {
-	var batchId = utils.getRandomString(20, 'aA#');
-
-	console.log("Starting " + batches.length + "-item batch " + batchId + "...");
-
-	executeBatchesSequentiallyInternal(batchId, batches, 0, [], resultFunc);
-}
-
-function executeBatchesSequentiallyInternal(batchId, batches, currentIndex, accumulatedResults, resultFunc) {
-	if (currentIndex == batches.length) {
-		console.log("Finishing batch " + batchId + "...");
-
-		resultFunc(accumulatedResults);
-
-		return;
-	}
-
-	console.log("Executing item #" + (currentIndex + 1) + " (of " + batches.length + ") for batch " + batchId);
-
-	var count = batches[currentIndex].length;
-
-	client.command(batches[currentIndex]).then(function(results) {
-		results.forEach((item) => {
-			accumulatedResults.push(item);
-
-			count--;
-		});
-
-		if (count == 0) {
-			executeBatchesSequentiallyInternal(batchId, batches, currentIndex + 1, accumulatedResults, resultFunc);
-		}
 	});
 }
 
@@ -575,9 +404,74 @@ function getRpcMethodHelp(methodName) {
 	});
 }
 
+
+
+function getRpcData(cmd) {
+	return new Promise(function(resolve, reject) {
+		client.command(cmd, function(err, result, resHeaders) {
+			if (err) {
+				console.log("Error for RPC command '" + cmd + "': " + err);
+
+				reject(err);
+
+			} else {
+				resolve(result);
+			}
+		});
+	});
+}
+
+function getRpcDataWithParams(cmd, params) {
+	return new Promise(function(resolve, reject) {
+		client.command(cmd, params, function(err, result, resHeaders) {
+			if (err) {
+				console.log("Error for RPC command '" + cmd + "': " + err);
+
+				reject(err);
+
+			} else {
+				resolve(result);
+			}
+		});
+	});
+}
+
+function executeBatchesSequentially(batches, resultFunc) {
+	var batchId = utils.getRandomString(20, 'aA#');
+
+	console.log("Starting " + batches.length + "-item batch " + batchId + "...");
+
+	executeBatchesSequentiallyInternal(batchId, batches, 0, [], resultFunc);
+}
+
+function executeBatchesSequentiallyInternal(batchId, batches, currentIndex, accumulatedResults, resultFunc) {
+	if (currentIndex == batches.length) {
+		console.log("Finishing batch " + batchId + "...");
+
+		resultFunc(accumulatedResults);
+
+		return;
+	}
+
+	console.log("Executing item #" + (currentIndex + 1) + " (of " + batches.length + ") for batch " + batchId);
+
+	var count = batches[currentIndex].length;
+
+	client.command(batches[currentIndex]).then(function(results) {
+		results.forEach((item) => {
+			accumulatedResults.push(item);
+
+			count--;
+		});
+
+		if (count == 0) {
+			executeBatchesSequentiallyInternal(batchId, batches, currentIndex + 1, accumulatedResults, resultFunc);
+		}
+	});
+}
+
+
 module.exports = {
-	getGenesisBlockHash: getGenesisBlockHash,
-	getGenesisCoinbaseTransactionId: getGenesisCoinbaseTransactionId,
 	getBlockchainInfo: getBlockchainInfo,
 	getNetworkInfo: getNetworkInfo,
 	getNetTotals: getNetTotals,
@@ -588,7 +482,7 @@ module.exports = {
 	getBlockByHashWithTransactions: getBlockByHashWithTransactions,
 	getRawTransaction: getRawTransaction,
 	getRawTransactions: getRawTransactions,
-	getMempoolStats: getMempoolStats,
+	getRawMempool: getRawMempool,
 	getUptimeSeconds: getUptimeSeconds,
 	getHelp: getHelp,
 	getRpcMethodHelp: getRpcMethodHelp,

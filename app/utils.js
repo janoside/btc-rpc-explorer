@@ -139,6 +139,16 @@ function formatExchangedCurrency(amount) {
 	return "";
 }
 
+function seededRandom(seed) {
+    var x = Math.sin(seed++) * 10000;
+    return x - Math.floor(x);
+}
+
+function seededRandomIntBetween(seed, min, max) {
+	var rand = seededRandom(seed);
+	return (min + (max - min) * rand);
+}
+
 
 module.exports = {
 	redirectToConnectPageIfNeeded: redirectToConnectPageIfNeeded,
@@ -149,5 +159,7 @@ module.exports = {
 	formatCurrencyAmount: formatCurrencyAmount,
 	formatExchangedCurrency: formatExchangedCurrency,
 	addThousandsSeparators: addThousandsSeparators,
-	formatCurrencyAmountInSmallestUnits: formatCurrencyAmountInSmallestUnits
+	formatCurrencyAmountInSmallestUnits: formatCurrencyAmountInSmallestUnits,
+	seededRandom: seededRandom,
+	seededRandomIntBetween: seededRandomIntBetween
 };
