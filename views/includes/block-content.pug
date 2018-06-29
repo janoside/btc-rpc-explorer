@@ -126,7 +126,10 @@ div(class="tab-content")
 			if (result.getblock.miner)
 				tr
 					th(class="table-active text-right") Miner
-					td(class="monospace word-wrap") #{result.getblock.miner.name}
+					td(class="monospace word-wrap") #{result.getblock.miner.name} 
+						if (result.getblock.miner.identifiedBy)
+							a(href=coinConfig.miningPoolsConfigUrl, data-toggle="tooltip", title=("Identified by: " + result.getblock.miner.identifiedBy), target="_blank")
+								i(class="fas fa-info-circle")
 
 		hr
 
