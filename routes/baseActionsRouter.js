@@ -435,6 +435,10 @@ router.get("/address/:address", function(req, res) {
 			console.log("Error u02qg02yqge: " + err2);
 		}
 	}
+
+	if (global.miningPoolsConfig.payout_addresses[address]) {
+		res.locals.payoutAddressForMiner = global.miningPoolsConfig.payout_addresses[address];
+	}
 	
 	coreApi.getAddress(address).then(function(result) {
 		res.locals.result.validateaddress = result;

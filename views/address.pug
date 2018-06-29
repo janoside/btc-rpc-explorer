@@ -16,6 +16,14 @@ block content
 			
 			hr
 
+			if (payoutAddressForMiner)
+				div(class="alert alert-primary", style="padding-bottom: 0;")
+					h4(class="alert-heading h5") #{coinConfig.name} Fun
+
+					p
+						span This looks like a miner payout address for #{payoutAddressForMiner.name}. 
+						a(href=coinConfig.miningPoolsConfigUrl) Read more
+
 			if (false)
 				pre
 					code #{JSON.stringify(addressObj, null, 4)}
