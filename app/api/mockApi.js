@@ -305,7 +305,6 @@ module.exports = {
 	getBlockByHeight: getBlockByHeight,
 	getBlocksByHeight: getBlocksByHeight,
 	getBlockByHash: getBlockByHash,
-	getBlockByHashWithTransactions: getBlockByHashWithTransactions,
 	getRawTransaction: getRawTransaction,
 	getRawTransactions: getRawTransactions,
 	getRawMempool: getRawMempool,
