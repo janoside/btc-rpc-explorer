@@ -16,8 +16,6 @@ block content
 
 		include includes/blocks-list.pug
 
-		hr
-
 		if (blockCount > limit)
 			- var pageNumber = offset / limit + 1;
 			- var pageCount = Math.floor(blockCount / limit);
