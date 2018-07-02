@@ -196,11 +196,15 @@ router.get("/blocks", function(req, res) {
 		var blockHeights = [];
 		if (sort == "desc") {
 			for (var i = (getblockchaininfo.blocks - offset); i > (getblockchaininfo.blocks - offset - limit); i--) {
-				blockHeights.push(i);
+				if (i >= 0) {
+					blockHeights.push(i);
+				}
 			}
 		} else {
 			for (var i = offset; i < (offset + limit); i++) {
-				blockHeights.push(i);
+				if (i >= 0) {
+					blockHeights.push(i);
+				}
 			}
 		}
 		
