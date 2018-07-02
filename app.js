@@ -79,13 +79,22 @@ function refreshExchangeRate() {
 	}
 }
 
+var firstCall = true;
 function trackMemoryUsage() {
 	var mbUsed = process.memoryUsage().heapUsed / 1024 / 1024;
 	mbUsed = Math.round(mbUsed * 100) / 100;
 
 	var stream = fs.createWriteStream("memoryUsage.csv", {flags:'a'});
+
+	if (firstCall) {
+		stream.write("App starting up.");
+	}
+
 	stream.write(new Date().toISOString() + "," + mbUsed + "\n");
+	
 	stream.end();
+
+	firstCall = false;
 }
 
 
