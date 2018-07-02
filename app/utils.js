@@ -149,6 +149,40 @@ function seededRandomIntBetween(seed, min, max) {
 	return (min + (max - min) * rand);
 }
 
+function getMinerFromCoinbaseTx(tx) {
+	if (tx == null) {
+		return null;
+	}
+	
+	if (global.miningPoolsConfig) {
+		for (var payoutAddress in global.miningPoolsConfig.payout_addresses) {
+			if (global.miningPoolsConfig.payout_addresses.hasOwnProperty(payoutAddress)) {
+				if (tx.vout && tx.vout.length > 0 && tx.vout[0].scriptPubKey && tx.vout[0].scriptPubKey.addresses && tx.vout[0].scriptPubKey.addresses.length > 0) {
+					if (tx.vout[0].scriptPubKey.addresses[0] == payoutAddress) {
+						var minerInfo = global.miningPoolsConfig.payout_addresses[payoutAddress];
+						minerInfo.identifiedBy = "payout address " + payoutAddress;
+
+						return minerInfo;
+					}
+				}
+			}
+		}
+
+		for (var coinbaseTag in global.miningPoolsConfig.coinbase_tags) {
+			if (global.miningPoolsConfig.coinbase_tags.hasOwnProperty(coinbaseTag)) {
+				if (hex2ascii(tx.vin[0].coinbase).indexOf(coinbaseTag) != -1) {
+					var minerInfo = global.miningPoolsConfig.coinbase_tags[coinbaseTag];
+					minerInfo.identifiedBy = "coinbase tag '" + coinbaseTag + "'";
+
+					return minerInfo;
+				}
+			}
+		}
+	}
+
+	return null;
+}
+
 
 module.exports = {
 	redirectToConnectPageIfNeeded: redirectToConnectPageIfNeeded,
@@ -161,5 +195,6 @@ module.exports = {
 	addThousandsSeparators: addThousandsSeparators,
 	formatCurrencyAmountInSmallestUnits: formatCurrencyAmountInSmallestUnits,
 	seededRandom: seededRandom,
-	seededRandomIntBetween: seededRandomIntBetween
+	seededRandomIntBetween: seededRandomIntBetween,
+	getMinerFromCoinbaseTx: getMinerFromCoinbaseTx
 };

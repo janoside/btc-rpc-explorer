@@ -326,29 +326,66 @@ function getRawTransactions(txids) {
 	});
 }
 
-function getMinerFromCoinbaseTx(tx) {
-	if (global.miningPoolsConfig) {
-		for (var coinbaseTag in global.miningPoolsConfig.coinbase_tags) {
-			if (global.miningPoolsConfig.coinbase_tags.hasOwnProperty(coinbaseTag)) {
-				if (utils.hex2ascii(tx.vin[0].coinbase).indexOf(coinbaseTag) != -1) {
-					return global.miningPoolsConfig.coinbase_tags[coinbaseTag];
-				}
-			}
-		}
-
-		for (var payoutAddress in global.miningPoolsConfig.payout_addresses) {
-			if (global.miningPoolsConfig.payout_addresses.hasOwnProperty(payoutAddress)) {
-				return global.miningPoolsConfig.payout_addresses[payoutAddress];
-			}
-		}
-	}
-
-	return null;
-}
-
 function getBlockByHashWithTransactions(blockHash, txLimit, txOffset) {
-	return tryCacheThenRpcApi(miscCache, "getBlockByHashWithTransactions-" + blockHash + "-" + txLimit + "-" + txOffset, 3600000, function() {
-		return rpcApi.getBlockByHashWithTransactions(blockHash, txLimit, txOffset);
+	return new Promise(function(resolve, reject) {
+		getBlockByHash(blockHash).then(function(block) {
+			var txids = [];
+			
+			if (txOffset > 0) {
+				txids.push(block.tx[0]);
+			}
+
+			for (var i = txOffset; i < (txOffset + txLimit); i++) {
+				txids.push(block.tx[i]);
+			}
+
+			getRawTransactions(txids).then(function(transactions) {
+				if (transactions.length == txids.length) {
+					block.coinbaseTx = transactions[0];
+					block.miner = utils.getMinerFromCoinbaseTx(block.coinbaseTx);
+				}
+
+				// if we're on page 2, we don't really want it anymore...
+				if (txOffset > 0) {
+					transactions.shift();
+				}
+
+				var maxInputsTracked = 10;
+				var vinTxids = [];
+				for (var i = 0; i < transactions.length; i++) {
+					var transaction = transactions[i];
+
+					if (transaction) {
+						for (var j = 0; j < Math.min(maxInputsTracked, transaction.vin.length); j++) {
+							if (transaction.vin[j].txid) {
+								vinTxids.push(transaction.vin[j].txid);
+							}
+						}
+					}
+				}
+
+				var txInputsByTransaction = {};
+				getRawTransactions(vinTxids).then(function(vinTransactions) {
+					var vinTxById = {};
+
+					vinTransactions.forEach(function(tx) {
+						vinTxById[tx.txid] = tx;
+					});
+
+					transactions.forEach(function(tx) {
+						txInputsByTransaction[tx.txid] = [];
+
+						for (var i = 0; i < Math.min(maxInputsTracked, tx.vin.length); i++) {
+							if (vinTxById[tx.vin[i].txid]) {
+								txInputsByTransaction[tx.txid].push(vinTxById[tx.vin[i].txid]);
+							}
+						}
+
+						resolve({ getblock:block, transactions:transactions, txInputsByTransaction:txInputsByTransaction });
+					});
+				});
+			});
+		});
 	});
 }
 

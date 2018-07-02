@@ -110,7 +110,7 @@ function getBlocksByHash(blockHashes) {
 			getRawTransactions(coinbaseTxids).then(function(coinbaseTxs) {
 				for (var i = 0; i < blocks.length; i++) {
 					blocks[i].coinbaseTx = coinbaseTxs[i];
-					blocks[i].miner = getMinerFromCoinbaseTx(coinbaseTxs[i]);
+					blocks[i].miner = utils.getMinerFromCoinbaseTx(coinbaseTxs[i]);
 				}
 
 				resolve(blocks);
@@ -187,115 +187,6 @@ function getRawTransactions(txids) {
 
 		executeBatchesSequentially(requestBatches, function(results) {
 			resolve(results);
-		});
-	});
-}
-
-function getMinerFromCoinbaseTx(tx) {
-	if (global.miningPoolsConfig) {
-		for (var payoutAddress in global.miningPoolsConfig.payout_addresses) {
-			if (global.miningPoolsConfig.payout_addresses.hasOwnProperty(payoutAddress)) {
-				if (tx.vout && tx.vout.length > 0 && tx.vout[0].scriptPubKey && tx.vout[0].scriptPubKey.addresses && tx.vout[0].scriptPubKey.addresses.length > 0) {
-					if (tx.vout[0].scriptPubKey.addresses[0] == payoutAddress) {
-						var minerInfo = global.miningPoolsConfig.payout_addresses[payoutAddress];
-						minerInfo.identifiedBy = "payout address " + payoutAddress;
-
-						return minerInfo;
-					}
-				}
-			}
-		}
-
-		for (var coinbaseTag in global.miningPoolsConfig.coinbase_tags) {
-			if (global.miningPoolsConfig.coinbase_tags.hasOwnProperty(coinbaseTag)) {
-				if (utils.hex2ascii(tx.vin[0].coinbase).indexOf(coinbaseTag) != -1) {
-					var minerInfo = global.miningPoolsConfig.coinbase_tags[coinbaseTag];
-					minerInfo.identifiedBy = "coinbase tag '" + coinbaseTag + "'";
-
-					return minerInfo;
-				}
-			}
-		}
-	}
-
-	return null;
-}
-
-function getBlockByHashWithTransactions(blockHash, txLimit, txOffset) {
-	console.log("getBlockByHashWithTransactions: " + blockHash);
-
-	return new Promise(function(resolve, reject) {
-		client.command('getblock', blockHash, function(errGetblock, resultGetblock, resHeadersGetblock) {
-			if (errGetblock) {
-				console.log("Error 3017hfwe0f: " + errGetblock);
-
-				reject(errGetblock);
-
-				return;
-			}
-
-			var txids = [];
-
-			// make sure we have the coinbase transaction since it can indicate
-			// "block" info that we might want to display (miner)
-			if (txOffset > 0) {
-				txids.push(resultGetblock.tx[0]);
-			}
-
-			for (var i = txOffset; i < Math.min(txOffset + txLimit, resultGetblock.tx.length); i++) {
-				txids.push(resultGetblock.tx[i]);
-			}
-
-			var maxInputsTracked = 10;
-			getRawTransactions(txids).then(function(transactions) {
-				var txInputsByTransaction = {};
-
-				// even if we're on "page 2" of transactions we pull the coinbase
-				// tx first so that we can store it
-				resultGetblock.coinbaseTx = transactions[0];
-				resultGetblock.miner = getMinerFromCoinbaseTx(transactions[0]);
-
-				// if we're on page 2, we don't really want it anymore...
-				if (txOffset > 0) {
-					transactions.shift();
-				}
-
-				var vinTxids = [];
-				var promises = [];
-				for (var i = 0; i < transactions.length; i++) {
-					var transaction = transactions[i];
-
-					if (transaction) {
-						//console.log("xyz: " + JSON.stringify(transaction.vin));
-
-						for (var j = 0; j < Math.min(maxInputsTracked, transaction.vin.length); j++) {
-							if (transaction.vin[j].txid) {
-								vinTxids.push(transaction.vin[j].txid);
-							}
-						}
-					}
-				}
-
-				getRawTransactions(vinTxids).then(function(vinTransactions) {
-					var vinTxById = {};
-
-					vinTransactions.forEach(function(tx) {
-						vinTxById[tx.txid] = tx;
-					});
-
-					transactions.forEach(function(tx) {
-						txInputsByTransaction[tx.txid] = [];
-
-						for (var i = 0; i < Math.min(maxInputsTracked, tx.vin.length); i++) {
-							if (vinTxById[tx.vin[i].txid]) {
-								txInputsByTransaction[tx.txid].push(vinTxById[tx.vin[i].txid]);
-							}
-						}
-
-						resolve({ getblock:resultGetblock, transactions:transactions, txInputsByTransaction:txInputsByTransaction });
-					});
-				});
-			});
 		});
 	});
 }
