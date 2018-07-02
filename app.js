@@ -87,12 +87,14 @@ function trackMemoryUsage() {
 	var stream = fs.createWriteStream("memoryUsage.csv", {flags:'a'});
 
 	if (firstCall) {
-		stream.write("App starting up.");
+		stream.write("App starting up.\n");
 	}
 
-	stream.write(new Date().toISOString() + "," + mbUsed + "\n");
-	
+	stream.write(mbUsed + "\n");
+
 	stream.end();
+
+	coreApi.logCacheSizes();
 
 	firstCall = false;
 }

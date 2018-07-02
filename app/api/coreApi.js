@@ -363,6 +363,14 @@ function getRpcMethodHelp(methodName) {
 	});
 }
 
+function logCacheSizes() {
+	var itemCounts = [ miscCache.itemCount, blockCache.itemCount, txCache.itemCount ];
+	
+	var stream = fs.createWriteStream("memoryUsage.csv", {flags:'a'});
+	stream.write("itemCounts: " + JSON.stringify(itemCounts) + "\n");
+	stream.end();
+}
+
 module.exports = {
 	getGenesisBlockHash: getGenesisBlockHash,
 	getGenesisCoinbaseTransactionId: getGenesisCoinbaseTransactionId,
@@ -380,5 +388,6 @@ module.exports = {
 	getUptimeSeconds: getUptimeSeconds,
 	getHelp: getHelp,
 	getRpcMethodHelp: getRpcMethodHelp,
-	getAddress: getAddress
+	getAddress: getAddress,
+	logCacheSizes: logCacheSizes
 };
