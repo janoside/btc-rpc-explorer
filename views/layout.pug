@@ -4,7 +4,14 @@ html
 		meta(charset="utf-8")
 		meta(name="viewport", content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0, shrink-to-fit=no")
 		
-		link(rel="stylesheet", href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css", integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4", crossorigin="anonymous")
+		if (session.uiTheme && session.uiTheme == "dark")
+			link(rel="stylesheet", href="/css/bootstrap-dark.css")
+
+			style.
+				hr { background-color: #555555; }
+		else
+			link(rel="stylesheet", href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css", integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4", crossorigin="anonymous")
+		
 		link(rel="stylesheet", href="https://netdna.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css")
 		link(rel="stylesheet", href="https://fonts.googleapis.com/css?family=Lato|Open+Sans|Cousine|Ubuntu:400,500,700")
 		link(rel="stylesheet", href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/default.min.css")
@@ -57,6 +64,16 @@ html
 													if (currencyFormatType == valueName)
 														i(class="fas fa-check")
 												span  #{item.name}
+
+									span(class="dropdown-header") Theme
+										a(class="dropdown-item", href="/changeSetting?name=uiTheme&value=light")
+											if (uiTheme == "light" || uiTheme == "")
+												i(class="fas fa-check")
+											span  Light
+										a(class="dropdown-item", href="/changeSetting?name=uiTheme&value=dark")
+											if (uiTheme == "dark")
+												i(class="fas fa-check")
+											span  Dark
 
 						form(method="post", action="/search", class="form-inline")
 							div(class="input-group input-group-sm")

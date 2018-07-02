@@ -234,6 +234,18 @@ app.use(function(req, res, next) {
 		}
 	}
 
+	// theme
+	if (!req.session.uiTheme) {
+		var cookieValue = req.cookies['user-setting-uiTheme'];
+
+		if (cookieValue) {
+			req.session.uiTheme = cookieValue;
+
+		} else {
+			req.session.uiTheme = "";
+		}
+	}
+
 	res.locals.currencyFormatType = req.session.currencyFormatType;
 
 
