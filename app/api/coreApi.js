@@ -1,4 +1,5 @@
 var LRU = require("lru-cache");
+var fs = require('fs');
 
 var utils = require("../utils.js");
 var config = require("../config.js");
