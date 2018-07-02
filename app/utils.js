@@ -150,7 +150,7 @@ function seededRandomIntBetween(seed, min, max) {
 }
 
 function getMinerFromCoinbaseTx(tx) {
-	if (tx == null) {
+	if (tx == null || tx.vin == null || tx.vin.length == 0) {
 		return null;
 	}
 	

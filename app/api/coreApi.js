@@ -305,10 +305,11 @@ function getRawTransactions(txids) {
 
 					} else {
 						var queriedTx = queriedTxs[queriedTxsCurrentIndex];
+						if (queriedTx != null) {
+							combinedTxs.push(queriedTx);
 
-						combinedTxs.push(queriedTx);
-
-						txCache.set("getRawTransaction-" + queriedTx.txid, queriedTx, 3600000);
+							txCache.set("getRawTransaction-" + queriedTx.txid, queriedTx, 3600000);
+						}
 
 						queriedTxsCurrentIndex++;
 					}
