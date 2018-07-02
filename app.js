@@ -52,6 +52,10 @@ app.use(session({
 }));
 app.use(express.static(path.join(__dirname, 'public')));
 
+process.on("unhandledRejection", (reason, p) => {
+	console.log("Unhandled Rejection at: Promise", p, "reason:", reason, "stack:", reason.stack);
+});
+
 
 function refreshExchangeRate() {
 	if (coins[config.coin].exchangeRateData) {
