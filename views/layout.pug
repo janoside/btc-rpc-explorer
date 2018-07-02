@@ -66,14 +66,14 @@ html
 												span  #{item.name}
 
 									span(class="dropdown-header") Theme
-										a(class="dropdown-item", href="/changeSetting?name=uiTheme&value=light")
-											if (uiTheme == "light" || uiTheme == "")
-												i(class="fas fa-check")
-											span  Light
-										a(class="dropdown-item", href="/changeSetting?name=uiTheme&value=dark")
-											if (uiTheme == "dark")
-												i(class="fas fa-check")
-											span  Dark
+									a(class="dropdown-item", href="/changeSetting?name=uiTheme&value=light")
+										if (session.uiTheme == "light" || session.uiTheme == "")
+											i(class="fas fa-check")
+										span  Light
+									a(class="dropdown-item", href="/changeSetting?name=uiTheme&value=dark")
+										if (session.uiTheme == "dark")
+											i(class="fas fa-check")
+										span  Dark
 
 						form(method="post", action="/search", class="form-inline")
 							div(class="input-group input-group-sm")
