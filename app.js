@@ -21,6 +21,7 @@ var coreApi = require("./app/api/coreApi.js");
 var coins = require("./app/coins.js");
 var request = require("request");
 var qrcode = require("qrcode");
+var fs = require('fs');
 
 
 var baseActionsRouter = require('./routes/baseActionsRouter');
@@ -76,6 +77,15 @@ function refreshExchangeRate() {
 			}
 		});
 	}
+}
+
+function trackMemoryUsage() {
+	var mbUsed = process.memoryUsage().heapUsed / 1024 / 1024;
+	mbUsed = Math.round(mbUsed * 100) / 100;
+
+	var stream = fs.createWriteStream("memoryUsage.csv", {flags:'a'});
+	stream.write(new Date().toISOString() + "," + mbUsed + "\n");
+	stream.end();
 }
 
 
@@ -169,6 +179,9 @@ app.runOnStartup = function() {
 
 	// refresh exchange rate periodically
 	setInterval(refreshExchangeRate, 1800000);
+
+	trackMemoryUsage();
+	setInterval(trackMemoryUsage, 5000);
 };
 
 app.use(function(req, res, next) {
