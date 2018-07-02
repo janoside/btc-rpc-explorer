@@ -88,13 +88,16 @@ function trackMemoryUsage() {
 	var mbUsed = process.memoryUsage().heapUsed / 1024 / 1024;
 	mbUsed = Math.round(mbUsed * 100) / 100;
 
+	var mbTotal = process.memoryUsage().heapTotal / 1024 / 1024;
+	mbTotal = Math.round(mbTotal * 100) / 100;
+
 	var stream = fs.createWriteStream("memoryUsage.csv", {flags:'a'});
 
 	if (firstCall) {
 		stream.write("App starting up.\n");
 	}
 
-	stream.write(mbUsed + "\n");
+	stream.write(mbUsed + " MB (" + Math.round(mbUsed / mbTotal * 100) + "%)\n");
 
 	stream.end();
 
