@@ -44,9 +44,9 @@ module.exports = {
 	headerDropdownLinks: {
 		title:"Related Tools",
 		links:[
-			{name: "Bitcoin Explorer", url:"https://btc-explorer.chaintools.io", imgUrl:"/img/logo/btc.svg"},
-			{name: "Litecoin Explorer", url:"https://ltc-explorer.chaintools.io", imgUrl:"/img/logo/ltc.svg"},
-			{name: "Lightning Explorer", url:"https://lightning-explorer.chaintools.io", imgUrl:"/img/logo/lightning.svg"},
+			{name: "Bitcoin Explorer", url:"https://btc.chaintools.io", imgUrl:"/img/logo/btc.svg"},
+			{name: "Litecoin Explorer", url:"https://ltc.chaintools.io", imgUrl:"/img/logo/ltc.svg"},
+			{name: "Lightning Explorer", url:"https://lightning.chaintools.io", imgUrl:"/img/logo/lightning.svg"},
 		]
 	}
 };
