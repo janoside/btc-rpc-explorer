@@ -143,7 +143,7 @@ div(class="tab-content")
 							else
 								span Transactions
 
-					if (txCount > 20)
+					if (!crawlerBot && txCount > 20)
 						div(class="col-md-8 text-right")
 							span(class="mr-2") Show
 							div(class="btn-group", role="group")
@@ -272,7 +272,7 @@ div(class="tab-content")
 			//pre
 			//	code #{JSON.stringify(tx, null, 4)}
 
-		if (txCount > limit)
+		if (!crawlerBot && txCount > limit)
 			- var pageNumber = offset / limit + 1;
 			- var pageCount = Math.floor(txCount / limit);
 			- if (pageCount * limit < txCount) {

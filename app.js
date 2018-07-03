@@ -23,6 +23,8 @@ var request = require("request");
 var qrcode = require("qrcode");
 var fs = require('fs');
 
+var crawlerBotUserAgentStrings = [ "Googlebot", "Bingbot", "Slurp", "DuckDuckBot", "Baiduspider", "YandexBot", "Sogou", "Exabot", "facebot", "ia_archiver" ];
+
 
 var baseActionsRouter = require('./routes/baseActionsRouter');
 
@@ -208,6 +210,13 @@ app.use(function(req, res, next) {
 		req.session.host = config.credentials.rpc.host;
 		req.session.port = config.credentials.rpc.port;
 		req.session.username = config.credentials.rpc.username;
+	}
+
+	var userAgent = req.headers['user-agent'];
+	for (var i = 0; i < crawlerBotUserAgentStrings.length; i++) {
+		if (userAgent.indexOf(crawlerBotUserAgentStrings[i]) != -1) {
+			res.locals.crawlerBot = true;
+		}
 	}
 
 	res.locals.config = global.config;
