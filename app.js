@@ -97,11 +97,9 @@ function trackMemoryUsage() {
 		stream.write("App starting up.\n");
 	}
 
-	stream.write(mbUsed + " MB (" + Math.round(mbUsed / mbTotal * 100) + "%)\n");
+	stream.write(mbUsed + "\n");
 
 	stream.end();
-
-	coreApi.logCacheSizes();
 
 	firstCall = false;
 }
