@@ -152,41 +152,54 @@ function getRawTransactions(txids) {
 			return;
 		}
 
-		if (coins[config.coin].genesisCoinbaseTransactionId) {
-			if (txids.length == 1 && txids[0] == coins[config.coin].genesisCoinbaseTransactionId) {
-				// copy the "confirmations" field from genesis block to the genesis-coinbase tx
-				getBlockchainInfo().then(function(blockchainInfoResult) {
-					var result = coins[config.coin].genesisCoinbaseTransaction;
-					result.confirmations = blockchainInfoResult.blocks;
-
-					resolve([result]);
-
-				}).catch(function(err) {
-					reject(err);
-
-					return;
-				});
-
-				return;
-			}
-		}
-
 		var requests = [];
+		var promises = [];
 		for (var i = 0; i < txids.length; i++) {
 			var txid = txids[i];
 			
 			if (txid) {
-				requests.push({
-					method: 'getrawtransaction',
-					parameters: [ txid, 1 ]
-				});
+				if (coins[config.coin].genesisCoinbaseTransactionId && txid == coins[config.coin].genesisCoinbaseTransactionId) {
+					// copy the "confirmations" field from genesis block to the genesis-coinbase tx
+					promises.push(new Promise(function(resolve2, reject2) {
+						getBlockchainInfo().then(function(blockchainInfoResult) {
+							var result = coins[config.coin].genesisCoinbaseTransaction;
+							result.confirmations = blockchainInfoResult.blocks;
+
+							resolve2([result]);
+
+						}).catch(function(err) {
+							reject2(err);
+						});
+					}));
+
+				} else {
+					requests.push({
+						method: 'getrawtransaction',
+						parameters: [ txid, 1 ]
+					});
+				}
 			}
 		}
 
 		var requestBatches = utils.splitArrayIntoChunks(requests, 100);
 
-		executeBatchesSequentially(requestBatches, function(results) {
-			resolve(results);
+		promises.push(new Promise(function(resolve2, reject2) {
+			executeBatchesSequentially(requestBatches, function(results) {
+				resolve2(results);
+			});
+		}));
+		
+		Promise.all(promises).then(function(results) {
+			console.log(JSON.stringify(results));
+
+			var finalResults = [];
+			for (var i = 0; i < results.length; i++) {
+				for (var j = 0; j < results[i].length; j++) {
+					finalResults.push(results[i][j]);
+				}
+			}
+
+			resolve(finalResults);
 		});
 	});
 }

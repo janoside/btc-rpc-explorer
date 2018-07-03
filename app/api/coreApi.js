@@ -356,7 +356,7 @@ function getBlockByHashWithTransactions(blockHash, txLimit, txOffset) {
 				for (var i = 0; i < transactions.length; i++) {
 					var transaction = transactions[i];
 
-					if (transaction) {
+					if (transaction && transaction.vin) {
 						for (var j = 0; j < Math.min(maxInputsTracked, transaction.vin.length); j++) {
 							if (transaction.vin[j].txid) {
 								vinTxids.push(transaction.vin[j].txid);
@@ -376,9 +376,11 @@ function getBlockByHashWithTransactions(blockHash, txLimit, txOffset) {
 					transactions.forEach(function(tx) {
 						txInputsByTransaction[tx.txid] = [];
 
-						for (var i = 0; i < Math.min(maxInputsTracked, tx.vin.length); i++) {
-							if (vinTxById[tx.vin[i].txid]) {
-								txInputsByTransaction[tx.txid].push(vinTxById[tx.vin[i].txid]);
+						if (tx && tx.vin) {
+							for (var i = 0; i < Math.min(maxInputsTracked, tx.vin.length); i++) {
+								if (vinTxById[tx.vin[i].txid]) {
+									txInputsByTransaction[tx.txid].push(vinTxById[tx.vin[i].txid]);
+								}
 							}
 						}
 
