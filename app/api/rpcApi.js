@@ -47,7 +47,7 @@ function getBlockByHeight(blockHeight) {
 }
 
 function getBlocksByHeight(blockHeights) {
-	console.log("getBlocksByHeight: " + blockHeights);
+	//console.log("getBlocksByHeight: " + blockHeights);
 
 	return new Promise(function(resolve, reject) {
 		var batch = [];
@@ -147,7 +147,7 @@ function getAddress(address) {
 }
 
 function getRawTransactions(txids) {
-	console.log("getRawTransactions: " + txids);
+	//console.log("getRawTransactions: " + txids);
 
 	return new Promise(function(resolve, reject) {
 		if (!txids || txids.length == 0) {
@@ -194,8 +194,6 @@ function getRawTransactions(txids) {
 		}));
 		
 		Promise.all(promises).then(function(results) {
-			console.log(JSON.stringify(results));
-
 			var finalResults = [];
 			for (var i = 0; i < results.length; i++) {
 				for (var j = 0; j < results[i].length; j++) {

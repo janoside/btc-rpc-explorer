@@ -26,7 +26,7 @@ function getGenesisCoinbaseTransactionId() {
 
 
 function tryCacheThenRpcApi(cache, cacheKey, cacheMaxAge, rpcApiFunction) {
-	console.log("tryCache: " + cacheKey + ", " + cacheMaxAge);
+	//console.log("tryCache: " + cacheKey + ", " + cacheMaxAge);
 
 	return new Promise(function(resolve, reject) {
 		var result = cache.get(cacheKey);
@@ -270,8 +270,7 @@ function getBlocksByHeight(blockHeights) {
 
 					} else {
 						var queriedBlock = queriedBlocks[queriedBlocksCurrentIndex];
-						console.log("queriedBlock: " + queriedBlock);
-
+						
 						combinedBlocks.push(queriedBlock);
 
 						blockCache.set("getBlockByHeight-" + queriedBlock.height, queriedBlock, 3600000);
