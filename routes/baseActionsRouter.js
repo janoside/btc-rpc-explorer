@@ -106,6 +106,19 @@ router.get("/mempool-summary", function(req, res) {
 	});
 });
 
+router.get("/peers", function(req, res) {
+	coreApi.getPeerSummary().then(function(peerSummary) {
+		res.locals.peerSummary = peerSummary;
+
+		res.render("peers");
+
+	}).catch(function(err) {
+		res.locals.userMessage = "Error: " + err;
+
+		res.render("peers");
+	});
+});
+
 router.post("/connect", function(req, res) {
 	var host = req.body.host;
 	var port = req.body.port;

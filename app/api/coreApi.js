@@ -70,6 +70,84 @@ function getUptimeSeconds() {
 	return tryCacheThenRpcApi(miscCache, "getUptimeSeconds", 1000, rpcApi.getUptimeSeconds);
 }
 
+function getPeerSummary() {
+	return new Promise(function(resolve, reject) {
+		tryCacheThenRpcApi(miscCache, "getpeerinfo", 1000, rpcApi.getPeerInfo).then(function(getpeerinfo) {
+			var result = {};
+			result.getpeerinfo = getpeerinfo;
+
+			var versionSummaryMap = {};
+			for (var i = 0; i < getpeerinfo.length; i++) {
+				var x = getpeerinfo[i];
+
+				if (versionSummaryMap[x.subver] == null) {
+					versionSummaryMap[x.subver] = 0;
+				}
+
+				versionSummaryMap[x.subver]++;
+			}
+
+			var versionSummary = [];
+			for (var prop in versionSummaryMap) {
+				if (versionSummaryMap.hasOwnProperty(prop)) {
+					versionSummary.push([prop, versionSummaryMap[prop]]);
+				}
+			}
+
+			versionSummary.sort(function(a, b) {
+				if (b[1] > a[1]) {
+					return 1;
+
+				} else if (b[1] < a[1]) {
+					return -1;
+
+				} else {
+					return a[0].localeCompare(b[0]);
+				}
+			});
+
+
+
+			var servicesSummaryMap = {};
+			for (var i = 0; i < getpeerinfo.length; i++) {
+				var x = getpeerinfo[i];
+
+				if (servicesSummaryMap[x.services] == null) {
+					servicesSummaryMap[x.services] = 0;
+				}
+
+				servicesSummaryMap[x.services]++;
+			}
+
+			var servicesSummary = [];
+			for (var prop in servicesSummaryMap) {
+				if (servicesSummaryMap.hasOwnProperty(prop)) {
+					servicesSummary.push([prop, servicesSummaryMap[prop]]);
+				}
+			}
+
+			servicesSummary.sort(function(a, b) {
+				if (b[1] > a[1]) {
+					return 1;
+
+				} else if (b[1] < a[1]) {
+					return -1;
+
+				} else {
+					return a[0].localeCompare(b[0]);
+				}
+			});
+
+
+
+			result.versionSummary = versionSummary;
+			result.servicesSummary = servicesSummary;
+
+			resolve(result);
+		});
+	});
+}
+
 function getMempoolStats() {
 	return new Promise(function(resolve, reject) {
 		tryCacheThenRpcApi(miscCache, "getRawMempool", 5000, rpcApi.getRawMempool).then(function(result) {
@@ -430,5 +508,6 @@ module.exports = {
 	getHelp: getHelp,
 	getRpcMethodHelp: getRpcMethodHelp,
 	getAddress: getAddress,
-	logCacheSizes: logCacheSizes
+	logCacheSizes: logCacheSizes,
+	getPeerSummary: getPeerSummary
 };

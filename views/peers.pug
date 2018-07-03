@@ -1,0 +1,86 @@
+extends layout
+
+block headContent
+	title Peers
+
+block content
+	h1(class="h2") Peers
+	hr
+
+	ul(class='nav nav-tabs mb-3')
+		li(class="nav-item")
+			a(data-toggle="tab", href="#tab-summary", class="nav-link active", role="tab") Summary
+		li(class="nav-item")
+			a(data-toggle="tab", href="#tab-details", class="nav-link", role="tab") Details
+		li(class="nav-item")
+			a(data-toggle="tab", href="#tab-raw", class="nav-link", role="tab") Raw
+
+	div(class="tab-content")
+		div(id="tab-summary", class="tab-pane active", role="tabpanel")
+			h2(class="h3") Versions
+			hr
+			table(class="table table-striped table-responsive-sm mt-4")
+				thead
+					tr
+						th
+						th(class="data-header") Version
+						th(class="data-header") Count
+				tbody
+					each item, index in peerSummary.versionSummary
+						tr
+							th(class="data-cell") #{index + 1}
+
+							td(class="data-cell") #{item[0]}
+							td(class="data-cell") #{item[1].toLocaleString()}
+
+
+			h2(class="h3") Services
+			hr
+			table(class="table table-striped table-responsive-sm mt-4")
+				thead
+					tr
+						th
+						th(class="data-header") Services
+						th(class="data-header") Count
+				tbody
+					each item, index in peerSummary.servicesSummary
+						tr
+							th(class="data-cell") #{index + 1}
+
+							td(class="data-cell") #{item[0]}
+							td(class="data-cell") #{item[1].toLocaleString()}
+
+
+
+		div(id="tab-details", class="tab-pane", role="tabpanel")
+			h2(class="h3") Peers List
+			hr
+			table(class="table table-striped table-responsive-sm mt-4")
+				thead
+					tr
+						th
+						th(class="data-header") Version
+						th(class="data-header") Address
+						th(class="data-header") Services
+						th(class="data-header") Last Send / Receive
+
+				tbody
+					each item, index in peerSummary.getpeerinfo
+						- var lastSendAgo = moment.duration(moment.utc(new Date()).diff(moment.utc(new Date(parseInt(item.lastsend) * 1000)))).format().replace("milliseconds", "ms");
+						- var lastRecvAgo = moment.duration(moment.utc(new Date()).diff(moment.utc(new Date(parseInt(item.lastrecv) * 1000)))).format().replace("milliseconds", "ms");
+
+						tr
+							th(class="data-cell") #{index + 1}
+
+							td(class="data-cell") #{item.subver}
+							td(class="data-cell") #{item.addr}
+							td(class="data-cell") #{item.services}
+							td(class="data-cell") #{lastSendAgo} / #{lastRecvAgo}
+
+
+		div(id="tab-raw", class="tab-pane", role="tabpanel")
+			pre
+				code #{JSON.stringify(peerSummary.getpeerinfo, null, 4)}
+
+	
+	

@@ -23,6 +23,10 @@ function getUptimeSeconds() {
 	return getRpcData("uptime");
 }
 
+function getPeerInfo() {
+	return getRpcData("getpeerinfo");
+}
+
 function getRawMempool() {
 	return getRpcDataWithParams("getrawmempool", true);
 }
@@ -405,5 +409,6 @@ module.exports = {
 	getUptimeSeconds: getUptimeSeconds,
 	getHelp: getHelp,
 	getRpcMethodHelp: getRpcMethodHelp,
-	getAddress: getAddress
+	getAddress: getAddress,
+	getPeerInfo: getPeerInfo
 };
