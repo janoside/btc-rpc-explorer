@@ -26,6 +26,11 @@ module.exports = {
 		"walletpassphrasechange"
 	],
 
+	site: {
+		blockTxPageSize:20,
+		browseBlocksPageSize:20
+	},
+
 	credentials: credentials,
 
 	// Edit "ipWhitelistForRpcCommands" regex to limit access to RPC Browser / Terminal to matching IPs

@@ -181,7 +181,7 @@ router.get("/changeSetting", function(req, res) {
 });
 
 router.get("/blocks", function(req, res) {
-	var limit = 20;
+	var limit = config.site.browseBlocksPageSize;
 	var offset = 0;
 	var sort = "desc";
 
@@ -333,7 +333,7 @@ router.get("/block-height/:blockHeight", function(req, res) {
 
 	res.locals.result = {};
 
-	var limit = 20;
+	var limit = config.site.blockTxPageSize;
 	var offset = 0;
 
 	if (req.query.limit) {
@@ -368,7 +368,7 @@ router.get("/block/:blockHash", function(req, res) {
 
 	res.locals.result = {};
 
-	var limit = 20;
+	var limit = config.site.blockTxPageSize;
 	var offset = 0;
 
 	if (req.query.limit) {
