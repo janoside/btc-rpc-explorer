@@ -336,7 +336,8 @@ router.get("/block-height/:blockHeight", function(req, res) {
 	var limit = config.site.blockTxPageSize;
 	var offset = 0;
 
-	if (req.query.limit) {
+	// for demo sites, keep page sizes static
+	if (!config.demoSite && req.query.limit) {
 		limit = parseInt(req.query.limit);
 	}
 
@@ -371,7 +372,8 @@ router.get("/block/:blockHash", function(req, res) {
 	var limit = config.site.blockTxPageSize;
 	var offset = 0;
 
-	if (req.query.limit) {
+	// for demo sites, keep page sizes static
+	if (!config.demoSite && req.query.limit) {
 		limit = parseInt(req.query.limit);
 	}
 
