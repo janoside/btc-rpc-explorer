@@ -13,15 +13,13 @@ Live demos are available at:
 
 # Features
 
-* List of recent blocks
-* Browse blocks by height, in ascending or descending order
+* Browse blocks
 * View block details
 * View transaction details, with navigation "backward" via spent transaction outputs
-* View raw JSON output used to generate most pages
-* Search to directly navigate to transactions or blocks
-* Mempool summary, showing unconfirmed transaction counts by fee level
-* RPC Browser to explore all of the RPC commands available from your node
-* RPC Terminal to send commands to your node
+* View JSON content used to generate most pages
+* Search supports transactions, blocks, addresses (including bech32)
+* Mempool summary, with fee, size, and age breakdowns
+* RPC command browser and terminal
 * Currently supports BTC, LTC (support for any Bitcoin-RPC-protocol-compliant coin can be added easily)
 
 # Getting started
