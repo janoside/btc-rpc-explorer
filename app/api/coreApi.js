@@ -153,10 +153,16 @@ function getMempoolStats() {
 		tryCacheThenRpcApi(miscCache, "getRawMempool", 5000, rpcApi.getRawMempool).then(function(result) {
 			var maxFee = 0;
 			var maxFeePerByte = 0;
+			var maxAge = 0;
+			var maxSize = 0;
+			var ages = [];
+			var sizes = [];
 			for (var txid in result) {
 				var txMempoolInfo = result[txid];
 				var fee = txMempoolInfo.modifiedfee;
 				var feePerByte = txMempoolInfo.modifiedfee / txMempoolInfo.size;
+				var age = Date.now() / 1000 - txMempoolInfo.time;
+				var size = txMempoolInfo.size;
 
 				if (fee > maxFee) {
 					maxFee = txMempoolInfo.modifiedfee;
@@ -165,7 +171,38 @@ function getMempoolStats() {
 				if (feePerByte > maxFeePerByte) {
 					maxFeePerByte = txMempoolInfo.modifiedfee / txMempoolInfo.size;
 				}
+
+				ages.push({age:age, txid:txid});
+				sizes.push({size:size, txid:txid});
+
+				if (age > maxAge) {
+					maxAge = age;
+				}
+
+				if (size > maxSize) {
+					maxSize = size;
+				}
 			}
+
+			ages.sort(function(a, b) {
+				if (a.age != b.age) {
+					return b.age - a.age;
+
+				} else {
+					return a.txid.localeCompare(b.txid);
+				}
+			});
+
+			sizes.sort(function(a, b) {
+				if (a.size != b.size) {
+					return b.size - a.size;
+
+				} else {
+					return a.txid.localeCompare(b.txid);
+				}
+			});
+
+			maxSize = 4000;
 
 			var satoshiPerByteBucketMaxima = coins[config.coin].feeSatoshiPerByteBucketMaxima;
 			var bucketCount = satoshiPerByteBucketMaxima.length + 1;
@@ -182,6 +219,30 @@ function getMempoolStats() {
 				}
 			}
 
+			var ageBucketCount = 100;
+			var ageBucketTxCounts = [];
+			var ageBucketLabels = [];
+
+			var sizeBucketCount = 100;
+			var sizeBucketTxCounts = [];
+			var sizeBucketLabels = [];
+
+			for (var i = 0; i < ageBucketCount; i++) {
+				ageBucketTxCounts.push(0);
+				ageBucketLabels.push(parseInt(i * maxAge / 10) + " - " + parseInt((i + 1) * maxAge / 10));
+			}
+
+			for (var i = 0; i < sizeBucketCount; i++) {
+				sizeBucketTxCounts.push(0);
+
+				if (i == sizeBucketCount - 1) {
+					sizeBucketLabels.push(parseInt(i * maxSize / 10) + "+");
+
+				} else {
+					sizeBucketLabels.push(parseInt(i * maxSize / 10) + " - " + parseInt((i + 1) * maxSize / 10));
+				}
+			}
+
 			satoshiPerByteBucketLabels[bucketCount - 1] = (satoshiPerByteBucketMaxima[satoshiPerByteBucketMaxima.length - 1] + "+");
 
 			var summary = {
@@ -189,7 +250,11 @@ function getMempoolStats() {
 				"totalFees":0,
 				"totalBytes":0,
 				"satoshiPerByteBuckets":satoshiPerByteBuckets,
-				"satoshiPerByteBucketLabels":satoshiPerByteBucketLabels
+				"satoshiPerByteBucketLabels":satoshiPerByteBucketLabels,
+				"ageBucketTxCounts":ageBucketTxCounts,
+				"ageBucketLabels":ageBucketLabels,
+				"sizeBucketTxCounts":sizeBucketTxCounts,
+				"sizeBucketLabels":sizeBucketLabels
 			};
 
 			for (var txid in result) {
@@ -197,6 +262,8 @@ function getMempoolStats() {
 				var fee = txMempoolInfo.modifiedfee;
 				var feePerByte = txMempoolInfo.modifiedfee / txMempoolInfo.size;
 				var satoshiPerByte = feePerByte * 100000000;
+				var age = Date.now() / 1000 - txMempoolInfo.time;
+				var size = txMempoolInfo.size;
 
 				var addedToBucket = false;
 				for (var i = 0; i < satoshiPerByteBucketMaxima.length; i++) {
@@ -220,6 +287,12 @@ function getMempoolStats() {
 				summary["count"]++;
 				summary["totalFees"] += txMempoolInfo.modifiedfee;
 				summary["totalBytes"] += txMempoolInfo.size;
+
+				var ageBucketIndex = Math.min(ageBucketCount - 1, parseInt(age / (maxAge / ageBucketCount)));
+				var sizeBucketIndex = Math.min(sizeBucketCount - 1, parseInt(size / (maxSize / sizeBucketCount)));
+
+				ageBucketTxCounts[ageBucketIndex]++;
+				sizeBucketTxCounts[sizeBucketIndex]++;
 			}
 
 			summary["averageFee"] = summary["totalFees"] / summary["count"];
@@ -233,6 +306,11 @@ function getMempoolStats() {
 				summary["satoshiPerByteBucketCounts"].push(summary["satoshiPerByteBuckets"][i]["count"]);
 				summary["satoshiPerByteBucketTotalFees"].push(summary["satoshiPerByteBuckets"][i]["totalFees"]);
 			}
+
+			/*console.log(JSON.stringify(ageBuckets));
+			console.log(JSON.stringify(ageBucketLabels));
+			console.log(JSON.stringify(sizeBuckets));
+			console.log(JSON.stringify(sizeBucketLabels));*/
 
 			resolve(summary);
 		});

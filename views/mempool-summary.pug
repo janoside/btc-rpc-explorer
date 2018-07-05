@@ -96,7 +96,7 @@ block content
 						}
 					});
 
-			table(class="table table-striped table-responsive-sm")
+			table(class="table table-striped table-responsive-sm mb-4")
 				thead
 					tr
 						th Fee Rate
@@ -125,4 +125,83 @@ block content
 							else
 								td(class="text-right monospace") -
 								td(class="text-right monospace") -
+
+
+			h4 Transactions by size
+			hr
+
+			canvas(id="txSizesBarChart", height="100", class="mb-4")
+
+			script var sizeBucketLabels = [];
+			script var bgColors = [];
+			each sizeBucketLabel, index in mempoolstats["sizeBucketLabels"]
+				- var percentTx = Math.round(100 * mempoolstats["sizeBucketTxCounts"][index] / getmempoolinfo.size).toLocaleString();
+				script sizeBucketLabels.push(["#{sizeBucketLabel} bytes","#{mempoolstats["sizeBucketTxCounts"][index]} tx (#{percentTx}%)"]);
+				script bgColors.push("hsl(#{(333 * index / mempoolstats["sizeBucketLabels"].length)}, 100%, 50%)");
+
+			script var sizeBucketTxCounts = [#{mempoolstats["sizeBucketTxCounts"]}];
+
+			script.
+				var ctx = document.getElementById("txSizesBarChart").getContext('2d');
+				var txSizesBarChart = new Chart(ctx, {
+					type: 'bar',
+					data: {
+						labels: sizeBucketLabels,
+						datasets: [{
+							data: sizeBucketTxCounts,
+							backgroundColor: bgColors
+						}]
+					},
+					options: {
+						legend: {
+							display: false
+						},
+						scales: {
+							yAxes: [{
+								ticks: {
+									beginAtZero:true
+								}
+							}]
+						}
+					}
+				});
+
+			h4 Transactions by age
+			hr
+
+			canvas(id="txAgesBarChart", height="100", class="mb-4")
+
+			script var ageBucketLabels = [];
+			script var bgColors = [];
+			each ageBucketLabel, index in mempoolstats["ageBucketLabels"]
+				- var percentTx = Math.round(100 * mempoolstats["ageBucketTxCounts"][index] / getmempoolinfo.size).toLocaleString();
+				script ageBucketLabels.push(["#{ageBucketLabel} sec","#{mempoolstats["ageBucketTxCounts"][index]} tx (#{percentTx}%)"]);
+				script bgColors.push("hsl(#{(333 * index / mempoolstats["ageBucketLabels"].length)}, 100%, 50%)");
+
+			script var ageBucketTxCounts = [#{mempoolstats["ageBucketTxCounts"]}];
+
+			script.
+				var ctx = document.getElementById("txAgesBarChart").getContext('2d');
+				var txAgesBarChart = new Chart(ctx, {
+					type: 'bar',
+					data: {
+						labels: ageBucketLabels,
+						datasets: [{
+							data: ageBucketTxCounts,
+							backgroundColor: bgColors
+						}]
+					},
+					options: {
+						legend: {
+							display: false
+						},
+						scales: {
+							yAxes: [{
+								ticks: {
+									beginAtZero:true
+								}
+							}]
+						}
+					}
+				});
 						
