@@ -7,6 +7,7 @@ table(class="table table-striped table-responsive-sm")
 			th(class="data-header text-right") Age
 			th(class="data-header") Miner
 			th(class="data-header text-right") Transactions
+			th(class="data-header text-right") Avg Fee
 			th(class="data-header text-right") Size (bytes)
 	tbody
 		each block, blockIndex in blocks
@@ -24,5 +25,12 @@ table(class="table table-striped table-responsive-sm")
 							span #{block.miner.name}
 						else
 							span ?
+
+					
 					td(class="data-cell monospace text-right") #{block.tx.length.toLocaleString()}
+
+					td(class="data-cell monospace text-right")
+						- var currencyValue = new Decimal(block.totalFees).dividedBy(block.tx.length);
+						include ./value-display.pug
+
 					td(class="data-cell monospace text-right") #{block.size.toLocaleString()}

@@ -1,6 +1,7 @@
 var Decimal = require("decimal.js");
 var config = require("./config.js");
 var coins = require("./coins.js");
+var coinConfig = coins[config.coin];
 
 function redirectToConnectPageIfNeeded(req, res) {
 	if (!req.session.host) {
@@ -183,6 +184,17 @@ function getMinerFromCoinbaseTx(tx) {
 	return null;
 }
 
+function getBlockTotalFeesFromCoinbaseTxAndBlockHeight(coinbaseTx, blockHeight) {
+	if (coinbaseTx == null) {
+		return 0;
+	}
+
+	var blockReward = coinConfig.blockRewardFunction(blockHeight);
+	var totalOutput = coinbaseTx.vout[0].value;
+
+	return new Decimal(totalOutput).minus(new Decimal(blockReward));
+}
+
 
 module.exports = {
 	redirectToConnectPageIfNeeded: redirectToConnectPageIfNeeded,
@@ -196,5 +208,6 @@ module.exports = {
 	formatCurrencyAmountInSmallestUnits: formatCurrencyAmountInSmallestUnits,
 	seededRandom: seededRandom,
 	seededRandomIntBetween: seededRandomIntBetween,
-	getMinerFromCoinbaseTx: getMinerFromCoinbaseTx
+	getMinerFromCoinbaseTx: getMinerFromCoinbaseTx,
+	getBlockTotalFeesFromCoinbaseTxAndBlockHeight: getBlockTotalFeesFromCoinbaseTxAndBlockHeight
 };

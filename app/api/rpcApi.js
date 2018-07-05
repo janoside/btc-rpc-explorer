@@ -114,6 +114,7 @@ function getBlocksByHash(blockHashes) {
 			getRawTransactions(coinbaseTxids).then(function(coinbaseTxs) {
 				for (var i = 0; i < blocks.length; i++) {
 					blocks[i].coinbaseTx = coinbaseTxs[i];
+					blocks[i].totalFees = utils.getBlockTotalFeesFromCoinbaseTxAndBlockHeight(coinbaseTxs[i], blocks[i].height);
 					blocks[i].miner = utils.getMinerFromCoinbaseTx(coinbaseTxs[i]);
 				}
 

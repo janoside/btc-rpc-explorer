@@ -280,6 +280,7 @@ function getBlocksByHeight(blockHeights) {
 				}
 
 				resolve(combinedBlocks);
+
 			}).catch(function(err) {
 				console.log("Error 39g2rfyewgf: " + err);
 			});
@@ -420,6 +421,7 @@ function getBlockByHashWithTransactions(blockHash, txLimit, txOffset) {
 			getRawTransactions(txids).then(function(transactions) {
 				if (transactions.length == txids.length) {
 					block.coinbaseTx = transactions[0];
+					block.totalFees = utils.getBlockTotalFeesFromCoinbaseTxAndBlockHeight(block.coinbaseTx, block.height);
 					block.miner = utils.getMinerFromCoinbaseTx(block.coinbaseTx);
 				}
 
