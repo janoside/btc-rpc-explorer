@@ -85,27 +85,6 @@ function refreshExchangeRate() {
 	}
 }
 
-var firstCall = true;
-function trackMemoryUsage() {
-	var mbUsed = process.memoryUsage().heapUsed / 1024 / 1024;
-	mbUsed = Math.round(mbUsed * 100) / 100;
-
-	var mbTotal = process.memoryUsage().heapTotal / 1024 / 1024;
-	mbTotal = Math.round(mbTotal * 100) / 100;
-
-	var stream = fs.createWriteStream("memoryUsage.csv", {flags:'a'});
-
-	if (firstCall) {
-		stream.write("App starting up.\n");
-	}
-
-	stream.write(mbUsed + "\n");
-
-	stream.end();
-
-	firstCall = false;
-}
-
 
 
 app.runOnStartup = function() {
@@ -198,8 +177,8 @@ app.runOnStartup = function() {
 	// refresh exchange rate periodically
 	setInterval(refreshExchangeRate, 1800000);
 
-	trackMemoryUsage();
-	setInterval(trackMemoryUsage, 5000);
+	utils.logMemoryUsage();
+	setInterval(utils.logMemoryUsage, 5000);
 };
 
 app.use(function(req, res, next) {

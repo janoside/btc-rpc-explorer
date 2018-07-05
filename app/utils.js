@@ -150,6 +150,16 @@ function seededRandomIntBetween(seed, min, max) {
 	return (min + (max - min) * rand);
 }
 
+function logMemoryUsage() {
+	var mbUsed = process.memoryUsage().heapUsed / 1024 / 1024;
+	mbUsed = Math.round(mbUsed * 100) / 100;
+
+	var mbTotal = process.memoryUsage().heapTotal / 1024 / 1024;
+	mbTotal = Math.round(mbTotal * 100) / 100;
+
+	console.log("memoryUsage: heapUsed=" + mbUsed + ", heapTotal=" + mbTotal + ", ratio=" + parseInt(mbUsed / mbTotal * 100));
+}
+
 function getMinerFromCoinbaseTx(tx) {
 	if (tx == null || tx.vin == null || tx.vin.length == 0) {
 		return null;
@@ -208,6 +218,7 @@ module.exports = {
 	formatCurrencyAmountInSmallestUnits: formatCurrencyAmountInSmallestUnits,
 	seededRandom: seededRandom,
 	seededRandomIntBetween: seededRandomIntBetween,
+	logMemoryUsage: logMemoryUsage,
 	getMinerFromCoinbaseTx: getMinerFromCoinbaseTx,
 	getBlockTotalFeesFromCoinbaseTxAndBlockHeight: getBlockTotalFeesFromCoinbaseTxAndBlockHeight
 };
