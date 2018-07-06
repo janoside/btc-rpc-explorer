@@ -200,7 +200,18 @@ function getBlockTotalFeesFromCoinbaseTxAndBlockHeight(coinbaseTx, blockHeight) 
 	}
 
 	var blockReward = coinConfig.blockRewardFunction(blockHeight);
-	var totalOutput = coinbaseTx.vout[0].value;
+
+	var totalOutput = -1;
+	for (var i = 0; i < coinbaseTx.vout.length; i++) {
+		var outputValue = coinbaseTx.vout[i].value;
+		if (outputValue >= blockReward) {
+			totalOutput = outputValue;
+		}
+	}
+
+	if (totalOutput == -1) {
+		return 0;
+	}
 
 	return new Decimal(totalOutput).minus(new Decimal(blockReward));
 }
