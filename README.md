@@ -50,53 +50,44 @@ The below instructions are geared toward BTC, but can be adapted easily to other
 <table>
   <tr>
     <td valign="top">
-      <h4>Connect via RPC</h4>
-      <hr/>
-      <img src="public/img/screenshots/connect.png" style="margin-right:5px; border: 1px solid #ccc;" />
-    </td>
-    <td valign="top">
       <h4>Homepage (list of recent blocks)</h4>
-      <hr/>
       <img src="public/img/screenshots/home.png" style="margin-right:5px; border: 1px solid #ccc;" />
     </td>
     <td valign="top">
       <h4>Node Details</h4>
-      <hr/>
       <img src="public/img/screenshots/node-details.png" style="margin-right:5px; border: 1px solid #ccc;" />
+    </td>
+    <td valign="top">
+      <h4>Transaction Details</h4>
+      <img src="public/img/screenshots/transaction.png" style="margin-right:5px; border: 1px solid #ccc;" />
     </td>
   </tr>
   <tr>
     <td valign="top">
       <h4>Browse Blocks</h4>
-      <hr/>
       <img src="public/img/screenshots/blocks.png" style="margin-right:5px; border: 1px solid #ccc;" />
     </td>
     <td valign="top">
       <h4>Block Details</h4>
-      <hr/>
       <img src="public/img/screenshots/block.png" style="margin-right:5px; border: 1px solid #ccc;" />
     </td>
     <td valign="top">
       <h4>Mempool Summary</h4>
-      <hr/>
       <img src="public/img/screenshots/mempool-summary.png" style="margin-right:5px; border: 1px solid #ccc;" />
     </td>
   </tr>
   <tr>
     <td valign="top">
-      <h4>Transaction Details</h4>
-      <hr/>
-      <img src="public/img/screenshots/transaction.png" style="margin-right:5px; border: 1px solid #ccc;" />
-    </td>
-    <td valign="top">
       <h4>Transaction, Raw JSON</h4>
-      <hr/>
       <img src="public/img/screenshots/transaction-raw.png" style="margin-right:5px; border: 1px solid #ccc;" />
     </td>
     <td valign="top">
       <h4>RPC Browser</h4>
-      <hr/>
       <img src="public/img/screenshots/rpc-browser.png" style="margin-right:5px; border: 1px solid #ccc;" />
+    </td>
+    <td valign="top">
+      <h4>Connect via RPC</h4>
+      <img src="public/img/screenshots/connect.png" style="margin-right:5px; border: 1px solid #ccc;" />
     </td>
   </tr>
 </table>
