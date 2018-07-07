@@ -31,121 +31,129 @@ div(class="tab-content")
 								a(href=sbInfo.referenceUrl) Read more
 
 		
-		table(class="table")
-			if (false)
-				tr
-					th(class="table-active properties-header") Previous Block
-					td(class="monospace word-wrap")
-						if (result.getblock.previousblockhash)
-							a(class="word-wrap", href=("/block/" + result.getblock.previousblockhash)) #{(result.getblock.height - 1).toLocaleString()}
-
-						else if (result.getblock.hash == genesisBlockHash)
-							span None
-
-			if (false)
-				tr
-					th(class="table-active properties-header") Next Block
-					td(class="monospace word-wrap")
-						if (result.getblock.nextblockhash)
-							a(href=("/block/" + result.getblock.nextblockhash)) #{(result.getblock.height + 1).toLocaleString()}
-						else
-							span None
-							span(class="text-muted")  (latest block)
-
-			if (false)
-				tr
-					th(class="table-active properties-header") Block Height
-					td(class="monospace")
-						a(href=("/block-height/" + result.getblock.height)) #{result.getblock.height.toLocaleString()}
-
-			tr
-				th(class="table-active properties-header") Timestamp (utc)
-
-				- var timeAgo = moment.duration(moment.utc(new Date()).diff(moment.utc(new Date(parseInt(result.getblock.time) * 1000))));
-				td(class="monospace") #{moment.utc(new Date(result.getblock.time * 1000)).format("Y-MM-DD HH:mm:ss")}
-					br
-					span(class="text-muted")  (age #{timeAgo.format()})
-
-			tr
-				th(class="table-active properties-header") Transaction Count
-				td(class="monospace") #{result.getblock.tx.length.toLocaleString()}
-
-			tr
-				th(class="table-active properties-header") Total Fees
-				td(class="monospace")
-					- var currencyValue = new Decimal(result.getblock.totalFees);
-					include ./value-display.pug
-
-			tr
-				th(class="table-active properties-header") Average Fee
-				td(class="monospace")
-					- var currencyValue = new Decimal(result.getblock.totalFees).dividedBy(result.getblock.tx.length);
-					include ./value-display.pug
-
-			tr
-				th(class="table-active properties-header") Size
-				td(class="monospace")
-					span #{result.getblock.size.toLocaleString()} bytes
-					if (result.getblock.weight)
-						br
-						span(class="text-muted")  (weight: #{result.getblock.weight.toLocaleString()})
-
-			tr
-				th(class="table-active properties-header") Confirmations
-				td(class="monospace")
-					if (result.getblock.confirmations < 6)
-						strong(class="text-warning") #{result.getblock.confirmations}
-					else
-						strong(class="text-success") #{result.getblock.confirmations.toLocaleString()}
-
-			tr
-				- var scales = [ {val:1000000000000000, name:"quadrillion"}, {val:1000000000000, name:"trillion"}, {val:1000000000, name:"billion"}, {val:1000000, name:"million"} ];
-				- var scaleDone = false;
-				th(class="table-active properties-header") Difficulty
-				td(class="monospace")
-					span #{parseFloat(result.getblock.difficulty).toLocaleString()}
-					each item in scales
-						if (!scaleDone)
-							- var fraction = Math.floor(result.getblock.difficulty / item.val);
-							if (fraction >= 1)
-								- scaleDone = true;
+		div(class="row")
+			div(class="col-md-6")
+				table(class="table")
+					tr
+						th(class="table-active properties-header") Previous Block
+						td(class="monospace word-wrap")
+							if (result.getblock.previousblockhash)
+								a(class="word-wrap", href=("/block/" + result.getblock.previousblockhash)) #{result.getblock.previousblockhash}
 								br
-								span(class="text-muted")  (#{fraction} #{item.name})
+								span(class="text-muted") ##{(result.getblock.height - 1).toLocaleString()}
+
+							else if (result.getblock.hash == genesisBlockHash)
+								span None
+								br
+								span(class="text-muted") (genesis block)
+
+					if (false)
+						tr
+							th(class="table-active properties-header") Block Height
+							td(class="monospace")
+								a(href=("/block-height/" + result.getblock.height)) #{result.getblock.height.toLocaleString()}
+
+					tr
+						th(class="table-active properties-header") Timestamp (utc)
+
+						- var timeAgo = moment.duration(moment.utc(new Date()).diff(moment.utc(new Date(parseInt(result.getblock.time) * 1000))));
+						td(class="monospace") #{moment.utc(new Date(result.getblock.time * 1000)).format("Y-MM-DD HH:mm:ss")}
+							br
+							span(class="text-muted")  (age #{timeAgo.format()})
+
+					tr
+						th(class="table-active properties-header") Transaction Count
+						td(class="monospace") #{result.getblock.tx.length.toLocaleString()}
+
+					tr
+						th(class="table-active properties-header") Total Fees
+						td(class="monospace")
+							- var currencyValue = new Decimal(result.getblock.totalFees);
+							include ./value-display.pug
+
+					tr
+						th(class="table-active properties-header") Average Fee
+						td(class="monospace")
+							- var currencyValue = new Decimal(result.getblock.totalFees).dividedBy(result.getblock.tx.length);
+							include ./value-display.pug
+
+					tr
+						th(class="table-active properties-header") Size
+						td(class="monospace")
+							span #{result.getblock.size.toLocaleString()} bytes
+							if (result.getblock.weight)
+								br
+								span(class="text-muted")  (weight: #{result.getblock.weight.toLocaleString()})
+
+					tr
+						th(class="table-active properties-header") Confirmations
+						td(class="monospace")
+							if (result.getblock.confirmations < 6)
+								strong(class="text-warning") #{result.getblock.confirmations}
+							else
+								strong(class="text-success") #{result.getblock.confirmations.toLocaleString()}
+					tr
+						th(class="table-active text-right") Miner
+						td(class="monospace word-wrap")
+							if (result.getblock.miner)
+								span #{result.getblock.miner.name} 
+								if (result.getblock.miner.identifiedBy)
+									a(href=coinConfig.miningPoolsConfigUrl, data-toggle="tooltip", title=("Identified by: " + result.getblock.miner.identifiedBy), target="_blank")
+										i(class="fas fa-info-circle")
+							else
+								span ? 
+								a(href=coinConfig.miningPoolsConfigUrl, data-toggle="tooltip", title=("Unable to identify (click to see config)"), target="_blank")
+									i(class="fas fa-info-circle")
+
+			div(class="col-md-6")
+				table(class="table")
+					tr
+						th(class="table-active properties-header") Next Block
+						td(class="monospace word-wrap")
+							if (result.getblock.nextblockhash)
+								a(href=("/block/" + result.getblock.nextblockhash)) #{result.getblock.nextblockhash}
+								br
+								span(class="text-muted") ##{(result.getblock.height + 1).toLocaleString()}
+							else
+								span None
+								br
+								span(class="text-muted") (latest block)
+
+					tr
+						- var scales = [ {val:1000000000000000, name:"quadrillion"}, {val:1000000000000, name:"trillion"}, {val:1000000000, name:"billion"}, {val:1000000, name:"million"} ];
+						- var scaleDone = false;
+						th(class="table-active properties-header") Difficulty
+						td(class="monospace")
+							span #{parseFloat(result.getblock.difficulty).toLocaleString()}
+							each item in scales
+								if (!scaleDone)
+									- var fraction = Math.floor(result.getblock.difficulty / item.val);
+									if (fraction >= 1)
+										- scaleDone = true;
+										br
+										span(class="text-muted")  (#{fraction} #{item.name})
 
 
-			tr
-				th(class="table-active text-right") Version
-				td(class="monospace") 0x#{result.getblock.versionHex}
-					span(class="text-muted")  (decimal: #{result.getblock.version})
+					tr
+						th(class="table-active text-right") Version
+						td(class="monospace") 0x#{result.getblock.versionHex}
+							span(class="text-muted")  (decimal: #{result.getblock.version})
 
-			tr
-				th(class="table-active text-right") Nonce
-				td(class="monospace") #{result.getblock.nonce}
+					tr
+						th(class="table-active text-right") Nonce
+						td(class="monospace") #{result.getblock.nonce}
 
-			tr
-				th(class="table-active text-right") Bits
-				td(class="monospace") #{result.getblock.bits}
+					tr
+						th(class="table-active text-right") Bits
+						td(class="monospace") #{result.getblock.bits}
 
-			tr
-				th(class="table-active text-right") Merkle Root
-				td(class="monospace word-wrap") #{result.getblock.merkleroot}
+					tr
+						th(class="table-active text-right") Merkle Root
+						td(class="monospace word-wrap") #{result.getblock.merkleroot}
 
-			tr
-				th(class="table-active text-right") Chainwork
-				td(class="monospace word-wrap") #{result.getblock.chainwork}
-
-			tr
-				th(class="table-active text-right") Miner
-				td(class="monospace word-wrap")
-					if (result.getblock.miner)
-						span #{result.getblock.miner.name} 
-						if (result.getblock.miner.identifiedBy)
-							a(href=coinConfig.miningPoolsConfigUrl, data-toggle="tooltip", title=("Identified by: " + result.getblock.miner.identifiedBy), target="_blank")
-								i(class="fas fa-info-circle")
-					else
-						span ? 
-						a(href=coinConfig.miningPoolsConfigUrl, data-toggle="tooltip", title=("Unable to identify (click to see config)"), target="_blank")
-							i(class="fas fa-info-circle")
+					tr
+						th(class="table-active text-right") Chainwork
+						td(class="monospace word-wrap") #{result.getblock.chainwork}
 
 		hr
 
@@ -153,7 +161,7 @@ div(class="tab-content")
 			div(class="card-header")
 				div(class="row")
 					div(class="col-md-4")
-						h2(class="h4 mb-0") #{txCount.toLocaleString()} 
+						h2(class="h5 mb-0") #{txCount.toLocaleString()} 
 							if (txCount == 1)
 								span Transaction
 							else
@@ -172,135 +180,131 @@ div(class="tab-content")
 									a(href=(paginationBaseUrl + "?limit=100"), class="btn btn-sm btn-primary px-2", class=(limit == 100 ? "active" : false)) 100
 								
 								a(href=(paginationBaseUrl + "?limit=3000"), class="btn btn-sm btn-primary px-2", class=(limit >= txCount ? "active" : false)) all
-
-		if (false)
-			h2(class="h4") Transactions (#{txCount.toLocaleString()})
-				small  - Showing 
-					if (txCount <= limit)
-						span all
-					else
-						span #{(offset + 1)} - #{Math.min(offset + limit, txCount)}
-		
-		each tx, txIndex in result.transactions
-			//pre
-			//	code #{JSON.stringify(tx, null, 4)}
-			div(class="card mb-3")
-				div(class="card-header")
-					div(class="row")
-						div(class="col-md-10")
-							if (tx && tx.txid)
-								a(href=("/tx/" + tx.txid), class="monospace") #{tx.txid}
-						div(class="col-md-2 text-right")
-							span ##{(txIndex + offset).toLocaleString()}
-				div(class="card-body")
+			
+			div(class="card-body")
+				each tx, txIndex in result.transactions
 					//pre
-					//	code #{JSON.stringify(result.txInputsByTransaction[tx.txid], null, 4)}
-					if (true)
-						div(class="row")
-							div(class="col-md-6")
-								//h6 Input (#{tx.vin.length.toLocaleString()})
-								if (result.txInputsByTransaction[tx.txid])
-									- var totalInputValue = new Decimal(0);
-									table(class="table mb-0")
-										if (tx.vin[0].coinbase)
-											- totalInputValue = totalInputValue.plus(new Decimal(coinConfig.blockRewardFunction(result.getblock.height)));
-											tr
-												th 1
-												td(class="border-top-0")
-													span(class="tag monospace") coinbase
-													span(class="monospace")  Newly minted coins
-												td(class="border-top-0")
-													- var currencyValue = coinConfig.blockRewardFunction(result.getblock.height);
-													include ./value-display.pug
+					//	code #{JSON.stringify(tx, null, 4)}
+					div(class="xcard mb-3")
+						div(class="card-header")
+							if (tx && tx.txid)
+								strong ##{(txIndex + offset).toLocaleString()}
+								span  &ndash; 
+								a(href=("/tx/" + tx.txid), class="monospace") #{tx.txid}
+							div(class="row")
+								div(class="col-md-10")
+									
+								div(class="col-md-2 text-right")
+									
+						div(class="card-body")
+							//pre
+							//	code #{JSON.stringify(result.txInputsByTransaction[tx.txid], null, 4)}
+							if (true)
+								div(class="row")
+									div(class="col-md-6")
+										//h6 Input (#{tx.vin.length.toLocaleString()})
+										if (result.txInputsByTransaction[tx.txid])
+											- var totalInputValue = new Decimal(0);
+											table(class="table mb-0")
+												if (tx.vin[0].coinbase)
+													- totalInputValue = totalInputValue.plus(new Decimal(coinConfig.blockRewardFunction(result.getblock.height)));
+													tr
+														th 1
+														td(class="border-top-0")
+															span(class="tag monospace") coinbase
+															span(class="monospace")  Newly minted coins
+														td(class="border-top-0")
+															- var currencyValue = coinConfig.blockRewardFunction(result.getblock.height);
+															include ./value-display.pug
 
-										each txInput, txInputIndex in result.txInputsByTransaction[tx.txid]
-											if (txInput)
-												- var vout = txInput.vout[tx.vin[txInputIndex].vout];
+												each txInput, txInputIndex in result.txInputsByTransaction[tx.txid]
+													if (txInput)
+														- var vout = txInput.vout[tx.vin[txInputIndex].vout];
 
-												tr
-													th #{(txInputIndex + 1)}
+														tr
+															th #{(txInputIndex + 1)}
 
-													td(class=(txInputIndex == 0 ? "border-top-0" : false))
-														if (vout.scriptPubKey && vout.scriptPubKey.addresses)
-															div(class="monospace", style="word-break: break-word;")
-																a(href=("/address/" + vout.scriptPubKey.addresses[0])) #{vout.scriptPubKey.addresses[0]}
+															td(class=(txInputIndex == 0 ? "border-top-0" : false))
+																if (vout.scriptPubKey && vout.scriptPubKey.addresses)
+																	div(class="monospace", style="word-break: break-word;")
+																		a(href=("/address/" + vout.scriptPubKey.addresses[0])) #{vout.scriptPubKey.addresses[0]}
 
-															span(class="monospace small") via 
-																a(href=("/tx/" + txInput.txid + "#output-" + tx.vin[txInputIndex].vout), class="monospace") tx:#{txInput.txid.substring(0, 20)}...[#{tx.vin[txInputIndex].vout}]
-													td(class=(txInputIndex == 0 ? "border-top-0" : false))
-														if (vout.value)
-															- totalInputValue = totalInputValue.plus(new Decimal(vout.value));
+																	span(class="monospace small") via 
+																		a(href=("/tx/" + txInput.txid + "#output-" + tx.vin[txInputIndex].vout), class="monospace") tx:#{txInput.txid.substring(0, 20)}...[#{tx.vin[txInputIndex].vout}]
+															td(class=(txInputIndex == 0 ? "border-top-0" : false))
+																if (vout.value)
+																	- totalInputValue = totalInputValue.plus(new Decimal(vout.value));
 
+																	- var currencyValue = vout.value;
+																	include ./value-display.pug
+
+												- var coinbaseCount = tx.vin[0].coinbase ? 1 : 0;
+												if ((tx.vin.length - coinbaseCount) > result.txInputsByTransaction[tx.txid].length)
+													tr
+														td
+														td
+															span(class="monospace text-muted") #{(tx.vin.length - result.txInputsByTransaction[tx.txid].length).toLocaleString()} more...
+														td
+												else
+													tr
+														th
+														td
+														td
+															strong
+																- var currencyValue = totalInputValue;
+																include ./value-display.pug
+											
+
+									div(class="col-md-6")
+										//h6 Output (#{tx.vout.length.toLocaleString()})
+										- var totalOutputValue = new Decimal(0);
+										table(class="table mb-0")
+											tbody
+												each vout, voutIndex in tx.vout
+													tr
+														th #{(voutIndex + 1)}
+														td(class=(voutIndex == 0 ? "border-top-0" : false))
+															if (vout.scriptPubKey)
+																if (vout.scriptPubKey.addresses)
+																	a(id=("output-" + voutIndex), href=("/address/" + vout.scriptPubKey.addresses[0]))
+																		div(class="monospace", style="word-break: break-word;") #{vout.scriptPubKey.addresses[0]}
+
+																else if (vout.scriptPubKey.hex && vout.scriptPubKey.hex.startsWith('6a24aa21a9ed'))
+																	span(class="monospace") Segregated Witness committment 
+																	a(href="https://github.com/bitcoin/bips/blob/master/bip-0141.mediawiki#commitment-structure", data-toggle="tooltip", title="View developer docs", target="_blank") 
+																		i(class="fas fa-info-circle")
+																else if (vout.scriptPubKey.asm && vout.scriptPubKey.asm.startsWith('OP_RETURN '))
+																	span(class="monospace") OP_RETURN: 
+																	span(class="monospace text-muted") #{utils.hex2ascii(vout.scriptPubKey.asm.substring("OP_RETURN ".length))}
+														td(class=(voutIndex == 0 ? "border-top-0" : false))
 															- var currencyValue = vout.value;
 															include ./value-display.pug
 
-										- var coinbaseCount = tx.vin[0].coinbase ? 1 : 0;
-										if ((tx.vin.length - coinbaseCount) > result.txInputsByTransaction[tx.txid].length)
-											tr
-												td
-												td
-													span(class="monospace text-muted") #{(tx.vin.length - result.txInputsByTransaction[tx.txid].length).toLocaleString()} more...
-												td
-										else
-											tr
-												th
-												td
-												td
-													strong
-														- var currencyValue = totalInputValue;
-														include ./value-display.pug
-									
+															- totalOutputValue = totalOutputValue.plus(vout.value);
 
-							div(class="col-md-6")
-								//h6 Output (#{tx.vout.length.toLocaleString()})
-								- var totalOutputValue = new Decimal(0);
-								table(class="table mb-0")
-									tbody
-										each vout, voutIndex in tx.vout
-											tr
-												th #{(voutIndex + 1)}
-												td(class=(voutIndex == 0 ? "border-top-0" : false))
-													if (vout.scriptPubKey)
-														if (vout.scriptPubKey.addresses)
-															a(id=("output-" + voutIndex), href=("/address/" + vout.scriptPubKey.addresses[0]))
-																div(class="monospace", style="word-break: break-word;") #{vout.scriptPubKey.addresses[0]}
+												tr
+													th
+													td
+													td
+														strong
+															- var currencyValue = totalOutputValue;
+															include ./value-display.pug
+					//pre
+					//	code #{JSON.stringify(tx, null, 4)}
 
-														else if (vout.scriptPubKey.hex && vout.scriptPubKey.hex.startsWith('6a24aa21a9ed'))
-															span(class="monospace") Segregated Witness committment 
-															a(href="https://github.com/bitcoin/bips/blob/master/bip-0141.mediawiki#commitment-structure", data-toggle="tooltip", title="View developer docs", target="_blank") 
-																i(class="fas fa-info-circle")
-														else if (vout.scriptPubKey.asm && vout.scriptPubKey.asm.startsWith('OP_RETURN '))
-															span(class="monospace") OP_RETURN: 
-															span(class="monospace text-muted") #{utils.hex2ascii(vout.scriptPubKey.asm.substring("OP_RETURN ".length))}
-												td(class=(voutIndex == 0 ? "border-top-0" : false))
-													- var currencyValue = vout.value;
-													include ./value-display.pug
+			if (!crawlerBot && txCount > limit)
+				- var pageNumber = offset / limit + 1;
+				- var pageCount = Math.floor(txCount / limit);
+				- if (pageCount * limit < txCount) {
+					- pageCount++;
+				- }
+				- var paginationUrlFunction = function(x) {
+					- return paginationBaseUrl + "?limit=" + limit + "&offset=" + ((x - 1) * limit);
+				- }
+				
+				hr
 
-													- totalOutputValue = totalOutputValue.plus(vout.value);
-
-										tr
-											th
-											td
-											td
-												strong
-													- var currencyValue = totalOutputValue;
-													include ./value-display.pug
-			//pre
-			//	code #{JSON.stringify(tx, null, 4)}
-
-		if (!crawlerBot && txCount > limit)
-			- var pageNumber = offset / limit + 1;
-			- var pageCount = Math.floor(txCount / limit);
-			- if (pageCount * limit < txCount) {
-				- pageCount++;
-			- }
-			- var paginationUrlFunction = function(x) {
-				- return paginationBaseUrl + "?limit=" + limit + "&offset=" + ((x - 1) * limit);
-			- }
-			
-			hr
-
-			include ./pagination.pug
+				include ./pagination.pug
 					
 	div(id="tab-raw", class="tab-pane", role="tabpanel")
 		pre
