@@ -357,7 +357,7 @@ router.get("/block-height/:blockHeight", function(req, res) {
 			res.locals.result.transactions = result.transactions;
 			res.locals.result.txInputsByTransaction = result.txInputsByTransaction;
 
-			res.render("block-height");
+			res.render("block");
 		});
 	});
 });
