@@ -4,10 +4,21 @@ block headContent
 	title Block #{blockHash}
 
 block content
-	h1(class="h2") Block 
-		small(style="width: 100%;", class="monospace") ##{result.getblock.height.toLocaleString()}
-		br
-		small(style="width: 100%;", class="monospace word-wrap") #{result.getblock.hash}
+	div(class="row")
+		div(class="col-md-8")
+			h1(class="h2") Block 
+				small(style="width: 100%;", class="monospace") ##{result.getblock.height.toLocaleString()}
+				br
+				small(style="width: 100%;", class="monospace word-wrap") #{result.getblock.hash}
+			
+
+		div(class="col-md-4")
+			div(class="text-md-right mb-2")
+				if (result.getblock.height > 0)
+					a(href=("/block/" + result.getblock.previousblockhash), class="btn btn-primary", data-toggle="tooltip", title=("Block " + result.getblock.previousblockhash)) ◀ ##{(result.getblock.height - 1).toLocaleString()}
+				if (result.getblock.nextblockhash)
+					a(href=("/block/" + result.getblock.nextblockhash), class="btn btn-primary", data-toggle="tooltip", title=("Block " + result.getblock.nextblockhash)) ##{(result.getblock.height + 1).toLocaleString()} ▶
+		
 	hr
 
 	include includes/block-content.pug

@@ -32,32 +32,31 @@ div(class="tab-content")
 
 		
 		table(class="table")
-			tr
-				th(class="table-active properties-header") Previous Block
-				td(class="monospace word-wrap")
-					if (result.getblock.previousblockhash)
-						a(class="word-wrap", href=("/block/" + result.getblock.previousblockhash)) #{result.getblock.previousblockhash}
-						br
-						span(class="text-muted") (#{(result.getblock.height - 1).toLocaleString()})
+			if (false)
+				tr
+					th(class="table-active properties-header") Previous Block
+					td(class="monospace word-wrap")
+						if (result.getblock.previousblockhash)
+							a(class="word-wrap", href=("/block/" + result.getblock.previousblockhash)) #{(result.getblock.height - 1).toLocaleString()}
 
-					else if (result.getblock.hash == genesisBlockHash)
-						span None
+						else if (result.getblock.hash == genesisBlockHash)
+							span None
 
-			tr
-				th(class="table-active properties-header") Next Block
-				td(class="monospace word-wrap")
-					if (result.getblock.nextblockhash)
-						a(href=("/block/" + result.getblock.nextblockhash)) #{result.getblock.nextblockhash}
-						br
-						span(class="text-muted") (#{(result.getblock.height + 1).toLocaleString()})
-					else
-						span None
-						span(class="text-muted")  (latest block)
+			if (false)
+				tr
+					th(class="table-active properties-header") Next Block
+					td(class="monospace word-wrap")
+						if (result.getblock.nextblockhash)
+							a(href=("/block/" + result.getblock.nextblockhash)) #{(result.getblock.height + 1).toLocaleString()}
+						else
+							span None
+							span(class="text-muted")  (latest block)
 
-			tr
-				th(class="table-active properties-header") Block Height
-				td(class="monospace")
-					a(href=("/block-height/" + result.getblock.height)) #{result.getblock.height.toLocaleString()}
+			if (false)
+				tr
+					th(class="table-active properties-header") Block Height
+					td(class="monospace")
+						a(href=("/block-height/" + result.getblock.height)) #{result.getblock.height.toLocaleString()}
 
 			tr
 				th(class="table-active properties-header") Timestamp (utc)
@@ -65,11 +64,23 @@ div(class="tab-content")
 				- var timeAgo = moment.duration(moment.utc(new Date()).diff(moment.utc(new Date(parseInt(result.getblock.time) * 1000))));
 				td(class="monospace") #{moment.utc(new Date(result.getblock.time * 1000)).format("Y-MM-DD HH:mm:ss")}
 					br
-					span(class="text-muted")  (#{timeAgo.format()})
+					span(class="text-muted")  (age #{timeAgo.format()})
 
 			tr
 				th(class="table-active properties-header") Transaction Count
 				td(class="monospace") #{result.getblock.tx.length.toLocaleString()}
+
+			tr
+				th(class="table-active properties-header") Total Fees
+				td(class="monospace")
+					- var currencyValue = new Decimal(result.getblock.totalFees);
+					include ./value-display.pug
+
+			tr
+				th(class="table-active properties-header") Average Fee
+				td(class="monospace")
+					- var currencyValue = new Decimal(result.getblock.totalFees).dividedBy(result.getblock.tx.length);
+					include ./value-display.pug
 
 			tr
 				th(class="table-active properties-header") Size
@@ -123,13 +134,18 @@ div(class="tab-content")
 				th(class="table-active text-right") Chainwork
 				td(class="monospace word-wrap") #{result.getblock.chainwork}
 
-			if (result.getblock.miner)
-				tr
-					th(class="table-active text-right") Miner
-					td(class="monospace word-wrap") #{result.getblock.miner.name} 
+			tr
+				th(class="table-active text-right") Miner
+				td(class="monospace word-wrap")
+					if (result.getblock.miner)
+						span #{result.getblock.miner.name} 
 						if (result.getblock.miner.identifiedBy)
 							a(href=coinConfig.miningPoolsConfigUrl, data-toggle="tooltip", title=("Identified by: " + result.getblock.miner.identifiedBy), target="_blank")
 								i(class="fas fa-info-circle")
+					else
+						span ? 
+						a(href=coinConfig.miningPoolsConfigUrl, data-toggle="tooltip", title=("Unable to identify (click to see config)"), target="_blank")
+							i(class="fas fa-info-circle")
 
 		hr
 
