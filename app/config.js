@@ -13,6 +13,7 @@ module.exports = {
 		"dumpprivkey",
 		"dumpwallet",
 		"setban",
+		"clearbanned",
 		"setnetworkactive",
 		"lockunspent",
 		"move",
@@ -24,6 +25,7 @@ module.exports = {
 		"walletlock",
 		"walletpassphrase",
 		"walletpassphrasechange",
+		"verifychain",
 		"pruneblockchain"
 	],
 
