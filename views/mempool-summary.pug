@@ -4,7 +4,7 @@ block headContent
 	title Mempool Summary
 	
 block content
-	h1(class="h2") Mempool Summary
+	h1(class="h3") Mempool Summary
 	hr
 
 	if (false)
@@ -41,7 +41,7 @@ block content
 					td(class="monospace") #{utils.formatCurrencyAmountInSmallestUnits(mempoolstats["averageFeePerByte"])}/B
 
 		if (getmempoolinfo.size > 0)
-			h4 Transactions by fee rate
+			h2(class="h5") Transactions by fee rate
 			hr
 
 			if (false)
@@ -127,7 +127,7 @@ block content
 								td(class="text-right monospace") -
 
 
-			h4 Transactions by size
+			h2(class="h5") Transactions by size
 			hr
 
 			canvas(id="txSizesBarChart", height="100", class="mb-4")
@@ -166,7 +166,7 @@ block content
 					}
 				});
 
-			h4 Transactions by age
+			h2(class="h5") Transactions by age
 			hr
 
 			canvas(id="txAgesBarChart", height="100", class="mb-4")

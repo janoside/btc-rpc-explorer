@@ -10,7 +10,7 @@ block headContent
 
 block content
 	if (result && result.getrawtransaction)
-		h1(class="h2 word-wrap") Transaction
+		h1(class="h3 word-wrap") Transaction 
 			br
 			small(class="monospace") #{txid}
 		hr
@@ -61,7 +61,7 @@ block content
 									span  
 										a(href=stInfo.referenceUrl) Read more
 
-				table(class="table")
+				table(class="table mb-4")
 					tr
 						th(class="table-active properties-header") Included in Block
 						td(class="monospace word-wrap")
@@ -131,13 +131,13 @@ block content
 								strong(class="text-success") #{result.getrawtransaction.confirmations.toLocaleString()}
 
 					if (result.getrawtransaction.vin[0].coinbase)
-						tr
+						tr(class="border-bottom")
 							th(class="table-active properties-header") Network Fees Collected
 							td
 								- var currencyValue = new Decimal(totalOutputValue).minus(totalInputValue);
 								include includes/value-display.pug
 					else
-						tr
+						tr(class="border-bottom")
 							th(class="table-active properties-header") Network Fee Paid
 							td(class="monospace")
 								strong
@@ -252,8 +252,8 @@ block content
 													include includes/value-display.pug
 
 			div(id="tab-scripts", class="tab-pane", role="tabpanel")
-				h3 Input Scripts
-				table(class="table table-striped")
+				h3(class="h5") Input Scripts
+				table(class="table table-striped mb-5")
 					thead
 						tr
 							th(style="width: 50px;")
@@ -274,7 +274,7 @@ block content
 											br
 											span(class="word-wrap monospace text-muted") (decoded) #{utils.hex2ascii(vin.coinbase)}
 
-				h3 Output Scripts
+				h3(class="h5") Output Scripts
 				table(class="table table-striped")
 					thead
 						tr

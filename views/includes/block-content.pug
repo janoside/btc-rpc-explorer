@@ -92,7 +92,7 @@ div(class="tab-content")
 								strong(class="text-warning") #{result.getblock.confirmations}
 							else
 								strong(class="text-success") #{result.getblock.confirmations.toLocaleString()}
-					tr
+					tr(class="border-bottom")
 						th(class="table-active text-right") Miner
 						td(class="monospace word-wrap")
 							if (result.getblock.miner)
@@ -151,7 +151,7 @@ div(class="tab-content")
 						th(class="table-active text-right") Merkle Root
 						td(class="monospace word-wrap") #{result.getblock.merkleroot}
 
-					tr
+					tr(class="border-bottom")
 						th(class="table-active text-right") Chainwork
 						td(class="monospace word-wrap") #{result.getblock.chainwork}
 
@@ -161,7 +161,7 @@ div(class="tab-content")
 			div(class="card-header")
 				div(class="row")
 					div(class="col-md-4")
-						h2(class="h5 mb-0") #{txCount.toLocaleString()} 
+						h2(class="h6 mb-0") #{txCount.toLocaleString()} 
 							if (txCount == 1)
 								span Transaction
 							else

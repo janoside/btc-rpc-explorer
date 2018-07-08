@@ -6,11 +6,11 @@ block headContent
 block content
 	if (result && result.validateaddress)
 		if (!result.validateaddress.isvalid)
-			h1(class="h2 text-danger") Invalid Address
+			h1(class="h3 text-danger") Invalid Address
 				br
 				small(class="monospace") #{address}
 		else
-			h1(class="h2") Address
+			h1(class="h3") Address
 				br
 				small(class="monospace") #{address}
 			
