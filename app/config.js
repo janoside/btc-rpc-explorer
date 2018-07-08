@@ -23,7 +23,8 @@ module.exports = {
 		"importwallet",
 		"walletlock",
 		"walletpassphrase",
-		"walletpassphrasechange"
+		"walletpassphrasechange",
+		"pruneblockchain"
 	],
 
 	site: {
