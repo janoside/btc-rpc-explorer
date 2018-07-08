@@ -31,6 +31,17 @@ router.get("/", function(req, res) {
 		return;
 	}
 
+	var promises = [];
+
+	promises.push(coreApi.getMempoolInfo());
+	promises.push(coreApi.getMiningInfo());
+
+	var chainTxStatsIntervals = [ 144, 144 * 7, 144 * 30, 144 * 265 ];
+	res.locals.chainTxStatsLabels = [ "24 hours", "1 week", "1 month", "1 year", "All time" ];
+	for (var i = 0; i < chainTxStatsIntervals.length; i++) {
+		promises.push(coreApi.getChainTxStats(chainTxStatsIntervals[i]));
+	}
+
 	coreApi.getBlockchainInfo().then(function(getblockchaininfo) {
 		res.locals.getblockchaininfo = getblockchaininfo;
 
@@ -41,10 +52,24 @@ router.get("/", function(req, res) {
 			}
 		}
 
+		promises.push(coreApi.getChainTxStats(getblockchaininfo.blocks - 1));
+
 		coreApi.getBlocksByHeight(blockHeights).then(function(latestBlocks) {
 			res.locals.latestBlocks = latestBlocks;
 
-			res.render("index");
+			Promise.all(promises).then(function(promiseResults) {
+				res.locals.mempoolInfo = promiseResults[0];
+				res.locals.miningInfo = promiseResults[1];
+
+				var chainTxStats = [];
+				for (var i = 0; i < res.locals.chainTxStatsLabels.length; i++) {
+					chainTxStats.push(promiseResults[i + 2]);
+				}
+
+				res.locals.chainTxStats = chainTxStats;
+
+				res.render("index");
+			});
 		});
 	}).catch(function(err) {
 		res.locals.userMessage = "Error loading recent blocks: " + err;

@@ -4,7 +4,7 @@ block headContent
 	title Home
 	
 block content
-	h1(class="h2") #{coinConfig.siteTitle}
+	h1(class="h3") #{coinConfig.siteTitle}
 	hr
 
 	if (config.demoSite && session.hideHomepageBanner != "true")
@@ -28,24 +28,83 @@ block content
 			a(href="/changeSetting?name=hideHomepageBanner&value=true", class="close", aria-label="Close", style="text-decoration: none;")
 				span(aria-hidden="true") &times;
 
+	div(class="card mb-3")
+		div(class="card-header")
+			h2(class="h6 mb-0") Network Summary
+		div(class="card-body")
+			table(class="table table-responsive-sm")
+				thead
+					tr
+						th Hashrate
+						if (getblockchaininfo.size_on_disk)
+							th Blockchain Size
+
+						th Difficulty
+						th Mempool Size
+
+				tbody(class="monospace")
+					tr
+						td #{miningInfo.networkhashps}
+						td #{utils.formatBytes(getblockchaininfo.size_on_disk)}
+							span(class="text-muted")  (pruned: #{getblockchaininfo.pruned})
+
+						td
+							- var scales = [ {val:1000000000000000, name:"e15"}, {val:1000000000000, name:"e12"}, {val:1000000000, name:"e9"}, {val:1000000, name:"e6"} ];
+							- var scaleDone = false;
+							span #{parseFloat(getblockchaininfo.difficulty).toLocaleString()}
+							each item in scales
+								if (!scaleDone)
+									- var fraction = Math.floor(getblockchaininfo.difficulty / item.val);
+									if (fraction >= 1)
+										- scaleDone = true;
+										span(class="text-muted")  (#{fraction}#{item.name})
+
+						td #{mempoolInfo.size.toLocaleString()} tx 
+							span(class="text-muted") (#{mempoolInfo.usage.toLocaleString()} bytes)
 	
 	if (latestBlocks)
-		div(class="row mt-4")
-			div(class="col")
-				h2(class="h3") Latest Blocks
-					if (getblockchaininfo.initialblockdownload)
-						small  (#{(getblockchaininfo.headers - getblockchaininfo.blocks).toLocaleString()} behind)
+		div(class="card mb-3")
+			div(class="card-header")
+				div(class="row")
+					div(class="col")
+						h2(class="h6 mb-0") Latest Blocks
+							if (getblockchaininfo.initialblockdownload)
+								small  (#{(getblockchaininfo.headers - getblockchaininfo.blocks).toLocaleString()} behind)
 
-			div(class="col")
-				span(style="float: right;")
-					a(href="/blocks", class="btn btn-primary") Browse Blocks &raquo;
+					div(class="col")
+						span(style="float: right;")
+							a(href="/blocks") Browse Blocks &raquo;
 
-		hr
+			div(class="card-body")
 
-		- var blocks = latestBlocks;
-		- var blockOffset = 0;
+				- var blocks = latestBlocks;
+				- var blockOffset = 0;
 
-		include includes/blocks-list.pug
+				include includes/blocks-list.pug
+
+
+	if (chainTxStats)
+		div(class="card mb-3")
+			div(class="card-header")
+				h2(class="h6 mb-0") Transaction Stats
+		
+			div(class="card-body")
+				table(class="table table-responsive-sm text-right")
+					thead
+						tr
+							th
+							each item, index in chainTxStatsLabels
+								th #{item}
+					tbody
+						tr
+							th(class="text-left") Count
+							each item, index in chainTxStats
+								td(class="monospace") #{item.window_tx_count.toLocaleString()}
+
+						tr
+							th(class="text-left") Rate
+							each item, index in chainTxStats
+								td(class="monospace") #{new Decimal(item.txrate).toDecimalPlaces(4)}
 
 block endOfBody
 	script(async, defer, src="https://buttons.github.io/buttons.js")

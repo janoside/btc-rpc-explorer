@@ -66,8 +66,18 @@ function getMempoolInfo() {
 	return tryCacheThenRpcApi(miscCache, "getMempoolInfo", 1000, rpcApi.getMempoolInfo);
 }
 
+function getMiningInfo() {
+	return tryCacheThenRpcApi(miscCache, "getMiningInfo", 1000, rpcApi.getMiningInfo);
+}
+
 function getUptimeSeconds() {
 	return tryCacheThenRpcApi(miscCache, "getUptimeSeconds", 1000, rpcApi.getUptimeSeconds);
+}
+
+function getChainTxStats(blockCount) {
+	return tryCacheThenRpcApi(miscCache, "getChainTxStats-" + blockCount, 120000, function() {
+		return rpcApi.getChainTxStats(blockCount);
+	});
 }
 
 function getPeerSummary() {
@@ -576,6 +586,7 @@ module.exports = {
 	getNetworkInfo: getNetworkInfo,
 	getNetTotals: getNetTotals,
 	getMempoolInfo: getMempoolInfo,
+	getMiningInfo: getMiningInfo,
 	getBlockByHeight: getBlockByHeight,
 	getBlocksByHeight: getBlocksByHeight,
 	getBlockByHash: getBlockByHash,
@@ -588,5 +599,6 @@ module.exports = {
 	getRpcMethodHelp: getRpcMethodHelp,
 	getAddress: getAddress,
 	logCacheSizes: logCacheSizes,
-	getPeerSummary: getPeerSummary
+	getPeerSummary: getPeerSummary,
+	getChainTxStats: getChainTxStats
 };
