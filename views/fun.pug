@@ -30,6 +30,8 @@ block content
 							a(href=("/block/" + item.blockHash)) Block #{item.blockHash.substring(0, 20)}...
 						else if (item.type == "blockheight")
 							a(href=("/block/" + item.blockHash)) Block ##{item.blockHeight}
+						else if (item.type == "link")
+							a(href=item.url) #{item.url.substring(0, 20)}...
 
 					td(class="data-cell")
 						if (item.referenceUrl && item.referenceUrl.trim().length > 0)

@@ -98,6 +98,13 @@ module.exports = {
 			summary: "The first block containing a (non-coinbase) transaction.",
 			referenceUrl: ""
 		},
+		{
+			type: "link",
+			date: "2016-05-02",
+			url: "/rpc-browser?method=verifymessage&args%5B0%5D=Ler4HNAEfwYhBmGXcFP2Po1NpRUEiK8km2&args%5B1%5D=G7W57QZ1jevRhBp7SajpcUgJiGs998R4AdBjcIgJq5BOECh4jHNatZKCFLQeo9PvZLf60ykR32XjT4IrUi9PtCU%3D&args%5B2%5D=I%2C+Charlie+Lee%2C+am+the+creator+of+Litecoin&execute=Execute",
+			summary: "Litecoin's Proof-of-Creator",
+			referenceUrl: "https://medium.com/@SatoshiLite/satoshilite-1e2dad89a017"
+		}
 	],
 	exchangeRateData:{
 		jsonUrl:"https://api.coinmarketcap.com/v1/ticker/Litecoin/",
