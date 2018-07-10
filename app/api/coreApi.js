@@ -212,7 +212,7 @@ function getMempoolStats() {
 				}
 			});
 
-			maxSize = 4000;
+			maxSize = 2000;
 
 			var satoshiPerByteBucketMaxima = coins[config.coin].feeSatoshiPerByteBucketMaxima;
 			var bucketCount = satoshiPerByteBucketMaxima.length + 1;
@@ -239,17 +239,17 @@ function getMempoolStats() {
 
 			for (var i = 0; i < ageBucketCount; i++) {
 				ageBucketTxCounts.push(0);
-				ageBucketLabels.push(parseInt(i * maxAge / 10) + " - " + parseInt((i + 1) * maxAge / 10));
+				ageBucketLabels.push(parseInt(i * maxAge / ageBucketCount) + " - " + parseInt((i + 1) * maxAge / ageBucketCount));
 			}
 
 			for (var i = 0; i < sizeBucketCount; i++) {
 				sizeBucketTxCounts.push(0);
 
 				if (i == sizeBucketCount - 1) {
-					sizeBucketLabels.push(parseInt(i * maxSize / 10) + "+");
+					sizeBucketLabels.push(parseInt(i * maxSize / sizeBucketCount) + "+");
 
 				} else {
-					sizeBucketLabels.push(parseInt(i * maxSize / 10) + " - " + parseInt((i + 1) * maxSize / 10));
+					sizeBucketLabels.push(parseInt(i * maxSize / sizeBucketCount) + " - " + parseInt((i + 1) * maxSize / sizeBucketCount));
 				}
 			}
 
