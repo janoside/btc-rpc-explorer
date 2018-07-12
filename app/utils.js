@@ -1,4 +1,6 @@
 var Decimal = require("decimal.js");
+var request = require("request");
+
 var config = require("./config.js");
 var coins = require("./coins.js");
 var coinConfig = coins[config.coin];
@@ -216,6 +218,32 @@ function getBlockTotalFeesFromCoinbaseTxAndBlockHeight(coinbaseTx, blockHeight) 
 	return new Decimal(totalOutput).minus(new Decimal(blockReward));
 }
 
+function refreshExchangeRate() {
+	if (coins[config.coin].exchangeRateData) {
+		request(coins[config.coin].exchangeRateData.jsonUrl, function(error, response, body) {
+			if (!error && response && response.statusCode && response.statusCode == 200) {
+				var responseBody = JSON.parse(body);
+
+				var exchangeRate = coins[config.coin].exchangeRateData.responseBodySelectorFunction(responseBody);
+				if (exchangeRate > 0) {
+					global.exchangeRate = exchangeRate;
+					global.exchangeRateUpdateTime = new Date();
+
+					console.log("Using exchange rate: " + global.exchangeRate + " USD/" + coins[config.coin].name + " starting at " + global.exchangeRateUpdateTime);
+
+				} else {
+					console.log("Unable to get exchange rate data");
+				}
+			} else {
+				console.log("Error:");
+				console.log(error);
+				console.log("Response:");
+				console.log(response);
+			}
+		});
+	}
+}
+
 
 module.exports = {
 	redirectToConnectPageIfNeeded: redirectToConnectPageIfNeeded,
@@ -231,5 +259,6 @@ module.exports = {
 	seededRandomIntBetween: seededRandomIntBetween,
 	logMemoryUsage: logMemoryUsage,
 	getMinerFromCoinbaseTx: getMinerFromCoinbaseTx,
-	getBlockTotalFeesFromCoinbaseTxAndBlockHeight: getBlockTotalFeesFromCoinbaseTxAndBlockHeight
+	getBlockTotalFeesFromCoinbaseTxAndBlockHeight: getBlockTotalFeesFromCoinbaseTxAndBlockHeight,
+	refreshExchangeRate: refreshExchangeRate
 };
