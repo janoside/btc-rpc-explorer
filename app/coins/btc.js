@@ -151,6 +151,14 @@ module.exports = {
 			blockHash: "00000000000000000139cb443e16442fcd07a4a0e0788dd045ee3cf268982016",
 			summary: "First block mined that was greater than 1MB.",
 			referenceUrl: "https://en.bit.news/bitfury-mined-first-segwit-block-size-1-mb/"
+		},
+		{
+			type: "blockheight",
+			date: "2018-01-20",
+			blockHeight: 505225,
+			blockHash: "0000000000000000001bbb529c64ddf55edec8f4ebc0a0ccf1d3bb21c278bfa7",
+			summary: "First block mined that was greater than 2MB.",
+			referenceUrl: "https://twitter.com/BitGo/status/954998877920247808"
 		}
 	],
 	exchangeRateData:{
