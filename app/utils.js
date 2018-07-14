@@ -5,6 +5,17 @@ var config = require("./config.js");
 var coins = require("./coins.js");
 var coinConfig = coins[config.coin];
 
+var exponentScales = [
+	{val:1000000000000000000000000, name:"yotta", abbreviation:"Y", exponent:"24"},
+	{val:1000000000000000000000, name:"zetta", abbreviation:"Z", exponent:"21"},
+	{val:1000000000000000000, name:"exa", abbreviation:"E", exponent:"18"},
+	{val:1000000000000000, name:"peta", abbreviation:"P", exponent:"15"},
+	{val:1000000000000, name:"tera", abbreviation:"T", exponent:"12"},
+	{val:1000000000, name:"giga", abbreviation:"G", exponent:"9"},
+	{val:1000000, name:"mega", abbreviation:"M", exponent:"6"},
+	{val:1000, name:"kilo", abbreviation:"K", exponent:"3"}
+];
+
 function redirectToConnectPageIfNeeded(req, res) {
 	if (!req.session.host) {
 		req.session.redirectUrl = req.originalUrl;
@@ -240,6 +251,43 @@ function refreshExchangeRate() {
 	}
 }
 
+function parseExponentStringDouble(val) {
+	var [lead,decimal,pow] = val.toString().split(/e|\./);
+	return +pow <= 0 
+		? "0." + "0".repeat(Math.abs(pow)-1) + lead + decimal
+		: lead + ( +pow >= decimal.length ? (decimal + "0".repeat(+pow-decimal.length)) : (decimal.slice(0,+pow)+"."+decimal.slice(+pow)));
+}
+
+function formatHashrate(val, decimalPlaces) {
+	console.log("formatting hashrate: " + val);
+
+	var x = parseExponentStringDouble(val);
+
+	for (var i = 0; i < exponentScales.length; i++) {
+		var item = exponentScales[i];
+
+		var fraction = new Decimal(x / item.val);
+		if (fraction >= 1) {
+			return [fraction.toDecimalPlaces(decimalPlaces), item];
+		}
+	}
+
+	return [x, {}];
+}
+
+function formatDifficulty(d, decimalPlaces) {
+	for (var i = 0; i < exponentScales.length; i++) {
+		var item = exponentScales[i];
+
+		var fraction = new Decimal(d / item.val);
+		if (fraction >= 1) {
+			return [fraction.toDecimalPlaces(decimalPlaces), item];
+		}
+	}
+
+	return [d, {}];
+}
+
 
 module.exports = {
 	redirectToConnectPageIfNeeded: redirectToConnectPageIfNeeded,
@@ -256,5 +304,8 @@ module.exports = {
 	logMemoryUsage: logMemoryUsage,
 	getMinerFromCoinbaseTx: getMinerFromCoinbaseTx,
 	getBlockTotalFeesFromCoinbaseTxAndBlockHeight: getBlockTotalFeesFromCoinbaseTxAndBlockHeight,
-	refreshExchangeRate: refreshExchangeRate
+	refreshExchangeRate: refreshExchangeRate,
+	parseExponentStringDouble: parseExponentStringDouble,
+	formatHashrate: formatHashrate,
+	formatDifficulty: formatDifficulty
 };

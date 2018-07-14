@@ -44,20 +44,20 @@ block content
 
 				tbody(class="monospace")
 					tr
-						td #{miningInfo.networkhashps}
+						- var hashrateData = utils.formatHashrate(miningInfo.networkhashps, 3);
+						td
+							span #{hashrateData[0]} 
+							span(title=(hashrateData[1].name + "-hash / x10^" + hashrateData[1].exponent), data-toggle="tooltip") #{hashrateData[1].abbreviation}H
+							span /s
 						td #{utils.formatBytes(getblockchaininfo.size_on_disk)}
 							span(class="text-muted")  (pruned: #{getblockchaininfo.pruned})
 
 						td
-							- var scales = [ {val:1000000000000000, name:"e15"}, {val:1000000000000, name:"e12"}, {val:1000000000, name:"e9"}, {val:1000000, name:"e6"} ];
-							- var scaleDone = false;
-							span #{parseFloat(getblockchaininfo.difficulty).toLocaleString()}
-							each item in scales
-								if (!scaleDone)
-									- var fraction = Math.floor(getblockchaininfo.difficulty / item.val);
-									if (fraction >= 1)
-										- scaleDone = true;
-										span(class="text-muted")  (#{fraction}#{item.name})
+							- var difficultyData = utils.formatDifficulty(getblockchaininfo.difficulty, 3);
+							
+							span(title=parseFloat(getblockchaininfo.difficulty).toLocaleString(), data-toggle="tooltip") #{difficultyData[0]}
+							span  x 10
+							sup #{difficultyData[1].exponent}
 
 						td #{mempoolInfo.size.toLocaleString()} tx 
 							span(class="text-muted") (#{mempoolInfo.usage.toLocaleString()} bytes)
