@@ -81,9 +81,14 @@ div(class="tab-content")
 						th(class="table-active properties-header") Size
 						td(class="monospace")
 							span #{result.getblock.size.toLocaleString()} bytes
-							if (result.getblock.weight)
+
+					if (result.getblock.weight)
+						tr
+							th(class="table-active properties-header") Weight
+							td(class="monospace")
+								span #{result.getblock.weight.toLocaleString()} wu
 								br
-								span(class="text-muted")  (weight: #{result.getblock.weight.toLocaleString()})
+								span(class="text-muted")  (#{new Decimal(100 * result.getblock.weight / coinConfig.maxBlockWeight).toDecimalPlaces(2)}% full)
 
 					tr
 						th(class="table-active properties-header") Confirmations
@@ -92,18 +97,7 @@ div(class="tab-content")
 								strong(class="text-warning") #{result.getblock.confirmations}
 							else
 								strong(class="text-success") #{result.getblock.confirmations.toLocaleString()}
-					tr(class="border-bottom")
-						th(class="table-active text-right") Miner
-						td(class="monospace word-wrap")
-							if (result.getblock.miner)
-								span #{result.getblock.miner.name} 
-								if (result.getblock.miner.identifiedBy)
-									a(href=coinConfig.miningPoolsConfigUrl, data-toggle="tooltip", title=("Identified by: " + result.getblock.miner.identifiedBy), target="_blank")
-										i(class="fas fa-info-circle")
-							else
-								span ? 
-								a(href=coinConfig.miningPoolsConfigUrl, data-toggle="tooltip", title=("Unable to identify (click to see config)"), target="_blank")
-									i(class="fas fa-info-circle")
+
 
 			div(class="col-md-6")
 				table(class="table")
@@ -124,14 +118,12 @@ div(class="tab-content")
 						- var scaleDone = false;
 						th(class="table-active properties-header") Difficulty
 						td(class="monospace")
-							span #{parseFloat(result.getblock.difficulty).toLocaleString()}
-							each item in scales
-								if (!scaleDone)
-									- var fraction = Math.floor(result.getblock.difficulty / item.val);
-									if (fraction >= 1)
-										- scaleDone = true;
-										br
-										span(class="text-muted")  (#{fraction} #{item.name})
+							- var difficultyData = utils.formatDifficulty(result.getblock.difficulty, 3);
+							
+							span(title=parseFloat(result.getblock.difficulty).toLocaleString(), data-toggle="tooltip")
+								span #{difficultyData[0]}
+								span  x 10
+								sup #{difficultyData[1].exponent}
 
 
 					tr
@@ -154,6 +146,19 @@ div(class="tab-content")
 					tr(class="border-bottom")
 						th(class="table-active text-right") Chainwork
 						td(class="monospace word-wrap") #{result.getblock.chainwork}
+
+					tr(class="border-bottom")
+						th(class="table-active text-right") Miner
+						td(class="monospace word-wrap")
+							if (result.getblock.miner)
+								span #{result.getblock.miner.name} 
+								if (result.getblock.miner.identifiedBy)
+									a(href=coinConfig.miningPoolsConfigUrl, data-toggle="tooltip", title=("Identified by: " + result.getblock.miner.identifiedBy), target="_blank")
+										i(class="fas fa-info-circle")
+							else
+								span ? 
+								a(href=coinConfig.miningPoolsConfigUrl, data-toggle="tooltip", title=("Unable to identify (click to see config)"), target="_blank")
+									i(class="fas fa-info-circle")
 
 		div(class="card mb-3")
 			div(class="card-header")
