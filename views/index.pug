@@ -44,7 +44,7 @@ block content
 
 				tbody(class="monospace")
 					tr
-						- var hashrateData = utils.formatHashrate(miningInfo.networkhashps, 3);
+						- var hashrateData = utils.formatLargeNumber(miningInfo.networkhashps, 3);
 						td
 							span #{hashrateData[0]} 
 							span(title=(hashrateData[1].name + "-hash / x10^" + hashrateData[1].exponent), data-toggle="tooltip") #{hashrateData[1].abbreviation}H
@@ -53,15 +53,16 @@ block content
 							span(class="text-muted")  (pruned: #{getblockchaininfo.pruned})
 
 						td
-							- var difficultyData = utils.formatDifficulty(getblockchaininfo.difficulty, 3);
+							- var difficultyData = utils.formatLargeNumber(getblockchaininfo.difficulty, 3);
 							
 							span(title=parseFloat(getblockchaininfo.difficulty).toLocaleString(), data-toggle="tooltip")
 								span #{difficultyData[0]}
 								span  x 10
 								sup #{difficultyData[1].exponent}
 
-						td #{mempoolInfo.size.toLocaleString()} tx 
-							span(class="text-muted") (#{mempoolInfo.usage.toLocaleString()} bytes)
+						td #{mempoolInfo.size.toLocaleString()} tx / 
+							- var mempoolBytesData = utils.formatLargeNumber(mempoolInfo.usage, 2);
+							span #{mempoolBytesData[0]} #{mempoolBytesData[1].abbreviation}B
 	
 	if (latestBlocks)
 		div(class="card mb-3")

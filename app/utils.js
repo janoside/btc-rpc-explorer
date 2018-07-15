@@ -258,34 +258,17 @@ function parseExponentStringDouble(val) {
 		: lead + ( +pow >= decimal.length ? (decimal + "0".repeat(+pow-decimal.length)) : (decimal.slice(0,+pow)+"."+decimal.slice(+pow)));
 }
 
-function formatHashrate(val, decimalPlaces) {
-	console.log("formatting hashrate: " + val);
-
-	var x = parseExponentStringDouble(val);
-
+function formatLargeNumber(n, decimalPlaces) {
 	for (var i = 0; i < exponentScales.length; i++) {
 		var item = exponentScales[i];
 
-		var fraction = new Decimal(x / item.val);
+		var fraction = new Decimal(n / item.val);
 		if (fraction >= 1) {
 			return [fraction.toDecimalPlaces(decimalPlaces), item];
 		}
 	}
 
-	return [x, {}];
-}
-
-function formatDifficulty(d, decimalPlaces) {
-	for (var i = 0; i < exponentScales.length; i++) {
-		var item = exponentScales[i];
-
-		var fraction = new Decimal(d / item.val);
-		if (fraction >= 1) {
-			return [fraction.toDecimalPlaces(decimalPlaces), item];
-		}
-	}
-
-	return [d, {}];
+	return [n, {}];
 }
 
 
@@ -306,6 +289,5 @@ module.exports = {
 	getBlockTotalFeesFromCoinbaseTxAndBlockHeight: getBlockTotalFeesFromCoinbaseTxAndBlockHeight,
 	refreshExchangeRate: refreshExchangeRate,
 	parseExponentStringDouble: parseExponentStringDouble,
-	formatHashrate: formatHashrate,
-	formatDifficulty: formatDifficulty
+	formatLargeNumber: formatLargeNumber
 };
