@@ -9,6 +9,7 @@ table(class="table table-striped table-responsive-sm")
 			th(class="data-header text-right") Transactions
 			th(class="data-header text-right") Average Fee
 			th(class="data-header text-right") Size (bytes)
+			th(class="data-header text-right") Weight (wu)
 	tbody
 		each block, blockIndex in blocks
 			if (block)
@@ -22,7 +23,7 @@ table(class="table table-striped table-responsive-sm")
 					td(class="data-cell monospace text-right") #{timeAgo.format()}
 					td(class="data-cell monospace")
 						if (block.miner && block.miner.name)
-							span #{block.miner.name}
+							span(data-toggle="tooltip", title=("Identified by: " + block.miner.identifiedBy)) #{block.miner.name}
 						else
 							span ?
 
@@ -34,3 +35,4 @@ table(class="table table-striped table-responsive-sm")
 						include ./value-display.pug
 
 					td(class="data-cell monospace text-right") #{block.size.toLocaleString()}
+					td(class="data-cell monospace text-right") #{block.weight.toLocaleString()}
