@@ -5,11 +5,15 @@ table(class="table table-striped table-responsive-sm")
 			th(class="data-header") Height
 			th(class="data-header") Timestamp (utc)
 			th(class="data-header text-right") Age
-			th(class="data-header") Miner
+			th(class="data-header") Miner 
+				a(data-toggle="tooltip", title=("Hover text below for details"))
+					i(class="fas fa-info-circle")
 			th(class="data-header text-right") Transactions
 			th(class="data-header text-right") Average Fee
 			th(class="data-header text-right") Size (bytes)
-			th(class="data-header text-right") Weight (wu)
+			th(class="data-header text-right") Weight (wu) 
+				a(data-toggle="tooltip", title=("Hover text below for % full"))
+					i(class="fas fa-info-circle")
 	tbody
 		each block, blockIndex in blocks
 			if (block)
@@ -33,6 +37,7 @@ table(class="table table-striped table-responsive-sm")
 					td(class="data-cell monospace text-right")
 						- var currencyValue = new Decimal(block.totalFees).dividedBy(block.tx.length);
 						include ./value-display.pug
-
+						
 					td(class="data-cell monospace text-right") #{block.size.toLocaleString()}
-					td(class="data-cell monospace text-right") #{block.weight.toLocaleString()}
+					td(class="data-cell monospace text-right")
+						span(title=(new Decimal(100 * block.weight / coinConfig.maxBlockWeight).toDecimalPlaces(2) + "% full"), data-toggle="tooltip") #{block.weight.toLocaleString()}

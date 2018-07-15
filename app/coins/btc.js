@@ -10,6 +10,7 @@ module.exports = {
 	nodeUrl:"https://bitcoin.org/en/full-node",
 	demoSiteUrl: "https://btc.chaintools.io",
 	miningPoolsConfigUrl:"https://raw.githubusercontent.com/blockchain/Blockchain-Known-Pools/master/pools.json",
+	maxBlockWeight: 4000000,
 	currencyUnits:[
 		{
 			name:"BTC",

@@ -1,5 +1,8 @@
-span(class="monospace") #{utils.formatCurrencyAmount(currencyValue, currencyFormatType)}
-	if (global.exchangeRate)
-		span  
-		span(data-toggle="tooltip", title=utils.formatExchangedCurrency(currencyValue))
-			i(class="fas fa-exchange-alt")
+if (currencyValue > 0)
+	span(class="monospace") #{utils.formatCurrencyAmount(currencyValue, currencyFormatType)}
+		if (global.exchangeRate)
+			span  
+			span(data-toggle="tooltip", title=utils.formatExchangedCurrency(currencyValue))
+				i(class="fas fa-exchange-alt")
+else
+	span(class="monospace") 0
