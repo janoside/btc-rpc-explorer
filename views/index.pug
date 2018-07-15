@@ -55,9 +55,10 @@ block content
 						td
 							- var difficultyData = utils.formatDifficulty(getblockchaininfo.difficulty, 3);
 							
-							span(title=parseFloat(getblockchaininfo.difficulty).toLocaleString(), data-toggle="tooltip") #{difficultyData[0]}
-							span  x 10
-							sup #{difficultyData[1].exponent}
+							span(title=parseFloat(getblockchaininfo.difficulty).toLocaleString(), data-toggle="tooltip")
+								span #{difficultyData[0]}
+								span  x 10
+								sup #{difficultyData[1].exponent}
 
 						td #{mempoolInfo.size.toLocaleString()} tx 
 							span(class="text-muted") (#{mempoolInfo.usage.toLocaleString()} bytes)
