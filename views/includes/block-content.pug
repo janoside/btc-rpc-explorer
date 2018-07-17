@@ -118,7 +118,7 @@ div(class="tab-content")
 						- var scaleDone = false;
 						th(class="table-active properties-header") Difficulty
 						td(class="monospace")
-							- var difficultyData = utils.formatDifficulty(result.getblock.difficulty, 3);
+							- var difficultyData = utils.formatLargeNumber(result.getblock.difficulty, 3);
 							
 							span(title=parseFloat(result.getblock.difficulty).toLocaleString(), data-toggle="tooltip")
 								span #{difficultyData[0]}
