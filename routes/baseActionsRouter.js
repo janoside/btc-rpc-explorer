@@ -685,6 +685,59 @@ router.get("/rpc-browser", function(req, res) {
 	});
 });
 
+router.get("/tx-stats", function(req, res) {
+	var dataPoints = 150;
+
+	if (req.query.dataPoints) {
+		dataPoints = req.query.dataPoints;
+	}
+
+	if (dataPoints > 250) {
+		dataPoints = 250;
+	}
+
+	coreApi.getBlockchainInfo().then(function(getblockchaininfo) {
+		res.locals.getblockchaininfo = getblockchaininfo;
+
+		var chainTxStatsIntervals = [];
+		for (var i = 0; i < dataPoints; i++) {
+			chainTxStatsIntervals.push(parseInt(Math.max(10, getblockchaininfo.blocks - i * getblockchaininfo.blocks / (dataPoints - 1) - 1)));
+		}
+
+		//console.log("ints: " + JSON.stringify(chainTxStatsIntervals));
+
+		var promises = [];
+		for (var i = 0; i < chainTxStatsIntervals.length; i++) {
+			promises.push(coreApi.getChainTxStats(chainTxStatsIntervals[i]));
+		}
+
+		Promise.all(promises).then(function(results) {
+			res.locals.txStatResults = results;
+
+			var txStats = {
+				txCounts: [],
+				txLabels: [],
+				txRates: []
+			};
+
+			for (var i = results.length - 1; i >= 0; i--) {
+				if (results[i].window_tx_count) {
+					txStats.txCounts.push( {x:(getblockchaininfo.blocks - results[i].window_block_count), y: (results[i].txcount - results[i].window_tx_count)} );
+					txStats.txRates.push( {x:(getblockchaininfo.blocks - results[i].window_block_count), y: (results[i].txrate)} );
+					txStats.txLabels.push(i);
+				}
+			}
+
+			res.locals.txStats = txStats;
+
+			console.log("res: " + JSON.stringify(results));
+
+			res.render("tx-stats");
+		});
+	});
+	
+});
+
 router.get("/about", function(req, res) {
 	res.render("about");
 });

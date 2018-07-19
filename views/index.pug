@@ -88,7 +88,13 @@ block content
 	if (chainTxStats)
 		div(class="card mb-3")
 			div(class="card-header")
-				h2(class="h6 mb-0") Transaction Stats
+				div(class="row")
+					div(class="col")
+						h2(class="h6 mb-0") Transaction Stats
+
+					div(class="col")
+						span(style="float: right;")
+							a(href="/tx-stats") More Transaction Stats &raquo;
 		
 			div(class="card-body")
 				table(class="table table-responsive-sm text-right")
