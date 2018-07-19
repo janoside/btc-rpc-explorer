@@ -47,8 +47,7 @@ block content
 						- var hashrateData = utils.formatLargeNumber(miningInfo.networkhashps, 3);
 						td
 							span #{hashrateData[0]} 
-							span(title=(hashrateData[1].name + "-hash / x10^" + hashrateData[1].exponent), data-toggle="tooltip") #{hashrateData[1].abbreviation}H
-							span /s
+							span(title=(hashrateData[1].name + "-hash / x10^" + hashrateData[1].exponent), data-toggle="tooltip") #{hashrateData[1].abbreviation}H/s
 						td #{utils.formatBytes(getblockchaininfo.size_on_disk)}
 							span(class="text-muted")  (pruned: #{getblockchaininfo.pruned})
 

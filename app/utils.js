@@ -6,6 +6,9 @@ var coins = require("./coins.js");
 var coinConfig = coins[config.coin];
 
 var exponentScales = [
+	{val:1000000000000000000000000000000000, name:"?", abbreviation:"V", exponent:"33"},
+	{val:1000000000000000000000000000000, name:"?", abbreviation:"W", exponent:"30"},
+	{val:1000000000000000000000000000, name:"?", abbreviation:"X", exponent:"27"},
 	{val:1000000000000000000000000, name:"yotta", abbreviation:"Y", exponent:"24"},
 	{val:1000000000000000000000, name:"zetta", abbreviation:"Z", exponent:"21"},
 	{val:1000000000000000000, name:"exa", abbreviation:"E", exponent:"18"},

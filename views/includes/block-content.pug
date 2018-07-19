@@ -90,7 +90,7 @@ div(class="tab-content")
 								br
 								span(class="text-muted")  (#{new Decimal(100 * result.getblock.weight / coinConfig.maxBlockWeight).toDecimalPlaces(2)}% full)
 
-					tr
+					tr(class="border-bottom")
 						th(class="table-active properties-header") Confirmations
 						td(class="monospace")
 							if (result.getblock.confirmations < 6)
@@ -143,9 +143,17 @@ div(class="tab-content")
 						th(class="table-active text-right") Merkle Root
 						td(class="monospace word-wrap") #{result.getblock.merkleroot}
 
-					tr(class="border-bottom")
+					tr
 						th(class="table-active text-right") Chainwork
-						td(class="monospace word-wrap") #{result.getblock.chainwork}
+						td(class="monospace word-wrap") #{result.getblock.chainwork.replace(/^0+/, '')}
+							br
+							- var chainworkData = utils.formatLargeNumber(parseInt("0x" + result.getblock.chainwork), 2);
+							span(class="text-muted")
+								span (~
+								span #{chainworkData[0]}
+								span  x 10
+								sup #{chainworkData[1].exponent}
+								span  hashes)
 
 					tr(class="border-bottom")
 						th(class="table-active text-right") Miner
