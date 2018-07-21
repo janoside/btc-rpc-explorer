@@ -56,5 +56,7 @@ module.exports = {
 			{name: "Litecoin Explorer", url:"https://ltc.chaintools.io", imgUrl:"/img/logo/ltc.svg"},
 			{name: "Lightning Explorer", url:"https://lightning.chaintools.io", imgUrl:"/img/logo/lightning.svg"},
 		]
-	}
+	},
+
+	ipStackComApiAccessKey:""
 };

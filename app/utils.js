@@ -254,6 +254,52 @@ function refreshExchangeRate() {
 	}
 }
 
+// Uses IPStack.com API
+function geoLocateIpAddresses(ipAddresses) {
+	return new Promise(function(resolve, reject) {
+		var chunks = splitArrayIntoChunks(ipAddresses, 1);
+
+		var promises = [];
+		for (var i = 0; i < chunks.length; i++) {
+			var ipStr = "";
+			for (var j = 0; j < chunks[i].length; j++) {
+				if (j > 0) {
+					ipStr = ipStr + ",";
+				}
+
+				ipStr = ipStr + chunks[i][j];
+			}
+
+			var apiUrl = "http://api.ipstack.com/" + ipStr + "?access_key=" + config.ipStackComApiAccessKey;
+			promises.push(new Promise(function(resolve2, reject2) {
+				request(apiUrl, function(error, response, body) {
+					if (error) {
+						reject2(error);
+
+					} else {
+						resolve2(response);
+					}
+				});
+			}));
+		}
+
+		Promise.all(promises).then(function(results) {
+			var ipDetails = {};
+
+			for (var i = 0; i < results.length; i++) {
+				var res = results[i];
+				if (res["statusCode"] == 200) {
+					var resBody = JSON.parse(res["body"]);
+
+					ipDetails[resBody["ip"]] = resBody;
+				}
+			}
+
+			resolve(ipDetails);
+		});
+	});
+}
+
 function parseExponentStringDouble(val) {
 	var [lead,decimal,pow] = val.toString().split(/e|\./);
 	return +pow <= 0 
@@ -292,5 +338,6 @@ module.exports = {
 	getBlockTotalFeesFromCoinbaseTxAndBlockHeight: getBlockTotalFeesFromCoinbaseTxAndBlockHeight,
 	refreshExchangeRate: refreshExchangeRate,
 	parseExponentStringDouble: parseExponentStringDouble,
-	formatLargeNumber: formatLargeNumber
+	formatLargeNumber: formatLargeNumber,
+	geoLocateIpAddresses: geoLocateIpAddresses
 };
