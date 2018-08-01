@@ -16,7 +16,6 @@ table(class="table table-striped table-responsive-sm")
 		each block, blockIndex in blocks
 			if (block)
 				tr
-					//th #{(blockIndex + blockOffset + 1).toLocaleString()}
 					td(class="data-cell monospace")
 						a(href=("/block-height/" + block.height)) #{block.height.toLocaleString()}
 					td(class="data-cell monospace") #{moment.utc(new Date(parseInt(block.time) * 1000)).format("Y-MM-DD HH:mm:ss")}
