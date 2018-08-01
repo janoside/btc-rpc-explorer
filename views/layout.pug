@@ -179,7 +179,7 @@ html(lang="en")
 				Raven.config("#{config.sentryUrl}").install();
 
 		if (config.googleAnalyticsTrackingId && config.googleAnalyticsTrackingId.length > 0)
-			script(async, src=("https://www.googletagmanager.com/gtag/js?id=#{config.googleAnalyticsTrackingId}"))
+			script(async, src=("https://www.googletagmanager.com/gtag/js?id=" + config.googleAnalyticsTrackingId))
 			script.
 				window.dataLayer = window.dataLayer || [];
 				function gtag(){dataLayer.push(arguments);}
