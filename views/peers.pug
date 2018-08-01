@@ -149,7 +149,17 @@ block endOfBody
 		each ipAddress, index in peerIpSummary.ips
 			- var ipDetails = peerIpSummary.detailsByIp[ipAddress];
 			if (ipDetails && ipDetails.latitude && ipDetails.longitude)
-				script L.marker([#{ipDetails.latitude}, #{ipDetails.longitude}]).addTo(mymap);
+				- var ipDetailsPopupHtml = "<b>" + ipAddress + "</b><br>";
+				if (ipDetails.city)
+					- var ipDetailsPopupHtml = ipDetailsPopupHtml + ipDetails.city + ", ";
+
+				if (ipDetails.country_name)
+					- var ipDetailsPopupHtml = ipDetailsPopupHtml + ipDetails.country_name + " ";
+
+				if (ipDetails.location && ipDetails.location.country_flag_emoji)
+					- var ipDetailsPopupHtml = ipDetailsPopupHtml + ipDetails.location.country_flag_emoji;
+
+				script L.marker([#{ipDetails.latitude}, #{ipDetails.longitude}]).addTo(mymap).bindPopup("!{ipDetailsPopupHtml}");
 		
 
 
