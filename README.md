@@ -34,11 +34,13 @@ The below instructions are geared toward BTC, but can be adapted easily to other
 ## Instructions
 
 1. Clone this repo
-2. `npm install` to install all required dependencies
-3. Edit the "rpc" settings in [credentials.js](app/credentials.js) to target your node
-4. Optional: Change the "coin" value in [config.js](app/config.js). Currently supported values are "BTC" and "LTC".
-5. `npm start` to start the local server
-6. Visit http://127.0.0.1:3002/
+2. `npm install`
+3. `npm run build`
+4. Edit the "rpc" settings in [credentials.js](app/credentials.js) to target your node
+5. Optional: Change the "coin" value in [config.js](app/config.js). Currently supported values are "BTC" and "LTC".
+6. Optional: Add an ipstack.com API access key to [credentials.js](app/credentials.js). Doing so will add a map to the /peers page.
+7. `npm start` to start the local server
+8. Visit http://127.0.0.1:3002/
 
 ## Run via Docker
 
