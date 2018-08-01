@@ -40,6 +40,7 @@ block content
 					tr
 						th(class="table-active properties-header") Blockchain Size
 						td(class="monospace") #{utils.formatBytes(getblockchaininfo.size_on_disk)}
+							br
 							span(class="text-muted")  (pruned: #{getblockchaininfo.pruned})
 				tr
 					th(class="table-active properties-header") Connections
@@ -47,19 +48,19 @@ block content
 				tr
 					th(class="table-active properties-header") Block Count
 					td(class="monospace") #{getblockchaininfo.blocks.toLocaleString()}
-						span(class="text-muted")  (header count: #{getblockchaininfo.headers.toLocaleString()})
+						br
+						span(class="text-muted") (headers: #{getblockchaininfo.headers.toLocaleString()})
 				tr
 					- var scales = [ {val:1000000000000000, name:"quadrillion"}, {val:1000000000000, name:"trillion"}, {val:1000000000, name:"billion"}, {val:1000000, name:"million"} ];
 					- var scaleDone = false;
 					th(class="table-active properties-header") Difficulty
 					td(class="monospace")
-						span #{parseFloat(getblockchaininfo.difficulty).toLocaleString()}
-						each item in scales
-							if (!scaleDone)
-								- var fraction = Math.floor(getblockchaininfo.difficulty / item.val);
-								if (fraction >= 1)
-									- scaleDone = true;
-									span(class="text-muted")  (#{fraction} #{item.name})
+						- var difficultyData = utils.formatLargeNumber(getblockchaininfo.difficulty, 3);
+						
+						span(title=parseFloat(getblockchaininfo.difficulty).toLocaleString(), data-toggle="tooltip")
+							span #{difficultyData[0]}
+							span  x 10
+							sup #{difficultyData[1].exponent}
 
 				tr
 					th(class="table-active properties-header") Status
@@ -83,7 +84,7 @@ block content
 						span Total Upload: #{utils.formatBytes(getnettotals.totalbytessent)}
 						span(class="text-muted")  (avg #{utils.formatBytes(getnettotals.totalbytessent / uptimeSeconds)}/s)
 
-				tr
+				tr(class="border-bottom")
 					th(class="table-active properties-header") Warnings
 					td(class="monospace")
 						if (getblockchaininfo.warnings && getblockchaininfo.warnings.trim().length > 0)
