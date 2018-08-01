@@ -1,5 +1,5 @@
 doctype html
-html
+html(lang="en")
 	head
 		meta(charset="utf-8")
 		meta(name="viewport", content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0, shrink-to-fit=no")
@@ -29,10 +29,10 @@ html
 				a(class="navbar-brand", href="/")
 					span
 						if (coinConfig.logoUrl)
-							img(src=coinConfig.logoUrl, class="header-image")
+							img(src=coinConfig.logoUrl, class="header-image", alt="logo")
 						span #{coinConfig.siteTitle}
 						
-				button(type="button", class="navbar-toggler navbar-toggler-right", data-toggle="collapse", data-target="#navbarNav")
+				button(type="button", class="navbar-toggler navbar-toggler-right", data-toggle="collapse", data-target="#navbarNav", aria-label="collapse navigation")
 					span(class="navbar-toggler-icon")
 					
 				div(class="collapse navbar-collapse", id="navbarNav")
@@ -44,12 +44,12 @@ html
 
 							if (config.headerDropdownLinks)
 								li(class="nav-item dropdown")
-									a(class="nav-link dropdown-toggle", href="javascript:void(0)", id="navbarDropdown", role="button", data-toggle="dropdown", aria-haspopup="true", aria-expanded="false") 
+									a(class="nav-link dropdown-toggle", href="javascript:void(0)", role="button", data-toggle="dropdown", aria-haspopup="true", aria-expanded="false") 
 										span  #{config.headerDropdownLinks.title}
-									div(class="dropdown-menu", aria-labelledby="navbarDropdown")
+									div(class="dropdown-menu", aria-label=(config.headerDropdownLinks.title + " Items"))
 										each item in config.headerDropdownLinks.links
 											a(class="dropdown-item", href=item.url)
-												img(src=item.imgUrl, style="width: 24px; height: 24px; margin-right: 8px;")
+												img(src=item.imgUrl, style="width: 24px; height: 24px; margin-right: 8px;", alt=item.name)
 												span  #{item.name}
 
 							li(class="nav-item dropdown")
@@ -136,11 +136,11 @@ html
 										div(class="mt-2")
 											- var demoSiteCoins = ["BTC", "LTC"];
 											each demoSiteCoin in demoSiteCoins
-												a(href=coinConfigs[demoSiteCoin].demoSiteUrl, class="mr-2")
-													img(src=("/img/logo/" + demoSiteCoin.toLowerCase() + ".svg"))
+												a(href=coinConfigs[demoSiteCoin].demoSiteUrl, class="mr-2", title=coinConfigs[demoSiteCoin].siteTitle)
+													img(src=("/img/logo/" + demoSiteCoin.toLowerCase() + ".svg"), alt=demoSiteCoin.toLowerCase())
 
-											a(href="https://lightning.chaintools.io", class="mr-2")
-												img(src=("/img/logo/lightning.svg"), style="width: 32px; height: 32px;")
+											a(href="https://lightning.chaintools.io", class="mr-2", title="Lightning Explorer")
+												img(src=("/img/logo/lightning.svg"), style="width: 32px; height: 32px;", alt="lightning")
 
 						div(class="col-md-7 text-md-right")
 							dl
