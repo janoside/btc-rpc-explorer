@@ -174,7 +174,7 @@ html(lang="en")
 			hljs.initHighlightingOnLoad();
 
 		if (config.sentryUrl && config.sentryUrl.length > 0)
-			script(src="https://cdn.ravenjs.com/3.25.2/raven.min.js", crossorigin="anonymous")
+			script(src="https://cdn.ravenjs.com/3.26.4/raven.min.js", crossorigin="anonymous")
 			script.
 				Raven.config("#{config.sentryUrl}").install();
 
