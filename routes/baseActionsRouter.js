@@ -135,8 +135,26 @@ router.get("/peers", function(req, res) {
 	coreApi.getPeerSummary().then(function(peerSummary) {
 		res.locals.peerSummary = peerSummary;
 
-		res.render("peers");
+		var peerIps = [];
+		for (var i = 0; i < peerSummary.getpeerinfo.length; i++) {
+			var ipWithPort = peerSummary.getpeerinfo[i].addr;
+			if (ipWithPort.lastIndexOf(":") >= 0) {
+				var ip = ipWithPort.substring(0, ipWithPort.lastIndexOf(":"));
+				if (ip.trim().length > 0) {
+					peerIps.push(ip.trim());
+				}
+			}
+		}
 
+		if (peerIps.length > 0) {
+			utils.geoLocateIpAddresses(peerIps).then(function(results) {
+				res.locals.peerIpSummary = results;
+				
+				res.render("peers");
+			});
+		} else {
+			res.render("peers");
+		}
 	}).catch(function(err) {
 		res.locals.userMessage = "Error: " + err;
 

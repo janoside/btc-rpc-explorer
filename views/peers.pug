@@ -3,6 +3,17 @@ extends layout
 block headContent
 	title Peers
 
+	link(rel="stylesheet", href="https://unpkg.com/leaflet@1.3.3/dist/leaflet.css", integrity="sha512-Rksm5RenBEKSKFjgI3a41vrjkw4EVPlJ3+OiI65vTjIdo9brlAacEuKOiQ5OFh7cOI1bkDwLqdLw3Zg0cRJAAQ==", crossorigin="")
+
+	script(src="https://unpkg.com/leaflet@1.3.3/dist/leaflet.js", integrity="sha512-tAGcCfR4Sc5ZP5ZoVz0quoZDYX5aCtEm/eu1KhSLj2c9eFrylXZknQYmxUssFaVJKvvc0dJQixhGjG2yXWiV9Q==", crossorigin="")
+
+	style.
+		.versions-hidden-rows, .services-hidden-rows {
+			display: none;
+		}
+
+		#map { height: 700px; }
+
 block content
 	h1(class="h3") Peers
 	hr
@@ -17,44 +28,54 @@ block content
 
 	div(class="tab-content")
 		div(id="tab-summary", class="tab-pane active", role="tabpanel")
-			h2(class="h5") Versions
-			hr
-			table(class="table table-striped table-responsive-sm mt-4")
-				thead
-					tr
-						th
-						th(class="data-header") Version
-						th(class="data-header") Count
-				tbody
-					each item, index in peerSummary.versionSummary
-						tr
-							th(class="data-cell") #{index + 1}
+			h2(class="h5 mb-3") Connected to #{peerSummary.getpeerinfo.length} 
+				if (peerSummary.getpeerinfo.length == 1)
+					span Peer
+				else
+					span Peers
 
-							td(class="data-cell") #{item[0]}
-							td(class="data-cell") #{item[1].toLocaleString()}
+			if (config.credentials.ipStackComApiAccessKey && config.credentials.ipStackComApiAccessKey.trim().length > 0)
+				div(id="map", class="mb-4")
 
+			div(class="card mb-4")
+				div(class="card-header")
+					h2(class="h6 mb-0") Top Versions
+				div(class="card-body")
+					table(class="table table-striped table-responsive-sm")
+						thead
+							tr
+								th
+								th(class="data-header") Version
+								th(class="data-header") Count
+						tbody
+							each item, index in peerSummary.versionSummary
+								tr(class=(index >= 5 ? "versions-hidden-rows" : false))
+									th(class="data-cell") #{index + 1}
 
-			h2(class="h5") Services
-			hr
-			table(class="table table-striped table-responsive-sm mt-4")
-				thead
-					tr
-						th
-						th(class="data-header") Services
-						th(class="data-header") Count
-				tbody
-					each item, index in peerSummary.servicesSummary
-						tr
-							th(class="data-cell") #{index + 1}
+									td(class="data-cell") #{item[0]}
+									td(class="data-cell") #{item[1].toLocaleString()}
 
-							td(class="data-cell") #{item[0]}
-							td(class="data-cell") #{item[1].toLocaleString()}
+			div(class="card mb-4")
+				div(class="card-header")
+					h2(class="h6 mb-0") Top Service Flags
+				div(class="card-body")
+					table(class="table table-striped table-responsive-sm")
+						thead
+							tr
+								th
+								th(class="data-header") Services
+								th(class="data-header") Count
+						tbody
+							each item, index in peerSummary.servicesSummary
+								tr(class=(index >= 5 ? "services-hidden-rows" : false))
+									th(class="data-cell") #{index + 1}
+
+									td(class="data-cell") #{item[0]}
+									td(class="data-cell") #{item[1].toLocaleString()}
 
 
 
 		div(id="tab-details", class="tab-pane", role="tabpanel")
-			h2(class="h5") Peers List
-			hr
 			table(class="table table-striped table-responsive-sm mt-4")
 				thead
 					tr
@@ -62,6 +83,7 @@ block content
 						th(class="data-header") Version
 						th(class="data-header") Address
 						th(class="data-header") Services
+						th(class="data-header") Location
 						th(class="data-header") Last Send / Receive
 
 				tbody
@@ -75,12 +97,59 @@ block content
 							td(class="data-cell") #{item.subver}
 							td(class="data-cell") #{item.addr}
 							td(class="data-cell") #{item.services}
+							td(class="data-cell")
+								- var ipAddr = item.addr.substring(0, item.addr.lastIndexOf(":"));
+								if (peerIpSummary.ips.includes(ipAddr))
+									- var ipDetails = peerIpSummary.detailsByIp[ipAddr];
+									if (ipDetails.city)
+										span #{ipDetails.city}, 
+									if (ipDetails.country_name)
+										span #{ipDetails.country_name}
+									if (ipDetails.location && ipDetails.location.country_flag_emoji)
+										span  #{ipDetails.location.country_flag_emoji}
+								else
+									span ?
+
+								- var ipAddr = null;
+
 							td(class="data-cell") #{lastSendAgo} / #{lastRecvAgo}
 
 
 		div(id="tab-raw", class="tab-pane", role="tabpanel")
+			h5 GetPeerInfo
 			pre
 				code #{JSON.stringify(peerSummary.getpeerinfo, null, 4)}
 
+			h5 IP Summary
+			pre
+				code #{JSON.stringify(peerIpSummary, null, 4)}
+
 	
-	
+block endOfBody
+	if (config.credentials.ipStackComApiAccessKey && config.credentials.ipStackComApiAccessKey.trim().length > 0)
+		script.
+			var mymap = L.map('map').setView([21.505, -0.09], 3);
+
+			L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw', {
+				maxZoom: 18,
+				attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, ' +
+					'<a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
+					'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+				id: 'mapbox.streets'
+			}).addTo(mymap);
+
+			/*L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+				attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+			}).addTo(mymap);*/
+
+			$(document).ready(function() {
+				window.dispatchEvent(new Event('resize'));
+			});
+
+		each ipAddress, index in peerIpSummary.ips
+			- var ipDetails = peerIpSummary.detailsByIp[ipAddress];
+			if (ipDetails && ipDetails.latitude && ipDetails.longitude)
+				script L.marker([#{ipDetails.latitude}, #{ipDetails.longitude}]).addTo(mymap);
+		
+
+

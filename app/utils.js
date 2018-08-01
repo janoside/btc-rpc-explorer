@@ -5,6 +5,8 @@ var config = require("./config.js");
 var coins = require("./coins.js");
 var coinConfig = coins[config.coin];
 
+var ipCache = {};
+
 var exponentScales = [
 	{val:1000000000000000000000000000000000, name:"?", abbreviation:"V", exponent:"33"},
 	{val:1000000000000000000000000000000, name:"?", abbreviation:"W", exponent:"30"},
@@ -270,28 +272,45 @@ function geoLocateIpAddresses(ipAddresses) {
 				ipStr = ipStr + chunks[i][j];
 			}
 
-			var apiUrl = "http://api.ipstack.com/" + ipStr + "?access_key=" + config.ipStackComApiAccessKey;
-			promises.push(new Promise(function(resolve2, reject2) {
-				request(apiUrl, function(error, response, body) {
-					if (error) {
-						reject2(error);
+			if (ipCache[ipStr] != null) {
+				promises.push(new Promise(function(resolve2, reject2) {
+					resolve2(ipCache[ipStr]);
+				}));
 
-					} else {
-						resolve2(response);
-					}
-				});
-			}));
+			} else if (config.credentials.ipStackComApiAccessKey && config.credentials.ipStackComApiAccessKey.trim().length > 0) {
+				var apiUrl = "http://api.ipstack.com/" + ipStr + "?access_key=" + config.credentials.ipStackComApiAccessKey;
+				promises.push(new Promise(function(resolve2, reject2) {
+					request(apiUrl, function(error, response, body) {
+						if (error) {
+							reject2(error);
+
+						} else {
+							resolve2(response);
+						}
+					});
+				}));
+			} else {
+				promises.push(new Promise(function(resolve2, reject2) {
+					resolve2(null);
+				}));
+			}
 		}
 
 		Promise.all(promises).then(function(results) {
-			var ipDetails = {};
+			var ipDetails = {ips:[], detailsByIp:{}};
 
 			for (var i = 0; i < results.length; i++) {
 				var res = results[i];
-				if (res["statusCode"] == 200) {
+				if (res != null && res["statusCode"] == 200) {
 					var resBody = JSON.parse(res["body"]);
+					var ip = resBody["ip"];
 
-					ipDetails[resBody["ip"]] = resBody;
+					ipDetails.ips.push(ip);
+					ipDetails.detailsByIp[ip] = resBody;
+
+					if (ipCache[ip] == null) {
+						ipCache[ip] = res;
+					}
 				}
 			}
 

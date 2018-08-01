@@ -8,5 +8,10 @@ module.exports = {
 		port:8332,
 		username:"username",
 		password:"password"
-	}
+	},
+
+	// optional: enter your api access key from ipstack.com below
+	// to include a map of the estimated locations of your node's
+	// peers
+	ipStackComApiAccessKey:""
 };
