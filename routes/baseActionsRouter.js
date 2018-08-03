@@ -748,7 +748,7 @@ router.get("/tx-stats", function(req, res) {
 
 			res.locals.txStats = txStats;
 
-			console.log("res: " + JSON.stringify(results));
+			//console.log("res: " + JSON.stringify(results));
 
 			res.render("tx-stats");
 		});
