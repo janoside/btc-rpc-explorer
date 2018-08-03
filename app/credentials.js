@@ -13,5 +13,11 @@ module.exports = {
 	// optional: enter your api access key from ipstack.com below
 	// to include a map of the estimated locations of your node's
 	// peers
-	ipStackComApiAccessKey:""
+	ipStackComApiAccessKey:"",
+
+	// optional: GA tracking code
+	googleAnalyticsTrackingId:"",
+
+	// optional: sentry.io error-tracking url
+	sentryUrl:"",
 };

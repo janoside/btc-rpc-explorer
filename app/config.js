@@ -42,8 +42,6 @@ module.exports = {
 	// Edit "ipWhitelistForRpcCommands" regex to limit access to RPC Browser / Terminal to matching IPs
 	ipWhitelistForRpcCommands:/^(127\.0\.0\.1)?(\:\:1)?$/,
 
-	googleAnalyticsTrackingId:"",
-	sentryUrl:"",
 	siteTools:[
 		{name:"Node Status", url:"/node-status", desc:"Summary of this node: version, network, uptime, etc.", fontawesome:"fas fa-broadcast-tower"},
 		{name:"Peers", url:"/peers", desc:"Detailed info about the peers connected to this node.", fontawesome:"fas fa-sitemap"},
@@ -57,7 +55,6 @@ module.exports = {
 		{name:"Mempool Summary", url:"/mempool-summary", desc:"Detailed summary of the current mempool for this node.", fontawesome:"fas fa-clipboard-list"},
 		{name:(coins[currentCoin].name + " Fun"), url:"/fun", desc:"See fun/interesting historical blockchain data.", fontawesome:"fas fa-certificate"}
 	],
-
 
 	donationAddresses:{
 		coins:["BTC", "LTC"],
