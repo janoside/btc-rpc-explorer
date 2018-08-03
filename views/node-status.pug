@@ -37,9 +37,10 @@ block content
 					td(class="monospace") #{getnetworkinfo.protocolversion}
 
 				if (getblockchaininfo.size_on_disk)
+					- var sizeData = utils.formatLargeNumber(getblockchaininfo.size_on_disk, 2);
 					tr
 						th(class="table-active properties-header") Blockchain Size
-						td(class="monospace") #{utils.formatBytes(getblockchaininfo.size_on_disk)}
+						td(class="monospace") #{sizeData[0]} #{sizeData[1].abbreviation}B
 							br
 							span(class="text-muted")  (pruned: #{getblockchaininfo.pruned})
 				tr
@@ -78,11 +79,16 @@ block content
 				tr
 					th(class="table-active properties-header") Network Traffic
 					td(class="monospace")
-						span Total Download: #{utils.formatBytes(getnettotals.totalbytesrecv)}
-						span(class="text-muted")  (avg #{utils.formatBytes(getnettotals.totalbytesrecv / uptimeSeconds)}/s)
+						- var downData = utils.formatLargeNumber(getnettotals.totalbytesrecv, 2);
+						- var downRateData = utils.formatLargeNumber(getnettotals.totalbytesrecv / uptimeSeconds, 2);
+						- var upData = utils.formatLargeNumber(getnettotals.totalbytessent, 2);
+						- var upRateData = utils.formatLargeNumber(getnettotals.totalbytessent / uptimeSeconds, 2);
+
+						span Total Download: #{downData[0]} #{downData[1].abbreviation}B
+						span(class="text-muted")  (avg #{downRateData[0]} #{downRateData[1].abbreviation}B/s)
 						br
-						span Total Upload: #{utils.formatBytes(getnettotals.totalbytessent)}
-						span(class="text-muted")  (avg #{utils.formatBytes(getnettotals.totalbytessent / uptimeSeconds)}/s)
+						span Total Upload: #{upData[0]} #{upData[1].abbreviation}B
+						span(class="text-muted")  (avg #{upRateData[0]} #{upRateData[1].abbreviation}B/s)
 
 				tr(class="border-bottom")
 					th(class="table-active properties-header") Warnings

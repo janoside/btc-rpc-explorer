@@ -81,20 +81,6 @@ function getRandomString(length, chars) {
 	return result;
 }
 
-function formatBytes(bytesInt) {
-	var scales = [ {val:1000000000000000, name:"PB"}, {val:1000000000000, name:"TB"}, {val:1000000000, name:"GB"}, {val:1000000, name:"MB"}, {val:1000, name:"KB"} ];
-	for (var i = 0; i < scales.length; i++) {
-		var item = scales[i];
-
-		var fraction = Math.floor(bytesInt / item.val);
-		if (fraction >= 1) {
-			return fraction.toLocaleString() + " " + item.name;
-		}
-	}
-
-	return Math.floor(bytesInt) + " B";
-}
-
 var formatCurrencyCache = {};
 
 function formatCurrencyAmount(amount, formatType) {
@@ -345,7 +331,6 @@ module.exports = {
 	hex2ascii: hex2ascii,
 	splitArrayIntoChunks: splitArrayIntoChunks,
 	getRandomString: getRandomString,
-	formatBytes: formatBytes,
 	formatCurrencyAmount: formatCurrencyAmount,
 	formatExchangedCurrency: formatExchangedCurrency,
 	addThousandsSeparators: addThousandsSeparators,

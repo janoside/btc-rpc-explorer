@@ -16,11 +16,16 @@ block content
 			tr
 				th(class="table-active properties-header") Transaction Count
 				td #{getmempoolinfo.size.toLocaleString()}
+
 			tr
+				- var mem1Data = utils.formatLargeNumber(getmempoolinfo.usage, 2);
+				- var mem2Data = utils.formatLargeNumber(getmempoolinfo.bytes, 2);
+
 				th(class="table-active properties-header") Memory Usage
 				td(class="monospace")
-					span #{utils.formatBytes(getmempoolinfo.usage)}
-					span(class="text-muted")  (virtual size: #{utils.formatBytes(getmempoolinfo.bytes)})
+					span #{mem1Data[0]} #{mem1Data[1].abbreviation}B
+					span(class="text-muted")  (virtual size: #{mem2Data[0]} #{mem2Data[1].abbreviation}B)
+
 			tr
 				th(class="table-active properties-header") Total Fees
 				td(class="monospace")
