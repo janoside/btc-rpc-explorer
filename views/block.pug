@@ -1,7 +1,7 @@
 extends layout
 
 block headContent
-	title Block #{blockHash}
+	title Block ##{result.getblock.height.toLocaleString()}, #{result.getblock.hash}
 
 block content
 	h1(class="h3") Block 
