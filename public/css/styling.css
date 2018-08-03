@@ -20,9 +20,16 @@ code, .monospace {
 	font-family: "Source Code Pro", monospace;
 }
 
+.details-table td {
+	border-top: none;
+	padding: 0.4em;
+	padding-right: 0.6em;
+}
+
 .properties-header {
 	width: 190px;
 	text-align: right;
+	font-weight: bold;
 }
 
 pre {
