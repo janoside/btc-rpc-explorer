@@ -32,36 +32,92 @@ block content
 		div(class="card-header")
 			h2(class="h6 mb-0") Network Summary
 		div(class="card-body")
-			table(class="table table-responsive-sm")
-				thead
-					tr
-						th Hashrate
-						if (getblockchaininfo.size_on_disk)
-							th Blockchain Size
-
-						th Difficulty
-						th Mempool Size
-
-				tbody(class="monospace")
-					tr
-						- var hashrateData = utils.formatLargeNumber(miningInfo.networkhashps, 3);
-						td
-							span #{hashrateData[0]} 
-							span(title=(hashrateData[1].name + "-hash / x10^" + hashrateData[1].exponent), data-toggle="tooltip") #{hashrateData[1].abbreviation}H/s
-						td #{utils.formatBytes(getblockchaininfo.size_on_disk)}
-							span(class="text-muted")  (pruned: #{getblockchaininfo.pruned})
-
-						td
-							- var difficultyData = utils.formatLargeNumber(getblockchaininfo.difficulty, 3);
+			div(class="row")
+				div(class="col-md-4")
+					ul(style="list-style-type: none;", class="pl-0")
+						li
+							div(class="float-left", style="height: 40px; width: 40px;")
+								span
+									i(class="fas fa-tachometer-alt fa-2x mr-2", style="margin-top: 6px;")
+							- var hashrateData = utils.formatLargeNumber(miningInfo.networkhashps, 3);
 							
-							span(title=parseFloat(getblockchaininfo.difficulty).toLocaleString(), data-toggle="tooltip")
-								span #{difficultyData[0]}
-								span  x 10
-								sup #{difficultyData[1].exponent}
+							span(class="font-weight-bold") Hashrate 
 
-						td #{mempoolInfo.size.toLocaleString()} tx / 
-							- var mempoolBytesData = utils.formatLargeNumber(mempoolInfo.usage, 2);
-							span #{mempoolBytesData[0]} #{mempoolBytesData[1].abbreviation}B
+							p(class="lead")
+								span #{hashrateData[0]} 
+								span(title=(hashrateData[1].name + "-hash / x10^" + hashrateData[1].exponent), data-toggle="tooltip") #{hashrateData[1].abbreviation}H/s
+
+						if (getblockchaininfo.size_on_disk)
+							li
+								div(class="float-left", style="height: 40px; width: 40px;")
+									span
+										i(class="fas fa-database fa-2x mr-2", style="margin-top: 6px; margin-left: 3px;")
+								span(class="font-weight-bold") Blockchain Size
+
+								- var sizeData = utils.formatLargeNumber(getblockchaininfo.size_on_disk, 2);
+								p(class="lead") #{sizeData[0]} #{sizeData[1].abbreviation}B
+
+				div(class="col-md-4")
+					ul(style="list-style-type: none;", class="pl-0")
+						li
+							div(class="float-left", style="height: 40px; width: 40px;")
+								span
+									i(class="fas fa-unlock-alt fa-2x mr-2", style="margin-top: 6px; margin-left: 3px;")
+
+							span(class="font-weight-bold") Unconfirmed Transactions
+
+							p(class="lead") #{mempoolInfo.size.toLocaleString()} tx 
+								- var mempoolBytesData = utils.formatLargeNumber(mempoolInfo.usage, 2);
+								span(class="text-muted") (#{mempoolBytesData[0]} #{mempoolBytesData[1].abbreviation}B)
+
+						li
+							div(class="float-left", style="height: 40px; width: 40px; font-size: 12px;")
+								span
+									i(class="fas fa-dumbbell fa-2x mr-2", style="margin-top: 6px;")
+
+							- var difficultyData = utils.formatLargeNumber(getblockchaininfo.difficulty, 3);
+
+							span(class="font-weight-bold") Difficulty
+
+							p(class="lead")
+								span(title=parseFloat(getblockchaininfo.difficulty).toLocaleString(), data-toggle="tooltip")
+									span #{difficultyData[0]}
+									span  x 10
+									sup #{difficultyData[1].exponent}
+
+				div(class="col-md-4")
+					ul(style="list-style-type: none;", class="pl-0")
+						li 
+							div(class="float-left", style="height: 40px; width: 40px; font-size: 12px;")
+								span
+									i(class="fas fa-money-bill-wave-alt fa-2x mr-2", style="margin-top: 7px;")
+
+							span(class="font-weight-bold") Exchange Rate 
+								span(data-toggle="tooltip", title=("Exchange-rate data from: " + coinConfig.exchangeRateData.jsonUrl))
+									i(class="fas fa-info-circle")
+
+							if (global.exchangeRate)
+								p(class="lead") #{utils.formatExchangedCurrency(1.0)}
+							else
+								p(class="lead") -
+
+						li
+							div(class="float-left", style="height: 40px; width: 40px;")
+								span
+									i(class="fas fa-bolt fa-2x mr-2", style="margin-top: 6px; margin-left: 6px;")
+
+							- var chainworkData = utils.formatLargeNumber(parseInt("0x" + getblockchaininfo.chainwork), 2);
+							span(class="font-weight-bold") Chainwork
+							
+							p(class="lead")
+								span(data-toggle="tooltip", title=getblockchaininfo.chainwork.replace(/^0+/, ''))
+									span ~
+									span #{chainworkData[0]}
+									span  x 10
+									sup #{chainworkData[1].exponent}
+									span  hashes
+
+	include includes/tools-card.pug
 	
 	if (latestBlocks)
 		div(class="card mb-3")
@@ -74,7 +130,9 @@ block content
 
 					div(class="col")
 						span(style="float: right;")
-							a(href="/blocks") Browse Blocks &raquo;
+							a(href="/blocks")
+								i(class="fas fa-cubes")
+								span  Browse Blocks &raquo;
 
 			div(class="card-body")
 
@@ -89,11 +147,13 @@ block content
 			div(class="card-header")
 				div(class="row")
 					div(class="col")
-						h2(class="h6 mb-0") Transaction Stats
+						h2(class="h6 mb-0") Transaction Stats Summary
 
 					div(class="col")
 						span(style="float: right;")
-							a(href="/tx-stats") More Transaction Stats &raquo;
+							a(href="/tx-stats")
+								i(class="fas fa-chart-bar")
+								span  Transaction Stats &raquo;
 		
 			div(class="card-body")
 				table(class="table table-responsive-sm text-right")

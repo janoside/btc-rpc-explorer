@@ -31,6 +31,8 @@ router.get("/", function(req, res) {
 		return;
 	}
 
+	res.locals.homepage = true;
+
 	var promises = [];
 
 	promises.push(coreApi.getMempoolInfo());

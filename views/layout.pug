@@ -41,6 +41,16 @@ html(lang="en")
 								a(href="/about", class="nav-link")
 									span About
 
+							if (config.siteTools)
+								li(class="nav-item dropdown")
+									a(class="nav-link dropdown-toggle", href="javascript:void(0)", role="button", data-toggle="dropdown", aria-haspopup="true", aria-expanded="false") 
+										span  Tools
+									div(class="dropdown-menu", aria-label="Tools Items")
+										each item in config.siteTools
+											a(class="dropdown-item", href=item.url)
+												i(class=item.fontawesome, style="width: 20px; margin-right: 10px;")
+												span  #{item.name}
+
 							if (config.headerDropdownLinks)
 								li(class="nav-item dropdown")
 									a(class="nav-link dropdown-toggle", href="javascript:void(0)", role="button", data-toggle="dropdown", aria-haspopup="true", aria-expanded="false") 
@@ -82,22 +92,15 @@ html(lang="en")
 									button(type="submit", class="btn btn-primary")
 										i(class="fas fa-search")
 		
-		if (host && port)
+		if (host && port && !homepage)
 			div(id="sub-menu", class="container mb-4", style="margin-top: -1.0rem;")
 				ul(class="nav")
-					li(class="nav-item")
-						a(href="/node-status", class="nav-link") Node Status
-					li(class="nav-item")
-						a(href="/peers", class="nav-link") Peers
-					li(class="nav-item")
-						a(href="/rpc-browser", class="nav-link") RPC Browser
-					li(class="nav-item")
-						a(href="/rpc-terminal", class="nav-link") RPC Terminal
-					li(class="nav-item")
-						a(href="/mempool-summary", class="nav-link") Mempool Summary
-					if (coinConfig.historicalData && coinConfig.historicalData.length > 0)
+					each item, index in config.siteTools
 						li(class="nav-item")
-							a(href="/fun", class="nav-link") #{coinConfig.name} Fun
+							a(href=item.url, class="nav-link")
+								i(class=item.fontawesome, style="margin-right: 5px;")
+								span #{item.name}
+					
 
 				hr
 				

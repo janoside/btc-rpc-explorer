@@ -1,0 +1,19 @@
+div(class="card mb-3")
+	div(class="card-header")
+		h2(class="h6 mb-0") Tools
+	div(class="card-body")
+		div(class="row")
+			each item, index in [[0, 1, 6], [2, 3, 7], [4, 5]]
+				div(class="col-md-4")
+					ul(style="list-style-type: none;", class="pl-0")
+						each toolIndex, toolIndexIndex in item
+							- var siteTool = config.siteTools[toolIndex];
+
+							li
+								div(class="float-left", style="height: 50px; width: 40px; margin-right: 10px;")
+									span
+										i(class=siteTool.fontawesome, class="fa-2x mr-2", style="margin-top: 6px;")
+
+								a(href=siteTool.url) #{siteTool.name}
+								br
+								p #{siteTool.desc}
