@@ -137,13 +137,24 @@ block content
 
 							if (result.getrawtransaction.vin[0].coinbase)
 								tr
-									td(class="properties-header") Network Fees Collected
+									td(class="properties-header") Fees Collected
 									td
 										- var currencyValue = new Decimal(totalOutputValue).minus(totalInputValue);
 										include includes/value-display.pug
+
+								- var blockRewardMax = coinConfig.blockRewardFunction(result.getblock.height);
+								if (totalOutputValue < blockRewardMax)
+									tr
+										td(class="properties-header") Fees Destroyed
+										td(class="text-danger")
+											- var currencyValue = new Decimal(blockRewardMax).minus(totalOutputValue);
+											include includes/value-display.pug
+											
+											a(class="ml-2", data-toggle="tooltip", title="The miner of this block failed to collect this value. As a result, it is lost.")
+												i(class="fas fa-info-circle")
 							else
 								tr
-									td(class="properties-header") Network Fee Paid
+									td(class="properties-header") Fee Paid
 									td(class="monospace")
 										strong
 											- var currencyValue = new Decimal(totalInputValue).minus(totalOutputValue);
@@ -167,20 +178,27 @@ block content
 							div(style="background-color: #f0f0f0; padding: 5px 10px;", class="mb-3")
 								span(class="monospace word-wrap") #{utils.hex2ascii(result.getrawtransaction.vin[0].coinbase)}
 
+				- var fontawesomeInputName = "arrow-down";
+				- var fontawesomeOutputName = "arrow-up";
+
 				div(class="card mb-3")
 					div(class="card-header")
 						h2(class="h6 mb-0")
 							span #{result.getrawtransaction.vin.length.toLocaleString()} 
 							if (result.getrawtransaction.vin.length == 1)
-								span Input, 
+								span Input
 							else
-								span Inputs, 
+								span Inputs
+
+							span , 
 
 							span #{result.getrawtransaction.vout.length.toLocaleString()} 
 							if (result.getrawtransaction.vout.length == 1)
 								span Output
 							else
 								span Outputs
+
+					
 					div(class="card-body")
 						div(class="row")
 							div(class="col-md-6")
@@ -188,7 +206,10 @@ block content
 									table(class="table mb-0")
 										if (result.getrawtransaction.vin[0].coinbase)
 											tr
-												th 1
+												th
+													a(data-toggle="tooltip", title="Input #1")
+														i(class=("fas fa-" + fontawesomeInputName + " mr-2"))
+													span 1
 												td(class="border-top-0")
 													span(class="tag monospace") coinbase
 													span(class="monospace") Newly minted coins
@@ -201,7 +222,11 @@ block content
 												- var vout = txInput.vout[result.getrawtransaction.vin[txInputIndex].vout];
 
 												tr
-													th #{(txInputIndex + 1)}
+													th
+														a(data-toggle="tooltip", title=("Input #" + (txInputIndex + 1)))
+															i(class=("fas fa-" + fontawesomeInputName + " mr-2"))
+														span #{(txInputIndex + 1)}
+													
 													//pre
 													//	code #{JSON.stringify(txInput)}
 
@@ -230,7 +255,10 @@ block content
 									tbody
 										each vout, voutIndex in result.getrawtransaction.vout
 											tr
-												th #{(voutIndex + 1)}
+												th
+													a(data-toggle="tooltip", title=("Output #" + (voutIndex + 1)))
+														i(class=("fas fa-" + fontawesomeOutputName + " mr-2"))
+													span #{(voutIndex + 1)}
 												td(class=(voutIndex == 0 ? "border-top-0" : false))
 													if (vout.scriptPubKey)
 														if (vout.scriptPubKey.addresses)
@@ -244,6 +272,10 @@ block content
 														else if (vout.scriptPubKey.asm && vout.scriptPubKey.asm.startsWith('OP_RETURN '))
 															span(class="monospace") OP_RETURN: 
 															span(class="monospace text-muted") #{utils.hex2ascii(vout.scriptPubKey.asm.substring("OP_RETURN ".length))}
+														else
+															span(class="monospace text-danger") Unable to decode output:
+															br
+															span(class="monospace") type=#{vout.scriptPubKey.type}, asm=#{vout.scriptPubKey.asm}
 												td(class=(voutIndex == 0 ? "border-top-0" : false))
 													- var currencyValue = vout.value;
 													include includes/value-display.pug

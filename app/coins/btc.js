@@ -163,6 +163,13 @@ module.exports = {
 			blockHash: "0000000000000000001bbb529c64ddf55edec8f4ebc0a0ccf1d3bb21c278bfa7",
 			summary: "First block mined that was greater than 2MB.",
 			referenceUrl: "https://twitter.com/BitGo/status/954998877920247808"
+		},
+		{
+			type: "tx",
+			date: "2017-12-30",
+			txid: "9bf8853b3a823bbfa1e54017ae11a9e1f4d08a854dcce9f24e08114f2c921182",
+			summary: "Block reward lost",
+			alertBodyHtml: "This coinbase transaction completely fails to collect the block's mining reward. 12.5 BTC were lost."
 		}
 	],
 	exchangeRateData:{

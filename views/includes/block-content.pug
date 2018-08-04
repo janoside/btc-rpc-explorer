@@ -288,6 +288,11 @@ div(class="tab-content")
 																else if (vout.scriptPubKey.asm && vout.scriptPubKey.asm.startsWith('OP_RETURN '))
 																	span(class="monospace") OP_RETURN: 
 																	span(class="monospace text-muted") #{utils.hex2ascii(vout.scriptPubKey.asm.substring("OP_RETURN ".length))}
+
+																else
+																	span(class="monospace text-danger") Unable to decode output:
+																	br
+																	span(class="monospace") type=#{vout.scriptPubKey.type}, asm=#{vout.scriptPubKey.asm}
 														td(class=(voutIndex == 0 ? "border-top-0" : false))
 															- var currencyValue = vout.value;
 															include ./value-display.pug
