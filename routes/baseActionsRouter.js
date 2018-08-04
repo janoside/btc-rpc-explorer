@@ -500,8 +500,10 @@ router.get("/address/:address", function(req, res) {
 		}
 	}
 
-	if (global.miningPoolsConfig.payout_addresses[address]) {
-		res.locals.payoutAddressForMiner = global.miningPoolsConfig.payout_addresses[address];
+	for (var i = 0; i < global.miningPoolsConfigs.length; i++) {
+		if (global.miningPoolsConfigs[i].payout_addresses[address]) {
+			res.locals.payoutAddressForMiner = global.miningPoolsConfigs[i].payout_addresses[address];
+		}
 	}
 	
 	coreApi.getAddress(address).then(function(result) {

@@ -163,11 +163,11 @@ div(class="tab-content")
 									if (result.getblock.miner)
 										span #{result.getblock.miner.name} 
 										if (result.getblock.miner.identifiedBy)
-											a(href=coinConfig.miningPoolsConfigUrl, data-toggle="tooltip", title=("Identified by: " + result.getblock.miner.identifiedBy), target="_blank")
+											span(data-toggle="tooltip", title=("Identified by: " + result.getblock.miner.identifiedBy))
 												i(class="fas fa-info-circle")
 									else
 										span ? 
-										a(href=coinConfig.miningPoolsConfigUrl, data-toggle="tooltip", title=("Unable to identify (click to see config)"), target="_blank")
+										span(data-toggle="tooltip", title="Unable to identify miner")
 											i(class="fas fa-info-circle")
 
 		div(class="card mb-3")

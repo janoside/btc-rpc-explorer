@@ -23,9 +23,17 @@ block content
 					p
 						span This looks like a miner payout address for the pool 
 						strong #{payoutAddressForMiner.name}
-						span  (see the configuration 
-						a(href=coinConfig.miningPoolsConfigUrl) here
-						span )
+						if (coinConfig.miningPoolsConfigUrls.length > 1)
+							span  (see the configurations: 
+							each item, index in coinConfig.miningPoolsConfigUrls
+								if (index > 0)
+									span , 
+								a(href=item) config ##{index + 1}
+							span )
+						else
+							span  (see the configuration
+							a(href=coinConfig.miningPoolsConfigUrls[0]) here
+							span )
 
 			if (false)
 				pre

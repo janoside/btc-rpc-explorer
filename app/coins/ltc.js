@@ -8,7 +8,9 @@ module.exports = {
 	nodeTitle:"Litecoin Full Node",
 	nodeUrl:"https://litecoin.org/",
 	demoSiteUrl: "https://ltc.chaintools.io",
-	miningPoolsConfigUrl:"https://raw.githubusercontent.com/hashstream/pools/master/pools.json",
+	miningPoolsConfigUrls:[
+		"https://raw.githubusercontent.com/hashstream/pools/master/pools.json",
+	],
 	maxBlockWeight: 4000000,
 	currencyUnits:[
 		{
