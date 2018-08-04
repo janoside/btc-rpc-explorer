@@ -49,8 +49,7 @@ div(class="tab-content")
 
 									else if (result.getblock.hash == genesisBlockHash)
 										span None
-										br
-										span(class="text-muted") (genesis block)
+										span(class="text-muted")  (genesis block)
 
 							if (false)
 								tr
@@ -114,7 +113,7 @@ div(class="tab-content")
 										span(class="text-muted") ##{(result.getblock.height + 1).toLocaleString()}
 									else
 										span None
-										span(class="text-muted") (latest block)
+										span(class="text-muted")  (latest block)
 
 							tr
 								- var scales = [ {val:1000000000000000, name:"quadrillion"}, {val:1000000000000, name:"trillion"}, {val:1000000000, name:"billion"}, {val:1000000, name:"million"} ];
