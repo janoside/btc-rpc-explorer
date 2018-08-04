@@ -44,43 +44,48 @@ block content
 			
 			ul(class='nav nav-tabs mb-3')
 				li(class="nav-item")
-					a(data-toggle="tab", href="#tab-summary", class="nav-link active", role="tab") Summary
+					a(data-toggle="tab", href="#tab-details", class="nav-link active", role="tab") Summary
 				li(class="nav-item")
 					a(data-toggle="tab", href="#tab-raw", class="nav-link", role="tab") Raw
 
 
 			div(class="tab-content")
-				div(id="tab-summary", class="tab-pane active", role="tabpanel")
-					table(class="table")
-						if (addressObj.hash)
-							tr
-								th(class="table-active properties-header") Hash 160
-								td(class="monospace") #{addressObj.hash.toString("hex")}
+				div(id="tab-details", class="tab-pane active", role="tabpanel")
 
-						if (result.validateaddress.scriptPubKey)
-							tr
-								th(class="table-active properties-header") Script Public Key
-								td(class="monospace") #{result.validateaddress.scriptPubKey}
+					div(class="card mb-3")
+						div(class="card-header")
+							span(class="h6") Summary
+						div(class="card-body")
+							table(class="table details-table")
+								if (addressObj.hash)
+									tr
+										td(class="properties-header") Hash 160
+										td(class="monospace") #{addressObj.hash.toString("hex")}
 
-						if (addressObj.hasOwnProperty("version"))
-							tr
-								th(class="table-active properties-header") Version
-								td(class="monospace") #{addressObj.version}
+								if (result.validateaddress.scriptPubKey)
+									tr
+										td(class="properties-header") Script Public Key
+										td(class="monospace") #{result.validateaddress.scriptPubKey}
 
-						if (result.validateaddress.hasOwnProperty("witness_version"))
-							tr
-								th(class="table-active properties-header") Witness Version
-								td(class="monospace") #{result.validateaddress.witness_version}
+								if (addressObj.hasOwnProperty("version"))
+									tr
+										td(class="properties-header") Version
+										td(class="monospace") #{addressObj.version}
 
-						if (result.validateaddress.witness_program)
-							tr
-								th(class="table-active properties-header") Witness Program
-								td(class="monospace") #{result.validateaddress.witness_program}
+								if (result.validateaddress.hasOwnProperty("witness_version"))
+									tr
+										td(class="properties-header") Witness Version
+										td(class="monospace") #{result.validateaddress.witness_version}
 
-						tr
-							th(class="table-active properties-header") QR Code
-							td(class="monospace")
-								img(src=addressQrCodeUrl, alt=address)
+								if (result.validateaddress.witness_program)
+									tr
+										td(class="properties-header") Witness Program
+										td(class="monospace") #{result.validateaddress.witness_program}
+
+								tr
+									td(class="properties-header") QR Code
+									td(class="monospace")
+										img(src=addressQrCodeUrl, alt=address, style="border: solid 1px #ccc;")
 
 					div(class="card mb-3")
 						div(class="card-header")
