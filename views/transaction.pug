@@ -82,10 +82,10 @@ block content
 										span(class="text-muted")  (unconfirmed)
 							
 							tr
-								td(class="properties-header") Timestamp (utc)
+								td(class="properties-header") Timestamp
 								
 								if (result.getrawtransaction.time)
-									td(class="monospace") #{moment.utc(new Date(result.getrawtransaction["time"] * 1000)).format("Y-MM-DD HH:mm:ss")}
+									td(class="monospace") #{moment.utc(new Date(result.getrawtransaction["time"] * 1000)).format("Y-MM-DD HH:mm:ss")} utc
 										- var timeAgo = moment.duration(moment.utc(new Date()).diff(moment.utc(new Date(parseInt(result.getrawtransaction["time"]) * 1000))));
 										br
 										span(class="text-muted")  (#{timeAgo.format()})

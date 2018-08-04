@@ -59,10 +59,10 @@ div(class="tab-content")
 										a(href=("/block-height/" + result.getblock.height)) #{result.getblock.height.toLocaleString()}
 
 							tr
-								td(class="properties-header") Timestamp (utc)
+								td(class="properties-header") Timestamp
 
 								- var timeAgo = moment.duration(moment.utc(new Date()).diff(moment.utc(new Date(parseInt(result.getblock.time) * 1000))));
-								td(class="monospace") #{moment.utc(new Date(result.getblock.time * 1000)).format("Y-MM-DD HH:mm:ss")}
+								td(class="monospace") #{moment.utc(new Date(result.getblock.time * 1000)).format("Y-MM-DD HH:mm:ss")} utc
 									br
 									span(class="text-muted")  (age #{timeAgo.format()})
 
@@ -92,7 +92,6 @@ div(class="tab-content")
 									td(class="properties-header") Weight
 									td(class="monospace")
 										span #{result.getblock.weight.toLocaleString()} wu
-										br
 										span(class="text-muted")  (#{new Decimal(100 * result.getblock.weight / coinConfig.maxBlockWeight).toDecimalPlaces(2)}% full)
 
 							tr
@@ -115,7 +114,6 @@ div(class="tab-content")
 										span(class="text-muted") ##{(result.getblock.height + 1).toLocaleString()}
 									else
 										span None
-										br
 										span(class="text-muted") (latest block)
 
 							tr
@@ -149,16 +147,15 @@ div(class="tab-content")
 								td(class="monospace word-wrap") #{result.getblock.merkleroot}
 
 							tr
+								- var chainworkData = utils.formatLargeNumber(parseInt("0x" + result.getblock.chainwork), 2);
+
 								td(class="properties-header") Chainwork
-								td(class="monospace word-wrap") #{result.getblock.chainwork.replace(/^0+/, '')}
-									br
-									- var chainworkData = utils.formatLargeNumber(parseInt("0x" + result.getblock.chainwork), 2);
-									span(class="text-muted")
-										span (~
-										span #{chainworkData[0]}
-										span  x 10
-										sup #{chainworkData[1].exponent}
-										span  hashes)
+								td(class="monospace word-wrap") #{chainworkData[0]}
+									span  x 10
+									sup #{chainworkData[1].exponent}
+									span  hashes
+									
+									span(class="text-muted")  (#{result.getblock.chainwork.replace(/^0+/, '')})
 
 							tr
 								td(class="properties-header") Miner
@@ -207,10 +204,10 @@ div(class="tab-content")
 								strong ##{(txIndex + offset).toLocaleString()}
 								span  &ndash; 
 								a(href=("/tx/" + tx.txid), class="monospace") #{tx.txid}
-							div(class="row")
-								div(class="col-md-10")
-									
-								div(class="col-md-2 text-right")
+
+								if (global.specialTransactions && global.specialTransactions[tx.txid])
+									span  
+									i(class="fas fa-certificate text-primary")
 									
 						div(class="card-body")
 							//pre
