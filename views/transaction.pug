@@ -216,6 +216,7 @@ block content
 					div(class="card-body")
 						- var tx = result.getrawtransaction;
 						- var txInputs = result.txInputs;
+						- var blockHeight = result.getblock.height;
 						include includes/transaction-io-details.pug
 
 			- var fontawesomeInputName = "sign-in-alt";

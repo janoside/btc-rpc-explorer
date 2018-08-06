@@ -2,6 +2,16 @@
 - var fontawesomeOutputName = "sign-out-alt";
 
 
+- var totalInputValue = new Decimal(0);
+if (tx.vin[0].coinbase)
+	- totalInputValue = totalInputValue.plus(new Decimal(coinConfig.blockRewardFunction(blockHeight)));
+each txInput, txInputIndex in txInputs
+	if (txInput)
+		- var vout = txInput.vout[tx.vin[txInputIndex].vout];
+		if (vout.value)
+			- totalInputValue = totalInputValue.plus(new Decimal(vout.value));
+
+
 div(class="row")
 	div(class="col-md-6")
 		if (txInputs)
@@ -17,7 +27,7 @@ div(class="row")
 							span(class="tag monospace") coinbase
 							span(class="monospace") Newly minted coins
 							
-						td(class="border-top-0")
+						td(class="border-top-0 text-right")
 							- var currencyValue = coinConfig.blockRewardFunction(result.getblock.height);
 							include ./value-display.pug
 
@@ -41,7 +51,7 @@ div(class="row")
 									span(class="small monospace") via 
 										a(href=("/tx/" + txInput.txid + "#output-" + tx.vin[txInputIndex].vout), class="monospace") #{txInput.txid.substring(0, 20)}...[#{tx.vin[txInputIndex].vout}]
 
-							td(class=(txInputIndex == 0 ? "border-top-0" : false), class="pl-0")
+							td(class=(txInputIndex == 0 ? "border-top-0" : false), class="pl-0 text-right")
 								if (vout.value)
 									- var currencyValue = vout.value;
 									include ./value-display.pug
@@ -49,10 +59,9 @@ div(class="row")
 				tr
 					th
 					td
-					td
-						strong
-							- var currencyValue = totalInputValue;
-							include ./value-display.pug
+					td(class="text-right font-weight-bold")
+						- var currencyValue = totalInputValue;
+						include ./value-display.pug
 			
 
 	div(class="col-md-6")
@@ -82,16 +91,15 @@ div(class="row")
 									span(class="monospace text-danger") Unable to decode output:
 									br
 									span(class="monospace") type=#{vout.scriptPubKey.type}, asm=#{vout.scriptPubKey.asm}
-						td(class=(voutIndex == 0 ? "border-top-0" : false), class="pl-0")
+						td(class=(voutIndex == 0 ? "border-top-0" : false), class="pl-0 text-right")
 							- var currencyValue = vout.value;
 							include ./value-display.pug
 
 				tr
 					th
 					td
-					td
-						strong
-							- var currencyValue = totalOutputValue;
-							include ./value-display.pug
+					td(class="text-right font-weight-bold")
+						- var currencyValue = totalOutputValue;
+						include ./value-display.pug
 
 

@@ -216,6 +216,7 @@ div(class="tab-content")
 							//	code #{JSON.stringify(result.txInputsByTransaction[tx.txid], null, 4)}
 							if (true)
 								- var txInputs = result.txInputsByTransaction[tx.txid];
+								- var blockHeight = result.getblock.height;
 
 								include ./transaction-io-details.pug
 								
