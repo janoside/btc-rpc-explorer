@@ -75,17 +75,38 @@ div(class="tab-content")
 									- var currencyValue = new Decimal(result.getblock.totalFees);
 									include ./value-display.pug
 
-							tr
-								td(class="properties-header") Average Fee
-								td(class="monospace")
-									- var currencyValue = new Decimal(result.getblock.totalFees).dividedBy(result.getblock.tx.length);
-									include ./value-display.pug
+							if (result.getblock.totalFees > 0)
+								tr
+									td(class="properties-header") Average Fee
+									td(class="monospace")
+										- var currencyValue = new Decimal(result.getblock.totalFees).dividedBy(result.getblock.tx.length);
+										include ./value-display.pug
+
+
+							- var coinbaseTxTotalOutputValue = new Decimal(0);
+							each vout in result.getblock.coinbaseTx.vout
+								- coinbaseTxTotalOutputValue = coinbaseTxTotalOutputValue.plus(new Decimal(vout.value));
+								
+							- var blockRewardMax = coinConfig.blockRewardFunction(result.getblock.height);
+							if (coinbaseTxTotalOutputValue < blockRewardMax)
+								tr
+									td(class="properties-header") Fees Destroyed
+									td(class="text-danger")
+										- var currencyValue = new Decimal(blockRewardMax).minus(coinbaseTxTotalOutputValue);
+										include ./value-display.pug
+
+										a(class="ml-2", data-toggle="tooltip", title="The miner of this block failed to collect this value. As a result, it is lost.")
+											i(class="fas fa-info-circle")
 
 							if (result.getblock.weight)
 								tr
 									td(class="properties-header") Weight
 									td(class="monospace")
-										span #{result.getblock.weight.toLocaleString()} wu
+										span(style="") #{result.getblock.weight.toLocaleString()} wu 
+										
+										- var radialProgressBarPercent = new Decimal(100 * result.getblock.weight / coinConfig.maxBlockWeight).toDecimalPlaces(2);
+										include ./radial-progress-bar.pug
+										
 										span(class="text-muted")  (#{new Decimal(100 * result.getblock.weight / coinConfig.maxBlockWeight).toDecimalPlaces(2)}% full)
 
 							tr

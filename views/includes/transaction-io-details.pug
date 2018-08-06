@@ -12,6 +12,11 @@ each txInput, txInputIndex in txInputs
 			- totalInputValue = totalInputValue.plus(new Decimal(vout.value));
 
 
+- var totalOutputValue = new Decimal(0);
+each vout, voutIndex in tx.vout
+	- totalOutputValue = totalOutputValue.plus(new Decimal(vout.value));
+
+
 div(class="row")
 	div(class="col-md-6")
 		if (txInputs)
@@ -84,13 +89,24 @@ div(class="row")
 									span(class="monospace") Segregated Witness committment 
 									a(href="https://github.com/bitcoin/bips/blob/master/bip-0141.mediawiki#commitment-structure", data-toggle="tooltip", title="View developer docs", target="_blank")  
 										i(class="fas fa-info-circle")
+
 								else if (vout.scriptPubKey.asm && vout.scriptPubKey.asm.startsWith('OP_RETURN '))
 									span(class="monospace") OP_RETURN: 
 									span(class="monospace text-muted") #{utils.hex2ascii(vout.scriptPubKey.asm.substring("OP_RETURN ".length))}
+
 								else
-									span(class="monospace text-danger") Unable to decode output:
-									br
-									span(class="monospace") type=#{vout.scriptPubKey.type}, asm=#{vout.scriptPubKey.asm}
+									span(class="monospace")
+										span(class="text-danger font-weight-bold") Unable to decode output:
+										br
+										span(class="font-weight-bold") type: 
+										span #{vout.scriptPubKey.type}
+										br
+										span(class="font-weight-bold") asm: 
+										span #{vout.scriptPubKey.asm}
+										br
+										span(class="font-weight-bold") decodedHex: 
+										span #{utils.hex2ascii(vout.scriptPubKey.hex)}
+
 						td(class=(voutIndex == 0 ? "border-top-0" : false), class="pl-0 text-right")
 							- var currencyValue = vout.value;
 							include ./value-display.pug
