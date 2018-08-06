@@ -69,33 +69,41 @@ block content
 						span(class="h6") Summary
 					div(class="card-body")
 						table(class="table details-table mb-0")
-							tr
-								td(class="properties-header") Included in Block
-								td(class="monospace word-wrap")
-									if (result.getblock)
-										a(href=("/block/" + result.getrawtransaction.blockhash)) #{result.getrawtransaction.blockhash}
-										if (result.getblock.height)
+
+							- var isTxConfirmed = true;
+							if (!result.getrawtransaction.confirmations || result.getrawtransaction.confirmations == 0)
+								- isTxConfirmed = false;
+
+							if (!isTxConfirmed)
+								tr
+									td(class="properties-header") Status
+									td(class="monospace text-danger") Unconfirmed
+
+							if (isTxConfirmed)
+								tr
+									td(class="properties-header") Included in Block
+									td(class="monospace word-wrap")
+										if (result.getblock)
+											a(href=("/block/" + result.getrawtransaction.blockhash)) #{result.getrawtransaction.blockhash}
+											if (result.getblock.height)
+												br
+												span (##{result.getblock.height.toLocaleString()})
+										else
+											span N/A
+											span(class="text-muted")  (unconfirmed)
+							
+							if (isTxConfirmed)
+								tr
+									td(class="properties-header") Timestamp
+									
+									if (result.getrawtransaction.time)
+										td(class="monospace") #{moment.utc(new Date(result.getrawtransaction["time"] * 1000)).format("Y-MM-DD HH:mm:ss")} utc
+											- var timeAgo = moment.duration(moment.utc(new Date()).diff(moment.utc(new Date(parseInt(result.getrawtransaction["time"]) * 1000))));
 											br
-											span (##{result.getblock.height.toLocaleString()})
+											span(class="text-muted")  (#{timeAgo.format()})
 									else
-										span N/A
-										span(class="text-muted")  (unconfirmed)
-							
-							tr
-								td(class="properties-header") Timestamp
-								
-								if (result.getrawtransaction.time)
-									td(class="monospace") #{moment.utc(new Date(result.getrawtransaction["time"] * 1000)).format("Y-MM-DD HH:mm:ss")} utc
-										- var timeAgo = moment.duration(moment.utc(new Date()).diff(moment.utc(new Date(parseInt(result.getrawtransaction["time"]) * 1000))));
-										br
-										span(class="text-muted")  (#{timeAgo.format()})
-								else
-									td(class="monospace") N/A
-										span(class="text-muted")  (unconfirmed)
-							
-							//tr
-							//	th(class="table-active properties-header") Transaction ID
-							//	td #{txid}
+										td(class="monospace") N/A
+											span(class="text-muted")  (unconfirmed)
 							
 							tr
 								td(class="properties-header") Version
@@ -125,15 +133,18 @@ block content
 											a(href="https://bitcoin.org/en/developer-guide#locktime-and-sequence-number", data-toggle="tooltip", title="More info about locktime", target="_blank") 
 												i(class="fas fa-info-circle")
 
-							tr
-								td(class="properties-header") Confirmations
-								td(class="monospace")
-									if (!result.getrawtransaction.confirmations || result.getrawtransaction.confirmations == 0)
-										strong(class="text-danger") 0 (unconfirmed)
-									else if (result.getrawtransaction.confirmations < 6)
-										strong(class="text-warning") #{result.getrawtransaction.confirmations}
-									else
-										strong(class="text-success") #{result.getrawtransaction.confirmations.toLocaleString()}
+							if (isTxConfirmed)
+								tr
+									td(class="properties-header") Confirmations
+									td(class="monospace")
+										if (!result.getrawtransaction.confirmations || result.getrawtransaction.confirmations == 0)
+											strong(class="text-danger") 0 (unconfirmed)
+
+										else if (result.getrawtransaction.confirmations < 6)
+											strong(class="text-warning") #{result.getrawtransaction.confirmations}
+
+										else
+											strong(class="text-success") #{result.getrawtransaction.confirmations.toLocaleString()}
 
 							if (result.getrawtransaction.vin[0].coinbase)
 								tr
@@ -216,7 +227,9 @@ block content
 					div(class="card-body")
 						- var tx = result.getrawtransaction;
 						- var txInputs = result.txInputs;
-						- var blockHeight = result.getblock.height;
+						- var blockHeight = -1;
+						if (result && result.getblock)
+							- blockHeight = result.getblock.height;
 						include includes/transaction-io-details.pug
 
 			- var fontawesomeInputName = "sign-in-alt";
