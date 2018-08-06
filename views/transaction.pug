@@ -157,7 +157,7 @@ block content
 									- var minerInfo = utils.getMinerFromCoinbaseTx(result.getrawtransaction);
 
 									td(class="properties-header") Miner
-									td
+									td(class="monospace")
 										if (minerInfo)
 											span #{minerInfo.name} 
 											if (minerInfo.identifiedBy)
