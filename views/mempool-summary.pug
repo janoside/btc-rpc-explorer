@@ -12,38 +12,42 @@ block content
 			code #{JSON.stringify(mempoolstats, null, 4)}
 
 	if (true)
-		table(class="table")
-			tr
-				th(class="table-active properties-header") Transaction Count
-				td #{getmempoolinfo.size.toLocaleString()}
+		div(class="card mb-3")
+			div(class="card-header")
+				span(class="h6") Summary
+			div(class="card-body")
+				table(class="table details-table mb-0")
+					tr
+						td(class="properties-header") Transaction Count
+						td #{getmempoolinfo.size.toLocaleString()}
 
-			tr
-				- var mem1Data = utils.formatLargeNumber(getmempoolinfo.usage, 2);
-				- var mem2Data = utils.formatLargeNumber(getmempoolinfo.bytes, 2);
+					tr
+						- var mem1Data = utils.formatLargeNumber(getmempoolinfo.usage, 2);
+						- var mem2Data = utils.formatLargeNumber(getmempoolinfo.bytes, 2);
 
-				th(class="table-active properties-header") Memory Usage
-				td(class="monospace")
-					span #{mem1Data[0]} #{mem1Data[1].abbreviation}B
-					span(class="text-muted")  (virtual size: #{mem2Data[0]} #{mem2Data[1].abbreviation}B)
+						td(class="properties-header") Memory Usage
+						td(class="monospace")
+							span #{mem1Data[0]} #{mem1Data[1].abbreviation}B
+							span(class="text-muted")  (virtual size: #{mem2Data[0]} #{mem2Data[1].abbreviation}B)
 
-			tr
-				th(class="table-active properties-header") Total Fees
-				td(class="monospace")
-					- var currencyValue = mempoolstats["totalFees"];
-					include includes/value-display.pug
-					
-			if (getmempoolinfo.size > 0)
-				tr
-					th(class="table-active properties-header") Average Fee
-					td(class="monospace") #{utils.formatCurrencyAmount(mempoolstats["averageFee"], currencyFormatType)}
-						if (global.exchangeRate)
-							span  
-							span(data-toggle="tooltip", title=utils.formatExchangedCurrency(mempoolstats["averageFee"]))
-								i(class="fas fa-exchange-alt")
+					tr
+						td(class="properties-header") Total Fees
+						td(class="monospace")
+							- var currencyValue = mempoolstats["totalFees"];
+							include includes/value-display.pug
+							
+					if (getmempoolinfo.size > 0)
+						tr
+							td(class="properties-header") Average Fee
+							td(class="monospace") #{utils.formatCurrencyAmount(mempoolstats["averageFee"], currencyFormatType)}
+								if (global.exchangeRate)
+									span  
+									span(data-toggle="tooltip", title=utils.formatExchangedCurrency(mempoolstats["averageFee"]))
+										i(class="fas fa-exchange-alt")
 
-				tr
-					th(class="table-active properties-header") Average Fee per Byte
-					td(class="monospace") #{utils.formatCurrencyAmountInSmallestUnits(mempoolstats["averageFeePerByte"])}/B
+						tr
+							td(class="properties-header") Average Fee per Byte
+							td(class="monospace") #{utils.formatCurrencyAmountInSmallestUnits(mempoolstats["averageFeePerByte"], 2)}/B
 
 		if (getmempoolinfo.size > 0)
 			h2(class="h5") Transactions by fee rate
@@ -126,7 +130,7 @@ block content
 										span(data-toggle="tooltip", title=utils.formatExchangedCurrency(avgFee))
 											i(class="fas fa-exchange-alt")
 												
-								td(class="text-right monospace") #{utils.formatCurrencyAmountInSmallestUnits(avgFeeRate)}/B
+								td(class="text-right monospace") #{utils.formatCurrencyAmountInSmallestUnits(avgFeeRate, 2)}/B
 							else
 								td(class="text-right monospace") -
 								td(class="text-right monospace") -

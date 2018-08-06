@@ -83,7 +83,7 @@ function getRandomString(length, chars) {
 
 var formatCurrencyCache = {};
 
-function formatCurrencyAmount(amount, formatType) {
+function formatCurrencyAmountWithForcedDecimalPlaces(amount, formatType, forcedDecimalPlaces) {
 	if (formatCurrencyCache[formatType]) {
 		var dec = new Decimal(amount);
 		dec = dec.times(formatCurrencyCache[formatType].multiplier);
@@ -91,6 +91,10 @@ function formatCurrencyAmount(amount, formatType) {
 		var decimalPlaces = formatCurrencyCache[formatType].decimalPlaces;
 		if (decimalPlaces == 0 && dec < 1) {
 			decimalPlaces = 5;
+		}
+
+		if (forcedDecimalPlaces >= 0) {
+			decimalPlaces = forcedDecimalPlaces;
 		}
 
 		return addThousandsSeparators(dec.toDecimalPlaces(decimalPlaces)) + " " + formatCurrencyCache[formatType].name;
@@ -113,6 +117,10 @@ function formatCurrencyAmount(amount, formatType) {
 					decimalPlaces = 5;
 				}
 
+				if (forcedDecimalPlaces >= 0) {
+					decimalPlaces = forcedDecimalPlaces;
+				}
+
 				return addThousandsSeparators(dec.toDecimalPlaces(decimalPlaces)) + " " + currencyUnit.name;
 			}
 		}
@@ -121,8 +129,12 @@ function formatCurrencyAmount(amount, formatType) {
 	return amount;
 }
 
-function formatCurrencyAmountInSmallestUnits(amount) {
-	return formatCurrencyAmount(amount, coins[config.coin].currencyUnits[coins[config.coin].currencyUnits.length - 1].name);
+function formatCurrencyAmount(amount, formatType) {
+	return formatCurrencyAmountWithForcedDecimalPlaces(amount, formatType, -1);
+}
+
+function formatCurrencyAmountInSmallestUnits(amount, forcedDecimalPlaces) {
+	return formatCurrencyAmountWithForcedDecimalPlaces(amount, coins[config.coin].currencyUnits[coins[config.coin].currencyUnits.length - 1].name, forcedDecimalPlaces);
 }
 
 // ref: https://stackoverflow.com/a/2901298/673828
@@ -336,6 +348,7 @@ module.exports = {
 	splitArrayIntoChunks: splitArrayIntoChunks,
 	getRandomString: getRandomString,
 	formatCurrencyAmount: formatCurrencyAmount,
+	formatCurrencyAmountWithForcedDecimalPlaces: formatCurrencyAmountWithForcedDecimalPlaces,
 	formatExchangedCurrency: formatExchangedCurrency,
 	addThousandsSeparators: addThousandsSeparators,
 	formatCurrencyAmountInSmallestUnits: formatCurrencyAmountInSmallestUnits,
