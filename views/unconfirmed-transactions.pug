@@ -1,0 +1,54 @@
+extends layout
+
+block headContent
+	title Unconfirmed Transactions
+
+block content
+	h1(class="h2") Unconfirmed Transactions
+	hr
+
+	if (false)
+		pre
+			code #{JSON.stringify(mempoolDetails.txCount, null, 4)}
+
+	if (mempoolDetails)
+		- var txCount = mempoolDetails.txCount;
+
+		div(class="card")
+			div(class="card-header")
+				span(class="h6")
+					if (txCount == 1)
+						span 1 Transaction
+					else
+						span #{txCount.toLocaleString()} Transactions
+
+			div(class="card-body")
+				each tx, txIndex in mempoolDetails.transactions
+					div(class="xcard mb-3")
+						div(class="card-header")
+							if (tx && tx.txid)
+								strong ##{(txIndex + offset).toLocaleString()}
+								span  &ndash; 
+								a(href=("/tx/" + tx.txid), class="monospace") #{tx.txid}
+									
+						div(class="card-body")
+							- var txInputs = mempoolDetails.txInputsByTransaction[tx.txid];
+							- var blockHeight = -1;
+
+							include includes/transaction-io-details.pug
+
+				if (txCount > limit)
+					- var pageNumber = offset / limit + 1;
+					- var pageCount = Math.floor(txCount / limit);
+					- if (pageCount * limit < txCount) {
+						- pageCount++;
+					- }
+					- var paginationUrlFunction = function(x) {
+						- return paginationBaseUrl + "?limit=" + limit + "&offset=" + ((x - 1) * limit + "&sort=" + sort);
+					- }
+					
+					hr
+
+					include includes/pagination.pug
+	else
+		p No unconfirmed transactions found

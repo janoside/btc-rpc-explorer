@@ -158,6 +158,61 @@ function getPeerSummary() {
 	});
 }
 
+function getMempoolDetails(start, count) {
+	return new Promise(function(resolve, reject) {
+		tryCacheThenRpcApi(miscCache, "getRawMempool", 1000, rpcApi.getRawMempool).then(function(result) {
+			var txids = [];
+			var txidIndex = 0;
+			for (var txid in result) {
+				if (txidIndex >= start && (txidIndex < (start + count)))  {
+					txids.push(txid);
+				}
+
+				txidIndex++;
+			}
+
+			getRawTransactions(txids).then(function(transactions) {
+				var maxInputsTracked = 10;
+				var vinTxids = [];
+				for (var i = 0; i < transactions.length; i++) {
+					var transaction = transactions[i];
+
+					if (transaction && transaction.vin) {
+						for (var j = 0; j < Math.min(maxInputsTracked, transaction.vin.length); j++) {
+							if (transaction.vin[j].txid) {
+								vinTxids.push(transaction.vin[j].txid);
+							}
+						}
+					}
+				}
+
+				var txInputsByTransaction = {};
+				getRawTransactions(vinTxids).then(function(vinTransactions) {
+					var vinTxById = {};
+
+					vinTransactions.forEach(function(tx) {
+						vinTxById[tx.txid] = tx;
+					});
+
+					transactions.forEach(function(tx) {
+						txInputsByTransaction[tx.txid] = [];
+
+						if (tx && tx.vin) {
+							for (var i = 0; i < Math.min(maxInputsTracked, tx.vin.length); i++) {
+								if (vinTxById[tx.vin[i].txid]) {
+									txInputsByTransaction[tx.txid].push(vinTxById[tx.vin[i].txid]);
+								}
+							}
+						}
+					});
+
+					resolve({ txCount:txidIndex, transactions:transactions, txInputsByTransaction:txInputsByTransaction });
+				});
+			});
+		});
+	});
+}
+
 function getMempoolStats() {
 	return new Promise(function(resolve, reject) {
 		tryCacheThenRpcApi(miscCache, "getRawMempool", 5000, rpcApi.getRawMempool).then(function(result) {
@@ -600,5 +655,6 @@ module.exports = {
 	getAddress: getAddress,
 	logCacheSizes: logCacheSizes,
 	getPeerSummary: getPeerSummary,
-	getChainTxStats: getChainTxStats
+	getChainTxStats: getChainTxStats,
+	getMempoolDetails: getMempoolDetails
 };
