@@ -1,0 +1,97 @@
+- var fontawesomeInputName = "sign-in-alt";
+- var fontawesomeOutputName = "sign-out-alt";
+
+
+div(class="row")
+	div(class="col-md-6")
+		if (txInputs)
+			table(class="table mb-0")
+				if (tx.vin[0].coinbase)
+					tr
+						th(class="pl-0 pr-1 monospace")
+							a(data-toggle="tooltip", title="Input #1", style="white-space: nowrap;")
+								i(class=("fas fa-" + fontawesomeInputName + " mr-2"))
+								span 1
+
+						td(class="border-top-0")
+							span(class="tag monospace") coinbase
+							span(class="monospace") Newly minted coins
+							
+						td(class="border-top-0")
+							- var currencyValue = coinConfig.blockRewardFunction(result.getblock.height);
+							include ./value-display.pug
+
+				each txInput, txInputIndex in txInputs
+					if (txInput)
+						- var vout = txInput.vout[tx.vin[txInputIndex].vout];
+
+						tr
+							th(class="pl-0 pr-1 monospace")
+								a(data-toggle="tooltip", title=("Input #" + (txInputIndex + 1)), style="white-space: nowrap;")
+									i(class=("fas fa-" + fontawesomeInputName + " mr-2"))
+									span #{(txInputIndex + 1)}
+							
+							//pre
+							//	code #{JSON.stringify(txInput)}
+
+							td(class=(txInputIndex == 0 ? "border-top-0" : false), class="pl-0")
+								if (vout.scriptPubKey && vout.scriptPubKey.addresses)
+									div(class="monospace", style="word-break: break-word;")
+										a(href=("/address/" + vout.scriptPubKey.addresses[0])) #{vout.scriptPubKey.addresses[0]}
+									span(class="small monospace") via 
+										a(href=("/tx/" + txInput.txid + "#output-" + tx.vin[txInputIndex].vout), class="monospace") #{txInput.txid.substring(0, 20)}...[#{tx.vin[txInputIndex].vout}]
+
+							td(class=(txInputIndex == 0 ? "border-top-0" : false), class="pl-0")
+								if (vout.value)
+									- var currencyValue = vout.value;
+									include ./value-display.pug
+
+				tr
+					th
+					td
+					td
+						strong
+							- var currencyValue = totalInputValue;
+							include ./value-display.pug
+			
+
+	div(class="col-md-6")
+		table(class="table mb-0")
+			tbody
+				each vout, voutIndex in tx.vout
+					tr
+						th(class="pl-0 pr-1 monospace")
+							a(data-toggle="tooltip", title=("Output #" + (voutIndex + 1)), style="white-space: nowrap;")
+								i(class=("fas fa-" + fontawesomeOutputName + " mr-2"))
+								span #{(voutIndex + 1)}
+
+						td(class=(voutIndex == 0 ? "border-top-0" : false), class="pl-0")
+							if (vout.scriptPubKey)
+								if (vout.scriptPubKey.addresses)
+									a(id=("output-" + voutIndex), href=("/address/" + vout.scriptPubKey.addresses[0]))
+										div(class="monospace", style="word-break: break-word;") #{vout.scriptPubKey.addresses[0]}
+
+								else if (vout.scriptPubKey.hex && vout.scriptPubKey.hex.startsWith('6a24aa21a9ed'))
+									span(class="monospace") Segregated Witness committment 
+									a(href="https://github.com/bitcoin/bips/blob/master/bip-0141.mediawiki#commitment-structure", data-toggle="tooltip", title="View developer docs", target="_blank")  
+										i(class="fas fa-info-circle")
+								else if (vout.scriptPubKey.asm && vout.scriptPubKey.asm.startsWith('OP_RETURN '))
+									span(class="monospace") OP_RETURN: 
+									span(class="monospace text-muted") #{utils.hex2ascii(vout.scriptPubKey.asm.substring("OP_RETURN ".length))}
+								else
+									span(class="monospace text-danger") Unable to decode output:
+									br
+									span(class="monospace") type=#{vout.scriptPubKey.type}, asm=#{vout.scriptPubKey.asm}
+						td(class=(voutIndex == 0 ? "border-top-0" : false), class="pl-0")
+							- var currencyValue = vout.value;
+							include ./value-display.pug
+
+				tr
+					th
+					td
+					td
+						strong
+							- var currencyValue = totalOutputValue;
+							include ./value-display.pug
+
+
