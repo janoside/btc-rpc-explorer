@@ -1,21 +1,7 @@
 - var fontawesomeInputName = "sign-in-alt";
 - var fontawesomeOutputName = "sign-out-alt";
 
-
-- var totalInputValue = new Decimal(0);
-if (tx.vin[0].coinbase)
-	- totalInputValue = totalInputValue.plus(new Decimal(coinConfig.blockRewardFunction(blockHeight)));
-each txInput, txInputIndex in txInputs
-	if (txInput)
-		- var vout = txInput.vout[tx.vin[txInputIndex].vout];
-		if (vout.value)
-			- totalInputValue = totalInputValue.plus(new Decimal(vout.value));
-
-
-- var totalOutputValue = new Decimal(0);
-each vout, voutIndex in tx.vout
-	- totalOutputValue = totalOutputValue.plus(new Decimal(vout.value));
-
+- var totalIOValues = utils.getTxTotalInputOutputValues(tx, txInputs, blockHeight);
 
 div(class="row")
 	div(class="col-md-6")
@@ -65,7 +51,7 @@ div(class="row")
 					th
 					td
 					td(class="text-right font-weight-bold")
-						- var currencyValue = totalInputValue;
+						- var currencyValue = totalIOValues.input;
 						include ./value-display.pug
 			
 
@@ -115,7 +101,7 @@ div(class="row")
 					th
 					td
 					td(class="text-right font-weight-bold")
-						- var currencyValue = totalOutputValue;
+						- var currencyValue = totalIOValues.output;
 						include ./value-display.pug
 
 

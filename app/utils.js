@@ -214,6 +214,32 @@ function getMinerFromCoinbaseTx(tx) {
 	return null;
 }
 
+function getTxTotalInputOutputValues(tx, txInputs, blockHeight) {
+	var totalInputValue = new Decimal(0);
+	if (tx.vin[0].coinbase)
+		totalInputValue = totalInputValue.plus(new Decimal(coinConfig.blockRewardFunction(blockHeight)));
+	
+	for (var i = 0; i < txInputs.length; i++) {
+		var txInput = txInputs[i];
+
+		if (txInput) {
+			var vout = txInput.vout[tx.vin[i].vout];
+			if (vout.value) {
+				totalInputValue = totalInputValue.plus(new Decimal(vout.value));
+			}
+		}
+	}
+
+
+	var totalOutputValue = new Decimal(0);
+	
+	for (var i = 0; i < tx.vout.length; i++) {
+		totalOutputValue = totalOutputValue.plus(new Decimal(tx.vout[i].value));
+	}
+
+	return {input:totalInputValue, output:totalOutputValue};
+}
+
 function getBlockTotalFeesFromCoinbaseTxAndBlockHeight(coinbaseTx, blockHeight) {
 	if (coinbaseTx == null) {
 		return 0;
@@ -360,5 +386,6 @@ module.exports = {
 	refreshExchangeRate: refreshExchangeRate,
 	parseExponentStringDouble: parseExponentStringDouble,
 	formatLargeNumber: formatLargeNumber,
-	geoLocateIpAddresses: geoLocateIpAddresses
+	geoLocateIpAddresses: geoLocateIpAddresses,
+	getTxTotalInputOutputValues: getTxTotalInputOutputValues
 };
