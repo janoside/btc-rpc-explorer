@@ -216,21 +216,23 @@ function getMinerFromCoinbaseTx(tx) {
 
 function getTxTotalInputOutputValues(tx, txInputs, blockHeight) {
 	var totalInputValue = new Decimal(0);
-	if (tx.vin[0].coinbase) {
-		totalInputValue = totalInputValue.plus(new Decimal(coinConfig.blockRewardFunction(blockHeight)));
-	}
 	
 	for (var i = 0; i < tx.vin.length; i++) {
-		var txInput = txInputs[i];
+		if (tx.vin[i].coinbase) {
+			totalInputValue = totalInputValue.plus(new Decimal(coinConfig.blockRewardFunction(blockHeight)));
 
-		if (txInput) {
-			try {
-				var vout = txInput.vout[tx.vin[i].vout];
-				if (vout.value) {
-					totalInputValue = totalInputValue.plus(new Decimal(vout.value));
+		} else {
+			var txInput = txInputs[i];
+
+			if (txInput) {
+				try {
+					var vout = txInput.vout[tx.vin[i].vout];
+					if (vout.value) {
+						totalInputValue = totalInputValue.plus(new Decimal(vout.value));
+					}
+				} catch (err) {
+					console.log("Error getting tx.totalInputValue: err=" + err + ", txid=" + tx.txid + ", index=tx.vin[" + i + "]");
 				}
-			} catch {
-				console.log("Error getting tx.totalInputValue: txid=" + tx.txid + ", index=tx.vin[" + i + "]");
 			}
 		}
 	}
