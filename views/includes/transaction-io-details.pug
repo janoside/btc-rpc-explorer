@@ -6,46 +6,49 @@
 div(class="row")
 	div(class="col-md-6")
 		if (txInputs)
-			table(class="table mb-0")
+			table(class="table monospace mb-0")
 				if (tx.vin[0].coinbase)
 					tr
-						th(class="pl-0 pr-1 monospace")
+						th(class="pl-0 pr-1")
 							a(data-toggle="tooltip", title="Input #1", style="white-space: nowrap;")
 								i(class=("fas fa-" + fontawesomeInputName + " mr-2"))
 								span 1
 
 						td(class="border-top-0")
-							span(class="tag monospace") coinbase
-							span(class="monospace") Newly minted coins
+							span(class="tag") coinbase
+							span Newly minted coins
 							
 						td(class="border-top-0 text-right")
 							- var currencyValue = coinConfig.blockRewardFunction(result.getblock.height);
 							include ./value-display.pug
 
 				each txInput, txInputIndex in txInputs
-					if (txInput)
-						- var vout = txInput.vout[tx.vin[txInputIndex].vout];
+					tr
+						th(class="pl-0 pr-1")
+							a(data-toggle="tooltip", title=("Input #" + (txInputIndex + 1)), style="white-space: nowrap;")
+								i(class=("fas fa-" + fontawesomeInputName + " mr-2"))
+								span #{(txInputIndex + 1)}
 
-						tr
-							th(class="pl-0 pr-1 monospace")
-								a(data-toggle="tooltip", title=("Input #" + (txInputIndex + 1)), style="white-space: nowrap;")
-									i(class=("fas fa-" + fontawesomeInputName + " mr-2"))
-									span #{(txInputIndex + 1)}
-							
-							//pre
-							//	code #{JSON.stringify(txInput)}
+						- var vout = null;
+						if (txInput && txInput.vout && tx.vin && tx.vin[txInputIndex])
+							- var vout = txInput.vout[tx.vin[txInputIndex].vout];
 
-							td(class=(txInputIndex == 0 ? "border-top-0" : false), class="pl-0")
-								if (vout.scriptPubKey && vout.scriptPubKey.addresses)
-									div(class="monospace", style="word-break: break-word;")
-										a(href=("/address/" + vout.scriptPubKey.addresses[0])) #{vout.scriptPubKey.addresses[0]}
-									span(class="small monospace") via 
-										a(href=("/tx/" + txInput.txid + "#output-" + tx.vin[txInputIndex].vout), class="monospace") #{txInput.txid.substring(0, 20)}...[#{tx.vin[txInputIndex].vout}]
+						td(class=(txInputIndex == 0 ? "border-top-0" : false), class="pl-0")
+							if (vout && vout.scriptPubKey && vout.scriptPubKey.addresses)
+								div(style="word-break: break-word;")
+									a(href=("/address/" + vout.scriptPubKey.addresses[0])) #{vout.scriptPubKey.addresses[0]}
+								span(class="small") via 
+									a(href=("/tx/" + txInput.txid + "#output-" + tx.vin[txInputIndex].vout)) #{txInput.txid.substring(0, 20)}...[#{tx.vin[txInputIndex].vout}]
 
-							td(class=(txInputIndex == 0 ? "border-top-0" : false), class="pl-0 text-right")
-								if (vout.value)
-									- var currencyValue = vout.value;
-									include ./value-display.pug
+							else
+								span(class="text-danger") Unable to decode input
+									a(data-toggle="popover", title=JSON.stringify(txInput)) 
+										i(class="fas fa-plus-square")
+
+						td(class=(txInputIndex == 0 ? "border-top-0" : false), class="pl-0 text-right")
+							if (vout && vout.value)
+								- var currencyValue = vout.value;
+								include ./value-display.pug
 
 				tr
 					th

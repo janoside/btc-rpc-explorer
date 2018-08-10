@@ -32,6 +32,10 @@ code, .monospace {
 	font-weight: bold;
 }
 
+.popover {
+	max-width: 1200px;
+}
+
 pre {
 	white-space: pre-wrap;
 	white-space: -moz-pre-wrap;
