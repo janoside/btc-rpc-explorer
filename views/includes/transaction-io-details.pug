@@ -7,48 +7,51 @@ div(class="row")
 	div(class="col-md-6")
 		if (txInputs)
 			table(class="table monospace mb-0")
-				if (tx.vin[0].coinbase)
-					tr
-						th(class="pl-0 pr-1")
-							a(data-toggle="tooltip", title="Input #1", style="white-space: nowrap;")
-								i(class=("fas fa-" + fontawesomeInputName + " mr-2"))
-								span 1
+				each txVin, txVinIndex in tx.vin
+					if (txVin.coinbase)
+						tr
+							th(class="pl-0 pr-1")
+								a(data-toggle="tooltip", title="Input #1", style="white-space: nowrap;")
+									i(class=("fas fa-" + fontawesomeInputName + " mr-2"))
+									span 1
 
-						td(class="border-top-0")
-							span(class="tag") coinbase
-							span Newly minted coins
-							
-						td(class="border-top-0 text-right")
-							- var currencyValue = coinConfig.blockRewardFunction(result.getblock.height);
-							include ./value-display.pug
-
-				each txInput, txInputIndex in txInputs
-					tr
-						th(class="pl-0 pr-1")
-							a(data-toggle="tooltip", title=("Input #" + (txInputIndex + 1)), style="white-space: nowrap;")
-								i(class=("fas fa-" + fontawesomeInputName + " mr-2"))
-								span #{(txInputIndex + 1)}
-
-						- var vout = null;
-						if (txInput && txInput.vout && tx.vin && tx.vin[txInputIndex])
-							- var vout = txInput.vout[tx.vin[txInputIndex].vout];
-
-						td(class=(txInputIndex == 0 ? "border-top-0" : false), class="pl-0")
-							if (vout && vout.scriptPubKey && vout.scriptPubKey.addresses)
-								div(style="word-break: break-word;")
-									a(href=("/address/" + vout.scriptPubKey.addresses[0])) #{vout.scriptPubKey.addresses[0]}
-								span(class="small") via 
-									a(href=("/tx/" + txInput.txid + "#output-" + tx.vin[txInputIndex].vout)) #{txInput.txid.substring(0, 20)}...[#{tx.vin[txInputIndex].vout}]
-
-							else
-								span(class="text-danger") Unable to decode input
-									a(data-toggle="popover", title=JSON.stringify(txInput)) 
-										i(class="fas fa-plus-circle")
-
-						td(class=(txInputIndex == 0 ? "border-top-0" : false), class="pl-0 text-right")
-							if (vout && vout.value)
-								- var currencyValue = vout.value;
+							td(class="border-top-0")
+								span(class="tag") coinbase
+								span Newly minted coins
+								
+							td(class="border-top-0 text-right")
+								- var currencyValue = coinConfig.blockRewardFunction(result.getblock.height);
 								include ./value-display.pug
+
+					else
+						tr
+							th(class="pl-0 pr-1")
+								a(data-toggle="tooltip", title=("Input #" + (txVinIndex + 1)), style="white-space: nowrap;")
+									i(class=("fas fa-" + fontawesomeInputName + " mr-2"))
+									span #{(txVinIndex + 1)}
+
+							- var vout = null;
+							if (txInputs && txInputs[txVinIndex])
+								- var txInput = txInputs[txVinIndex];
+								if (txInput.vout && txInput.vout[txVin.vout])
+									- var vout = txInput.vout[txVin.vout];
+
+							td(class=(txVinIndex == 0 ? "border-top-0" : false), class="pl-0")
+								if (vout && vout.scriptPubKey && vout.scriptPubKey.addresses)
+									div(style="word-break: break-word;")
+										a(href=("/address/" + vout.scriptPubKey.addresses[0])) #{vout.scriptPubKey.addresses[0]}
+									span(class="small") via 
+										a(href=("/tx/" + txInput.txid + "#output-" + txVin.vout)) #{txInput.txid.substring(0, 20)}...[#{txVin.vout}]
+
+								else
+									span(class="text-danger") Unable to decode input
+										a(data-toggle="popover", title=JSON.stringify(txInput)) 
+											i(class="fas fa-plus-circle")
+
+							td(class=(txInputIndex == 0 ? "border-top-0" : false), class="pl-0 text-right")
+								if (vout && vout.value)
+									- var currencyValue = vout.value;
+									include ./value-display.pug
 
 				tr
 					th

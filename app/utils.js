@@ -220,13 +220,17 @@ function getTxTotalInputOutputValues(tx, txInputs, blockHeight) {
 		totalInputValue = totalInputValue.plus(new Decimal(coinConfig.blockRewardFunction(blockHeight)));
 	}
 	
-	for (var i = 0; i < txInputs.length; i++) {
+	for (var i = 0; i < tx.vin.length; i++) {
 		var txInput = txInputs[i];
 
 		if (txInput) {
-			var vout = txInput.vout[tx.vin[i].vout];
-			if (vout.value) {
-				totalInputValue = totalInputValue.plus(new Decimal(vout.value));
+			try {
+				var vout = txInput.vout[tx.vin[i].vout];
+				if (vout.value) {
+					totalInputValue = totalInputValue.plus(new Decimal(vout.value));
+				}
+			} catch {
+				console.log("Error getting tx.totalInputValue: txid=" + tx.txid + ", index=tx.vin[" + i + "]");
 			}
 		}
 	}
