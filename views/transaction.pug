@@ -100,7 +100,7 @@ block content
 										td(class="monospace") #{moment.utc(new Date(result.getrawtransaction["time"] * 1000)).format("Y-MM-DD HH:mm:ss")} utc
 											- var timeAgo = moment.duration(moment.utc(new Date()).diff(moment.utc(new Date(parseInt(result.getrawtransaction["time"]) * 1000))));
 											br
-											span(class="text-muted")  (#{timeAgo.format()})
+											span(class="text-muted")  (age: #{timeAgo.format()})
 									else
 										td(class="monospace") N/A
 											span(class="text-muted")  (unconfirmed)
@@ -109,14 +109,15 @@ block content
 								td(class="properties-header") Version
 								td(class="monospace") #{result.getrawtransaction.version}
 							
+							if (result.getrawtransaction.vsize != result.getrawtransaction.size)
+								tr
+									td(class="properties-header") Virtual Size
+									td(class="monospace") #{result.getrawtransaction.vsize.toLocaleString()} VB
+
 							tr
 								td(class="properties-header") Size
-								td(class="monospace")
-									span #{result.getrawtransaction.size.toLocaleString()} bytes
-									if (result.getrawtransaction.vsize != result.getrawtransaction.size)
-										span  (
-										a(href="https://github.com/bitcoin/bips/blob/master/bip-0141.mediawiki#Transaction_size_calculations") virtual size
-										span : #{result.getrawtransaction.vsize.toLocaleString()} bytes)
+								td(class="monospace") #{result.getrawtransaction.size.toLocaleString()} B
+									
 							
 							if (result.getrawtransaction.locktime > 0)
 								tr
@@ -190,7 +191,13 @@ block content
 										
 										br
 										span(class="text-muted")  (#{utils.formatCurrencyAmount(totalInputValue, currencyFormatType)} - #{utils.formatCurrencyAmount(totalOutputValue, currencyFormatType)})
-										br
+								
+								tr
+									td(class="properties-header") Fee Rate
+									td(class="monospace")
+										if (result.getrawtransaction.vsize != result.getrawtransaction.size)
+											span #{utils.addThousandsSeparators(new DecimalRounded(totalInputValue).minus(totalOutputValue).dividedBy(result.getrawtransaction.vsize).times(100000000))} sat/VB
+											br
 										span #{utils.addThousandsSeparators(new DecimalRounded(totalInputValue).minus(totalOutputValue).dividedBy(result.getrawtransaction.size).times(100000000))} sat/B
 
 				if (result.getrawtransaction.vin[0].coinbase)
