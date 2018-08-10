@@ -216,8 +216,9 @@ function getMinerFromCoinbaseTx(tx) {
 
 function getTxTotalInputOutputValues(tx, txInputs, blockHeight) {
 	var totalInputValue = new Decimal(0);
-	if (tx.vin[0].coinbase)
+	if (tx.vin[0].coinbase) {
 		totalInputValue = totalInputValue.plus(new Decimal(coinConfig.blockRewardFunction(blockHeight)));
+	}
 	
 	for (var i = 0; i < txInputs.length; i++) {
 		var txInput = txInputs[i];
