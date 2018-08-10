@@ -216,32 +216,34 @@ function getMinerFromCoinbaseTx(tx) {
 
 function getTxTotalInputOutputValues(tx, txInputs, blockHeight) {
 	var totalInputValue = new Decimal(0);
-	
-	for (var i = 0; i < tx.vin.length; i++) {
-		if (tx.vin[i].coinbase) {
-			totalInputValue = totalInputValue.plus(new Decimal(coinConfig.blockRewardFunction(blockHeight)));
+	var totalOutputValue = new Decimal(0);
 
-		} else {
-			var txInput = txInputs[i];
+	try {
+		for (var i = 0; i < tx.vin.length; i++) {
+			if (tx.vin[i].coinbase) {
+				totalInputValue = totalInputValue.plus(new Decimal(coinConfig.blockRewardFunction(blockHeight)));
 
-			if (txInput) {
-				try {
-					var vout = txInput.vout[tx.vin[i].vout];
-					if (vout.value) {
-						totalInputValue = totalInputValue.plus(new Decimal(vout.value));
+			} else {
+				var txInput = txInputs[i];
+
+				if (txInput) {
+					try {
+						var vout = txInput.vout[tx.vin[i].vout];
+						if (vout.value) {
+							totalInputValue = totalInputValue.plus(new Decimal(vout.value));
+						}
+					} catch (err) {
+						console.log("Error getting tx.totalInputValue: err=" + err + ", txid=" + tx.txid + ", index=tx.vin[" + i + "]");
 					}
-				} catch (err) {
-					console.log("Error getting tx.totalInputValue: err=" + err + ", txid=" + tx.txid + ", index=tx.vin[" + i + "]");
 				}
 			}
 		}
-	}
-
-
-	var totalOutputValue = new Decimal(0);
-	
-	for (var i = 0; i < tx.vout.length; i++) {
-		totalOutputValue = totalOutputValue.plus(new Decimal(tx.vout[i].value));
+		
+		for (var i = 0; i < tx.vout.length; i++) {
+			totalOutputValue = totalOutputValue.plus(new Decimal(tx.vout[i].value));
+		}
+	} catch (err) {
+		console.log("Error computing total input/output values for tx: err=" + err + ", tx=" + JSON.stringify(tx) + ", txInputs=" + JSON.stringify(txInputs) + ", blockHeight=" + blockHeight);
 	}
 
 	return {input:totalInputValue, output:totalOutputValue};
