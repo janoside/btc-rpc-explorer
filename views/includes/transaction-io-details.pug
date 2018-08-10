@@ -7,6 +7,7 @@ div(class="row")
 	div(class="col-md-6")
 		if (txInputs)
 			table(class="table monospace mb-0")
+				- var extraInputCount = 0;
 				each txVin, txVinIndex in tx.vin
 					if (txVin.coinbase)
 						tr
@@ -24,34 +25,48 @@ div(class="row")
 								include ./value-display.pug
 
 					else
-						tr
-							th(class="pl-0 pr-1")
-								a(data-toggle="tooltip", title=("Input #" + (txVinIndex + 1)), style="white-space: nowrap;")
-									i(class=("fas fa-" + fontawesomeInputName + " mr-2"))
-									span #{(txVinIndex + 1)}
+						- var vout = null;
+						if (txInputs && txInputs[txVinIndex])
+							- var txInput = txInputs[txVinIndex];
+							if (txInput.vout && txInput.vout[txVin.vout])
+								- var vout = txInput.vout[txVin.vout];
 
-							- var vout = null;
-							if (txInputs && txInputs[txVinIndex])
-								- var txInput = txInputs[txVinIndex];
-								if (txInput.vout && txInput.vout[txVin.vout])
-									- var vout = txInput.vout[txVin.vout];
+						if (vout)
+							tr
+								th(class="pl-0 pr-1")
+									a(data-toggle="tooltip", title=("Input #" + (txVinIndex + 1)), style="white-space: nowrap;")
+										i(class=("fas fa-" + fontawesomeInputName + " mr-2"))
+										span #{(txVinIndex + 1)}
 
-							td(class=(txVinIndex == 0 ? "border-top-0" : false), class="pl-0")
-								if (vout && vout.scriptPubKey && vout.scriptPubKey.addresses)
-									div(style="word-break: break-word;")
-										a(href=("/address/" + vout.scriptPubKey.addresses[0])) #{vout.scriptPubKey.addresses[0]}
-									span(class="small") via 
-										a(href=("/tx/" + txInput.txid + "#output-" + txVin.vout)) #{txInput.txid.substring(0, 20)}...[#{txVin.vout}]
+								td(class=(txVinIndex == 0 ? "border-top-0" : false), class="pl-0")
+									if (vout && vout.scriptPubKey && vout.scriptPubKey.addresses)
+										div(style="word-break: break-word;")
+											a(href=("/address/" + vout.scriptPubKey.addresses[0])) #{vout.scriptPubKey.addresses[0]}
+										span(class="small") via 
+											a(href=("/tx/" + txInput.txid + "#output-" + txVin.vout)) #{txInput.txid.substring(0, 20)}...[#{txVin.vout}]
 
-								else
-									span(class="text-danger") Unable to decode input
-										a(data-toggle="popover", title=JSON.stringify(txInput)) 
-											i(class="fas fa-plus-circle")
+								td(class=(txVinIndex == 0 ? "border-top-0" : false), class="pl-0 text-right")
+									if (vout && vout.value)
+										- var currencyValue = vout.value;
+										include ./value-display.pug
+						else
+							- extraInputCount = extraInputCount + 1;
 
-							td(class=(txInputIndex == 0 ? "border-top-0" : false), class="pl-0 text-right")
-								if (vout && vout.value)
-									- var currencyValue = vout.value;
-									include ./value-display.pug
+				if (extraInputCount > 0)
+					tr
+						th(class="pl-0 pr-1")
+
+						td(class="border-top-0 pl-0")
+							span #{extraInputCount} Additonal 
+							if (extraInputCount != 1)
+								span inputs 
+							else
+								span input 
+								
+							a(data-toggle="tooltip", title="Additional inputs withheld for performance. See this transaction's details page for more info.")
+								i(class="fas fa-info-circle")
+							
+						td(class="border-top-0")
 
 				tr
 					th

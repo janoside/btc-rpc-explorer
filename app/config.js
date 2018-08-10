@@ -34,6 +34,7 @@ module.exports = {
 
 	site: {
 		blockTxPageSize:20,
+		blockTxMaxInput:15,
 		browseBlocksPageSize:20
 	},
 
