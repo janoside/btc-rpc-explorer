@@ -115,14 +115,25 @@ block content
 							td(class="data-cell") #{lastSendAgo} / #{lastRecvAgo}
 
 
-			h5 GetPeerInfo
-			pre
-				code #{JSON.stringify(peerSummary.getpeerinfo, null, 4)}
 		div(id="tab-json", class="tab-pane", role="tabpanel")
+			each item, index in peerSummary.getpeerinfo
+				div(class="border-bottom p-1")
+					a(href=("javascript:$('#peerinfo_" + index + "').toggle()"))
+						i(class="fas fa-plus-circle") 
 
-			h5 IP Summary
-			pre
-				code #{JSON.stringify(peerIpSummary, null, 4)}
+					span(class="monospace")  #{item.addr}
+
+				div(style="display: none;", id=("peerinfo_" + index), class="p-3")
+					h6 Peer Details
+					pre
+						code #{JSON.stringify(item, null, 4)}
+
+					if (peerIpSummary.detailsByIp[item.addr.substring(0, item.addr.lastIndexOf(":"))])
+						hr
+
+						h6 IP Geo-Location Info
+						pre
+							code #{JSON.stringify(peerIpSummary.detailsByIp[item.addr.substring(0, item.addr.lastIndexOf(":"))], null, 4)}
 
 	
 block endOfBody
