@@ -21,7 +21,7 @@ block content
 			li(class="nav-item")
 				a(data-toggle="tab", href="#tab-scripts", class="nav-link", role="tab") Scripts
 			li(class="nav-item")
-				a(data-toggle="tab", href="#tab-raw", class="nav-link", role="tab") Raw
+				a(data-toggle="tab", href="#tab-json", class="nav-link", role="tab") JSON
 
 		- DecimalRounded = Decimal.clone({ precision: 4, rounding: 2 })
 
@@ -296,7 +296,7 @@ block content
 													br
 													span(class="word-wrap monospace text-muted") (decoded) #{utils.hex2ascii(vout.scriptPubKey.asm)}
 
-			div(id="tab-raw", class="tab-pane", role="tabpanel")
+			div(id="tab-json", class="tab-pane", role="tabpanel")
 				div(class="highlight")
 					pre
 						code(class="language-json", data-lang="json") #{JSON.stringify(result.getrawtransaction, null, 4)}

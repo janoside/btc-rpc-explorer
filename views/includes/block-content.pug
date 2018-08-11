@@ -2,7 +2,7 @@ ul(class='nav nav-tabs mb-3')
 	li(class="nav-item")
 		a(data-toggle="tab", href="#tab-details", class="nav-link active", role="tab") Details
 	li(class="nav-item")
-		a(data-toggle="tab", href="#tab-raw", class="nav-link", role="tab") Raw
+		a(data-toggle="tab", href="#tab-json", class="nav-link", role="tab") JSON
 
 - var txCount = result.getblock.tx.length;
 
@@ -258,7 +258,7 @@ div(class="tab-content")
 
 				include ./pagination.pug
 					
-	div(id="tab-raw", class="tab-pane", role="tabpanel")
+	div(id="tab-json", class="tab-pane", role="tabpanel")
 		pre
 			code #{JSON.stringify(result.getblock, null, 4)}
 

@@ -46,7 +46,7 @@ block content
 				li(class="nav-item")
 					a(data-toggle="tab", href="#tab-details", class="nav-link active", role="tab") Details
 				li(class="nav-item")
-					a(data-toggle="tab", href="#tab-raw", class="nav-link", role="tab") Raw
+					a(data-toggle="tab", href="#tab-json", class="nav-link", role="tab") JSON
 
 
 			div(class="tab-content")
@@ -123,7 +123,7 @@ block content
 								a(href="https://github.com/janoside/btc-rpc-explorer/issues/8") Suggestions and/or pull requests are welcome!
 				
 
-				div(id="tab-raw", class="tab-pane", role="tabpanel")
+				div(id="tab-json", class="tab-pane", role="tabpanel")
 					div(class="highlight")
 						pre
 							code(class="language-json", data-lang="json") #{JSON.stringify(result.validateaddress, null, 4)}

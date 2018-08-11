@@ -24,7 +24,7 @@ block content
 		li(class="nav-item")
 			a(data-toggle="tab", href="#tab-details", class="nav-link", role="tab") Details
 		li(class="nav-item")
-			a(data-toggle="tab", href="#tab-raw", class="nav-link", role="tab") Raw
+			a(data-toggle="tab", href="#tab-json", class="nav-link", role="tab") JSON
 
 	div(class="tab-content")
 		div(id="tab-summary", class="tab-pane active", role="tabpanel")
@@ -115,10 +115,10 @@ block content
 							td(class="data-cell") #{lastSendAgo} / #{lastRecvAgo}
 
 
-		div(id="tab-raw", class="tab-pane", role="tabpanel")
 			h5 GetPeerInfo
 			pre
 				code #{JSON.stringify(peerSummary.getpeerinfo, null, 4)}
+		div(id="tab-json", class="tab-pane", role="tabpanel")
 
 			h5 IP Summary
 			pre
