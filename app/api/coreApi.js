@@ -195,12 +195,12 @@ function getMempoolDetails(start, count) {
 					});
 
 					transactions.forEach(function(tx) {
-						txInputsByTransaction[tx.txid] = [];
+						txInputsByTransaction[tx.txid] = {};
 
 						if (tx && tx.vin) {
 							for (var i = 0; i < Math.min(maxInputsTracked, tx.vin.length); i++) {
 								if (vinTxById[tx.vin[i].txid]) {
-									txInputsByTransaction[tx.txid].push(vinTxById[tx.vin[i].txid]);
+									txInputsByTransaction[tx.txid][i] = vinTxById[tx.vin[i].txid];
 								}
 							}
 						}
@@ -596,12 +596,12 @@ function getBlockByHashWithTransactions(blockHash, txLimit, txOffset) {
 					});
 
 					transactions.forEach(function(tx) {
-						txInputsByTransaction[tx.txid] = [];
+						txInputsByTransaction[tx.txid] = {};
 
 						if (tx && tx.vin) {
 							for (var i = 0; i < Math.min(maxInputsTracked, tx.vin.length); i++) {
 								if (vinTxById[tx.vin[i].txid]) {
-									txInputsByTransaction[tx.txid].push(vinTxById[tx.vin[i].txid]);
+									txInputsByTransaction[tx.txid][i] = vinTxById[tx.vin[i].txid];
 								}
 							}
 						}
