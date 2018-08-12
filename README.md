@@ -21,6 +21,11 @@ Live demos are available at:
 * Mempool summary, with fee, size, and age breakdowns
 * RPC command browser and terminal
 * Currently supports BTC, LTC (support for any Bitcoin-RPC-protocol-compliant coin can be added easily)
+* Geolocation for the connected peers 
+  ## Planned Featuers
+    * Block difficulty chart
+    * Price chart
+    * Hashrate chart
 
 # Getting started
 
