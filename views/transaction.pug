@@ -64,141 +64,133 @@ block content
 									span  
 										a(href=stInfo.referenceUrl) Read more
 
+				- var isTxConfirmed = true;
+				if (!result.getrawtransaction.confirmations || result.getrawtransaction.confirmations == 0)
+					- isTxConfirmed = false;
+
 				div(class="card mb-3")
 					div(class="card-header")
 						span(class="h6") Summary
 					div(class="card-body")
-						table(class="table details-table mb-0")
+						if (!isTxConfirmed)
+							div(class="row")
+								div(class="summary-table-label") Status
+								div(class="summary-table-content monospace")
+									span(class="text-danger") Unconfirmed
 
-							- var isTxConfirmed = true;
-							if (!result.getrawtransaction.confirmations || result.getrawtransaction.confirmations == 0)
-								- isTxConfirmed = false;
+						if (isTxConfirmed)
+							div(class="row")
+								div(class="summary-table-label") Block
+								div(class="summary-table-content monospace")
+									a(href=("/block/" + result.getrawtransaction.blockhash)) #{result.getrawtransaction.blockhash}
+									if (result.getblock.height)
+										br
+										span (##{result.getblock.height.toLocaleString()})
 
-							if (!isTxConfirmed)
-								tr
-									td(class="properties-header") Status
-									td(class="monospace text-danger") Unconfirmed
-
-							if (isTxConfirmed)
-								tr
-									td(class="properties-header") Included in Block
-									td(class="monospace word-wrap")
-										if (result.getblock)
-											a(href=("/block/" + result.getrawtransaction.blockhash)) #{result.getrawtransaction.blockhash}
-											if (result.getblock.height)
-												br
-												span (##{result.getblock.height.toLocaleString()})
-										else
-											span N/A
-											span(class="text-muted")  (unconfirmed)
-							
-							if (isTxConfirmed)
-								tr
-									td(class="properties-header") Timestamp
-									
+						if (isTxConfirmed)
+							div(class="row")
+								div(class="summary-table-label") Timestamp
+								div(class="summary-table-content monospace")
 									if (result.getrawtransaction.time)
 										td(class="monospace") #{moment.utc(new Date(result.getrawtransaction["time"] * 1000)).format("Y-MM-DD HH:mm:ss")} utc
 											- var timeAgo = moment.duration(moment.utc(new Date()).diff(moment.utc(new Date(parseInt(result.getrawtransaction["time"]) * 1000))));
 											br
 											span(class="text-muted")  (age: #{timeAgo.format()})
+
+						div(class="row")
+							div(class="summary-table-label") Version
+							div(class="summary-table-content monospace") #{result.getrawtransaction.version}
+
+						if (result.getrawtransaction.vsize != result.getrawtransaction.size)
+							div(class="row")
+								div(class="summary-table-label") Virtual Size
+								div(class="summary-table-content monospace") #{result.getrawtransaction.vsize.toLocaleString()} VB
+
+						div(class="row")
+							div(class="summary-table-label") Size
+							div(class="summary-table-content monospace") #{result.getrawtransaction.size.toLocaleString()} B
+
+						if (result.getrawtransaction.locktime > 0)
+							div(class="row")
+								div(class="summary-table-label") Locktime
+								div(class="summary-table-content monospace")
+									if (result.getrawtransaction.locktime < 500000000)
+										span Spendable in block 
+										a(href=("/block-height/" + result.getrawtransaction.locktime)) #{result.getrawtransaction.locktime}
+										span  or later 
+										a(href="https://bitcoin.org/en/developer-guide#locktime-and-sequence-number", data-toggle="tooltip", title="More info about locktime", target="_blank") 
+											i(class="fas fa-info-circle")
 									else
-										td(class="monospace") N/A
-											span(class="text-muted")  (unconfirmed)
-							
-							tr
-								td(class="properties-header") Version
-								td(class="monospace") #{result.getrawtransaction.version}
-							
-							if (result.getrawtransaction.vsize != result.getrawtransaction.size)
-								tr
-									td(class="properties-header") Virtual Size
-									td(class="monospace") #{result.getrawtransaction.vsize.toLocaleString()} VB
+										span Spendable after #{moment.utc(new Date(result.getrawtransaction.locktime * 1000)).format("Y-MM-DD HH:mm:ss")} (utc) 
+										a(href="https://bitcoin.org/en/developer-guide#locktime-and-sequence-number", data-toggle="tooltip", title="More info about locktime", target="_blank") 
+											i(class="fas fa-info-circle")
 
-							tr
-								td(class="properties-header") Size
-								td(class="monospace") #{result.getrawtransaction.size.toLocaleString()} B
-									
-							
-							if (result.getrawtransaction.locktime > 0)
-								tr
-									td(class="properties-header") Locktime
-									td(class="monospace")
-										if (result.getrawtransaction.locktime < 500000000)
-											span Spendable in block 
-											a(href=("/block-height/" + result.getrawtransaction.locktime)) #{result.getrawtransaction.locktime}
-											span  or later 
-											a(href="https://bitcoin.org/en/developer-guide#locktime-and-sequence-number", data-toggle="tooltip", title="More info about locktime", target="_blank") 
-												i(class="fas fa-info-circle")
-										else
-											span Spendable after #{moment.utc(new Date(result.getrawtransaction.locktime * 1000)).format("Y-MM-DD HH:mm:ss")} (utc) 
-											a(href="https://bitcoin.org/en/developer-guide#locktime-and-sequence-number", data-toggle="tooltip", title="More info about locktime", target="_blank") 
-												i(class="fas fa-info-circle")
+						if (isTxConfirmed)
+							div(class="row")
+								div(class="summary-table-label") Confirmations
+								div(class="summary-table-content monospace")
+									if (!result.getrawtransaction.confirmations || result.getrawtransaction.confirmations == 0)
+										strong(class="text-danger") 0 (unconfirmed)
 
-							if (isTxConfirmed)
-								tr
-									td(class="properties-header") Confirmations
-									td(class="monospace")
-										if (!result.getrawtransaction.confirmations || result.getrawtransaction.confirmations == 0)
-											strong(class="text-danger") 0 (unconfirmed)
+									else if (result.getrawtransaction.confirmations < 6)
+										strong(class="text-warning") #{result.getrawtransaction.confirmations}
 
-										else if (result.getrawtransaction.confirmations < 6)
-											strong(class="text-warning") #{result.getrawtransaction.confirmations}
+									else
+										strong(class="text-success") #{result.getrawtransaction.confirmations.toLocaleString()}
 
-										else
-											strong(class="text-success") #{result.getrawtransaction.confirmations.toLocaleString()}
 
-							if (result.getrawtransaction.vin[0].coinbase)
-								tr
-									td(class="properties-header") Fees Collected
-									td
-										- var currencyValue = new Decimal(totalOutputValue).minus(totalInputValue);
+						if (result.getrawtransaction.vin[0].coinbase)
+							div(class="row")
+								div(class="summary-table-label") Fees Collected
+								div(class="summary-table-content monospace")
+									- var currencyValue = new Decimal(totalOutputValue).minus(totalInputValue);
+									include includes/value-display.pug
+
+							- var blockRewardMax = coinConfig.blockRewardFunction(result.getblock.height);
+							if (totalOutputValue < blockRewardMax)
+								div(class="row")
+									div(class="summary-table-label") Fees Destroyed
+									div(class="summary-table-content monospace")
+										- var currencyValue = new Decimal(blockRewardMax).minus(totalOutputValue);
 										include includes/value-display.pug
 
-								- var blockRewardMax = coinConfig.blockRewardFunction(result.getblock.height);
-								if (totalOutputValue < blockRewardMax)
-									tr
-										td(class="properties-header") Fees Destroyed
-										td(class="text-danger")
-											- var currencyValue = new Decimal(blockRewardMax).minus(totalOutputValue);
-											include includes/value-display.pug
+										a(class="ml-2", data-toggle="tooltip", title="The miner of this transaction's block failed to collect this value. As a result, it is lost.")
+											i(class="fas fa-info-circle")
 
-											a(class="ml-2", data-toggle="tooltip", title="The miner of this transaction's block failed to collect this value. As a result, it is lost.")
+							- var minerInfo = utils.getMinerFromCoinbaseTx(result.getrawtransaction);
+							div(class="row")
+								div(class="summary-table-label") Miner
+								div(class="summary-table-content monospace")
+									if (minerInfo)
+										span #{minerInfo.name} 
+										if (minerInfo.identifiedBy)
+											span(data-toggle="tooltip", title=("Identified by: " + minerInfo.identifiedBy))
 												i(class="fas fa-info-circle")
+									else
+										span ? 
+										span(data-toggle="tooltip", title="Unable to identify miner")
+											i(class="fas fa-info-circle")
 
-								tr
-									- var minerInfo = utils.getMinerFromCoinbaseTx(result.getrawtransaction);
+						else
 
-									td(class="properties-header") Miner
-									td(class="monospace")
-										if (minerInfo)
-											span #{minerInfo.name} 
-											if (minerInfo.identifiedBy)
-												span(data-toggle="tooltip", title=("Identified by: " + minerInfo.identifiedBy))
-													i(class="fas fa-info-circle")
-										else
-											span ? 
-											span(data-toggle="tooltip", title="Unable to identify miner")
-												i(class="fas fa-info-circle")
+							div(class="row")
+								div(class="summary-table-label") Fee Paid
+								div(class="summary-table-content monospace")
+									- var currencyValue = new Decimal(totalInputValue).minus(totalOutputValue);
+									include includes/value-display.pug
 
+									br
+									span(class="text-muted")  (#{utils.formatCurrencyAmount(totalInputValue, currencyFormatType)} - #{utils.formatCurrencyAmount(totalOutputValue, currencyFormatType)})
 
-							else
-								tr
-									td(class="properties-header") Fee Paid
-									td(class="monospace")
-										strong
-											- var currencyValue = new Decimal(totalInputValue).minus(totalOutputValue);
-											include includes/value-display.pug
-										
+							div(class="row")
+								div(class="summary-table-label") Fee Rate
+								div(class="summary-table-content monospace")
+									if (result.getrawtransaction.vsize != result.getrawtransaction.size)
+										span #{utils.addThousandsSeparators(new DecimalRounded(totalInputValue).minus(totalOutputValue).dividedBy(result.getrawtransaction.vsize).times(100000000))} sat/VB
 										br
-										span(class="text-muted")  (#{utils.formatCurrencyAmount(totalInputValue, currencyFormatType)} - #{utils.formatCurrencyAmount(totalOutputValue, currencyFormatType)})
-								
-								tr
-									td(class="properties-header") Fee Rate
-									td(class="monospace")
-										if (result.getrawtransaction.vsize != result.getrawtransaction.size)
-											span #{utils.addThousandsSeparators(new DecimalRounded(totalInputValue).minus(totalOutputValue).dividedBy(result.getrawtransaction.vsize).times(100000000))} sat/VB
-											br
-										span #{utils.addThousandsSeparators(new DecimalRounded(totalInputValue).minus(totalOutputValue).dividedBy(result.getrawtransaction.size).times(100000000))} sat/B
+
+									span #{utils.addThousandsSeparators(new DecimalRounded(totalInputValue).minus(totalOutputValue).dividedBy(result.getrawtransaction.size).times(100000000))} sat/B
+
 
 				if (result.getrawtransaction.vin[0].coinbase)
 					div(class="card mb-3")

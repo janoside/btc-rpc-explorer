@@ -77,11 +77,127 @@ strong {
 	font-weight: 500;
 }
 
+.summary-table-label, .summary-table-content, .summary-split-table-label, .summary-split-table-content {
+	position: relative;
+	width: 100%;
+	min-height: 1px;
+	padding-right: 5px;
+	padding-left: 15px;
+	margin-bottom: 5px;
+}
+
+.summary-table-label, .summary-split-table-label {
+	font-weight: bold;
+}
+
+.summary-table-content, .summary-split-table-content {
+	margin-bottom: 20px;
+}
+
+@media (min-width: 576px) {
+	.summary-table-label {
+		max-width: 100%;
+		text-align: left;
+	}
+	.summary-table-content {
+		max-width: 100%;
+		margin-bottom: 20px;
+	}
+
+	.summary-split-table-label {
+		max-width: 100%;
+		text-align: left;
+	}
+	.summary-split-table-content {
+		max-width: 100%;
+		margin-bottom: 20px;
+	}
+}
+
+@media (min-width: 768px) {
+	.summary-table-label {
+		max-width: 18%;
+		text-align: right;
+	}
+	.summary-table-content {
+		max-width: 82%;
+		margin-bottom: 5px;
+	}
+
+	.summary-split-table-label {
+		max-width: 36%;
+		text-align: right;
+	}
+	.summary-split-table-content {
+		max-width: 64%;
+		margin-bottom: 5px;
+	}
+}
+
+@media (min-width: 992px) {
+	.summary-table-label {
+		max-width: 15%;
+		text-align: right;
+	}
+	.summary-table-content {
+		max-width: 85%;
+		margin-bottom: 5px;
+	}
+
+	.summary-split-table-label {
+		max-width: 30%;
+		text-align: right;
+	}
+	.summary-split-table-content {
+		max-width: 70%;
+		margin-bottom: 5px;
+	}
+}
+
+@media (min-width: 1200px) {
+	.summary-table-label {
+		max-width: 11%;
+		text-align: right;
+	}
+	.summary-table-content {
+		max-width: 89%;
+		margin-bottom: 5px;
+	}
+
+	.summary-split-table-label {
+		max-width: 22%;
+		text-align: right;
+	}
+	.summary-split-table-content {
+		max-width: 78%;
+		margin-bottom: 5px;
+	}
+}
+
 @media (min-width: 1920px) {
 	.container {
 		max-width: 1800px;
 	}
+	.summary-table-label {
+		max-width: 8%;
+		text-align: right;
+	}
+	.summary-table-content {
+		max-width: 92%;
+		margin-bottom: 5px;
+	}
+
+	.summary-split-table-label {
+		max-width: 16%;
+		text-align: right;
+	}
+	.summary-split-table-content {
+		max-width: 84%;
+		margin-bottom: 5px;
+	}
 }
+
+
 
 footer {
 	border-top: solid 5px #597FA5;

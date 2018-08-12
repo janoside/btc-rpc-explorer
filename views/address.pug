@@ -56,42 +56,42 @@ block content
 						div(class="card-header")
 							span(class="h6") Summary
 						div(class="card-body")
-							table(class="table details-table mb-0")
-								if (addressObj.hash)
-									tr
-										td(class="properties-header") Hash 160
-										td(class="monospace") #{addressObj.hash.toString("hex")}
 
-								if (result.validateaddress.scriptPubKey)
-									tr
-										td(class="properties-header") Script Public Key
-										td(class="monospace") #{result.validateaddress.scriptPubKey}
+							if (addressObj.hash)
+								div(class="row")
+									div(class="summary-table-label") Hash 160
+									div(class="summary-table-content monospace") #{addressObj.hash.toString("hex")}
 
-								if (addressObj.hasOwnProperty("version"))
-									tr
-										td(class="properties-header") Version
-										td(class="monospace") #{addressObj.version}
+							if (result.validateaddress.scriptPubKey)
+								div(class="row")
+									div(class="summary-table-label") Script Public Key
+									div(class="summary-table-content monospace") #{result.validateaddress.scriptPubKey}
 
-								if (result.validateaddress.hasOwnProperty("witness_version"))
-									tr
-										td(class="properties-header") Witness Version
-										td(class="monospace") #{result.validateaddress.witness_version}
+							if (addressObj.hasOwnProperty("version"))
+								div(class="row")
+									div(class="summary-table-label") Version
+									div(class="summary-table-content monospace") #{addressObj.version}
 
-								if (result.validateaddress.witness_program)
-									tr
-										td(class="properties-header") Witness Program
-										td(class="monospace") #{result.validateaddress.witness_program}
+							if (result.validateaddress.hasOwnProperty("witness_version"))
+								div(class="row")
+									div(class="summary-table-label") Witness Version
+									div(class="summary-table-content monospace") #{result.validateaddress.witness_version}
 
-								tr
-									td(class="properties-header") QR Code
-									td(class="monospace")
-										img(src=addressQrCodeUrl, alt=address, style="border: solid 1px #ccc;")
+							if (result.validateaddress.witness_program)
+								div(class="row")
+									div(class="summary-table-label") Witness Program
+									div(class="summary-table-content monospace") #{result.validateaddress.witness_program}
+
+							div(class="row")
+								div(class="summary-table-label") QR Code
+								div(class="summary-table-content monospace")
+									img(src=addressQrCodeUrl, alt=address, style="border: solid 1px #ccc;")
 
 					div(class="card mb-3")
 						div(class="card-header")
 							span(class="h6") Flags
 						div(class="card-body")
-							table(class="table text-center")
+							table(class="table table-responsive-sm text-center")
 								thead
 									tr
 										th Is Valid?
