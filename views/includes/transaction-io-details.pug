@@ -34,7 +34,8 @@ div(class="row monospace")
 											div(style="word-break: break-word;")
 												a(href=("/address/" + vout.scriptPubKey.addresses[0])) #{vout.scriptPubKey.addresses[0]}
 												if (global.specialAddresses[vout.scriptPubKey.addresses[0]])
-													a(data-toggle="tooltip", title=("Miner payout address: " + global.specialAddresses[vout.scriptPubKey.addresses[0]].name))  
+													span  
+													a(data-toggle="tooltip", title=("Miner payout address: " + global.specialAddresses[vout.scriptPubKey.addresses[0]].name))
 														i(class="fas fa-certificate text-primary")
 											span(class="small") via 
 												a(href=("/tx/" + txInput.txid + "#output-" + txVin.vout)) #{txInput.txid.substring(0, 20)}...[#{txVin.vout}]
@@ -81,7 +82,8 @@ div(class="row monospace")
 										span(class="monospace", style="word-break: break-word;") #{vout.scriptPubKey.addresses[0]}
 
 									if (global.specialAddresses[vout.scriptPubKey.addresses[0]])
-										a(data-toggle="tooltip", title=("Miner payout address: " + global.specialAddresses[vout.scriptPubKey.addresses[0]].name))  
+										span  
+										a(data-toggle="tooltip", title=("Miner payout address: " + global.specialAddresses[vout.scriptPubKey.addresses[0]].name))
 											i(class="fas fa-certificate text-primary")
 
 								else if (vout.scriptPubKey.hex && vout.scriptPubKey.hex.startsWith('6a24aa21a9ed'))

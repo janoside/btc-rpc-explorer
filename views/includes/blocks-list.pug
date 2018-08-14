@@ -21,7 +21,8 @@ table(class="table table-striped table-responsive-sm")
 
 						if (global.specialBlocks && global.specialBlocks[block.hash])
 							span  
-							i(class="fas fa-certificate text-primary")
+							a(data-toggle="tooltip", title=(coinConfig.name + " Fun! See block for details"))
+								i(class="fas fa-certificate text-primary")
 					td(class="data-cell monospace") #{moment.utc(new Date(parseInt(block.time) * 1000)).format("Y-MM-DD HH:mm:ss")}
 
 					- var timeAgo = moment.duration(moment.utc(new Date()).diff(moment.utc(new Date(parseInt(block.time) * 1000))));
