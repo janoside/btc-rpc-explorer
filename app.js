@@ -154,8 +154,6 @@ app.runOnStartup = function() {
 					}
 				}
 			}
-
-			console.log("Identified special addresses: " + JSON.stringify(global.specialAddresses));
 		});
 		
 	}
