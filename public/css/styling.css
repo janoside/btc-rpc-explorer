@@ -20,6 +20,10 @@ code, .monospace {
 	font-family: "Source Code Pro", monospace;
 }
 
+.card-body {
+	padding: 1.1em;
+}
+
 .details-table td {
 	border-top: none;
 	padding: 0.4em;
@@ -77,7 +81,7 @@ strong {
 	font-weight: 500;
 }
 
-.summary-table-label, .summary-table-content, .summary-split-table-label, .summary-split-table-content {
+.summary-table-label, .summary-table-content, .summary-split-table-label, .summary-split-table-content, .tx-io-label, .tx-io-content, .tx-io-desc, .tx-io-value {
 	position: relative;
 	width: 100%;
 	min-height: 1px;
@@ -86,7 +90,7 @@ strong {
 	margin-bottom: 5px;
 }
 
-.summary-table-label, .summary-split-table-label {
+.summary-table-label, .summary-split-table-label, .tx-io-label {
 	font-weight: bold;
 }
 
@@ -112,6 +116,11 @@ strong {
 		max-width: 100%;
 		margin-bottom: 20px;
 	}
+
+	.tx-io-label { max-width: 100%; }
+	.tx-io-content { max-width: 100%; }
+	.tx-io-desc { max-width: 100%; }
+	.tx-io-value { max-width: 100%; }
 }
 
 @media (min-width: 768px) {
@@ -132,6 +141,11 @@ strong {
 		max-width: 64%;
 		margin-bottom: 5px;
 	}
+
+	.tx-io-label { max-width: 8%; }
+	.tx-io-content { max-width: 92%; }
+	.tx-io-desc { max-width: 60%; }
+	.tx-io-value { max-width: 40%; text-align: right; padding-right: 25px; }
 }
 
 @media (min-width: 992px) {
@@ -152,9 +166,18 @@ strong {
 		max-width: 70%;
 		margin-bottom: 5px;
 	}
+
+	.tx-io-label { max-width: 10%; }
+	.tx-io-content { max-width: 90%; }
+	.tx-io-desc { max-width: 60%; }
+	.tx-io-value { max-width: 40%; text-align: right; padding-right: 25px; }
 }
 
 @media (min-width: 1200px) {
+	.container {
+		max-width: 1160px;
+	}
+
 	.summary-table-label {
 		max-width: 11%;
 		text-align: right;
@@ -172,12 +195,18 @@ strong {
 		max-width: 78%;
 		margin-bottom: 5px;
 	}
+
+	.tx-io-label { max-width: 8%; }
+	.tx-io-content { max-width: 92%; }
+	.tx-io-desc { max-width: 61%; }
+	.tx-io-value { max-width: 39%; text-align: right; padding-right: 25px; }
 }
 
 @media (min-width: 1920px) {
 	.container {
 		max-width: 1800px;
 	}
+
 	.summary-table-label {
 		max-width: 8%;
 		text-align: right;
@@ -195,6 +224,11 @@ strong {
 		max-width: 84%;
 		margin-bottom: 5px;
 	}
+
+	.tx-io-label { max-width: 5%; }
+	.tx-io-content { max-width: 95%; }
+	.tx-io-desc { max-width: 60%; }
+	.tx-io-value { max-width: 40%; text-align: right; padding-right: 25px; }
 }
 
 

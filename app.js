@@ -108,6 +108,7 @@ app.runOnStartup = function() {
 
 	global.specialTransactions = {};
 	global.specialBlocks = {};
+	global.specialAddresses = {};
 
 	if (global.coinConfig.historicalData) {
 		global.coinConfig.historicalData.forEach(function(item) {
@@ -145,6 +146,16 @@ app.runOnStartup = function() {
 
 		Promise.all(promises).then(function(results) {
 			global.miningPoolsConfigs = results;
+
+			for (var i = 0; i < global.miningPoolsConfigs.length; i++) {
+				for (var x in global.miningPoolsConfigs[i].payout_addresses) {
+					if (global.miningPoolsConfigs[i].payout_addresses.hasOwnProperty(x)) {
+						global.specialAddresses[x] = global.miningPoolsConfigs[i].payout_addresses[x];
+					}
+				}
+			}
+
+			console.log("Identified special addresses: " + JSON.stringify(global.specialAddresses));
 		});
 		
 	}

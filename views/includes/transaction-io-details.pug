@@ -3,94 +3,86 @@
 
 - var totalIOValues = utils.getTxTotalInputOutputValues(tx, txInputs, blockHeight);
 
-div(class="row")
-	div(class="col-md-6")
+div(class="row monospace")
+	div(class="col-lg-6")
 		if (txInputs)
-			table(class="table monospace mb-0")
-				- var extraInputCount = 0;
-				each txVin, txVinIndex in tx.vin
-					if (txVin.coinbase)
-						tr
-							th(class="pl-0 pr-1")
-								a(data-toggle="tooltip", title="Input #1", style="white-space: nowrap;")
-									i(class=("fas fa-" + fontawesomeInputName + " mr-2"))
-									span 1
+			- var extraInputCount = 0;
+			each txVin, txVinIndex in tx.vin
+				if (!txVin.coinbase)
+					- var vout = null;
+					if (txInputs && txInputs[txVinIndex])
+						- var txInput = txInputs[txVinIndex];
+						if (txInput.vout && txInput.vout[txVin.vout])
+							- var vout = txInput.vout[txVin.vout];
 
-							td(class="border-top-0")
-								span(class="tag") coinbase
-								span Newly minted coins
-								
-							td(class="border-top-0 text-right")
-								- var currencyValue = coinConfig.blockRewardFunction(result.getblock.height);
-								include ./value-display.pug
+				if (txVin.coinbase || vout)
+					div(class="row")
+						div(class="tx-io-label")
+							a(data-toggle="tooltip", title=("Input #" + (txVinIndex + 1).toLocaleString()), style="white-space: nowrap;")
+								i(class=("fas fa-" + fontawesomeInputName + " mr-2"))
+								span(class="d-inline d-md-none") Input #
+								span #{(txVinIndex + 1).toLocaleString()}
 
-					else
-						- var vout = null;
-						if (txInputs && txInputs[txVinIndex])
-							- var txInput = txInputs[txVinIndex];
-							if (txInput.vout && txInput.vout[txVin.vout])
-								- var vout = txInput.vout[txVin.vout];
+						div(class="tx-io-content")
+							div(class="row")
+								div(class="tx-io-desc")
+									if (txVin.coinbase)
+										span(class="tag") coinbase
+										span Newly minted coins
+									else
+										if (vout && vout.scriptPubKey && vout.scriptPubKey.addresses)
+											div(style="word-break: break-word;")
+												a(href=("/address/" + vout.scriptPubKey.addresses[0])) #{vout.scriptPubKey.addresses[0]}
+												if (global.specialAddresses[vout.scriptPubKey.addresses[0]])
+													a(data-toggle="tooltip", title=("Miner payout address: " + global.specialAddresses[vout.scriptPubKey.addresses[0]].name))  
+														i(class="fas fa-certificate text-primary")
+											span(class="small") via 
+												a(href=("/tx/" + txInput.txid + "#output-" + txVin.vout)) #{txInput.txid.substring(0, 20)}...[#{txVin.vout}]
 
-						if (vout)
-							tr
-								th(class="pl-0 pr-1")
-									a(data-toggle="tooltip", title=("Input #" + (txVinIndex + 1)), style="white-space: nowrap;")
-										i(class=("fas fa-" + fontawesomeInputName + " mr-2"))
-										span #{(txVinIndex + 1)}
-
-								td(class=(txVinIndex == 0 ? "border-top-0" : false), class="pl-0")
-									if (vout && vout.scriptPubKey && vout.scriptPubKey.addresses)
-										div(style="word-break: break-word;")
-											a(href=("/address/" + vout.scriptPubKey.addresses[0])) #{vout.scriptPubKey.addresses[0]}
-										span(class="small") via 
-											a(href=("/tx/" + txInput.txid + "#output-" + txVin.vout)) #{txInput.txid.substring(0, 20)}...[#{txVin.vout}]
-
-								td(class=(txVinIndex == 0 ? "border-top-0" : false), class="pl-0 text-right")
-									if (vout && vout.value)
-										- var currencyValue = vout.value;
+								div(class="tx-io-value")
+									if (txVin.coinbase)
+										- var currencyValue = coinConfig.blockRewardFunction(result.getblock.height);
 										include ./value-display.pug
-						else
-							- extraInputCount = extraInputCount + 1;
+									else
+										if (vout && vout.value)
+											- var currencyValue = vout.value;
+											include ./value-display.pug
 
-				if (extraInputCount > 0)
-					tr
-						th(class="pl-0 pr-1")
+					hr
 
-						td(class="border-top-0 pl-0")
-							span #{extraInputCount} Additonal 
-							if (extraInputCount != 1)
-								span inputs 
-							else
-								span input 
-								
-							a(data-toggle="tooltip", title="Additional inputs withheld for performance. See this transaction's details page for more info.")
-								i(class="fas fa-info-circle")
-							
-						td(class="border-top-0")
+				else
+					- extraInputCount = extraInputCount + 1;
 
-				tr
-					th
-					td
-					td(class="text-right font-weight-bold")
+			div(class="row mb-5")
+				div(class="col")
+					div(class="font-weight-bold text-left text-md-right")
+						span(class="d-inline d-md-none") Total Input: 
 						- var currencyValue = totalIOValues.input;
 						include ./value-display.pug
+					
+			
 			
 
-	div(class="col-md-6")
-		table(class="table mb-0")
-			tbody
-				each vout, voutIndex in tx.vout
-					tr
-						th(class="pl-0 pr-1 monospace")
-							a(data-toggle="tooltip", title=("Output #" + (voutIndex + 1)), style="white-space: nowrap;")
-								i(class=("fas fa-" + fontawesomeOutputName + " mr-2"))
-								span #{(voutIndex + 1)}
+	div(class="col-lg-6")
+		each vout, voutIndex in tx.vout
+			div(class="row")
+				div(class="tx-io-label")
+					a(data-toggle="tooltip", title=("Output #" + (voutIndex + 1).toLocaleString()), style="white-space: nowrap;")
+						i(class=("fas fa-" + fontawesomeInputName + " mr-2"))
+						span(class="d-inline d-md-none") Output #
+						span #{(voutIndex + 1).toLocaleString()}
 
-						td(class=(voutIndex == 0 ? "border-top-0" : false), class="pl-0")
+				div(class="tx-io-content")
+					div(class="row")
+						div(class="tx-io-desc")
 							if (vout.scriptPubKey)
 								if (vout.scriptPubKey.addresses)
 									a(id=("output-" + voutIndex), href=("/address/" + vout.scriptPubKey.addresses[0]))
-										div(class="monospace", style="word-break: break-word;") #{vout.scriptPubKey.addresses[0]}
+										span(class="monospace", style="word-break: break-word;") #{vout.scriptPubKey.addresses[0]}
+
+									if (global.specialAddresses[vout.scriptPubKey.addresses[0]])
+										a(data-toggle="tooltip", title=("Miner payout address: " + global.specialAddresses[vout.scriptPubKey.addresses[0]].name))  
+											i(class="fas fa-certificate text-primary")
 
 								else if (vout.scriptPubKey.hex && vout.scriptPubKey.hex.startsWith('6a24aa21a9ed'))
 									span(class="monospace") Segregated Witness committment 
@@ -114,15 +106,17 @@ div(class="row")
 										span(class="font-weight-bold") decodedHex: 
 										span #{utils.hex2ascii(vout.scriptPubKey.hex)}
 
-						td(class=(voutIndex == 0 ? "border-top-0" : false), class="pl-0 text-right")
+						div(class="tx-io-value")
 							- var currencyValue = vout.value;
 							include ./value-display.pug
 
-				tr
-					th
-					td
-					td(class="text-right font-weight-bold")
-						- var currencyValue = totalIOValues.output;
-						include ./value-display.pug
+			hr
+
+		div(class="row mb-5")
+			div(class="col")
+				div(class="font-weight-bold text-left text-md-right")
+					span(class="d-inline d-md-none") Total Output: 
+					- var currencyValue = totalIOValues.output;
+					include ./value-display.pug
 
 
