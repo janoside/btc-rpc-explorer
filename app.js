@@ -227,6 +227,18 @@ app.use(function(req, res, next) {
 		}
 	}
 
+	// theme
+	if (!req.session.hideHomepageBanner) {
+		var cookieValue = req.cookies['user-setting-hideHomepageBanner'];
+
+		if (cookieValue) {
+			req.session.hideHomepageBanner = cookieValue;
+
+		} else {
+			req.session.hideHomepageBanner = "false";
+		}
+	}
+
 	res.locals.currencyFormatType = req.session.currencyFormatType;
 
 
