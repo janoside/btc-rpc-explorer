@@ -227,8 +227,8 @@ strong {
 
 	.tx-io-label { max-width: 5%; }
 	.tx-io-content { max-width: 95%; }
-	.tx-io-desc { max-width: 60%; }
-	.tx-io-value { max-width: 40%; text-align: right; padding-right: 25px; }
+	.tx-io-desc { max-width: 70%; }
+	.tx-io-value { max-width: 30%; text-align: right; padding-right: 25px; }
 }
 
 
