@@ -25,8 +25,13 @@ function getGenesisCoinbaseTransactionId() {
 
 
 
-function tryCacheThenRpcApi(cache, cacheKey, cacheMaxAge, rpcApiFunction) {
+function tryCacheThenRpcApi(cache, cacheKey, cacheMaxAge, rpcApiFunction, cacheConditionFunction) {
 	//console.log("tryCache: " + cacheKey + ", " + cacheMaxAge);
+	if (cacheConditionFunction == null) {
+		cacheConditionFunction = function(obj) {
+			return true;
+		};
+	}
 
 	return new Promise(function(resolve, reject) {
 		var result = cache.get(cacheKey);
@@ -35,17 +40,18 @@ function tryCacheThenRpcApi(cache, cacheKey, cacheMaxAge, rpcApiFunction) {
 
 		} else {
 			rpcApiFunction().then(function(result) {
-				if (result) {
+				if (result != null && cacheConditionFunction(result)) {
 					cache.set(cacheKey, result, cacheMaxAge);
-
-					resolve(result);
-
-				} else {
-					resolve(result);
 				}
+
+				resolve(result);
 			});
 		}
 	});
+}
+
+function shouldCacheTransaction(tx) {
+	return (tx.confirmations > 0);
 }
 
 
@@ -490,9 +496,11 @@ function getBlocksByHash(blockHashes) {
 }
 
 function getRawTransaction(txid) {
-	return tryCacheThenRpcApi(txCache, "getRawTransaction-" + txid, 3600000, function() {
+	var rpcApiFunction = function() {
 		return rpcApi.getRawTransaction(txid);
-	});
+	};
+
+	return tryCacheThenRpcApi(txCache, "getRawTransaction-" + txid, 3600000, rpcApiFunction, shouldCacheTransaction);
 }
 
 function getAddress(address) {
@@ -529,7 +537,9 @@ function getRawTransactions(txids) {
 						if (queriedTx != null) {
 							combinedTxs.push(queriedTx);
 
-							txCache.set("getRawTransaction-" + queriedTx.txid, queriedTx, 3600000);
+							if (shouldCacheTransaction(queriedTx)) {
+								txCache.set("getRawTransaction-" + queriedTx.txid, queriedTx, 3600000);
+							}
 						}
 
 						queriedTxsCurrentIndex++;
