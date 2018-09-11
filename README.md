@@ -50,8 +50,13 @@ The below instructions are geared toward BTC, but can be adapted easily to other
 
 # Donate
 
-To support continued development of this tool and/or to support the hosting of the live demo site:
+Any support for continued development of this tool is appreciated!
 
 * [Bitcoin](bitcoin:3NPGpNyLLmVKCEcuipBs7G4KpQJoJXjDGe): 3NPGpNyLLmVKCEcuipBs7G4KpQJoJXjDGe
+
+![Bitcoin Donation QR Code](/public/img/qr-btc.png)
+
 * [Litecoin](litecoin:ME4pXiXuWfEi1ANBDo9irUJVcZBhsTx14i): ME4pXiXuWfEi1ANBDo9irUJVcZBhsTx14i
+
+![Litecoin Donation QR Code](/public/img/qr-ltc.png)
 
