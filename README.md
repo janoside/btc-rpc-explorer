@@ -37,11 +37,25 @@ The below instructions are geared toward BTC, but can be adapted easily to other
 1. Clone this repo
 2. `npm install`
 3. `npm run build`
-4. Edit the "rpc" settings in [credentials.js](app/credentials.js) to target your node
+4. Edit the environment variables of the server to set the proper "rpc" credentials to target your node. See [configuration](#configuration)
 5. Optional: Change the "coin" value in [config.js](app/config.js). Currently supported values are "BTC" and "LTC".
-6. Optional: Add an ipstack.com API access key to [credentials.js](app/credentials.js). Doing so will add a map to the /peers page.
+6. Optional: Add an ipstack.com API access key to the [environment variables](#environment-variables). Doing so will add a map to the /peers page.
 7. `npm start` to start the local server
 8. Visit http://127.0.0.1:3002/
+
+### Configuration
+Some parameters have to be set as environment variables in the server. Alternatively, you can create a `.env` file in the root directory with such parameters and the software will take them from there.
+
+#### Environment variables:
+```
+BTCEXP_RPC_HOST = localhost
+BTCEXP_RPC_PORT = 8332
+BTCEXP_RPC_USERNAME = username
+BTCEXP_RPC_PASSWORD = password
+BTCEXP_IPSTACK_KEY = 0000aaaafffffgggggg
+BTCEXP_COOKIEPASSWORD = 0x000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f
+```
+If you omit one parameter, a default value will be considered.
 
 ## Run via Docker
 
