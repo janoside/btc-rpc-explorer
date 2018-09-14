@@ -58,7 +58,7 @@ process.on("unhandledRejection", (reason, p) => {
 	console.log("Unhandled Rejection at: Promise", p, "reason:", reason, "stack:", reason.stack);
 });
 
-
+var rpcCredentials = null;
 
 app.runOnStartup = function() {
 	global.config = config;
@@ -67,21 +67,20 @@ app.runOnStartup = function() {
 
 	console.log("Running RPC Explorer for coin: " + global.coinConfig.name);
 
-	var rpcCredentials = null;
-	if (config.credentials.rpc) {
-		rpcCredentials = config.credentials.rpc;
-
-	} else if (process.env.RPC_HOST) {
+	if (process.env.RPC_HOST) {
 		rpcCredentials = {
 			host: process.env.RPC_HOST,
 			port: process.env.RPC_PORT,
 			username: process.env.RPC_USERNAME,
 			password: process.env.RPC_PASSWORD
 		};
+	} else if (config.credentials.rpc) {
+		rpcCredentials = config.credentials.rpc;
+
 	}
 
 	if (rpcCredentials) {
-		console.log("Connecting via RPC to node at " + config.credentials.rpc.host + ":" + config.credentials.rpc.port);
+		console.log("Connecting via RPC to node at " + rpcCredentials.host + ":" + rpcCredentials.port);
 
 		global.client = new bitcoinCore({
 			host: rpcCredentials.host,
@@ -180,10 +179,10 @@ app.use(function(req, res, next) {
 	// make session available in templates
 	res.locals.session = req.session;
 
-	if (config.credentials.rpc && req.session.host == null) {
-		req.session.host = config.credentials.rpc.host;
-		req.session.port = config.credentials.rpc.port;
-		req.session.username = config.credentials.rpc.username;
+	if (rpcCredentials && req.session.host == null) {
+		req.session.host = rpcCredentials.host;
+		req.session.port = rpcCredentials.port;
+		req.session.username = rpcCredentials.username;
 	}
 
 	var userAgent = req.headers['user-agent'];
