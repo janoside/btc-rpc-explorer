@@ -69,31 +69,15 @@ app.runOnStartup = function() {
 	global.coinConfigs = coins;
 
 	console.log("Running RPC Explorer for coin: " + global.coinConfig.name);
+	console.log("Connecting via RPC to node at " + config.credentials.rpc.host + ":" + config.credentials.rpc.port);
 
-	var rpcCredentials = null;
-	if (config.credentials.rpc) {
-		rpcCredentials = config.credentials.rpc;
-
-	} else if (process.env.RPC_HOST) {
-		rpcCredentials = {
-			host: process.env.RPC_HOST,
-			port: process.env.RPC_PORT,
-			username: process.env.RPC_USERNAME,
-			password: process.env.RPC_PASSWORD
-		};
-	}
-
-	if (rpcCredentials) {
-		console.log("Connecting via RPC to node at " + config.credentials.rpc.host + ":" + config.credentials.rpc.port);
-
-		global.client = new bitcoinCore({
-			host: rpcCredentials.host,
-			port: rpcCredentials.port,
-			username: rpcCredentials.username,
-			password: rpcCredentials.password,
-			timeout: 5000
-		});
-	}
+	global.client = new bitcoinCore({
+		host: config.credentials.rpc.host,
+		port: config.credentials.rpc.port,
+		username: config.credentials.rpc.username,
+		password: config.credentials.rpc.password,
+		timeout: 5000
+	});
 
 	if (config.donationAddresses) {
 		var getDonationAddressQrCode = function(coinId) {
