@@ -76,7 +76,32 @@ app.runOnStartup = function() {
 		};
 	} else if (config.credentials.rpc) {
 		rpcCredentials = config.credentials.rpc;
+	}
 
+	// rpc cookie authentication
+	var rpcCookieFile = null;
+	if (process.env.RPC_COOKIEFILE) {
+		rpcCookieFile = process.env.RPC_COOKIEFILE;
+	} else if (config.credentials.rpc.cookiefile) {
+		rpcCookieFile = config.credentials.rpc.cookiefile;
+	}
+
+	if (rpcCookieFile != null) {
+		console.log("Using RPC cookie authentication: " + rpcCookieFile);
+
+		// try to read and parse the authcookie
+		var authcookie = null;
+		try {
+			authcookie = fs.readFileSync(rpcCookieFile).toString().split(":");
+			if (authcookie.length == 2) { 
+    			rpcCredentials.username = authcookie[0];
+    			rpcCredentials.password = authcookie[1];
+    		} else {
+    			throw rpcCookieFile + " seems to have unexpected format";
+    		}
+    	} catch (e) {
+			console.error("Could not read RPC authcookie: " + e);
+		}
 	}
 
 	if (rpcCredentials) {

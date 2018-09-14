@@ -6,8 +6,11 @@ module.exports = {
 	rpc: {
 		host:"localhost",
 		port:8332,
-		username:"username",
-		password:"password"
+		cookiefile:"/run/bitcoind/authcookie"
+		
+		// deprecated
+		//username:"username",
+		//password:"password"
 	},
 
 	// optional: enter your api access key from ipstack.com below
