@@ -28,8 +28,9 @@ The below instructions are geared toward BTC, but can be adapted easily to other
 
 ## Prerequisites
 
-1. Install and run a full, archiving node - [instructions](https://bitcoin.org/en/full-node). Ensure that your node has full transaction indexing enabled (`txindex=1`) and the RPC server enabled (`server=1`).
+1. Install and run a full, archiving node - [instructions](https://bitcoin.org/en/full-node). Ensure that your bitcoin node has full transaction indexing enabled (`txindex=1`) and the RPC server enabled (`server=1`).
 2. Synchronize your node with the Bitcoin network.
+3. "Recent" version of Node.js (8+ recommended).
 
 ## Instructions
 
@@ -47,57 +48,15 @@ The below instructions are geared toward BTC, but can be adapted easily to other
 1. `docker build -t btc-rpc-explorer .`
 2. `docker run -p 3002:3002 -it btc-rpc-explorer`
 
-# Screenshots
-
-<table>
-  <tr>
-    <td valign="top">
-      <h4>Homepage (list of recent blocks)</h4>
-      <img src="public/img/screenshots/home.png" style="margin-right:5px; border: 1px solid #ccc;" />
-    </td>
-    <td valign="top">
-      <h4>Node Details</h4>
-      <img src="public/img/screenshots/node-details.png" style="margin-right:5px; border: 1px solid #ccc;" />
-    </td>
-    <td valign="top">
-      <h4>Transaction Details</h4>
-      <img src="public/img/screenshots/transaction.png" style="margin-right:5px; border: 1px solid #ccc;" />
-    </td>
-  </tr>
-  <tr>
-    <td valign="top">
-      <h4>Browse Blocks</h4>
-      <img src="public/img/screenshots/blocks.png" style="margin-right:5px; border: 1px solid #ccc;" />
-    </td>
-    <td valign="top">
-      <h4>Block Details</h4>
-      <img src="public/img/screenshots/block.png" style="margin-right:5px; border: 1px solid #ccc;" />
-    </td>
-    <td valign="top">
-      <h4>Mempool Summary</h4>
-      <img src="public/img/screenshots/mempool-summary.png" style="margin-right:5px; border: 1px solid #ccc;" />
-    </td>
-  </tr>
-  <tr>
-    <td valign="top">
-      <h4>Transaction, Raw JSON</h4>
-      <img src="public/img/screenshots/transaction-raw.png" style="margin-right:5px; border: 1px solid #ccc;" />
-    </td>
-    <td valign="top">
-      <h4>RPC Browser</h4>
-      <img src="public/img/screenshots/rpc-browser.png" style="margin-right:5px; border: 1px solid #ccc;" />
-    </td>
-    <td valign="top">
-      <h4>Connect via RPC</h4>
-      <img src="public/img/screenshots/connect.png" style="margin-right:5px; border: 1px solid #ccc;" />
-    </td>
-  </tr>
-</table>
-
 # Donate
 
-To support continued development of this tool and/or to support the hosting of the live demo site:
+Any support for continued development of this tool is appreciated!
 
 * [Bitcoin](bitcoin:3NPGpNyLLmVKCEcuipBs7G4KpQJoJXjDGe): 3NPGpNyLLmVKCEcuipBs7G4KpQJoJXjDGe
+
+![Bitcoin Donation QR Code](/public/img/qr-btc.png)
+
 * [Litecoin](litecoin:ME4pXiXuWfEi1ANBDo9irUJVcZBhsTx14i): ME4pXiXuWfEi1ANBDo9irUJVcZBhsTx14i
+
+![Litecoin Donation QR Code](/public/img/qr-ltc.png)
 
