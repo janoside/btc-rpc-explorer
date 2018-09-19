@@ -93,9 +93,8 @@ block content
 								div(class="summary-table-content monospace")
 									if (result.getrawtransaction.time)
 										td(class="monospace") #{moment.utc(new Date(result.getrawtransaction["time"] * 1000)).format("Y-MM-DD HH:mm:ss")} utc
-											- var timeAgo = moment.duration(moment.utc(new Date()).diff(moment.utc(new Date(parseInt(result.getrawtransaction["time"]) * 1000))));
-											br
-											span(class="text-muted")  (age: #{timeAgo.format()})
+											- var timeAgoTime = result.getrawtransaction["time"];
+											include includes/time-ago.pug
 
 						div(class="row")
 							div(class="summary-table-label") Version

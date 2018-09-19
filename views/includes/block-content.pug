@@ -52,10 +52,9 @@ div(class="tab-content")
 						div(class="row")
 							div(class="summary-split-table-label") Timestamp
 							div(class="summary-split-table-content monospace")
-								- var timeAgo = moment.duration(moment.utc(new Date()).diff(moment.utc(new Date(parseInt(result.getblock.time) * 1000))));
 								span #{moment.utc(new Date(result.getblock.time * 1000)).format("Y-MM-DD HH:mm:ss")} utc
-								br
-								span(class="text-muted")  (age #{timeAgo.format()})
+								- var timeAgoTime = result.getblock.time;
+								include ./time-ago.pug
 
 						div(class="row")
 							div(class="summary-split-table-label") Transactions
