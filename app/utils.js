@@ -373,7 +373,7 @@ function formatLargeNumber(n, decimalPlaces) {
 		}
 	}
 
-	return [n, {}];
+	return [new Decimal(n).toDecimalPlaces(decimalPlaces), {}];
 }
 
 
