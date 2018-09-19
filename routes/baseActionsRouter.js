@@ -381,9 +381,15 @@ router.get("/block-height/:blockHeight", function(req, res) {
 	var limit = config.site.blockTxPageSize;
 	var offset = 0;
 
-	// for demo sites, keep page sizes static
-	if (!config.demoSite && req.query.limit) {
+	if (req.query.limit) {
 		limit = parseInt(req.query.limit);
+
+		// for demo sites, limit page sizes
+		if (config.demoSite && limit > config.site.blockTxPageSize) {
+			limit = config.site.blockTxPageSize;
+
+			res.locals.userMessage = "Transaction page size limited to " + config.site.blockTxPageSize + ". If this is your site, you can change or disable this limit in the site config.";
+		}
 	}
 
 	if (req.query.offset) {
@@ -417,9 +423,15 @@ router.get("/block/:blockHash", function(req, res) {
 	var limit = config.site.blockTxPageSize;
 	var offset = 0;
 
-	// for demo sites, keep page sizes static
-	if (!config.demoSite && req.query.limit) {
+	if (req.query.limit) {
 		limit = parseInt(req.query.limit);
+
+		// for demo sites, limit page sizes
+		if (config.demoSite && limit > config.site.blockTxPageSize) {
+			limit = config.site.blockTxPageSize;
+
+			res.locals.userMessage = "Transaction page size limited to " + config.site.blockTxPageSize + ". If this is your site, you can change or disable this limit in the site config.";
+		}
 	}
 
 	if (req.query.offset) {
