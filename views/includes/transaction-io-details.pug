@@ -42,7 +42,7 @@ div(class="row monospace")
 
 								div(class="tx-io-value")
 									if (txVin.coinbase)
-										- var currencyValue = coinConfig.blockRewardFunction(result.getblock.height);
+										- var currencyValue = coinConfig.blockRewardFunction(blockHeight);
 										include ./value-display.pug
 									else
 										if (vout && vout.value)
