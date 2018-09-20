@@ -212,11 +212,11 @@ div(class="tab-content")
 					//pre
 					//	code #{JSON.stringify(tx, null, 4)}
 					div(class="xcard mb-3")
-						div(class="card-header")
+						div(class="card-header monospace")
 							if (tx && tx.txid)
 								span ##{(txIndex + offset + 1).toLocaleString()}
 								span  &ndash; 
-								a(href=("/tx/" + tx.txid), class="monospace") #{tx.txid}
+								a(href=("/tx/" + tx.txid)) #{tx.txid}
 
 								if (global.specialTransactions && global.specialTransactions[tx.txid])
 									span  
