@@ -98,13 +98,12 @@ block content
 														
 
 										else
-											if (balance.confirmed)
-												div(class="row")
-													div(class="summary-split-table-label") Balance
-													div(class="summary-split-table-content monospace")
-														- var currencyValue = balance.confirmed / 100000000;
-														include includes/value-display.pug
-														include includes/electrum-trust-note.pug
+											div(class="row")
+												div(class="summary-split-table-label") Balance
+												div(class="summary-split-table-content monospace")
+													- var currencyValue = balance.confirmed / 100000000;
+													include includes/value-display.pug
+													include includes/electrum-trust-note.pug
 
 											if (balance.unconfirmed)
 												div(class="row")
