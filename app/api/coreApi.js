@@ -558,6 +558,49 @@ function getRawTransactions(txids) {
 	});
 }
 
+function getRawTransactionsWithInputs(txids) {
+	return new Promise(function(resolve, reject) {
+		getRawTransactions(txids).then(function(transactions) {
+			var maxInputsTracked = config.site.txMaxInput;
+			var vinTxids = [];
+			for (var i = 0; i < transactions.length; i++) {
+				var transaction = transactions[i];
+
+				if (transaction && transaction.vin) {
+					for (var j = 0; j < Math.min(maxInputsTracked, transaction.vin.length); j++) {
+						if (transaction.vin[j].txid) {
+							vinTxids.push(transaction.vin[j].txid);
+						}
+					}
+				}
+			}
+
+			var txInputsByTransaction = {};
+			getRawTransactions(vinTxids).then(function(vinTransactions) {
+				var vinTxById = {};
+
+				vinTransactions.forEach(function(tx) {
+					vinTxById[tx.txid] = tx;
+				});
+
+				transactions.forEach(function(tx) {
+					txInputsByTransaction[tx.txid] = {};
+
+					if (tx && tx.vin) {
+						for (var i = 0; i < Math.min(maxInputsTracked, tx.vin.length); i++) {
+							if (vinTxById[tx.vin[i].txid]) {
+								txInputsByTransaction[tx.txid][i] = vinTxById[tx.vin[i].txid];
+							}
+						}
+					}
+
+					resolve({ transactions:transactions, txInputsByTransaction:txInputsByTransaction });
+				});
+			});
+		});
+	});
+}
+
 function getBlockByHashWithTransactions(blockHash, txLimit, txOffset) {
 	return new Promise(function(resolve, reject) {
 		getBlockByHash(blockHash).then(function(block) {
@@ -658,6 +701,7 @@ module.exports = {
 	getBlockByHashWithTransactions: getBlockByHashWithTransactions,
 	getRawTransaction: getRawTransaction,
 	getRawTransactions: getRawTransactions,
+	getRawTransactionsWithInputs: getRawTransactionsWithInputs,
 	getMempoolStats: getMempoolStats,
 	getUptimeSeconds: getUptimeSeconds,
 	getHelp: getHelp,

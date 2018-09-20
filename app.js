@@ -22,6 +22,7 @@ var coins = require("./app/coins.js");
 var request = require("request");
 var qrcode = require("qrcode");
 var fs = require('fs');
+var electrumApi = require("./app/api/electrumApi.js");
 
 var crawlerBotUserAgentStrings = [ "Googlebot", "Bingbot", "Slurp", "DuckDuckBot", "Baiduspider", "YandexBot", "Sogou", "Exabot", "facebot", "ia_archiver" ];
 
@@ -119,6 +120,12 @@ app.runOnStartup = function() {
 				global.specialTransactions[item.txid] = item;
 			}
 		});
+	}
+
+	if (config.electrumXServers && config.electrumXServers.length > 0) {
+		electrumApi.connectToServers();
+
+		global.electrumApi = electrumApi;
 	}
 
 	if (global.coinConfig.miningPoolsConfigUrls) {

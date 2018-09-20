@@ -56,76 +56,203 @@ block content
 						div(class="card-header")
 							span(class="h6") Summary
 						div(class="card-body")
-
-							if (addressObj.hash)
-								div(class="row")
-									div(class="summary-table-label") Hash 160
-									div(class="summary-table-content monospace") #{addressObj.hash.toString("hex")}
-
-							if (result.validateaddress.scriptPubKey)
-								div(class="row")
-									div(class="summary-table-label") Script Public Key
-									div(class="summary-table-content monospace") #{result.validateaddress.scriptPubKey}
-
-							if (addressObj.hasOwnProperty("version"))
-								div(class="row")
-									div(class="summary-table-label") Version
-									div(class="summary-table-content monospace") #{addressObj.version}
-
-							if (result.validateaddress.hasOwnProperty("witness_version"))
-								div(class="row")
-									div(class="summary-table-label") Witness Version
-									div(class="summary-table-content monospace") #{result.validateaddress.witness_version}
-
-							if (result.validateaddress.witness_program)
-								div(class="row")
-									div(class="summary-table-label") Witness Program
-									div(class="summary-table-content monospace") #{result.validateaddress.witness_program}
-
 							div(class="row")
-								div(class="summary-table-label") QR Code
-								div(class="summary-table-content monospace")
-									img(src=addressQrCodeUrl, alt=address, style="border: solid 1px #ccc;")
+								div(class="col-md-6")
 
-					div(class="card mb-3")
-						div(class="card-header")
-							span(class="h6") Flags
-						div(class="card-body")
-							table(class="table table-responsive-sm text-center")
-								thead
-									tr
-										th Is Valid?
-										th Is Script?
-										th Is Witness?
-										th Is Mine?
-										th Is Watch-Only?
-								tbody
-									tr
-										- var x = result.validateaddress;
-										- var flags = [x.isvalid, x.isscript, x.iswitness, x.ismine, x.iswatchonly];
+									if (addressObj.hash)
+										div(class="row")
+											div(class="summary-split-table-label") Hash 160
+											div(class="summary-split-table-content monospace") #{addressObj.hash.toString("hex")}
 
-										each flag in flags
-											td
-												if (flag)
+									if (result.validateaddress.scriptPubKey)
+										div(class="row")
+											div(class="summary-split-table-label") Script Public Key
+											div(class="summary-split-table-content monospace") #{result.validateaddress.scriptPubKey}
+
+									if (addressObj.hasOwnProperty("version"))
+										div(class="row")
+											div(class="summary-split-table-label") Version
+											div(class="summary-split-table-content monospace") #{addressObj.version}
+
+									if (result.validateaddress.hasOwnProperty("witness_version"))
+										div(class="row")
+											div(class="summary-split-table-label") Witness Version
+											div(class="summary-split-table-content monospace") #{result.validateaddress.witness_version}
+
+									if (result.validateaddress.witness_program)
+										div(class="row")
+											div(class="summary-split-table-label") Witness Program
+											div(class="summary-split-table-content monospace") #{result.validateaddress.witness_program}
+
+									if (balance)
+										if (balance.conflictedResults)
+											div(class="row")
+												div(class="summary-split-table-label") Balance
+												div(class="summary-split-table-content monospace")
+													span(class="text-danger") Conflicted ElectrumX Results
+													include includes/electrum-trust-note.pug
+
+													each item in balance.conflictedResults
+														- var currencyValue = item.confirmed / 100000000;
+														include includes/value-display.pug
+														
+
+										else
+											if (balance.confirmed)
+												div(class="row")
+													div(class="summary-split-table-label") Balance
+													div(class="summary-split-table-content monospace")
+														- var currencyValue = balance.confirmed / 100000000;
+														include includes/value-display.pug
+														include includes/electrum-trust-note.pug
+
+											if (balance.unconfirmed)
+												div(class="row")
+													div(class="summary-split-table-label") Unconfirmed
+													div(class="summary-split-table-content monospace")
+														- var currencyValue = balance.unconfirmed / 100000000;
+														include includes/value-display.pug
+														include includes/electrum-trust-note.pug
+
+									if (electrumHistory)
+										div(class="row")
+											div(class="summary-split-table-label") Transactions
+											div(class="summary-split-table-content monospace") #{electrumHistory.length.toLocaleString()}
+												include includes/electrum-trust-note.pug
+
+									div(class="row")
+										div(class="summary-split-table-label") QR Code
+										div(class="summary-split-table-content monospace")
+											img(src=addressQrCodeUrl, alt=address, style="border: solid 1px #ccc;")
+
+								div(class="col-md-6")
+									- var x = result.validateaddress;
+									- var flagNames = ["Is Valid?", "Is Script?", "Is Witness?", "Is Mine?", "Is Watch-Only?"];
+									- var flags = [x.isvalid, x.isscript, x.iswitness, x.ismine, x.iswatchonly];
+
+									each flagName, index in flagNames
+										div(class="row")
+											div(class="summary-split-table-label") #{flagName}
+											div(class="summary-split-table-content monospace")
+												if (flags[index])
 													i(class="fas fa-check text-success")
 												else
 													i(class="fas fa-times text-danger")
 
+					if (false)
+						div(class="card mb-3")
+							div(class="card-header")
+								span(class="h6") Flags
+							div(class="card-body")
+								table(class="table table-responsive-sm text-center")
+									thead
+										tr
+											th Is Valid?
+											th Is Script?
+											th Is Witness?
+											th Is Mine?
+											th Is Watch-Only?
+									tbody
+										tr
+											- var x = result.validateaddress;
+											- var flags = [x.isvalid, x.isscript, x.iswitness, x.ismine, x.iswatchonly];
+
+											each flag in flags
+												td
+													if (flag)
+														i(class="fas fa-check text-success")
+													else
+														i(class="fas fa-times text-danger")
+
 					div(class="card")
 						div(class="card-header")
 							span(class="h6") Transactions
+							if (transactions)
+								include includes/electrum-trust-note.pug
 						div(class="card-body")
-							table(class="table")
-								strong
-									p(class="text-warning") This is a work-in-progress
-								p Since this app is database-free, displaying a list of transactions involving the current address is tricky. I'm actively researching the best way to implement this.
+							if (transactions)
+								each tx, txIndex in transactions
+									//pre
+									//	code #{JSON.stringify(tx, null, 4)}
+									div(class="xcard mb-3")
+										div(class="card-header monospace clearfix")
+											div(class="float-left", style="margin-right: 10px;")
+												span ##{(offset + txIndex + 1).toLocaleString()}
+												span  &ndash; 
+											div(class="float-left")
+												if (tx && tx.txid)
+													if (tx.time)
+														span #{moment.utc(new Date(tx["time"] * 1000)).format("Y-MM-DD HH:mm:ss")} utc
+														- var timeAgoTime = tx.time;
+														include includes/time-ago.pug
 
-								a(href="https://github.com/janoside/btc-rpc-explorer/issues/8") Suggestions and/or pull requests are welcome!
+													else
+														span(class="text-danger") Unconfirmed
+
+													br
+													a(href=("/tx/" + tx.txid)) #{tx.txid}
+													br
+
+													if (addrGainsByTx[tx.txid])
+														- var currencyValue = addrGainsByTx[tx.txid];
+														span(class="text-success") +
+															include includes/value-display.pug
+
+														if (addrLossesByTx[tx.txid])
+															span  / 
+
+													if (addrLossesByTx[tx.txid])
+														- var currencyValue = addrLossesByTx[tx.txid];
+														span(class="text-danger") -
+															include includes/value-display.pug
+
+													if (global.specialTransactions && global.specialTransactions[tx.txid])
+														span  
+														a(data-toggle="tooltip", title=(coinConfig.name + " Fun! See transaction for details"))
+															i(class="fas fa-certificate text-primary")
+													
+										div(class="card-body")
+											if (true)
+												- var txInputs = txInputsByTransaction[tx.txid];
+												- var blockHeight = blockHeightsByTxid[tx.txid];
+
+												include includes/transaction-io-details.pug
+							else
+								p Since this explorer is database-free, it doesn't natively support address transaction history. However, you can configure it to communicate with one or more ElectrumX servers to build and display this data. In doing so, you should be aware that you'll be trusting those ElectrumX servers. If you configure multiple servers the results obtained from each will be cross-referenced against the others. Communicating with ElectrumX servers will also impact your privacy since the servers will know what addresses you're interested in. If these tradeoffs are acceptable, you can see a list of public ElectrumX servers here: 
+								a(href="https://uasf.saltylemon.org/electrum") https://uasf.saltylemon.org/electrum
+							
+							if (false)
+								pre
+									code #{JSON.stringify(transactions, null, 4)}
+
+							- var pageNumber = offset / limit + 1;
+							- var pageCount = Math.floor(txids.length / limit);
+							- if (pageCount * limit < txids.length) {
+								- pageCount++;
+							- }
+							- var paginationUrlFunction = function(x) {
+								- return paginationBaseUrl + "?limit=" + limit + "&offset=" + ((x - 1) * limit);
+							- }
+							
+							hr
+
+							include includes/pagination.pug
+
+							
 				
 
 				div(id="tab-json", class="tab-pane", role="tabpanel")
 					div(class="highlight")
+						h4 Node.ValidateAddress
 						pre
 							code(class="language-json", data-lang="json") #{JSON.stringify(result.validateaddress, null, 4)}
+
+						h4 Electrum.Balance
+						pre
+							code(class="language-json", data-lang="json") #{JSON.stringify(electrumBalance, null, 4)}
+
+						h4 Electrum.History
+						pre
+							code(class="language-json", data-lang="json") #{JSON.stringify(electrumHistory, null, 4)}
 
 		
