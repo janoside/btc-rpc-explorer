@@ -66,7 +66,7 @@ app.runOnStartup = function() {
 	global.coinConfig = coins[config.coin];
 	global.coinConfigs = coins;
 
-	console.log("Running RPC Explorer for coin: " + global.coinConfig.name);
+	console.log("Running RPC Explorer for " + global.coinConfig.name);
 
 	var rpcCredentials = null;
 	if (config.credentials.rpc) {
@@ -162,7 +162,6 @@ app.runOnStartup = function() {
 				}
 			}
 		});
-		
 	}
 
 	if (global.sourcecodeVersion == null) {

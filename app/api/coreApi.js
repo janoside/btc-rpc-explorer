@@ -178,7 +178,7 @@ function getMempoolDetails(start, count) {
 			}
 
 			getRawTransactions(txids).then(function(transactions) {
-				var maxInputsTracked = config.site.blockTxMaxInput;
+				var maxInputsTracked = config.site.txMaxInput;
 				var vinTxids = [];
 				for (var i = 0; i < transactions.length; i++) {
 					var transaction = transactions[i];
@@ -626,7 +626,7 @@ function getBlockByHashWithTransactions(blockHash, txLimit, txOffset) {
 					transactions.shift();
 				}
 
-				var maxInputsTracked = config.site.blockTxMaxInput;
+				var maxInputsTracked = config.site.txMaxInput;
 				var vinTxids = [];
 				for (var i = 0; i < transactions.length; i++) {
 					var transaction = transactions[i];
