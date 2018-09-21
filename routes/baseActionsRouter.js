@@ -615,6 +615,9 @@ router.get("/address/:address", function(req, res) {
 						var addrGainsByTx = {};
 						var addrLossesByTx = {};
 
+						res.locals.addrGainsByTx = addrGainsByTx;
+						res.locals.addrLossesByTx = addrLossesByTx;
+
 						for (var i = 0; i < rawTxResult.transactions.length; i++) {
 							var tx = rawTxResult.transactions[i];
 							var txInputs = rawTxResult.txInputsByTransaction[tx.txid];
@@ -634,7 +637,7 @@ router.get("/address/:address", function(req, res) {
 
 								if (txInput != null) {
 									for (var k = 0; k < txInput.vout.length; k++) {
-										if (txInput.vout[k].scriptPubKey.addresses.includes(address)) {
+										if (txInput.vout[k] && txInput.vout[k].scriptPubKey && txInput.vout[k].scriptPubKey.addresses && txInput.vout[k].scriptPubKey.addresses.includes(address)) {
 											if (addrLossesByTx[tx.txid] == null) {
 												addrLossesByTx[tx.txid] = new Decimal(0);
 											}
@@ -649,10 +652,10 @@ router.get("/address/:address", function(req, res) {
 							//console.log("txInputs: " + JSON.stringify(txInputs));
 						}
 
-						res.locals.addrGainsByTx = addrGainsByTx;
-						res.locals.addrLossesByTx = addrLossesByTx;
-
 						resolve();
+
+					}).catch(function(err) {
+						reject(err);
 					});
 				
 				}).catch(function(err) {
@@ -661,7 +664,10 @@ router.get("/address/:address", function(req, res) {
 			}));
 		}
 
-		Promise.all(promises).then(function() {
+		Promise.all(promises).catch(function(err) {
+			console.log(err);
+
+		}).finally(function() {
 			qrcode.toDataURL(address, function(err, url) {
 				if (err) {
 					console.log("Error 93ygfew0ygf2gf2: " + err);
@@ -671,10 +677,6 @@ router.get("/address/:address", function(req, res) {
 
 				res.render("address");
 			});
-		}).catch(function(err) {
-			console.log(err);
-
-			res.render("address");
 		});
 		
 	}).catch(function(err) {
