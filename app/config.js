@@ -32,6 +32,10 @@ module.exports = {
 		"pruneblockchain"
 	],
 
+	// https://uasf.saltylemon.org/electrum
+	electrumXServers:[
+	],
+
 	site: {
 		blockTxPageSize:20,
 		addressTxPageSize:20,

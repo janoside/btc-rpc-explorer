@@ -525,7 +525,8 @@ router.get("/address/:address", function(req, res) {
 	res.locals.address = address;
 	res.locals.limit = limit;
 	res.locals.offset = offset;
-	res.locals.paginationBaseUrl = ("/address/" + address);
+	res.locals.sort = sort;
+	res.locals.paginationBaseUrl = ("/address/" + address + "?sort=" + sort);
 	
 	res.locals.result = {};
 
@@ -557,6 +558,8 @@ router.get("/address/:address", function(req, res) {
 			var addrScripthash = hexEnc.stringify(sha256(hexEnc.parse(validateaddressResult.scriptPubKey)));
 			addrScripthash = addrScripthash.match(/.{2}/g).reverse().join("");
 
+			res.locals.electrumScripthash = addrScripthash;
+
 			promises.push(new Promise(function(resolve, reject) {
 				electrumApi.getAddressBalance(addrScripthash).then(function(result) {
 					res.locals.balance = result;
@@ -572,14 +575,25 @@ router.get("/address/:address", function(req, res) {
 
 			promises.push(new Promise(function(resolve, reject) {
 				electrumApi.getAddressTxids(addrScripthash).then(function(result) {
-					res.locals.electrumHistory = result;
+					var txidResult = null;
+
+					if (result.conflictedResults) {
+						res.locals.conflictedTxidResults = true;
+
+						txidResult = result.conflictedResults[0];
+
+					} else {
+						txidResult = result;
+					}
+
+					res.locals.electrumHistory = txidResult;
 
 					var txids = [];
 					var blockHeightsByTxid = {};
 
-					for (var i = 0; i < result.length; i++) {
-						txids.push(result[i].tx_hash);
-						blockHeightsByTxid[result[i].tx_hash] = result[i].height;
+					for (var i = 0; i < txidResult.result.length; i++) {
+						txids.push(txidResult.result[i].tx_hash);
+						blockHeightsByTxid[txidResult.result[i].tx_hash] = txidResult.result[i].height;
 					}
 
 					if (sort == "desc") {
@@ -606,7 +620,7 @@ router.get("/address/:address", function(req, res) {
 							var txInputs = rawTxResult.txInputsByTransaction[tx.txid];
 
 							for (var j = 0; j < tx.vout.length; j++) {
-								if (tx.vout[j].scriptPubKey.addresses.includes(address)) {
+								if (tx.vout[j].value > 0 && tx.vout[j].scriptPubKey && tx.vout[j].scriptPubKey.addresses && tx.vout[j].scriptPubKey.addresses.includes(address)) {
 									if (addrGainsByTx[tx.txid] == null) {
 										addrGainsByTx[tx.txid] = new Decimal(0);
 									}
@@ -618,16 +632,17 @@ router.get("/address/:address", function(req, res) {
 							for (var j = 0; j < tx.vin.length; j++) {
 								var txInput = txInputs[j];
 
-								for (var k = 0; k < txInput.vout.length; k++) {
-									if (txInput.vout[k].scriptPubKey.addresses.includes(address)) {
-										if (addrLossesByTx[tx.txid] == null) {
-											addrLossesByTx[tx.txid] = new Decimal(0);
-										}
+								if (txInput != null) {
+									for (var k = 0; k < txInput.vout.length; k++) {
+										if (txInput.vout[k].scriptPubKey.addresses.includes(address)) {
+											if (addrLossesByTx[tx.txid] == null) {
+												addrLossesByTx[tx.txid] = new Decimal(0);
+											}
 
-										addrLossesByTx[tx.txid] = addrLossesByTx[tx.txid].plus(new Decimal(txInput.vout[k].value));
+											addrLossesByTx[tx.txid] = addrLossesByTx[tx.txid].plus(new Decimal(txInput.vout[k].value));
+										}
 									}
 								}
-								
 							}
 
 							//console.log("tx: " + JSON.stringify(tx));
@@ -658,6 +673,8 @@ router.get("/address/:address", function(req, res) {
 			});
 		}).catch(function(err) {
 			console.log(err);
+
+			res.render("address");
 		});
 		
 	}).catch(function(err) {

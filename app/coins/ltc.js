@@ -1,6 +1,34 @@
 var Decimal = require("decimal.js");
 Decimal8 = Decimal.clone({ precision:8, rounding:8 });
 
+var ltcCurrencyUnits = [
+	{
+		name:"LTC",
+		multiplier:1,
+		default:true,
+		values:["", "ltc", "LTC"],
+		decimalPlaces:8
+	},
+	{
+		name:"lite",
+		multiplier:1000,
+		values:["lite"],
+		decimalPlaces:5
+	},
+	{
+		name:"photon",
+		multiplier:1000000,
+		values:["photon"],
+		decimalPlaces:2
+	},
+	{
+		name:"litoshi",
+		multiplier:100000000,
+		values:["litoshi", "lit"],
+		decimalPlaces:0
+	}
+];
+
 module.exports = {
 	name:"Litecoin",
 	logoUrl:"/img/logo/ltc.svg",
@@ -12,33 +40,9 @@ module.exports = {
 		"https://raw.githubusercontent.com/hashstream/pools/master/pools.json",
 	],
 	maxBlockWeight: 4000000,
-	currencyUnits:[
-		{
-			name:"LTC",
-			multiplier:1,
-			default:true,
-			values:["", "ltc", "LTC"],
-			decimalPlaces:8
-		},
-		{
-			name:"lite",
-			multiplier:1000,
-			values:["lite"],
-			decimalPlaces:5
-		},
-		{
-			name:"photon",
-			multiplier:1000000,
-			values:["photon"],
-			decimalPlaces:2
-		},
-		{
-			name:"litoshi",
-			multiplier:100000000,
-			values:["litoshi", "lit"],
-			decimalPlaces:0
-		}
-	],
+	currencyUnits:ltcCurrencyUnits,
+	currencyUnitsByName:{"LTC":ltcCurrencyUnits[0], "lite":ltcCurrencyUnits[1], "photon":ltcCurrencyUnits[2], "litoshi":ltcCurrencyUnits[3]},
+	baseCurrencyUnit:ltcCurrencyUnits[3],
 	feeSatoshiPerByteBucketMaxima: [5, 10, 25, 50, 100, 150, 200, 250],
 	genesisBlockHash: "12a765e31ffd4059bada1e25190f6e98c99d9714d334efa41a195a7e7e04bfe2",
 	genesisCoinbaseTransactionId: "97ddfbbae6be97fd6cdf3e7ca13232a3afff2353e29badfab7f73011edd4ced9",

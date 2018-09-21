@@ -245,6 +245,18 @@ app.use(function(req, res, next) {
 		}
 	}
 
+	// electrum trust warnings on address pages
+	if (!req.session.hideElectrumTrustWarnings) {
+		var cookieValue = req.cookies['user-setting-hideElectrumTrustWarnings'];
+
+		if (cookieValue) {
+			req.session.hideElectrumTrustWarnings = cookieValue;
+
+		} else {
+			req.session.hideElectrumTrustWarnings = "false";
+		}
+	}
+
 	res.locals.currencyFormatType = req.session.currencyFormatType;
 
 

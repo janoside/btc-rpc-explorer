@@ -558,10 +558,18 @@ function getRawTransactions(txids) {
 	});
 }
 
-function getRawTransactionsWithInputs(txids) {
+function getRawTransactionsWithInputs(txids, maxInputs=-1) {
 	return new Promise(function(resolve, reject) {
 		getRawTransactions(txids).then(function(transactions) {
 			var maxInputsTracked = config.site.txMaxInput;
+			
+			if (maxInputs <= 0) {
+				maxInputsTracked = 1000000;
+
+			} else if (maxInputs > 0) {
+				maxInputsTracked = maxInputs;
+			}
+
 			var vinTxids = [];
 			for (var i = 0; i < transactions.length; i++) {
 				var transaction = transactions[i];

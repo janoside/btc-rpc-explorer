@@ -52,6 +52,22 @@ block content
 			div(class="tab-content")
 				div(id="tab-details", class="tab-pane active", role="tabpanel")
 
+					if (config.electrumXServers && config.electrumXServers.length > 0)
+						if (session.hideElectrumTrustWarnings != "true")
+							div(class="alert alert-primary alert-dismissible clearfix", role="alert")
+								h4(class="alert-heading h6 font-weight-bold") Note
+								p Since this explorer is database-free, it doesn't natively support address balances and transaction histories. In order to provide this functionality, address balances and transaction history can be requested from a configurable set of ElectrumX servers. If multiple ElectrumX servers are configured, the results are cross-referenced and conflicts noted. For the transaction history displayed below, only the transaction identifiers from ElectrumX are used; the transaction details are requested via RPC from this app's primary node, as usual.
+
+								span(class="font-weight-bold") Configured ElectrumX Servers
+								ul
+									each server in config.electrumXServers
+										li
+											span #{server.host}
+											span  : #{server.port}
+
+								a(href="/changeSetting?name=hideElectrumTrustWarnings&value=true", class="close", aria-label="Close", style="text-decoration: none;")
+									span(aria-hidden="true") &times;
+
 					div(class="card mb-3")
 						div(class="card-header")
 							span(class="h6") Summary
@@ -90,10 +106,9 @@ block content
 												div(class="summary-split-table-label") Balance
 												div(class="summary-split-table-content monospace")
 													span(class="text-danger") Conflicted ElectrumX Results
-													include includes/electrum-trust-note.pug
 
 													each item in balance.conflictedResults
-														- var currencyValue = item.confirmed / 100000000;
+														- var currencyValue = item.confirmed / coinConfig.baseCurrencyUnit.multiplier;
 														include includes/value-display.pug
 														
 
@@ -101,23 +116,20 @@ block content
 											div(class="row")
 												div(class="summary-split-table-label") Balance
 												div(class="summary-split-table-content monospace")
-													- var currencyValue = balance.confirmed / 100000000;
+													- var currencyValue = balance.result.confirmed / coinConfig.baseCurrencyUnit.multiplier;
 													include includes/value-display.pug
-													include includes/electrum-trust-note.pug
 
 											if (balance.unconfirmed)
 												div(class="row")
 													div(class="summary-split-table-label") Unconfirmed
 													div(class="summary-split-table-content monospace")
-														- var currencyValue = balance.unconfirmed / 100000000;
+														- var currencyValue = balance.unconfirmed / coinConfig.baseCurrencyUnit.multiplier;
 														include includes/value-display.pug
-														include includes/electrum-trust-note.pug
 
 									if (electrumHistory)
 										div(class="row")
 											div(class="summary-split-table-label") Transactions
-											div(class="summary-split-table-content monospace") #{electrumHistory.length.toLocaleString()}
-												include includes/electrum-trust-note.pug
+											div(class="summary-split-table-content monospace") #{electrumHistory.result.length.toLocaleString()}
 
 									div(class="row")
 										div(class="summary-split-table-label") QR Code
@@ -125,6 +137,11 @@ block content
 											img(src=addressQrCodeUrl, alt=address, style="border: solid 1px #ccc;")
 
 								div(class="col-md-6")
+									if (electrumScripthash)
+										div(class="row")
+											div(class="summary-split-table-label") Scripthash
+											div(class="summary-split-table-content monospace") #{electrumScripthash}
+
 									- var x = result.validateaddress;
 									- var flagNames = ["Is Valid?", "Is Script?", "Is Witness?", "Is Mine?", "Is Watch-Only?"];
 									- var flags = [x.isvalid, x.isscript, x.iswitness, x.ismine, x.iswatchonly];
@@ -164,34 +181,79 @@ block content
 														i(class="fas fa-times text-danger")
 
 					div(class="card")
-						div(class="card-header")
-							span(class="h6") Transactions
-							if (transactions)
-								include includes/electrum-trust-note.pug
+						div(class="card-header clearfix")
+							div(class="float-left")
+								span(class="h6")
+									if (txids)
+										if (txids.length == 1)
+											span 1 Transaction
+										else
+											span #{txids.length.toLocaleString()} Transactions
+									else
+										span Transactions
+
+							if (!crawlerBot && txids && txids.length > 0)
+								div(class="float-right")
+									a(href="#", class="pull-right dropdown-toggle", data-toggle="dropdown", aria-haspopup="true", aria-expanded="false")
+										if (sort == "desc")
+											span Newest First
+										else
+											span Oldest First
+
+									div(class="dropdown-menu dropdown-menu-right")
+										a(href=("/address/" + address), class="dropdown-item")
+											if (sort == "desc")
+												i(class="fa fa-check") 
+											span  Newest First
+										a(href=("/address/" + address + "?sort=asc"), class="dropdown-item")
+											if (sort != "desc")
+												i(class="fa fa-check") 
+											span  Oldest First
+
 						div(class="card-body")
+							if (conflictedTxidResults)
+								div(class="alert alert-warning", style="padding-bottom: 0;")
+									div(class="float-left", style="width: 55px; height: 50px; font-size: 18px;")
+										i(class="fas fa-exclamation-triangle fa-2x", style="margin-top: 10px;")
+									h4(class="alert-heading h6 font-weight-bold") Trust Warning
+									p
+										span The transaction history for this address was requested from mulitple ElectrumX servers and the results did not match. The results below were obtained only from 
+										span(class="font-weight-bold") #{electrumHistory.server}
+
 							if (transactions)
 								each tx, txIndex in transactions
 									//pre
 									//	code #{JSON.stringify(tx, null, 4)}
 									div(class="xcard mb-3")
 										div(class="card-header monospace clearfix")
-											div(class="float-left", style="margin-right: 10px;")
-												span ##{(offset + txIndex + 1).toLocaleString()}
-												span  &ndash; 
-											div(class="float-left")
-												if (tx && tx.txid)
-													if (tx.time)
-														span #{moment.utc(new Date(tx["time"] * 1000)).format("Y-MM-DD HH:mm:ss")} utc
-														- var timeAgoTime = tx.time;
-														include includes/time-ago.pug
+											div(class="float-left", style="margin-right: 0px;")
+												if (sort == "desc")
+													span ##{(txids.length - offset - txIndex).toLocaleString()}
+												else
+													span ##{(offset + txIndex + 1).toLocaleString()}
+												span  &ndash;
 
-													else
-														span(class="text-danger") Unconfirmed
+											div(class="row")
+												div(class="col-md-6")
+													if (tx && tx.txid)
+														a(href=("/tx/" + tx.txid)) #{tx.txid}
 
-													br
-													a(href=("/tx/" + tx.txid)) #{tx.txid}
-													br
+														if (global.specialTransactions && global.specialTransactions[tx.txid])
+															span  
+															a(data-toggle="tooltip", title=(coinConfig.name + " Fun! See transaction for details"))
+																i(class="fas fa-certificate text-primary")
 
+												div(class="col-md-6")
+													div(class="text-md-right")
+														if (tx.time)
+															span #{moment.utc(new Date(tx["time"] * 1000)).format("Y-MM-DD HH:mm:ss")} utc
+															- var timeAgoTime = tx.time;
+															include includes/time-ago.pug
+
+														else
+															span(class="text-danger") Unconfirmed
+
+												div(class="col")
 													if (addrGainsByTx[tx.txid])
 														- var currencyValue = addrGainsByTx[tx.txid];
 														span(class="text-success") +
@@ -204,11 +266,6 @@ block content
 														- var currencyValue = addrLossesByTx[tx.txid];
 														span(class="text-danger") -
 															include includes/value-display.pug
-
-													if (global.specialTransactions && global.specialTransactions[tx.txid])
-														span  
-														a(data-toggle="tooltip", title=(coinConfig.name + " Fun! See transaction for details"))
-															i(class="fas fa-certificate text-primary")
 													
 										div(class="card-body")
 											if (true)
@@ -216,6 +273,7 @@ block content
 												- var blockHeight = blockHeightsByTxid[tx.txid];
 
 												include includes/transaction-io-details.pug
+
 							else
 								p Since this explorer is database-free, it doesn't natively support address transaction history. However, you can configure it to communicate with one or more ElectrumX servers to build and display this data. In doing so, you should be aware that you'll be trusting those ElectrumX servers. If you configure multiple servers the results obtained from each will be cross-referenced against the others. Communicating with ElectrumX servers will also impact your privacy since the servers will know what addresses you're interested in. If these tradeoffs are acceptable, you can see a list of public ElectrumX servers here: 
 								a(href="https://uasf.saltylemon.org/electrum") https://uasf.saltylemon.org/electrum
@@ -224,18 +282,19 @@ block content
 								pre
 									code #{JSON.stringify(transactions, null, 4)}
 
-							- var pageNumber = offset / limit + 1;
-							- var pageCount = Math.floor(txids.length / limit);
-							- if (pageCount * limit < txids.length) {
-								- pageCount++;
-							- }
-							- var paginationUrlFunction = function(x) {
-								- return paginationBaseUrl + "?limit=" + limit + "&offset=" + ((x - 1) * limit);
-							- }
-							
-							hr
+							if (!crawlerBot && txids && txids.length > limit)
+								- var pageNumber = offset / limit + 1;
+								- var pageCount = Math.floor(txids.length / limit);
+								- if (pageCount * limit < txids.length) {
+									- pageCount++;
+								- }
+								- var paginationUrlFunction = function(x) {
+									- return paginationBaseUrl + "&limit=" + limit + "&offset=" + ((x - 1) * limit);
+								- }
 
-							include includes/pagination.pug
+								hr
+
+								include includes/pagination.pug
 
 							
 				
@@ -246,12 +305,13 @@ block content
 						pre
 							code(class="language-json", data-lang="json") #{JSON.stringify(result.validateaddress, null, 4)}
 
-						h4 Electrum.Balance
-						pre
-							code(class="language-json", data-lang="json") #{JSON.stringify(electrumBalance, null, 4)}
+						if (config.electrumXServers && config.electrumXServers.length > 0)
+							h4 Electrum.Balance
+							pre
+								code(class="language-json", data-lang="json") #{JSON.stringify(electrumBalance, null, 4)}
 
-						h4 Electrum.History
-						pre
-							code(class="language-json", data-lang="json") #{JSON.stringify(electrumHistory, null, 4)}
+							h4 Electrum.History
+							pre
+								code(class="language-json", data-lang="json") #{JSON.stringify(electrumHistory, null, 4)}
 
 		
