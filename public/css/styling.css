@@ -167,8 +167,8 @@ strong {
 		margin-bottom: 5px;
 	}
 
-	.tx-io-label { max-width: 10%; }
-	.tx-io-content { max-width: 90%; }
+	.tx-io-label { max-width: 11%; }
+	.tx-io-content { max-width: 89%; }
 	.tx-io-desc { max-width: 60%; }
 	.tx-io-value { max-width: 40%; text-align: right; padding-right: 25px; }
 }
@@ -196,8 +196,8 @@ strong {
 		margin-bottom: 5px;
 	}
 
-	.tx-io-label { max-width: 8%; }
-	.tx-io-content { max-width: 92%; }
+	.tx-io-label { max-width: 9.5%; }
+	.tx-io-content { max-width: 90.5%; }
 	.tx-io-desc { max-width: 61%; }
 	.tx-io-value { max-width: 39%; text-align: right; padding-right: 25px; }
 }
@@ -225,8 +225,8 @@ strong {
 		margin-bottom: 5px;
 	}
 
-	.tx-io-label { max-width: 5%; }
-	.tx-io-content { max-width: 95%; }
+	.tx-io-label { max-width: 6.5%; }
+	.tx-io-content { max-width: 93.5%; }
 	.tx-io-desc { max-width: 70%; }
 	.tx-io-value { max-width: 30%; text-align: right; padding-right: 25px; }
 }
