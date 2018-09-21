@@ -42,10 +42,10 @@ block content
 			div(id="tab-details", class="tab-pane active", role="tabpanel")
 				if (global.specialTransactions && global.specialTransactions[txid])
 					div(class="alert alert-primary", style="padding-bottom: 0;")
-						div(class="float-left", style="width: 50px; height: 50px; font-size: 18px;")
+						div(class="float-left", style="width: 55px; height: 55px; font-size: 18px;")
 							i(class="fas fa-certificate fa-2x", style="margin-top: 10px;")
 
-						h4(class="alert-heading h5") #{coinConfig.name} Fun
+						h4(class="alert-heading h6 font-weight-bold") #{coinConfig.name} Fun
 
 						// special transaction info
 						- var stInfo = global.specialTransactions[txid];
