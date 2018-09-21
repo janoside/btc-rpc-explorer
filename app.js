@@ -233,7 +233,7 @@ app.use(function(req, res, next) {
 		}
 	}
 
-	// theme
+	// homepage banner
 	if (!req.session.hideHomepageBanner) {
 		var cookieValue = req.cookies['user-setting-hideHomepageBanner'];
 

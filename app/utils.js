@@ -173,7 +173,7 @@ function logMemoryUsage() {
 	var mbTotal = process.memoryUsage().heapTotal / 1024 / 1024;
 	mbTotal = Math.round(mbTotal * 100) / 100;
 
-	console.log("memoryUsage: heapUsed=" + mbUsed + ", heapTotal=" + mbTotal + ", ratio=" + parseInt(mbUsed / mbTotal * 100));
+	//console.log("memoryUsage: heapUsed=" + mbUsed + ", heapTotal=" + mbTotal + ", ratio=" + parseInt(mbUsed / mbTotal * 100));
 }
 
 function getMinerFromCoinbaseTx(tx) {
