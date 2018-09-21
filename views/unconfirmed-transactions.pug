@@ -25,11 +25,11 @@ block content
 			div(class="card-body")
 				each tx, txIndex in mempoolDetails.transactions
 					div(class="xcard mb-3")
-						div(class="card-header")
+						div(class="card-header monospace")
 							if (tx && tx.txid)
 								strong ##{(txIndex + offset).toLocaleString()}
 								span  &ndash; 
-								a(href=("/tx/" + tx.txid), class="monospace") #{tx.txid}
+								a(href=("/tx/" + tx.txid)) #{tx.txid}
 									
 						div(class="card-body")
 							- var txInputs = mempoolDetails.txInputsByTransaction[tx.txid];
