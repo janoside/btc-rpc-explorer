@@ -149,12 +149,12 @@ html(lang="en")
 								dd
 									div(class="text-md-right text-center")
 										each coin, index in config.donationAddresses.coins
-											div(style="display: inline-block;", class="text-center mb-3", class=(index > 0 ? "ml-md-3" : false))
+											div(style="display: inline-block; max-width: 150px;", class="text-center mb-3 word-wrap monospace", class=(index > 0 ? "ml-md-3" : false))
 												img(src=donationAddressQrCodeUrls[coin], alt=config.donationAddresses[coin].address, style="border: solid 1px #ccc;")
 												br
 												if (config.donationAddresses[coin].urlPrefix)
 													span #{coin}: 
-													a(href=(config.donationAddresses[coin].urlPrefix + config.donationAddresses[coin].address)) #{config.donationAddresses[coin].address.substring(0, 10)}...
+													a(href=(config.donationAddresses[coin].urlPrefix + config.donationAddresses[coin].address)) #{config.donationAddresses[coin].address}
 												else
 													span #{coin}
 		
