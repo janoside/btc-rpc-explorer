@@ -34,6 +34,10 @@ function runOnServer(electrumClient, f) {
 
 		}).catch(function(err) {
 			console.log("Error dif0e21qdh: " + JSON.stringify(err) + ", host=" + electrumClient.host + ", port=" + electrumClient.port);
+
+			reject(err);
+
+			electrumClient.reconnect();
 		});
 	});
 }
