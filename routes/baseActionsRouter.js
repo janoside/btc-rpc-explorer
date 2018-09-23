@@ -544,9 +544,11 @@ router.get("/address/:address", function(req, res) {
 		}
 	}
 
-	for (var i = 0; i < global.miningPoolsConfigs.length; i++) {
-		if (global.miningPoolsConfigs[i].payout_addresses[address]) {
-			res.locals.payoutAddressForMiner = global.miningPoolsConfigs[i].payout_addresses[address];
+	if (global.miningPoolsConfigs) {
+		for (var i = 0; i < global.miningPoolsConfigs.length; i++) {
+			if (global.miningPoolsConfigs[i].payout_addresses[address]) {
+				res.locals.payoutAddressForMiner = global.miningPoolsConfigs[i].payout_addresses[address];
+			}
 		}
 	}
 
