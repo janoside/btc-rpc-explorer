@@ -9,20 +9,43 @@ const ElectrumClient = require('electrum-client');
 var electrumClients = [];
 
 function connectToServers() {
-	for (var i = 0; i < config.electrumXServers.length; i++) {
-		connectToServer(config.electrumXServers[i].host, config.electrumXServers[i].port);
-	}
+	return new Promise(function(resolve, reject) {
+		var promises = [];
+
+		for (var i = 0; i < config.electrumXServers.length; i++) {
+			promises.push(connectToServer(config.electrumXServers[i].host, config.electrumXServers[i].port));
+		}
+
+		Promise.all(promises).then(function() {
+			resolve();
+
+		}).catch(function(err) {
+			console.log("Error 120387rygxx231gwe40: " + err);
+
+			reject(err);
+		});
+	});
 }
 
 function connectToServer(host, port) {
-	console.log("Connecting to ElectrumX Server: " + host + ":" + port);
+	return new Promise(function(resolve, reject) {
+		console.log("Connecting to ElectrumX Server: " + host + ":" + port);
 
-	var electrumClient = new ElectrumClient(port, host, 'tls');
-	electrumClient.initElectrum({client:"btc-rpc-explorer-v1.1", version:"1.2"}).then(function(res) {
-		console.log("Connected to ElectrumX Server: " + host + ":" + port + ", versions: " + res);
+		var electrumClient = new ElectrumClient(port, host, 'tls');
+		electrumClient.initElectrum({client:"btc-rpc-explorer-v1.1", version:"1.2"}).then(function(res) {
+			console.log("Connected to ElectrumX Server: " + host + ":" + port + ", versions: " + res);
 
-		electrumClients.push(electrumClient);
+			electrumClients.push(electrumClient);
+
+			resolve();
+
+		}).catch(function(err) {
+			console.log("Error 137rg023xx7gerfwdd: " + err + ", when trying to connect to ElectrumX server at " + host + ":" + port);
+
+			reject(err);
+		});
 	});
+	
 }
 
 function runOnServer(electrumClient, f) {

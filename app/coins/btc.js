@@ -177,6 +177,14 @@ module.exports = {
 			summary: "Block reward lost",
 			alertBodyHtml: "This coinbase transaction completely fails to collect the block's mining reward. 12.5 BTC were lost.",
 			referenceUrl: "https://bitcoin.stackexchange.com/a/67012/3397"
+		},
+		{
+			type:"address",
+			date:"2011-12-03",
+			address:"1JryTePceSiWVpoNBU8SbwiT7J4ghzijzW",
+			summary:"Brainwallet address for 'Satoshi Nakamoto'",
+			referenceUrl:"https://twitter.com/MrHodl/status/1041448002005741568",
+			alertBodyHtml:"This address was generated from the SHA256 hash of 'Satoshi Nakamoto' as example of the 'brainwallet' concept."
 		}
 	],
 	exchangeRateData:{

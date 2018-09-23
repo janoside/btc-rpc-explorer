@@ -37,6 +37,41 @@ block content
 							span  (see the configuration
 							a(href=coinConfig.miningPoolsConfigUrls[0]) here
 							span )
+			else if (global.specialAddresses[address] && global.specialAddresses[address].type == "donation")
+				div(class="alert alert-primary", style="padding-bottom: 0;")
+					div(class="float-left", style="width: 50px; height: 50px; font-size: 18px;")
+						i(class="fas fa-certificate fa-2x", style="margin-top: 10px;")
+
+					h4(class="alert-heading h6 font-weight-bold") #{coinConfig.name} Fun
+
+					p
+						span This is the #{coinConfig.ticker} donation address to support development of this tool. All support is appreciated!
+
+			else if (global.specialAddresses[address] && global.specialAddresses[address].type == "fun")
+				div(class="alert alert-primary", style="padding-bottom: 0;")
+					div(class="float-left", style="width: 50px; height: 50px; font-size: 18px;")
+						i(class="fas fa-certificate fa-2x", style="margin-top: 10px;")
+
+					h4(class="alert-heading h6 font-weight-bold") #{coinConfig.name} Fun
+
+					// special address info
+					- var saInfo = global.specialAddresses[address].addressInfo;
+					if (saInfo.alertBodyHtml)
+						p
+							span !{saInfo.alertBodyHtml}
+
+							if (saInfo.referenceUrl && saInfo.referenceUrl.trim().length > 0 && saInfo.alertBodyHtml.indexOf(saInfo.referenceUrl) == -1)
+								span  
+									a(href=saInfo.referenceUrl) Read more
+
+					else
+						p
+							span #{saInfo.summary}
+
+							if (saInfo.referenceUrl && saInfo.referenceUrl.trim().length > 0)
+								span  
+									a(href=saInfo.referenceUrl) Read more
+
 
 			if (false)
 				pre
@@ -211,7 +246,7 @@ block content
 									else
 										span Transactions
 
-							if (!crawlerBot && txids && txids.length > 0)
+							if (!crawlerBot && txids && txids.length > 1)
 								div(class="float-right")
 									a(href="#", class="pull-right dropdown-toggle", data-toggle="dropdown", aria-haspopup="true", aria-expanded="false")
 										if (sort == "desc")
@@ -240,7 +275,7 @@ block content
 										span(class="font-weight-bold") #{electrumHistory.server}
 
 							
-							if (transactions)
+							if (advancedFunctionality)
 								if (transactions.length == 0)
 									span No transactions found
 

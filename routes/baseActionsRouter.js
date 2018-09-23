@@ -538,6 +538,7 @@ router.get("/address/:address", function(req, res) {
 	res.locals.offset = offset;
 	res.locals.sort = sort;
 	res.locals.paginationBaseUrl = ("/address/" + address + "?sort=" + sort);
+	res.locals.transactions = [];
 	
 	res.locals.result = {};
 
@@ -562,6 +563,8 @@ router.get("/address/:address", function(req, res) {
 			}
 		}
 	}
+
+	res.locals.advancedFunctionality = (global.electrumApi != null);
 
 	coreApi.getAddress(address).then(function(validateaddressResult) {
 		res.locals.result.validateaddress = validateaddressResult;

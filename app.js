@@ -111,6 +111,10 @@ app.runOnStartup = function() {
 	global.specialBlocks = {};
 	global.specialAddresses = {};
 
+	if (config.donationAddresses && config.donationAddresses[coinConfig.ticker]) {
+		global.specialAddresses[config.donationAddresses[coinConfig.ticker].address] = {type:"donation"};
+	}
+
 	if (global.coinConfig.historicalData) {
 		global.coinConfig.historicalData.forEach(function(item) {
 			if (item.type == "blockheight") {
@@ -118,14 +122,22 @@ app.runOnStartup = function() {
 
 			} else if (item.type == "tx") {
 				global.specialTransactions[item.txid] = item;
+
+			} else if (item.type == "address") {
+				global.specialAddresses[item.address] = {type:"fun", addressInfo:item};
 			}
 		});
 	}
 
 	if (config.electrumXServers && config.electrumXServers.length > 0) {
-		electrumApi.connectToServers();
+		electrumApi.connectToServers().then(function() {
+			console.log("Live with ElectrumX API");
 
-		global.electrumApi = electrumApi;
+			global.electrumApi = electrumApi;
+			
+		}).catch(function(err) {
+			console.log("Error 31207ugf4e0fed: " + err + ", while initializing ElectrumX API");
+		});
 	}
 
 	if (global.coinConfig.miningPoolsConfigUrls) {
@@ -157,7 +169,7 @@ app.runOnStartup = function() {
 			for (var i = 0; i < global.miningPoolsConfigs.length; i++) {
 				for (var x in global.miningPoolsConfigs[i].payout_addresses) {
 					if (global.miningPoolsConfigs[i].payout_addresses.hasOwnProperty(x)) {
-						global.specialAddresses[x] = global.miningPoolsConfigs[i].payout_addresses[x];
+						global.specialAddresses[x] = {type:"minerPayout", minerInfo:global.miningPoolsConfigs[i].payout_addresses[x]};
 					}
 				}
 			}
