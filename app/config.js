@@ -66,9 +66,10 @@ module.exports = {
 
 	donationAddresses:{
 		coins:["BTC", "LTC"],
+		sites:{"BTC":"https://btc.chaintools.io", "LTC":"https://ltc.chaintools.io"},
 
-		"BTC":{address:"3NPGpNyLLmVKCEcuipBs7G4KpQJoJXjDGe", urlPrefix:"bitcoin:"},
-		"LTC":{address:"ME4pXiXuWfEi1ANBDo9irUJVcZBhsTx14i", urlPrefix:"litecoin:"}
+		"BTC":{address:"3NPGpNyLLmVKCEcuipBs7G4KpQJoJXjDGe"},
+		"LTC":{address:"ME4pXiXuWfEi1ANBDo9irUJVcZBhsTx14i"}
 	},
 
 	headerDropdownLinks: {

@@ -152,11 +152,12 @@ html(lang="en")
 											div(style="display: inline-block; max-width: 150px;", class="text-center mb-3 word-wrap monospace", class=(index > 0 ? "ml-md-3" : false))
 												img(src=donationAddressQrCodeUrls[coin], alt=config.donationAddresses[coin].address, style="border: solid 1px #ccc;")
 												br
-												if (config.donationAddresses[coin].urlPrefix)
+												if (coinConfig.ticker == coin)
 													span #{coin}: 
-													a(href=(config.donationAddresses[coin].urlPrefix + config.donationAddresses[coin].address)) #{config.donationAddresses[coin].address}
+													a(href=("/address/" + config.donationAddresses[coin].address)) #{config.donationAddresses[coin].address}
 												else
-													span #{coin}
+													span #{coin}: 
+													a(href=(config.donationAddresses.sites[coin] + "/address/" + config.donationAddresses[coin].address)) #{config.donationAddresses[coin].address}
 		
 		script(src="https://code.jquery.com/jquery-3.3.1.min.js", integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=", crossorigin="anonymous")
 		script(src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js", integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ", crossorigin="anonymous")

@@ -31,6 +31,7 @@ var btcCurrencyUnits = [
 
 module.exports = {
 	name:"Bitcoin",
+	ticker:"BTC",
 	logoUrl:"/img/logo/btc.svg",
 	siteTitle:"Bitcoin Explorer",
 	siteDescriptionHtml:"<b>BTC Explorer</b> is <a href='https://github.com/janoside/btc-rpc-explorer). If you run your own [Bitcoin Full Node](https://bitcoin.org/en/full-node), **BTC Explorer** can easily run alongside it, communicating via RPC calls. See the project [ReadMe](https://github.com/janoside/btc-rpc-explorer) for a list of features and instructions for running.",
