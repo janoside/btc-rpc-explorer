@@ -604,9 +604,11 @@ router.get("/address/:address", function(req, res) {
 
 					var pagedTxids = [];
 					for (var i = offset; i < (offset + limit); i++) {
-						pagedTxids.push(txids[i]);
+						if (txids.length > i) {
+							pagedTxids.push(txids[i]);
+						}
 					}
-
+					
 					coreApi.getRawTransactionsWithInputs(pagedTxids).then(function(rawTxResult) {
 						res.locals.transactions = rawTxResult.transactions;
 						res.locals.txInputsByTransaction = rawTxResult.txInputsByTransaction;

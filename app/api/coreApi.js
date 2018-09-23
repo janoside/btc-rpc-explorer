@@ -601,9 +601,9 @@ function getRawTransactionsWithInputs(txids, maxInputs=-1) {
 							}
 						}
 					}
-
-					resolve({ transactions:transactions, txInputsByTransaction:txInputsByTransaction });
 				});
+
+				resolve({ transactions:transactions, txInputsByTransaction:txInputsByTransaction });
 			});
 		});
 	});

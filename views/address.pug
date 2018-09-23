@@ -220,6 +220,9 @@ block content
 										span The transaction history for this address was requested from mulitple ElectrumX servers and the results did not match. The results below were obtained only from 
 										span(class="font-weight-bold") #{electrumHistory.server}
 
+							if (!transactions || transactions.length == 0)
+								span No transactions found
+
 							if (transactions)
 								each tx, txIndex in transactions
 									//pre
