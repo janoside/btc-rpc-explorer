@@ -111,7 +111,9 @@ function getBlocksByHash(blockHashes) {
 		var blocks = [];
 		client.command(batch).then((responses) => {
 			responses.forEach((item) => {
-				blocks.push(item);
+				if (item.tx) {
+					blocks.push(item);
+				}
 			});
 
 			var coinbaseTxids = [];
