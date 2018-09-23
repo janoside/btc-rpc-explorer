@@ -1,0 +1,15 @@
+extends layout
+
+block headContent
+	title Search
+
+block content
+	h1(class="h3") Search
+	hr
+
+	div(class="mb-5")
+		form(method="post", action="/search", class="form")
+			div(class="input-group input-group-lg")
+				input(type="text", class="form-control form-control-sm", name="query", placeholder="block height/hash, txid, address", value=(query), style="width: 300px;")
+				div(class="input-group-append")
+					button(type="submit", class="btn btn-primary") Search

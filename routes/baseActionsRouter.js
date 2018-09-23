@@ -281,6 +281,17 @@ router.get("/blocks", function(req, res) {
 	});
 });
 
+router.get("/search", function(req, res) {
+	if (!req.body.query) {
+		req.session.userMessage = "Enter a block height, block hash, or transaction id.";
+		req.session.userMessageType = "primary";
+
+		res.render("search");
+
+		return;
+	}
+});
+
 router.post("/search", function(req, res) {
 	if (!req.body.query) {
 		req.session.userMessage = "Enter a block height, block hash, or transaction id.";
