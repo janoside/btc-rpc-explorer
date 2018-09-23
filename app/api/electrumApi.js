@@ -18,12 +18,10 @@ function connectToServer(host, port) {
 	console.log("Connecting to ElectrumX Server: " + host + ":" + port);
 
 	var electrumClient = new ElectrumClient(port, host, 'tls');
-	electrumClient.connect().then(function() {
-		electrumClient.server_version("btc-rpc-explorer-1.1", "1.2").then(function(res) {
-			console.log("Connected to ElectrumX Server: " + host + ":" + port + ", versions: " + res);
+	electrumClient.initElectrum({client:"btc-rpc-explorer-v1.1", version:"1.2"}).then(function(res) {
+		console.log("Connected to ElectrumX Server: " + host + ":" + port + ", versions: " + res);
 
-			electrumClients.push(electrumClient);
-		});
+		electrumClients.push(electrumClient);
 	});
 }
 
