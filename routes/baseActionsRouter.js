@@ -610,8 +610,16 @@ router.get("/address/:address", function(req, res) {
 							pagedTxids.push(txids[i]);
 						}
 					}
+
+					// always request the first txid; we'll use it to show "first seen" info for the address
+					pagedTxids.unshift(txidResult.result[0].tx_hash);
 					
 					coreApi.getRawTransactionsWithInputs(pagedTxids).then(function(rawTxResult) {
+						// first result is always the earliest tx, but doesn't fit into the current paging;
+						// store it as firstSeenTransaction then remove from list
+						res.locals.firstSeenTransaction = rawTxResult.transactions[0];
+						rawTxResult.transactions.shift();
+
 						res.locals.transactions = rawTxResult.transactions;
 						res.locals.txInputsByTransaction = rawTxResult.txInputsByTransaction;
 						res.locals.blockHeightsByTxid = blockHeightsByTxid;
@@ -662,6 +670,17 @@ router.get("/address/:address", function(req, res) {
 						reject(err);
 					});
 				
+				}).catch(function(err) {
+					reject(err);
+				});
+			}));
+
+			promises.push(new Promise(function(resolve, reject) {
+				coreApi.getBlockchainInfo().then(function(getblockchaininfo) {
+					res.locals.getblockchaininfo = getblockchaininfo;
+
+					resolve();
+
 				}).catch(function(err) {
 					reject(err);
 				});

@@ -100,6 +100,25 @@ block content
 											div(class="summary-split-table-label") Witness Program
 											div(class="summary-split-table-content monospace") #{result.validateaddress.witness_program}
 
+									if (firstSeenTransaction)
+										div(class="row")
+											div(class="summary-split-table-label") First Seen
+											div(class="summary-split-table-content monospace")
+												if (getblockchaininfo)
+													span Block ##{(getblockchaininfo.blocks - firstSeenTransaction.confirmations).toLocaleString()}
+												else
+													a(href=("/block/" + firstSeenTransaction.blockhash)) #{firstSeenTransaction.blockhash}
+
+												br
+
+												span #{moment.utc(new Date(firstSeenTransaction.time * 1000)).format("Y-MM-DD HH:mm:ss")} utc
+												- var timeAgoTime = firstSeenTransaction.time;
+												include includes/time-ago.pug
+												
+												if (false)
+													pre
+														code #{JSON.stringify(firstSeenTransaction)}
+
 									if (balance)
 										if (balance.conflictedResults)
 											div(class="row")
