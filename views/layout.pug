@@ -176,9 +176,9 @@ html(lang="en")
 			hljs.initHighlightingOnLoad();
 
 		if (config.credentials.sentryUrl && config.credentials.sentryUrl.length > 0)
-			script(src="https://cdn.ravenjs.com/3.26.4/raven.min.js", crossorigin="anonymous")
+			script(src="https://browser.sentry-cdn.com/4.0.4/bundle.min.js", crossorigin="anonymous")
 			script.
-				Raven.config("#{config.credentials.sentryUrl}").install();
+				Sentry.init({ dsn: '#{config.credentials.sentryUrl}' });
 
 		if (config.credentials.googleAnalyticsTrackingId && config.credentials.googleAnalyticsTrackingId.trim().length > 0)
 			script(async, src=("https://www.googletagmanager.com/gtag/js?id=" + config.credentials.googleAnalyticsTrackingId))
