@@ -131,7 +131,7 @@ app.runOnStartup = function() {
 
 	if (config.electrumXServers && config.electrumXServers.length > 0) {
 		electrumApi.connectToServers().then(function() {
-			console.log("Live with ElectrumX API");
+			console.log("Live with ElectrumX API.");
 
 			global.electrumApi = electrumApi;
 			

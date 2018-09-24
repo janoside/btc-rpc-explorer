@@ -27,6 +27,27 @@ function connectToServers() {
 	});
 }
 
+function reconnectToServers() {
+	return new Promise(function(resolve, reject) {
+		for (var i = 0; i < electrumClients.length; i++) {
+			electrumClients[i].close();
+		}
+
+		electrumClients = [];
+
+		console.log("Reconnecting ElectrumX sockets...");
+
+		connectToServers().catch(function(err) {
+			console.log("Error 317fh29y7fg3333: " + err);
+			
+		}).finally(function() {
+			console.log("Done reconnecting ElectrumX sockets.");
+
+			resolve();
+		});
+	});
+}
+
 function connectToServer(host, port) {
 	return new Promise(function(resolve, reject) {
 		console.log("Connecting to ElectrumX Server: " + host + ":" + port);
@@ -54,11 +75,9 @@ function runOnServer(electrumClient, f) {
 			resolve({result:result, server:electrumClient.host});
 
 		}).catch(function(err) {
-			console.log("Error dif0e21qdh: " + JSON.stringify(err) + ", host=" + electrumClient.host + ", port=" + electrumClient.port);
+			console.log("Error dif0e21qdh: " + err + ", host=" + electrumClient.host + ", port=" + electrumClient.port);
 
 			reject(err);
-
-			electrumClient.reconnect();
 		});
 	});
 }
@@ -148,6 +167,7 @@ function getAddressBalance(addrScripthash) {
 
 module.exports = {
 	connectToServers: connectToServers,
+	reconnectToServers: reconnectToServers,
 	getAddressTxids: getAddressTxids,
 	getAddressBalance: getAddressBalance
 };
