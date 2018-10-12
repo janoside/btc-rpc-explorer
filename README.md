@@ -34,12 +34,12 @@ The below instructions are geared toward BTC, but can be adapted easily to other
 
 ## Instructions
 
-1. Clone this repo
+1. Clone this repo: `git clone https://github.com/janoside/btc-rpc-explorer`
 2. `npm install`
 3. `npm run build`
-4. Edit the "rpc" settings in [credentials.js](app/credentials.js) to target your node
-5. Optional: Change the "coin" value in [config.js](app/config.js). Currently supported values are "BTC" and "LTC".
-6. Optional: Add an ipstack.com API access key to [credentials.js](app/credentials.js). Doing so will add a map to the /peers page.
+4. Edit the "rpc" settings in [app/credentials.js](app/credentials.js) to target your node
+5. Optional: Change the "coin" value in [app/config.js](app/config.js). Currently supported values are "BTC" and "LTC".
+6. Optional: Add an ipstack.com API access key to [app/credentials.js](app/credentials.js). Doing so will add a map to the /peers page.
 7. `npm start` to start the local server
 8. Visit http://127.0.0.1:3002/
 
