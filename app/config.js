@@ -34,6 +34,7 @@ module.exports = {
 
 	// https://uasf.saltylemon.org/electrum
 	electrumXServers:[
+		// {host: "electrum.example.com", port:50002}, ...
 	],
 
 	site: {
