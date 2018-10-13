@@ -50,7 +50,7 @@ module.exports = {
 		"logging",
 		"move",
 		"preciousblock",
-		"pruneblockchain"
+		"pruneblockchain",
 		"removeprunedfunds",
 		"rescanblockchain",
 		"savemempool",
@@ -58,7 +58,7 @@ module.exports = {
 		"sendmany",
 		"sendtoaddress",
 		"sendrawtransaction",
-		"setaccount"
+		"setaccount",
 		"setban",
 		"setnetworkactive",
 		"signmessage",
