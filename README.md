@@ -8,7 +8,7 @@ I built this tool because I wanted to use it myself. Whatever reasons one might 
 
 Live demos are available at:
 
-* BTC: https://btc.chaintools.io
+* BTC: https://explorer.goopen.si
 * LTC: https://ltc.chaintools.io
 
 # Features
@@ -35,7 +35,7 @@ The below instructions are geared toward BTC, but can be adapted easily to other
 
 ## Instructions
 
-1. Clone this repo: `git clone https://github.com/janoside/btc-rpc-explorer`
+1. Clone this repo: `git clone https://github.com/alko89/btc-rpc-explorer`
 2. `npm install`
 3. `npm run build`
 4. Edit the "rpc" settings in [app/credentials.js](app/credentials.js) to target your node

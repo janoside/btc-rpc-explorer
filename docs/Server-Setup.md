@@ -17,7 +17,7 @@ Copy content from [./btc-explorer.com.conf](./btc-explorer.com.conf) into `/etc/
     cd /etc/ssl/certs
     openssl dhparam -out dhparam.pem 4096
     cd /home/bitcoin
-    git clone https://github.com/janoside/btc-rpc-explorer.git
+    git clone https://github.com/alko89/btc-rpc-explorer.git
     cd /home/bitcoin/btc-rpc-explorer
     npm install
     pm2 start bin/www --name "btc-rpc-explorer"
