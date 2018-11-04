@@ -1,0 +1,7 @@
+sudo: required
+services:
+  - docker
+script: docker-compose build
+notifications:
+  email:
+    on_success: never
