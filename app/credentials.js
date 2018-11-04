@@ -4,10 +4,11 @@ module.exports = {
 	// You may delete this section if you wish to connect manually via the UI.
 
 	rpc: {
-		host:"localhost",
-		port:8332,
-		username:"username",
-		password:"password"
+		// host: "127.0.0.1",
+		host: "bitcoind",
+		port: 18332,
+		username: "bitcoinrpc",
+		password: "rpcpass"
 	},
 
 	// optional: enter your api access key from ipstack.com below

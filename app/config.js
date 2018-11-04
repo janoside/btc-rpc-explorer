@@ -75,6 +75,8 @@ module.exports = {
 	// https://uasf.saltylemon.org/electrum
 	electrumXServers:[
 		// {host: "electrum.example.com", port:50002}, ...
+		// { host: "127.0.0.1", port:50002 }
+		{ host: "electrumx", port:50002 }
 	],
 
 	site: {
@@ -107,16 +109,16 @@ module.exports = {
 
 	donationAddresses:{
 		coins:["BTC", "LTC"],
-		sites:{"BTC":"https://btc.chaintools.io", "LTC":"https://ltc.chaintools.io"},
+		sites:{"BTC":"https://explorer.goopen.si", "LTC":"https://ltc.chaintools.io"},
 
-		"BTC":{address:"3NPGpNyLLmVKCEcuipBs7G4KpQJoJXjDGe"},
-		"LTC":{address:"ME4pXiXuWfEi1ANBDo9irUJVcZBhsTx14i"}
+		"BTC":{address:"3QmhE7msgPgyoieCyoFapEzzRE5gp2cC9P"},
+		"LTC":{address:"MSvBJDjv4eVqBA6seL29nXJ6hCzNpVVp9C"}
 	},
 
 	headerDropdownLinks: {
 		title:"Related Sites",
 		links:[
-			{name: "Bitcoin Explorer", url:"https://btc.chaintools.io", imgUrl:"/img/logo/btc.svg"},
+			{name: "Bitcoin Explorer", url:"https://explorer.goopen.si", imgUrl:"/img/logo/btc.svg"},
 			{name: "Litecoin Explorer", url:"https://ltc.chaintools.io", imgUrl:"/img/logo/ltc.svg"},
 			{name: "Lightning Explorer", url:"https://lightning.chaintools.io", imgUrl:"/img/logo/lightning.svg"},
 		]
