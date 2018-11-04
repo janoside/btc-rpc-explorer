@@ -75,8 +75,8 @@ module.exports = {
 	// https://uasf.saltylemon.org/electrum
 	electrumXServers:[
 		// {host: "electrum.example.com", port:50002}, ...
-		{ host: "127.0.0.1", port:50002 }
-		// { host: "electrumx", port:50002 }
+		// { host: "127.0.0.1", port:50002 }
+		{ host: "electrumx", port:50002 }
 	],
 
 	site: {
