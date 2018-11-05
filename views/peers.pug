@@ -134,11 +134,8 @@ block content
 						h6 IP Geo-Location Info
 						pre
 							code #{JSON.stringify(peerIpSummary.detailsByIp[item.addr.substring(0, item.addr.lastIndexOf(":"))], null, 4)}
-			h4 Electrum.Balance
-				pre
-					code(class="language-json", data-lang="json") #{JSON.stringify(electrumBalance, null, 4)}
 
-	
+
 block endOfBody
 	if (config.credentials.ipStackComApiAccessKey && config.credentials.ipStackComApiAccessKey.trim().length > 0)
 		script.
