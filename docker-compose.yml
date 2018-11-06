@@ -6,17 +6,17 @@ services:
     volumes:
       - ./bitcoin.conf:/bitcoin/.bitcoin/bitcoin.conf
     ports:
-      - "18333:18333"
-      - "18332:18332"
+      - "18443:18443"
+      - "18444:18444"
 
   electrumx:
     image: alko89/electrumx
     ports:
       - "50002:50002"
     environment:
-      - DAEMON_URL=http://bitcoinrpc:rpcpass@bitcoind:18332
+      - DAEMON_URL=http://bitcoinrpc:rpcpass@bitcoind:18443
       - COIN=BitcoinSegwit
-      - NET=testnet
+      - NET=regtest
       - DB_ENGINE=leveldb
 
   explorer:

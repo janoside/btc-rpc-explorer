@@ -6,7 +6,7 @@ module.exports = {
 	rpc: {
 		// host: "127.0.0.1",
 		host: "bitcoind",
-		port: 18332,
+		port: 18443,
 		username: "bitcoinrpc",
 		password: "rpcpass"
 	},

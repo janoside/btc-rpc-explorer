@@ -8,7 +8,7 @@ port="$2"
 
 until nc -z $host $port ; do
   >&2 echo "ElectrumX server is unavailable - sleeping..."
-  sleep 5
+  sleep 10
 done
 
 exec npm start
