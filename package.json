@@ -37,7 +37,7 @@
     "morgan": "^1.9.1",
     "pug": "2.0.1",
     "qrcode": "1.2.0",
-    "request": "2.85.0",
+    "request": "2.88.0",
     "serve-favicon": "^2.5.0",
     "simple-git": "1.92.0"
   },
