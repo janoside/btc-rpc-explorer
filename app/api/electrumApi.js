@@ -72,8 +72,12 @@ function connectToServer(host, port) {
 function runOnServer(electrumClient, f) {
 	return new Promise(function(resolve, reject) {
 		f(electrumClient).then(function(result) {
-			resolve({result:result, server:electrumClient.host});
+			if (result.success) {
+				resolve({result:result.response, server:electrumClient.host});
 
+			} else {
+				reject({error:result.error, server:electrumClient.host});
+			}
 		}).catch(function(err) {
 			console.log("Error dif0e21qdh: " + err + ", host=" + electrumClient.host + ", port=" + electrumClient.port);
 

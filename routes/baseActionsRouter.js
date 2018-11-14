@@ -598,7 +598,7 @@ router.get("/address/:address", function(req, res) {
 
 						txidResult = result.conflictedResults[0];
 
-					} else {
+					} else if (result.result != null) {
 						txidResult = result;
 					}
 
@@ -607,9 +607,11 @@ router.get("/address/:address", function(req, res) {
 					var txids = [];
 					var blockHeightsByTxid = {};
 
-					for (var i = 0; i < txidResult.result.length; i++) {
-						txids.push(txidResult.result[i].tx_hash);
-						blockHeightsByTxid[txidResult.result[i].tx_hash] = txidResult.result[i].height;
+					if (txidResult) {
+						for (var i = 0; i < txidResult.result.length; i++) {
+							txids.push(txidResult.result[i].tx_hash);
+							blockHeightsByTxid[txidResult.result[i].tx_hash] = txidResult.result[i].height;
+						}
 					}
 
 					if (sort == "desc") {
@@ -625,8 +627,11 @@ router.get("/address/:address", function(req, res) {
 						}
 					}
 
-					// always request the first txid; we'll use it to show "first seen" info for the address
-					pagedTxids.unshift(txidResult.result[0].tx_hash);
+					if (txidResult && txidResult.result != null) {
+						// since we always request the first txid (to determine "first seen" info for the address),
+						// remove it for proper paging
+						pagedTxids.unshift(txidResult.result[0].tx_hash);
+					}
 					
 					coreApi.getRawTransactionsWithInputs(pagedTxids).then(function(rawTxResult) {
 						// first result is always the earliest tx, but doesn't fit into the current paging;
@@ -681,10 +686,16 @@ router.get("/address/:address", function(req, res) {
 						resolve();
 
 					}).catch(function(err) {
+						console.log("Error asdgf07uh23: " + err + ", error json: " + JSON.stringify(err));
+
 						reject(err);
 					});
 				
 				}).catch(function(err) {
+					res.locals.electrumHistoryError = err;
+
+					console.log("Error 23t07ug2wghefud: " + err + ", error json: " + JSON.stringify(err));
+
 					reject(err);
 				});
 			}));
@@ -696,13 +707,15 @@ router.get("/address/:address", function(req, res) {
 					resolve();
 
 				}).catch(function(err) {
+					console.log("Error 132r80h32rh: " + err + ", error json: " + JSON.stringify(err));
+
 					reject(err);
 				});
 			}));
 		}
 
 		Promise.all(promises).catch(function(err) {
-			console.log(err);
+			console.log("Error 32197rgh327g2: " + err + ", error json: " + JSON.stringify(err));
 
 		}).finally(function() {
 			qrcode.toDataURL(address, function(err, url) {
