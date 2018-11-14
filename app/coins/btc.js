@@ -106,6 +106,7 @@ module.exports = {
 			date: "2009-10-12",
 			txid: "7dff938918f07619abd38e4510890396b1cef4fbeca154fb7aafba8843295ea2",
 			summary: "First bitcoin traded for fiat currency.",
+			alertBodyHtml: "In this first-known BTC-to-fiat transaction, 5,050 BTC were exchanged for 5.02 USD, at an effective exchange rate of ~0.001 USD/BTC.",
 			referenceUrl: "https://twitter.com/marttimalmi/status/423455561703624704"
 		},
 		{
