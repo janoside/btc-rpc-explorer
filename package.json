@@ -27,7 +27,7 @@
     "crypto-js": "3.1.9-1",
     "debug": "~2.6.0",
     "decimal.js": "7.2.3",
-    "electrum-client": "github:chaintools/node-electrum-client#90e533753",
+    "electrum-client": "github:chaintools/node-electrum-client#72d910d59",
     "express": "^4.16.4",
     "express-session": "1.15.6",
     "jstransformer-markdown-it": "^2.0.0",
