@@ -118,7 +118,7 @@ block content
 		div(id="tab-json", class="tab-pane", role="tabpanel")
 			each item, index in peerSummary.getpeerinfo
 				div(class="border-bottom p-1")
-					a(href=("javascript:$('#peerinfo_" + index + "').toggle()"))
+					a(href="javascript:void(0)" onclick=("javascript:var peer = document.getElementById('peerinfo_" + index + "'); peer.style.display = peer.style.display === 'none' ? '' : 'none';"))
 						i(class="fas fa-plus-circle") 
 
 					span(class="monospace")  #{item.addr}
