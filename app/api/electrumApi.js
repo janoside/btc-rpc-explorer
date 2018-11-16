@@ -13,7 +13,8 @@ function connectToServers() {
 		var promises = [];
 
 		for (var i = 0; i < config.electrumXServers.length; i++) {
-			promises.push(connectToServer(config.electrumXServers[i].host, config.electrumXServers[i].port));
+			var { host, port, protocol } = config.electrumXServers[i];
+			promises.push(connectToServer(host, port, protocol));
 		}
 
 		Promise.all(promises).then(function() {
@@ -48,11 +49,13 @@ function reconnectToServers() {
 	});
 }
 
-function connectToServer(host, port) {
+function connectToServer(host, port, protocol) {
 	return new Promise(function(resolve, reject) {
 		console.log("Connecting to ElectrumX Server: " + host + ":" + port);
 
-		var electrumClient = new ElectrumClient(port, host, 'tls');
+		// default protocol is 'tcp' if port is 50001, which is the default unencrypted port for electrumx
+		var defaultProtocol = port === 50001 ? 'tcp' : 'tls';
+		var electrumClient = new ElectrumClient(port, host, protocol || defaultProtocol);
 		electrumClient.initElectrum({client:"btc-rpc-explorer-v1.1", version:"1.2"}).then(function(res) {
 			console.log("Connected to ElectrumX Server: " + host + ":" + port + ", versions: " + res);
 

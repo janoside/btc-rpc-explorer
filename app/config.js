@@ -74,7 +74,9 @@ module.exports = {
 
 	// https://uasf.saltylemon.org/electrum
 	electrumXServers:[
-		// {host: "electrum.example.com", port:50002}, ...
+		// set host & port of electrum servers to connect to
+		// protocol can be "tls" or "tcp", it defaults to "tcp" if port is 50001 and "tls" otherwise
+		// {host: "electrum.example.com", port:50002, protocol: "tls"}, ...
 	],
 
 	site: {
