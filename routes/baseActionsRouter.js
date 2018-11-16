@@ -714,10 +714,7 @@ router.get("/address/:address", function(req, res) {
 			}));
 		}
 
-		Promise.all(promises).catch(function(err) {
-			console.log("Error 32197rgh327g2: " + err + ", error json: " + JSON.stringify(err));
-
-		}).finally(function() {
+		promises.push(new Promise(function(resolve, reject) {
 			qrcode.toDataURL(address, function(err, url) {
 				if (err) {
 					console.log("Error 93ygfew0ygf2gf2: " + err);
@@ -725,8 +722,17 @@ router.get("/address/:address", function(req, res) {
 
 				res.locals.addressQrCodeUrl = url;
 
-				res.render("address");
+				resolve();
 			});
+		}));
+
+		Promise.all(promises).then(function() {
+			res.render("address");
+
+		}).catch(function(err) {
+			console.log("Error 32197rgh327g2: " + err + ", error json: " + JSON.stringify(err));
+
+			res.render("address");
 		});
 		
 	}).catch(function(err) {
