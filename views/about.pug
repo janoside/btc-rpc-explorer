@@ -7,28 +7,26 @@ block content
 	h1(class="h3") About
 	hr
 
-	p This tool is intended to be a simple, self-hosted explorer for the #{coinConfig.name} blockchain, driven by RPC calls to your own node. This tool is easy to run but lacks some features compared to database-backed explorers.
+	p This tool is intended to be a simple, self-hosted explorer for the #{coinConfig.name} blockchain, driven by RPC calls to your Bitcoiv SV node. This tool is easy to run but lacks some features compared to database-backed explorers.
 
-	p I built this tool because I wanted to use it myself. Whatever reasons one might have for running a full node (trustlessness, technical curiosity, supporting the network, etc) it's helpful to appreciate the "fullness" of your own node. With this explorer, you can not only explore the blockchain (in the traditional sense of the term "explorer"), but also explore the functional capabilities of your own node.
+	p Special thanks to @janoside, @OmisNomis and @waqas64 
+		a(href="https://github.com/waqas64/btc-rpc-explorer") github.com/waqas64/btc-rpc-explorer
 
-	p Pull requests are welcome! 
-		a(href="https://github.com/janoside/btc-rpc-explorer") github.com/janoside/btc-rpc-explorer
+	//- if (config.donationAddresses)
+	//- 	hr
 
-	if (config.donationAddresses)
-		hr
+	//- 	p If you value this tool and want to support my work on this project, please consider a small donation. Anything is appreciated!
 
-		p If you value this tool and want to support my work on this project, please consider a small donation. Anything is appreciated!
+	//- 	each coin, index in config.donationAddresses.coins
+	//- 		div(style="display: inline-block;", class="text-md-center mb-3", class=(index > 0 ? "ml-md-5" : false))
+	//- 			if (config.donationAddresses[coin].urlPrefix)
+	//- 				a(href=(config.donationAddresses[coin].urlPrefix + config.donationAddresses[coin].address)) #{coinConfigs[coin].name} (#{coin})
+	//- 			else
+	//- 				span #{coinConfigs[coin].name} (#{coin})
 
-		each coin, index in config.donationAddresses.coins
-			div(style="display: inline-block;", class="text-md-center mb-3", class=(index > 0 ? "ml-md-5" : false))
-				if (config.donationAddresses[coin].urlPrefix)
-					a(href=(config.donationAddresses[coin].urlPrefix + config.donationAddresses[coin].address)) #{coinConfigs[coin].name} (#{coin})
-				else
-					span #{coinConfigs[coin].name} (#{coin})
-
-				br
-				span #{config.donationAddresses[coin].address}
-				br
-				img(src=donationAddressQrCodeUrls[coin], alt=config.donationAddresses[coin].address, style="border: solid 1px #ccc;")
-				br
+	//- 			br
+	//- 			span #{config.donationAddresses[coin].address}
+	//- 			br
+	//- 			img(src=donationAddressQrCodeUrls[coin], alt=config.donationAddresses[coin].address, style="border: solid 1px #ccc;")
+	//- 			br
 		

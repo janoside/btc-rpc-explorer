@@ -48,16 +48,3 @@ The below instructions are geared toward BTC, but can be adapted easily to other
 
 1. `docker build -t btc-rpc-explorer .`
 2. `docker run -p 3002:3002 -it btc-rpc-explorer`
-
-# Donate
-
-Any support for continued development of this tool is appreciated!
-
-* [Bitcoin](bitcoin:3NPGpNyLLmVKCEcuipBs7G4KpQJoJXjDGe): 3NPGpNyLLmVKCEcuipBs7G4KpQJoJXjDGe
-
-![Bitcoin Donation QR Code](/public/img/qr-btc.png)
-
-* [Litecoin](litecoin:ME4pXiXuWfEi1ANBDo9irUJVcZBhsTx14i): ME4pXiXuWfEi1ANBDo9irUJVcZBhsTx14i
-
-![Litecoin Donation QR Code](/public/img/qr-ltc.png)
-
