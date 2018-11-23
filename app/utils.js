@@ -219,6 +219,7 @@ function getTxTotalInputOutputValues(tx, txInputs, blockHeight) {
 	var totalOutputValue = new Decimal(0);
 
 	try {
+		if(Array.isArray(tx.vin)){
 		for (var i = 0; i < tx.vin.length; i++) {
 			if (tx.vin[i].coinbase) {
 				totalInputValue = totalInputValue.plus(new Decimal(coinConfig.blockRewardFunction(blockHeight)));
@@ -242,6 +243,7 @@ function getTxTotalInputOutputValues(tx, txInputs, blockHeight) {
 		for (var i = 0; i < tx.vout.length; i++) {
 			totalOutputValue = totalOutputValue.plus(new Decimal(tx.vout[i].value));
 		}
+	}
 	} catch (err) {
 		console.log("Error computing total input/output values for tx: err=" + err + ", tx=" + JSON.stringify(tx) + ", txInputs=" + JSON.stringify(txInputs) + ", blockHeight=" + blockHeight);
 	}

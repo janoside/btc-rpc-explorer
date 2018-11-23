@@ -89,7 +89,7 @@ app.runOnStartup = function() {
 			port: rpcCredentials.port,
 			username: rpcCredentials.username,
 			password: rpcCredentials.password,
-			timeout: 5000
+			timeout: 20000
 		});
 	}
 

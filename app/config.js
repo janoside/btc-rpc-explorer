@@ -76,7 +76,11 @@ module.exports = {
 	electrumXServers:[
 		// set host & port of electrum servers to connect to
 		// protocol can be "tls" or "tcp", it defaults to "tcp" if port is 50001 and "tls" otherwise
-		// {host: "electrum.example.com", port:50002, protocol: "tls"}, ...
+		// {host: "shsmithslz63a5um.onion", port:60003, protocol: "tcp"},
+	    {host: "satoshi.vision.cash", port:50002, protocol: "ssl"},
+		// {host: "electrum.qtornado.com", port:50001, protocol: "tcp"},
+		// {host: "electrum.coinucopia.io", port:50001, protocol: "tcp"},
+
 	],
 
 	site: {
@@ -101,9 +105,9 @@ module.exports = {
 		{name:"Mempool Summary", url:"/mempool-summary", desc:"Detailed summary of the current mempool for this node.", fontawesome:"fas fa-clipboard-list"},
 		{name:"Unconfirmed Transactions", url:"/unconfirmed-tx", desc:"Browse unconfirmed/pending transactions.", fontawesome:"fas fa-unlock-alt"},
 
-		{name:"RPC Browser", url:"/rpc-browser", desc:"Browse the RPC functionality of this node. See docs and execute commands.", fontawesome:"fas fa-book"},
-		{name:"RPC Terminal", url:"/rpc-terminal", desc:"Directly execute RPCs against this node.", fontawesome:"fas fa-terminal"},
-		{name:(coins[currentCoin].name + " Fun"), url:"/fun", desc:"See fun/interesting historical blockchain data.", fontawesome:"fas fa-certificate"}
+		// {name:"RPC Browser", url:"/rpc-browser", desc:"Browse the RPC functionality of this node. See docs and execute commands.", fontawesome:"fas fa-book"},
+		// {name:"RPC Terminal", url:"/rpc-terminal", desc:"Directly execute RPCs against this node.", fontawesome:"fas fa-terminal"},
+		// {name:(coins[currentCoin].name + " Fun"), url:"/fun", desc:"See fun/interesting historical blockchain data.", fontawesome:"fas fa-certificate"}
 
 	],
 
@@ -115,12 +119,12 @@ module.exports = {
 		"LTC":{address:"ME4pXiXuWfEi1ANBDo9irUJVcZBhsTx14i"}
 	},
 
-	headerDropdownLinks: {
-		title:"Related Sites",
-		links:[
-			{name: "Bitcoin Explorer", url:"https://btc.chaintools.io", imgUrl:"/img/logo/btc.svg"},
-			{name: "Litecoin Explorer", url:"https://ltc.chaintools.io", imgUrl:"/img/logo/ltc.svg"},
-			{name: "Lightning Explorer", url:"https://lightning.chaintools.io", imgUrl:"/img/logo/lightning.svg"},
-		]
-	}
+//	headerDropdownLinks: {
+		// title:"Related Sites",
+		// links:[
+		// 	{name: "Bitcoin Explorer", url:"https://btc.chaintools.io", imgUrl:"/img/logo/btc.svg"},
+		// 	{name: "Litecoin Explorer", url:"https://ltc.chaintools.io", imgUrl:"/img/logo/ltc.svg"},
+		// 	{name: "Lightning Explorer", url:"https://lightning.chaintools.io", imgUrl:"/img/logo/lightning.svg"},
+		// ]
+//	}
 };

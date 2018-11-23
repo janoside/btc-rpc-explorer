@@ -742,187 +742,187 @@ router.get("/address/:address", function(req, res) {
 	});
 });
 
-router.get("/rpc-terminal", function(req, res) {
-	if (!config.demoSite) {
-		var ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
-		var match = config.ipWhitelistForRpcCommands.exec(ip);
+// router.get("/rpc-terminal", function(req, res) {
+// 	if (!config.demoSite) {
+// 		var ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+// 		var match = config.ipWhitelistForRpcCommands.exec(ip);
 
-		if (!match) {
-			res.send("RPC Terminal / Browser may not be accessed from '" + ip + "'. This restriction can be modified in your config.js file.");
+// 		if (!match) {
+// 			res.send("RPC Terminal / Browser may not be accessed from '" + ip + "'. This restriction can be modified in your config.js file.");
 
-			return;
-		}
-	}
+// 			return;
+// 		}
+// 	}
 
-	res.render("terminal");
-});
+// 	res.render("terminal");
+// });
 
-router.post("/rpc-terminal", function(req, res) {
-	if (!config.demoSite) {
-		var ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
-		var match = config.ipWhitelistForRpcCommands.exec(ip);
+// router.post("/rpc-terminal", function(req, res) {
+// 	if (!config.demoSite) {
+// 		var ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+// 		var match = config.ipWhitelistForRpcCommands.exec(ip);
 
-		if (!match) {
-			res.send("RPC Terminal / Browser may not be accessed from '" + ip + "'. This restriction can be modified in your config.js file.");
+// 		if (!match) {
+// 			res.send("RPC Terminal / Browser may not be accessed from '" + ip + "'. This restriction can be modified in your config.js file.");
 
-			return;
-		}
-	}
+// 			return;
+// 		}
+// 	}
 
-	var params = req.body.cmd.trim().split(/\s+/);
-	var cmd = params.shift();
-	var parsedParams = [];
+// 	var params = req.body.cmd.trim().split(/\s+/);
+// 	var cmd = params.shift();
+// 	var parsedParams = [];
 
-	params.forEach(function(param, i) {
-		if (!isNaN(param)) {
-			parsedParams.push(parseInt(param));
+// 	params.forEach(function(param, i) {
+// 		if (!isNaN(param)) {
+// 			parsedParams.push(parseInt(param));
 
-		} else {
-			parsedParams.push(param);
-		}
-	});
+// 		} else {
+// 			parsedParams.push(param);
+// 		}
+// 	});
 
-	if (config.rpcBlacklist.includes(cmd.toLowerCase())) {
-		res.write("Sorry, that RPC command is blacklisted. If this is your server, you may allow this command by removing it from the 'rpcBlacklist' setting in config.js.", function() {
-			res.end();
-		});
+// 	if (config.rpcBlacklist.includes(cmd.toLowerCase())) {
+// 		res.write("Sorry, that RPC command is blacklisted. If this is your server, you may allow this command by removing it from the 'rpcBlacklist' setting in config.js.", function() {
+// 			res.end();
+// 		});
 
-		return;
-	}
+// 		return;
+// 	}
 
-	client.command([{method:cmd, parameters:parsedParams}], function(err, result, resHeaders) {
-		console.log("Result[1]: " + JSON.stringify(result, null, 4));
-		console.log("Error[2]: " + JSON.stringify(err, null, 4));
-		console.log("Headers[3]: " + JSON.stringify(resHeaders, null, 4));
+// 	client.command([{method:cmd, parameters:parsedParams}], function(err, result, resHeaders) {
+// 		console.log("Result[1]: " + JSON.stringify(result, null, 4));
+// 		console.log("Error[2]: " + JSON.stringify(err, null, 4));
+// 		console.log("Headers[3]: " + JSON.stringify(resHeaders, null, 4));
 
-		if (err) {
-			console.log(JSON.stringify(err, null, 4));
+// 		if (err) {
+// 			console.log(JSON.stringify(err, null, 4));
 
-			res.write(JSON.stringify(err, null, 4), function() {
-				res.end();
-			});
+// 			res.write(JSON.stringify(err, null, 4), function() {
+// 				res.end();
+// 			});
 
-		} else if (result) {
-			res.write(JSON.stringify(result, null, 4), function() {
-				res.end();
-			});
+// 		} else if (result) {
+// 			res.write(JSON.stringify(result, null, 4), function() {
+// 				res.end();
+// 			});
 
-		} else {
-			res.write(JSON.stringify({"Error":"No response from node"}, null, 4), function() {
-				res.end();
-			});
-		}
-	});
-});
+// 		} else {
+// 			res.write(JSON.stringify({"Error":"No response from node"}, null, 4), function() {
+// 				res.end();
+// 			});
+// 		}
+// 	});
+// });
 
-router.get("/rpc-browser", function(req, res) {
-	if (!config.demoSite) {
-		var ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
-		var match = config.ipWhitelistForRpcCommands.exec(ip);
+// router.get("/rpc-browser", function(req, res) {
+// 	if (!config.demoSite) {
+// 		var ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+// 		var match = config.ipWhitelistForRpcCommands.exec(ip);
 
-		if (!match) {
-			res.send("RPC Terminal / Browser may not be accessed from '" + ip + "'. This restriction can be modified in your config.js file.");
+// 		if (!match) {
+// 			res.send("RPC Terminal / Browser may not be accessed from '" + ip + "'. This restriction can be modified in your config.js file.");
 
-			return;
-		}
-	}
+// 			return;
+// 		}
+// 	}
 
-	coreApi.getHelp().then(function(result) {
-		res.locals.gethelp = result;
+// 	coreApi.getHelp().then(function(result) {
+// 		res.locals.gethelp = result;
 
-		if (req.query.method) {
-			res.locals.method = req.query.method;
+// 		if (req.query.method) {
+// 			res.locals.method = req.query.method;
 
-			coreApi.getRpcMethodHelp(req.query.method.trim()).then(function(result2) {
-				res.locals.methodhelp = result2;
+// 			coreApi.getRpcMethodHelp(req.query.method.trim()).then(function(result2) {
+// 				res.locals.methodhelp = result2;
 
-				if (req.query.execute) {
-					var argDetails = result2.args;
-					var argValues = [];
+// 				if (req.query.execute) {
+// 					var argDetails = result2.args;
+// 					var argValues = [];
 
-					if (req.query.args) {
-						for (var i = 0; i < req.query.args.length; i++) {
-							var argProperties = argDetails[i].properties;
+// 					if (req.query.args) {
+// 						for (var i = 0; i < req.query.args.length; i++) {
+// 							var argProperties = argDetails[i].properties;
 
-							for (var j = 0; j < argProperties.length; j++) {
-								if (argProperties[j] == "numeric") {
-									if (req.query.args[i] == null || req.query.args[i] == "") {
-										argValues.push(null);
+// 							for (var j = 0; j < argProperties.length; j++) {
+// 								if (argProperties[j] == "numeric") {
+// 									if (req.query.args[i] == null || req.query.args[i] == "") {
+// 										argValues.push(null);
 
-									} else {
-										argValues.push(parseInt(req.query.args[i]));
-									}
+// 									} else {
+// 										argValues.push(parseInt(req.query.args[i]));
+// 									}
 
-									break;
+// 									break;
 
-								} else if (argProperties[j] == "boolean") {
-									if (req.query.args[i]) {
-										argValues.push(req.query.args[i] == "true");
-									}
+// 								} else if (argProperties[j] == "boolean") {
+// 									if (req.query.args[i]) {
+// 										argValues.push(req.query.args[i] == "true");
+// 									}
 
-									break;
+// 									break;
 
-								} else if (argProperties[j] == "string") {
-									if (req.query.args[i]) {
-										argValues.push(req.query.args[i]);
-									}
+// 								} else if (argProperties[j] == "string") {
+// 									if (req.query.args[i]) {
+// 										argValues.push(req.query.args[i]);
+// 									}
 
-									break;
-								}
-							}
-						}
-					}
+// 									break;
+// 								}
+// 							}
+// 						}
+// 					}
 
-					res.locals.argValues = argValues;
+// 					res.locals.argValues = argValues;
 
-					if (config.rpcBlacklist.includes(req.query.method.toLowerCase())) {
-						res.locals.methodResult = "Sorry, that RPC command is blacklisted. If this is your server, you may allow this command by removing it from the 'rpcBlacklist' setting in config.js.";
+// 					if (config.rpcBlacklist.includes(req.query.method.toLowerCase())) {
+// 						res.locals.methodResult = "Sorry, that RPC command is blacklisted. If this is your server, you may allow this command by removing it from the 'rpcBlacklist' setting in config.js.";
 
-						res.render("browser");
+// 						res.render("browser");
 
-						return;
-					}
+// 						return;
+// 					}
 
-					console.log("Executing RPC '" + req.query.method + "' with params: [" + argValues + "]");
+// 					console.log("Executing RPC '" + req.query.method + "' with params: [" + argValues + "]");
 
-					client.command([{method:req.query.method, parameters:argValues}], function(err3, result3, resHeaders3) {
-						console.log("RPC Response: err=" + err3 + ", result=" + result3 + ", headers=" + resHeaders3);
+// 					client.command([{method:req.query.method, parameters:argValues}], function(err3, result3, resHeaders3) {
+// 						console.log("RPC Response: err=" + err3 + ", result=" + result3 + ", headers=" + resHeaders3);
 
-						if (err3) {
-							if (result3) {
-								res.locals.methodResult = {error:("" + err3), result:result3};
+// 						if (err3) {
+// 							if (result3) {
+// 								res.locals.methodResult = {error:("" + err3), result:result3};
 								
-							} else {
-								res.locals.methodResult = {error:("" + err3)};
-							}
-						} else if (result3) {
-							res.locals.methodResult = result3;
+// 							} else {
+// 								res.locals.methodResult = {error:("" + err3)};
+// 							}
+// 						} else if (result3) {
+// 							res.locals.methodResult = result3;
 
-						} else {
-							res.locals.methodResult = {"Error":"No response from node."};
-						}
+// 						} else {
+// 							res.locals.methodResult = {"Error":"No response from node."};
+// 						}
 
-						res.render("browser");
-					});
-				} else {
-					res.render("browser");
-				}
-			}).catch(function(err) {
-				res.locals.userMessage = "Error loading help content for method " + req.query.method + ": " + err;
+// 						res.render("browser");
+// 					});
+// 				} else {
+// 					res.render("browser");
+// 				}
+// 			}).catch(function(err) {
+// 				res.locals.userMessage = "Error loading help content for method " + req.query.method + ": " + err;
 
-				res.render("browser");
-			});
+// 				res.render("browser");
+// 			});
 
-		} else {
-			res.render("browser");
-		}
+// 		} else {
+// 			res.render("browser");
+// 		}
 
-	}).catch(function(err) {
-		res.locals.userMessage = "Error loading help content: " + err;
+// 	}).catch(function(err) {
+// 		res.locals.userMessage = "Error loading help content: " + err;
 
-		res.render("browser");
-	});
-});
+// 		res.render("browser");
+// 	});
+// });
 
 router.get("/unconfirmed-tx", function(req, res) {
 	var limit = config.site.browseBlocksPageSize;

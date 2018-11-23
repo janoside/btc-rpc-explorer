@@ -32,15 +32,15 @@ var btcCurrencyUnits = [
 module.exports = {
 	name:"BCHSV",
 	ticker:"BCHSV",
-	logoUrl:"/img/logo/bchsv.svg",
+	logoUrl:"/img/logo/bchsv.png",
 	siteTitle:"Bitcoin Cash SV Chain Explorer",
 	siteDescriptionHtml:"<b>Bitcoin SV Chain Explorer</b> is <a href='https://github.com/waqas64/btc-rpc-explorer).",
 	nodeTitle:"BitCoin Cash SV Full Node",
-	// nodeUrl:"https://bitcoin.org/en/full-node",
+	nodeUrl:"https://github.com/bitcoin-sv/bitcoin-sv/releases",
 	// demoSiteUrl: "https://btc.chaintools.io",
 	miningPoolsConfigUrls:[
-		// "https://raw.githubusercontent.com/blockchain/Blockchain-Known-Pools/master/pools.json",
-		// "https://raw.githubusercontent.com/btccom/Blockchain-Known-Pools/master/pools.json"
+		 "https://raw.githubusercontent.com/waqas64/Blockchain-Known-Pools/master/pools.json",
+		 "https://raw.githubusercontent.com/btccom/Blockchain-Known-Pools/master/pools.json"
 	],
 	maxBlockWeight: 4000000,
 	currencyUnits:btcCurrencyUnits,
@@ -189,11 +189,11 @@ module.exports = {
 		}
 	],
 	exchangeRateData:{
-		jsonUrl:"https://api.coinmarketcap.com/v1/ticker/Bitcoin/",
+		jsonUrl:"https://api.coinmarketcap.com/v2/ticker/3602/",
 		exchangedCurrencyName:"usd",
 		responseBodySelectorFunction:function(responseBody) {
-			if (responseBody[0] && responseBody[0].price_usd) {
-				return responseBody[0].price_usd;
+			if (responseBody.data && responseBody.data.quotes) {
+				return responseBody.data.quotes.USD.price;
 			}
 			
 			return -1;
