@@ -4,10 +4,10 @@ module.exports = {
 	// You may delete this section if you wish to connect manually via the UI.
 
 	rpc: {
-		host:"localhost",
-		port:8332,
-		username:"username",
-		password:"password"
+		host:"patrick-ubuntu",
+		port:18332,
+		username:"pat",
+		password:"qgtKKidgyYnSA-pZM0xmmU0Ox8kRYmIuZf30AjDcqVY="
 	},
 
 	// optional: enter your api access key from ipstack.com below

@@ -13,6 +13,7 @@ var utils = require('./../app/utils.js');
 var coins = require("./../app/coins.js");
 var config = require("./../app/config.js");
 var coreApi = require("./../app/api/coreApi.js");
+const rpcApi = require("./../app/api/rpcApi");
 
 router.get("/", function(req, res) {
 	if (req.session.host == null || req.session.host.trim() == "") {
@@ -1022,8 +1023,49 @@ router.get("/fun", function(req, res) {
 	});
 
 	res.locals.historicalData = sortedList;
-	
+
 	res.render("fun");
+});
+
+router.get('/newblocks', (req, res) => {
+
+    rpcApi.getBlocksByHeight([parseInt(req.query.blockHeight)]).then((latestBlocks) => {
+
+    	if(latestBlocks) {
+
+			let block = latestBlocks[0];
+
+			let miner = '?';
+			if(typeof(block.miner) !== 'undefined' && block.miner !== null) {
+				miner = block.miner;
+			}
+
+			let exchangeRate = (global.exchangeRate) ? global.exchangeRate : null;
+
+			let currencyValue = new Decimal(block.totalFees).dividedBy(block.tx.length);
+			let currencyFormatType = req.session.currencyFormatType;
+			let formatExchangedCurrency = utils.formatExchangedCurrency(currencyValue);
+
+			let height = block.height.toLocaleString();
+			let timeUTC = new Date(parseInt(block.time) * 1000).getTime();
+			let time = moment.utc(new Date(parseInt(block.time) * 1000)).format("Y-MM-DD HH:mm:ss");
+			let timeAgo = moment.duration(moment.utc(new Date()).diff(moment.utc(new Date(parseInt(block.time) * 1000)))).format('m') + ' min';
+			let transactions = block.tx.length.toLocaleString();
+			let currencyValueFormatted = utils.formatCurrencyAmount(currencyValue, currencyFormatType);
+			let size = block.size.toLocaleString();
+			let weight = block.weight.toLocaleString();
+			let radialProgressBarPercent = new Decimal(100 * block.weight / coinConfig.maxBlockWeight).toDecimalPlaces(2);
+
+			res.send({height: height, time: time, timeUTC: timeUTC, timeAgo: timeAgo, miner: miner, transactions: transactions,
+				currencyValue: currencyValue, currencyValueFormatted: currencyValueFormatted, size: size, weight: weight, radialProgressBarPercent: radialProgressBarPercent
+				, currencyFormatType: currencyFormatType, exchangeRate: exchangeRate, formatExchangedCurrency: formatExchangedCurrency});
+        } else {
+    		res.status(200).send({});
+		}
+	})
+	.catch(err => {
+		res.status(200).send(err);
+	});
 });
 
 module.exports = router;

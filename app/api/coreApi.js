@@ -431,7 +431,7 @@ function getBlocksByHeight(blockHeights) {
 				resolve(combinedBlocks);
 
 			}).catch(function(err) {
-				console.log("Error 39g2rfyewgf: " + err);
+				//console.log("Error 39g2rfyewgf: " + err);
 			});
 		} else {
 			for (var i = 0; i < blockHeights.length; i++) {
@@ -492,6 +492,8 @@ function getBlocksByHash(blockHashes) {
 
 			resolve(combinedBlocks);
 		}
+
+		reject("Not found");
 	});
 }
 

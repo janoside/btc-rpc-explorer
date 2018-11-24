@@ -55,7 +55,7 @@ function getBlockByHeight(blockHeight) {
 }
 
 function getBlocksByHeight(blockHeights) {
-	//console.log("getBlocksByHeight: " + blockHeights);
+	console.log("getBlocksByHeight: " + blockHeights);
 
 	return new Promise(function(resolve, reject) {
 		var batch = [];
@@ -74,6 +74,7 @@ function getBlocksByHeight(blockHeights) {
 
 			if (blockHashes.length == batch.length) {
 				getBlocksByHash(blockHashes).then(function(blocks) {
+					console.log('block ' + blockHashes + ' fetched');
 					resolve(blocks);
 				});
 			}
