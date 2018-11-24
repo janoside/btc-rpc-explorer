@@ -251,3 +251,29 @@ footer a:hover {
 .table-striped>tbody>tr:nth-child(odd)>th {
 	/*background-color: #fbfbfb;*/
 }
+
+text {
+	font-weight: 350;
+	font-family: "Helvetica Neue", Helvetica, Arial, sans-serf;
+	font-size: 14px;
+  }
+  
+  .node rect {
+	stroke: #111;
+	fill: #fff;
+	stroke-width: 1.5px;
+  }
+  
+  .edgePath path.path {
+	/* stroke: #edad23;
+	fill: #edad23; */
+	stroke: #111;
+	fill: #111;
+	stroke-width: 1.5px;
+  }
+  
+.arrowhead {
+   stroke: #84dfaa;
+   fill: #edad23;
+   stroke-width: 1.5px;
+  }

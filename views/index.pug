@@ -7,6 +7,7 @@ block content
 	h1(class="h3") #{coinConfig.siteTitle} 
 	span(class="tag" style="font-size: small" ) Auto refreshed every 30 secs
 	hr
+	include includes/graph.pug
 
 	if (config.demoSite && session.hideHomepageBanner != "true")
 		div(class="alert alert-primary alert-dismissible", role="alert")
