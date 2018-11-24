@@ -34,9 +34,6 @@ var app = express();
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 
-// don't send 304 errors
-app.disable('etag');
-
 // ref: https://blog.stigok.com/post/disable-pug-debug-output-with-expressjs-web-app
 app.engine('pug', (path, options, fn) => {
 	options.debug = false;
