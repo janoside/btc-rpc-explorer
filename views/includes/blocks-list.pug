@@ -29,7 +29,7 @@ table(class="table table-striped table-responsive-sm mb-0")
 					- var timeAgo = moment.duration(moment.utc(new Date()).diff(moment.utc(new Date(parseInt(block.time) * 1000))));
 					td(class="data-cell monospace text-right block-time-ago") #{timeAgo.format("m") + " min"}
 					td(class="data-cell monospace")
-						if (block.miner && block.miner.name)
+						if (block.miner)
 							span(data-toggle="tooltip", title=("Identified by: " + block.miner.identifiedBy), class="tag") #{block.miner.name}
 						else
 							span ?

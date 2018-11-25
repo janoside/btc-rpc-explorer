@@ -1047,6 +1047,7 @@ router.get('/newblocks', (req, res) => {
 			let formatExchangedCurrency = utils.formatExchangedCurrency(currencyValue);
 
 			let height = block.height.toLocaleString();
+			let height_number = block.height;
 			let timeUTC = new Date(parseInt(block.time) * 1000).getTime();
 			let time = moment.utc(new Date(parseInt(block.time) * 1000)).format("Y-MM-DD HH:mm:ss");
 			let timeAgo = moment.duration(moment.utc(new Date()).diff(moment.utc(new Date(parseInt(block.time) * 1000)))).format('m') + ' min';
@@ -1056,7 +1057,7 @@ router.get('/newblocks', (req, res) => {
 			let weight = block.weight.toLocaleString();
 			let radialProgressBarPercent = new Decimal(100 * block.weight / coinConfig.maxBlockWeight).toDecimalPlaces(2);
 
-			res.send({height: height, time: time, timeUTC: timeUTC, timeAgo: timeAgo, miner: miner, transactions: transactions,
+			res.send({height: height, height_number: height_number, time: time, timeUTC: timeUTC, timeAgo: timeAgo, miner: miner, transactions: transactions,
 				currencyValue: currencyValue, currencyValueFormatted: currencyValueFormatted, size: size, weight: weight, radialProgressBarPercent: radialProgressBarPercent
 				, currencyFormatType: currencyFormatType, exchangeRate: exchangeRate, formatExchangedCurrency: formatExchangedCurrency});
         } else {

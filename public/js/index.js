@@ -39,12 +39,12 @@ $(document).ready(function () {
                     }
 
                     if(data.miner !== '?') {
-                        data.miner = '<span data-toogle="tooltip" class="tag" title="Identified by: ' + data.miner.identifiedBy + '">' + data.miner.name + '</span>';
+                        data.miner = '<span class="tag" data-toogle="tooltip" title="Identified by: ' + data.miner.identifiedBy + '">' + data.miner.name + '</span>';
                     }
 
                     $('#block-list').prepend(
                         '<tr>' +
-                        '<td class="data-cell monospace"><a href="/block-height/' + data.height + '">' + data.height + '</a></td>' +
+                        '<td class="data-cell monospace"><a href="/block-height/' + data.height_number + '">' + data.height + '</a></td>' +
                         '<td class="data-cell monospace">' + data.time + '<span class="d-none block-timestamp">' + data.timeUTC + '</span>' +'</td>' +
                         '<td class="data-cell monospace text-right block-time-ago">' + data.timeAgo + '</td>' +
                         '<td class="data-cell monospace"><span>' + data.miner + '</span></td>' +
@@ -69,8 +69,10 @@ $(document).ready(function () {
                         '</tr>'
                     );
 
+                    $('[data-toggle="tooltip"]').tooltip('dispose');
                     $('[data-toggle="tooltip"]').tooltip();
-                    $('[data-toggle="popover"]').popover({html:true, container:"body"});
+                    //$('[data-toggle="popover"]').popover({html:true, container:"body"});
+                    //$("[data-toggle='toggle']").toggle();
 
                     latestBlock = latestBlock + 1;
                 }
