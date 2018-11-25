@@ -10,8 +10,13 @@ div(id='viz')
             .setDefaultEdgeLabel(function() { return {}; });
             g.graph().rankDir = 'RL';
 
-        for(var i=0;i<=blocks.length-3;i++) {   
-             g.setNode(i,  { label: '#'+blocks[i].height + '\n' + blocks[i].miner.name, class: "type-S" }); 
+        for(var i=0;i<=blocks.length-3;i++) { 
+            if(blocks[i].miner){  
+                g.setNode(i,  { label: '#'+blocks[i].height + '\n' + blocks[i].miner.name, class: "type-S" }); 
+             }else
+             {
+                g.setNode(i,  { label: '#'+blocks[i].height + '\n' + 'Unknown', class: "type-S" }); 
+             }
          }
 
         g.setNode(999,  {label: '', shape:"img" }); //Alpha node
