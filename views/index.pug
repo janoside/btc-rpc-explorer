@@ -4,31 +4,31 @@ block headContent
 	title Home
 	
 block content
-	h1(class="h3") #{coinConfig.siteTitle} 
+	h1(class="h3") #{coinConfig.pageTitle} 
 	span(class="tag" style="font-size: small" ) Auto refreshed every 30 secs
 	hr
 	include includes/graph.pug
 
-	if (config.demoSite && session.hideHomepageBanner != "true")
-		div(class="alert alert-primary alert-dismissible", role="alert")
-			p
-				strong #{coinConfig.siteTitle}
-				span  is 
-				a(href="https://github.com/janoside/btc-rpc-explorer") open-source
-				span  and easy to set up. It can communicate with your 
-				a(href=coinConfig.nodeUrl) #{coinConfig.name} Full Node
-				span  via RPC. See the 
-				a(href="https://github.com/janoside/btc-rpc-explorer") project description
-				span  for a list of features and instructions for running.
+	//- if (config.demoSite && session.hideHomepageBanner != "true")
+	//- 	div(class="alert alert-primary alert-dismissible", role="alert")
+	//- 		p
+	//- 			strong #{coinConfig.siteTitle}
+	//- 			span  is 
+	//- 			a(href="https://github.com/janoside/btc-rpc-explorer") open-source
+	//- 			span  and easy to set up. It can communicate with your 
+	//- 			a(href=coinConfig.nodeUrl) #{coinConfig.name} Full Node
+	//- 			span  via RPC. See the 
+	//- 			a(href="https://github.com/janoside/btc-rpc-explorer") project description
+	//- 			span  for a list of features and instructions for running.
 
-			div(style="height: 34px;")
-				a(class="github-button", href="https://github.com/janoside/btc-rpc-explorer", data-icon="octicon-star", data-size="large", data-show-count="true", aria-label="Star janoside/btc-rpc-explorer on GitHub", style="padding-right: 10px;") Star
+	//- 		div(style="height: 34px;")
+	//- 			a(class="github-button", href="https://github.com/janoside/btc-rpc-explorer", data-icon="octicon-star", data-size="large", data-show-count="true", aria-label="Star janoside/btc-rpc-explorer on GitHub", style="padding-right: 10px;") Star
 				
-				span    
-				a(class="github-button", href="https://github.com/janoside/btc-rpc-explorer/fork", data-icon="octicon-repo-forked", data-size="large", data-show-count="true", aria-label="Fork janoside/btc-rpc-explorer on GitHub") Fork
+	//- 			span    
+	//- 			a(class="github-button", href="https://github.com/janoside/btc-rpc-explorer/fork", data-icon="octicon-repo-forked", data-size="large", data-show-count="true", aria-label="Fork janoside/btc-rpc-explorer on GitHub") Fork
 
-			a(href="/changeSetting?name=hideHomepageBanner&value=true", class="close", aria-label="Close", style="text-decoration: none;")
-				span(aria-hidden="true") &times;
+	//- 		a(href="/changeSetting?name=hideHomepageBanner&value=true", class="close", aria-label="Close", style="text-decoration: none;")
+	//- 			span(aria-hidden="true") &times;
 
 	div(class="card mb-3")
 		div(class="card-header")
