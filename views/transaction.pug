@@ -100,7 +100,7 @@ block content
 							div(class="summary-table-label") Version
 							div(class="summary-table-content monospace") #{result.getrawtransaction.version}
 
-						if (result.getrawtransaction.vsize != result.getrawtransaction.size)
+						if (result.getrawtransaction.vsize && result.getrawtransaction.vsize != result.getrawtransaction.size)
 							div(class="row")
 								div(class="summary-table-label") Virtual Size
 								div(class="summary-table-content monospace") #{result.getrawtransaction.vsize.toLocaleString()} VB
@@ -184,7 +184,7 @@ block content
 							div(class="row")
 								div(class="summary-table-label") Fee Rate
 								div(class="summary-table-content monospace")
-									if (result.getrawtransaction.vsize != result.getrawtransaction.size)
+									if (result.getrawtransaction.vsize && result.getrawtransaction.vsize != result.getrawtransaction.size)
 										span #{utils.addThousandsSeparators(new DecimalRounded(totalInputValue).minus(totalOutputValue).dividedBy(result.getrawtransaction.vsize).times(100000000))} sat/VB
 										br
 
