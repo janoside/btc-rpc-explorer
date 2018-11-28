@@ -112,11 +112,10 @@ module.exports = {
 	],
 
 	donationAddresses:{
-		coins:["BTC", "LTC"],
-		sites:{"BTC":"https://btc.chaintools.io", "LTC":"https://ltc.chaintools.io"},
+		coins:["BSV"],
+		sites:{"BSV":"https://whatsonchain.com"},
 
-		"BTC":{address:"3NPGpNyLLmVKCEcuipBs7G4KpQJoJXjDGe"},
-		"LTC":{address:"ME4pXiXuWfEi1ANBDo9irUJVcZBhsTx14i"}
+		"BSV":{address:"bitcoincash:qq7su5mghkkamjss3g87g3eejxf8f3excuekujtlev"},
 	},
 
 //	headerDropdownLinks: {

@@ -21,7 +21,7 @@ html(lang="en")
 		script(src="https://cdnjs.cloudflare.com/ajax/libs/d3/5.7.0/d3.min.js")
 		script(src="https://dagrejs.github.io/project/dagre-d3/latest/dagre-d3.min.js")
 
-		block headContent
+	block headContent
 			title Explorer
 		
 	body
@@ -145,27 +145,35 @@ html(lang="en")
 										//- 	a(href="https://lightning.chaintools.io", class="mr-2", title="Lightning Explorer")
 										//- 		img(src=("/img/logo/lightning.svg"), style="width: 32px; height: 32px;", alt="lightning")
 
-						//- div(class="col-md-7 text-md-right")
-						//- 	dl
-						//- 		dt Support Development of #{coinConfig.siteTitle}
-						//- 		dd
-						//- 			div(class="text-md-right text-center")
-						//- 				each coin, index in config.donationAddresses.coins
-						//- 					div(style="display: inline-block; max-width: 150px;", class="text-center mb-3 word-wrap monospace", class=(index > 0 ? "ml-md-3" : false))
-						//- 						img(src=donationAddressQrCodeUrls[coin], alt=config.donationAddresses[coin].address, style="border: solid 1px #ccc;")
-						//- 						br
-						//- 						if (coinConfig.ticker == coin)
-						//- 							span #{coin}: 
-						//- 							a(href=("/address/" + config.donationAddresses[coin].address)) #{config.donationAddresses[coin].address}
-						//- 						else
-						//- 							span #{coin}: 
-						//- 							a(href=(config.donationAddresses.sites[coin] + "/address/" + config.donationAddresses[coin].address)) #{config.donationAddresses[coin].address}
+						div(class="col-md-7 text-md-right")
+							dl
+								dt Support Development of #{coinConfig.siteTitle}
+								dd
+									div(class="text-md-right text-center")
+									
+										each coin, index in config.donationAddresses.coins
+											div(style="display: inline-block; max-width: 150px;", class="text-center mb-3 word-wrap monospace", class=(index > 0 ? "ml-md-3" : false))
+												//img(src=donationAddressQrCodeUrls[coin], alt=config.donationAddresses[coin].address, style="border: solid 1px #ccc;")
+												br
+												if (coinConfig.ticker == coin)
+													span #{coin} Wallet: 
+													a(href=("/address/" + config.donationAddresses[coin].address)) #{"QR"}
+												else
+													span #{coin} Wallet: 
+													a(href=(config.donationAddresses.sites[coin] + "/address/" + config.donationAddresses[coin].address)) #{"QR"}
+												
+												br
+												br
+												<div class="money-button" data-to="1353" data-amount="1" data-currency="USD" data-label="Donate" data-client-identifier="8aaaca8efcef24903d22e9e0265d201b" data-button-id="1543440390519" data-button-data="{}" data-type="tip">
+												</div>
+	
 		
 		script(src="https://code.jquery.com/jquery-3.3.1.min.js", integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=", crossorigin="anonymous")
 		script(src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js", integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ", crossorigin="anonymous")
 		script(src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js", integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb", crossorigin="anonymous")
 		script(src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js", integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm", crossorigin="anonymous")
 		script(defer, src="https://use.fontawesome.com/releases/v5.2.0/js/all.js", integrity="sha384-4oV5EgaV02iISL2ban6c/RmotsABqE4yZxZLcYMAdG7FAPsyHYAPpywE9PJo+Khy", crossorigin="anonymous")
+		script(src="https://www.moneybutton.com/moneybutton.js")
 
 		script(src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js")
 		
