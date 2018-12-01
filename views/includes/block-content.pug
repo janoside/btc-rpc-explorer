@@ -170,7 +170,10 @@ div(class="tab-content")
 							div(class="summary-split-table-label") Miner
 							div(class="summary-split-table-content monospace")
 								if (result.getblock.miner)
-									span #{result.getblock.miner.name} 
+									if(result.getblock.miner.name)
+										span #{result.getblock.miner.name} 
+									else
+										span #{result.getblock.miner} 
 									if (result.getblock.miner.identifiedBy)
 										span(data-toggle="tooltip", title=("Identified by: " + result.getblock.miner.identifiedBy))
 											i(class="fas fa-info-circle")
@@ -217,13 +220,15 @@ div(class="tab-content")
 								span ##{(txIndex + offset + 1).toLocaleString()}
 								span  &ndash; 
 								a(href=("/tx/" + tx.txid)) #{tx.txid}
-
 								if (global.specialTransactions && global.specialTransactions[tx.txid])
-									span  
-									a(data-toggle="tooltip", title=(coinConfig.name + " Fun! See transaction for details"))
-										i(class="fas fa-certificate text-primary")
-									
-						div(class="card-body")
+									span
+										a(data-toggle="tooltip", title=(coinConfig.name + " Fun! See transaction for details"))
+											i(class="fas fa-certificate text-primary")
+								span  
+								a(href=("#" + tx.txid) data-toggle="collapse" data-parent="#accordion" aria-expanded="false" aria-controls=("#" + tx.txid))
+									i(class="fa fa-chevron-down pull-right")
+			
+						div(class="card-body collapse " role="tabpanel" id=tx.txid)
 							//pre
 							//	code #{JSON.stringify(result.txInputsByTransaction[tx.txid], null, 4)}
 							if (true)
@@ -231,6 +236,7 @@ div(class="tab-content")
 								- var blockHeight = result.getblock.height;
 
 								include ./transaction-io-details.pug
+
 								
 					//pre
 					//	code #{JSON.stringify(tx, null, 4)}

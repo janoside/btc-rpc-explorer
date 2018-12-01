@@ -211,7 +211,12 @@ function getMinerFromCoinbaseTx(tx) {
 		}
 	}
 
-	return null;
+	if(tx.vin[0].coinbase)
+	{
+		return hex2ascii(tx.vin[0].coinbase);
+	}
+	
+	return null
 }
 
 function getTxTotalInputOutputValues(tx, txInputs, blockHeight) {
