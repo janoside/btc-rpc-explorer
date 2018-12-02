@@ -205,7 +205,8 @@ div(class="tab-content")
 								if (txCount > 100)
 									a(href=(paginationBaseUrl + "?limit=100"), class="btn btn-sm btn-primary px-2", class=(limit == 100 ? "active" : false)) 100
 								
-								a(href=(paginationBaseUrl + "?limit=3000"), class="btn btn-sm btn-primary px-2", class=(limit >= txCount ? "active" : false)) all
+								if (txCount < 500)
+									a(href=(paginationBaseUrl + "?limit=3000"), class="btn btn-sm btn-primary px-2", class=(limit >= txCount ? "active" : false)) all
 
 			- var fontawesomeInputName = "sign-in-alt";
 			- var fontawesomeOutputName = "sign-out-alt";
@@ -224,14 +225,15 @@ div(class="tab-content")
 									span
 										a(data-toggle="tooltip", title=(coinConfig.name + " Fun! See transaction for details"))
 											i(class="fas fa-certificate text-primary")
-								span  
-								a(href=("#" + tx.txid) data-toggle="collapse" data-parent="#accordion" aria-expanded="false" aria-controls=("#" + tx.txid))
-									i(class="fa fa-chevron-down pull-right")
-			
+								if (txCount < 100)							
+									span  
+									a(href=("#" + tx.txid) data-toggle="collapse" data-parent="#accordion" aria-expanded="false" aria-controls=("#" + tx.txid))
+										i(class="fa fa-chevron-down pull-right")
+								
 						div(class="card-body collapse " role="tabpanel" id=tx.txid)
 							//pre
 							//	code #{JSON.stringify(result.txInputsByTransaction[tx.txid], null, 4)}
-							if (true)
+							if (txCount < 100)
 								- var txInputs = result.txInputsByTransaction[tx.txid];
 								- var blockHeight = result.getblock.height;
 
