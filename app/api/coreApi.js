@@ -622,55 +622,68 @@ function getBlockByHashWithTransactions(blockHash, txLimit, txOffset) {
 				txids.push(block.tx[i]);
 			}
 
-			getRawTransactions(txids).then(function(transactions) {
-				if (transactions.length == txids.length) {
-					block.coinbaseTx = transactions[0];
-					block.totalFees = utils.getBlockTotalFeesFromCoinbaseTxAndBlockHeight(block.coinbaseTx, block.height);
-					block.miner = utils.getMinerFromCoinbaseTx(block.coinbaseTx);
+			if(block.tx.length > 15000)
+			{
+				var transactions = [];
+				for(var i=0; i <txids.length - 1;i++ )
+				{
+					
+					transactions.push({txid:txids[i]})
 				}
 
-				// if we're on page 2, we don't really want it anymore...
-				if (txOffset > 0) {
-					transactions.shift();
-				}
-
-				var maxInputsTracked = config.site.txMaxInput;
-				var vinTxids = [];
-				for (var i = 0; i < transactions.length; i++) {
-					var transaction = transactions[i];
-
-					if (transaction && transaction.vin) {
-						for (var j = 0; j < Math.min(maxInputsTracked, transaction.vin.length); j++) {
-							if (transaction.vin[j].txid) {
-								vinTxids.push(transaction.vin[j].txid);
-							}
-						}
+				resolve({ getblock:block, transactions:transactions, txInputsByTransaction:{} });
+			}
+			else{
+				getRawTransactions(txids).then(function(transactions) {
+					if (transactions.length == txids.length) {
+						block.coinbaseTx = transactions[0];
+						block.totalFees = utils.getBlockTotalFeesFromCoinbaseTxAndBlockHeight(block.coinbaseTx, block.height);
+						block.miner = utils.getMinerFromCoinbaseTx(block.coinbaseTx);
 					}
-				}
 
-				var txInputsByTransaction = {};
-				getRawTransactions(vinTxids).then(function(vinTransactions) {
-					var vinTxById = {};
+					// if we're on page 2, we don't really want it anymore...
+					if (txOffset > 0) {
+						transactions.shift();
+					}
 
-					vinTransactions.forEach(function(tx) {
-						vinTxById[tx.txid] = tx;
-					});
+					var maxInputsTracked = config.site.txMaxInput;
+					var vinTxids = [];
+					for (var i = 0; i < transactions.length; i++) {
+						var transaction = transactions[i];
 
-					transactions.forEach(function(tx) {
-						txInputsByTransaction[tx.txid] = {};
-
-						if (tx && tx.vin) {
-							for (var i = 0; i < Math.min(maxInputsTracked, tx.vin.length); i++) {
-								if (vinTxById[tx.vin[i].txid]) {
-									txInputsByTransaction[tx.txid][i] = vinTxById[tx.vin[i].txid];
+						if (transaction && transaction.vin) {
+							for (var j = 0; j < Math.min(maxInputsTracked, transaction.vin.length); j++) {
+								if (transaction.vin[j].txid) {
+									vinTxids.push(transaction.vin[j].txid);
 								}
 							}
 						}
+					}
 
-						resolve({ getblock:block, transactions:transactions, txInputsByTransaction:txInputsByTransaction });
+					var txInputsByTransaction = {};
+					getRawTransactions(vinTxids).then(function(vinTransactions) {
+						var vinTxById = {};
+
+						vinTransactions.forEach(function(tx) {
+							vinTxById[tx.txid] = tx;
+						});
+
+						transactions.forEach(function(tx) {
+							txInputsByTransaction[tx.txid] = {};
+
+							if (tx && tx.vin) {
+								for (var i = 0; i < Math.min(maxInputsTracked, tx.vin.length); i++) {
+									if (vinTxById[tx.vin[i].txid]) {
+										txInputsByTransaction[tx.txid][i] = vinTxById[tx.vin[i].txid];
+									}
+								}
+							}
+
+							resolve({ getblock:block, transactions:transactions, txInputsByTransaction:txInputsByTransaction });
+						});
 					});
 				});
-			});
+			}
 		});
 	});
 }
