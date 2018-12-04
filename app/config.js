@@ -76,7 +76,7 @@ module.exports = {
 	electrumXServers:[
 		// set host & port of electrum servers to connect to
 		// protocol can be "tls" or "tcp", it defaults to "tcp" if port is 50001 and "tls" otherwise
-		// {host: "shsmithslz63a5um.onion", port:60003, protocol: "tcp"},
+		{host: "sv1.hsmiths.com", port:60004, protocol: "ssl"},
 	    {host: "satoshi.vision.cash", port:50002, protocol: "ssl"},
 		// {host: "electrum.qtornado.com", port:50001, protocol: "tcp"},
 		// {host: "electrum.coinucopia.io", port:50001, protocol: "tcp"},
