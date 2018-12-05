@@ -399,10 +399,10 @@ router.get("/block-height/:blockHeight", function(req, res) {
 		limit = parseInt(req.query.limit);
 
 		// for demo sites, limit page sizes
-		if (config.demoSite && limit > config.site.blockTxPageSize) {
+		if (limit > config.site.blockTxPageSize) {
 			limit = config.site.blockTxPageSize;
 
-			res.locals.userMessage = "Transaction page size limited to " + config.site.blockTxPageSize + ". If this is your site, you can change or disable this limit in the site config.";
+			res.locals.userMessage = "For now transaction page size limited to " + config.site.blockTxPageSize + ".";
 		}
 	}
 
@@ -415,10 +415,10 @@ router.get("/block-height/:blockHeight", function(req, res) {
 	res.locals.paginationBaseUrl = "/block-height/" + blockHeight;
 
 	coreApi.getBlockByHeight(blockHeight).then(function(result) {
-		res.locals.result.getblockbyheight = result;
-
 		coreApi.getBlockByHashWithTransactions(result.hash, limit, offset).then(function(result) {
-			res.locals.result.getblock = result.getblock;
+			
+			res.locals.result.getblock = result.getblock
+			res.locals.result.getblock.txCount = result.getblock.tx.length
 			res.locals.result.transactions = result.transactions;
 			res.locals.result.txInputsByTransaction = result.txInputsByTransaction;
 
@@ -459,6 +459,7 @@ router.get("/block/:blockHash", function(req, res) {
 	// TODO handle RPC error
 	coreApi.getBlockByHashWithTransactions(blockHash, limit, offset).then(function(result) {
 		res.locals.result.getblock = result.getblock;
+		res.locals.result.getblock.txCount = result.getblock.tx.length
 		res.locals.result.transactions = result.transactions;
 		res.locals.result.txInputsByTransaction = result.txInputsByTransaction;
 

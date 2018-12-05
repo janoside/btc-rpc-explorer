@@ -1,10 +1,12 @@
+- var txCount = result.getblock.txCount;
+
 ul(class='nav nav-tabs mb-3')
 	li(class="nav-item")
 		a(data-toggle="tab", href="#tab-details", class="nav-link active", role="tab") Details
-	li(class="nav-item")
-		a(data-toggle="tab", href="#tab-json", class="nav-link", role="tab") JSON
+	if(txCount < 1000)
+		li(class="nav-item")
+			a(data-toggle="tab", href="#tab-json", class="nav-link", role="tab") JSON
 
-- var txCount = result.getblock.tx.length;
 
 div(class="tab-content")
 	div(id="tab-details", class="tab-pane active", role="tabpanel")
@@ -58,7 +60,7 @@ div(class="tab-content")
 
 						div(class="row")
 							div(class="summary-split-table-label") Transactions
-							div(class="summary-split-table-content monospace") #{result.getblock.tx.length.toLocaleString()}
+							div(class="summary-split-table-content monospace") #{result.getblock.txCount.toLocaleString()}
 
 						div(class="row")
 							div(class="summary-split-table-label") Total Fees
@@ -70,7 +72,7 @@ div(class="tab-content")
 							div(class="row")
 								div(class="summary-split-table-label") Average Fee
 								div(class="summary-split-table-content monospace")
-									- var currencyValue = new Decimal(result.getblock.totalFees).dividedBy(result.getblock.tx.length);
+									- var currencyValue = new Decimal(result.getblock.totalFees).dividedBy(result.getblock.txCount);
 									include ./value-display.pug
 
 						- var blockRewardMax = coinConfig.blockRewardFunction(result.getblock.height);
@@ -257,8 +259,9 @@ div(class="tab-content")
 				hr
 
 				include ./pagination.pug
-					
-	div(id="tab-json", class="tab-pane", role="tabpanel")
-		pre
-			code #{JSON.stringify(result.getblock, null, 4)}
+	
+	if(txCount < 1000)					
+		div(id="tab-json", class="tab-pane", role="tabpanel")
+			pre
+				code #{JSON.stringify(result.getblock, null, 4)}
 

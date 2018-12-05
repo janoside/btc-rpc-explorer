@@ -29,6 +29,9 @@ function tryCacheThenRpcApi(cache, cacheKey, cacheMaxAge, rpcApiFunction, cacheC
 	//console.log("tryCache: " + cacheKey + ", " + cacheMaxAge);
 	if (cacheConditionFunction == null) {
 		cacheConditionFunction = function(obj) {
+			if(obj && obj.tx){
+				return shouldCacheBlock(obj)
+			}			
 			return true;
 		};
 	}
@@ -54,7 +57,9 @@ function shouldCacheTransaction(tx) {
 	return (tx.confirmations > 0);
 }
 
-
+function shouldCacheBlock(block) {
+	return (block && block.tx && block.tx.length < 5000);
+}
 
 function getBlockchainInfo() {
 	return tryCacheThenRpcApi(miscCache, "getBlockchainInfo", 10000, rpcApi.getBlockchainInfo);
@@ -389,7 +394,7 @@ function getMempoolStats() {
 }
 
 function getBlockByHeight(blockHeight) {
-	return tryCacheThenRpcApi(blockCache, "getBlockByHeight-" + blockHeight, 3600000, function() {
+	return tryCacheThenRpcApi(blockCache, "getBlockByHeight-" + blockHeight, 600000, function() {
 		return rpcApi.getBlockByHeight(blockHeight);
 	});
 }
@@ -421,9 +426,11 @@ function getBlocksByHeight(blockHeights) {
 						var queriedBlock = queriedBlocks[queriedBlocksCurrentIndex];
 						
 						combinedBlocks.push(queriedBlock);
-
-						blockCache.set("getBlockByHeight-" + queriedBlock.height, queriedBlock, 3600000);
-
+						
+						if(shouldCacheBlock(queriedBlock))
+						{
+							blockCache.set("getBlockByHeight-" + queriedBlock.height, queriedBlock, 600000);
+						}
 						queriedBlocksCurrentIndex++;
 					}
 				}
@@ -438,13 +445,14 @@ function getBlocksByHeight(blockHeights) {
 				combinedBlocks.push(blocksByIndex[i]);
 			}
 
+
 			resolve(combinedBlocks);
 		}
 	});
 }
 
 function getBlockByHash(blockHash) {
-	return tryCacheThenRpcApi(blockCache, "getBlockByHash-" + blockHash, 3600000, function() {
+	return tryCacheThenRpcApi(blockCache, "getBlockByHash-" + blockHash, 600000, function() {
 		return rpcApi.getBlockByHash(blockHash);
 	});
 }
@@ -477,8 +485,10 @@ function getBlocksByHash(blockHashes) {
 
 						combinedBlocks.push(queriedBlock);
 
-						blockCache.set("getBlockByHash-" + queriedBlock.hash, queriedBlock, 3600000);
-
+						if(shouldCacheBlock(queriedBlock))
+						{
+							blockCache.set("getBlockByHash-" + queriedBlock.hash, queriedBlock, 600000);
+						}
 						queriedBlocksCurrentIndex++;
 					}
 				}
@@ -500,11 +510,11 @@ function getRawTransaction(txid) {
 		return rpcApi.getRawTransaction(txid);
 	};
 
-	return tryCacheThenRpcApi(txCache, "getRawTransaction-" + txid, 3600000, rpcApiFunction, shouldCacheTransaction);
+	return tryCacheThenRpcApi(txCache, "getRawTransaction-" + txid, 600000, rpcApiFunction, shouldCacheTransaction);
 }
 
 function getAddress(address) {
-	return tryCacheThenRpcApi(miscCache, "getAddress-" + address, 3600000, function() {
+	return tryCacheThenRpcApi(miscCache, "getAddress-" + address, 600000, function() {
 		return rpcApi.getAddress(address);
 	});
 }
@@ -538,7 +548,7 @@ function getRawTransactions(txids) {
 							combinedTxs.push(queriedTx);
 
 							if (shouldCacheTransaction(queriedTx)) {
-								txCache.set("getRawTransaction-" + queriedTx.txid, queriedTx, 3600000);
+								txCache.set("getRawTransaction-" + queriedTx.txid, queriedTx, 600000);
 							}
 						}
 
@@ -689,13 +699,13 @@ function getBlockByHashWithTransactions(blockHash, txLimit, txOffset) {
 }
 
 function getHelp() {
-	return tryCacheThenRpcApi(miscCache, "getHelp", 3600000, function() {
+	return tryCacheThenRpcApi(miscCache, "getHelp", 600000, function() {
 		return rpcApi.getHelp();
 	});
 }
 
 function getRpcMethodHelp(methodName) {
-	return tryCacheThenRpcApi(miscCache, "getHelp-" + methodName, 3600000, function() {
+	return tryCacheThenRpcApi(miscCache, "getHelp-" + methodName, 600000, function() {
 		return rpcApi.getRpcMethodHelp(methodName);
 	});
 }
