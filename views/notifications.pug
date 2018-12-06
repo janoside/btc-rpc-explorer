@@ -1,0 +1,31 @@
+extends layout
+
+block headContent
+	title Node Status
+	
+block content
+	h1(class="h3") Notifications
+	hr
+
+
+	div(class="card mb-3")
+		div(class="card-header")
+			span(class="h4") New Block Mined
+		div(class="card-body")
+			table(class="table details-table mb-0")
+				tr
+					td(class="monospace") 
+						span(class="h5" style="height: 50px; width: 40px; margin-right: 10px;")
+							<i class="fab fa-telegram"></i> 
+							a(href="https://t.me/BlockNotifications" target="_blank") Telegram			
+				tr
+					td(class="monospace") 
+						span(class="h5" style="height: 50px; width: 40px; margin-right: 10px;")
+							<i class="fab fa-slack"></i> 
+							a(href="https://join.slack.com/t/blocknotifications/shared_invite/enQtNDkzMzE0MDUzMDYxLWMzNDdhYjVmYmVkZmZjM2EzYjg2NjE1ZjY3ZTAxYjJkOWJkNGUyNGQ2YWY2MmM2MWFkOGNhOTI4MmFmODhkZWI …" target="_blank") Slack 						
+				tr
+					td(class="monospace") 						
+						span(class="h5" style="height: 50px; width: 40px; margin-right: 10px;")
+							<i class="fab fa-twitter"></i> 
+							a(href="https://twitter.com/BlockNotificat1" target="_blank") Twitter
+										
