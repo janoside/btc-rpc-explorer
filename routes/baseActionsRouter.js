@@ -167,66 +167,66 @@ router.get("/peers", function(req, res) {
 	});
 });
 
-router.post("/connect", function(req, res) {
-	var host = req.body.host;
-	var port = req.body.port;
-	var username = req.body.username;
-	var password = req.body.password;
+// router.post("/connect", function(req, res) {
+// 	var host = req.body.host;
+// 	var port = req.body.port;
+// 	var username = req.body.username;
+// 	var password = req.body.password;
 
-	res.cookie('rpc-host', host);
-	res.cookie('rpc-port', port);
-	res.cookie('rpc-username', username);
+// 	res.cookie('rpc-host', host);
+// 	res.cookie('rpc-port', port);
+// 	res.cookie('rpc-username', username);
 
-	req.session.host = host;
-	req.session.port = port;
-	req.session.username = username;
+// 	req.session.host = host;
+// 	req.session.port = port;
+// 	req.session.username = username;
 
-	var client = new bitcoinCore({
-		host: host,
-		port: port,
-		username: username,
-		password: password,
-		timeout: 30000
-	});
+// 	var client = new bitcoinCore({
+// 		host: host,
+// 		port: port,
+// 		username: username,
+// 		password: password,
+// 		timeout: 30000
+// 	});
 
-	console.log("created client: " + client);
+// 	console.log("created client: " + client);
 
-	global.client = client;
+// 	global.client = client;
 
-	req.session.userMessage = "<strong>Connected via RPC</strong>: " + username + " @ " + host + ":" + port;
-	req.session.userMessageType = "success";
+// 	req.session.userMessage = "<strong>Connected via RPC</strong>: " + username + " @ " + host + ":" + port;
+// 	req.session.userMessageType = "success";
 
-	res.redirect("/");
-});
+// 	res.redirect("/");
+// });
 
-router.get("/disconnect", function(req, res) {
-	res.cookie('rpc-host', "");
-	res.cookie('rpc-port', "");
-	res.cookie('rpc-username', "");
+// router.get("/disconnect", function(req, res) {
+// 	res.cookie('rpc-host', "");
+// 	res.cookie('rpc-port', "");
+// 	res.cookie('rpc-username', "");
 
-	req.session.host = "";
-	req.session.port = "";
-	req.session.username = "";
+// 	req.session.host = "";
+// 	req.session.port = "";
+// 	req.session.username = "";
 
-	console.log("destroyed client.");
+// 	console.log("destroyed client.");
 
-	global.client = null;
+// 	global.client = null;
 
-	req.session.userMessage = "Disconnected from node.";
-	req.session.userMessageType = "success";
+// 	req.session.userMessage = "Disconnected from node.";
+// 	req.session.userMessageType = "success";
 
-	res.redirect("/");
-});
+// 	res.redirect("/");
+// });
 
-router.get("/changeSetting", function(req, res) {
-	if (req.query.name) {
-		req.session[req.query.name] = req.query.value;
+// router.get("/changeSetting", function(req, res) {
+// 	if (req.query.name) {
+// 		req.session[req.query.name] = req.query.value;
 
-		res.cookie('user-setting-' + req.query.name, req.query.value);
-	}
+// 		res.cookie('user-setting-' + req.query.name, req.query.value);
+// 	}
 
-	res.redirect(req.headers.referer);
-});
+// 	res.redirect(req.headers.referer);
+// });
 
 router.get("/blocks", function(req, res) {
 	var limit = config.site.browseBlocksPageSize;
@@ -1025,6 +1025,10 @@ router.get("/fun", function(req, res) {
 	res.locals.historicalData = sortedList;
 	
 	res.render("fun");
+});
+
+router.get("/notifications", function(req, res) {
+	res.render("notifications");
 });
 
 module.exports = router;
