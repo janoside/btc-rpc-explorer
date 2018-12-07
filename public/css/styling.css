@@ -61,6 +61,15 @@ pre {
 	margin-right: 4px;
 }
 
+.tag-memo {
+	border-radius: 4px;
+	background-color: #487521;
+	color: white;
+	padding: 2px 5px;
+	margin-right: 4px;
+}
+
+
 #subheader a {
 	margin-right: 20px;
 }

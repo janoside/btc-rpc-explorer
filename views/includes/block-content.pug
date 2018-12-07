@@ -229,9 +229,18 @@ div(class="tab-content")
 											i(class="fas fa-certificate text-primary")
 								if (txCount < 15000)							
 									span  
-									a(href=("#" + tx.txid) data-toggle="collapse" data-parent="#accordion" aria-expanded="false" aria-controls=("#" + tx.txid))
-										i(class="fa fa-chevron-down pull-right")
-													
+									a(href=("#" + tx.txid) data-toggle="collapse" data-parent="#accordion" aria-expanded="false" aria-controls=("#" + tx.txid) style="padding-right: inherit;")
+										i(class="fa fa-chevron-down pull-right") 
+								
+								
+								each vout, voutIndex in tx.vout
+									if (vout && vout.scriptPubKey && vout.scriptPubKey.asm && vout.scriptPubKey.asm.startsWith('OP_RETURN '))
+										- var opReturn = utils.getOpReturnTags(vout.scriptPubKey.asm); 
+										if(opReturn.tag == "memo.cash")
+											span(class="tag-memo") #{opReturn.tag}
+											span(class="tag-memo") #{opReturn.action}
+										
+
 						if (txCount < 15000)
 		
 							div(class="card-body collapse " role="tabpanel" id=tx.txid)

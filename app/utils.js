@@ -7,6 +7,25 @@ var coinConfig = coins[config.coin];
 
 var ipCache = {};
 
+var memoPrefixes = [
+	{ prefix: '365', action: 'Set name' },
+	{ prefix: '621', action: 'Post memo' },
+	{ prefix: '877', action: 'Reply to memo' },
+	{ prefix: '1133', action: 'Like / tip memo' },
+	{ prefix: '1389', action: 'Set profile text' },
+	{ prefix: '1645', action: 'Follow user' },
+	{ prefix: '1901', action: 'Unfollow user' },
+	{ prefix: '2669', action: 'Set profile picture' },
+	// {prefix:'2925', action:'Repost memo'}, planned
+	{ prefix: '3181', action: 'Post topic message' },
+	{ prefix: '3437', action: 'Topic follow' },
+	{ prefix: '3693', action: 'Topic unfollow' },
+	{ prefix: '4205', action: 'Create poll' },
+	{ prefix: '4973', action: 'Add poll option' },
+	{ prefix: '5229', action: 'Poll vote' }
+	// {prefix:'9325', action:'Send money'}, planned
+  ];
+
 var exponentScales = [
 	{val:1000000000000000000000000000000000, name:"?", abbreviation:"V", exponent:"33"},
 	{val:1000000000000000000000000000000, name:"?", abbreviation:"W", exponent:"30"},
@@ -33,6 +52,25 @@ function redirectToConnectPageIfNeeded(req, res) {
 	
 	return false;
 }
+
+function getOpReturnTags(hex){
+	var result = {};
+	var ss = hex.split(' ');
+	//var tsp = ss[1].substring(0, 8)
+	//var scriptBody = ss[1].substring(8)
+
+	let msp = ss[1].split(0)[0];
+	var mpr = memoPrefixes.filter(p => { return p.prefix === msp })
+	if (mpr.length > 0) {
+	  result.tag = "memo.cash";
+	  result.memoCashPrefix = mpr[0].prefix;
+	  result.memoCashAction = mpr[0].action;
+	  result.action = result.memoCashAction	;	
+	}
+
+	return result;
+}
+
 
 function hex2ascii(hex) {
 	var str = "";
@@ -403,5 +441,6 @@ module.exports = {
 	parseExponentStringDouble: parseExponentStringDouble,
 	formatLargeNumber: formatLargeNumber,
 	geoLocateIpAddresses: geoLocateIpAddresses,
-	getTxTotalInputOutputValues: getTxTotalInputOutputValues
+	getTxTotalInputOutputValues: getTxTotalInputOutputValues,
+	getOpReturnTags: getOpReturnTags
 };
