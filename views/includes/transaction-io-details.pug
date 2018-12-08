@@ -110,11 +110,9 @@ div(class="row monospace")
 									- var opReturn = utils.getOpReturnTags(vout.scriptPubKey.asm); 
 									if(opReturn && opReturn.tag)
 										span(class="monospace") #{vout.scriptPubKey.asm.substring("OP_RETURN ".length)}
-										//- br
-										//- span(class="tag-memo") Action: #{opReturn.action}
-										//- br
-									else
-										span(class="monospace text-muted") #{utils.hex2ascii(vout.scriptPubKey.asm.substring("OP_RETURN ".length))}
+
+									br
+									span(class="monospace text-muted") ASCII:  #{utils.hex2ascii(vout.scriptPubKey.asm.substring("OP_RETURN ".length))}
 	
 								else
 									span(class="monospace")

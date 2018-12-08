@@ -201,14 +201,14 @@ div(class="tab-content")
 							div(class="btn-group", role="group")
 								a(href=(paginationBaseUrl + "?limit=20"), class="btn btn-sm btn-primary px-2", class=((limit == 20 && txCount > limit) ? "active" : false)) 20
 								
-								if (txCount > 50)
-									a(href=(paginationBaseUrl + "?limit=50"), class="btn btn-sm btn-primary px-2", class=(limit == 50 ? "active" : false)) 50
+								//- if (txCount > 50)
+								//- 	a(href=(paginationBaseUrl + "?limit=50"), class="btn btn-sm btn-primary px-2", class=(limit == 50 ? "active" : false)) 50
 								
-								if (txCount > 100)
-									a(href=(paginationBaseUrl + "?limit=100"), class="btn btn-sm btn-primary px-2", class=(limit == 100 ? "active" : false)) 100
+								//- if (txCount > 100)
+								//- 	a(href=(paginationBaseUrl + "?limit=100"), class="btn btn-sm btn-primary px-2", class=(limit == 100 ? "active" : false)) 100
 								
-								if (txCount < 1000)
-									a(href=(paginationBaseUrl + "?limit=3000"), class="btn btn-sm btn-primary px-2", class=(limit >= txCount ? "active" : false)) all
+								//- if (txCount < 1000)
+								//- 	a(href=(paginationBaseUrl + "?limit=3000"), class="btn btn-sm btn-primary px-2", class=(limit >= txCount ? "active" : false)) all
 
 			- var fontawesomeInputName = "sign-in-alt";
 			- var fontawesomeOutputName = "sign-out-alt";
@@ -227,10 +227,9 @@ div(class="tab-content")
 									span
 										a(data-toggle="tooltip", title=(coinConfig.name + " Fun! See transaction for details"))
 											i(class="fas fa-certificate text-primary")
-								if (txCount < 15000)							
-									span  
-									a(href=("#" + tx.txid) data-toggle="collapse" data-parent="#accordion" aria-expanded="false" aria-controls=("#" + tx.txid) style="padding-right: inherit;")
-										i(class="fa fa-chevron-down pull-right") 
+								span  
+								a(href=("#" + tx.txid) data-toggle="collapse" data-parent="#accordion" aria-expanded="false" aria-controls=("#" + tx.txid) style="padding-right: inherit;")
+									i(class="fa fa-chevron-down pull-right") 
 								
 								if(tx.vout)
 									each vout, voutIndex in tx.vout
@@ -239,17 +238,18 @@ div(class="tab-content")
 											if(opReturn.tag == "memo.cash")
 												span(class="tag-memo") #{opReturn.tag}
 												span(class="tag-memo") #{opReturn.action}
-										
+											else if (opReturn.tag == "yours.org")
+												span(class="tag-yours") #{opReturn.tag}
+											else		
+												span(class="tag") "OP_RETURN"
 
-						if (txCount < 15000)
-		
-							div(class="card-body collapse " role="tabpanel" id=tx.txid)
-								//pre
-								//	code #{JSON.stringify(result.txInputsByTransaction[tx.txid], null, 4)}
-								- var txInputs = result.txInputsByTransaction[tx.txid];
-								- var blockHeight = result.getblock.height;
+						div(class="card-body collapse " role="tabpanel" id=tx.txid)
+							//pre
+							//	code #{JSON.stringify(result.txInputsByTransaction[tx.txid], null, 4)}
+							- var txInputs = result.txInputsByTransaction[tx.txid];
+							- var blockHeight = result.getblock.height;
 
-								include ./transaction-io-details.pug
+							include ./transaction-io-details.pug
 
 								
 					//pre

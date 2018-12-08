@@ -55,18 +55,27 @@ function redirectToConnectPageIfNeeded(req, res) {
 
 function getOpReturnTags(hex){
 	var result = {};
+
 	var ss = hex.split(' ');
 	//var tsp = ss[1].substring(0, 8)
 	//var scriptBody = ss[1].substring(8)
+	if(ss && ss.length > 1){
+		let msp = ss[1].split(0)[0];	
+		var mpr = memoPrefixes.filter(p => { return p.prefix === msp })
+		if (mpr && mpr.length > 0) {
+		result.tag = "memo.cash";
+		result.memoCashPrefix = mpr[0].prefix;
+		result.action = mpr[0].action	;
+		return result;	
+		}
 
-	let msp = ss[1].split(0)[0];
-	var mpr = memoPrefixes.filter(p => { return p.prefix === msp })
-	if (mpr && mpr.length > 0) {
-	  result.tag = "memo.cash";
-	  result.memoCashPrefix = mpr[0].prefix;
-	  result.memoCashAction = mpr[0].action;
-	  result.action = result.memoCashAction	;	
+		var ascii = hex2ascii(ss[1]);
+		if(ascii.includes("yours.org") && ascii.length < 10) {
+			result.tag = "yours.org";
+			return result;
+		}
 	}
+
 
 	return result;
 }

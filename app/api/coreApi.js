@@ -394,7 +394,7 @@ function getMempoolStats() {
 }
 
 function getBlockByHeight(blockHeight) {
-	return tryCacheThenRpcApi(blockCache, "getBlockByHeight-" + blockHeight, 600000, function() {
+	return tryCacheThenRpcApi(blockCache, "getBlockByHeight-" + blockHeight, 300000, function() {
 		return rpcApi.getBlockByHeight(blockHeight);
 	});
 }
@@ -429,7 +429,7 @@ function getBlocksByHeight(blockHeights) {
 						
 						if(shouldCacheBlock(queriedBlock))
 						{
-							blockCache.set("getBlockByHeight-" + queriedBlock.height, queriedBlock, 600000);
+							blockCache.set("getBlockByHeight-" + queriedBlock.height, queriedBlock, 300000);
 						}
 						queriedBlocksCurrentIndex++;
 					}
@@ -452,7 +452,7 @@ function getBlocksByHeight(blockHeights) {
 }
 
 function getBlockByHash(blockHash) {
-	return tryCacheThenRpcApi(blockCache, "getBlockByHash-" + blockHash, 600000, function() {
+	return tryCacheThenRpcApi(blockCache, "getBlockByHash-" + blockHash, 300000, function() {
 		return rpcApi.getBlockByHash(blockHash);
 	});
 }
@@ -487,7 +487,7 @@ function getBlocksByHash(blockHashes) {
 
 						if(shouldCacheBlock(queriedBlock))
 						{
-							blockCache.set("getBlockByHash-" + queriedBlock.hash, queriedBlock, 600000);
+							blockCache.set("getBlockByHash-" + queriedBlock.hash, queriedBlock, 300000);
 						}
 						queriedBlocksCurrentIndex++;
 					}
@@ -510,11 +510,11 @@ function getRawTransaction(txid) {
 		return rpcApi.getRawTransaction(txid);
 	};
 
-	return tryCacheThenRpcApi(txCache, "getRawTransaction-" + txid, 600000, rpcApiFunction, shouldCacheTransaction);
+	return tryCacheThenRpcApi(txCache, "getRawTransaction-" + txid, 300000, rpcApiFunction, shouldCacheTransaction);
 }
 
 function getAddress(address) {
-	return tryCacheThenRpcApi(miscCache, "getAddress-" + address, 600000, function() {
+	return tryCacheThenRpcApi(miscCache, "getAddress-" + address, 300000, function() {
 		return rpcApi.getAddress(address);
 	});
 }
@@ -548,7 +548,7 @@ function getRawTransactions(txids) {
 							combinedTxs.push(queriedTx);
 
 							if (shouldCacheTransaction(queriedTx)) {
-								txCache.set("getRawTransaction-" + queriedTx.txid, queriedTx, 600000);
+								txCache.set("getRawTransaction-" + queriedTx.txid, queriedTx, 300000);
 							}
 						}
 
@@ -632,18 +632,18 @@ function getBlockByHashWithTransactions(blockHash, txLimit, txOffset) {
 				txids.push(block.tx[i]);
 			}
 
-			if(block.tx.length > 15000)
-			{
-				var transactions = [];
-				for(var i=0; i <txids.length - 1;i++ )
-				{
+			// if(block.tx.length > 15000)
+			// {
+			// 	var transactions = [];
+			// 	for(var i=0; i <txids.length - 1;i++ )
+			// 	{
 					
-					transactions.push({txid:txids[i]})
-				}
+			// 		transactions.push({txid:txids[i]})
+			// 	}
 
-				resolve({ getblock:block, transactions:transactions, txInputsByTransaction:{} });
-			}
-			else{
+			// 	resolve({ getblock:block, transactions:transactions, txInputsByTransaction:{} });
+			// }
+			 {
 				getRawTransactions(txids).then(function(transactions) {
 					if (transactions.length == txids.length) {
 						block.coinbaseTx = transactions[0];
@@ -699,13 +699,13 @@ function getBlockByHashWithTransactions(blockHash, txLimit, txOffset) {
 }
 
 function getHelp() {
-	return tryCacheThenRpcApi(miscCache, "getHelp", 600000, function() {
+	return tryCacheThenRpcApi(miscCache, "getHelp", 300000, function() {
 		return rpcApi.getHelp();
 	});
 }
 
 function getRpcMethodHelp(methodName) {
-	return tryCacheThenRpcApi(miscCache, "getHelp-" + methodName, 600000, function() {
+	return tryCacheThenRpcApi(miscCache, "getHelp-" + methodName, 300000, function() {
 		return rpcApi.getRpcMethodHelp(methodName);
 	});
 }
