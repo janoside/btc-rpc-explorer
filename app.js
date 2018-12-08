@@ -176,12 +176,12 @@ app.runOnStartup = function() {
 		});
 	}
 
-	if (global.sourcecodeVersion == null) {
-		simpleGit(".").log(["-n 1"], function(err, log) {
-			global.sourcecodeVersion = log.all[0].hash.substring(0, 10);
-			global.sourcecodeDate = log.all[0].date.substring(0, "0000-00-00".length);
-		});
-	}
+	// if (global.sourcecodeVersion == null) {
+	// 	simpleGit(".").log(["-n 1"], function(err, log) {
+	// 		global.sourcecodeVersion = log.all[0].hash.substring(0, 10);
+	// 		global.sourcecodeDate = log.all[0].date.substring(0, "0000-00-00".length);
+	// 	});
+	// }
 
 	if (global.exchangeRate == null) {
 		utils.refreshExchangeRate();

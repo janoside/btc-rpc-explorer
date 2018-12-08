@@ -61,7 +61,7 @@ function getOpReturnTags(hex){
 
 	let msp = ss[1].split(0)[0];
 	var mpr = memoPrefixes.filter(p => { return p.prefix === msp })
-	if (mpr.length > 0) {
+	if (mpr && mpr.length > 0) {
 	  result.tag = "memo.cash";
 	  result.memoCashPrefix = mpr[0].prefix;
 	  result.memoCashAction = mpr[0].action;
