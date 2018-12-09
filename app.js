@@ -91,6 +91,13 @@ app.runOnStartup = function() {
 			password: rpcCredentials.password,
 			timeout: 5000
 		});
+
+		coreApi.getNetworkInfo().then(function(getnetworkinfo) {
+			console.log("Connected via RPC to node. Basic info: version=" + getnetworkinfo.version + ", subversion=" + getnetworkinfo.subversion + ", protocolversion=" + getnetworkinfo.protocolversion + ", services=" + getnetworkinfo.localservices);
+		
+		}).catch(function(err) {
+			console.log("Error 923grf20fge: " + err + ", error json: " + JSON.stringify(err));
+		});
 	}
 
 	if (config.donationAddresses) {
