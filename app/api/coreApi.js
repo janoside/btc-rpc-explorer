@@ -9,9 +9,9 @@ var coins = require("../coins.js");
 var rpcApi = require("./rpcApi.js");
 //var rpcApi = require("./mockApi.js");
 
-var miscCache = LRU(50);
-var blockCache = LRU(50);
-var txCache = LRU(200);
+var miscCache = LRU(25);
+var blockCache = LRU(25);
+var txCache = LRU(100);
 
 
 
