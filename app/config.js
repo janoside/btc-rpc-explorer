@@ -84,9 +84,9 @@ module.exports = {
 	],
 
 	site: {
-		blockTxPageSize:20,
-		addressTxPageSize:20,
-		txMaxInput:15,
+		blockTxPageSize:10,
+		addressTxPageSize:10,
+		txMaxInput:10,
 		browseBlocksPageSize:20
 	},
 

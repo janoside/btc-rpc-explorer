@@ -440,8 +440,8 @@ router.get("/block/:blockHash", function(req, res) {
 	if (req.query.limit) {
 		limit = parseInt(req.query.limit);
 
-		// for demo sites, limit page sizes
-		if (config.demoSite && limit > config.site.blockTxPageSize) {
+		// limit page sizes
+		if (limit > config.site.blockTxPageSize) {
 			limit = config.site.blockTxPageSize;
 
 			res.locals.userMessage = "Transaction page size limited to " + config.site.blockTxPageSize + ". If this is your site, you can change or disable this limit in the site config.";
@@ -515,8 +515,8 @@ router.get("/address/:address", function(req, res) {
 	if (req.query.limit) {
 		limit = parseInt(req.query.limit);
 
-		// for demo sites, limit page sizes
-		if (config.demoSite && limit > config.site.addressTxPageSize) {
+		// limit page sizes
+		if (limit > config.site.addressTxPageSize) {
 			limit = config.site.addressTxPageSize;
 
 			res.locals.userMessage = "Transaction page size limited to " + config.site.addressTxPageSize + ". If this is your site, you can change or disable this limit in the site config.";
@@ -633,7 +633,7 @@ router.get("/address/:address", function(req, res) {
 						// remove it for proper paging
 						pagedTxids.unshift(txidResult.result[0].tx_hash);
 					}
-					
+				
 					coreApi.getRawTransactionsWithInputs(pagedTxids).then(function(rawTxResult) {
 						// first result is always the earliest tx, but doesn't fit into the current paging;
 						// store it as firstSeenTransaction then remove from list

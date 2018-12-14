@@ -195,11 +195,11 @@ div(class="tab-content")
 							else
 								span Transactions
 
-					if (!config.demoSite && !crawlerBot && txCount > 20)
-						div(class="col-md-8 text-right")
-							span(class="mr-2") Show
-							div(class="btn-group", role="group")
-								a(href=(paginationBaseUrl + "?limit=20"), class="btn btn-sm btn-primary px-2", class=((limit == 20 && txCount > limit) ? "active" : false)) 20
+					//- if (txCount > 10)
+					//- 	div(class="col-md-8 text-right")
+					//- 		span(class="mr-2") Show
+					//- 		div(class="btn-group", role="group")
+					//- 			a(href=(paginationBaseUrl + "?limit=10"), class="btn btn-sm btn-primary px-2", class=((limit == 10 && txCount > limit) ? "active" : false)) 10
 								
 								//- if (txCount > 50)
 								//- 	a(href=(paginationBaseUrl + "?limit=50"), class="btn btn-sm btn-primary px-2", class=(limit == 50 ? "active" : false)) 50

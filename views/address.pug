@@ -47,6 +47,10 @@ block content
 					p
 						span This is the #{coinConfig.ticker} donation address to support development of this tool. All support is appreciated!
 					script(src="https://www.moneybutton.com/moneybutton.js")
+					<div class="money-button" data-to="1353" data-amount="1" data-currency="USD" data-label="Donate" data-client-identifier="8aaaca8efcef24903d22e9e0265d201b" data-button-id="1543440390519" data-button-data="{}" data-type="tip" data-editable="false">
+					</div>
+					<div class="money-button" data-to="1353" data-amount="10" data-currency="USD" data-label="Donate" data-client-identifier="8aaaca8efcef24903d22e9e0265d201b" data-button-id="1543440390519" data-button-data="{}" data-type="tip" data-editable="false">
+					</div>
 					<div class="money-button" data-to="1353" data-amount="1" data-currency="USD" data-label="Donate" data-client-identifier="8aaaca8efcef24903d22e9e0265d201b" data-button-id="1543440390519" data-button-data="{}" data-type="tip" data-editable="true">
 					</div>
 
@@ -254,18 +258,18 @@ block content
 									a(href="#", class="pull-right dropdown-toggle", data-toggle="dropdown", aria-haspopup="true", aria-expanded="false")
 										if (sort == "desc")
 											span Newest First
-										else
-											span Oldest First
+										//- else
+										//- 	span Oldest First
 
 									div(class="dropdown-menu dropdown-menu-right")
 										a(href=("/address/" + address), class="dropdown-item")
 											if (sort == "desc")
 												i(class="fa fa-check") 
 											span  Newest First
-										a(href=("/address/" + address + "?sort=asc"), class="dropdown-item")
-											if (sort != "desc")
-												i(class="fa fa-check") 
-											span  Oldest First
+										//- a(href=("/address/" + address + "?sort=asc"), class="dropdown-item")
+										//- 	if (sort != "desc")
+										//- 		i(class="fa fa-check") 
+										//- 	span  Oldest First
 
 						div(class="card-body")
 							if (conflictedTxidResults)
