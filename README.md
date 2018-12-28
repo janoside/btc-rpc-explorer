@@ -1,4 +1,4 @@
-# Blockchain RPC Explorer
+# WhatsOnChain Blockchain Explorer
 
 Simple, database-free SV blockchain explorer, via RPC. Built with Node.js, express, bootstrap-v4.
 
