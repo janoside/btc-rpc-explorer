@@ -100,14 +100,16 @@ block content
 							div(class="summary-table-label") Version
 							div(class="summary-table-content monospace") #{result.getrawtransaction.version}
 
-						if (result.getrawtransaction.vsize != result.getrawtransaction.size)
-							div(class="row")
-								div(class="summary-table-label") Virtual Size
-								div(class="summary-table-content monospace") #{result.getrawtransaction.vsize.toLocaleString()} VB
-
 						div(class="row")
 							div(class="summary-table-label") Size
-							div(class="summary-table-content monospace") #{result.getrawtransaction.size.toLocaleString()} B
+							div(class="summary-table-content monospace")
+								span #{result.getrawtransaction.size.toLocaleString()} B
+								if (result.getrawtransaction.vsize != result.getrawtransaction.size)
+									br
+									span(class="text-muted")
+										span (
+										span(title="virtual size", data-toggle="tooltip") vsize
+										span : #{result.getrawtransaction.vsize.toLocaleString()} VB)
 
 						if (result.getrawtransaction.locktime > 0)
 							div(class="row")
@@ -178,8 +180,8 @@ block content
 									- var currencyValue = new Decimal(totalInputValue).minus(totalOutputValue);
 									include includes/value-display.pug
 
-									br
-									span(class="text-muted")  (#{utils.formatCurrencyAmount(totalInputValue, currencyFormatType)} - #{utils.formatCurrencyAmount(totalOutputValue, currencyFormatType)})
+									span.ml-2(title=(utils.formatCurrencyAmount(totalInputValue, currencyFormatType) + " - " + utils.formatCurrencyAmount(totalOutputValue, currencyFormatType)), data-toggle="tooltip")
+										i(class="fas fa-ellipsis-h")
 
 							div(class="row")
 								div(class="summary-table-label") Fee Rate
