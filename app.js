@@ -84,8 +84,12 @@ function logNetworkStats() {
 
 			var mempoolMapping = {size:"tx_count", bytes:"tx_vsize_total", usage:"total_memory_usage"};
 			for (var key in mempoolInfo) {
-				if (mempoolMapping[key]) {
-					points.push({measurement:`bitcoin.mempool.${mempoolMapping[key]}`, fields:{value:mempoolInfo[key]}})
+				try {
+					if (mempoolMapping[key]) {
+						points.push({measurement:`${global.coinConfig.name.toLowerCase()}.mempool.${mempoolMapping[key]}`, fields:{value:mempoolInfo[key]}})
+					}
+				} catch(err) {
+					console.error(`Error mapping mempool info for key '${key}': ${err.stack}`);
 				}
 			}
 
@@ -101,22 +105,30 @@ function logNetworkStats() {
 			};
 
 			for (var key in miningInfo) {
-				if (miningMapping[key]) {
-					points.push({measurement:`bitcoin.mining.${miningMapping[key].name}`, fields:{value:miningMapping[key].transform(miningInfo[key])}})
+				try {
+					if (miningMapping[key]) {
+						points.push({measurement:`${global.coinConfig.name.toLowerCase()}.mining.${miningMapping[key].name}`, fields:{value:miningMapping[key].transform(miningInfo[key])}})
+					}
+				} catch(err) {
+					console.error(`Error mapping mining info for key '${key}': ${err.stack}`);
 				}
 			}
 
 			var blockchainMapping = {size_on_disk:"size_on_disk"};
 			for (var key in blockchainInfo) {
-				if (blockchainMapping[key]) {
-					points.push({measurement:`bitcoin.blockchain.${blockchainMapping[key]}`, fields:{value:blockchainInfo[key]}})
+				try {
+					if (blockchainMapping[key]) {
+						points.push({measurement:`${global.coinConfig.name.toLowerCase()}.blockchain.${blockchainMapping[key]}`, fields:{value:blockchainInfo[key]}})
+					}
+				} catch(err) {
+					console.error(`Error mapping blockchain info for key '${key}': ${err.stack}`);
 				}
 			}
 
 			//console.log("Points to send to InfluxDB: " + JSON.stringify(points, null, 4));
 
 			global.influxdb.writePoints(points).catch(err => {
-				console.error(`Error saving data to InfluxDB: ${err.stack}`)
+				console.error(`Error saving data to InfluxDB: ${err.stack}`);
 			});
 		}).catch(err => {
 			console.log(`Error logging network stats: ${err}`);
