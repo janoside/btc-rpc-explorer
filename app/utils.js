@@ -280,7 +280,7 @@ function refreshExchangeRate() {
 
 					if (global.influxdb) {
 						global.influxdb.writePoints([{
-							measurement: "exchange_rates.btc_usd",
+							measurement: `exchange_rates.${coins[config.coin].ticker.toLowerCase()}_usd`,
 							fields:{value:parseFloat(exchangeRate)}
 
 						}]).catch(err => {
