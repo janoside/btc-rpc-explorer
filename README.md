@@ -38,7 +38,7 @@ The below instructions are geared toward BTC, but can be adapted easily to other
 1. Clone this repo: `git clone https://github.com/janoside/btc-rpc-explorer`
 2. `npm install`
 3. `npm run build`
-4. Optional: Create git-ignored file [app/credentials.js](app/credentials.js) with values to overwrite those in [app/defaultCredentials.js](app/defaultCredentials.js).
+4. Optional: Create git-ignored file `app/credentials.js` with values to overwrite those in [app/defaultCredentials.js](app/defaultCredentials.js).
 5. Optional: Change the "coin" value in [app/config.js](app/config.js). Currently supported values are "BTC" and "LTC".
 6. `npm start`
 7. Open [http://127.0.0.1:3002/](http://127.0.0.1:3002/)
