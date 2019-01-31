@@ -59,3 +59,5 @@ typings/
 
 
 public/css/radial-progress.css
+
+app/credentials.js

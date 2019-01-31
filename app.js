@@ -23,6 +23,8 @@ var request = require("request");
 var qrcode = require("qrcode");
 var fs = require('fs');
 var electrumApi = require("./app/api/electrumApi.js");
+var Influx = require("influx");
+var coreApi = require("./app/api/coreApi.js");
 
 var crawlerBotUserAgentStrings = [ "Googlebot", "Bingbot", "Slurp", "DuckDuckBot", "Baiduspider", "YandexBot", "Sogou", "Exabot", "facebot", "ia_archiver" ];
 
@@ -59,6 +61,68 @@ process.on("unhandledRejection", (reason, p) => {
 	console.log("Unhandled Rejection at: Promise", p, "reason:", reason, "stack:", reason.stack);
 });
 
+
+function logNetworkStats() {
+	if (global.influxdb) {
+		var promises = [];
+
+		promises.push(coreApi.getMempoolInfo());
+		promises.push(coreApi.getMiningInfo());
+
+		promises.push(coreApi.getBlockchainInfo());
+
+		Promise.all(promises).then(function(promiseResults) {
+			var mempoolInfo = promiseResults[0];
+			var miningInfo = promiseResults[1];
+			var blockchainInfo = promiseResults[2];
+
+			//console.log("mempoolInfo: " + JSON.stringify(mempoolInfo));
+			//console.log("miningInfo: " + JSON.stringify(miningInfo));
+			//console.log("blockchainInfo: " + JSON.stringify(blockchainInfo));
+
+			var points = [];
+
+			var mempoolMapping = {size:"tx_count", bytes:"tx_vsize_total", usage:"total_memory_usage"};
+			for (var key in mempoolInfo) {
+				if (mempoolMapping[key]) {
+					points.push({measurement:`bitcoin.mempool.${mempoolMapping[key]}`, fields:{value:mempoolInfo[key]}})
+				}
+			}
+
+			var miningMapping = {
+				difficulty:{
+					name:"mining_difficulty",
+					transform:function(rawval) {return parseFloat(rawval);}
+				},
+				networkhashps:{
+					name:"networkhashps",
+					transform:function(rawval) {return parseFloat(rawval);}
+				}
+			};
+
+			for (var key in miningInfo) {
+				if (miningMapping[key]) {
+					points.push({measurement:`bitcoin.mining.${miningMapping[key].name}`, fields:{value:miningMapping[key].transform(miningInfo[key])}})
+				}
+			}
+
+			var blockchainMapping = {size_on_disk:"size_on_disk"};
+			for (var key in blockchainInfo) {
+				if (blockchainMapping[key]) {
+					points.push({measurement:`bitcoin.blockchain.${blockchainMapping[key]}`, fields:{value:blockchainInfo[key]}})
+				}
+			}
+
+			//console.log("Points to send to InfluxDB: " + JSON.stringify(points, null, 4));
+
+			global.influxdb.writePoints(points).catch(err => {
+				console.error(`Error saving data to InfluxDB: ${err.stack}`)
+			});
+		}).catch(err => {
+			console.log(`Error logging network stats: ${err}`);
+		});
+	}
+}
 
 
 app.runOnStartup = function() {
@@ -98,6 +162,15 @@ app.runOnStartup = function() {
 		}).catch(function(err) {
 			console.log("Error 923grf20fge: " + err + ", error json: " + JSON.stringify(err));
 		});
+	}
+
+	if (config.credentials.influxdb.active) {
+		global.influxdb = new Influx.InfluxDB(config.credentials.influxdb);
+
+		console.log(`Connected to InfluxDB: ${config.credentials.influxdb.host}:${config.credentials.influxdb.port}/${config.credentials.influxdb.database}`);
+
+		logNetworkStats();
+		setInterval(logNetworkStats, 5 * 60000);
 	}
 
 	if (config.donationAddresses) {
