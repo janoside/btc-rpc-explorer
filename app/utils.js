@@ -278,6 +278,16 @@ function refreshExchangeRate() {
 					global.exchangeRate = exchangeRate;
 					global.exchangeRateUpdateTime = new Date();
 
+					if (global.influxdb) {
+						global.influxdb.writePoints([{
+							measurement: "exchange_rates.btc_usd",
+							fields:{value:parseFloat(exchangeRate)}
+
+						}]).catch(err => {
+							console.error(`Error saving data to InfluxDB: ${err.stack}`)
+						});
+					}
+
 					console.log("Using exchange rate: " + global.exchangeRate + " USD/" + coins[config.coin].name + " starting at " + global.exchangeRateUpdateTime);
 
 				} else {
