@@ -182,7 +182,7 @@ app.runOnStartup = function() {
 		console.log(`Connected to InfluxDB: ${config.credentials.influxdb.host}:${config.credentials.influxdb.port}/${config.credentials.influxdb.database}`);
 
 		logNetworkStats();
-		setInterval(logNetworkStats, 5 * 60000);
+		setInterval(logNetworkStats, 1 * 60000);
 	}
 
 	if (config.donationAddresses) {
