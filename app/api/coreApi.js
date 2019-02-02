@@ -492,6 +492,8 @@ function getBlocksByHash(blockHashes) {
 
 			resolve(combinedBlocks);
 		}
+
+		reject();
 	});
 }
 
