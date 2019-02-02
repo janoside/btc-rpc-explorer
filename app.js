@@ -86,7 +86,7 @@ function logNetworkStats() {
 			for (var key in mempoolInfo) {
 				try {
 					if (mempoolMapping[key]) {
-						points.push({measurement:`${global.coinConfig.name.toLowerCase()}.mempool.${mempoolMapping[key]}`, fields:{value:mempoolInfo[key]}})
+						points.push({measurement:`${global.coinConfig.name.toLowerCase()}.mempool.${mempoolMapping[key]}`, fields:{value:mempoolInfo[key]}});
 					}
 				} catch(err) {
 					console.error(`Error mapping mempool info for key '${key}': ${err.stack}`);
@@ -107,7 +107,7 @@ function logNetworkStats() {
 			for (var key in miningInfo) {
 				try {
 					if (miningMapping[key]) {
-						points.push({measurement:`${global.coinConfig.name.toLowerCase()}.mining.${miningMapping[key].name}`, fields:{value:miningMapping[key].transform(miningInfo[key])}})
+						points.push({measurement:`${global.coinConfig.name.toLowerCase()}.mining.${miningMapping[key].name}`, fields:{value:miningMapping[key].transform(miningInfo[key])}});
 					}
 				} catch(err) {
 					console.error(`Error mapping mining info for key '${key}': ${err.stack}`);
@@ -118,7 +118,7 @@ function logNetworkStats() {
 			for (var key in blockchainInfo) {
 				try {
 					if (blockchainMapping[key]) {
-						points.push({measurement:`${global.coinConfig.name.toLowerCase()}.blockchain.${blockchainMapping[key]}`, fields:{value:blockchainInfo[key]}})
+						points.push({measurement:`${global.coinConfig.name.toLowerCase()}.blockchain.${blockchainMapping[key]}`, fields:{value:blockchainInfo[key]}});
 					}
 				} catch(err) {
 					console.error(`Error mapping blockchain info for key '${key}': ${err.stack}`);
