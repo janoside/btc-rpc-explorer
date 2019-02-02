@@ -136,6 +136,62 @@ function logNetworkStats() {
 	}
 }
 
+function logBlockStats() {
+	if (global.influxdb) {
+		if (global.blockStatsStatus == null) {
+			global.blockStatsStatus = {currentBlock:-1};
+		}
+
+		coreApi.getBlockchainInfo().then(function(getblockchaininfo) {
+			var blockHeights = [];
+			if (getblockchaininfo.blocks) {
+				for (var i = 0; i < 5; i++) {
+					blockHeights.push(getblockchaininfo.blocks - i);
+				}
+			}
+
+			coreApi.getBlocksByHeight(blockHeights).then(function(blocks) {
+				var points = [];
+
+				for (var i = 0; i < blocks.length; i++) {
+					var block = blocks[i];
+
+					var totalfees = new Decimal(parseFloat(block.totalFees));
+					var blockreward = new Decimal(parseFloat(global.coinConfig.blockRewardFunction(block.height)));
+					var timestamp = new Date(block.time * 1000);
+
+					var blockInfo = {
+						strippedsize:block.strippedsize,
+						size:block.size,
+						weight:block.weight,
+						version:block.version,
+						nonce:block.nonce,
+						txcount:block.nTx,
+						totalfees:totalfees.toNumber(),
+						avgfee:(block.totalFees / block.nTx),
+						blockreward:blockreward.toNumber(),
+						timemediantimediff:(block.time - block.mediantime),
+						feeratio:totalfees.dividedBy(totalfees.plus(blockreward)).toNumber()
+					};
+
+					for (var key in blockInfo) {
+						points.push({measurement:`${global.coinConfig.name.toLowerCase()}.blocks.${key}`, fields:{value:blockInfo[key]}, timestamp:timestamp});
+					}
+
+					//console.log("block: " + block.height + ": " + JSON.stringify(blockInfo, null, 4));
+					//console.log("points: " + JSON.stringify(points, null, 4));
+				}
+
+				global.influxdb.writePoints(points).catch(err => {
+					console.error(`Error saving data to InfluxDB: ${err.stack}`);
+				});
+			});
+		}).catch(function(err) {
+			console.log(`Error logging block stats: ${err}`);
+		});
+	}
+}
+
 
 app.runOnStartup = function() {
 	global.config = config;
@@ -171,11 +227,6 @@ app.runOnStartup = function() {
 		coreApi.getNetworkInfo().then(function(getnetworkinfo) {
 			console.log("Connected via RPC to node. Basic info: version=" + getnetworkinfo.version + ", subversion=" + getnetworkinfo.subversion + ", protocolversion=" + getnetworkinfo.protocolversion + ", services=" + getnetworkinfo.localservices);
 		
-		}).catch(function(err) {
-			console.log("Error 923grf20fge: " + err + ", error json: " + JSON.stringify(err));
-		});
-	}
-
 	if (config.credentials.influxdb.active) {
 		global.influxdb = new Influx.InfluxDB(config.credentials.influxdb);
 
@@ -183,6 +234,13 @@ app.runOnStartup = function() {
 
 		logNetworkStats();
 		setInterval(logNetworkStats, 1 * 60000);
+
+				logBlockStats();
+				setInterval(logBlockStats, 5 * 60000);
+			}
+		}).catch(function(err) {
+			console.log("Error 923grf20fge: " + err + ", error json: " + JSON.stringify(err));
+		});
 	}
 
 	if (config.donationAddresses) {
