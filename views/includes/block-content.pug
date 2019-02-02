@@ -9,7 +9,7 @@ ul(class='nav nav-tabs mb-3')
 div(class="tab-content")
 	div(id="tab-details", class="tab-pane active", role="tabpanel")
 		if (global.specialBlocks && global.specialBlocks[result.getblock.hash])
-			div(class="alert alert-primary", style="padding-bottom: 0;")
+			div(class="alert alert-primary shadow-sm", style="padding-bottom: 0;")
 				div(class="float-left", style="width: 55px; height: 55px; font-size: 18px;")
 					i(class="fas fa-certificate fa-2x", style="margin-top: 10px;")
 				h4(class="alert-heading h6 font-weight-bold") #{coinConfig.name} Fun
@@ -32,7 +32,7 @@ div(class="tab-content")
 							span  
 								a(href=sbInfo.referenceUrl) Read more
 
-		div(class="card mb-3")
+		div(class="card mb-3 shadow-sm")
 			div(class="card-header")
 				span(class="h6") Summary
 			div(class="card-body")
@@ -180,7 +180,7 @@ div(class="tab-content")
 										i(class="fas fa-info-circle")
 									
 
-		div(class="card mb-3")
+		div(class="card mb-3 shadow-sm")
 			div(class="card-header")
 				div(class="row")
 					div(class="col-md-4")

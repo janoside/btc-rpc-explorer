@@ -17,7 +17,7 @@ block content
 			hr
 
 			if (payoutAddressForMiner)
-				div(class="alert alert-primary", style="padding-bottom: 0;")
+				div(class="alert alert-primary shadow-sm", style="padding-bottom: 0;")
 					div(class="float-left", style="width: 50px; height: 50px; font-size: 18px;")
 						i(class="fas fa-certificate fa-2x", style="margin-top: 10px;")
 
@@ -38,7 +38,7 @@ block content
 							a(href=coinConfig.miningPoolsConfigUrls[0]) here
 							span )
 			else if (global.specialAddresses[address] && global.specialAddresses[address].type == "donation")
-				div(class="alert alert-primary", style="padding-bottom: 0;")
+				div(class="alert alert-primary shadow-sm", style="padding-bottom: 0;")
 					div(class="float-left", style="width: 50px; height: 50px; font-size: 18px;")
 						i(class="fas fa-certificate fa-2x", style="margin-top: 10px;")
 
@@ -48,7 +48,7 @@ block content
 						span This is the #{coinConfig.ticker} donation address to support development of this tool. All support is appreciated!
 
 			else if (global.specialAddresses[address] && global.specialAddresses[address].type == "fun")
-				div(class="alert alert-primary", style="padding-bottom: 0;")
+				div(class="alert alert-primary shadow-sm", style="padding-bottom: 0;")
 					div(class="float-left", style="width: 50px; height: 50px; font-size: 18px;")
 						i(class="fas fa-certificate fa-2x", style="margin-top: 10px;")
 
@@ -89,7 +89,7 @@ block content
 
 					if (config.electrumXServers && config.electrumXServers.length > 0)
 						if (session.hideElectrumTrustWarnings != "true")
-							div(class="alert alert-primary alert-dismissible clearfix", role="alert")
+							div(class="alert alert-primary alert-dismissible clearfix shadow-sm", role="alert")
 								h4(class="alert-heading h6 font-weight-bold") Note
 								p Since this explorer is database-free, it doesn't natively support address balances and transaction histories. In order to provide this functionality, address balances and transaction history can be requested from a configurable set of ElectrumX servers. If multiple ElectrumX servers are configured, the results are cross-referenced and conflicts noted. For the transaction history displayed below, only the transaction identifiers from ElectrumX are used; the transaction details are requested via RPC from this app's primary node, as usual.
 
@@ -103,7 +103,7 @@ block content
 								a(href="/changeSetting?name=hideElectrumTrustWarnings&value=true", class="close", aria-label="Close", style="text-decoration: none;")
 									span(aria-hidden="true") &times;
 
-					div(class="card mb-3")
+					div(class="card mb-3 shadow-sm")
 						div(class="card-header")
 							span(class="h6") Summary
 						div(class="card-body")
@@ -210,31 +210,32 @@ block content
 													i(class="fas fa-times text-danger")
 
 					if (false)
-						div(class="card mb-3")
+						div(class="card mb-3 shadow-sm")
 							div(class="card-header")
 								span(class="h6") Flags
 							div(class="card-body")
-								table(class="table table-responsive-sm text-center")
-									thead
-										tr
-											th Is Valid?
-											th Is Script?
-											th Is Witness?
-											th Is Mine?
-											th Is Watch-Only?
-									tbody
-										tr
-											- var x = result.validateaddress;
-											- var flags = [x.isvalid, x.isscript, x.iswitness, x.ismine, x.iswatchonly];
+								div(class="table-responsive")
+									table(class="table text-center")
+										thead
+											tr
+												th Is Valid?
+												th Is Script?
+												th Is Witness?
+												th Is Mine?
+												th Is Watch-Only?
+										tbody
+											tr
+												- var x = result.validateaddress;
+												- var flags = [x.isvalid, x.isscript, x.iswitness, x.ismine, x.iswatchonly];
 
-											each flag in flags
-												td
-													if (flag)
-														i(class="fas fa-check text-success")
-													else
-														i(class="fas fa-times text-danger")
+												each flag in flags
+													td
+														if (flag)
+															i(class="fas fa-check text-success")
+														else
+															i(class="fas fa-times text-danger")
 
-					div(class="card")
+					div(class="card mb-3 shadow-sm")
 						div(class="card-header clearfix")
 							div(class="float-left")
 								span(class="h6")

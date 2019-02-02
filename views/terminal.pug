@@ -18,7 +18,7 @@ block content
 	:markdown-it
 		Use this interactive terminal to send RPC commands to your node. Results will be shown inline. To browse all available RPC commands you can use the [RPC Browser](/rpc-browser).
 
-	div(class="card mb-3")
+	div(class="card mb-3 shadow-sm")
 		div(class="card-body")
 			form(id="terminal-form")
 				div(class="form-group")
@@ -48,7 +48,7 @@ block endOfBody
 					function(response, textStatus, jqXHR) {
 						var t = new Date().getTime();
 
-						$("#terminal-output").prepend("<div id='output-" + t + "' class='card mb-3'><div class='card-body'><h5>" + cmd + "</h5><pre><code>" + response + "</code></pre></div></div>");
+						$("#terminal-output").prepend("<div id='output-" + t + "' class='card mb-3 shadow-sm'><div class='card-body'><h5>" + cmd + "</h5><pre><code>" + response + "</code></pre></div></div>");
 						console.log(response);
 
 						$("#output-" + t + " pre code").each(function(i, block) {

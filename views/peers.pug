@@ -37,7 +37,7 @@ block content
 			if (config.credentials.ipStackComApiAccessKey && config.credentials.ipStackComApiAccessKey.trim().length > 0)
 				div(id="map", class="mb-4")
 
-			div(class="card mb-4")
+			div(class="card mb-4 shadow-sm")
 				div(class="card-header")
 					h2(class="h6 mb-0") Top Versions
 				div(class="card-body")
@@ -55,7 +55,7 @@ block content
 									td(class="data-cell") #{item[0]}
 									td(class="data-cell") #{item[1].toLocaleString()}
 
-			div(class="card mb-4")
+			div(class="card mb-4 shadow-sm")
 				div(class="card-header")
 					h2(class="h6 mb-0") Top Service Flags
 				div(class="card-body")

@@ -24,14 +24,14 @@ div(class="row monospace")
 								span #{(txVinIndex + 1).toLocaleString()}
 
 						div(class="tx-io-content")
-							div(class="row")
+							div(class="row pr-3")
 								div(class="tx-io-desc")
 									if (txVin.coinbase)
 										span(class="tag") coinbase
 										span Newly minted coins
 									else
 										if (vout && vout.scriptPubKey && vout.scriptPubKey.addresses)
-											div(style="word-break: break-word;")
+											div(class="word-wrap")
 												a(href=("/address/" + vout.scriptPubKey.addresses[0])) #{vout.scriptPubKey.addresses[0]}
 												if (global.specialAddresses[vout.scriptPubKey.addresses[0]])
 													- var specialAddressInfo = global.specialAddresses[vout.scriptPubKey.addresses[0]];
@@ -81,12 +81,12 @@ div(class="row monospace")
 						span #{(voutIndex + 1).toLocaleString()}
 
 				div(class="tx-io-content")
-					div(class="row")
+					div(class="row pr-3")
 						div(class="tx-io-desc")
 							if (vout.scriptPubKey)
 								if (vout.scriptPubKey.addresses)
 									a(id=("output-" + voutIndex), href=("/address/" + vout.scriptPubKey.addresses[0]))
-										span(class="monospace", style="word-break: break-word;") #{vout.scriptPubKey.addresses[0]}
+										span(class="monospace word-wrap") #{vout.scriptPubKey.addresses[0]}
 
 									if (global.specialAddresses[vout.scriptPubKey.addresses[0]])
 										- var specialAddressInfo = global.specialAddresses[vout.scriptPubKey.addresses[0]];

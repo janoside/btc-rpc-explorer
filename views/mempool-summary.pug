@@ -12,7 +12,7 @@ block content
 			code #{JSON.stringify(mempoolstats, null, 4)}
 
 	if (true)
-		div(class="card mb-3")
+		div(class="card mb-3 shadow-sm")
 			div(class="card-header")
 				span(class="h6") Summary
 			div(class="card-body")
@@ -105,35 +105,36 @@ block content
 						}
 					});
 
-			table(class="table table-striped table-responsive-sm mb-4")
-				thead
-					tr
-						th Fee Rate
-						th(class="text-right") Tx Count
-						th(class="text-right") Total Fees
-						th(class="text-right") Average Fee
-						th(class="text-right") Average Fee Rate
-				tbody
-					each item, index in mempoolstats["satoshiPerByteBuckets"]
+			div(class="table-responsive")
+				table(class="table table-striped mb-4")
+					thead
 						tr
-							td #{mempoolstats["satoshiPerByteBucketLabels"][index]}
-							td(class="text-right monospace") #{item["count"].toLocaleString()}
-							td(class="text-right monospace") #{utils.formatCurrencyAmount(item["totalFees"], currencyFormatType)}
+							th Fee Rate
+							th(class="text-right") Tx Count
+							th(class="text-right") Total Fees
+							th(class="text-right") Average Fee
+							th(class="text-right") Average Fee Rate
+					tbody
+						each item, index in mempoolstats["satoshiPerByteBuckets"]
+							tr
+								td #{mempoolstats["satoshiPerByteBucketLabels"][index]}
+								td(class="text-right monospace") #{item["count"].toLocaleString()}
+								td(class="text-right monospace") #{utils.formatCurrencyAmount(item["totalFees"], currencyFormatType)}
 
-							if (item["totalBytes"] > 0)
-								- var avgFee = item["totalFees"] / item["count"];
-								- var avgFeeRate = item["totalFees"] / item["totalBytes"];
+								if (item["totalBytes"] > 0)
+									- var avgFee = item["totalFees"] / item["count"];
+									- var avgFeeRate = item["totalFees"] / item["totalBytes"];
 
-								td(class="text-right monospace") #{utils.formatCurrencyAmount(avgFee, currencyFormatType)}
-									if (global.exchangeRate)
-										span  
-										span(data-toggle="tooltip", title=utils.formatExchangedCurrency(avgFee))
-											i(class="fas fa-exchange-alt")
-												
-								td(class="text-right monospace") #{utils.formatCurrencyAmountInSmallestUnits(avgFeeRate, 2)}/B
-							else
-								td(class="text-right monospace") -
-								td(class="text-right monospace") -
+									td(class="text-right monospace") #{utils.formatCurrencyAmount(avgFee, currencyFormatType)}
+										if (global.exchangeRate)
+											span  
+											span(data-toggle="tooltip", title=utils.formatExchangedCurrency(avgFee))
+												i(class="fas fa-exchange-alt")
+													
+									td(class="text-right monospace") #{utils.formatCurrencyAmountInSmallestUnits(avgFeeRate, 2)}/B
+								else
+									td(class="text-right monospace") -
+									td(class="text-right monospace") -
 
 
 			h2(class="h5") Transactions by size
