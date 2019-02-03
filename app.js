@@ -169,8 +169,13 @@ function logBlockStats() {
 						txcount:block.nTx,
 						totalfees:totalfees.toNumber(),
 						avgfee:(block.totalFees / block.nTx),
+						avgfeeperweight:(block.totalFees / block.weight),
+						avgfeepersize:(block.totalFees / block.size),
+						avgtxsize:(block.size / block.nTx),
+						avgtxweight:(block.weight / block.nTx),
 						blockreward:blockreward.toNumber(),
 						timemediantimediff:(block.time - block.mediantime),
+						witnessdatasize:(block.size - block.strippedsize),
 						feeratio:totalfees.dividedBy(totalfees.plus(blockreward)).toNumber()
 					};
 
