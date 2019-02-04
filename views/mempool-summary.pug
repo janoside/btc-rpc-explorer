@@ -39,11 +39,9 @@ block content
 					if (getmempoolinfo.size > 0)
 						tr
 							td(class="properties-header") Average Fee
-							td(class="monospace") #{utils.formatCurrencyAmount(mempoolstats["averageFee"], currencyFormatType)}
-								if (global.exchangeRate)
-									span  
-									span(data-toggle="tooltip", title=utils.formatExchangedCurrency(mempoolstats["averageFee"]))
-										i(class="fas fa-exchange-alt")
+							td(class="monospace")
+								- var currencyValue = mempoolstats["averageFee"];
+								include ./includes/value-display.pug
 
 						tr
 							td(class="properties-header") Average Fee per Byte
@@ -119,17 +117,17 @@ block content
 							tr
 								td #{mempoolstats["satoshiPerByteBucketLabels"][index]}
 								td(class="text-right monospace") #{item["count"].toLocaleString()}
-								td(class="text-right monospace") #{utils.formatCurrencyAmount(item["totalFees"], currencyFormatType)}
+								td(class="text-right monospace")
+									- var currencyValue = item["totalFees"];
+									include ./includes/value-display.pug
 
 								if (item["totalBytes"] > 0)
 									- var avgFee = item["totalFees"] / item["count"];
 									- var avgFeeRate = item["totalFees"] / item["totalBytes"];
 
-									td(class="text-right monospace") #{utils.formatCurrencyAmount(avgFee, currencyFormatType)}
-										if (global.exchangeRate)
-											span  
-											span(data-toggle="tooltip", title=utils.formatExchangedCurrency(avgFee))
-												i(class="fas fa-exchange-alt")
+									td(class="text-right monospace")
+										- var currencyValue = avgFee;
+										include ./includes/value-display.pug
 													
 									td(class="text-right monospace") #{utils.formatCurrencyAmountInSmallestUnits(avgFeeRate, 2)}/B
 								else

@@ -1,8 +1,9 @@
 var Decimal = require("decimal.js");
 Decimal8 = Decimal.clone({ precision:8, rounding:8 });
 
-var btcCurrencyUnits = [
+var currencyUnits = [
 	{
+		type:"native",
 		name:"BTC",
 		multiplier:1,
 		default:true,
@@ -10,23 +11,42 @@ var btcCurrencyUnits = [
 		decimalPlaces:8
 	},
 	{
+		type:"native",
 		name:"mBTC",
 		multiplier:1000,
 		values:["mbtc"],
 		decimalPlaces:5
 	},
 	{
+		type:"native",
 		name:"bits",
 		multiplier:1000000,
 		values:["bits"],
 		decimalPlaces:2
 	},
 	{
+		type:"native",
 		name:"sat",
 		multiplier:100000000,
 		values:["sat", "satoshi"],
 		decimalPlaces:0
-	}
+	},
+	{
+		type:"exchanged",
+		name:"USD",
+		multiplier:"usd",
+		values:["usd"],
+		decimalPlaces:2,
+		symbol:"$"
+	},
+	{
+		type:"exchanged",
+		name:"EUR",
+		multiplier:"eur",
+		values:["eur"],
+		decimalPlaces:2,
+		symbol:"€"
+	},
 ];
 
 module.exports = {
@@ -43,9 +63,10 @@ module.exports = {
 		"https://raw.githubusercontent.com/btccom/Blockchain-Known-Pools/master/pools.json"
 	],
 	maxBlockWeight: 4000000,
-	currencyUnits:btcCurrencyUnits,
-	currencyUnitsByName:{"BTC":btcCurrencyUnits[0], "mBTC":btcCurrencyUnits[1], "bits":btcCurrencyUnits[2], "sat":btcCurrencyUnits[3]},
-	baseCurrencyUnit:btcCurrencyUnits[3],
+	currencyUnits:currencyUnits,
+	currencyUnitsByName:{"BTC":currencyUnits[0], "mBTC":currencyUnits[1], "bits":currencyUnits[2], "sat":currencyUnits[3]},
+	baseCurrencyUnit:currencyUnits[3],
+	defaultCurrencyUnit:currencyUnits[0],
 	feeSatoshiPerByteBucketMaxima: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 20, 25, 50, 75, 100, 150],
 	genesisBlockHash: "000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f",
 	genesisCoinbaseTransactionId: "4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b",
@@ -189,14 +210,25 @@ module.exports = {
 		}
 	],
 	exchangeRateData:{
-		jsonUrl:"https://api.coinmarketcap.com/v1/ticker/Bitcoin/",
-		exchangedCurrencyName:"usd",
+		jsonUrl:"https://api.coindesk.com/v1/bpi/currentprice.json",
 		responseBodySelectorFunction:function(responseBody) {
-			if (responseBody[0] && responseBody[0].price_usd) {
-				return responseBody[0].price_usd;
+			//console.log("Exchange Rate Response: " + JSON.stringify(responseBody));
+
+			var exchangedCurrencies = ["USD", "GBP", "EUR"];
+
+			if (responseBody.bpi) {
+				var exchangeRates = {};
+
+				for (var i = 0; i < exchangedCurrencies.length; i++) {
+					if (responseBody.bpi[exchangedCurrencies[i]]) {
+						exchangeRates[exchangedCurrencies[i].toLowerCase()] = responseBody.bpi[exchangedCurrencies[i]].rate_float;
+					}
+				}
+
+				return exchangeRates;
 			}
 			
-			return -1;
+			return null;
 		}
 	},
 	blockRewardFunction:function(blockHeight) {

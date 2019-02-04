@@ -96,8 +96,8 @@ block content
 								span(data-toggle="tooltip", title=("Exchange-rate data from: " + coinConfig.exchangeRateData.jsonUrl))
 									i(class="fas fa-info-circle")
 
-							if (global.exchangeRate)
-								p(class="lead") #{utils.formatExchangedCurrency(1.0)}
+							if (global.exchangeRates)
+								p(class="lead") #{utils.formatExchangedCurrency(1.0, "usd")}
 							else
 								p(class="lead") -
 

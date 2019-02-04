@@ -338,12 +338,12 @@ app.runOnStartup = function() {
 		});
 	}
 
-	if (global.exchangeRate == null) {
-		utils.refreshExchangeRate();
+	if (global.exchangeRates == null) {
+		utils.refreshExchangeRates();
 	}
 
 	// refresh exchange rate periodically
-	setInterval(utils.refreshExchangeRate, 1800000);
+	setInterval(utils.refreshExchangeRates, 1800000);
 
 	utils.logMemoryUsage();
 	setInterval(utils.logMemoryUsage, 5000);

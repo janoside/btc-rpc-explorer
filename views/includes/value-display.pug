@@ -1,8 +1,15 @@
+- var currencyFormatInfo = utils.getCurrencyFormatInfo(currencyFormatType);
+
 if (currencyValue > 0)
 	span(class="monospace") #{utils.formatCurrencyAmount(currencyValue, currencyFormatType)}
-		if (global.exchangeRate)
+		if (currencyFormatInfo.type == "native")
+			if (global.exchangeRates)
+				span  
+				span(data-toggle="tooltip", title=utils.formatExchangedCurrency(currencyValue, "usd"))
+					i(class="fas fa-exchange-alt")
+		else if (currencyFormatInfo.type == "exchanged")
 			span  
-			span(data-toggle="tooltip", title=utils.formatExchangedCurrency(currencyValue))
+			span(data-toggle="tooltip", title=utils.formatCurrencyAmount(currencyValue, coinConfig.defaultCurrencyUnit.name))
 				i(class="fas fa-exchange-alt")
 else
 	span(class="monospace") 0

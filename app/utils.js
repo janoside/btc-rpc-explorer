@@ -1,5 +1,6 @@
 var Decimal = require("decimal.js");
 var request = require("request");
+var qrcode = require("qrcode");
 
 var config = require("./config.js");
 var coins = require("./coins.js");
@@ -83,12 +84,34 @@ function getRandomString(length, chars) {
 
 var formatCurrencyCache = {};
 
-function formatCurrencyAmountWithForcedDecimalPlaces(amount, formatType, forcedDecimalPlaces) {
-	if (formatCurrencyCache[formatType]) {
-		var dec = new Decimal(amount);
-		dec = dec.times(formatCurrencyCache[formatType].multiplier);
+function getCurrencyFormatInfo(formatType) {
+	if (formatCurrencyCache[formatType] == null) {
+		for (var x = 0; x < coins[config.coin].currencyUnits.length; x++) {
+			var currencyUnit = coins[config.coin].currencyUnits[x];
 
-		var decimalPlaces = formatCurrencyCache[formatType].decimalPlaces;
+			for (var y = 0; y < currencyUnit.values.length; y++) {
+				var currencyUnitValue = currencyUnit.values[y];
+
+				if (currencyUnitValue == formatType) {
+					formatCurrencyCache[formatType] = currencyUnit;
+				}
+			}
+		}
+	}
+
+	if (formatCurrencyCache[formatType] != null) {
+		return formatCurrencyCache[formatType];
+	}
+
+	return null;
+}
+
+function formatCurrencyAmountWithForcedDecimalPlaces(amount, formatType, forcedDecimalPlaces) {
+	var formatInfo = getCurrencyFormatInfo(formatType);
+	if (formatInfo != null) {
+		var dec = new Decimal(amount);
+
+		var decimalPlaces = formatInfo.decimalPlaces;
 		if (decimalPlaces == 0 && dec < 1) {
 			decimalPlaces = 5;
 		}
@@ -97,31 +120,16 @@ function formatCurrencyAmountWithForcedDecimalPlaces(amount, formatType, forcedD
 			decimalPlaces = forcedDecimalPlaces;
 		}
 
-		return addThousandsSeparators(dec.toDecimalPlaces(decimalPlaces)) + " " + formatCurrencyCache[formatType].name;
-	}
+		if (formatInfo.type == "native") {
+			dec = dec.times(formatInfo.multiplier);
 
-	for (var x = 0; x < coins[config.coin].currencyUnits.length; x++) {
-		var currencyUnit = coins[config.coin].currencyUnits[x];
+			return addThousandsSeparators(dec.toDecimalPlaces(decimalPlaces)) + " " + formatInfo.name;
 
-		for (var y = 0; y < currencyUnit.values.length; y++) {
-			var currencyUnitValue = currencyUnit.values[y];
+		} else if (formatInfo.type == "exchanged") {
+			if (global.exchangeRates != null && global.exchangeRates[formatInfo.multiplier] != null) {
+				dec = dec.times(global.exchangeRates[formatInfo.multiplier]);
 
-			if (currencyUnitValue == formatType) {
-				formatCurrencyCache[formatType] = currencyUnit;
-
-				var dec = new Decimal(amount);
-				dec = dec.times(currencyUnit.multiplier);
-
-				var decimalPlaces = currencyUnit.decimalPlaces;
-				if (decimalPlaces == 0 && dec < 1) {
-					decimalPlaces = 5;
-				}
-
-				if (forcedDecimalPlaces >= 0) {
-					decimalPlaces = forcedDecimalPlaces;
-				}
-
-				return addThousandsSeparators(dec.toDecimalPlaces(decimalPlaces)) + " " + currencyUnit.name;
+				return formatInfo.symbol + addThousandsSeparators(dec.toDecimalPlaces(decimalPlaces));
 			}
 		}
 	}
@@ -134,7 +142,7 @@ function formatCurrencyAmount(amount, formatType) {
 }
 
 function formatCurrencyAmountInSmallestUnits(amount, forcedDecimalPlaces) {
-	return formatCurrencyAmountWithForcedDecimalPlaces(amount, coins[config.coin].currencyUnits[coins[config.coin].currencyUnits.length - 1].name, forcedDecimalPlaces);
+	return formatCurrencyAmountWithForcedDecimalPlaces(amount, coins[config.coin].baseCurrencyUnit.name, forcedDecimalPlaces);
 }
 
 // ref: https://stackoverflow.com/a/2901298/673828
@@ -145,12 +153,12 @@ function addThousandsSeparators(x) {
 	return parts.join(".");
 }
 
-function formatExchangedCurrency(amount) {
-	if (global.exchangeRate != null) {
+function formatExchangedCurrency(amount, exchangeType) {
+	if (global.exchangeRates != null && global.exchangeRates[exchangeType.toLowerCase()] != null) {
 		var dec = new Decimal(amount);
-		dec = dec.times(global.exchangeRate);
+		dec = dec.times(global.exchangeRates[exchangeType.toLowerCase()]);
 
-		return addThousandsSeparators(dec.toDecimalPlaces(2)) + " " + coins[config.coin].exchangeRateData.exchangedCurrencyName;
+		return "$" + addThousandsSeparators(dec.toDecimalPlaces(2));
 	}
 
 	return "";
@@ -267,28 +275,18 @@ function getBlockTotalFeesFromCoinbaseTxAndBlockHeight(coinbaseTx, blockHeight) 
 	return totalOutput.minus(new Decimal(blockReward));
 }
 
-function refreshExchangeRate() {
+function refreshExchangeRates() {
 	if (coins[config.coin].exchangeRateData) {
 		request(coins[config.coin].exchangeRateData.jsonUrl, function(error, response, body) {
 			if (!error && response && response.statusCode && response.statusCode == 200) {
 				var responseBody = JSON.parse(body);
 
-				var exchangeRate = coins[config.coin].exchangeRateData.responseBodySelectorFunction(responseBody);
-				if (exchangeRate > 0) {
-					global.exchangeRate = exchangeRate;
-					global.exchangeRateUpdateTime = new Date();
+				var exchangeRates = coins[config.coin].exchangeRateData.responseBodySelectorFunction(responseBody);
+				if (exchangeRates != null) {
+					global.exchangeRates = exchangeRates;
+					global.exchangeRatesUpdateTime = new Date();
 
-					if (global.influxdb) {
-						global.influxdb.writePoints([{
-							measurement: `exchange_rates.${coins[config.coin].ticker.toLowerCase()}_usd`,
-							fields:{value:parseFloat(exchangeRate)}
-
-						}]).catch(err => {
-							console.error(`Error saving data to InfluxDB: ${err.stack}`)
-						});
-					}
-
-					console.log("Using exchange rate: " + global.exchangeRate + " USD/" + coins[config.coin].name + " starting at " + global.exchangeRateUpdateTime);
+					console.log("Using exchange rates: " + JSON.stringify(global.exchangeRates) + " starting at " + global.exchangeRatesUpdateTime);
 
 				} else {
 					console.log("Unable to get exchange rate data");
@@ -386,12 +384,101 @@ function formatLargeNumber(n, decimalPlaces) {
 	return [new Decimal(n).toDecimalPlaces(decimalPlaces), {}];
 }
 
+function rgbToHsl(r, g, b) {
+    r /= 255, g /= 255, b /= 255;
+    var max = Math.max(r, g, b), min = Math.min(r, g, b);
+    var h, s, l = (max + min) / 2;
+
+    if(max == min){
+        h = s = 0; // achromatic
+    }else{
+        var d = max - min;
+        s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+        switch(max){
+            case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+            case g: h = (b - r) / d + 2; break;
+            case b: h = (r - g) / d + 4; break;
+        }
+        h /= 6;
+    }
+
+    return {h:h, s:s, l:l};
+}
+
+function colorHexToRgb(hex) {
+    // Expand shorthand form (e.g. "03F") to full form (e.g. "0033FF")
+    var shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
+    hex = hex.replace(shorthandRegex, function(m, r, g, b) {
+        return r + r + g + g + b + b;
+    });
+
+    var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    return result ? {
+        r: parseInt(result[1], 16),
+        g: parseInt(result[2], 16),
+        b: parseInt(result[3], 16)
+    } : null;
+}
+
+function colorHexToHsl(hex) {
+	var rgb = colorHexToRgb(hex);
+	return rgbToHsl(rgb.r, rgb.g, rgb.b);
+}
+
+function logError(errorId, err, optionalUserData = null) {
+	console.log("Error " + errorId + ": " + err + ", json: " + JSON.stringify(err) + (optionalUserData != null ? (", userData: " + optionalUserData) : ""));
+}
+
+function buildQrCodeUrls(strings) {
+	return new Promise(function(resolve, reject) {
+		var promises = [];
+		var qrcodeUrls = {};
+
+		for (var i = 0; i < strings.length; i++) {
+			promises.push(new Promise(function(resolve2, reject2) {
+				buildQrCodeUrl(strings[i], qrcodeUrls).then(function() {
+					resolve2();
+
+				}).catch(function(err) {
+					reject2(err);
+				});
+			}));
+		}
+
+		Promise.all(promises).then(function(results) {
+			resolve(qrcodeUrls);
+
+		}).catch(function(err) {
+			reject(err);
+		});
+	});
+}
+
+function buildQrCodeUrl(str, results) {
+	return new Promise(function(resolve, reject) {
+		qrcode.toDataURL(str, function(err, url) {
+			if (err) {
+				utils.logError("2q3ur8fhudshfs", err, str);
+
+				reject(err);
+
+				return;
+			}
+
+			results[str] = url;
+
+			resolve();
+		});
+	});
+}
+
 
 module.exports = {
 	redirectToConnectPageIfNeeded: redirectToConnectPageIfNeeded,
 	hex2ascii: hex2ascii,
 	splitArrayIntoChunks: splitArrayIntoChunks,
 	getRandomString: getRandomString,
+	getCurrencyFormatInfo: getCurrencyFormatInfo,
 	formatCurrencyAmount: formatCurrencyAmount,
 	formatCurrencyAmountWithForcedDecimalPlaces: formatCurrencyAmountWithForcedDecimalPlaces,
 	formatExchangedCurrency: formatExchangedCurrency,
@@ -402,9 +489,14 @@ module.exports = {
 	logMemoryUsage: logMemoryUsage,
 	getMinerFromCoinbaseTx: getMinerFromCoinbaseTx,
 	getBlockTotalFeesFromCoinbaseTxAndBlockHeight: getBlockTotalFeesFromCoinbaseTxAndBlockHeight,
-	refreshExchangeRate: refreshExchangeRate,
+	refreshExchangeRates: refreshExchangeRates,
 	parseExponentStringDouble: parseExponentStringDouble,
 	formatLargeNumber: formatLargeNumber,
 	geoLocateIpAddresses: geoLocateIpAddresses,
-	getTxTotalInputOutputValues: getTxTotalInputOutputValues
+	getTxTotalInputOutputValues: getTxTotalInputOutputValues,
+	rgbToHsl: rgbToHsl,
+	colorHexToRgb: colorHexToRgb,
+	colorHexToHsl: colorHexToHsl,
+	logError: logError,
+	buildQrCodeUrls: buildQrCodeUrls
 };
