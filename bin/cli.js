@@ -18,6 +18,7 @@ const args = require('meow')(`
 
       --cookie-secret <secret>     secret key for signed cookie hmac generation [default: hmac derive from bitcoind pass]
       --demo                       enable demoSite mode [default: disabled]
+      --no-rates                   disable fetching of currency exchange rates [default: enabled]
 
       --ipstack-key <key>          api access key for ipstack (for geoip) [default: disabled]
       --ganalytics-tracking <tid>  tracking id for google analytics [default: disabled]
