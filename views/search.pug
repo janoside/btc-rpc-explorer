@@ -9,6 +9,7 @@ block content
 
 	div(class="mb-5")
 		form(method="post", action="/search", class="form")
+			input(type="hidden", name="_csrf", value=csrfToken)
 			div(class="input-group input-group-lg")
 				input(type="text", class="form-control form-control-sm", name="query", placeholder="block height/hash, txid, address", value=(query), style="width: 300px;")
 				div(class="input-group-append")

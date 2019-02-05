@@ -11,6 +11,7 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var session = require("express-session");
+var csurf = require("csurf");
 var config = require("./app/config.js");
 var simpleGit = require('simple-git');
 var utils = require("./app/utils.js");
@@ -451,6 +452,11 @@ app.use(function(req, res, next) {
 	// make some var available to all request
 	// ex: req.cheeseStr = "cheese";
 
+	next();
+});
+
+app.use(csurf(), (req, res, next) => {
+	res.locals.csrfToken = req.csrfToken();
 	next();
 });
 

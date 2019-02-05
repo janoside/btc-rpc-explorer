@@ -5,6 +5,8 @@ block content
 	hr
 
 	form(method="post", action="/connect")
+		input(type="hidden", name="_csrf", value=csrfToken)
+
 		div(class="form-group")
 			label(for="input-host") Host / IP
 			input(id="input-host", type="text", name="host", class="form-control", placeholder="Host / IP", value=host)
