@@ -1,22 +1,30 @@
 var os = require('os');
 var path = require('path');
+var url = require('url');
+
+var btcUri = process.env.BTCEXP_BITCOIND_URI ? url.parse(process.env.BTCEXP_BITCOIND_URI, true) : { query: { } };
+var btcAuth = btcUri.auth ? btcUri.auth.split(':') : [];
+
+var ifxUri = process.env.BTCEXP_INFLUXDB_URI ? url.parse(process.env.BTCEXP_INFLUXDB_URI, true) : { query: { } };
+var ifxAuth = ifxUri.auth ? ifxUri.auth.split(':') : [];
+var ifxActive = !!process.env.BTCEXP_ENABLE_INFLUXDB || Object.keys(process.env).some(k => k.startsWith('BTCEXP_INFLUXDB_'));
 
 module.exports = {
 	rpc: {
-		host: process.env.BTCEXP_BITCOIND_HOST || "127.0.0.1",
-		port: process.env.BTCEXP_BITCOIND_PORT || 8332,
-		username: process.env.BTCEXP_BITCOIND_USER,
-		password: process.env.BTCEXP_BITCOIND_PASS,
-		cookie: process.env.BTCEXP_BITCOIND_COOKIE || path.join(os.homedir(), '.bitcoin', '.cookie'),
+		host: btcUri.hostname || process.env.BTCEXP_BITCOIND_HOST || "127.0.0.1",
+		port: btcUri.port || process.env.BTCEXP_BITCOIND_PORT || 8332,
+		username: btcAuth[0] || process.env.BTCEXP_BITCOIND_USER,
+		password: btcAuth[1] || process.env.BTCEXP_BITCOIND_PASS,
+		cookie: btcUri.query.cookie || process.env.BTCEXP_BITCOIND_COOKIE || path.join(os.homedir(), '.bitcoin', '.cookie'),
 	},
 
 	influxdb:{
-		active: !!process.env.BTCEXP_ENABLE_INFLUXDB,
-		host: process.env.BTCEXP_INFLUXDB_HOST || "127.0.0.1",
-		port: process.env.BTCEXP_INFLUXDB_PORT || 8086,
-		database: process.env.BTCEXP_INFLUXDB_DBNAME || "influxdb",
-		username: process.env.BTCEXP_INFLUXDB_USER || "admin",
-		password: process.env.BTCEXP_INFLUXDB_PASS || "admin"
+		active: ifxActive,
+		host: ifxUri.hostname || process.env.BTCEXP_INFLUXDB_HOST || "127.0.0.1",
+		port: ifxUri.port || process.env.BTCEXP_INFLUXDB_PORT || 8086,
+		database: ifxUri.pathname && ifxUri.pathname.substr(1) || process.env.BTCEXP_INFLUXDB_DBNAME || "influxdb",
+		username: ifxAuth[0] || process.env.BTCEXP_INFLUXDB_USER || "admin",
+		password: ifxAuth[1] || process.env.BTCEXP_INFLUXDB_PASS || "admin"
 	},
 
 	// optional: enter your api access key from ipstack.com below
