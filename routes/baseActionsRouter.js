@@ -746,30 +746,18 @@ router.get("/address/:address", function(req, res) {
 });
 
 router.get("/rpc-terminal", function(req, res) {
-	if (!config.demoSite) {
-		var ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
-		var match = config.ipWhitelistForRpcCommands.exec(ip);
-
-		if (!match) {
-			res.send("RPC Terminal / Browser may not be accessed from '" + ip + "'. This restriction can be modified in your config.js file.");
-
-			return;
-		}
+	if (!config.demoSite && !req.authenticated) {
+		res.send("RPC Terminal / Browser may not be accessed without logging-in. This restriction can be modified in your config.js file.");
+		return;
 	}
 
 	res.render("terminal");
 });
 
 router.post("/rpc-terminal", function(req, res) {
-	if (!config.demoSite) {
-		var ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
-		var match = config.ipWhitelistForRpcCommands.exec(ip);
-
-		if (!match) {
-			res.send("RPC Terminal / Browser may not be accessed from '" + ip + "'. This restriction can be modified in your config.js file.");
-
-			return;
-		}
+	if (!config.demoSite && !req.authenticated) {
+		res.send("RPC Terminal / Browser may not be accessed without logging-in. This restriction can be modified in your config.js file.");
+		return;
 	}
 
 	var params = req.body.cmd.trim().split(/\s+/);
@@ -819,15 +807,9 @@ router.post("/rpc-terminal", function(req, res) {
 });
 
 router.get("/rpc-browser", function(req, res, next) {
-	if (!config.demoSite) {
-		var ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
-		var match = config.ipWhitelistForRpcCommands.exec(ip);
-
-		if (!match) {
-			res.send("RPC Terminal / Browser may not be accessed from '" + ip + "'. This restriction can be modified in your config.js file.");
-
-			return;
-		}
+	if (!config.demoSite && !req.authenticated) {
+		res.send("RPC Terminal / Browser may not be accessed without logging-in. This restriction can be modified in your config.js file.");
+		return;
 	}
 
 	coreApi.getHelp().then(function(result) {

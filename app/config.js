@@ -106,9 +106,6 @@ module.exports = {
 
 	credentials: credentials,
 
-	// Edit "ipWhitelistForRpcCommands" regex to limit access to RPC Browser / Terminal to matching IPs
-	ipWhitelistForRpcCommands:/^(127\.0\.0\.1)?(\:\:1)?$/,
-
 	siteTools:[
 		{name:"Node Status", url:"/node-status", desc:"Summary of this node: version, network, uptime, etc.", fontawesome:"fas fa-broadcast-tower"},
 		{name:"Peers", url:"/peers", desc:"Detailed info about the peers connected to this node.", fontawesome:"fas fa-sitemap"},
