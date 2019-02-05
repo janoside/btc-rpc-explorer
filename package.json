@@ -3,10 +3,12 @@
   "version": "1.0.0",
   "description": "Explorer for Bitcoin and RPC-compatible blockchains",
   "private": false,
+  "bin": "bin/cli.js",
   "scripts": {
     "start": "node ./bin/www",
     "build": "npm-run-all build:*",
-    "build:less": "lessc ./public/css/radial-progress.less ./public/css/radial-progress.css"
+    "build:less": "lessc ./public/css/radial-progress.less ./public/css/radial-progress.css",
+    "prepare": "npm run build"
   },
   "keywords": [
     "bitcoin",
@@ -34,6 +36,7 @@
     "influx": "5.0.7",
     "jstransformer-markdown-it": "^2.0.0",
     "lru-cache": "4.1.3",
+    "meow": "^5.0.0",
     "moment": "^2.24.0",
     "moment-duration-format": "2.2.2",
     "morgan": "^1.9.1",

@@ -11,10 +11,10 @@ module.exports = {
 	},
 
 	influxdb:{
-		active: !!process.env.BTCEXP_INFLUXDB_ENABLED,
+		active: !!process.env.BTCEXP_ENABLE_INFLUXDB,
 		host: process.env.BTCEXP_INFLUXDB_HOST || "127.0.0.1",
 		port: process.env.BTCEXP_INFLUXDB_PORT || 8086,
-		database: process.env.BTCEXP_INFLUXDB_DB || "influxdb",
+		database: process.env.BTCEXP_INFLUXDB_DBNAME || "influxdb",
 		username: process.env.BTCEXP_INFLUXDB_USER || "admin",
 		password: process.env.BTCEXP_INFLUXDB_PASS || "admin"
 	},
