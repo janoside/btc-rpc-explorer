@@ -1,9 +1,13 @@
+var os = require('os');
+var path = require('path');
+
 module.exports = {
 	rpc: {
 		host: process.env.BTCEXP_BITCOIND_HOST || "127.0.0.1",
 		port: process.env.BTCEXP_BITCOIND_PORT || 8332,
 		username: process.env.BTCEXP_BITCOIND_USER,
 		password: process.env.BTCEXP_BITCOIND_PASS,
+		cookie: process.env.BTCEXP_BITCOIND_COOKIE || path.join(os.homedir(), '.bitcoin', '.cookie'),
 	},
 
 	influxdb:{

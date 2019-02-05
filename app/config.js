@@ -1,3 +1,4 @@
+var fs = require('fs');
 var coins = require("./coins.js");
 
 var currentCoin = process.env.BTCEXP_COIN || "BTC";
@@ -6,6 +7,13 @@ var credentials = require("./defaultCredentials.js");
 try {
   Object.assign(credentials, require("./credentials.js"))
 } catch (err) {}
+
+var rpcCred = credentials.rpc;
+
+if (rpcCred.cookie && !rpcCred.username && !rpcCred.password && fs.existsSync(rpcCred.cookie)) {
+  [ rpcCred.username, rpcCred.password ] = fs.readFileSync(rpcCred.cookie).toString().split(':', 2);
+  if (!rpcCred.password) throw new Error('Cookie file '+rpcCred.cookie+' in unexpected format');
+}
 
 module.exports = {
 	cookiePassword: process.env.BTCEXP_COOKIE_PASSWORD || "0x000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f",
@@ -107,7 +115,7 @@ module.exports = {
 
 		{name:"RPC Browser", url:"/rpc-browser", desc:"Browse the RPC functionality of this node. See docs and execute commands.", fontawesome:"fas fa-book"},
 		{name:"RPC Terminal", url:"/rpc-terminal", desc:"Directly execute RPCs against this node.", fontawesome:"fas fa-terminal"},
-		
+
 		{name:(coins[currentCoin].name + " Fun"), url:"/fun", desc:"See fun/interesting historical blockchain data.", fontawesome:"fas fa-certificate"}
 	],
 
