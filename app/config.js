@@ -1,4 +1,5 @@
 var fs = require('fs');
+var crypto = require('crypto');
 var coins = require("./coins.js");
 
 var currentCoin = process.env.BTCEXP_COIN || "BTC";
@@ -15,8 +16,13 @@ if (rpcCred.cookie && !rpcCred.username && !rpcCred.password && fs.existsSync(rp
   if (!rpcCred.password) throw new Error('Cookie file '+rpcCred.cookie+' in unexpected format');
 }
 
+var cookieSecret = process.env.BTCEXP_COOKIE_SECRET
+ || (rpcCred.password && crypto.createHmac('sha256', JSON.stringify(rpcCred))
+                               .update('btc-rpc-explorer-cookie-secret').digest('hex'))
+ || "0x000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f";
+
 module.exports = {
-	cookiePassword: process.env.BTCEXP_COOKIE_PASSWORD || "0x000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f",
+	cookieSecret: cookieSecret,
 	demoSite: !!process.env.BTCEXP_DEMO,
 	coin: currentCoin,
 

@@ -14,7 +14,7 @@ const args = require('meow')(`
       -u, --bitcoind-user <user>   username for bitcoind rpc [default: none]
       -w, --bitcoind-pass <pass>   password for bitcoind rpc [default: none]
 
-      --cookie-password <secret>   secret key for signed cookie hmac generation
+      --cookie-secret <secret>     secret key for signed cookie hmac generation [default: hmac derive from bitcoind pass]
       --demo                       enable demoSite mode [default: disabled]
 
       --ipstack-key <key>          api access key for ipstack (for geoip) [default: disabled]
