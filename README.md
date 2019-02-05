@@ -56,6 +56,9 @@ BTCEXP_IPSTACK_KEY = 0000aaaafffffgggggg
 BTCEXP_COOKIE_SECRET = 0x000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f
 ```
 
+You may enable password protection by setting `BTCEXP_LOGIN=<password>`.
+Authenticating is done with http basic auth, using the selected password and an empty (or any) username.
+
 ## Run via Docker
 
 1. `docker build -t btc-rpc-explorer .`

@@ -6,6 +6,7 @@ const args = require('meow')(`
 
     Options
       -p, --port <port>            port to bind http server [default: 3002]
+      -l, --login <password>       protect web interface with a password [default: no password]
       --coin <coin>                crypto-coin to enable [default: BTC]
 
       -H, --bitcoind-host <host>   hostname for bitcoind rpc [default: 127.0.0.1]
@@ -27,9 +28,9 @@ const args = require('meow')(`
       --influxdb-pass <pass>       password for influxdb [default: admin]
       --influxdb-dbname <db>       database name for influxdb [default: influxdb]
 
-      -e, --node-env <env>      nodejs environment mode [default: production]
-      -h, --help                output usage information
-      -v, --version             output version number
+      -e, --node-env <env>         nodejs environment mode [default: production]
+      -h, --help                   output usage information
+      -v, --version                output version number
 
     Example
       $ btc-rpc-explorer --port 8080 --bitcoind-port 18443 --bitcoind-cookie ~/.bitcoin/regtest/.cookie
@@ -38,10 +39,10 @@ const args = require('meow')(`
     All options may also be specified as environment variables:
       $ BTCEXP_PORT=8080 BTCEXP_BITCOIND_PORT=18443 BTCEXP_BITCOIND_COOKIE=~/.bitcoin/regtest/.cookie btc-rpc-explorer
 
-`, { flags: { port: {alias:'p'}, enableInfluxdb: {type:'boolean'}, nodeEnv: {alias:'e', default:'production'}
+`, { flags: { port: {alias:'p'}, login: {alias:'l'}
             , bitcoindHost: {alias:'H'}, bitcoindPort: {alias:'P'}, bitcoindCookie: {alias:'c'}
             , bitcoindUser: {alias:'u'}, bitcoindPass: {alias:'w'}
-            , demo: {type:'boolean'}
+            , demo: {type:'boolean'}, enableInfluxdb: {type:'boolean'}, nodeEnv: {alias:'e', default:'production'}
             } }
 ).flags;
 
