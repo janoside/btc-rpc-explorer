@@ -16,6 +16,8 @@ const args = require('meow')(`
       -u, --bitcoind-user <user>   username for bitcoind rpc [default: none]
       -w, --bitcoind-pass <pass>   password for bitcoind rpc [default: none]
 
+      --rpc-allowall               allow all rpc commands [default: false]
+      --rpc-blacklist <methods>    comma separated list of rpc commands to block [default: see in config.js]
       --cookie-secret <secret>     secret key for signed cookie hmac generation [default: hmac derive from bitcoind pass]
       --demo                       enable demoSite mode [default: disabled]
       --no-rates                   disable fetching of currency exchange rates [default: enabled]
@@ -52,7 +54,8 @@ const args = require('meow')(`
 `, { flags: { port: {alias:'p'}, login: {alias:'l'}
             , bitcoindUri: {alias:'b'}, bitcoindHost: {alias:'H'}, bitcoindPort: {alias:'P'}
             , bitcoindCookie: {alias:'c'}, bitcoindUser: {alias:'u'}, bitcoindPass: {alias:'w'}
-            , demo: {type:'boolean'}, enableInfluxdb: {type:'boolean'}, nodeEnv: {alias:'e', default:'production'}
+            , demo: {type:'boolean'}, rpcAllowall: {type:'boolean'}
+            , enableInfluxdb: {type:'boolean'}, nodeEnv: {alias:'e', default:'production'}
             } }
 ).flags;
 

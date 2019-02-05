@@ -26,7 +26,10 @@ module.exports = {
 	demoSite: !!process.env.BTCEXP_DEMO,
 	coin: currentCoin,
 
-	rpcBlacklist:[
+	rpcBlacklist:
+	  process.env.BTCEXP_RPC_ALLOWALL  ? []
+	: process.env.BTCEXP_RPC_BLACKLIST ? process.env.BTCEXP_RPC_BLACKLIST.split(',').filter(Boolean)
+	: [
 		"addnode",
 		"backupwallet",
 		"bumpfee",
