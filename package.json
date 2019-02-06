@@ -3,10 +3,12 @@
   "version": "1.0.0",
   "description": "Explorer for Bitcoin and RPC-compatible blockchains",
   "private": false,
+  "bin": "bin/cli.js",
   "scripts": {
     "start": "node ./bin/www",
     "build": "npm-run-all build:*",
-    "build:less": "lessc ./public/css/radial-progress.less ./public/css/radial-progress.css"
+    "build:less": "lessc ./public/css/radial-progress.less ./public/css/radial-progress.css",
+    "prepare": "npm run build"
   },
   "keywords": [
     "bitcoin",
@@ -20,11 +22,13 @@
     "url": "git+https://github.com/janoside/btc-rpc-explorer.git"
   },
   "dependencies": {
+    "basic-auth": "^2.0.1",
     "bitcoin-core": "2.0.0",
     "bitcoinjs-lib": "3.3.2",
     "body-parser": "~1.18.2",
     "cookie-parser": "~1.4.3",
     "crypto-js": "3.1.9-1",
+    "csurf": "^1.9.0",
     "debug": "~2.6.0",
     "decimal.js": "7.2.3",
     "dotenv": "^6.2.0",
@@ -34,6 +38,7 @@
     "influx": "5.0.7",
     "jstransformer-markdown-it": "^2.0.0",
     "lru-cache": "4.1.3",
+    "meow": "^5.0.0",
     "moment": "^2.24.0",
     "moment-duration-format": "2.2.2",
     "morgan": "^1.9.1",

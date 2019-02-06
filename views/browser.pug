@@ -46,6 +46,7 @@ block content
 								hr
 
 							form(method="get")
+								input(type="hidden", name="_csrf", value=csrfToken)
 								input(type="hidden", name="method", value=method)
 
 								div(class="h5 mb-3") Arguments

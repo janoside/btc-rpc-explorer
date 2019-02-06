@@ -1,4 +1,5 @@
 var express = require('express');
+var csurf = require('csurf');
 var router = express.Router();
 var util = require('util');
 var moment = require('moment');
@@ -13,6 +14,8 @@ var utils = require('./../app/utils.js');
 var coins = require("./../app/coins.js");
 var config = require("./../app/config.js");
 var coreApi = require("./../app/api/coreApi.js");
+
+const forceCsrf = csurf({ ignoreMethods: [] });
 
 router.get("/", function(req, res) {
 	if (req.session.host == null || req.session.host.trim() == "") {
@@ -41,7 +44,7 @@ router.get("/", function(req, res) {
 	promises.push(coreApi.getMempoolInfo());
 	promises.push(coreApi.getMiningInfo());
 
-	var chainTxStatsIntervals = [ 144, 144 * 7, 144 * 30, 144 * 265 ];
+	var chainTxStatsIntervals = [ 144, 144 * 7, 144 * 30, 144 * 365 ];
 	res.locals.chainTxStatsLabels = [ "24 hours", "1 week", "1 month", "1 year", "All time" ];
 	for (var i = 0; i < chainTxStatsIntervals.length; i++) {
 		promises.push(coreApi.getChainTxStats(chainTxStatsIntervals[i]));
@@ -743,30 +746,18 @@ router.get("/address/:address", function(req, res) {
 });
 
 router.get("/rpc-terminal", function(req, res) {
-	if (!config.demoSite) {
-		var ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
-		var match = config.ipWhitelistForRpcCommands.exec(ip);
-
-		if (!match) {
-			res.send("RPC Terminal / Browser may not be accessed from '" + ip + "'. This restriction can be modified in your config.js file.");
-
-			return;
-		}
+	if (!config.demoSite && !req.authenticated) {
+		res.send("RPC Terminal / Browser may not be accessed without logging-in. This restriction can be modified in your config.js file.");
+		return;
 	}
 
 	res.render("terminal");
 });
 
 router.post("/rpc-terminal", function(req, res) {
-	if (!config.demoSite) {
-		var ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
-		var match = config.ipWhitelistForRpcCommands.exec(ip);
-
-		if (!match) {
-			res.send("RPC Terminal / Browser may not be accessed from '" + ip + "'. This restriction can be modified in your config.js file.");
-
-			return;
-		}
+	if (!config.demoSite && !req.authenticated) {
+		res.send("RPC Terminal / Browser may not be accessed without logging-in. This restriction can be modified in your config.js file.");
+		return;
 	}
 
 	var params = req.body.cmd.trim().split(/\s+/);
@@ -815,16 +806,10 @@ router.post("/rpc-terminal", function(req, res) {
 	});
 });
 
-router.get("/rpc-browser", function(req, res) {
-	if (!config.demoSite) {
-		var ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
-		var match = config.ipWhitelistForRpcCommands.exec(ip);
-
-		if (!match) {
-			res.send("RPC Terminal / Browser may not be accessed from '" + ip + "'. This restriction can be modified in your config.js file.");
-
-			return;
-		}
+router.get("/rpc-browser", function(req, res, next) {
+	if (!config.demoSite && !req.authenticated) {
+		res.send("RPC Terminal / Browser may not be accessed without logging-in. This restriction can be modified in your config.js file.");
+		return;
 	}
 
 	coreApi.getHelp().then(function(result) {
@@ -883,26 +868,30 @@ router.get("/rpc-browser", function(req, res) {
 						return;
 					}
 
-					console.log("Executing RPC '" + req.query.method + "' with params: [" + argValues + "]");
+					forceCsrf(req, res, err => {
+						if (err) return next(err);
 
-					client.command([{method:req.query.method, parameters:argValues}], function(err3, result3, resHeaders3) {
-						console.log("RPC Response: err=" + err3 + ", result=" + result3 + ", headers=" + resHeaders3);
+						console.log("Executing RPC '" + req.query.method + "' with params: [" + argValues + "]");
 
-						if (err3) {
-							if (result3) {
-								res.locals.methodResult = {error:("" + err3), result:result3};
-								
+						client.command([{method:req.query.method, parameters:argValues}], function(err3, result3, resHeaders3) {
+							console.log("RPC Response: err=" + err3 + ", result=" + result3 + ", headers=" + resHeaders3);
+
+							if (err3) {
+								if (result3) {
+									res.locals.methodResult = {error:("" + err3), result:result3};
+
+								} else {
+									res.locals.methodResult = {error:("" + err3)};
+								}
+							} else if (result3) {
+								res.locals.methodResult = result3;
+
 							} else {
-								res.locals.methodResult = {error:("" + err3)};
+								res.locals.methodResult = {"Error":"No response from node."};
 							}
-						} else if (result3) {
-							res.locals.methodResult = result3;
 
-						} else {
-							res.locals.methodResult = {"Error":"No response from node."};
-						}
-
-						res.render("browser");
+							res.render("browser");
+						});
 					});
 				} else {
 					res.render("browser");
