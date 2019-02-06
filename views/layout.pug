@@ -2,6 +2,7 @@ doctype html
 html(lang="en")
 	head
 		meta(charset="utf-8")
+		meta(name="csrf-token", content=csrfToken)
 		meta(name="viewport", content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0, shrink-to-fit=no")
 		
 		if (session.uiTheme && session.uiTheme == "dark")
@@ -86,6 +87,7 @@ html(lang="en")
 										span  Dark
 
 						form(method="post", action="/search", class="form-inline")
+							input(type="hidden", name="_csrf", value=csrfToken)
 							div(class="input-group input-group-sm")
 								input(type="text", class="form-control form-control-sm", name="query", placeholder="block height/hash, txid, address", value=(query), style="width: 300px;")
 								div(class="input-group-append")

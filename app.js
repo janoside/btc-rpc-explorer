@@ -11,6 +11,7 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var session = require("express-session");
+var csurf = require("csurf");
 var config = require("./app/config.js");
 var simpleGit = require('simple-git');
 var utils = require("./app/utils.js");
@@ -27,6 +28,7 @@ var fs = require('fs');
 var electrumApi = require("./app/api/electrumApi.js");
 var Influx = require("influx");
 var coreApi = require("./app/api/coreApi.js");
+var auth = require('./app/auth.js');
 
 var crawlerBotUserAgentStrings = [ "Googlebot", "Bingbot", "Slurp", "DuckDuckBot", "Baiduspider", "YandexBot", "Sogou", "Exabot", "facebot", "ia_archiver" ];
 
@@ -46,6 +48,12 @@ app.engine('pug', (path, options, fn) => {
 
 app.set('view engine', 'pug');
 
+// basic http authentication
+if (process.env.BTCEXP_LOGIN) {
+	app.disable('x-powered-by');
+	app.use(auth(process.env.BTCEXP_LOGIN));
+}
+
 // uncomment after placing your favicon in /public
 //app.use(favicon(__dirname + '/public/favicon.ico'));
 app.use(logger('dev'));
@@ -53,7 +61,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(session({
-	secret: config.cookiePassword,
+	secret: config.cookieSecret,
 	resave: false,
 	saveUninitialized: false
 }));
@@ -444,6 +452,11 @@ app.use(function(req, res, next) {
 	// make some var available to all request
 	// ex: req.cheeseStr = "cheese";
 
+	next();
+});
+
+app.use(csurf(), (req, res, next) => {
+	res.locals.csrfToken = req.csrfToken();
 	next();
 });
 

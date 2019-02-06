@@ -1,3 +1,5 @@
+var fs = require('fs');
+var crypto = require('crypto');
 var coins = require("./coins.js");
 
 var currentCoin = process.env.BTCEXP_COIN || "BTC";
@@ -7,12 +9,27 @@ try {
   Object.assign(credentials, require("./credentials.js"))
 } catch (err) {}
 
+var rpcCred = credentials.rpc;
+
+if (rpcCred.cookie && !rpcCred.username && !rpcCred.password && fs.existsSync(rpcCred.cookie)) {
+  [ rpcCred.username, rpcCred.password ] = fs.readFileSync(rpcCred.cookie).toString().split(':', 2);
+  if (!rpcCred.password) throw new Error('Cookie file '+rpcCred.cookie+' in unexpected format');
+}
+
+var cookieSecret = process.env.BTCEXP_COOKIE_SECRET
+ || (rpcCred.password && crypto.createHmac('sha256', JSON.stringify(rpcCred))
+                               .update('btc-rpc-explorer-cookie-secret').digest('hex'))
+ || "0x000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f";
+
 module.exports = {
-	cookiePassword: process.env.BTCEXP_COOKIE_PASSWORD || "0x000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f",
+	cookieSecret: cookieSecret,
 	demoSite: !!process.env.BTCEXP_DEMO,
 	coin: currentCoin,
 
-	rpcBlacklist:[
+	rpcBlacklist:
+	  process.env.BTCEXP_RPC_ALLOWALL  ? []
+	: process.env.BTCEXP_RPC_BLACKLIST ? process.env.BTCEXP_RPC_BLACKLIST.split(',').filter(Boolean)
+	: [
 		"addnode",
 		"backupwallet",
 		"bumpfee",
@@ -92,9 +109,6 @@ module.exports = {
 
 	credentials: credentials,
 
-	// Edit "ipWhitelistForRpcCommands" regex to limit access to RPC Browser / Terminal to matching IPs
-	ipWhitelistForRpcCommands:/^(127\.0\.0\.1)?(\:\:1)?$/,
-
 	siteTools:[
 		{name:"Node Status", url:"/node-status", desc:"Summary of this node: version, network, uptime, etc.", fontawesome:"fas fa-broadcast-tower"},
 		{name:"Peers", url:"/peers", desc:"Detailed info about the peers connected to this node.", fontawesome:"fas fa-sitemap"},
@@ -107,7 +121,7 @@ module.exports = {
 
 		{name:"RPC Browser", url:"/rpc-browser", desc:"Browse the RPC functionality of this node. See docs and execute commands.", fontawesome:"fas fa-book"},
 		{name:"RPC Terminal", url:"/rpc-terminal", desc:"Directly execute RPCs against this node.", fontawesome:"fas fa-terminal"},
-		
+
 		{name:(coins[currentCoin].name + " Fun"), url:"/fun", desc:"See fun/interesting historical blockchain data.", fontawesome:"fas fa-certificate"}
 	],
 
