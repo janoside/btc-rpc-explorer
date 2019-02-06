@@ -2,6 +2,8 @@
 
 'use strict';
 
+require('dotenv').config();
+
 var express = require('express');
 var path = require('path');
 var favicon = require('serve-favicon');
@@ -205,33 +207,20 @@ app.runOnStartup = function() {
 
 	console.log("Running RPC Explorer for " + global.coinConfig.name);
 
-	var rpcCredentials = null;
-	if (config.credentials.rpc) {
-		rpcCredentials = config.credentials.rpc;
+	var rpcCred = config.credentials.rpc;
+	console.log("Connecting via RPC to node at " + rpcCred.host + ":" + rpcCred.port);
 
-	} else if (process.env.RPC_HOST) {
-		rpcCredentials = {
-			host: process.env.RPC_HOST,
-			port: process.env.RPC_PORT,
-			username: process.env.RPC_USERNAME,
-			password: process.env.RPC_PASSWORD
-		};
-	}
+	global.client = new bitcoinCore({
+		host: rpcCred.host,
+		port: rpcCred.port,
+		username: rpcCred.username,
+		password: rpcCred.password,
+		timeout: 5000
+	});
 
-	if (rpcCredentials) {
-		console.log("Connecting via RPC to node at " + config.credentials.rpc.host + ":" + config.credentials.rpc.port);
+	coreApi.getNetworkInfo().then(function(getnetworkinfo) {
+		console.log("Connected via RPC to node. Basic info: version=" + getnetworkinfo.version + ", subversion=" + getnetworkinfo.subversion + ", protocolversion=" + getnetworkinfo.protocolversion + ", services=" + getnetworkinfo.localservices);
 
-		global.client = new bitcoinCore({
-			host: rpcCredentials.host,
-			port: rpcCredentials.port,
-			username: rpcCredentials.username,
-			password: rpcCredentials.password,
-			timeout: 5000
-		});
-
-		coreApi.getNetworkInfo().then(function(getnetworkinfo) {
-			console.log("Connected via RPC to node. Basic info: version=" + getnetworkinfo.version + ", subversion=" + getnetworkinfo.subversion + ", protocolversion=" + getnetworkinfo.protocolversion + ", services=" + getnetworkinfo.localservices);
-		
 	if (config.credentials.influxdb.active) {
 		global.influxdb = new Influx.InfluxDB(config.credentials.influxdb);
 
@@ -246,7 +235,6 @@ app.runOnStartup = function() {
 		}).catch(function(err) {
 			console.log("Error 923grf20fge: " + err + ", error json: " + JSON.stringify(err));
 		});
-	}
 
 	if (config.donationAddresses) {
 		var getDonationAddressQrCode = function(coinId) {
