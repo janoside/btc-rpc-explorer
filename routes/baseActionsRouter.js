@@ -830,7 +830,7 @@ router.get("/rpc-browser", function(req, res, next) {
 							var argProperties = argDetails[i].properties;
 
 							for (var j = 0; j < argProperties.length; j++) {
-								if (argProperties[j] == "numeric") {
+								if (argProperties[j] === "numeric") {
 									if (req.query.args[i] == null || req.query.args[i] == "") {
 										argValues.push(null);
 
@@ -840,19 +840,22 @@ router.get("/rpc-browser", function(req, res, next) {
 
 									break;
 
-								} else if (argProperties[j] == "boolean") {
+								} else if (argProperties[j] === "boolean") {
 									if (req.query.args[i]) {
 										argValues.push(req.query.args[i] == "true");
 									}
 
 									break;
 
-								} else if (argProperties[j] == "string") {
+								} else if (argProperties[j] === "string" || argProperties[j] === "numeric or string") {
 									if (req.query.args[i]) {
 										argValues.push(req.query.args[i]);
 									}
 
 									break;
+								}
+								else {
+								  console.log(`Unknown argument property: ${argProperties[j]}`);
 								}
 							}
 						}
