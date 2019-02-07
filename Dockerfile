@@ -1,6 +1,10 @@
-FROM node:8
+FROM node:alpine
 WORKDIR /workspace
 COPY . .
-RUN npm install
+
+RUN apk update && \
+    apk add --no-cache git python make && \
+    npm install
+
 CMD npm start
 EXPOSE 3002
