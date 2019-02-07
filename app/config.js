@@ -1,24 +1,11 @@
 var fs = require('fs');
 var crypto = require('crypto');
+var url = require('url');
+
 var coins = require("./coins.js");
+var credentials = require("./credentials.js");
 
 var currentCoin = process.env.BTCEXP_COIN || "BTC";
-
-var credentials = require("./defaultCredentials.js");
-var overrideCredentials = null;
-
-try {
-	Object.assign(overrideCredentials, require("./credentials.js"));
-	
-} catch (err) {
-	// expected
-}
-
-if (overrideCredentials != null) {
-	for (var key in overrideCredentials) {
-		credentials[key] = overrideCredentials[key];
-	}
-}
 
 var rpcCred = credentials.rpc;
 
@@ -34,6 +21,15 @@ var cookieSecret = process.env.BTCEXP_COOKIE_SECRET
  || (rpcCred.password && crypto.createHmac('sha256', JSON.stringify(rpcCred))
                                .update('btc-rpc-explorer-cookie-secret').digest('hex'))
  || "0x000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f";
+
+
+var electrumXServerUriStrings = (process.env.BTCEXP_ELECTRUMX_SERVERS || "").split(',');
+var electrumXServers = [];
+for (var i = 0; i < electrumXServerUriStrings.length; i++) {
+	var uri = url.parse(electrumXServerUriStrings[i]);
+	
+	electrumXServers.push({protocol:uri.protocol.substring(0, uri.protocol.length - 1), host:uri.hostname, port:parseInt(uri.port)});
+}
 
 module.exports = {
 	cookieSecret: cookieSecret,
@@ -107,12 +103,7 @@ module.exports = {
 		"walletpassphrasechange",
 	],
 
-	// https://uasf.saltylemon.org/electrum
-	electrumXServers:[
-		// set host & port of electrum servers to connect to
-		// protocol can be "tls" or "tcp", it defaults to "tcp" if port is 50001 and "tls" otherwise
-		// {host: "electrum.example.com", port:50002, protocol: "tls"}, ...
-	],
+	electrumXServers:electrumXServers,
 
 	site: {
 		blockTxPageSize:20,
