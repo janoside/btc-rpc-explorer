@@ -10,6 +10,8 @@ var currentCoin = process.env.BTCEXP_COIN || "BTC";
 var rpcCred = credentials.rpc;
 
 if (rpcCred.cookie && !rpcCred.username && !rpcCred.password && fs.existsSync(rpcCred.cookie)) {
+	console.log(`Loading RPC cookie file: ${rpcCred.cookie}`);
+	
 	[ rpcCred.username, rpcCred.password ] = fs.readFileSync(rpcCred.cookie).toString().split(':', 2);
 	
 	if (!rpcCred.password) {
