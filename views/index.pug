@@ -87,19 +87,20 @@ block content
 
 				div(class="col-md-4")
 					ul(style="list-style-type: none;", class="pl-0")
-						li 
-							div(class="float-left", style="height: 40px; width: 40px; font-size: 12px;")
-								span
-									i(class="fas fa-money-bill-wave-alt fa-2x mr-2", style="margin-top: 7px;")
+						if (!process.env.BTCEXP_NO_RATES)
+							li 
+								div(class="float-left", style="height: 40px; width: 40px; font-size: 12px;")
+									span
+										i(class="fas fa-money-bill-wave-alt fa-2x mr-2", style="margin-top: 7px;")
 
-							span(class="font-weight-bold") Exchange Rate 
-								span(data-toggle="tooltip", title=("Exchange-rate data from: " + coinConfig.exchangeRateData.jsonUrl))
-									i(class="fas fa-info-circle")
+								span(class="font-weight-bold") Exchange Rate 
+									span(data-toggle="tooltip", title=("Exchange-rate data from: " + coinConfig.exchangeRateData.jsonUrl))
+										i(class="fas fa-info-circle")
 
-							if (global.exchangeRates)
-								p(class="lead") #{utils.formatExchangedCurrency(1.0, "usd")}
-							else
-								p(class="lead") -
+								if (global.exchangeRates)
+									p(class="lead") #{utils.formatExchangedCurrency(1.0, "usd")}
+								else
+									p(class="lead") -
 
 						li
 							div(class="float-left", style="height: 40px; width: 40px;")

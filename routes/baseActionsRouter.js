@@ -869,7 +869,9 @@ router.get("/rpc-browser", function(req, res, next) {
 					}
 
 					forceCsrf(req, res, err => {
-						if (err) return next(err);
+						if (err) {
+							return next(err);
+						}
 
 						console.log("Executing RPC '" + req.query.method + "' with params: [" + argValues + "]");
 

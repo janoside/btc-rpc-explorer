@@ -38,26 +38,13 @@ The below instructions are geared toward BTC, but can be adapted easily to other
 1. Clone this repo: `git clone https://github.com/janoside/btc-rpc-explorer`
 2. `npm install`
 3. `npm run build`
-4. Set environment variables with your bitcoind rpc credentials and other settings. See [configuration](#configuration).
+4. Configure via environment variables or `.env` file. See [configuration](#configuration).
 5. `npm start`
 6. Open [http://127.0.0.1:3002/](http://127.0.0.1:3002/)
 
 ### Configuration
 
-Configuration options may be passed as environment variables.
-You can also set them in a `.env` file in the root directory, in the following format:
-
-```
-BTCEXP_BITCOIND_HOST = localhost
-BTCEXP_BITCOIND_PORT = 8332
-BTCEXP_BITCOIND_USER = username
-BTCEXP_BITCOIND_PASS = password
-BTCEXP_IPSTACK_KEY = 0000aaaafffffgggggg
-BTCEXP_COOKIE_SECRET = 0x000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f
-```
-
-You may enable password protection by setting `BTCEXP_LOGIN=<password>`.
-Authenticating is done with http basic auth, using the selected password and an empty (or any) username.
+Configuration options may be passed as environment variables or by creating a `.env` file in the root directory. See [.env-sample](.env-sample) for a list of the options and details for formatting `.env`.
 
 ## Run via Docker
 

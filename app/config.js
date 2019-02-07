@@ -6,14 +6,24 @@ var currentCoin = process.env.BTCEXP_COIN || "BTC";
 
 var credentials = require("./defaultCredentials.js");
 try {
-  Object.assign(credentials, require("./credentials.js"))
-} catch (err) {}
+	var overrideCredentials = null;
+	Object.assign(overrideCredentials, require("./credentials.js"));
+	
+	for (var key in overrideCredentials) {
+		credentials[key] = overrideCredentials[key];
+	}
+} catch (err) {
+	console.log(`Error loading override credentials from app/credentials.js: ${err}`);
+}
 
 var rpcCred = credentials.rpc;
 
 if (rpcCred.cookie && !rpcCred.username && !rpcCred.password && fs.existsSync(rpcCred.cookie)) {
-  [ rpcCred.username, rpcCred.password ] = fs.readFileSync(rpcCred.cookie).toString().split(':', 2);
-  if (!rpcCred.password) throw new Error('Cookie file '+rpcCred.cookie+' in unexpected format');
+	[ rpcCred.username, rpcCred.password ] = fs.readFileSync(rpcCred.cookie).toString().split(':', 2);
+	
+	if (!rpcCred.password) {
+		throw new Error(`Cookie file ${rpcCred.cookie} in unexpected format`);
+	}
 }
 
 var cookieSecret = process.env.BTCEXP_COOKIE_SECRET
