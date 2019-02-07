@@ -226,23 +226,25 @@ app.runOnStartup = function() {
 		timeout: 5000
 	});
 
-	coreApi.getNetworkInfo().then(function(getnetworkinfo) {
-		console.log("Connected via RPC to node. Basic info: version=" + getnetworkinfo.version + ", subversion=" + getnetworkinfo.subversion + ", protocolversion=" + getnetworkinfo.protocolversion + ", services=" + getnetworkinfo.localservices);
-
 	if (config.credentials.influxdb.active) {
 		global.influxdb = new Influx.InfluxDB(config.credentials.influxdb);
 
 		console.log(`Connected to InfluxDB: ${config.credentials.influxdb.host}:${config.credentials.influxdb.port}/${config.credentials.influxdb.database}`);
+	}
 
-		logNetworkStats();
-		setInterval(logNetworkStats, 1 * 60000);
+	coreApi.getNetworkInfo().then(function(getnetworkinfo) {
+		console.log("Connected via RPC to node. Basic info: version=" + getnetworkinfo.version + ", subversion=" + getnetworkinfo.subversion + ", protocolversion=" + getnetworkinfo.protocolversion + ", services=" + getnetworkinfo.localservices);
 
-				logBlockStats();
-				setInterval(logBlockStats, 5 * 60000);
-			}
-		}).catch(function(err) {
-			console.log("Error 923grf20fge: " + err + ", error json: " + JSON.stringify(err));
-		});
+		if (global.influxdb != null) {
+			logNetworkStats();
+			setInterval(logNetworkStats, 1 * 60000);
+
+			logBlockStats();
+			setInterval(logBlockStats, 5 * 60000);
+		}
+	}).catch(function(err) {
+		console.log("Error 923grf20fge: " + err + ", error json: " + JSON.stringify(err));
+	});
 
 	if (config.donationAddresses) {
 		var getDonationAddressQrCode = function(coinId) {

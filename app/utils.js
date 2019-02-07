@@ -290,6 +290,22 @@ function refreshExchangeRates() {
 					global.exchangeRates = exchangeRates;
 					global.exchangeRatesUpdateTime = new Date();
 
+					if (global.influxdb) {
+						var points = [];
+						for (var key in exchangeRates) {
+							points.push({
+								measurement: `exchange_rates.${coins[config.coin].ticker.toLowerCase()}_${key.toLowerCase()}`,
+								fields:{value:parseFloat(exchangeRates[key])}
+							});
+						}
+
+						//console.log("pts: " + JSON.stringify(points));
+
+						global.influxdb.writePoints(points).catch(err => {
+							console.error(`Error saving data to InfluxDB: ${err.stack}`)
+						});
+					}
+
 					console.log("Using exchange rates: " + JSON.stringify(global.exchangeRates) + " starting at " + global.exchangeRatesUpdateTime);
 
 				} else {
