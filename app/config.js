@@ -5,15 +5,19 @@ var coins = require("./coins.js");
 var currentCoin = process.env.BTCEXP_COIN || "BTC";
 
 var credentials = require("./defaultCredentials.js");
+var overrideCredentials = null;
+
 try {
-	var overrideCredentials = null;
 	Object.assign(overrideCredentials, require("./credentials.js"));
 	
+} catch (err) {
+	// expected
+}
+
+if (overrideCredentials != null) {
 	for (var key in overrideCredentials) {
 		credentials[key] = overrideCredentials[key];
 	}
-} catch (err) {
-	console.log(`Error loading override credentials from app/credentials.js: ${err}`);
 }
 
 var rpcCred = credentials.rpc;
