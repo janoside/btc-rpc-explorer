@@ -18,8 +18,8 @@ if (process.env.BTCEXP_ENABLE_INFLUXDB != null) {
 
 module.exports = {
 	rpc: {
-		host: btcUri.hostname || process.env.BTCEXP_BITCOIND_HOST || "127.0.0.1",
-		port: btcUri.port || process.env.BTCEXP_BITCOIND_PORT || 8332,
+		host: btcUri.hostname || process.env.BTCEXP_BITCOIND_HOST,
+		port: btcUri.port || process.env.BTCEXP_BITCOIND_PORT,
 		username: btcAuth[0] || process.env.BTCEXP_BITCOIND_USER,
 		password: btcAuth[1] || process.env.BTCEXP_BITCOIND_PASS,
 		cookie: btcUri.query.cookie || process.env.BTCEXP_BITCOIND_COOKIE || path.join(os.homedir(), '.bitcoin', '.cookie'),
