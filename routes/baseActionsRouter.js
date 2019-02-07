@@ -853,8 +853,8 @@ router.get("/rpc-browser", function(req, res, next) {
 									}
 
 									break;
-								}
-								else {
+									
+								} else {
 								  console.log(`Unknown argument property: ${argProperties[j]}`);
 								}
 							}
