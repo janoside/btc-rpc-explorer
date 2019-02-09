@@ -6,6 +6,7 @@ const args = require('meow')(`
 
     Options
       -p, --port <port>              port to bind http server [default: 3002]
+      -i, --host <host>              host to bind http server [default: 127.0.0.1]
       -a, --basic-auth-password <..> protect web interface with a password [default: no password]
       -C, --coin <coin>              crypto-coin to enable [default: BTC]
 
@@ -53,7 +54,7 @@ const args = require('meow')(`
       $ BTCEXP_PORT=8080 BTCEXP_BITCOIND_PORT=18443 BTCEXP_BITCOIND_COOKIE=~/.bitcoin/regtest/.cookie btc-rpc-explorer
 
 
-`, { flags: { port: {alias:'p'}, basicAuthPassword: {alias:'a'}, coin: {alias:'C'}
+`, { flags: { port: {alias:'p'}, host: {alias:'i'}, basicAuthPassword: {alias:'a'}, coin: {alias:'C'}
             , bitcoindUri: {alias:'b'}, bitcoindHost: {alias:'H'}, bitcoindPort: {alias:'P'}
             , bitcoindCookie: {alias:'c'}, bitcoindUser: {alias:'u'}, bitcoindPass: {alias:'w'}
             , demo: {type:'boolean'}, rpcAllowall: {type:'boolean'}, electrumxServers: {alias:'E'}

@@ -3,9 +3,10 @@ var debug = require('debug')('my-application');
 var app = require('../app');
 
 app.set('port', process.env.PORT || process.env.BTCEXP_PORT || 3002);
+app.set('host', process.env.BTCEXP_HOST || '127.0.0.1');
 
-var server = app.listen(app.get('port'), function() {
-	debug('Express server listening on port ' + server.address().port);
+var server = app.listen(app.get('port'), app.get('host'), function() {
+	debug('Express server listening on ' + server.address().address + ':' + server.address().port);
 
 	if (app.runOnStartup) {
 		app.runOnStartup();
