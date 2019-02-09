@@ -57,5 +57,3 @@ typings/
 # dotenv environment variables file
 .env
 
-
-public/css/radial-progress.css
