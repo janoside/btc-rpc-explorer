@@ -2,8 +2,18 @@
 
 'use strict';
 
-var express = require('express');
+var os = require('os');
 var path = require('path');
+var dotenv = require("dotenv");
+var fs = require('fs');
+
+var configPaths = [ path.join(os.homedir(), '.config', 'btc-rpc-explorer.env'), path.join(process.cwd(), '.env') ];
+configPaths.filter(fs.existsSync).forEach(path => {
+	console.log('Loading env file:', path);
+	dotenv.config({ path });
+});
+
+var express = require('express');
 var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
@@ -22,21 +32,12 @@ var coreApi = require("./app/api/coreApi.js");
 var coins = require("./app/coins.js");
 var request = require("request");
 var qrcode = require("qrcode");
-var dotenv = require("dotenv");
-var os = require('os');
-var fs = require('fs');
 var electrumApi = require("./app/api/electrumApi.js");
 var Influx = require("influx");
 var coreApi = require("./app/api/coreApi.js");
 var auth = require('./app/auth.js');
 
 var crawlerBotUserAgentStrings = [ "Googlebot", "Bingbot", "Slurp", "DuckDuckBot", "Baiduspider", "YandexBot", "Sogou", "Exabot", "facebot", "ia_archiver" ];
-
-var configPaths = [ path.join(os.homedir(), '.config', 'btc-rpc-explorer.env'), path.join(process.cwd(), '.env') ];
-configPaths.filter(fs.existsSync).forEach(path => {
-	console.log('Loading env file:', path);
-	dotenv.config({ path });
-});
 
 var baseActionsRouter = require('./routes/baseActionsRouter');
 
