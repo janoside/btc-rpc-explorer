@@ -35,16 +35,31 @@ The below instructions are geared toward BTC, but can be adapted easily to other
 
 ## Instructions
 
-1. Clone this repo: `git clone https://github.com/janoside/btc-rpc-explorer`
-2. `npm install`
-3. `npm run build`
-4. Configure via environment variables or `.env` file. See [configuration](#configuration).
-5. `npm start`
-6. Open [http://127.0.0.1:3002/](http://127.0.0.1:3002/)
+```bash
+npm install -g janoside/btc-rpc-explorer
+btc-rpc-explorer
+```
+
+If you're running on mainnet with the default datadir and port, this Should Just Work.
+Open [http://127.0.0.1:3002/](http://127.0.0.1:3002/) to view the explorer.
+
+You may set configuration options in a `.env` file or using CLI args.
+See [configuration](#configuration) for details.
 
 ### Configuration
 
-Configuration options may be passed as environment variables or by creating a `.env` file in the root directory. See [.env-sample](.env-sample) for a list of the options and details for formatting `.env`.
+Configuration options may be passed as environment variables
+or by creating an env file at `~/.config/btc-rpc-explorer.env`
+or at `.env` in the working directory.
+See [.env-sample](.env-sample) for a list of the options and details for formatting `.env`.
+
+You may also pass options as CLI arguments, for example:
+
+```bash
+btc-rpc-explorer --port 8080 --bitcoind-port 18443 --bitcoind-cookie ~/.bitcoin/regtest/.cookie
+```
+
+See `btc-rpc-explorer --help` for the full list of CLI options.
 
 ## Run via Docker
 
