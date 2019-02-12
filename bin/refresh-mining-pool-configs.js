@@ -13,7 +13,7 @@ async function refreshMiningPoolsForCoin(coinName) {
 		console.log(`Refreshing mining pools for ${coinName}...`);
 		
 		if (coins[coinName].miningPoolsConfigUrls) {
-			var miningPoolsConfigDir = path.join(process.cwd(), "public", "txt", "mining-pools-configs", coinName);
+			var miningPoolsConfigDir = path.join(__dirname, "..", "public", "txt", "mining-pools-configs", coinName);
 			fs.readdir(miningPoolsConfigDir, function(err, files) {
 				if (err) {
 					reject(`Unable to delete existing files from '${miningPoolsConfigDir}'`);
@@ -59,8 +59,8 @@ async function refreshMiningPoolConfig(coinName, index, url) {
 			if (!error && response && response.statusCode && response.statusCode == 200) {
 				var responseBody = JSON.parse(body);
 
-				var filename = path.join(process.cwd(), "public", "txt", "mining-pools-configs", coinName, index + ".json");
-				
+				var filename = path.join(__dirname, "..", "public", "txt", "mining-pools-configs", coinName, index + ".json");
+
 				fs.writeFileSync(filename, body, function(err) {
 					console.log(`Error writing file '${filename}': ${err}`);
 				});
