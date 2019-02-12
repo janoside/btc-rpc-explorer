@@ -86,7 +86,9 @@ div(class="row monospace")
 							if (vout.scriptPubKey)
 								if (vout.scriptPubKey.addresses)
 									if (false)
-										if (vout.scriptPubKey.type == "pubkeyhash")
+										if (vout.scriptPubKey.type == "pubkey")
+											span(class="tag tx-out-type-tag") P2PK
+										else if (vout.scriptPubKey.type == "pubkeyhash")
 											span(class="tag tx-out-type-tag") P2PKH
 										else if (vout.scriptPubKey.type == "scripthash")
 											span(class="tag tx-out-type-tag") P2SH
@@ -113,6 +115,7 @@ div(class="row monospace")
 										span(class="font-weight-bold") OP_RETURN 
 										span(title="Segregated Witness", data-toggle="tooltip") SegWit 
 										span committment 
+
 									a(href="https://github.com/bitcoin/bips/blob/master/bip-0141.mediawiki#commitment-structure", data-toggle="tooltip", title="View developer docs", target="_blank")  
 										i(class="fas fa-info-circle")
 
