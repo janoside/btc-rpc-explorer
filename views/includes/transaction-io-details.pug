@@ -85,6 +85,14 @@ div(class="row monospace")
 						div(class="tx-io-desc")
 							if (vout.scriptPubKey)
 								if (vout.scriptPubKey.addresses)
+									if (false)
+										if (vout.scriptPubKey.type == "pubkeyhash")
+											span(class="tag tx-out-type-tag") P2PKH
+										else if (vout.scriptPubKey.type == "scripthash")
+											span(class="tag tx-out-type-tag") P2SH
+										else if (vout.scriptPubKey.type == "witness_v0_keyhash")
+											span(class="tag tx-out-type-tag") V0_P2WPKH
+
 									a(id=("output-" + voutIndex), href=("/address/" + vout.scriptPubKey.addresses[0]))
 										span(class="monospace word-wrap") #{vout.scriptPubKey.addresses[0]}
 
@@ -98,15 +106,20 @@ div(class="row monospace")
 											span  
 											a(data-toggle="tooltip", title=("Development donation address. All support is appreciated!"))
 												i(class="fas fa-certificate text-primary")
+												
 
 								else if (vout.scriptPubKey.hex && vout.scriptPubKey.hex.startsWith('6a24aa21a9ed'))
-									span(class="monospace") Segregated Witness committment 
+									span(class="monospace")
+										span(class="font-weight-bold") OP_RETURN 
+										span(title="Segregated Witness", data-toggle="tooltip") SegWit 
+										span committment 
 									a(href="https://github.com/bitcoin/bips/blob/master/bip-0141.mediawiki#commitment-structure", data-toggle="tooltip", title="View developer docs", target="_blank")  
 										i(class="fas fa-info-circle")
 
 								else if (vout.scriptPubKey.asm && vout.scriptPubKey.asm.startsWith('OP_RETURN '))
-									span(class="monospace") OP_RETURN: 
-									span(class="monospace text-muted") #{utils.hex2ascii(vout.scriptPubKey.asm.substring("OP_RETURN ".length))}
+									span(class="monospace")
+										span(class="font-weight-bold") OP_RETURN: 
+										span(class="text-muted") #{utils.hex2ascii(vout.scriptPubKey.asm.substring("OP_RETURN ".length))}
 
 								else
 									span(class="monospace")
