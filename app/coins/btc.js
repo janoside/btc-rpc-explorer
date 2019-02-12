@@ -59,8 +59,8 @@ module.exports = {
 	nodeUrl:"https://bitcoin.org/en/full-node",
 	demoSiteUrl: "https://btc.chaintools.io",
 	miningPoolsConfigUrls:[
-		"https://raw.githubusercontent.com/blockchain/Blockchain-Known-Pools/master/pools.json",
-		"https://raw.githubusercontent.com/btccom/Blockchain-Known-Pools/master/pools.json"
+		"https://raw.githubusercontent.com/btccom/Blockchain-Known-Pools/master/pools.json",
+		"https://raw.githubusercontent.com/blockchain/Blockchain-Known-Pools/master/pools.json"
 	],
 	maxBlockWeight: 4000000,
 	currencyUnits:currencyUnits,

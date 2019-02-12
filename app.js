@@ -213,6 +213,34 @@ function logBlockStats() {
 	}
 }
 
+function loadMiningPoolConfigs() {
+	global.miningPoolsConfigs = [];
+
+	var miningPoolsConfigDir = path.join(process.cwd(), "public", "txt", "mining-pools-configs", global.coinConfig.ticker);
+
+	fs.readdir(miningPoolsConfigDir, function(err, files) {
+		if (err) {
+			return console.log(`Unable to scan directory: ${err}`);
+		}
+
+		files.forEach(function(file) {
+			var filepath = path.join(miningPoolsConfigDir, file);
+
+			var contents = fs.readFileSync(filepath, 'utf8');
+
+			global.miningPoolsConfigs.push(JSON.parse(contents));
+		});
+	});
+
+	for (var i = 0; i < global.miningPoolsConfigs.length; i++) {
+		for (var x in global.miningPoolsConfigs[i].payout_addresses) {
+			if (global.miningPoolsConfigs[i].payout_addresses.hasOwnProperty(x)) {
+				global.specialAddresses[x] = {type:"minerPayout", minerInfo:global.miningPoolsConfigs[i].payout_addresses[x]};
+			}
+		}
+	}
+}
+
 
 app.runOnStartup = function() {
 	global.config = config;
@@ -299,41 +327,7 @@ app.runOnStartup = function() {
 		});
 	}
 
-	if (global.coinConfig.miningPoolsConfigUrls) {
-		var promises = [];
-
-		for (var i = 0; i < global.coinConfig.miningPoolsConfigUrls.length; i++) {
-			promises.push(new Promise(function(resolve, reject) {
-				request(global.coinConfig.miningPoolsConfigUrls[i], function(error, response, body) {
-					if (!error && response && response.statusCode && response.statusCode == 200) {
-						var responseBody = JSON.parse(body);
-
-						resolve(responseBody);
-						
-					} else {
-						console.log("Error:");
-						console.log(error);
-						console.log("Response:");
-						console.log(response);
-
-						resolve({"coinbase_tags" : {}, "payout_addresses":{}});
-					}
-				});
-			}));
-		}
-
-		Promise.all(promises).then(function(results) {
-			global.miningPoolsConfigs = results;
-
-			for (var i = 0; i < global.miningPoolsConfigs.length; i++) {
-				for (var x in global.miningPoolsConfigs[i].payout_addresses) {
-					if (global.miningPoolsConfigs[i].payout_addresses.hasOwnProperty(x)) {
-						global.specialAddresses[x] = {type:"minerPayout", minerInfo:global.miningPoolsConfigs[i].payout_addresses[x]};
-					}
-				}
-			}
-		});
-	}
+	loadMiningPoolConfigs();
 
 	if (global.sourcecodeVersion == null && fs.existsSync('.git')) {
 		simpleGit(".").log(["-n 1"], function(err, log) {
