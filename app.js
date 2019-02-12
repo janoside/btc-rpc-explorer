@@ -216,7 +216,7 @@ function logBlockStats() {
 function loadMiningPoolConfigs() {
 	global.miningPoolsConfigs = [];
 
-	var miningPoolsConfigDir = path.join(process.cwd(), "public", "txt", "mining-pools-configs", global.coinConfig.ticker);
+	var miningPoolsConfigDir = path.join(__dirname, "public", "txt", "mining-pools-configs", global.coinConfig.ticker);
 
 	fs.readdir(miningPoolsConfigDir, function(err, files) {
 		if (err) {
