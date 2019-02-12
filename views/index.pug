@@ -68,7 +68,7 @@ block content
 
 							p(class="lead") #{mempoolInfo.size.toLocaleString()} tx 
 								- var mempoolBytesData = utils.formatLargeNumber(mempoolInfo.usage, 2);
-								span(class="text-muted") (#{mempoolBytesData[0]} #{mempoolBytesData[1].abbreviation}B)
+								small(class="text-muted font-weight-light") (#{mempoolBytesData[0]} #{mempoolBytesData[1].abbreviation}B)
 
 						li
 							div(class="float-left", style="height: 40px; width: 40px; font-size: 12px;")

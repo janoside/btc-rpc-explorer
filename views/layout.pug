@@ -38,9 +38,10 @@ html(lang="en")
 				div(class="collapse navbar-collapse", id="navbarNav")
 					if (client)
 						ul(class="navbar-nav mr-auto")
-							li(class="nav-item")
-								a(href="/about", class="nav-link")
-									span About
+							if (false)
+								li(class="nav-item")
+									a(href="/about", class="nav-link")
+										span About
 
 							if (config.siteTools)
 								li(class="nav-item dropdown")
@@ -62,10 +63,19 @@ html(lang="en")
 												img(src=item.imgUrl, style="width: 24px; height: 24px; margin-right: 8px;", alt=item.name)
 												span  #{item.name}
 
+							
+						form(method="post", action="/search", class="form-inline mr-3")
+							input(type="hidden", name="_csrf", value=csrfToken)
+							div(class="input-group input-group-sm")
+								input(type="text", class="form-control form-control-sm", name="query", placeholder="block height/hash, txid, address", value=(query))
+								div(class="input-group-append")
+									button(type="submit", class="btn btn-primary")
+										i(class="fas fa-search")
+
+						ul(class="navbar-nav")
 							li(class="nav-item dropdown")
 								a(class="nav-link dropdown-toggle", href="javascript:void(0)", id="navbarDropdown", role="button", data-toggle="dropdown", aria-haspopup="true", aria-expanded="false") 
-									i(class="fas fa-cog")
-									span  Settings
+									i(class="fas fa-cog mr-1") 
 								div(class="dropdown-menu", aria-labelledby="navbarDropdown")
 									if (coinConfig.currencyUnits)
 										span(class="dropdown-header") Currency Units
@@ -86,14 +96,6 @@ html(lang="en")
 										if (session.uiTheme == "dark")
 											i(class="fas fa-check")
 										span  Dark
-
-						form(method="post", action="/search", class="form-inline")
-							input(type="hidden", name="_csrf", value=csrfToken)
-							div(class="input-group input-group-sm")
-								input(type="text", class="form-control form-control-sm", name="query", placeholder="block height/hash, txid, address", value=(query), style="width: 300px;")
-								div(class="input-group-append")
-									button(type="submit", class="btn btn-primary")
-										i(class="fas fa-search")
 		
 		if (host && port && !homepage)
 			div(id="sub-menu", class="container mb-4 d-lg-block d-none", style="margin-top: -1.0rem;")
