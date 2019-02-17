@@ -135,7 +135,7 @@ block content
 											div(class="summary-split-table-label") Witness Program
 											div(class="summary-split-table-content monospace") #{result.validateaddress.witness_program}
 
-									if (firstSeenTransaction)
+									if (firstSeenTransaction && firstSeenTransaction.confirmations > 0)
 										div(class="row")
 											div(class="summary-split-table-label") First Seen
 											div(class="summary-split-table-content monospace")
