@@ -53,6 +53,7 @@ module.exports = {
 		"https://raw.githubusercontent.com/hashstream/pools/master/pools.json",
 	],
 	maxBlockWeight: 4000000,
+	targetBlockTimeSeconds: 150,
 	currencyUnits:currencyUnits,
 	currencyUnitsByName:{"LTC":currencyUnits[0], "lite":currencyUnits[1], "photon":currencyUnits[2], "litoshi":currencyUnits[3]},
 	baseCurrencyUnit:currencyUnits[3],
