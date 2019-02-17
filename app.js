@@ -71,6 +71,15 @@ app.use(session({
 	resave: false,
 	saveUninitialized: false
 }));
+
+app.use(function(req, res, next) {
+	if (req.url.match(/^.*(css|js)$/)) {
+		res.setHeader("Cache-Control", "no-transform");
+	}
+
+	next();
+});
+
 app.use(express.static(path.join(__dirname, 'public')));
 
 process.on("unhandledRejection", (reason, p) => {
