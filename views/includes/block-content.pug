@@ -210,7 +210,7 @@ div(class="tab-content")
 			div(class="card-body")
 				each tx, txIndex in result.transactions
 					//pre
-					//	code #{JSON.stringify(tx, null, 4)}
+					//	code(class="json") #{JSON.stringify(tx, null, 4)}
 					div(class="xcard mb-3")
 						div(class="card-header monospace")
 							if (tx && tx.txid)
@@ -225,7 +225,7 @@ div(class="tab-content")
 									
 						div(class="card-body")
 							//pre
-							//	code #{JSON.stringify(result.txInputsByTransaction[tx.txid], null, 4)}
+							//	code(class="json") #{JSON.stringify(result.txInputsByTransaction[tx.txid], null, 4)}
 							if (true)
 								- var txInputs = result.txInputsByTransaction[tx.txid];
 								- var blockHeight = result.getblock.height;
@@ -233,7 +233,7 @@ div(class="tab-content")
 								include ./transaction-io-details.pug
 								
 					//pre
-					//	code #{JSON.stringify(tx, null, 4)}
+					//	code(class="json") #{JSON.stringify(tx, null, 4)}
 
 			if (!crawlerBot && txCount > limit)
 				- var pageNumber = offset / limit + 1;
@@ -251,5 +251,5 @@ div(class="tab-content")
 					
 	div(id="tab-json", class="tab-pane", role="tabpanel")
 		pre
-			code #{JSON.stringify(result.getblock, null, 4)}
+			code(class="json") #{JSON.stringify(result.getblock, null, 4)}
 

@@ -75,7 +75,7 @@ block content
 
 			if (false)
 				pre
-					code #{JSON.stringify(addressObj, null, 4)}
+					code(class="json") #{JSON.stringify(addressObj, null, 4)}
 			
 			ul(class='nav nav-tabs mb-3')
 				li(class="nav-item")
@@ -152,7 +152,7 @@ block content
 												
 												if (false)
 													pre
-														code #{JSON.stringify(firstSeenTransaction)}
+														code(class="json") #{JSON.stringify(firstSeenTransaction)}
 
 									if (balance)
 										if (balance.conflictedResults)
@@ -287,7 +287,7 @@ block content
 
 								each tx, txIndex in transactions
 									//pre
-									//	code #{JSON.stringify(tx, null, 4)}
+									//	code(class="json") #{JSON.stringify(tx, null, 4)}
 									div(class="xcard mb-3")
 										div(class="card-header monospace clearfix")
 											div(class="float-left", style="margin-right: 0px;")
@@ -344,7 +344,7 @@ block content
 							
 							if (false)
 								pre
-									code #{JSON.stringify(transactions, null, 4)}
+									code(class="json") #{JSON.stringify(transactions, null, 4)}
 
 							if (!crawlerBot && txids && txids.length > limit)
 								- var pageNumber = offset / limit + 1;
@@ -367,15 +367,15 @@ block content
 					div(class="highlight")
 						h4 Node.ValidateAddress
 						pre
-							code(class="language-json", data-lang="json") #{JSON.stringify(result.validateaddress, null, 4)}
+							code(class="json", data-lang="json") #{JSON.stringify(result.validateaddress, null, 4)}
 
 						if (config.electrumXServers && config.electrumXServers.length > 0)
 							h4 Electrum.Balance
 							pre
-								code(class="language-json", data-lang="json") #{JSON.stringify(electrumBalance, null, 4)}
+								code(class="json", data-lang="json") #{JSON.stringify(electrumBalance, null, 4)}
 
 							h4 Electrum.History
 							pre
-								code(class="language-json", data-lang="json") #{JSON.stringify(electrumHistory, null, 4)}
+								code(class="json", data-lang="json") #{JSON.stringify(electrumHistory, null, 4)}
 
 		

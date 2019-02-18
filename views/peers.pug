@@ -126,14 +126,14 @@ block content
 				div(style="display: none;", id=("peerinfo_" + index), class="p-3")
 					h6 Peer Details
 					pre
-						code #{JSON.stringify(item, null, 4)}
+						code(class="json") #{JSON.stringify(item, null, 4)}
 
 					if (peerIpSummary.detailsByIp[item.addr.substring(0, item.addr.lastIndexOf(":"))])
 						hr
 
 						h6 IP Geo-Location Info
 						pre
-							code #{JSON.stringify(peerIpSummary.detailsByIp[item.addr.substring(0, item.addr.lastIndexOf(":"))], null, 4)}
+							code(class="json") #{JSON.stringify(peerIpSummary.detailsByIp[item.addr.substring(0, item.addr.lastIndexOf(":"))], null, 4)}
 
 	
 block endOfBody
