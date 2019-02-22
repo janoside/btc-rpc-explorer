@@ -258,12 +258,12 @@ block content
 												span(class="word-wrap monospace") #{vin.scriptSig.asm}
 
 											else if (vin.coinbase)
-												div(style="line-height: 1.75em;")
+												div(class="monospace", style="line-height: 1.75em;")
 													span(class="rounded bg-primary text-light px-2 py-1 mr-2") coinbase
 													br
-													span(class="word-wrap monospace") #{vin.coinbase}
+													span(class="word-wrap") #{vin.coinbase}
 													br
-													span(class="word-wrap monospace text-muted") (decoded) #{utils.hex2ascii(vin.coinbase)}
+													span(class="word-wrap text-muted") (decoded) #{utils.hex2ascii(vin.coinbase)}
 
 				div(class="card mb-3 shadow-sm")
 					div(class="card-header")
