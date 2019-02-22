@@ -53,20 +53,6 @@ pre {
 	word-break: break-all;
 }
 
-.tag {
-	border-radius: 4px;
-	background-color: #0275d8;
-	color: white;
-	padding: 2px 5px;
-	margin-right: 4px;
-}
-
-.tx-out-type-tag {
-	background-color: #e1e1e1;
-	color: black;
-	font-weight: 300;
-}
-
 #subheader a {
 	margin-right: 20px;
 }

@@ -27,7 +27,7 @@ div(class="row monospace")
 							div(class="row pr-3")
 								div(class="tx-io-desc")
 									if (txVin.coinbase)
-										span(class="tag") coinbase
+										span(class="rounded bg-primary text-light px-2 py-1 mr-2") coinbase
 										span Newly minted coins
 									else
 										if (vout && vout.scriptPubKey && vout.scriptPubKey.addresses)
@@ -87,13 +87,13 @@ div(class="row monospace")
 								if (vout.scriptPubKey.addresses)
 									if (false)
 										if (vout.scriptPubKey.type == "pubkey")
-											span(class="tag tx-out-type-tag") P2PK
+											span(class="border border-secondary rounded bg-light px-2 py-1 mr-2") P2PK
 										else if (vout.scriptPubKey.type == "pubkeyhash")
-											span(class="tag tx-out-type-tag") P2PKH
+											span(class="border border-secondary rounded bg-light px-2 py-1 mr-2") P2PKH
 										else if (vout.scriptPubKey.type == "scripthash")
-											span(class="tag tx-out-type-tag") P2SH
+											span(class="border border-secondary rounded bg-light px-2 py-1 mr-2") P2SH
 										else if (vout.scriptPubKey.type == "witness_v0_keyhash")
-											span(class="tag tx-out-type-tag") V0_P2WPKH
+											span(class="border border-secondary rounded bg-light px-2 py-1 mr-2") V0_P2WPKH
 
 									a(id=("output-" + voutIndex), href=("/address/" + vout.scriptPubKey.addresses[0]))
 										span(class="monospace word-wrap") #{vout.scriptPubKey.addresses[0]}
@@ -112,7 +112,7 @@ div(class="row monospace")
 
 								else if (vout.scriptPubKey.hex && vout.scriptPubKey.hex.startsWith('6a24aa21a9ed'))
 									span(class="monospace")
-										span(class="font-weight-bold") OP_RETURN 
+										span(class="rounded bg-dark text-light px-2 py-1 mr-2") OP_RETURN
 										span(title="Segregated Witness", data-toggle="tooltip") SegWit 
 										span committment 
 
@@ -121,7 +121,7 @@ div(class="row monospace")
 
 								else if (vout.scriptPubKey.asm && vout.scriptPubKey.asm.startsWith('OP_RETURN '))
 									span(class="monospace")
-										span(class="font-weight-bold") OP_RETURN: 
+										span(class="rounded bg-dark text-light px-2 py-1 mr-2") OP_RETURN: 
 										span(class="text-muted") #{utils.hex2ascii(vout.scriptPubKey.asm.substring("OP_RETURN ".length))}
 
 								else
