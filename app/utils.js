@@ -282,7 +282,7 @@ function refreshExchangeRates() {
 
 	if (coins[config.coin].exchangeRateData) {
 		request(coins[config.coin].exchangeRateData.jsonUrl, function(error, response, body) {
-			if (!error && response && response.statusCode && response.statusCode == 200) {
+			if (error == null && response && response.statusCode && response.statusCode == 200) {
 				var responseBody = JSON.parse(body);
 
 				var exchangeRates = coins[config.coin].exchangeRateData.responseBodySelectorFunction(responseBody);
@@ -312,10 +312,7 @@ function refreshExchangeRates() {
 					console.log("Unable to get exchange rate data");
 				}
 			} else {
-				console.log("Error:");
-				console.log(error);
-				console.log("Response:");
-				console.log(response);
+				console.log(`Error 39r7h2390fgewfgds: ${error}, StatusCode: ${response.statusCode}, Response: ${JSON.stringify(response)}`);
 			}
 		});
 	}

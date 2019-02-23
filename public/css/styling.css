@@ -225,13 +225,10 @@ strong {
 
 
 
-footer {
-	border-top: solid 5px #597FA5;
-	border-bottom: solid 5px #597FA5;
-}
+
 
 footer a {
-	color: #ccc;
+	color: #ddd;
 	text-decoration: underline;
 }
 

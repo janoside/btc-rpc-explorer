@@ -117,7 +117,10 @@ html(lang="en")
 
 			div(style="margin-bottom: 30px;")
 
-			footer(class="footer bg-dark text-light pt-3 pb-1 px-3", style="margin-top: 50px;")
+			if (config.demoSite)
+				include ./includes/donation-modal.pug
+
+			footer(class="footer border-top border-bottom border-primary bg-dark text-light pt-3 pb-1 px-3", style="margin-top: 50px; border-width: 5px !important;")
 				div(class="container")
 					div(class="row")
 						div(class="col-md-5")
@@ -151,19 +154,10 @@ html(lang="en")
 
 						div(class="col-md-7 text-md-right")
 							dl
-								dt Support Development of #{coinConfig.siteTitle}
 								dd
-									div(class="text-md-right text-center")
-										each coin, index in config.donationAddresses.coins
-											div(style="display: inline-block; max-width: 150px;", class="text-center mb-3 word-wrap monospace", class=(index > 0 ? "ml-md-3" : false))
-												img(src=donationAddressQrCodeUrls[coin], alt=config.donationAddresses[coin].address, style="border: solid 1px #ccc;")
-												br
-												if (coinConfig.ticker == coin)
-													span #{coin}: 
-													a(href=("/address/" + config.donationAddresses[coin].address)) #{config.donationAddresses[coin].address}
-												else
-													span #{coin}: 
-													a(href=(config.donationAddresses.sites[coin] + "/address/" + config.donationAddresses[coin].address)) #{config.donationAddresses[coin].address}
+									button.btn.btn-primary(type="button", class="btn btn-primary", data-toggle="modal", data-target="#exampleModalCenter")
+										i(class="fas fa-heart mr-2")
+										span Support Development
 		
 		script(src="/js/jquery.min.js", integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=")
 		script(src="/js/popper.min.js", integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut")

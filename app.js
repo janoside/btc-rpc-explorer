@@ -242,6 +242,26 @@ function loadMiningPoolConfigs() {
 	}
 }
 
+function getSourcecodeProjectMetadata() {
+	var options = {
+		url: "https://api.github.com/repos/janoside/btc-rpc-explorer",
+		headers: {
+			'User-Agent': 'request'
+		}
+	};
+
+	request(options, function(error, response, body) {
+		if (error == null && response && response.statusCode && response.statusCode == 200) {
+			var responseBody = JSON.parse(body);
+
+			global.sourcecodeProjectMetadata = responseBody;
+
+		} else {
+			console.log(`Error 3208fh3ew7eghfg: ${error}, StatusCode: ${response.statusCode}, Response: ${JSON.stringify(response)}`);
+		}
+	});
+}
+
 
 app.runOnStartup = function() {
 	global.config = config;
@@ -281,16 +301,16 @@ app.runOnStartup = function() {
 		console.log("Error 923grf20fge: " + err + ", error json: " + JSON.stringify(err));
 	});
 
-	if (config.donationAddresses) {
+	if (config.donations.addresses) {
 		var getDonationAddressQrCode = function(coinId) {
-			qrcode.toDataURL(config.donationAddresses[coinId].address, function(err, url) {
+			qrcode.toDataURL(config.donations.addresses[coinId].address, function(err, url) {
 				global.donationAddressQrCodeUrls[coinId] = url;
 			});
 		};
 
 		global.donationAddressQrCodeUrls = {};
 
-		config.donationAddresses.coins.forEach(function(item) {
+		config.donations.addresses.coins.forEach(function(item) {
 			getDonationAddressQrCode(item);
 		});
 	}
@@ -299,8 +319,8 @@ app.runOnStartup = function() {
 	global.specialBlocks = {};
 	global.specialAddresses = {};
 
-	if (config.donationAddresses && config.donationAddresses[coinConfig.ticker]) {
-		global.specialAddresses[config.donationAddresses[coinConfig.ticker].address] = {type:"donation"};
+	if (config.donations.addresses && config.donations.addresses[coinConfig.ticker]) {
+		global.specialAddresses[config.donations.addresses[coinConfig.ticker].address] = {type:"donation"};
 	}
 
 	if (global.coinConfig.historicalData) {
@@ -339,6 +359,11 @@ app.runOnStartup = function() {
 			global.sourcecodeVersion = log.all[0].hash.substring(0, 10);
 			global.sourcecodeDate = log.all[0].date.substring(0, "0000-00-00".length);
 		});
+	}
+
+	if (config.demoSite) {
+		getSourcecodeProjectMetadata();
+		setInterval(getSourcecodeProjectMetadata, 3600000);
 	}
 
 	if (global.exchangeRates == null) {

@@ -135,12 +135,19 @@ module.exports = {
 		{name:(coins[currentCoin].name + " Fun"), url:"/fun", desc:"See fun/interesting historical blockchain data.", fontawesome:"fas fa-certificate"}
 	],
 
-	donationAddresses:{
-		coins:["BTC", "LTC"],
-		sites:{"BTC":"https://btc.chaintools.io", "LTC":"https://ltc.chaintools.io"},
+	donations:{
+		addresses:{
+			coins:["BTC", "LTC"],
+			sites:{"BTC":"https://btc.chaintools.io", "LTC":"https://ltc.chaintools.io"},
 
-		"BTC":{address:"3NPGpNyLLmVKCEcuipBs7G4KpQJoJXjDGe"},
-		"LTC":{address:"ME4pXiXuWfEi1ANBDo9irUJVcZBhsTx14i"}
+			"BTC":{address:"3NPGpNyLLmVKCEcuipBs7G4KpQJoJXjDGe"},
+			"LTC":{address:"ME4pXiXuWfEi1ANBDo9irUJVcZBhsTx14i"}
+		},
+		btcpayserver:{
+			host:"https://btcpay.chaintools.io",
+			storeId:"DUUExHMvKNAFukrJZHCShMhwZvfPq87QnkUhvE6h5kh2",
+			notifyEmail:"chaintools.io@gmail.com"
+		}
 	},
 
 	headerDropdownLinks: {
