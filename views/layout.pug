@@ -53,15 +53,17 @@ html(lang="en")
 												i(class=item.fontawesome, style="width: 20px; margin-right: 10px;")
 												span  #{item.name}
 
-							if (config.headerDropdownLinks)
-								li(class="nav-item dropdown")
-									a(class="nav-link dropdown-toggle", href="javascript:void(0)", role="button", data-toggle="dropdown", aria-haspopup="true", aria-expanded="false") 
-										span  #{config.headerDropdownLinks.title}
-									div(class="dropdown-menu", aria-label=(config.headerDropdownLinks.title + " Items"))
-										each item in config.headerDropdownLinks.links
-											a(class="dropdown-item", href=item.url)
-												img(src=item.imgUrl, style="width: 24px; height: 24px; margin-right: 8px;", alt=item.name)
-												span  #{item.name}
+							if (config.site.header.dropdowns)
+								each dropdown, ddIndex in config.site.header.dropdowns
+									li(class="nav-item dropdown")
+										a(class="nav-link dropdown-toggle", href="javascript:void(0)", role="button", data-toggle="dropdown", aria-haspopup="true", aria-expanded="false") 
+											span  #{dropdown.title}
+										div(class="dropdown-menu", aria-label=(dropdown.title + " Items"))
+											each dropdownLink in dropdown.links
+												a(class="dropdown-item", href=dropdownLink.url)
+													if (dropdownLink.imgUrl)
+														img(src=dropdownLink.imgUrl, style="width: 24px; height: 24px; margin-right: 8px;", alt=dropdownLink.name)
+													span  #{dropdownLink.name}
 
 							
 						form(method="post", action="/search", class="form-inline mr-3")

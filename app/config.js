@@ -114,6 +114,18 @@ module.exports = {
 		browseBlocksPageSize:20,
 		addressPage:{
 			txOutputMaxDefaultDisplay:10
+		},
+		header:{
+			dropdowns:[
+				{
+					title:"Related Sites",
+					links:[
+						{name: "Bitcoin Explorer", url:"https://btc.chaintools.io", imgUrl:"/img/logo/btc.svg"},
+						{name: "Litecoin Explorer", url:"https://ltc.chaintools.io", imgUrl:"/img/logo/ltc.svg"},
+						{name: "Lightning Explorer", url:"https://lightning.chaintools.io", imgUrl:"/img/logo/lightning.svg"},
+					]
+				}
+			]
 		}
 	},
 
@@ -148,14 +160,5 @@ module.exports = {
 			storeId:"DUUExHMvKNAFukrJZHCShMhwZvfPq87QnkUhvE6h5kh2",
 			notifyEmail:"chaintools.io@gmail.com"
 		}
-	},
-
-	headerDropdownLinks: {
-		title:"Related Sites",
-		links:[
-			{name: "Bitcoin Explorer", url:"https://btc.chaintools.io", imgUrl:"/img/logo/btc.svg"},
-			{name: "Litecoin Explorer", url:"https://ltc.chaintools.io", imgUrl:"/img/logo/ltc.svg"},
-			{name: "Lightning Explorer", url:"https://lightning.chaintools.io", imgUrl:"/img/logo/lightning.svg"},
-		]
 	}
 };
