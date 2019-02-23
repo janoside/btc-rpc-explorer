@@ -3,6 +3,16 @@
 
 - var totalIOValues = utils.getTxTotalInputOutputValues(tx, txInputs, blockHeight);
 
+script.
+	function showAllTxOutputs(link, txid) {
+		var hiddenRows = document.querySelectorAll("[data-txid='" + txid + "']");
+		hiddenRows.forEach(function(hiddenRow) {
+			hiddenRow.classList.remove("d-none");
+		});
+
+		link.classList.add("d-none");
+	}
+
 div(class="row monospace")
 	div(class="col-lg-6")
 		if (txInputs)
@@ -32,7 +42,7 @@ div(class="row monospace")
 									else
 										if (vout && vout.scriptPubKey && vout.scriptPubKey.addresses)
 											div(class="word-wrap")
-												a(href=("/address/" + vout.scriptPubKey.addresses[0])) #{vout.scriptPubKey.addresses[0]}
+												a(href=("/address/" + vout.scriptPubKey.addresses[0]), class=(txIOHighlightAddress == vout.scriptPubKey.addresses[0] ? "font-weight-bold" : null)) #{vout.scriptPubKey.addresses[0]}
 												if (global.specialAddresses[vout.scriptPubKey.addresses[0]])
 													- var specialAddressInfo = global.specialAddresses[vout.scriptPubKey.addresses[0]];
 													if (specialAddressInfo.type == "minerPayout")
@@ -93,76 +103,95 @@ div(class="row monospace")
 			
 
 	div(class="col-lg-6")
+		- var maxRegularRowCount = (txIOHighlightAddress != null ? config.site.addressPage.txOutputMaxDefaultDisplay : 10000000);
+		- var regularRowCount = 0;
+		- var hiddenRowCount = 0;
 		each vout, voutIndex in tx.vout
-			div(class="row")
-				div(class="tx-io-label")
-					a(data-toggle="tooltip", title=("Output #" + (voutIndex + 1).toLocaleString()), style="white-space: nowrap;")
-						i(class=("fas fa-" + fontawesomeOutputName + " mr-2"))
-						span(class="d-inline d-md-none") Output #
-						span #{(voutIndex + 1).toLocaleString()}
+			- var highlightRow = false;
+			if (txIOHighlightAddress != null && vout.scriptPubKey && vout.scriptPubKey.addresses && vout.scriptPubKey.addresses[0] == txIOHighlightAddress)
+				- highlightRow = true;
 
-				div(class="tx-io-content")
-					div(class="row pr-3")
-						div(class="tx-io-desc")
-							if (vout.scriptPubKey)
-								if (vout.scriptPubKey.addresses)
-									if (false)
-										if (vout.scriptPubKey.type == "pubkey")
-											span(class="border border-secondary rounded bg-light px-2 py-1 mr-2") P2PK
-										else if (vout.scriptPubKey.type == "pubkeyhash")
-											span(class="border border-secondary rounded bg-light px-2 py-1 mr-2") P2PKH
-										else if (vout.scriptPubKey.type == "scripthash")
-											span(class="border border-secondary rounded bg-light px-2 py-1 mr-2") P2SH
-										else if (vout.scriptPubKey.type == "witness_v0_keyhash")
-											span(class="border border-secondary rounded bg-light px-2 py-1 mr-2") V0_P2WPKH
+			if (!highlightRow)
+				- regularRowCount++;
 
-									a(id=("output-" + voutIndex), href=("/address/" + vout.scriptPubKey.addresses[0]))
-										span(class="monospace word-wrap") #{vout.scriptPubKey.addresses[0]}
+			- var hiddenRow = false;
+			if (!highlightRow && regularRowCount > maxRegularRowCount)
+				- hiddenRow = true;
+				- hiddenRowCount++;
 
-									if (global.specialAddresses[vout.scriptPubKey.addresses[0]])
-										- var specialAddressInfo = global.specialAddresses[vout.scriptPubKey.addresses[0]];
-										if (specialAddressInfo.type == "minerPayout")
-											span  
-											a(data-toggle="tooltip", title=("Miner payout address: " + specialAddressInfo.minerInfo.name))
-												i(class="fas fa-certificate text-primary")
-										else if (specialAddressInfo.type == "donation")
-											span  
-											a(data-toggle="tooltip", title=("Development donation address. All support is appreciated!"))
-												i(class="fas fa-certificate text-primary")
-												
+			div(data-txid=tx.txid, class=("pr-3 " + (hiddenRow ? "d-none" : "")))
+				div(class="row")
+					div(class="tx-io-label")
+						a(data-toggle="tooltip", title=("Output #" + (voutIndex + 1).toLocaleString()), style="white-space: nowrap;")
+							i(class=("fas fa-" + fontawesomeOutputName + " mr-2"))
+							span(class="d-inline d-md-none") Output #
+							span #{(voutIndex + 1).toLocaleString()}
 
-								else if (vout.scriptPubKey.hex && vout.scriptPubKey.hex.startsWith('6a24aa21a9ed'))
-									span(class="monospace")
-										span(class="rounded bg-dark text-light px-2 py-1 mr-2") OP_RETURN
-										span(title="Segregated Witness", data-toggle="tooltip") SegWit 
-										span committment 
+					div(class="tx-io-content")
+						div(class=("row pr-3"))
+							div(class="tx-io-desc")
+								if (vout.scriptPubKey)
+									if (vout.scriptPubKey.addresses)
+										if (false)
+											if (vout.scriptPubKey.type == "pubkey")
+												span(class="border border-secondary rounded bg-light px-2 py-1 mr-2") P2PK
+											else if (vout.scriptPubKey.type == "pubkeyhash")
+												span(class="border border-secondary rounded bg-light px-2 py-1 mr-2") P2PKH
+											else if (vout.scriptPubKey.type == "scripthash")
+												span(class="border border-secondary rounded bg-light px-2 py-1 mr-2") P2SH
+											else if (vout.scriptPubKey.type == "witness_v0_keyhash")
+												span(class="border border-secondary rounded bg-light px-2 py-1 mr-2") V0_P2WPKH
 
-									a(href="https://github.com/bitcoin/bips/blob/master/bip-0141.mediawiki#commitment-structure", data-toggle="tooltip", title="View developer docs", target="_blank")  
-										i(class="fas fa-info-circle")
+										a(id=("output-" + voutIndex), href=("/address/" + vout.scriptPubKey.addresses[0]))
+											span(class=("monospace word-wrap " + (highlightRow ? "font-weight-bold" : ""))) #{vout.scriptPubKey.addresses[0]}
 
-								else if (vout.scriptPubKey.asm && vout.scriptPubKey.asm.startsWith('OP_RETURN '))
-									span(class="monospace")
-										span(class="rounded bg-dark text-light px-2 py-1 mr-2") OP_RETURN
-										span(class="text-muted") #{utils.hex2ascii(vout.scriptPubKey.asm.substring("OP_RETURN ".length))}
+										if (global.specialAddresses[vout.scriptPubKey.addresses[0]])
+											- var specialAddressInfo = global.specialAddresses[vout.scriptPubKey.addresses[0]];
+											if (specialAddressInfo.type == "minerPayout")
+												span  
+												a(data-toggle="tooltip", title=("Miner payout address: " + specialAddressInfo.minerInfo.name))
+													i(class="fas fa-certificate text-primary")
+											else if (specialAddressInfo.type == "donation")
+												span  
+												a(data-toggle="tooltip", title=("Development donation address. All support is appreciated!"))
+													i(class="fas fa-certificate text-primary")
+													
 
-								else
-									span(class="monospace")
-										span(class="text-danger font-weight-bold") Unable to decode output:
-										br
-										span(class="font-weight-bold") type: 
-										span #{vout.scriptPubKey.type}
-										br
-										span(class="font-weight-bold") asm: 
-										span #{vout.scriptPubKey.asm}
-										br
-										span(class="font-weight-bold") decodedHex: 
-										span #{utils.hex2ascii(vout.scriptPubKey.hex)}
+									else if (vout.scriptPubKey.hex && vout.scriptPubKey.hex.startsWith('6a24aa21a9ed'))
+										span(class="monospace")
+											span(class="rounded bg-dark text-light px-2 py-1 mr-2") OP_RETURN
+											span(title="Segregated Witness", data-toggle="tooltip") SegWit 
+											span committment 
 
-						div(class="tx-io-value")
-							- var currencyValue = vout.value;
-							include ./value-display.pug
+										a(href="https://github.com/bitcoin/bips/blob/master/bip-0141.mediawiki#commitment-structure", data-toggle="tooltip", title="View developer docs", target="_blank")  
+											i(class="fas fa-info-circle")
 
-			hr
+									else if (vout.scriptPubKey.asm && vout.scriptPubKey.asm.startsWith('OP_RETURN '))
+										span(class="monospace")
+											span(class="rounded bg-dark text-light px-2 py-1 mr-2") OP_RETURN
+											span(class="text-muted") #{utils.hex2ascii(vout.scriptPubKey.asm.substring("OP_RETURN ".length))}
+
+									else
+										span(class="monospace")
+											span(class="text-danger font-weight-bold") Unable to decode output:
+											br
+											span(class="font-weight-bold") type: 
+											span #{vout.scriptPubKey.type}
+											br
+											span(class="font-weight-bold") asm: 
+											span #{vout.scriptPubKey.asm}
+											br
+											span(class="font-weight-bold") decodedHex: 
+											span #{utils.hex2ascii(vout.scriptPubKey.hex)}
+
+							div(class="tx-io-value")
+								- var currencyValue = vout.value;
+								include ./value-display.pug
+
+				hr
+
+		if (hiddenRowCount > 0)
+			a(href="javascript:void(0)", onclick=("showAllTxOutputs(this, '" + tx.txid + "');")) Show all #{tx.vout.length.toLocaleString()} outputs
 
 		div(class="row mb-5 pr-3")
 			div(class="col")
