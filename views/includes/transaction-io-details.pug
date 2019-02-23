@@ -142,7 +142,7 @@ div(class="row monospace")
 
 								else if (vout.scriptPubKey.asm && vout.scriptPubKey.asm.startsWith('OP_RETURN '))
 									span(class="monospace")
-										span(class="rounded bg-dark text-light px-2 py-1 mr-2") OP_RETURN: 
+										span(class="rounded bg-dark text-light px-2 py-1 mr-2") OP_RETURN
 										span(class="text-muted") #{utils.hex2ascii(vout.scriptPubKey.asm.substring("OP_RETURN ".length))}
 
 								else
