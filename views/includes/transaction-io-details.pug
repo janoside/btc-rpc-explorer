@@ -61,6 +61,27 @@ div(class="row monospace")
 				else
 					- extraInputCount = extraInputCount + 1;
 
+			if (extraInputCount > 0)
+				div(class="row")
+					div(class="tx-io-label")
+						a(data-toggle="tooltip", title=("Input #" + (tx.vin.length - extraInputCount + 1).toLocaleString() + " - " + tx.vin.length.toLocaleString()), style="white-space: nowrap;")
+							i(class=("fas fa-" + fontawesomeInputName + " mr-2"))
+							span(class="d-inline d-md-none") Input #
+							i(class=("fas fa-ellipsis-h mr-2"))
+
+					div(class="tx-io-content")
+						div(class="row pr-3")
+							div(class="tx-io-desc")
+								span #{extraInputCount.toLocaleString()} more input(s)
+								br
+								span(class="small") see 
+									a(href=("/tx/" + tx.txid)) transactions details
+
+							div(class="tx-io-value")
+								- var currencyValue = new Decimal(totalIOValues.output).minus(new Decimal(totalIOValues.input));
+								include ./value-display.pug
+				hr
+
 			div(class="row mb-5 pr-3")
 				div(class="col")
 					div(class="font-weight-bold text-left text-md-right")
