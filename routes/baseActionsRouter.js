@@ -678,16 +678,15 @@ router.get("/address/:address", function(req, res) {
 
 							for (var j = 0; j < tx.vin.length; j++) {
 								var txInput = txInputs[j];
+								var vinJ = tx.vin[j];
 
 								if (txInput != null) {
-									for (var k = 0; k < txInput.vout.length; k++) {
-										if (txInput.vout[k] && txInput.vout[k].scriptPubKey && txInput.vout[k].scriptPubKey.addresses && txInput.vout[k].scriptPubKey.addresses.includes(address)) {
-											if (addrLossesByTx[tx.txid] == null) {
-												addrLossesByTx[tx.txid] = new Decimal(0);
-											}
-
-											addrLossesByTx[tx.txid] = addrLossesByTx[tx.txid].plus(new Decimal(txInput.vout[k].value));
+									if (txInput.vout[vinJ.vout] && txInput.vout[vinJ.vout].scriptPubKey && txInput.vout[vinJ.vout].scriptPubKey.addresses && txInput.vout[vinJ.vout].scriptPubKey.addresses.includes(address)) {
+										if (addrLossesByTx[tx.txid] == null) {
+											addrLossesByTx[tx.txid] = new Decimal(0);
 										}
+
+										addrLossesByTx[tx.txid] = addrLossesByTx[tx.txid].plus(new Decimal(txInput.vout[vinJ.vout].value));
 									}
 								}
 							}
