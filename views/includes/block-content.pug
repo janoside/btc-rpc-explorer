@@ -250,6 +250,21 @@ div(class="tab-content")
 				include ./pagination.pug
 					
 	div(id="tab-json", class="tab-pane", role="tabpanel")
-		pre
-			code(class="json") #{JSON.stringify(result.getblock, null, 4)}
+		- var blockDetails = JSON.parse(JSON.stringify(result.getblock));
+		- blockDetails.tx = "See 'Transaction IDs'";
+
+		ul(class='nav nav-pills mb-3')
+			li(class="nav-item")
+				a(data-toggle="tab", href="#tab-json-block-summary", class="nav-link active", role="tab") Block Summary
+			li(class="nav-item")
+				a(data-toggle="tab", href="#tab-json-tx-ids", class="nav-link", role="tab") Transaction IDs
+
+		div(class="tab-content")
+			div(id="tab-json-block-summary", class="tab-pane active", role="tabpanel")
+				pre
+					code(class="json") #{JSON.stringify(blockDetails, null, 4)}
+
+			div(id="tab-json-tx-ids", class="tab-pane", role="tabpanel")
+				pre
+					code(class="json") #{JSON.stringify(result.getblock.tx, null, 4)}
 
