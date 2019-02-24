@@ -36,7 +36,7 @@ The below instructions are geared toward BTC, but can be adapted easily to other
 ## Instructions
 
 ```bash
-npm install -g janoside/btc-rpc-explorer
+npm install -g btc-rpc-explorer
 btc-rpc-explorer
 ```
 
