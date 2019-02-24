@@ -17,7 +17,7 @@ Live demos are available at:
 * View block details
 * View transaction details, with navigation "backward" via spent transaction outputs
 * View JSON content used to generate most pages
-* Search supports transactions, blocks, addresses
+* Search by transaction ID, block hash/height, and address
 * Optional transaction history for addresses by querying configurable ElectrumX servers
 * Mempool summary, with fee, size, and age breakdowns
 * RPC command browser and terminal
