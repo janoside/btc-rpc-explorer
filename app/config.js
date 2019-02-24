@@ -149,11 +149,10 @@ module.exports = {
 
 	donations:{
 		addresses:{
-			coins:["BTC", "LTC"],
-			sites:{"BTC":"https://btc.chaintools.io", "LTC":"https://ltc.chaintools.io"},
+			coins:["BTC"],
+			sites:{"BTC":"https://btc.chaintools.io"},
 
-			"BTC":{address:"3NPGpNyLLmVKCEcuipBs7G4KpQJoJXjDGe"},
-			"LTC":{address:"ME4pXiXuWfEi1ANBDo9irUJVcZBhsTx14i"}
+			"BTC":{address:"3NPGpNyLLmVKCEcuipBs7G4KpQJoJXjDGe"}
 		},
 		btcpayserver:{
 			host:"https://btcpay.chaintools.io",

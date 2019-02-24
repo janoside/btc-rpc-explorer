@@ -74,7 +74,3 @@ Any support for continued development of this tool is appreciated!
 
 ![Bitcoin Donation QR Code](/public/img/qr-btc.png)
 
-* [Litecoin](litecoin:ME4pXiXuWfEi1ANBDo9irUJVcZBhsTx14i): ME4pXiXuWfEi1ANBDo9irUJVcZBhsTx14i
-
-![Litecoin Donation QR Code](/public/img/qr-ltc.png)
-
