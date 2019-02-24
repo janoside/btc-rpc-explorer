@@ -211,7 +211,7 @@ div(class="tab-content")
 				each tx, txIndex in result.transactions
 					//pre
 					//	code(class="json") #{JSON.stringify(tx, null, 4)}
-					div(class="xcard mb-3")
+					div(class="xcard mb-4 bg-light rounded shadow-sm")
 						div(class="card-header monospace")
 							if (tx && tx.txid)
 								span ##{(txIndex + offset + 1).toLocaleString()}
@@ -223,7 +223,7 @@ div(class="tab-content")
 									a(data-toggle="tooltip", title=(coinConfig.name + " Fun! See transaction for details"))
 										i(class="fas fa-certificate text-primary")
 									
-						div(class="card-body")
+						div(class="card-body px-lg-3 px-2")
 							//pre
 							//	code(class="json") #{JSON.stringify(result.txInputsByTransaction[tx.txid], null, 4)}
 							if (true)

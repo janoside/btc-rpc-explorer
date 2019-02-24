@@ -32,6 +32,8 @@ div(class="row monospace")
 								i(class=("fas fa-" + fontawesomeInputName + " mr-2"))
 								span(class="d-inline d-md-none") Input #
 								span #{(txVinIndex + 1).toLocaleString()}
+								if (tx.vin.length > 0)
+									span(class="d-inline d-md-none font-weight-light text-muted")  / #{tx.vin.length.toLocaleString()}
 
 						div(class="tx-io-content")
 							div(class="row pr-3")
@@ -92,10 +94,10 @@ div(class="row monospace")
 								include ./value-display.pug
 				hr
 
-			div(class="row mb-5 pr-3")
+			div(class="row mb-5 mb-lg-2 pr-3")
 				div(class="col")
 					div(class="font-weight-bold text-left text-md-right")
-						span(class="d-inline d-md-none") Total Input: 
+						span(class="d-block d-md-none") Total Input: 
 						- var currencyValue = totalIOValues.input;
 						include ./value-display.pug
 					
@@ -119,13 +121,15 @@ div(class="row monospace")
 				- hiddenRow = true;
 				- hiddenRowCount++;
 
-			div(data-txid=tx.txid, class=("pr-3 " + (hiddenRow ? "d-none" : "")))
+			div(data-txid=tx.txid, class=("pr-0 " + (hiddenRow ? "d-none" : "")))
 				div(class="row")
 					div(class="tx-io-label")
 						a(data-toggle="tooltip", title=("Output #" + (voutIndex + 1).toLocaleString()), style="white-space: nowrap;")
 							i(class=("fas fa-" + fontawesomeOutputName + " mr-2"))
 							span(class="d-inline d-md-none") Output #
 							span #{(voutIndex + 1).toLocaleString()}
+							if (tx.vout.length > 0)
+								span(class="d-inline d-md-none font-weight-light text-muted")  / #{tx.vout.length.toLocaleString()}
 
 					div(class="tx-io-content")
 						div(class=("row pr-3"))
@@ -169,7 +173,7 @@ div(class="row monospace")
 									else if (vout.scriptPubKey.asm && vout.scriptPubKey.asm.startsWith('OP_RETURN '))
 										span(class="monospace")
 											span(class="rounded bg-dark text-light px-2 py-1 mr-2") OP_RETURN
-											span(class="text-muted") #{utils.hex2ascii(vout.scriptPubKey.asm.substring("OP_RETURN ".length))}
+											span #{utils.hex2ascii(vout.scriptPubKey.asm.substring("OP_RETURN ".length))}
 
 									else
 										span(class="monospace")
@@ -193,10 +197,10 @@ div(class="row monospace")
 		if (hiddenRowCount > 0)
 			a(href="javascript:void(0)", onclick=("showAllTxOutputs(this, '" + tx.txid + "');")) Show all #{tx.vout.length.toLocaleString()} outputs
 
-		div(class="row mb-5 pr-3")
+		div(class="row mb-2 pr-3")
 			div(class="col")
 				div(class="font-weight-bold text-left text-md-right")
-					span(class="d-inline d-md-none") Total Output: 
+					span(class="d-block d-md-none") Total Output: 
 					- var currencyValue = totalIOValues.output;
 					include ./value-display.pug
 
