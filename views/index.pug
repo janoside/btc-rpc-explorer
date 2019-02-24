@@ -8,15 +8,15 @@ block content
 	hr
 
 	if (config.demoSite && session.hideHomepageBanner != "true")
-		div(class="alert alert-primary alert-dismissible shadow-sm", role="alert")
+		div(class="alert alert-primary alert-dismissible shadow-sm mb-4", role="alert")
 			p
 				strong #{coinConfig.siteTitle}
 				span  is 
-				a(href="https://github.com/janoside/btc-rpc-explorer") open-source
+				a(href="https://github.com/janoside/btc-rpc-explorer", target="_blank") open-source
 				span  and easy to set up. It can communicate with your 
-				a(href=coinConfig.nodeUrl) #{coinConfig.name} Full Node
+				a(href=coinConfig.nodeUrl, target="_blank") #{coinConfig.name} Full Node
 				span  via RPC. See the 
-				a(href="https://github.com/janoside/btc-rpc-explorer") project description
+				a(href="https://github.com/janoside/btc-rpc-explorer", target="_blank") project description
 				span  for a list of features and instructions for running.
 
 			div(class="clearfix")
@@ -44,7 +44,7 @@ block content
 	
 
 
-	div(class="card mb-3 shadow-sm")
+	div(class="card mb-4 shadow-sm")
 		div(class="card-header")
 			h2(class="h6 mb-0") Network Summary
 		div(class="card-body")
@@ -136,7 +136,7 @@ block content
 	include includes/tools-card.pug
 	
 	if (latestBlocks)
-		div(class="card mb-3 shadow-sm")
+		div(class="card mb-4 shadow-sm")
 			div(class="card-header")
 				div(class="row")
 					div(class="col")
@@ -158,7 +158,7 @@ block content
 
 
 	if (chainTxStats)
-		div(class="card mb-3 shadow-sm")
+		div(class="card mb-4 shadow-sm")
 			div(class="card-header")
 				div(class="row")
 					div(class="col")
