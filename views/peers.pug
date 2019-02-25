@@ -3,6 +3,8 @@ extends layout
 block headContent
 	title Peers
 
+	link(rel="stylesheet", href="/css/dataTables.bootstrap4.min.css", integrity="sha384-EkHEUZ6lErauT712zSr0DZ2uuCmi3DoQj6ecNdHQXpMpFNGAQ48WjfXCE5n20W+R")
+
 	link(rel="stylesheet", href="https://unpkg.com/leaflet@1.3.3/dist/leaflet.css", integrity="sha512-Rksm5RenBEKSKFjgI3a41vrjkw4EVPlJ3+OiI65vTjIdo9brlAacEuKOiQ5OFh7cOI1bkDwLqdLw3Zg0cRJAAQ==", crossorigin="")
 
 	script(src="https://unpkg.com/leaflet@1.3.3/dist/leaflet.js", integrity="sha512-tAGcCfR4Sc5ZP5ZoVz0quoZDYX5aCtEm/eu1KhSLj2c9eFrylXZknQYmxUssFaVJKvvc0dJQixhGjG2yXWiV9Q==", crossorigin="")
@@ -22,97 +24,106 @@ block content
 		li(class="nav-item")
 			a(data-toggle="tab", href="#tab-summary", class="nav-link active", role="tab") Summary
 		li(class="nav-item")
-			a(data-toggle="tab", href="#tab-details", class="nav-link", role="tab") Details
-		li(class="nav-item")
 			a(data-toggle="tab", href="#tab-json", class="nav-link", role="tab") JSON
 
 	div(class="tab-content")
 		div(id="tab-summary", class="tab-pane active", role="tabpanel")
-			h2(class="h5 mb-3") Connected to #{peerSummary.getpeerinfo.length} 
-				if (peerSummary.getpeerinfo.length == 1)
-					span Peer
-				else
-					span Peers
+			
 
-			if (config.credentials.ipStackComApiAccessKey && config.credentials.ipStackComApiAccessKey.trim().length > 0)
+			if (peerIpSummary.ips)
 				div(id="map", class="mb-4")
 
 			div(class="card mb-4 shadow-sm")
 				div(class="card-header")
-					h2(class="h6 mb-0") Top Versions
+					h2(class="h6 mb-0") Summary
 				div(class="card-body")
-					table(class="table table-striped table-responsive-sm")
+					div(class="row")
+						div(class="col-md-6")
+							span(class="font-weight-bold") Top Versions
+							hr
+							table(class="table table-striped table-responsive-sm")
+								thead
+									tr
+										th
+										th(class="data-header") Version
+										th(class="data-header") Count
+								tbody
+									each item, index in peerSummary.versionSummary
+										tr(class=(index >= 5 ? "versions-hidden-rows" : false))
+											td(class="data-cell font-weight-bold") #{index + 1}
+
+											td(class="data-cell monospace") #{item[0]}
+											td(class="data-cell monospace") #{item[1].toLocaleString()}
+
+						div(class="col-md-6")
+							span(class="font-weight-bold") Top Service Flags
+							hr
+							table(class="table table-striped table-responsive-sm")
+								thead
+									tr
+										th
+										th(class="data-header") Services
+										th(class="data-header") Count
+								tbody
+									each item, index in peerSummary.servicesSummary
+										tr(class=(index >= 5 ? "services-hidden-rows" : false))
+											td(class="data-cell font-weight-bold") #{index + 1}
+
+											td(class="data-cell monospace") #{item[0]}
+											td(class="data-cell monospace") #{item[1].toLocaleString()}
+
+			div(class="card mb-4 shadow-sm")
+				div(class="card-header")
+					h2(class="h6 mb-0") #{peerSummary.getpeerinfo.length} 
+						if (peerSummary.getpeerinfo.length == 1)
+							span Peer
+						else
+							span Peers
+
+				div(class="card-body")
+					table(class="table table-striped table-responsive-sm data-table mt-4")
 						thead
 							tr
 								th
 								th(class="data-header") Version
-								th(class="data-header") Count
-						tbody
-							each item, index in peerSummary.versionSummary
-								tr(class=(index >= 5 ? "versions-hidden-rows" : false))
-									th(class="data-cell") #{index + 1}
-
-									td(class="data-cell") #{item[0]}
-									td(class="data-cell") #{item[1].toLocaleString()}
-
-			div(class="card mb-4 shadow-sm")
-				div(class="card-header")
-					h2(class="h6 mb-0") Top Service Flags
-				div(class="card-body")
-					table(class="table table-striped table-responsive-sm")
-						thead
-							tr
-								th
+								th(class="data-header") Address
 								th(class="data-header") Services
-								th(class="data-header") Count
+
+								if (peerIpSummary.ips)
+									th(class="data-header") Location
+
+								th(class="data-header") Last Send / Receive
+
 						tbody
-							each item, index in peerSummary.servicesSummary
-								tr(class=(index >= 5 ? "services-hidden-rows" : false))
+							each item, index in peerSummary.getpeerinfo
+								- var lastSendAgo = moment.duration(moment.utc(new Date()).diff(moment.utc(new Date(parseInt(item.lastsend) * 1000)))).format().replace("milliseconds", "ms");
+								- var lastRecvAgo = moment.duration(moment.utc(new Date()).diff(moment.utc(new Date(parseInt(item.lastrecv) * 1000)))).format().replace("milliseconds", "ms");
+
+								tr
 									th(class="data-cell") #{index + 1}
 
-									td(class="data-cell") #{item[0]}
-									td(class="data-cell") #{item[1].toLocaleString()}
+									td(class="data-cell monospace") #{item.subver}
+									td(class="data-cell monospace") #{item.addr}
+									td(class="data-cell monospace") #{item.services}
 
+									if (peerIpSummary.ips)
+										td(class="data-cell monospace")
+											- var ipAddr = item.addr.substring(0, item.addr.lastIndexOf(":"));
+											if (peerIpSummary.ips && peerIpSummary.ips.includes(ipAddr))
+												- var ipDetails = peerIpSummary.detailsByIp[ipAddr];
+												if (ipDetails.city)
+													span #{ipDetails.city}, 
+												if (ipDetails.region)
+													span #{ipDetails.region}, 
+												if (ipDetails.country)
+													span #{ipDetails.country}
+											else
+												span ?
 
+											- var ipAddr = null;
 
-		div(id="tab-details", class="tab-pane", role="tabpanel")
-			table(class="table table-striped table-responsive-sm mt-4")
-				thead
-					tr
-						th
-						th(class="data-header") Version
-						th(class="data-header") Address
-						th(class="data-header") Services
-						th(class="data-header") Location
-						th(class="data-header") Last Send / Receive
-
-				tbody
-					each item, index in peerSummary.getpeerinfo
-						- var lastSendAgo = moment.duration(moment.utc(new Date()).diff(moment.utc(new Date(parseInt(item.lastsend) * 1000)))).format().replace("milliseconds", "ms");
-						- var lastRecvAgo = moment.duration(moment.utc(new Date()).diff(moment.utc(new Date(parseInt(item.lastrecv) * 1000)))).format().replace("milliseconds", "ms");
-
-						tr
-							th(class="data-cell") #{index + 1}
-
-							td(class="data-cell") #{item.subver}
-							td(class="data-cell") #{item.addr}
-							td(class="data-cell") #{item.services}
-							td(class="data-cell")
-								- var ipAddr = item.addr.substring(0, item.addr.lastIndexOf(":"));
-								if (peerIpSummary.ips.includes(ipAddr))
-									- var ipDetails = peerIpSummary.detailsByIp[ipAddr];
-									if (ipDetails.city)
-										span #{ipDetails.city}, 
-									if (ipDetails.country_name)
-										span #{ipDetails.country_name}
-									if (ipDetails.location && ipDetails.location.country_flag_emoji)
-										span  #{ipDetails.location.country_flag_emoji}
-								else
-									span ?
-
-								- var ipAddr = null;
-
-							td(class="data-cell") #{lastSendAgo} / #{lastRecvAgo}
+									td(class="data-cell monospace") #{lastSendAgo} / #{lastRecvAgo}
+			
 
 
 		div(id="tab-json", class="tab-pane", role="tabpanel")
@@ -128,7 +139,7 @@ block content
 					pre
 						code(class="json") #{JSON.stringify(item, null, 4)}
 
-					if (peerIpSummary.detailsByIp[item.addr.substring(0, item.addr.lastIndexOf(":"))])
+					if (peerIpSummary && peerIpSummary.detailsByIp && peerIpSummary.detailsByIp[item.addr.substring(0, item.addr.lastIndexOf(":"))])
 						hr
 
 						h6 IP Geo-Location Info
@@ -137,7 +148,15 @@ block content
 
 	
 block endOfBody
-	if (config.credentials.ipStackComApiAccessKey && config.credentials.ipStackComApiAccessKey.trim().length > 0)
+	script(src="/js/jquery.dataTables.min.js", integrity="sha384-rgWRqC0OFPisxlUvl332tiM/qmaNxnlY46eksSZD84t+s2vZlqGeHrncwIRX7CGp")
+	script(src="/js/dataTables.bootstrap4.min.js", integrity="sha384-uiSTMvD1kcI19sAHJDVf68medP9HA2E2PzGis9Efmfsdb8p9+mvbQNgFhzii1MEX")
+
+	script.
+		$(document).ready(function() {
+			$(".data-table").DataTable();
+		});
+
+	if (peerIpSummary.ips)
 		script.
 			var mymap = L.map('map').setView([21.505, -0.09], 3);
 
@@ -159,18 +178,18 @@ block endOfBody
 
 		each ipAddress, index in peerIpSummary.ips
 			- var ipDetails = peerIpSummary.detailsByIp[ipAddress];
-			if (ipDetails && ipDetails.latitude && ipDetails.longitude)
+			if (ipDetails && ipDetails.lat && ipDetails.lon)
 				- var ipDetailsPopupHtml = "<b>" + ipAddress + "</b><br>";
 				if (ipDetails.city)
 					- var ipDetailsPopupHtml = ipDetailsPopupHtml + ipDetails.city + ", ";
 
-				if (ipDetails.country_name)
-					- var ipDetailsPopupHtml = ipDetailsPopupHtml + ipDetails.country_name + " ";
+				if (ipDetails.region)
+					- var ipDetailsPopupHtml = ipDetailsPopupHtml + ipDetails.region + ", ";
 
-				if (ipDetails.location && ipDetails.location.country_flag_emoji)
-					- var ipDetailsPopupHtml = ipDetailsPopupHtml + ipDetails.location.country_flag_emoji;
+				if (ipDetails.country)
+					- var ipDetailsPopupHtml = ipDetailsPopupHtml + ipDetails.countryCode + " ";
 
-				script L.marker([#{ipDetails.latitude}, #{ipDetails.longitude}]).addTo(mymap).bindPopup("!{ipDetailsPopupHtml}");
+				script L.marker([#{ipDetails.lat}, #{ipDetails.lon}]).addTo(mymap).bindPopup("!{ipDetailsPopupHtml}");
 		
 
 

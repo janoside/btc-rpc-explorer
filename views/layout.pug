@@ -82,7 +82,7 @@ html(lang="en")
 									if (coinConfig.currencyUnits)
 										span(class="dropdown-header") Currency Units
 										each item in coinConfig.currencyUnits
-											if (item.type == "native" || !process.env.BTCEXP_NO_RATES)
+											if (item.type == "native" || config.queryExchangeRates)
 												a(class="dropdown-item", href=("/changeSetting?name=currencyFormatType&value=" + item.values[0]))
 													each valueName in item.values
 														if (currencyFormatType == valueName)

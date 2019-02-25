@@ -33,9 +33,23 @@ for (var i = 0; i < electrumXServerUriStrings.length; i++) {
 	electrumXServers.push({protocol:uri.protocol.substring(0, uri.protocol.length - 1), host:uri.hostname, port:parseInt(uri.port)});
 }
 
+["BTCEXP_DEMO", "BTCEXP_PRIVACY_MODE"].forEach(function(item) {
+	if (process.env[item] === undefined) {
+		process.env[item] = "false";
+	}
+});
+
+["BTCEXP_NO_RATES"].forEach(function(item) {
+	if (process.env[item] === undefined) {
+		process.env[item] = "true";
+	}
+});
+
 module.exports = {
 	cookieSecret: cookieSecret,
-	demoSite: !!process.env.BTCEXP_DEMO,
+	privacyMode: (process.env.BTCEXP_PRIVACY_MODE == "true"),
+	demoSite: (process.env.BTCEXP_DEMO == "true"),
+	queryExchangeRates: (process.env.BTCEXP_NO_RATES != "true"),
 	coin: currentCoin,
 
 	rpcBlacklist:

@@ -24,8 +24,8 @@ const args = require('meow')(`
       --cookie-secret <secret>       secret key for signed cookie hmac generation [default: hmac derive from bitcoind pass]
       --demo                         enable demoSite mode [default: disabled]
       --no-rates                     disable fetching of currency exchange rates [default: enabled]
+      --privacy-mode                 enable privacyMode to disable external data requests [default: disabled]
 
-      --ipstack-key <key>            api access key for ipstack (for geoip) [default: disabled]
       --ganalytics-tracking <tid>    tracking id for google analytics [default: disabled]
       --sentry-url <sentry-url>      sentry url [default: disabled]
 
@@ -59,6 +59,7 @@ const args = require('meow')(`
             , bitcoindCookie: {alias:'c'}, bitcoindUser: {alias:'u'}, bitcoindPass: {alias:'w'}
             , demo: {type:'boolean'}, rpcAllowall: {type:'boolean'}, electrumxServers: {alias:'E'}
             , enableInfluxdb: {type:'boolean'}, nodeEnv: {alias:'e', default:'production'}
+            , privacyMode: {type:'boolean'}
             } }
 ).flags;
 

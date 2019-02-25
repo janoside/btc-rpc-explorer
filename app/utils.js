@@ -276,7 +276,7 @@ function getBlockTotalFeesFromCoinbaseTxAndBlockHeight(coinbaseTx, blockHeight) 
 }
 
 function refreshExchangeRates() {
-	if (process.env.BTCEXP_NO_RATES) {
+	if (!config.queryExchangeRates || config.privacyMode) {
 		return;
 	}
 
@@ -318,9 +318,15 @@ function refreshExchangeRates() {
 	}
 }
 
-// Uses IPStack.com API
+// Uses ip-api.com API
 function geoLocateIpAddresses(ipAddresses) {
 	return new Promise(function(resolve, reject) {
+		if (config.privacyMode) {
+			resolve({});
+
+			return;
+		}
+
 		var chunks = splitArrayIntoChunks(ipAddresses, 1);
 
 		var promises = [];
@@ -339,8 +345,8 @@ function geoLocateIpAddresses(ipAddresses) {
 					resolve2(ipCache[ipStr]);
 				}));
 
-			} else if (config.credentials.ipStackComApiAccessKey && config.credentials.ipStackComApiAccessKey.trim().length > 0) {
-				var apiUrl = "http://api.ipstack.com/" + ipStr + "?access_key=" + config.credentials.ipStackComApiAccessKey;
+			} else {
+				var apiUrl = "http://ip-api.com/json/" + ipStr;
 				promises.push(new Promise(function(resolve2, reject2) {
 					request(apiUrl, function(error, response, body) {
 						if (error) {
@@ -350,10 +356,6 @@ function geoLocateIpAddresses(ipAddresses) {
 							resolve2(response);
 						}
 					});
-				}));
-			} else {
-				promises.push(new Promise(function(resolve2, reject2) {
-					resolve2(null);
 				}));
 			}
 		}
@@ -365,7 +367,7 @@ function geoLocateIpAddresses(ipAddresses) {
 				var res = results[i];
 				if (res != null && res["statusCode"] == 200) {
 					var resBody = JSON.parse(res["body"]);
-					var ip = resBody["ip"];
+					var ip = resBody["query"];
 
 					ipDetails.ips.push(ip);
 					ipDetails.detailsByIp[ip] = resBody;
@@ -377,6 +379,9 @@ function geoLocateIpAddresses(ipAddresses) {
 			}
 
 			resolve(ipDetails);
+
+		}).catch(function(err) {
+			reject(err);
 		});
 	});
 }

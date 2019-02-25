@@ -48,7 +48,7 @@ block content
 	if (getblockchaininfo.size_on_disk)
 		- networkSummaryItemCount++;
 
-	if (!process.env.BTCEXP_NO_RATES)
+	if (global.exchangeRates)
 		- networkSummaryItemCount++;
 
 	- var networkSummaryColumnClass = "col-md-4";
@@ -132,7 +132,7 @@ block content
 						- var sizeData = utils.formatLargeNumber(getblockchaininfo.size_on_disk, 2);
 						p(class="lead") #{sizeData[0]} #{sizeData[1].abbreviation}B
 
-				if (!process.env.BTCEXP_NO_RATES)
+				if (global.exchangeRates)
 					div(class=networkSummaryColumnClass)
 						div(class="float-left", style="height: 40px; width: 40px; font-size: 12px;")
 							span
