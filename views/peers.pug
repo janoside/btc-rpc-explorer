@@ -17,7 +17,11 @@ block headContent
 		#map { height: 700px; }
 
 block content
-	h1(class="h3") Peers
+	h1(class="h3") #{peerSummary.getpeerinfo.length} 
+		if (peerSummary.getpeerinfo.length == 1)
+			span Peer
+		else
+			span Peers
 	hr
 
 	ul(class='nav nav-tabs mb-3')
