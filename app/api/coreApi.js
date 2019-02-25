@@ -86,6 +86,68 @@ function getChainTxStats(blockCount) {
 	});
 }
 
+function getTxCountStats(dataPtCount, blockStart, blockEnd) {
+	return new Promise(function(resolve, reject) {
+		var dataPoints = dataPtCount;
+
+		getBlockchainInfo().then(function(getblockchaininfo) {
+			if (typeof blockStart === "string") {
+				if (["genesis", "first", "zero"].includes(blockStart)) {
+					blockStart = 0;
+				}
+			}
+
+			if (typeof blockEnd === "string") {
+				if (["latest", "tip", "newest"].includes(blockEnd)) {
+					blockEnd = getblockchaininfo.blocks;
+				}
+			}
+
+			if (blockStart > blockEnd) {
+				reject(`Error 37rhw0e7ufdsgf: blockStart (${blockStart}) > blockEnd (${blockEnd})`);
+
+				return;
+			}
+
+			if (blockStart < 0) {
+				blockStart += getblockchaininfo.blocks;
+			}
+
+			if (blockEnd < 0) {
+				blockEnd += getblockchaininfo.blocks;
+			}
+
+			var chainTxStatsIntervals = [];
+			for (var i = 0; i < dataPoints; i++) {
+				chainTxStatsIntervals.push(parseInt(Math.max(10, getblockchaininfo.blocks - blockStart - i * (blockEnd - blockStart) / (dataPoints - 1) - 1)));
+			}
+
+			var promises = [];
+			for (var i = 0; i < chainTxStatsIntervals.length; i++) {
+				promises.push(getChainTxStats(chainTxStatsIntervals[i]));
+			}
+
+			Promise.all(promises).then(function(results) {
+				var txStats = {
+					txCounts: [],
+					txLabels: [],
+					txRates: []
+				};
+
+				for (var i = results.length - 1; i >= 0; i--) {
+					if (results[i].window_tx_count) {
+						txStats.txCounts.push( {x:(getblockchaininfo.blocks - results[i].window_block_count), y: (results[i].txcount - results[i].window_tx_count)} );
+						txStats.txRates.push( {x:(getblockchaininfo.blocks - results[i].window_block_count), y: (results[i].txrate)} );
+						txStats.txLabels.push(i);
+					}
+				}
+				
+				resolve({txCountStats:txStats, getblockchaininfo:getblockchaininfo, totalTxCount:results[0].txcount});
+			});
+		});
+	});
+}
+
 function getPeerSummary() {
 	return new Promise(function(resolve, reject) {
 		tryCacheThenRpcApi(miscCache, "getpeerinfo", 1000, rpcApi.getPeerInfo).then(function(getpeerinfo) {
@@ -718,5 +780,6 @@ module.exports = {
 	logCacheSizes: logCacheSizes,
 	getPeerSummary: getPeerSummary,
 	getChainTxStats: getChainTxStats,
-	getMempoolDetails: getMempoolDetails
+	getMempoolDetails: getMempoolDetails,
+	getTxCountStats: getTxCountStats
 };

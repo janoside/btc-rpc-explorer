@@ -49,6 +49,9 @@ router.get("/", function(req, res) {
 
 		if (getblockchaininfo.chain !== 'regtest') {
 			var targetBlocksPerDay = 24 * 60 * 60 / global.coinConfig.targetBlockTimeSeconds;
+
+			promises.push(coreApi.getTxCountStats(72, -targetBlocksPerDay, "latest"));
+
 			var chainTxStatsIntervals = [ targetBlocksPerDay, targetBlocksPerDay * 7, targetBlocksPerDay * 30, targetBlocksPerDay * 365 ]
 				.filter(numBlocks => numBlocks <= getblockchaininfo.blocks);
 
@@ -78,9 +81,11 @@ router.get("/", function(req, res) {
 				res.locals.miningInfo = promiseResults[1];
 
 				if (getblockchaininfo.chain !== 'regtest') {
+					res.locals.txStats = promiseResults[2];
+
 					var chainTxStats = [];
 					for (var i = 0; i < res.locals.chainTxStatsLabels.length; i++) {
-						chainTxStats.push(promiseResults[i + 2]);
+						chainTxStats.push(promiseResults[i + 3]);
 					}
 
 					res.locals.chainTxStats = chainTxStats;
@@ -962,7 +967,7 @@ router.get("/unconfirmed-tx", function(req, res) {
 });
 
 router.get("/tx-stats", function(req, res) {
-	var dataPoints = 150;
+	var dataPoints = 100;
 
 	if (req.query.dataPoints) {
 		dataPoints = req.query.dataPoints;
@@ -972,46 +977,26 @@ router.get("/tx-stats", function(req, res) {
 		dataPoints = 250;
 	}
 
-	coreApi.getBlockchainInfo().then(function(getblockchaininfo) {
-		res.locals.getblockchaininfo = getblockchaininfo;
+	var targetBlocksPerDay = 24 * 60 * 60 / global.coinConfig.targetBlockTimeSeconds;
 
-		var chainTxStatsIntervals = [];
-		for (var i = 0; i < dataPoints; i++) {
-			chainTxStatsIntervals.push(parseInt(Math.max(10, getblockchaininfo.blocks - i * getblockchaininfo.blocks / (dataPoints - 1) - 1)));
-		}
+	coreApi.getTxCountStats(dataPoints, 0, "latest").then(function(result) {
+		res.locals.getblockchaininfo = result.getblockchaininfo;
+		res.locals.txStats = result.txCountStats;
 
-		//console.log("ints: " + JSON.stringify(chainTxStatsIntervals));
+		coreApi.getTxCountStats(targetBlocksPerDay / 4, -144, "latest").then(function(result2) {
+			res.locals.txStatsDay = result2.txCountStats;
 
-		var promises = [];
-		for (var i = 0; i < chainTxStatsIntervals.length; i++) {
-			promises.push(coreApi.getChainTxStats(chainTxStatsIntervals[i]));
-		}
+			coreApi.getTxCountStats(targetBlocksPerDay / 4, -144 * 7, "latest").then(function(result3) {
+				res.locals.txStatsWeek = result3.txCountStats;
 
-		Promise.all(promises).then(function(results) {
-			res.locals.txStatResults = results;
+				coreApi.getTxCountStats(targetBlocksPerDay / 4, -144 * 30, "latest").then(function(result4) {
+					res.locals.txStatsMonth = result4.txCountStats;
 
-			var txStats = {
-				txCounts: [],
-				txLabels: [],
-				txRates: []
-			};
-
-			for (var i = results.length - 1; i >= 0; i--) {
-				if (results[i].window_tx_count) {
-					txStats.txCounts.push( {x:(getblockchaininfo.blocks - results[i].window_block_count), y: (results[i].txcount - results[i].window_tx_count)} );
-					txStats.txRates.push( {x:(getblockchaininfo.blocks - results[i].window_block_count), y: (results[i].txrate)} );
-					txStats.txLabels.push(i);
-				}
-			}
-
-			res.locals.txStats = txStats;
-
-			//console.log("res: " + JSON.stringify(results));
-
-			res.render("tx-stats");
+					res.render("tx-stats");
+				});
+			});
 		});
 	});
-	
 });
 
 router.get("/about", function(req, res) {

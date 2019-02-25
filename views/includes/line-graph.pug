@@ -1,0 +1,71 @@
+script(src="/js/chart.bundle.min.js", integrity="sha384-e4YKd0O/y4TmH7qskMQzKnOrqN83RJ7TmJ4RsBLHodJ6jHOE30I7J1uZfLdvybhc")
+
+canvas(id=graphData.id, class="mb-4")
+
+script.
+	Chart.defaults.global.elements.point.radius = 1;
+	var ctx = document.getElementById("#{graphData.id}").getContext('2d');
+	var graph = new Chart(ctx, {
+		type: 'line',
+		labels: [#{graphData.labels}],
+		data: {
+			datasets: [{
+				borderColor: '#36a2eb',
+				borderWidth: 1,
+				backgroundColor: '#84CBFA',
+				data: #{graphData.dataVar}
+			}]
+		},
+		options: {
+			animation:{
+				duration:0
+			},
+			title: {
+				display: true,
+				text: '#{graphData.title}'
+			},
+			legend: {
+				display: false
+			},
+			scales: {
+				xAxes: [{
+					type: 'linear',
+					position: 'bottom',
+					scaleLabel: {
+						display: true,
+						labelString: '#{graphData.xaxisTitle}'
+					},
+					ticks: {
+						stepSize: #{graphData.xaxisStep},
+						/*callback: function(value, index, values) {
+							if (value > 1000000) {
+								return (value / 1000000).toLocaleString() + "M";
+
+							} else if (value > 1000) {
+								return (value / 1000).toLocaleString() + "k";
+
+							} else {
+								return value;
+							}
+						}*/
+					}
+				}],
+				yAxes: [{
+					scaleLabel: {
+						display: true,
+						labelString: '#{graphData.yaxisTitle}'
+					},
+					ticks: {
+						callback: function(value, index, values) {
+							if (value > 1000000) {
+								return (value / 1000000).toLocaleString() + "M";
+
+							} else {
+								return value;
+							}
+						}
+					}
+				}]
+			}
+		}
+	});

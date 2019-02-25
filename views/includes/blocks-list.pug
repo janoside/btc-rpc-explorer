@@ -45,7 +45,10 @@ div(class="table-responsive")
 
 						if (blocks && blocks.length > 0 && blocks[0].weight)
 							td(class="data-cell monospace text-right")
-								span #{block.weight.toLocaleString()} 
+								- var fullPercent = new Decimal(100 * block.weight / coinConfig.maxBlockWeight).toDecimalPlaces(1);
 
-								- var radialProgressBarPercent = new Decimal(100 * block.weight / coinConfig.maxBlockWeight).toDecimalPlaces(2);
-								include ./radial-progress-bar.pug
+								span #{block.weight.toLocaleString()} 
+								small(class="font-weight-light text-muted") (#{fullPercent}%)
+
+								div(class="progress", style="height: 3px;")
+									div(class="progress-bar", role="progressbar", style=("width: " + fullPercent + "%;"), aria-valuenow=parseInt(100 * block.weight / coinConfig.maxBlockWeight), aria-valuemin="0" ,aria-valuemax="100")

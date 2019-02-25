@@ -16,136 +16,71 @@ block content
 			#{JSON.stringify(txStats.txCounts.length)}
 
 		if (true)
-			canvas(id="graph1", class="mb-4")
+			div(class="row")
+				div(class="col-lg-6")
+					script var txCountDataDay = [];
+					each item, index in txStatsDay.txCounts
+						script txCountDataDay.push({x:#{item.x}, y:#{item.y}});
 
-			canvas(id="graph2", class="mb-4")
+					- var graphData = {id:"graphDay", dataVar:"txCountDataDay", labels:txStatsDay.txLabels, title:"Transactions, 24hr", xaxisTitle:"Block", xaxisStep:5, yaxisTitle:"Tx Count"};
+					include ./includes/line-graph.pug
 
-			script(src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.bundle.min.js")
+				div(class="col-lg-6")
+					script var txCountDataWeek = [];
+					each item, index in txStatsWeek.txCounts
+						script txCountDataWeek.push({x:#{item.x}, y:#{item.y}});
 
-			script var txCountData = [];
-			each item, index in txStats.txCounts
-				script txCountData.push({x:#{item.x}, y:#{item.y}});
+					- var graphData = {id:"graphWeek", dataVar:"txCountDataWeek", labels:txStatsWeek.txLabels, title:"Transactions, 7day", xaxisTitle:"Block", xaxisStep:100, yaxisTitle:"Tx Count"};
+					include ./includes/line-graph.pug
 
-			script var txRateData = [];
-			each item, index in txStats.txRates
-				script txRateData.push({x:#{item.x}, y:#{item.y}});
-				
-			script.
-				var ctx1 = document.getElementById("graph1").getContext('2d');
-				var graph1 = new Chart(ctx1, {
-					type: 'line',
-					labels: [#{txStats.txLabels}],
-					data: {
-						datasets: [{
-							borderColor: '#36a2eb',
-							backgroundColor: '#84CBFA',
-							data: txCountData
-						}]
-					},
-					options: {
-						title: {
-							display: true,
-							text: 'Cumulative Transactions'
-						},
-						legend: {
-							display: false
-						},
-						scales: {
-							xAxes: [{
-								type: 'linear',
-								position: 'bottom',
-								scaleLabel: {
-									display: true,
-									labelString: 'Block'
-								},
-								ticks: {
-									min: 0,
-									stepSize: 25000,
-									callback: function(value, index, values) {
-										if (value > 1000000) {
-											return (value / 1000000).toLocaleString() + "M";
+				div(class="col-lg-6")
+					script var txCountDataMonth = [];
+					each item, index in txStatsMonth.txCounts
+						script txCountDataMonth.push({x:#{item.x}, y:#{item.y}});
 
-										} else if (value > 1000) {
-											return (value / 1000).toLocaleString() + "k";
+					- var graphData = {id:"graphMonth", dataVar:"txCountDataMonth", labels:txStatsMonth.txLabels, title:"Transactions, 30day", xaxisTitle:"Block", xaxisStep:500, yaxisTitle:"Tx Count"};
+					include ./includes/line-graph.pug
 
-										} else {
-											return value;
-										}
-									}
-								}
-							}],
-							yAxes: [{
-								scaleLabel: {
-									display: true,
-									labelString: 'Tx Count'
-								},
-								ticks: {
-									beginAtZero:true,
-									min: 0,
-									callback: function(value, index, values) {
-										return (value / 1000000).toLocaleString() + "M";
-									}
-								}
-							}]
-						}
-					}
-				});
+				div(class="col-lg-6")
+					script var txCountDataAlltime = [];
+					each item, index in txStats.txCounts
+						script txCountDataAlltime.push({x:#{item.x}, y:#{item.y}});
+
+					- var graphData = {id:"graphAlltime", dataVar:"txCountDataAlltime", labels:txStatsMonth.txLabels, title:"Transactions, All time", xaxisTitle:"Block", xaxisStep:500, yaxisTitle:"Tx Count"};
+					include ./includes/line-graph.pug
 
 
+			div(class="row")
+				div(class="col-lg-6")
+					script var txRateDataDay = [];
+					each item, index in txStatsDay.txRates
+						script txRateDataDay.push({x:#{item.x}, y:#{item.y}});
 
-				var ctx2 = document.getElementById("graph2").getContext('2d');
-				var graph2 = new Chart(ctx2, {
-					type: 'line',
-					labels: [#{txStats.txLabels}],
-					data: {
-						datasets: [{
-							borderColor: '#36a2eb',
-							backgroundColor: '#84CBFA',
-							data: txRateData
-						}]
-					},
-					options: {
-						title: {
-							display: true,
-							text: 'Average Transactions Per Second'
-						},
-						legend: {
-							display: false
-						},
-						scales: {
-							xAxes: [{
-								type: 'linear',
-								position: 'bottom',
-								scaleLabel: {
-									display: true,
-									labelString: 'Block'
-								},
-								ticks: {
-									min: 0,
-									stepSize: 25000,
-									callback: function(value, index, values) {
-										if (value > 1000000) {
-											return (value / 1000000).toLocaleString() + "M";
+					- var graphData = {id:"graphRateDay", dataVar:"txRateDataDay", labels:txStatsDay.txLabels, title:"Tx Rate, 24hr", xaxisTitle:"Block", xaxisStep:5, yaxisTitle:"Tx Per Sec"};
+					include ./includes/line-graph.pug
 
-										} else if (value > 1000) {
-											return (value / 1000).toLocaleString() + "k";
+				div(class="col-lg-6")
+					script var txRateDataWeek = [];
+					each item, index in txStatsWeek.txRates
+						script txRateDataWeek.push({x:#{item.x}, y:#{item.y}});
 
-										} else {
-											return value;
-										}
-									}
-								}
-							}],
-							yAxes: [{
-								scaleLabel: {
-									display: true,
-									labelString: 'Tx Per Sec'
-								},
-								ticks: {
-									beginAtZero:true,
-									min: 0
-								}
-							}]
-						}
-					}
-				});
+					- var graphData = {id:"graphRateWeek", dataVar:"txRateDataWeek", labels:txStatsWeek.txLabels, title:"Tx Rate, 7day", xaxisTitle:"Block", xaxisStep:100, yaxisTitle:"Tx Per Sec"};
+					include ./includes/line-graph.pug
+
+				div(class="col-lg-6")
+					script var txRateDataMonth = [];
+					each item, index in txStatsMonth.txRates
+						script txRateDataMonth.push({x:#{item.x}, y:#{item.y}});
+
+					- var graphData = {id:"graphRateMonth", dataVar:"txRateDataMonth", labels:txStatsMonth.txLabels, title:"Tx Rate, 30day", xaxisTitle:"Block", xaxisStep:500, yaxisTitle:"Tx Per Sec"};
+					include ./includes/line-graph.pug
+
+				div(class="col-lg-6")
+					script var txRateDataAlltime = [];
+					each item, index in txStats.txRates
+						script txRateDataAlltime.push({x:#{item.x}, y:#{item.y}});
+
+					- var graphData = {id:"graphRateAlltime", dataVar:"txRateDataAlltime", labels:txStatsMonth.txLabels, title:"Tx Rate, All time", xaxisTitle:"Block", xaxisStep:500, yaxisTitle:"Tx Per Sec"};
+					include ./includes/line-graph.pug
+
+			
