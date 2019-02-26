@@ -76,6 +76,19 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 process.on("unhandledRejection", (reason, p) => {
 	console.log("Unhandled Rejection at: Promise", p, "reason:", reason, "stack:", reason.stack);
+
+	if (global.influxdb) {
+		var points = [];
+		points.push({
+			measurement:`express.unhandled_rejection`,
+			tags:{app:("btc-rpc-explorer." + global.config.coin)},
+			fields:{count:1}
+		});
+
+		global.influxdb.writePoints(points).catch(err => {
+			console.error(`Error saving data to InfluxDB: ${err.stack}`);
+		});
+	}
 });
 
 
