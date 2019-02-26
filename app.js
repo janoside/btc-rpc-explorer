@@ -394,6 +394,15 @@ app.use(function(req, res, next) {
 		}
 	}
 
+	if (global.influxdb) {
+		var points = [];
+		points.push({measurement:`express.request`, app:("btc-rpc-explorer." + global.config.coin), fields:{count:1, host:req.hostname, path:req.path, userAgent:userAgent}});
+
+		global.influxdb.writePoints(points).catch(err => {
+			console.error(`Error saving data to InfluxDB: ${err.stack}`);
+		});
+	}
+
 	res.locals.config = global.config;
 	res.locals.coinConfig = global.coinConfig;
 	
