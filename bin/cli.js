@@ -25,6 +25,7 @@ const args = require('meow')(`
       --demo                         enable demoSite mode [default: disabled]
       --no-rates                     disable fetching of currency exchange rates [default: enabled]
       --privacy-mode                 enable privacyMode to disable external data requests [default: disabled]
+      --max-mem <bytes>              value for max_old_space_size [default: 1024 (1 GB)]
 
       --ganalytics-tracking <tid>    tracking id for google analytics [default: disabled]
       --sentry-url <sentry-url>      sentry url [default: disabled]
