@@ -268,10 +268,10 @@ app.runOnStartup = function() {
 	global.coinConfig = coins[config.coin];
 	global.coinConfigs = coins;
 
-	console.log("Running RPC Explorer for " + global.coinConfig.name);
+	console.log(`Running RPC Explorer for ${global.coinConfig.name}`);
 
 	var rpcCred = config.credentials.rpc;
-	console.log("Connecting via RPC to node at " + rpcCred.host + ":" + rpcCred.port);
+	console.log(`Connecting via RPC to node at ${rpcCred.host}:${rpcCred.port}`);
 
 	global.client = new bitcoinCore({
 		host: rpcCred.host,
@@ -288,7 +288,7 @@ app.runOnStartup = function() {
 	}
 
 	coreApi.getNetworkInfo().then(function(getnetworkinfo) {
-		console.log("Connected via RPC to node. Basic info: version=" + getnetworkinfo.version + ", subversion=" + getnetworkinfo.subversion + ", protocolversion=" + getnetworkinfo.protocolversion + ", services=" + getnetworkinfo.localservices);
+		console.log(`Connected via RPC to node. Basic info: version=${getnetworkinfo.version}, subversion=${getnetworkinfo.subversion}, protocolversion=${getnetworkinfo.protocolversion}, services=${getnetworkinfo.localservices}`);
 
 		if (global.influxdb != null) {
 			logNetworkStats();
