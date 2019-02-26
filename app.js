@@ -378,6 +378,11 @@ app.runOnStartup = function() {
 };
 
 app.use(function(req, res, next) {
+	req.start = Date.now();
+	next();
+});
+
+app.use(function(req, res, next) {
 	// make session available in templates
 	res.locals.session = req.session;
 
@@ -392,15 +397,6 @@ app.use(function(req, res, next) {
 		if (userAgent.indexOf(crawlerBotUserAgentStrings[i]) != -1) {
 			res.locals.crawlerBot = true;
 		}
-	}
-
-	if (global.influxdb) {
-		var points = [];
-		points.push({measurement:`express.request`, app:("btc-rpc-explorer." + global.config.coin), fields:{count:1, host:req.hostname, path:req.path, userAgent:userAgent}});
-
-		global.influxdb.writePoints(points).catch(err => {
-			console.error(`Error saving data to InfluxDB: ${err.stack}`);
-		});
 	}
 
 	res.locals.config = global.config;
@@ -492,6 +488,27 @@ app.use(function(req, res, next) {
 
 	// make some var available to all request
 	// ex: req.cheeseStr = "cheese";
+
+	next();
+});
+
+app.use(function(req, res, next) {
+	var time = Date.now() - req.start;
+
+	console.log("time: " + time);
+
+	if (global.influxdb) {
+		var points = [];
+		points.push({
+			measurement:`express.request`,
+			tags:{app:("btc-rpc-explorer." + global.config.coin), host:req.hostname, path:req.path, userAgent:req.headers['user-agent']},
+			fields:{count:1, time:time}
+		});
+
+		global.influxdb.writePoints(points).catch(err => {
+			console.error(`Error saving data to InfluxDB: ${err.stack}`);
+		});
+	}
 
 	next();
 });
