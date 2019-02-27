@@ -526,7 +526,7 @@ app.use(function(req, res, next) {
 		points.push({
 			measurement:`express.request`,
 			tags:{app:("btc-rpc-explorer." + global.config.coin), host:req.hostname, path:req.path, userAgent:req.headers['user-agent']},
-			fields:{count:1, time:time, memdiff:memdiff}
+			fields:{count:1, duration:time, memdiff:memdiff}
 		});
 
 		global.influxdb.writePoints(points).catch(err => {
