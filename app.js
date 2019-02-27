@@ -386,6 +386,9 @@ app.runOnStartup = function() {
 	// refresh exchange rate periodically
 	setInterval(utils.refreshExchangeRates, 1800000);
 
+	utils.logAppStats();
+	setInterval(utils.logAppStats, 15000);
+
 	utils.logMemoryUsage();
 	setInterval(utils.logMemoryUsage, 5000);
 };

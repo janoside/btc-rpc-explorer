@@ -174,6 +174,28 @@ function seededRandomIntBetween(seed, min, max) {
 	return (min + (max - min) * rand);
 }
 
+function logAppStats() {
+	if (global.influxdb) {
+		var points = [];
+
+		points.push({
+			measurement:`app.memory_usage`,
+			tags:{app:("btc-rpc-explorer." + global.config.coin)},
+			fields:process.memoryUsage()
+		});
+
+		points.push({
+			measurement:`app.uptime`,
+			tags:{app:("btc-rpc-explorer." + global.config.coin)},
+			fields:{value:Math.floor(process.uptime())}
+		});
+
+		global.influxdb.writePoints(points).catch(err => {
+			console.error(`Error saving data to InfluxDB: ${err.stack}`);
+		});
+	}
+}
+
 function logMemoryUsage() {
 	var mbUsed = process.memoryUsage().heapUsed / 1024 / 1024;
 	mbUsed = Math.round(mbUsed * 100) / 100;
@@ -508,6 +530,7 @@ module.exports = {
 	formatCurrencyAmountInSmallestUnits: formatCurrencyAmountInSmallestUnits,
 	seededRandom: seededRandom,
 	seededRandomIntBetween: seededRandomIntBetween,
+	logAppStats: logAppStats,
 	logMemoryUsage: logMemoryUsage,
 	getMinerFromCoinbaseTx: getMinerFromCoinbaseTx,
 	getBlockTotalFeesFromCoinbaseTxAndBlockHeight: getBlockTotalFeesFromCoinbaseTxAndBlockHeight,
