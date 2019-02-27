@@ -1,3 +1,4 @@
+var debug = require('debug')('rpcApi');
 var utils = require("../utils.js");
 var config = require("../config.js");
 var coins = require("../coins.js");
@@ -55,7 +56,7 @@ function getBlockByHeight(blockHeight) {
 }
 
 function getBlocksByHeight(blockHeights) {
-	//console.log("getBlocksByHeight: " + blockHeights);
+	//debug("getBlocksByHeight: " + blockHeights);
 
 	return new Promise(function(resolve, reject) {
 		var batch = [];
@@ -97,7 +98,7 @@ function getBlockByHash(blockHash) {
 }
 
 function getBlocksByHash(blockHashes) {
-	console.log("rpc.getBlocksByHash: " + blockHashes);
+	debug("rpc.getBlocksByHash: " + blockHashes);
 
 	return new Promise(function(resolve, reject) {
 		var batch = [];
@@ -158,7 +159,7 @@ function getAddress(address) {
 }
 
 function getRawTransactions(txids) {
-	//console.log("getRawTransactions: " + txids);
+	//debug("getRawTransactions: " + txids);
 
 	return new Promise(function(resolve, reject) {
 		if (!txids || txids.length == 0) {
@@ -372,21 +373,21 @@ function getRpcDataWithParams(cmd, params) {
 function executeBatchesSequentially(batches, resultFunc) {
 	var batchId = utils.getRandomString(20, 'aA#');
 
-	console.log("Starting " + batches.length + "-item batch " + batchId + "...");
+	debug("Starting " + batches.length + "-item batch " + batchId + "...");
 
 	executeBatchesSequentiallyInternal(batchId, batches, 0, [], resultFunc);
 }
 
 function executeBatchesSequentiallyInternal(batchId, batches, currentIndex, accumulatedResults, resultFunc) {
 	if (currentIndex == batches.length) {
-		console.log("Finishing batch " + batchId + "...");
+		debug("Finishing batch " + batchId + "...");
 
 		resultFunc(accumulatedResults);
 
 		return;
 	}
 
-	console.log("Executing item #" + (currentIndex + 1) + " (of " + batches.length + ") for batch " + batchId);
+	debug("Executing item #" + (currentIndex + 1) + " (of " + batches.length + ") for batch " + batchId);
 
 	var count = batches[currentIndex].length;
 

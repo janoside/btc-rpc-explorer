@@ -1,3 +1,5 @@
+var debug = require("debug")("coreApi");
+
 var LRU = require("lru-cache");
 var fs = require('fs');
 
@@ -26,7 +28,7 @@ function getGenesisCoinbaseTransactionId() {
 
 
 function tryCacheThenRpcApi(cache, cacheKey, cacheMaxAge, rpcApiFunction, cacheConditionFunction) {
-	//console.log("tryCache: " + cacheKey + ", " + cacheMaxAge);
+	//debug("tryCache: " + cacheKey + ", " + cacheMaxAge);
 	if (cacheConditionFunction == null) {
 		cacheConditionFunction = function(obj) {
 			return true;
@@ -143,6 +145,9 @@ function getTxCountStats(dataPtCount, blockStart, blockEnd) {
 				}
 				
 				resolve({txCountStats:txStats, getblockchaininfo:getblockchaininfo, totalTxCount:results[0].txcount});
+
+			}).catch(function(err) {
+				reject(err);
 			});
 		});
 	});
@@ -440,10 +445,10 @@ function getMempoolStats() {
 				summary["satoshiPerByteBucketTotalFees"].push(summary["satoshiPerByteBuckets"][i]["totalFees"]);
 			}
 
-			/*console.log(JSON.stringify(ageBuckets));
-			console.log(JSON.stringify(ageBucketLabels));
-			console.log(JSON.stringify(sizeBuckets));
-			console.log(JSON.stringify(sizeBucketLabels));*/
+			/*debug(JSON.stringify(ageBuckets));
+			debug(JSON.stringify(ageBucketLabels));
+			debug(JSON.stringify(sizeBuckets));
+			debug(JSON.stringify(sizeBucketLabels));*/
 
 			resolve(summary);
 		});
