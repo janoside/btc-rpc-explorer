@@ -1,0 +1,6 @@
+User-agent: *
+Disallow: /address/
+Disallow: /rpc*
+Disallow: /tx-stats
+Disallow: /peers
+Disallow: /unconfirmed-tx
