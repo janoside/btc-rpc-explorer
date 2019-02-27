@@ -17,7 +17,7 @@ var coreApi = require("./../app/api/coreApi.js");
 
 const forceCsrf = csurf({ ignoreMethods: [] });
 
-router.get("/", function(req, res) {
+router.get("/", function(req, res, next) {
 	if (req.session.host == null || req.session.host.trim() == "") {
 		if (req.cookies['rpc-host']) {
 			res.locals.host = req.cookies['rpc-host'];
@@ -92,16 +92,20 @@ router.get("/", function(req, res) {
 				}
 
 				res.render("index");
+
+				next();
 			});
 		});
 	}).catch(function(err) {
 		res.locals.userMessage = "Error loading recent blocks: " + err;
 
 		res.render("index");
+
+		next();
 	});
 });
 
-router.get("/node-status", function(req, res) {
+router.get("/node-status", function(req, res, next) {
 	coreApi.getBlockchainInfo().then(function(getblockchaininfo) {
 		res.locals.getblockchaininfo = getblockchaininfo;
 
@@ -116,29 +120,39 @@ router.get("/node-status", function(req, res) {
 
 					res.render("node-status");
 
+					next();
+
 				}).catch(function(err) {
 					res.locals.userMessage = "Error getting node status: (id=0), err=" + err;
 
 					res.render("node-status");
+
+					next();
 				});
 			}).catch(function(err) {
 				res.locals.userMessage = "Error getting node status: (id=1), err=" + err;
 
 				res.render("node-status");
+
+				next();
 			});
 		}).catch(function(err) {
 			res.locals.userMessage = "Error getting node status: (id=2), err=" + err;
 
 			res.render("node-status");
+
+			next();
 		});
 	}).catch(function(err) {
 		res.locals.userMessage = "Error getting node status: (id=3), err=" + err;
 
 		res.render("node-status");
+
+		next();
 	});
 });
 
-router.get("/mempool-summary", function(req, res) {
+router.get("/mempool-summary", function(req, res, next) {
 	coreApi.getMempoolInfo().then(function(getmempoolinfo) {
 		res.locals.getmempoolinfo = getmempoolinfo;
 
@@ -146,15 +160,19 @@ router.get("/mempool-summary", function(req, res) {
 			res.locals.mempoolstats = mempoolstats;
 
 			res.render("mempool-summary");
+
+			next();
 		});
 	}).catch(function(err) {
 		res.locals.userMessage = "Error: " + err;
 
 		res.render("mempool-summary");
+
+		next();
 	});
 });
 
-router.get("/peers", function(req, res) {
+router.get("/peers", function(req, res, next) {
 	coreApi.getPeerSummary().then(function(peerSummary) {
 		res.locals.peerSummary = peerSummary;
 
@@ -174,18 +192,24 @@ router.get("/peers", function(req, res) {
 				res.locals.peerIpSummary = results;
 				
 				res.render("peers");
+
+				next();
 			});
 		} else {
 			res.render("peers");
+
+			next();
 		}
 	}).catch(function(err) {
 		res.locals.userMessage = "Error: " + err;
 
 		res.render("peers");
+
+		next();
 	});
 });
 
-router.post("/connect", function(req, res) {
+router.post("/connect", function(req, res, next) {
 	var host = req.body.host;
 	var port = req.body.port;
 	var username = req.body.username;
@@ -217,7 +241,7 @@ router.post("/connect", function(req, res) {
 	res.redirect("/");
 });
 
-router.get("/disconnect", function(req, res) {
+router.get("/disconnect", function(req, res, next) {
 	res.cookie('rpc-host', "");
 	res.cookie('rpc-port', "");
 	res.cookie('rpc-username', "");
@@ -236,7 +260,7 @@ router.get("/disconnect", function(req, res) {
 	res.redirect("/");
 });
 
-router.get("/changeSetting", function(req, res) {
+router.get("/changeSetting", function(req, res, next) {
 	if (req.query.name) {
 		req.session[req.query.name] = req.query.value;
 
@@ -246,7 +270,7 @@ router.get("/changeSetting", function(req, res) {
 	res.redirect(req.headers.referer);
 });
 
-router.get("/blocks", function(req, res) {
+router.get("/blocks", function(req, res, next) {
 	var limit = config.site.browseBlocksPageSize;
 	var offset = 0;
 	var sort = "desc";
@@ -291,26 +315,30 @@ router.get("/blocks", function(req, res) {
 			res.locals.blocks = blocks;
 
 			res.render("blocks");
+
+			next();
 		});
 	}).catch(function(err) {
 		res.locals.userMessage = "Error: " + err;
 
 		res.render("blocks");
+
+		next();
 	});
 });
 
-router.get("/search", function(req, res) {
+router.get("/search", function(req, res, next) {
 	if (!req.body.query) {
 		req.session.userMessage = "Enter a block height, block hash, or transaction id.";
 		req.session.userMessageType = "primary";
 
 		res.render("search");
 
-		return;
+		next();
 	}
 });
 
-router.post("/search", function(req, res) {
+router.post("/search", function(req, res, next) {
 	if (!req.body.query) {
 		req.session.userMessage = "Enter a block height, block hash, or transaction id.";
 
@@ -403,7 +431,7 @@ router.post("/search", function(req, res) {
 	}
 });
 
-router.get("/block-height/:blockHeight", function(req, res) {
+router.get("/block-height/:blockHeight", function(req, res, next) {
 	var blockHeight = parseInt(req.params.blockHeight);
 
 	res.locals.blockHeight = blockHeight;
@@ -441,11 +469,13 @@ router.get("/block-height/:blockHeight", function(req, res) {
 			res.locals.result.txInputsByTransaction = result.txInputsByTransaction;
 
 			res.render("block");
+
+			next();
 		});
 	});
 });
 
-router.get("/block/:blockHash", function(req, res) {
+router.get("/block/:blockHash", function(req, res, next) {
 	var blockHash = req.params.blockHash;
 
 	res.locals.blockHash = blockHash;
@@ -481,10 +511,12 @@ router.get("/block/:blockHash", function(req, res) {
 		res.locals.result.txInputsByTransaction = result.txInputsByTransaction;
 
 		res.render("block");
+
+		next();
 	});
 });
 
-router.get("/tx/:transactionId", function(req, res) {
+router.get("/tx/:transactionId", function(req, res, next) {
 	var txid = req.params.transactionId;
 
 	var output = -1;
@@ -514,16 +546,20 @@ router.get("/tx/:transactionId", function(req, res) {
 				res.locals.result.txInputs = txInputs;
 
 				res.render("transaction");
+
+				next();
 			});
 		});
 	}).catch(function(err) {
 		res.locals.userMessage = "Failed to load transaction with txid=" + txid + ": " + err;
 
 		res.render("transaction");
+
+		next();
 	});
 });
 
-router.get("/address/:address", function(req, res) {
+router.get("/address/:address", function(req, res, next) {
 	var limit = config.site.addressTxPageSize;
 	var offset = 0;
 	var sort = "desc";
@@ -743,34 +779,41 @@ router.get("/address/:address", function(req, res) {
 			});
 		}));
 
-		Promise.all(promises).then(function() {
-			res.render("address");
-
-		}).catch(function(err) {
+		Promise.all(promises).catch(function(err) {
 			console.log("Error 32197rgh327g2: " + err + ", error json: " + JSON.stringify(err));
 
+		}).finally(function() {
 			res.render("address");
+
+			next();
 		});
 		
 	}).catch(function(err) {
 		res.locals.userMessage = "Failed to load address " + address + " (" + err + ")";
 
 		res.render("address");
+
+		next();
 	});
 });
 
-router.get("/rpc-terminal", function(req, res) {
+router.get("/rpc-terminal", function(req, res, next) {
 	if (!config.demoSite && !req.authenticated) {
 		res.send("RPC Terminal / Browser may not be accessed without logging-in. This restriction can be modified in your config.js file.");
 		return;
 	}
 
 	res.render("terminal");
+
+	next();
 });
 
-router.post("/rpc-terminal", function(req, res) {
+router.post("/rpc-terminal", function(req, res, next) {
 	if (!config.demoSite && !req.authenticated) {
 		res.send("RPC Terminal / Browser may not be accessed without logging-in. This restriction can be modified in your config.js file.");
+
+		next();
+
 		return;
 	}
 
@@ -792,6 +835,8 @@ router.post("/rpc-terminal", function(req, res) {
 			res.end();
 		});
 
+		next();
+
 		return;
 	}
 
@@ -807,15 +852,21 @@ router.post("/rpc-terminal", function(req, res) {
 				res.end();
 			});
 
+			next();
+
 		} else if (result) {
 			res.write(JSON.stringify(result, null, 4), function() {
 				res.end();
 			});
 
+			next();
+
 		} else {
 			res.write(JSON.stringify({"Error":"No response from node"}, null, 4), function() {
 				res.end();
 			});
+
+			next();
 		}
 	});
 });
@@ -882,6 +933,8 @@ router.get("/rpc-browser", function(req, res, next) {
 
 						res.render("browser");
 
+						next();
+
 						return;
 					}
 
@@ -910,29 +963,39 @@ router.get("/rpc-browser", function(req, res, next) {
 							}
 
 							res.render("browser");
+
+							next();
 						});
 					});
 				} else {
 					res.render("browser");
+
+					next();
 				}
 			}).catch(function(err) {
 				res.locals.userMessage = "Error loading help content for method " + req.query.method + ": " + err;
 
 				res.render("browser");
+
+				next();
 			});
 
 		} else {
 			res.render("browser");
+
+			next();
 		}
 
 	}).catch(function(err) {
 		res.locals.userMessage = "Error loading help content: " + err;
 
 		res.render("browser");
+
+		next();
 	});
 });
 
-router.get("/unconfirmed-tx", function(req, res) {
+router.get("/unconfirmed-tx", function(req, res, next) {
 	var limit = config.site.browseBlocksPageSize;
 	var offset = 0;
 	var sort = "desc";
@@ -959,14 +1022,18 @@ router.get("/unconfirmed-tx", function(req, res) {
 
 		res.render("unconfirmed-transactions");
 
+		next();
+
 	}).catch(function(err) {
 		res.locals.userMessage = "Error: " + err;
 
 		res.render("unconfirmed-transactions");
+
+		next();
 	});
 });
 
-router.get("/tx-stats", function(req, res) {
+router.get("/tx-stats", function(req, res, next) {
 	var dataPoints = 100;
 
 	if (req.query.dataPoints) {
@@ -993,17 +1060,21 @@ router.get("/tx-stats", function(req, res) {
 					res.locals.txStatsMonth = result4.txCountStats;
 
 					res.render("tx-stats");
+
+					next();
 				});
 			});
 		});
 	});
 });
 
-router.get("/about", function(req, res) {
+router.get("/about", function(req, res, next) {
 	res.render("about");
+
+	next();
 });
 
-router.get("/fun", function(req, res) {
+router.get("/fun", function(req, res, next) {
 	var sortedList = coins[config.coin].historicalData;
 	sortedList.sort(function(a, b){
 		return ((a.date > b.date) ? 1 : -1);
@@ -1012,6 +1083,8 @@ router.get("/fun", function(req, res) {
 	res.locals.historicalData = sortedList;
 	
 	res.render("fun");
+
+	next();
 });
 
 module.exports = router;

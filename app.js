@@ -394,7 +394,9 @@ app.runOnStartup = function() {
 };
 
 app.use(function(req, res, next) {
-	req.start = Date.now();
+	req.startTime = Date.now();
+	req.startMem = process.memoryUsage().heapUsed;
+
 	next();
 });
 
@@ -508,31 +510,30 @@ app.use(function(req, res, next) {
 	next();
 });
 
-app.use(function(req, res, next) {
-	var time = Date.now() - req.start;
-
-	if (global.influxdb) {
-		var points = [];
-		points.push({
-			measurement:`express.request`,
-			tags:{app:("btc-rpc-explorer." + global.config.coin), host:req.hostname, path:req.path, userAgent:req.headers['user-agent']},
-			fields:{count:1, time:time}
-		});
-
-		global.influxdb.writePoints(points).catch(err => {
-			console.error(`Error saving data to InfluxDB: ${err.stack}`);
-		});
-	}
-
-	next();
-});
-
 app.use(csurf(), (req, res, next) => {
 	res.locals.csrfToken = req.csrfToken();
 	next();
 });
 
 app.use('/', baseActionsRouter);
+
+app.use(function(req, res, next) {
+	var time = Date.now() - req.startTime;
+	var memdiff = process.memoryUsage().heapUsed - req.startMem;
+
+	if (global.influxdb) {
+		var points = [];
+		points.push({
+			measurement:`express.request`,
+			tags:{app:("btc-rpc-explorer." + global.config.coin), host:req.hostname, path:req.path, userAgent:req.headers['user-agent']},
+			fields:{count:1, time:time, memdiff:memdiff}
+		});
+
+		global.influxdb.writePoints(points).catch(err => {
+			console.error(`Error saving data to InfluxDB: ${err.stack}`);
+		});
+	}
+});
 
 /// catch 404 and forwarding to error handler
 app.use(function(req, res, next) {

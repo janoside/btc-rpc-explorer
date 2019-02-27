@@ -47,6 +47,9 @@ function tryCacheThenRpcApi(cache, cacheKey, cacheMaxAge, rpcApiFunction, cacheC
 				}
 
 				resolve(result);
+
+			}).catch(function(err) {
+				reject(err);
 			});
 		}
 	});
@@ -149,6 +152,9 @@ function getTxCountStats(dataPtCount, blockStart, blockEnd) {
 			}).catch(function(err) {
 				reject(err);
 			});
+
+		}).catch(function(err) {
+			reject(err);
 		});
 	});
 }
@@ -227,6 +233,9 @@ function getPeerSummary() {
 			result.servicesSummary = servicesSummary;
 
 			resolve(result);
+
+		}).catch(function(err) {
+			reject(err);
 		});
 	});
 }
@@ -280,8 +289,16 @@ function getMempoolDetails(start, count) {
 					});
 
 					resolve({ txCount:txidIndex, transactions:transactions, txInputsByTransaction:txInputsByTransaction });
+				}).catch(function(err) {
+					reject(err);
 				});
+
+			}).catch(function(err) {
+				reject(err);
 			});
+
+		}).catch(function(err) {
+			reject(err);
 		});
 	});
 }
@@ -451,6 +468,9 @@ function getMempoolStats() {
 			debug(JSON.stringify(sizeBucketLabels));*/
 
 			resolve(summary);
+			
+		}).catch(function(err) {
+			reject(err);
 		});
 	});
 }

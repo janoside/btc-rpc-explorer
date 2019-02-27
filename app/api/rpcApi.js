@@ -78,6 +78,8 @@ function getBlocksByHeight(blockHeights) {
 					resolve(blocks);
 				});
 			}
+		}).catch(function(err) {
+			reject(err);
 		});
 	});
 }
@@ -131,6 +133,8 @@ function getBlocksByHash(blockHashes) {
 
 				resolve(blocks);
 			});
+		}).catch(function(err) {
+			reject(err);
 		});
 	});
 }
@@ -214,6 +218,9 @@ function getRawTransactions(txids) {
 			}
 
 			resolve(finalResults);
+
+		}).catch(function(err) {
+			reject(err);
 		});
 	});
 }
@@ -251,6 +258,9 @@ function getHelp() {
 			});
 
 			resolve(sections);
+
+		}).catch(function(err) {
+			reject(err);
 		});
 	});
 }
@@ -334,6 +344,9 @@ function getRpcMethodHelp(methodName) {
 			output.args = args;
 
 			resolve(output);
+
+		}).catch(function(err) {
+			reject(err);
 		});
 	});
 }
@@ -351,6 +364,8 @@ function getRpcData(cmd) {
 			} else {
 				resolve(result);
 			}
+		}).catch(function(err) {
+			reject(err);
 		});
 	});
 }
@@ -366,6 +381,8 @@ function getRpcDataWithParams(cmd, params) {
 			} else {
 				resolve(result);
 			}
+		}).catch(function(err) {
+			reject(err);
 		});
 	});
 }
@@ -401,6 +418,8 @@ function executeBatchesSequentiallyInternal(batchId, batches, currentIndex, accu
 		if (count == 0) {
 			executeBatchesSequentiallyInternal(batchId, batches, currentIndex + 1, accumulatedResults, resultFunc);
 		}
+	}).catch(function(err) {
+		reject(err);
 	});
 }
 
