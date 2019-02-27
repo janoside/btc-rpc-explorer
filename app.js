@@ -511,8 +511,6 @@ app.use(function(req, res, next) {
 app.use(function(req, res, next) {
 	var time = Date.now() - req.start;
 
-	console.log("time: " + time);
-
 	if (global.influxdb) {
 		var points = [];
 		points.push({
