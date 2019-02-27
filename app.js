@@ -521,6 +521,8 @@ app.use(function(req, res, next) {
 	var time = Date.now() - req.startTime;
 	var memdiff = process.memoryUsage().heapUsed - req.startMem;
 
+	console.log(`Heapdiff: path=${req.path}, heapdiff=${memdiff}`);
+
 	if (global.influxdb) {
 		var points = [];
 		points.push({
