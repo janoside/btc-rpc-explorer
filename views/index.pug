@@ -9,7 +9,7 @@ block content
 
 	if (config.demoSite && session.hideHomepageBanner != "true")
 		div(class="alert alert-primary alert-dismissible shadow-sm mb-4", role="alert")
-			p
+			span
 				strong #{coinConfig.siteTitle}
 				span  is 
 				a(href="https://github.com/janoside/btc-rpc-explorer", target="_blank") open-source
@@ -19,8 +19,8 @@ block content
 				a(href="https://github.com/janoside/btc-rpc-explorer", target="_blank") project description
 				span  for a list of features and instructions for running.
 
-			div(class="clearfix")
-				if (global.sourcecodeProjectMetadata)
+			if (global.sourcecodeProjectMetadata)
+				div(class="mt-2")
 					a(href="https://github.com/janoside/btc-rpc-explorer", class="btn btn-primary mr-3 mb-1")
 						i(class="fas fa-star mr-2")
 						span(class="mr-2") Star 
@@ -43,12 +43,15 @@ block content
 
 	
 
-	- var networkSummaryItemCount = 5;
+	- var networkSummaryItemCount = 4;
 
 	if (getblockchaininfo.size_on_disk)
 		- networkSummaryItemCount++;
 
 	if (global.exchangeRates)
+		- networkSummaryItemCount++;
+
+	if (txStats)
 		- networkSummaryItemCount++;
 
 	- var networkSummaryColumnClass = "col-md-4";
@@ -72,14 +75,15 @@ block content
 						span #{hashrateData[0]} 
 						span(title=(hashrateData[1].name + "-hash / x10^" + hashrateData[1].exponent), data-toggle="tooltip") #{hashrateData[1].abbreviation}H/s
 
-				div(class=networkSummaryColumnClass)
-					div(class="float-left", style="height: 40px; width: 40px;")
-						span
-							i(class="fas fa-sign-out-alt fa-2x mr-2", style="margin-top: 6px; margin-left: 3px;")
+				if (txStats)
+					div(class=networkSummaryColumnClass)
+						div(class="float-left", style="height: 40px; width: 40px;")
+							span
+								i(class="fas fa-sign-out-alt fa-2x mr-2", style="margin-top: 6px; margin-left: 3px;")
 
-					span(class="font-weight-bold") Total Transactions
+						span(class="font-weight-bold") Total Transactions
 
-					p(class="lead") #{txStats.totalTxCount.toLocaleString()}
+						p(class="lead") #{txStats.totalTxCount.toLocaleString()}
 
 				div(class=networkSummaryColumnClass)
 					div(class="float-left", style="height: 40px; width: 40px;")
