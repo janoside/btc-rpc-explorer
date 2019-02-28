@@ -355,6 +355,7 @@ function getRpcMethodHelp(methodName) {
 
 function getRpcData(cmd) {
 	return new Promise(function(resolve, reject) {
+		debug(`RPC: ${cmd}`);
 		client.command(cmd, function(err, result, resHeaders) {
 			if (err) {
 				console.log("Error for RPC command '" + cmd + "': " + err);
@@ -372,6 +373,7 @@ function getRpcData(cmd) {
 
 function getRpcDataWithParams(cmd, params) {
 	return new Promise(function(resolve, reject) {
+		debug(`RPC: ${cmd}(${params})`);
 		client.command(cmd, params, function(err, result, resHeaders) {
 			if (err) {
 				console.log("Error for RPC command '" + cmd + "': " + err);
@@ -390,24 +392,25 @@ function getRpcDataWithParams(cmd, params) {
 function executeBatchesSequentially(batches, resultFunc) {
 	var batchId = utils.getRandomString(20, 'aA#');
 
-	debug("Starting " + batches.length + "-item batch " + batchId + "...");
+	debug(`Starting ${batches.length}-item batch ${batchId}...`);
 
 	executeBatchesSequentiallyInternal(batchId, batches, 0, [], resultFunc);
 }
 
 function executeBatchesSequentiallyInternal(batchId, batches, currentIndex, accumulatedResults, resultFunc) {
 	if (currentIndex == batches.length) {
-		debug("Finishing batch " + batchId + "...");
+		debug(`Finishing batch ${batchId}...`);
 
 		resultFunc(accumulatedResults);
 
 		return;
 	}
 
-	debug("Executing item #" + (currentIndex + 1) + " (of " + batches.length + ") for batch " + batchId);
+	debug(`Executing item #${(currentIndex + 1)} (of ${batches.length}) for batch ${batchId}`);
 
 	var count = batches[currentIndex].length;
 
+	debug(`RPC: ${JSON.stringify(batches[currentIndex])}`);
 	client.command(batches[currentIndex]).then(function(results) {
 		results.forEach((item) => {
 			accumulatedResults.push(item);
