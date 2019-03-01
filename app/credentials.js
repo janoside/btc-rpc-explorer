@@ -7,7 +7,14 @@ var btcAuth = btcUri.auth ? btcUri.auth.split(':') : [];
 
 var ifxUri = process.env.BTCEXP_INFLUXDB_URI ? url.parse(process.env.BTCEXP_INFLUXDB_URI, true) : { query: { } };
 var ifxAuth = ifxUri.auth ? ifxUri.auth.split(':') : [];
-var ifxActive = !!process.env.BTCEXP_ENABLE_INFLUXDB || Object.keys(process.env).some(k => k.startsWith('BTCEXP_INFLUXDB_'));
+
+var ifxActive = false;
+if (process.env.BTCEXP_ENABLE_INFLUXDB != null) {
+	ifxActive = (process.env.BTCEXP_ENABLE_INFLUXDB.toLowerCase() == "true");
+
+} else {
+	ifxActive = Object.keys(process.env).some(k => k.startsWith('BTCEXP_INFLUXDB_'));
+}
 
 module.exports = {
 	rpc: {
