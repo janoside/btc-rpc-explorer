@@ -422,7 +422,7 @@ function executeBatchesSequentiallyInternal(batchId, batches, currentIndex, accu
 			executeBatchesSequentiallyInternal(batchId, batches, currentIndex + 1, accumulatedResults, resultFunc);
 		}
 	}).catch(function(err) {
-		reject(err);
+		throw err;
 	});
 }
 
