@@ -71,7 +71,9 @@ router.get("/", function(req, res, next) {
 			}
 		}
 
-		promises.push(coreApi.getChainTxStats(getblockchaininfo.blocks - 1));
+		if (getblockchaininfo.chain !== 'regtest') {
+			promises.push(coreApi.getChainTxStats(getblockchaininfo.blocks - 1));
+		}
 
 		coreApi.getBlocksByHeight(blockHeights).then(function(latestBlocks) {
 			res.locals.latestBlocks = latestBlocks;
