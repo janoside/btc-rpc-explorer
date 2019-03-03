@@ -6,13 +6,18 @@ var utils = require("../utils.js");
 var config = require("../config.js");
 var coins = require("../coins.js");
 
+var activeQueueTasks = 0;
 
 var rpcQueue = async.queue(function(task, callback) {
-	task.rpcCall();
+	activeQueueTasks++;
+	//console.log("activeQueueTasks: " + activeQueueTasks);
 
-	if (callback != null) {
+	task.rpcCall(function() {
 		callback();
-	}
+
+		activeQueueTasks--;
+		//console.log("activeQueueTasks: " + activeQueueTasks);
+	});
 
 }, config.rpcConcurrency);
 
@@ -255,18 +260,21 @@ function getRpcData(cmd) {
 	return new Promise(function(resolve, reject) {
 		debug(`RPC: ${cmd}`);
 
-		rpcCall = function() {
+		rpcCall = function(callback) {
 			client.command(cmd, function(err, result, resHeaders) {
 				if (err) {
 					console.log(`Error for RPC command '${cmd}': ${err}`);
 
 					reject(err);
 
-				} else {
-					resolve(result);
+					callback();
+
+					return;
 				}
-			}).catch(function(err) {
-				reject(err);
+
+				resolve(result);
+
+				callback();
 			});
 		};
 		
@@ -278,17 +286,21 @@ function getRpcDataWithParams(request) {
 	return new Promise(function(resolve, reject) {
 		debug(`RPC: ${request}`);
 
-		rpcCall = function() {
+		rpcCall = function(callback) {
 			client.command([request], function(err, result, resHeaders) {
 				if (err != null) {
 					console.log(`Error for RPC command ${JSON.stringify(request)}: ${err}, headers=${resHeaders}`);
 
 					reject(err);
 
+					callback();
+
 					return;
 				}
 
 				resolve(result[0]);
+
+				callback();
 			});
 		};
 		

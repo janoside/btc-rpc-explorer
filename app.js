@@ -75,7 +75,7 @@ app.use(session({
 app.use(express.static(path.join(__dirname, 'public')));
 
 process.on("unhandledRejection", (reason, p) => {
-	console.log("Unhandled Rejection at: Promise", p, "reason:", reason, "stack:", reason.stack);
+	console.log("Unhandled Rejection at: Promise", p, "reason:", reason, "stack:", (reason != null ? reason.stack : "null"));
 
 	if (global.influxdb) {
 		var points = [];
