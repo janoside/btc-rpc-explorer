@@ -281,7 +281,7 @@ function getRpcDataWithParams(request) {
 		rpcCall = function() {
 			client.command([request], function(err, result, resHeaders) {
 				if (err != null) {
-					console.log(`Error for RPC command ${request}: ${err}`);
+					console.log(`Error for RPC command ${JSON.stringify(request)}: ${err}, headers=${resHeaders}`);
 
 					reject(err);
 
