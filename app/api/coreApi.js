@@ -157,7 +157,7 @@ function shouldCacheTransaction(tx) {
 		return false;
 	}
 
-	if (tx.vin.length > 9) {
+	if (tx.vin != null && tx.vin.length > 9) {
 		return false;
 	}
 
