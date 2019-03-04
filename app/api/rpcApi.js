@@ -105,17 +105,15 @@ function getRawTransaction(txid) {
 	return new Promise(function(resolve, reject) {
 		if (coins[config.coin].genesisCoinbaseTransactionId && txid == coins[config.coin].genesisCoinbaseTransactionId) {
 			// copy the "confirmations" field from genesis block to the genesis-coinbase tx
-			promises.push(new Promise(function(resolve2, reject2) {
-				getBlockchainInfo().then(function(blockchainInfoResult) {
-					var result = coins[config.coin].genesisCoinbaseTransaction;
-					result.confirmations = blockchainInfoResult.blocks;
+			getBlockchainInfo().then(function(blockchainInfoResult) {
+				var result = coins[config.coin].genesisCoinbaseTransaction;
+				result.confirmations = blockchainInfoResult.blocks;
 
-					resolve([result]);
+				resolve(result);
 
-				}).catch(function(err) {
-					reject(err);
-				});
-			}));
+			}).catch(function(err) {
+				reject(err);
+			});
 
 		} else {
 			getRpcDataWithParams({method:"getrawtransaction", parameters:[txid, 1]}).then(function(result) {
