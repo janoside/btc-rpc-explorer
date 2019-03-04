@@ -505,12 +505,18 @@ router.get("/block/:blockHash", function(req, res, next) {
 	res.locals.limit = limit;
 	res.locals.offset = offset;
 	res.locals.paginationBaseUrl = "/block/" + blockHash;
-
-	// TODO handle RPC error
+	
 	coreApi.getBlockByHashWithTransactions(blockHash, limit, offset).then(function(result) {
 		res.locals.result.getblock = result.getblock;
 		res.locals.result.transactions = result.transactions;
 		res.locals.result.txInputsByTransaction = result.txInputsByTransaction;
+
+		res.render("block");
+
+		next();
+
+	}).catch(function(err) {
+		res.locals.userMessage = "Error getting block data";
 
 		res.render("block");
 
