@@ -714,7 +714,7 @@ function getBlockByHashWithTransactions(blockHash, txLimit, txOffset) {
 				txids.push(block.tx[0]);
 			}
 
-			for (var i = txOffset; i < (txOffset + txLimit); i++) {
+			for (var i = txOffset; i < Math.min(txOffset + txLimit, block.tx.length); i++) {
 				txids.push(block.tx[i]);
 			}
 

@@ -119,6 +119,12 @@ function getRawTransaction(txid) {
 
 		} else {
 			getRpcDataWithParams({method:"getrawtransaction", parameters:[txid, 1]}).then(function(result) {
+				if (result == null || result.code && result.code < 0) {
+					reject(result);
+
+					return;
+				}
+
 				resolve(result);
 
 			}).catch(function(err) {
