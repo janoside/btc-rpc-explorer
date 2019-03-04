@@ -46,12 +46,14 @@ for (var i = 0; i < electrumXServerUriStrings.length; i++) {
 });
 
 module.exports = {
+	coin: currentCoin,
+
 	cookieSecret: cookieSecret,
+
 	privacyMode: (process.env.BTCEXP_PRIVACY_MODE.toLowerCase() == "true"),
 	demoSite: (process.env.BTCEXP_DEMO.toLowerCase() == "true"),
 	queryExchangeRates: (process.env.BTCEXP_NO_RATES.toLowerCase() != "true"),
 	noInmemoryRpcCache: (process.env.BTCEXP_NO_INMEMORY_RPC_CACHE.toLowerCase() == "true"),
-	coin: currentCoin,
 	
 	rpcConcurrency: (process.env.BTCEXP_RPC_CONCURRENCY || 10),
 
