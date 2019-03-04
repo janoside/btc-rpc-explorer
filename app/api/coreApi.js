@@ -772,14 +772,116 @@ function getBlockByHashWithTransactions(blockHash, txLimit, txOffset) {
 }
 
 function getHelp() {
-	return tryCacheThenRpcApi(miscCache, "getHelp", 3600000, function() {
-		return rpcApi.getHelp();
+	return new Promise(function(resolve, reject) {
+		tryCacheThenRpcApi(miscCache, "getHelp", 3600000, rpcApi.getHelp).then(function(helpContent) {
+			var lines = helpContent.split("\n");
+			var sections = [];
+
+			lines.forEach(function(line) {
+				if (line.startsWith("==")) {
+					var sectionName = line.substring(2);
+					sectionName = sectionName.substring(0, sectionName.length - 2).trim();
+
+					sections.push({name:sectionName, methods:[]});
+
+				} else if (line.trim().length > 0) {
+					var methodName = line.trim();
+
+					if (methodName.includes(" ")) {
+						methodName = methodName.substring(0, methodName.indexOf(" "));
+					}
+
+					sections[sections.length - 1].methods.push({name:methodName, content:line.trim()});
+				}
+			});
+
+			resolve(sections);
+
+		}).catch(function(err) {
+			reject(err);
+		});
 	});
 }
 
 function getRpcMethodHelp(methodName) {
-	return tryCacheThenRpcApi(miscCache, "getHelp-" + methodName, 3600000, function() {
+	var rpcApiFunction = function() {
 		return rpcApi.getRpcMethodHelp(methodName);
+	};
+
+	return new Promise(function(resolve, reject) {
+		tryCacheThenRpcApi(miscCache, "getHelp-" + methodName, 3600000, rpcApiFunction).then(function(helpContent) {
+			var output = {};
+			output.string = helpContent;
+
+			var str = helpContent;
+
+			var lines = str.split("\n");
+			var argumentLines = [];
+			var catchArgs = false;
+			lines.forEach(function(line) {
+				if (line.trim().length == 0) {
+					catchArgs = false;
+				}
+
+				if (catchArgs) {
+					argumentLines.push(line);
+				}
+
+				if (line.trim() == "Arguments:" || line.trim() == "Arguments") {
+					catchArgs = true;
+				}
+			});
+
+			var args = [];
+			var argX = null;
+			// looking for line starting with "N. " where N is an integer (1-2 digits)
+			argumentLines.forEach(function(line) {
+				var regex = /^([0-9]+)\.\s*"?(\w+)"?\s*\(([^,)]*),?\s*([^,)]*),?\s*([^,)]*),?\s*([^,)]*)?\s*\)\s*(.+)?$/;
+
+				var match = regex.exec(line);
+
+				if (match) {
+					argX = {};
+					argX.name = match[2];
+					argX.detailsLines = [];
+
+					argX.properties = [];
+
+					if (match[3]) {
+						argX.properties.push(match[3]);
+					}
+
+					if (match[4]) {
+						argX.properties.push(match[4]);
+					}
+
+					if (match[5]) {
+						argX.properties.push(match[5]);
+					}
+
+					if (match[6]) {
+						argX.properties.push(match[6]);
+					}
+
+					if (match[7]) {
+						argX.description = match[7];
+					}
+
+					args.push(argX);
+				}
+
+				if (!match && argX) {
+					argX.detailsLines.push(line);
+				}
+			});
+
+			output.args = args;
+
+			resolve(output);
+
+		}).catch(function(err) {
+			reject(err);
+		});
 	});
 }
 
