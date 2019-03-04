@@ -24,7 +24,7 @@ html(lang="en")
 			title Explorer
 		
 	body
-		nav(class="navbar navbar-expand-lg navbar-dark bg-dark mb-4")
+		nav(class="navbar navbar-expand-lg navbar-dark bg-dark mb-3 mb-md-4")
 			div(class="container")
 				a(class="navbar-brand", href="/")
 					span
@@ -100,7 +100,7 @@ html(lang="en")
 										span  Dark
 		
 		if (host && port && !homepage)
-			div(id="sub-menu", class="container mb-4 d-lg-block d-none", style="margin-top: -1.0rem;")
+			div(id="sub-menu", class="container mb-3 d-lg-block d-none", style="margin-top: -1.0rem;")
 				ul(class="nav")
 					each item, index in config.siteTools
 						li(class="nav-item")
