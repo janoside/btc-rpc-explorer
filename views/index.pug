@@ -7,211 +7,218 @@ block content
 	h1(class="h3") #{coinConfig.siteTitle}
 	hr
 
-	if (config.demoSite && session.hideHomepageBanner != "true")
-		div(class="alert alert-primary alert-dismissible shadow-sm mb-4", role="alert")
-			span
-				strong #{coinConfig.siteTitle}
-				span  is 
-				a(href="https://github.com/janoside/btc-rpc-explorer", target="_blank") open-source
-				span  and easy to set up. It can communicate with your 
-				a(href=coinConfig.nodeUrl, target="_blank") #{coinConfig.name} Full Node
-				span  via RPC. See the 
-				a(href="https://github.com/janoside/btc-rpc-explorer", target="_blank") project description
-				span  for a list of features and instructions for running.
+	if (getblockchaininfo == null)
+		div(class="alert alert-warning")
+			p(class="font-weight-bold") Unable to get basic blockchain data
+			ul
+				li If you just started your node, it may still be initializing.
+				li If your node is already initialized, check your RPC connection info.
+	else
 
-			if (global.sourcecodeProjectMetadata)
-				div(class="mt-2")
-					a(href="https://github.com/janoside/btc-rpc-explorer", class="btn btn-primary mr-3 mb-1")
-						i(class="fas fa-star mr-2")
-						span(class="mr-2") Star 
-						span.font-weight-light #{global.sourcecodeProjectMetadata.stargazers_count}
+		if (config.demoSite && session.hideHomepageBanner != "true")
+			div(class="alert alert-primary alert-dismissible shadow-sm mb-4", role="alert")
+				span
+					strong #{coinConfig.siteTitle}
+					span  is 
+					a(href="https://github.com/janoside/btc-rpc-explorer", target="_blank") open-source
+					span  and easy to set up. It can communicate with your 
+					a(href=coinConfig.nodeUrl, target="_blank") #{coinConfig.name} Full Node
+					span  via RPC. See the 
+					a(href="https://github.com/janoside/btc-rpc-explorer", target="_blank") project description
+					span  for a list of features and instructions for running.
 
-					a(href="https://github.com/janoside/btc-rpc-explorer/fork", class="btn btn-primary mr-3 mb-1")
-						i(class="fas fa-code-branch mr-2")
-						span(class="mr-2") Fork 
-						span.font-weight-light #{global.sourcecodeProjectMetadata.forks_count}
+				if (global.sourcecodeProjectMetadata)
+					div(class="mt-2")
+						a(href="https://github.com/janoside/btc-rpc-explorer", class="btn btn-primary mr-3 mb-1")
+							i(class="fas fa-star mr-2")
+							span(class="mr-2") Star 
+							span.font-weight-light #{global.sourcecodeProjectMetadata.stargazers_count}
+
+						a(href="https://github.com/janoside/btc-rpc-explorer/fork", class="btn btn-primary mr-3 mb-1")
+							i(class="fas fa-code-branch mr-2")
+							span(class="mr-2") Fork 
+							span.font-weight-light #{global.sourcecodeProjectMetadata.forks_count}
+							
+						button.btn.btn-primary(type="button", class="btn btn-primary mb-1", data-toggle="modal", data-target="#exampleModalCenter")
+							i(class="fas fa-heart mr-2")
+							span Donate via 
+							span(class="font-weight-light") BTCPay
+
+					
+
+				a(href="/changeSetting?name=hideHomepageBanner&value=true", class="close", aria-label="Close", style="text-decoration: none;")
+					span(aria-hidden="true") &times;
+
+
+		- var networkSummaryItemCount = 4;
+
+		if (getblockchaininfo.size_on_disk)
+			- networkSummaryItemCount++;
+
+		if (global.exchangeRates)
+			- networkSummaryItemCount++;
+
+		if (txStats)
+			- networkSummaryItemCount++;
+
+		- var networkSummaryColumnClass = "col-md-4";
+		if (networkSummaryItemCount > 6)
+			- networkSummaryColumnClass = "col-md-3";
+			
+		div(class="card mb-4 shadow-sm")
+			div(class="card-header")
+				h2(class="h6 mb-0") Network Summary
+			div(class="card-body")
+				div(class="row")
+					div(class=networkSummaryColumnClass)
+						div(class="float-left", style="height: 40px; width: 40px;")
+							span
+								i(class="fas fa-tachometer-alt fa-2x mr-2", style="margin-top: 6px;")
+						- var hashrateData = utils.formatLargeNumber(miningInfo.networkhashps, 3);
 						
-					button.btn.btn-primary(type="button", class="btn btn-primary mb-1", data-toggle="modal", data-target="#exampleModalCenter")
-						i(class="fas fa-heart mr-2")
-						span Donate via 
-						span(class="font-weight-light") BTCPay
+						span(class="font-weight-bold") Hashrate 
 
-				
+						p(class="lead")
+							span #{hashrateData[0]} 
+							span(title=(hashrateData[1].name + "-hash / x10^" + hashrateData[1].exponent), data-toggle="tooltip") #{hashrateData[1].abbreviation}H/s
 
-			a(href="/changeSetting?name=hideHomepageBanner&value=true", class="close", aria-label="Close", style="text-decoration: none;")
-				span(aria-hidden="true") &times;
+					if (txStats)
+						div(class=networkSummaryColumnClass)
+							div(class="float-left", style="height: 40px; width: 40px;")
+								span
+									i(class="fas fa-sign-out-alt fa-2x mr-2", style="margin-top: 6px; margin-left: 3px;")
 
-	
+							span(class="font-weight-bold") Total Transactions
 
-	- var networkSummaryItemCount = 4;
+							p(class="lead") #{txStats.totalTxCount.toLocaleString()}
 
-	if (getblockchaininfo.size_on_disk)
-		- networkSummaryItemCount++;
-
-	if (global.exchangeRates)
-		- networkSummaryItemCount++;
-
-	if (txStats)
-		- networkSummaryItemCount++;
-
-	- var networkSummaryColumnClass = "col-md-4";
-	if (networkSummaryItemCount > 6)
-		- networkSummaryColumnClass = "col-md-3";
-		
-	div(class="card mb-4 shadow-sm")
-		div(class="card-header")
-			h2(class="h6 mb-0") Network Summary
-		div(class="card-body")
-			div(class="row")
-				div(class=networkSummaryColumnClass)
-					div(class="float-left", style="height: 40px; width: 40px;")
-						span
-							i(class="fas fa-tachometer-alt fa-2x mr-2", style="margin-top: 6px;")
-					- var hashrateData = utils.formatLargeNumber(miningInfo.networkhashps, 3);
-					
-					span(class="font-weight-bold") Hashrate 
-
-					p(class="lead")
-						span #{hashrateData[0]} 
-						span(title=(hashrateData[1].name + "-hash / x10^" + hashrateData[1].exponent), data-toggle="tooltip") #{hashrateData[1].abbreviation}H/s
-
-				if (txStats)
 					div(class=networkSummaryColumnClass)
 						div(class="float-left", style="height: 40px; width: 40px;")
 							span
-								i(class="fas fa-sign-out-alt fa-2x mr-2", style="margin-top: 6px; margin-left: 3px;")
+								i(class="fas fa-unlock-alt fa-2x mr-2", style="margin-top: 6px; margin-left: 3px;")
 
-						span(class="font-weight-bold") Total Transactions
+						span(class="font-weight-bold") Unconfirmed Transactions
 
-						p(class="lead") #{txStats.totalTxCount.toLocaleString()}
+						p(class="lead") #{mempoolInfo.size.toLocaleString()} tx 
+							- var mempoolBytesData = utils.formatLargeNumber(mempoolInfo.usage, 2);
+							small(class="text-muted font-weight-light") (#{mempoolBytesData[0]} #{mempoolBytesData[1].abbreviation}B)
 
-				div(class=networkSummaryColumnClass)
-					div(class="float-left", style="height: 40px; width: 40px;")
-						span
-							i(class="fas fa-unlock-alt fa-2x mr-2", style="margin-top: 6px; margin-left: 3px;")
-
-					span(class="font-weight-bold") Unconfirmed Transactions
-
-					p(class="lead") #{mempoolInfo.size.toLocaleString()} tx 
-						- var mempoolBytesData = utils.formatLargeNumber(mempoolInfo.usage, 2);
-						small(class="text-muted font-weight-light") (#{mempoolBytesData[0]} #{mempoolBytesData[1].abbreviation}B)
-
-				div(class=networkSummaryColumnClass)
-					div(class="float-left", style="height: 40px; width: 40px;")
-						span
-							i(class="fas fa-bolt fa-2x mr-2", style="margin-top: 6px; margin-left: 6px;")
-
-					- var chainworkData = utils.formatLargeNumber(parseInt("0x" + getblockchaininfo.chainwork), 2);
-					span(class="font-weight-bold") Chainwork
-					
-					p(class="lead")
-						span(data-toggle="tooltip", title=getblockchaininfo.chainwork.replace(/^0+/, ''))
-							span #{chainworkData[0]}
-							span  x 10
-							sup #{chainworkData[1].exponent}
-							span  hashes
-				
-				div(class=networkSummaryColumnClass)
-					div(class="float-left", style="height: 40px; width: 40px; font-size: 12px;")
-						span
-							i(class="fas fa-dumbbell fa-2x mr-2", style="margin-top: 6px;")
-
-					- var difficultyData = utils.formatLargeNumber(getblockchaininfo.difficulty, 3);
-
-					span(class="font-weight-bold") Difficulty
-
-					p(class="lead")
-						span(title=parseFloat(getblockchaininfo.difficulty).toLocaleString(), data-toggle="tooltip")
-							span #{difficultyData[0]}
-							span  x 10
-							sup #{difficultyData[1].exponent}
-
-				if (getblockchaininfo.size_on_disk)
 					div(class=networkSummaryColumnClass)
 						div(class="float-left", style="height: 40px; width: 40px;")
 							span
-								i(class="fas fa-database fa-2x mr-2", style="margin-top: 6px; margin-left: 3px;")
-						span(class="font-weight-bold") Blockchain Size
+								i(class="fas fa-bolt fa-2x mr-2", style="margin-top: 6px; margin-left: 6px;")
 
-						- var sizeData = utils.formatLargeNumber(getblockchaininfo.size_on_disk, 2);
-						p(class="lead") #{sizeData[0]} #{sizeData[1].abbreviation}B
-
-				if (global.exchangeRates)
+						- var chainworkData = utils.formatLargeNumber(parseInt("0x" + getblockchaininfo.chainwork), 2);
+						span(class="font-weight-bold") Chainwork
+						
+						p(class="lead")
+							span(data-toggle="tooltip", title=getblockchaininfo.chainwork.replace(/^0+/, ''))
+								span #{chainworkData[0]}
+								span  x 10
+								sup #{chainworkData[1].exponent}
+								span  hashes
+					
 					div(class=networkSummaryColumnClass)
 						div(class="float-left", style="height: 40px; width: 40px; font-size: 12px;")
 							span
-								i(class="fas fa-money-bill-wave-alt fa-2x mr-2", style="margin-top: 7px;")
+								i(class="fas fa-dumbbell fa-2x mr-2", style="margin-top: 6px;")
 
-						span(class="font-weight-bold") Exchange Rate 
-							span(data-toggle="tooltip", title=("Exchange-rate data from: " + coinConfig.exchangeRateData.jsonUrl))
-								i(class="fas fa-info-circle")
+						- var difficultyData = utils.formatLargeNumber(getblockchaininfo.difficulty, 3);
 
-						if (global.exchangeRates)
-							p(class="lead") #{utils.formatExchangedCurrency(1.0, "usd")}
-						else
-							p(class="lead") -
+						span(class="font-weight-bold") Difficulty
+
+						p(class="lead")
+							span(title=parseFloat(getblockchaininfo.difficulty).toLocaleString(), data-toggle="tooltip")
+								span #{difficultyData[0]}
+								span  x 10
+								sup #{difficultyData[1].exponent}
+
+					if (getblockchaininfo.size_on_disk)
+						div(class=networkSummaryColumnClass)
+							div(class="float-left", style="height: 40px; width: 40px;")
+								span
+									i(class="fas fa-database fa-2x mr-2", style="margin-top: 6px; margin-left: 3px;")
+							span(class="font-weight-bold") Blockchain Size
+
+							- var sizeData = utils.formatLargeNumber(getblockchaininfo.size_on_disk, 2);
+							p(class="lead") #{sizeData[0]} #{sizeData[1].abbreviation}B
+
+					if (global.exchangeRates)
+						div(class=networkSummaryColumnClass)
+							div(class="float-left", style="height: 40px; width: 40px; font-size: 12px;")
+								span
+									i(class="fas fa-money-bill-wave-alt fa-2x mr-2", style="margin-top: 7px;")
+
+							span(class="font-weight-bold") Exchange Rate 
+								span(data-toggle="tooltip", title=("Exchange-rate data from: " + coinConfig.exchangeRateData.jsonUrl))
+									i(class="fas fa-info-circle")
+
+							if (global.exchangeRates)
+								p(class="lead") #{utils.formatExchangedCurrency(1.0, "usd")}
+							else
+								p(class="lead") -
 
 
-	include includes/tools-card.pug
-	
-	if (latestBlocks)
-		div(class="card mb-4 shadow-sm")
-			div(class="card-header")
-				div(class="row")
-					div(class="col")
-						h2(class="h6 mb-0") Latest Blocks
-							if (getblockchaininfo.initialblockdownload)
-								small  (#{(getblockchaininfo.headers - getblockchaininfo.blocks).toLocaleString()} behind)
-
-					div(class="col")
-						span(style="float: right;")
-							a(href="/blocks")
-								span  Browse Blocks &raquo;
-
-			div(class="card-body")
-
-				- var blocks = latestBlocks;
-				- var blockOffset = 0;
-
-				include includes/blocks-list.pug
-
-
-	if (txStats)
-		div(class="card mb-4 shadow-sm")
-			div(class="card-header")
-				div(class="row")
-					div(class="col")
-						h2(class="h6 mb-0") Transaction Stats Summary
-
-					div(class="col")
-						span(style="float: right;")
-							a(href="/tx-stats")
-								span  Transaction Stats &raquo;
+		include includes/tools-card.pug
 		
-			div(class="card-body")
-				if (true)
+		if (latestBlocks)
+			div(class="card mb-4 shadow-sm")
+				div(class="card-header")
 					div(class="row")
-						div(class="col-lg-6")
-							div(class="table-responsive")
-								table(class="table text-right mb-4 mb-lg-0")
-									thead
-										tr
-											th Period
-											th Transactions
-											th Transactions Per Sec
-									tbody
-										each item, index in chainTxStats
-											tr(class="monospace")
-												td #{chainTxStatsLabels[index]}
-												td #{item.window_tx_count.toLocaleString()}
-												td #{new Decimal(item.txrate).toDecimalPlaces(4)}
+						div(class="col")
+							h2(class="h6 mb-0") Latest Blocks
+								if (getblockchaininfo.initialblockdownload)
+									small  (#{(getblockchaininfo.headers - getblockchaininfo.blocks).toLocaleString()} behind)
+
+						div(class="col")
+							span(style="float: right;")
+								a(href="/blocks")
+									span  Browse Blocks &raquo;
+
+				div(class="card-body")
+
+					- var blocks = latestBlocks;
+					- var blockOffset = 0;
+
+					include includes/blocks-list.pug
 
 
-						div(class="col-lg-6")
-							script var txRateDataDay = [];
-							each item, index in txStats.txCountStats.txRates
-								script txRateDataDay.push({x:#{item.x}, y:#{item.y}});
+		if (txStats)
+			div(class="card mb-4 shadow-sm")
+				div(class="card-header")
+					div(class="row")
+						div(class="col")
+							h2(class="h6 mb-0") Transaction Stats Summary
 
-							- var graphData = {id:"graphRateDay", dataVar:"txRateDataDay", labels:txStats.txCountStats.txLabels, title:"Tx Rate, 24hr", xaxisTitle:"Block", xaxisStep:5, yaxisTitle:"Tx Per Sec"};
-							include ./includes/line-graph.pug
-										
+						div(class="col")
+							span(style="float: right;")
+								a(href="/tx-stats")
+									span  Transaction Stats &raquo;
+			
+				div(class="card-body")
+					if (true)
+						div(class="row")
+							div(class="col-lg-6")
+								div(class="table-responsive")
+									table(class="table text-right mb-4 mb-lg-0")
+										thead
+											tr
+												th Period
+												th Transactions
+												th Transactions Per Sec
+										tbody
+											each item, index in chainTxStats
+												tr(class="monospace")
+													td #{chainTxStatsLabels[index]}
+													td #{item.window_tx_count.toLocaleString()}
+													td #{new Decimal(item.txrate).toDecimalPlaces(4)}
+
+
+							div(class="col-lg-6")
+								script var txRateDataDay = [];
+								each item, index in txStats.txCountStats.txRates
+									script txRateDataDay.push({x:#{item.x}, y:#{item.y}});
+
+								- var graphData = {id:"graphRateDay", dataVar:"txRateDataDay", labels:txStats.txCountStats.txLabels, title:"Tx Rate, 24hr", xaxisTitle:"Block", xaxisStep:5, yaxisTitle:"Tx Per Sec"};
+								include ./includes/line-graph.pug
+											
