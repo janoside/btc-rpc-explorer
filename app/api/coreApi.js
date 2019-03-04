@@ -1,4 +1,4 @@
-var debug = require("debug")("coreApi");
+var debug = require("debug")("btcexp:coreApi");
 var redis = require("redis");
 var bluebird = require("bluebird");
 
