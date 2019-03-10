@@ -787,10 +787,14 @@ router.get("/address/:address", function(req, res, next) {
 			});
 		}));
 
-		Promise.all(promises).catch(function(err) {
+		Promise.all(promises).then(function() {
+			res.render("address");
+
+			next();
+
+		}).catch(function(err) {
 			console.log("Error 32197rgh327g2: " + err + ", error json: " + JSON.stringify(err));
 
-		}).finally(function() {
 			res.render("address");
 
 			next();

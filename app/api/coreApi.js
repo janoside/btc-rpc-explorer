@@ -126,13 +126,7 @@ function tryCacheThenRpcApi(cache, cacheKey, cacheMaxAge, rpcApiFunction, cacheC
 	return new Promise(function(resolve, reject) {
 		var cacheResult = null;
 
-		cache.get(cacheKey).then(function(result) {
-			cacheResult = result;
-			
-		}).catch(function(err) {
-			console.log(`Error nds9fc2eg621tf3: key=${cacheKey}, err=${err}`);
-
-		}).finally(function() {
+		var finallyFunc = function() {
 			if (cacheResult != null) {
 				resolve(cacheResult);
 
@@ -148,6 +142,17 @@ function tryCacheThenRpcApi(cache, cacheKey, cacheMaxAge, rpcApiFunction, cacheC
 					reject(err);
 				});
 			}
+		};
+
+		cache.get(cacheKey).then(function(result) {
+			cacheResult = result;
+
+			finallyFunc();
+			
+		}).catch(function(err) {
+			console.log(`Error nds9fc2eg621tf3: key=${cacheKey}, err=${err}`);
+
+			finallyFunc();
 		});
 	});
 }

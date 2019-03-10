@@ -38,11 +38,13 @@ function reconnectToServers() {
 
 		console.log("Reconnecting ElectrumX sockets...");
 
-		connectToServers().catch(function(err) {
-			console.log("Error 317fh29y7fg3333: " + err);
-			
-		}).finally(function() {
+		connectToServers().then(function() {
 			console.log("Done reconnecting ElectrumX sockets.");
+
+			resolve();
+
+		}).catch(function(err) {
+			console.log("Error 317fh29y7fg3333: " + err);
 
 			resolve();
 		});
