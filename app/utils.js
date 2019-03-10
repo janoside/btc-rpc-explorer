@@ -334,7 +334,7 @@ function refreshExchangeRates() {
 					console.log("Unable to get exchange rate data");
 				}
 			} else {
-				console.log(`Error 39r7h2390fgewfgds: ${error}, StatusCode: ${response.statusCode}, Response: ${JSON.stringify(response)}`);
+				console.log(`Error 39r7h2390fgewfgds: ${error}, StatusCode: ${(response != null) ? response.statusCode : ""}, Response: ${JSON.stringify(response)}`);
 			}
 		});
 	}
