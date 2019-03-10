@@ -166,18 +166,19 @@ div(class="tab-content")
 								
 								span(class="text-muted")  (#{result.getblock.chainwork.replace(/^0+/, '')})
 
-						div(class="row")
-							div(class="summary-split-table-label") Miner
-							div(class="summary-split-table-content monospace")
-								if (result.getblock.miner)
-									span #{result.getblock.miner.name} 
-									if (result.getblock.miner.identifiedBy)
-										span(data-toggle="tooltip", title=("Identified by: " + result.getblock.miner.identifiedBy))
+						if (result.getblock.miner)
+							div(class="row")
+								div(class="summary-split-table-label") Miner
+								div(class="summary-split-table-content monospace")
+									if (result.getblock.miner)
+										span #{result.getblock.miner.name} 
+										if (result.getblock.miner.identifiedBy)
+											span(data-toggle="tooltip", title=("Identified by: " + result.getblock.miner.identifiedBy))
+												i(class="fas fa-info-circle")
+									else
+										span ? 
+										span(data-toggle="tooltip", title="Unable to identify miner")
 											i(class="fas fa-info-circle")
-								else
-									span ? 
-									span(data-toggle="tooltip", title="Unable to identify miner")
-										i(class="fas fa-info-circle")
 									
 
 		div(class="card mb-3 shadow-sm")
