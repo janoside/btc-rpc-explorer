@@ -20,8 +20,8 @@ block content
 					div(class="row")
 						div(class="col")
 							h4(style="display: inline-block;")
-								span(class="text-muted") Command: 
-								span  #{method}
+								span Command: 
+								span(class="font-weight-light") #{method}
 						div(class="col")
 							a(href=("https://bitcoin.org/en/developer-reference#" + method), class="btn btn-primary float-md-right") See developer docs &raquo;
 								
@@ -33,8 +33,10 @@ block content
 							a(data-toggle="tab", href="#tab-execute", class="nav-link active", role="tab") Execute
 						li(class="nav-item")
 							a(data-toggle="tab", href="#tab-help-content", class="nav-link", role="tab") Help Content
-						li(class="nav-item")
-							a(data-toggle="tab", href="#tab-parsed-args", class="nav-link", role="tab") Arguments Details
+
+						if (methodhelp.args && methodhelp.args.length > 0)
+							li(class="nav-item")
+								a(data-toggle="tab", href="#tab-parsed-args", class="nav-link", role="tab") Arguments Details
 
 					div(class="tab-content")
 						div(id="tab-execute", class="tab-pane active pb-3", role="tabpanel")
@@ -88,8 +90,9 @@ block content
 							pre
 								code(data-lang="txt", class="json bg-light") #{methodhelp.string}
 
-						div(id="tab-parsed-args", class="tab-pane", role="tabpanel")
-							pre
+						if (methodhelp.args && methodhelp.args.length > 0)
+							div(id="tab-parsed-args", class="tab-pane", role="tabpanel")
+								pre
 									code(data-lang="json", class="json bg-light") #{JSON.stringify(methodhelp.args, null, 4)}
 
 					
