@@ -6,9 +6,6 @@
   "bin": "bin/cli.js",
   "scripts": {
     "start": "node ./bin/www",
-    "build": "npm-run-all build:*",
-    "build:less": "lessc ./public/css/radial-progress.less ./public/css/radial-progress.css",
-    "prepare": "npm run build",
     "refresh-mining-pool-configs": "node ./bin/refresh-mining-pool-configs.js"
   },
   "keywords": [
