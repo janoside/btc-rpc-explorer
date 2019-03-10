@@ -93,11 +93,16 @@ div(class="tab-content")
 								div(class="summary-split-table-label") Weight
 								div(class="summary-split-table-content monospace")
 									span(style="") #{result.getblock.weight.toLocaleString()} wu 
-									
-									- var radialProgressBarPercent = new Decimal(100 * result.getblock.weight / coinConfig.maxBlockWeight).toDecimalPlaces(2);
-									include ./radial-progress-bar.pug
-									
+
 									span(class="text-muted")  (#{new Decimal(100 * result.getblock.weight / coinConfig.maxBlockWeight).toDecimalPlaces(2)}% full)
+
+									- var fullPercent = new Decimal(100 * result.getblock.weight / coinConfig.maxBlockWeight).toDecimalPlaces(0);
+
+									div(class="row")
+										div(class="col-md-10 col-lg-8 col-12")
+											div(class="progress my-1 mr-2", style="height: 4px;")
+												div(class="progress-bar", role="progressbar", style=("width: " + fullPercent + "%;"), aria-valuenow=parseInt(100 * result.getblock.weight / coinConfig.maxBlockWeight), aria-valuemin="0" ,aria-valuemax="100")
+									
 
 						div(class="row")
 							div(class="summary-split-table-label") Size
