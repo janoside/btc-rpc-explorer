@@ -2,6 +2,14 @@ script(src="/js/chart.bundle.min.js", integrity="sha384-e4YKd0O/y4TmH7qskMQzKnOr
 
 canvas(id=graphData.id, class="mb-4")
 
+if (session.uiTheme && session.uiTheme == "dark")
+	script.
+		Chart.defaults.global.defaultFontColor='white';
+else
+	script.
+		Chart.defaults.global.defaultFontColor='black';
+
+
 script.
 	Chart.defaults.global.elements.point.radius = 1;
 	var ctx = document.getElementById("#{graphData.id}").getContext('2d');

@@ -1,0 +1,15 @@
+hr {
+	background-color: #555555;
+}
+
+.hljs-attr {
+	color: #eeeeee;
+}
+
+.hljs, .hljs-subst {
+	color: #dddddd;
+}
+
+.hljs-type, .hljs-string, .hljs-number, .hljs-selector-id, .hljs-selector-class, .hljs-quote, .hljs-template-tag, .hljs-deletion {
+	color: #95dbc6;
+}

@@ -43,7 +43,7 @@ block content
 									h5(class="mt-3") Result
 
 									pre(style="border: solid 1px #ccc;")
-										code(class="json", data-lang="json") #{JSON.stringify(methodResult, null, 4)}
+										code(class="json bg-light", data-lang="json") #{JSON.stringify(methodResult, null, 4)}
 
 								hr
 
@@ -86,11 +86,11 @@ block content
 
 						div(id="tab-help-content", class="tab-pane", role="tabpanel")
 							pre
-								code(data-lang="txt", class="json") #{methodhelp.string}
+								code(data-lang="txt", class="json bg-light") #{methodhelp.string}
 
 						div(id="tab-parsed-args", class="tab-pane", role="tabpanel")
 							pre
-								code(data-lang="json", class="json") #{JSON.stringify(methodhelp.args, null, 4)}
+									code(data-lang="json", class="json bg-light") #{JSON.stringify(methodhelp.args, null, 4)}
 
 					
 							

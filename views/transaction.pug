@@ -199,11 +199,11 @@ block content
 							h2(class="h6 mb-0") Coinbase
 						div(class="card-body")
 							h6 Hex
-							div(style="background-color: #f0f0f0; padding: 5px 10px;", class="mb-3")
+							div(class="bg-light px-4 py-3 mb-3")
 								span(class="monospace word-wrap") #{result.getrawtransaction.vin[0].coinbase}
 
 							h6 Decoded
-							div(style="background-color: #f0f0f0; padding: 5px 10px;", class="mb-3")
+							div(class="bg-light px-4 py-3 mb-3")
 								span(class="monospace word-wrap") #{utils.hex2ascii(result.getrawtransaction.vin[0].coinbase)}
 
 				div(class="card mb-3 shadow-sm")
@@ -259,7 +259,7 @@ block content
 
 											else if (vin.coinbase)
 												div(class="monospace", style="line-height: 1.75em;")
-													span(class="rounded bg-primary text-light px-2 py-1 mr-2") coinbase
+													span(class="rounded bg-primary text-white px-2 py-1 mr-2") coinbase
 													br
 													span(class="word-wrap") #{vin.coinbase}
 													br
@@ -292,7 +292,7 @@ block content
 			div(id="tab-json", class="tab-pane", role="tabpanel")
 				div(class="highlight")
 					pre
-						code(class="json", data-lang="json") #{JSON.stringify(result.getrawtransaction, null, 4)}
+						code(class="json bg-light", data-lang="json") #{JSON.stringify(result.getrawtransaction, null, 4)}
 
 				//pre #{JSON.stringify(result.txInputs, null, 4)}
 

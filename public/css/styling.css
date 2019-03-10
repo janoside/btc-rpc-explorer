@@ -240,3 +240,7 @@ footer a:hover {
 .table-striped>tbody>tr:nth-child(odd)>th {
 	/*background-color: #fbfbfb;*/
 }
+
+.hljs-type, .hljs-string, .hljs-number, .hljs-selector-id, .hljs-selector-class, .hljs-quote, .hljs-template-tag, .hljs-deletion {
+	color: #3aa54f;
+}

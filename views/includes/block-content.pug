@@ -210,8 +210,8 @@ div(class="tab-content")
 			div(class="card-body")
 				each tx, txIndex in result.transactions
 					//pre
-					//	code(class="json") #{JSON.stringify(tx, null, 4)}
-					div(class="xcard mb-4 bg-light rounded shadow-sm")
+					//	code(class="json bg-light") #{JSON.stringify(tx, null, 4)}
+					div(class=("xcard bg-light rounded shadow-sm " + ((txIndex < (result.transactions.length - 1) || txCount > limit) ? "mb-4" : "")))
 						div(class="card-header monospace")
 							if (tx && tx.txid)
 								span ##{(txIndex + offset + 1).toLocaleString()}
@@ -225,7 +225,7 @@ div(class="tab-content")
 									
 						div(class="card-body px-lg-3 px-2")
 							//pre
-							//	code(class="json") #{JSON.stringify(result.txInputsByTransaction[tx.txid], null, 4)}
+							//	code(class="json bg-light") #{JSON.stringify(result.txInputsByTransaction[tx.txid], null, 4)}
 							if (true)
 								- var txInputs = result.txInputsByTransaction[tx.txid];
 								- var blockHeight = result.getblock.height;
@@ -233,21 +233,21 @@ div(class="tab-content")
 								include ./transaction-io-details.pug
 								
 					//pre
-					//	code(class="json") #{JSON.stringify(tx, null, 4)}
+					//	code(class="json bg-light") #{JSON.stringify(tx, null, 4)}
 
-			if (!crawlerBot && txCount > limit)
-				- var pageNumber = offset / limit + 1;
-				- var pageCount = Math.floor(txCount / limit);
-				- if (pageCount * limit < txCount) {
-					- pageCount++;
-				- }
-				- var paginationUrlFunction = function(x) {
-					- return paginationBaseUrl + "?limit=" + limit + "&offset=" + ((x - 1) * limit);
-				- }
-				
-				hr
+				if (!crawlerBot && txCount > limit)
+					- var pageNumber = offset / limit + 1;
+					- var pageCount = Math.floor(txCount / limit);
+					- if (pageCount * limit < txCount) {
+						- pageCount++;
+					- }
+					- var paginationUrlFunction = function(x) {
+						- return paginationBaseUrl + "?limit=" + limit + "&offset=" + ((x - 1) * limit);
+					- }
+					
+					hr
 
-				include ./pagination.pug
+					include ./pagination.pug
 					
 	div(id="tab-json", class="tab-pane", role="tabpanel")
 		- var blockDetails = JSON.parse(JSON.stringify(result.getblock));
@@ -262,9 +262,9 @@ div(class="tab-content")
 		div(class="tab-content")
 			div(id="tab-json-block-summary", class="tab-pane active", role="tabpanel")
 				pre
-					code(class="json") #{JSON.stringify(blockDetails, null, 4)}
+					code(class="json bg-light") #{JSON.stringify(blockDetails, null, 4)}
 
 			div(id="tab-json-tx-ids", class="tab-pane", role="tabpanel")
 				pre
-					code(class="json") #{JSON.stringify(result.getblock.tx, null, 4)}
+					code(class="json bg-light") #{JSON.stringify(result.getblock.tx, null, 4)}
 

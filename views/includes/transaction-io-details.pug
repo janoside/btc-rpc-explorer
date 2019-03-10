@@ -39,7 +39,7 @@ div(class="row monospace")
 							div(class="row pr-3")
 								div(class="tx-io-desc")
 									if (txVin.coinbase)
-										span(class="rounded bg-primary text-light px-2 py-1 mr-2") coinbase
+										span(class="rounded bg-primary text-white px-2 py-1 mr-2") coinbase
 										span Newly minted coins
 									else
 										if (vout && vout.scriptPubKey && vout.scriptPubKey.addresses)
@@ -163,7 +163,7 @@ div(class="row monospace")
 
 									else if (vout.scriptPubKey.hex && vout.scriptPubKey.hex.startsWith('6a24aa21a9ed'))
 										span(class="monospace")
-											span(class="rounded bg-dark text-light px-2 py-1 mr-2") OP_RETURN
+											span(class="rounded bg-primary text-white px-2 py-1 mr-2") OP_RETURN
 											span(title="Segregated Witness", data-toggle="tooltip") SegWit 
 											span committment 
 
@@ -172,7 +172,7 @@ div(class="row monospace")
 
 									else if (vout.scriptPubKey.asm && vout.scriptPubKey.asm.startsWith('OP_RETURN '))
 										span(class="monospace")
-											span(class="rounded bg-dark text-light px-2 py-1 mr-2") OP_RETURN
+											span(class="rounded bg-primary text-white px-2 py-1 mr-2") OP_RETURN
 											span #{utils.hex2ascii(vout.scriptPubKey.asm.substring("OP_RETURN ".length))}
 
 									else
