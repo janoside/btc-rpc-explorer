@@ -30,7 +30,7 @@ div(class="table-responsive")
 						td(class="data-cell monospace text-right") #{timeAgo.format()}
 						td(class="data-cell monospace")
 							if (block.miner && block.miner.name)
-								span(data-toggle="tooltip", title=("Identified by: " + block.miner.identifiedBy), class="rounded bg-primary px-2 py-1") #{block.miner.name}
+								span(data-toggle="tooltip", title=("Identified by: " + block.miner.identifiedBy), class="rounded bg-primary text-white px-2 py-1") #{block.miner.name}
 							else
 								span ?
 

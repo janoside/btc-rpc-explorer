@@ -32,12 +32,12 @@ block content
 						a(href="https://github.com/janoside/btc-rpc-explorer", class="btn btn-primary mr-3 mb-1")
 							i(class="fas fa-star mr-2")
 							span(class="mr-2") Star 
-							span.font-weight-light #{global.sourcecodeProjectMetadata.stargazers_count}
+							span(class="badge bg-white text-dark") #{global.sourcecodeProjectMetadata.stargazers_count}
 
 						a(href="https://github.com/janoside/btc-rpc-explorer/fork", class="btn btn-primary mr-3 mb-1")
 							i(class="fas fa-code-branch mr-2")
 							span(class="mr-2") Fork 
-							span.font-weight-light #{global.sourcecodeProjectMetadata.forks_count}
+							span(class="badge bg-white text-dark") #{global.sourcecodeProjectMetadata.forks_count}
 							
 						button.btn.btn-primary(type="button", class="btn btn-primary mb-1", data-toggle="modal", data-target="#exampleModalCenter")
 							i(class="fas fa-heart mr-2")
@@ -112,11 +112,13 @@ block content
 						span(class="font-weight-bold") Chainwork
 						
 						p(class="lead")
-							span(data-toggle="tooltip", title=getblockchaininfo.chainwork.replace(/^0+/, ''))
+							span(class="mr-2")
 								span #{chainworkData[0]}
 								span  x 10
 								sup #{chainworkData[1].exponent}
 								span  hashes
+
+							i(class="fas fa-info-circle fa-xs", data-toggle="tooltip", title=getblockchaininfo.chainwork.replace(/^0+/, ''))
 					
 					div(class=networkSummaryColumnClass)
 						div(class="float-left", style="height: 40px; width: 40px; font-size: 12px;")
@@ -128,10 +130,12 @@ block content
 						span(class="font-weight-bold") Difficulty
 
 						p(class="lead")
-							span(title=parseFloat(getblockchaininfo.difficulty).toLocaleString(), data-toggle="tooltip")
+							span(class="mr-2")
 								span #{difficultyData[0]}
 								span  x 10
 								sup #{difficultyData[1].exponent}
+
+							i(class="fas fa-info-circle fa-xs monospace", data-toggle="tooltip", title=parseFloat(getblockchaininfo.difficulty).toLocaleString())
 
 					if (getblockchaininfo.size_on_disk)
 						div(class=networkSummaryColumnClass)
