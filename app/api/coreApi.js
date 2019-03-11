@@ -1,6 +1,4 @@
 var debug = require("debug")("btcexp:coreApi");
-var redis = require("redis");
-var bluebird = require("bluebird");
 
 var LRU = require("lru-cache");
 var fs = require('fs');
@@ -8,17 +6,12 @@ var fs = require('fs');
 var utils = require("../utils.js");
 var config = require("../config.js");
 var coins = require("../coins.js");
+var redisCache = require("../redisCache.js");
 
 // choose one of the below: RPC to a node, or mock data while testing
 var rpcApi = require("./rpcApi.js");
 //var rpcApi = require("./mockApi.js");
 
-var redisClient = null;
-if (config.redisUrl) {
-	bluebird.promisifyAll(redis.RedisClient.prototype);
-
-	redisClient = redis.createClient({url:config.redisUrl});
-}
 
 function onCacheEvent(cacheType, hitOrMiss, cacheKey) {
 	//console.log(`cache.${cacheType}.${hitOrMiss}: ${cacheKey}`);
@@ -68,35 +61,7 @@ if (config.noInmemoryRpcCache) {
 	txCache = createMemoryLruCache(LRU(200));
 }
 
-if (redisClient) {
-	var redisCache = {
-		get:function(key) {
-			return new Promise(function(resolve, reject) {
-				redisClient.getAsync(key).then(function(result) {
-					if (result == null) {
-						onCacheEvent("redis", "miss", key);
-
-						resolve(result);
-
-						return;
-					}
-
-					onCacheEvent("redis", "hit", key);
-
-					resolve(JSON.parse(result));
-
-				}).catch(function(err) {
-					console.log(`Error 328rhwefghsdgsdss: ${err}`);
-
-					reject(err);
-				});
-			});
-		},
-		set:function(key, obj, maxAge) {
-			redisClient.set(key, JSON.stringify(obj), "PX", maxAge);
-		}
-	};
-
+if (redisCache.active) {
 	miscCache = redisCache;
 	blockCache = redisCache;
 	txCache = redisCache;

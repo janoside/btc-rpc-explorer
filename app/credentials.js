@@ -38,7 +38,7 @@ module.exports = {
 	// to include a map of the estimated locations of your node's
 	// peers
 	// format: "ID_FROM_IPSTACK"
-	ipStackComApiAccessKey: process.env.BTCEXP_IPSTACK_KEY,
+	ipStackComApiAccessKey: process.env.BTCEXP_IPSTACK_APIKEY,
 
 	// optional: GA tracking code
 	// format: "UA-..."

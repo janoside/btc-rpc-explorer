@@ -5,8 +5,8 @@ var qrcode = require("qrcode");
 var config = require("./config.js");
 var coins = require("./coins.js");
 var coinConfig = coins[config.coin];
+var redisCache = require("./redisCache.js");
 
-var ipCache = {};
 
 var exponentScales = [
 	{val:1000000000000000000000000000000000, name:"?", abbreviation:"V", exponent:"33"},
@@ -21,6 +21,43 @@ var exponentScales = [
 	{val:1000000, name:"mega", abbreviation:"M", exponent:"6"},
 	{val:1000, name:"kilo", abbreviation:"K", exponent:"3"}
 ];
+
+var ipMemoryCache = {};
+var ipCache = {
+	get:function(key) {
+		return new Promise(function(resolve, reject) {
+			if (ipMemoryCache[key] != null) {
+				resolve({key:key, value:ipMemoryCache[key]});
+
+				return;
+			}
+
+			if (redisCache.active) {
+				redisCache.get("ip-" + key).then(function(redisResult) {
+					if (redisResult != null) {
+						resolve({key:key, value:redisResult});
+
+						return;
+					}
+
+					resolve({key:key, value:null});
+				});
+
+			} else {
+				resolve({key:key, value:null});
+			}
+		});
+	},
+	set:function(key, value, expirationMillis) {
+		ipMemoryCache[key] = value;
+
+		if (redisCache.active) {
+			redisCache.set("ip-" + key, value, expirationMillis);
+		}
+	}
+};
+
+
 
 function redirectToConnectPageIfNeeded(req, res) {
 	if (!req.session.host) {
@@ -340,8 +377,8 @@ function refreshExchangeRates() {
 	}
 }
 
-// Uses ip-api.com API
-function geoLocateIpAddresses(ipAddresses) {
+// Uses ipstack.com API
+function geoLocateIpAddresses(ipAddresses, provider) {
 	return new Promise(function(resolve, reject) {
 		if (config.privacyMode) {
 			resolve({});
@@ -349,53 +386,48 @@ function geoLocateIpAddresses(ipAddresses) {
 			return;
 		}
 
-		var chunks = splitArrayIntoChunks(ipAddresses, 1);
+		var ipDetails = {ips:ipAddresses, detailsByIp:{}};
 
 		var promises = [];
-		for (var i = 0; i < chunks.length; i++) {
-			var ipStr = "";
-			for (var j = 0; j < chunks[i].length; j++) {
-				if (j > 0) {
-					ipStr = ipStr + ",";
-				}
+		for (var i = 0; i < ipAddresses.length; i++) {
+			var ipStr = ipAddresses[i];
+			
+			promises.push(new Promise(function(resolve2, reject2) {
+				ipCache.get(ipStr).then(function(result) {
+					if (result.value == null) {
+						var apiUrl = "http://api.ipstack.com/" + result.key + "?access_key=" + config.credentials.ipStackComApiAccessKey;
+						
+						console.log("Requesting IP-geo: " + apiUrl);
 
-				ipStr = ipStr + chunks[i][j];
-			}
+						request(apiUrl, function(error, response, body) {
+							if (error) {
+								reject2(error);
 
-			if (ipCache[ipStr] != null) {
-				promises.push(new Promise(function(resolve2, reject2) {
-					resolve2(ipCache[ipStr]);
-				}));
+							} else {
+								resolve2({needToProcess:true, response:response});
+							}
+						});
 
-			} else {
-				var apiUrl = "http://ip-api.com/json/" + ipStr;
-				promises.push(new Promise(function(resolve2, reject2) {
-					request(apiUrl, function(error, response, body) {
-						if (error) {
-							reject2(error);
+					} else {
+						ipDetails.detailsByIp[result.key] = result.value;
 
-						} else {
-							resolve2(response);
-						}
-					});
-				}));
-			}
+						resolve2({needToProcess:false});
+					}
+				});
+			}));
 		}
 
 		Promise.all(promises).then(function(results) {
-			var ipDetails = {ips:[], detailsByIp:{}};
-
 			for (var i = 0; i < results.length; i++) {
-				var res = results[i];
-				if (res != null && res["statusCode"] == 200) {
-					var resBody = JSON.parse(res["body"]);
-					var ip = resBody["query"];
+				if (results[i].needToProcess) {
+					var res = results[i].response;
+					if (res != null && res["statusCode"] == 200) {
+						var resBody = JSON.parse(res["body"]);
+						var ip = resBody["ip"];
 
-					ipDetails.ips.push(ip);
-					ipDetails.detailsByIp[ip] = resBody;
+						ipDetails.detailsByIp[ip] = resBody;
 
-					if (ipCache[ip] == null) {
-						ipCache[ip] = res;
+						ipCache.set(ip, resBody, 1000 * 60 * 60 * 24 * 365);
 					}
 				}
 			}
@@ -403,6 +435,8 @@ function geoLocateIpAddresses(ipAddresses) {
 			resolve(ipDetails);
 
 		}).catch(function(err) {
+			console.log("Error 80342hrf78wgehdf07gds: " + err);
+
 			reject(err);
 		});
 	});

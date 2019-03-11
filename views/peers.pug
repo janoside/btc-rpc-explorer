@@ -115,12 +115,13 @@ block content
 											- var ipAddr = item.addr.substring(0, item.addr.lastIndexOf(":"));
 											if (peerIpSummary.ips && peerIpSummary.ips.includes(ipAddr))
 												- var ipDetails = peerIpSummary.detailsByIp[ipAddr];
-												if (ipDetails.city)
-													span #{ipDetails.city}, 
-												if (ipDetails.region)
-													span #{ipDetails.region}, 
-												if (ipDetails.country)
-													span #{ipDetails.country}
+												if (ipDetails)
+													if (ipDetails.city)
+														span #{ipDetails.city}, 
+													if (ipDetails.region_name)
+														span #{ipDetails.region_name}, 
+													if (ipDetails.country_name)
+														span #{ipDetails.country_name}
 											else
 												span ?
 
@@ -182,18 +183,18 @@ block endOfBody
 
 		each ipAddress, index in peerIpSummary.ips
 			- var ipDetails = peerIpSummary.detailsByIp[ipAddress];
-			if (ipDetails && ipDetails.lat && ipDetails.lon)
+			if (ipDetails && ipDetails.latitude && ipDetails.longitude)
 				- var ipDetailsPopupHtml = "<b>" + ipAddress + "</b><br>";
 				if (ipDetails.city)
 					- var ipDetailsPopupHtml = ipDetailsPopupHtml + ipDetails.city + ", ";
 
-				if (ipDetails.region)
-					- var ipDetailsPopupHtml = ipDetailsPopupHtml + ipDetails.region + ", ";
+				if (ipDetails.region_name)
+					- var ipDetailsPopupHtml = ipDetailsPopupHtml + ipDetails.region_name + ", ";
 
-				if (ipDetails.country)
-					- var ipDetailsPopupHtml = ipDetailsPopupHtml + ipDetails.countryCode + " ";
+				if (ipDetails.country_name)
+					- var ipDetailsPopupHtml = ipDetailsPopupHtml + ipDetails.country_name + " ";
 
-				script L.marker([#{ipDetails.lat}, #{ipDetails.lon}]).addTo(mymap).bindPopup("!{ipDetailsPopupHtml}");
+				script L.marker([#{ipDetails.latitude}, #{ipDetails.longitude}]).addTo(mymap).bindPopup("!{ipDetailsPopupHtml}");
 		
 
 
