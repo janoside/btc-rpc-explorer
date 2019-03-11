@@ -5,10 +5,12 @@ block content
 	hr
 
 	if (message)
-		p !{message}
+		pre
+			code(class="json bg-light") !{message}
 	else
 		p Unknown error
 
 	if (error)
 		h2 #{error.status}
-		pre #{error.stack}
+		pre
+			code(class="json bg-light") #{error.stack}
