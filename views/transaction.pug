@@ -159,19 +159,19 @@ block content
 											i(class="fas fa-info-circle")
 
 							if (minerInfo)
-							- var minerInfo = utils.getMinerFromCoinbaseTx(result.getrawtransaction);
-							div(class="row")
-								div(class="summary-table-label") Miner
-								div(class="summary-table-content monospace")
-									if (minerInfo)
-										span #{minerInfo.name} 
-										if (minerInfo.identifiedBy)
-											span(data-toggle="tooltip", title=("Identified by: " + minerInfo.identifiedBy))
+								- var minerInfo = utils.getMinerFromCoinbaseTx(result.getrawtransaction);
+								div(class="row")
+									div(class="summary-table-label") Miner
+									div(class="summary-table-content monospace")
+										if (minerInfo)
+											span #{minerInfo.name} 
+											if (minerInfo.identifiedBy)
+												span(data-toggle="tooltip", title=("Identified by: " + minerInfo.identifiedBy))
+													i(class="fas fa-info-circle")
+										else
+											span ? 
+											span(data-toggle="tooltip", title="Unable to identify miner")
 												i(class="fas fa-info-circle")
-									else
-										span ? 
-										span(data-toggle="tooltip", title="Unable to identify miner")
-											i(class="fas fa-info-circle")
 
 						else
 
@@ -184,18 +184,18 @@ block content
 									include includes/value-display.pug
 
 									if (feePaid > 0)
-									span.ml-2(title=(utils.formatCurrencyAmount(totalInputValue, currencyFormatType) + " - " + utils.formatCurrencyAmount(totalOutputValue, currencyFormatType)), data-toggle="tooltip")
-										i(class="fas fa-ellipsis-h")
+										span.ml-2(title=(utils.formatCurrencyAmount(totalInputValue, currencyFormatType) + " - " + utils.formatCurrencyAmount(totalOutputValue, currencyFormatType)), data-toggle="tooltip")
+											i(class="fas fa-ellipsis-h")
 
 							if (feePaid > 0)
-							div(class="row")
-								div(class="summary-table-label") Fee Rate
-								div(class="summary-table-content monospace")
-									if (result.getrawtransaction.vsize != result.getrawtransaction.size)
-										span #{utils.addThousandsSeparators(new DecimalRounded(totalInputValue).minus(totalOutputValue).dividedBy(result.getrawtransaction.vsize).times(100000000))} sat/VB
-										br
+								div(class="row")
+									div(class="summary-table-label") Fee Rate
+									div(class="summary-table-content monospace")
+										if (result.getrawtransaction.vsize != result.getrawtransaction.size)
+											span #{utils.addThousandsSeparators(new DecimalRounded(totalInputValue).minus(totalOutputValue).dividedBy(result.getrawtransaction.vsize).times(100000000))} sat/VB
+											br
 
-									span #{utils.addThousandsSeparators(new DecimalRounded(totalInputValue).minus(totalOutputValue).dividedBy(result.getrawtransaction.size).times(100000000))} sat/B
+										span #{utils.addThousandsSeparators(new DecimalRounded(totalInputValue).minus(totalOutputValue).dividedBy(result.getrawtransaction.size).times(100000000))} sat/B
 
 
 				if (result.getrawtransaction.vin[0].coinbase)
@@ -258,17 +258,17 @@ block content
 												i(class=("fas fa-" + fontawesomeInputName + " mr-2"))
 												span #{(vinIndex + 1)}
 
-										td
+										td(class="word-wrap text-break monospace")
 											if (vin.scriptSig && vin.scriptSig.asm)
-												span(class="word-wrap monospace") #{vin.scriptSig.asm}
+												span #{vin.scriptSig.asm}
 
 											else if (vin.coinbase)
 												div(class="monospace", style="line-height: 1.75em;")
 													span(class="rounded bg-primary text-white px-2 py-1 mr-2") coinbase
 													br
-													span(class="word-wrap") #{vin.coinbase}
+													span #{vin.coinbase}
 													br
-													span(class="word-wrap text-muted") (decoded) #{utils.hex2ascii(vin.coinbase)}
+													span(class="text-muted") (decoded) #{utils.hex2ascii(vin.coinbase)}
 
 				div(class="card mb-3 shadow-sm")
 					div(class="card-header")
@@ -287,12 +287,12 @@ block content
 												i(class=("fas fa-" + fontawesomeOutputName + " mr-2"))
 												span #{(voutIndex + 1)}
 
-										td
+										td(class="word-wrap monospace")
 											if (vout.scriptPubKey && vout.scriptPubKey.asm)
-												span(class="word-wrap monospace") #{vout.scriptPubKey.asm}
+												span #{vout.scriptPubKey.asm}
 												if (vout.scriptPubKey.asm.startsWith("OP_RETURN"))
 													br
-													span(class="word-wrap monospace text-muted") (decoded) #{utils.hex2ascii(vout.scriptPubKey.asm)}
+													span(class="text-muted") (decoded) #{utils.hex2ascii(vout.scriptPubKey.asm)}
 
 			div(id="tab-json", class="tab-pane", role="tabpanel")
 				div(class="highlight")
