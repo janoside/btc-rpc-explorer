@@ -108,7 +108,11 @@ html(lang="en")
 							a(href=item.url, class="nav-link")
 								span #{item.name}
 		
-		div(class="pb-4 pt-3 pt-md-4", style="background-color: #0c0c0c;")
+		- var bodyBgColor = "#ffffff;";
+		if (session.uiTheme && session.uiTheme == "dark")
+			- bodyBgColor = "#0c0c0c;";
+
+		div(class="pb-4 pt-3 pt-md-4", style=("background-color: " + bodyBgColor))
 			div(class="container px-2 px-sm-3")
 				if (userMessage)
 					div(class="alert", class=(userMessageType ? ("alert-"  + userMessageType) : "alert-warning"), role="alert")
