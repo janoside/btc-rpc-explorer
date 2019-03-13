@@ -39,7 +39,7 @@ for (var i = 0; i < electrumXServerUriStrings.length; i++) {
 	}
 });
 
-["BTCEXP_NO_RATES"].forEach(function(item) {
+["BTCEXP_NO_RATES", "BTCEXP_UI_SHOW_TOOLS_SUBHEADER"].forEach(function(item) {
 	if (process.env[item] === undefined) {
 		process.env[item] = "true";
 	}
@@ -137,6 +137,7 @@ module.exports = {
 			txOutputMaxDefaultDisplay:10
 		},
 		header:{
+			showToolsSubheader:(process.env.BTCEXP_UI_SHOW_TOOLS_SUBHEADER == "true"),
 			dropdowns:[
 				{
 					title:"Related Sites",

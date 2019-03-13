@@ -100,29 +100,26 @@ html(lang="en")
 											i(class="fas fa-check")
 										span  Dark
 		
-		if (host && port && !homepage)
-			div(id="sub-menu", class="container mb-3 d-lg-block d-none", style="margin-top: -1.0rem;")
+		if (host && port && !homepage && config.site.header.showToolsSubheader)
+			div(id="sub-menu", class="container mb-2 pt-2 d-lg-block d-none border-top", style="")
 				ul(class="nav")
 					each item, index in config.siteTools
 						li(class="nav-item")
 							a(href=item.url, class="nav-link")
 								span #{item.name}
-					
-
-				hr
-				
+		
 		div(class="pb-4 pt-3 pt-md-4", style="background-color: #0c0c0c;")
 			div(class="container px-2 px-sm-3")
-			if (userMessage)
-				div(class="alert", class=(userMessageType ? ("alert-"  + userMessageType) : "alert-warning"), role="alert")
-					span !{userMessage}
-			
-			block content
+				if (userMessage)
+					div(class="alert", class=(userMessageType ? ("alert-"  + userMessageType) : "alert-warning"), role="alert")
+						span !{userMessage}
+				
+				block content
 
-			div(style="margin-bottom: 30px;")
+				div(style="margin-bottom: 30px;")
 
-			if (config.demoSite)
-				include ./includes/donation-modal.pug
+				if (config.demoSite)
+					include ./includes/donation-modal.pug
 
 		footer(class="footer border-top border-primary bg-dark pt-3 pb-1 px-3 text-white", style="border-width: 5px !important;")
 			div(class="container")
