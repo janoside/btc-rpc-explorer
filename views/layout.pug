@@ -24,8 +24,8 @@ html(lang="en")
 		block headContent
 			title Explorer
 		
-	body
-		nav(class="navbar navbar-expand-lg navbar-dark bg-dark mb-3 mb-md-4")
+	body(class="bg-dark")
+		nav(class="navbar navbar-expand-lg navbar-dark bg-dark")
 			div(class="container")
 				a(class="navbar-brand", href="/")
 					span
@@ -111,7 +111,8 @@ html(lang="en")
 
 				hr
 				
-		div(class="container")
+		div(class="pb-4 pt-3 pt-md-4", style="background-color: #0c0c0c;")
+			div(class="container px-2 px-sm-3")
 			if (userMessage)
 				div(class="alert", class=(userMessageType ? ("alert-"  + userMessageType) : "alert-warning"), role="alert")
 					span !{userMessage}
@@ -123,7 +124,7 @@ html(lang="en")
 			if (config.demoSite)
 				include ./includes/donation-modal.pug
 
-		footer(class="footer border-top border-primary bg-dark pt-3 pb-1 px-3 text-white", style="margin-top: 50px; border-width: 5px !important;")
+		footer(class="footer border-top border-primary bg-dark pt-3 pb-1 px-3 text-white", style="border-width: 5px !important;")
 			div(class="container")
 				div(class="row")
 					div(class="col-md-5")
