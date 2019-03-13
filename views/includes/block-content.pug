@@ -81,7 +81,7 @@ div(class="tab-content")
 						if (coinbaseTxTotalOutputValue < blockRewardMax)
 							div(class="row")
 								div(class="summary-split-table-label") Fees Destroyed
-								div(class="summary-split-table-content monospace text-danger")
+								div(class="summary-split-table-content monospace text-warning")
 									- var currencyValue = new Decimal(blockRewardMax).minus(coinbaseTxTotalOutputValue);
 									include ./value-display.pug
 
@@ -112,7 +112,7 @@ div(class="tab-content")
 							div(class="summary-split-table-label") Confirmations
 							div(class="summary-split-table-content monospace")
 								if (result.getblock.confirmations < 6)
-									span(class="font-weight-bold text-danger") #{result.getblock.confirmations.toLocaleString()} 
+									span(class="font-weight-bold text-warning") #{result.getblock.confirmations.toLocaleString()} 
 										a(data-toggle="tooltip", title="Fewer than 6 confirmations is generally considered 'unsettled' for high-value transactions. The applicability of this guidance may vary.")
 											i(class="fas fa-unlock-alt")
 								else

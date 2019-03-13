@@ -159,7 +159,7 @@ block content
 											div(class="row")
 												div(class="summary-split-table-label") Balance
 												div(class="summary-split-table-content monospace")
-													span(class="text-danger") Conflicted ElectrumX Results
+													span(class="text-warning") Conflicted ElectrumX Results
 
 													each item in balance.conflictedResults
 														- var currencyValue = item.confirmed / coinConfig.baseCurrencyUnit.multiplier;
@@ -207,7 +207,7 @@ block content
 												if (flags[index])
 													i(class="fas fa-check text-success")
 												else
-													i(class="fas fa-times text-danger")
+													i(class="fas fa-times text-warning")
 
 					if (false)
 						div(class="card mb-3 shadow-sm")
@@ -233,7 +233,7 @@ block content
 														if (flag)
 															i(class="fas fa-check text-success")
 														else
-															i(class="fas fa-times text-danger")
+															i(class="fas fa-times text-warning")
 
 					div(class="card mb-3 shadow-sm")
 						div(class="card-header clearfix")
@@ -366,16 +366,16 @@ block content
 
 				div(id="tab-json", class="tab-pane", role="tabpanel")
 					div(class="highlight")
-						h4 Node.ValidateAddress
+						h4 validateaddress
 						pre
 							code(class="json bg-light", data-lang="json") #{JSON.stringify(result.validateaddress, null, 4)}
 
 						if (config.electrumXServers && config.electrumXServers.length > 0)
-							h4 Electrum.Balance
+							h4 ElectrumX-balance
 							pre
 								code(class="json bg-light", data-lang="json") #{JSON.stringify(electrumBalance, null, 4)}
 
-							h4 Electrum.History
+							h4 ElectrumX-history
 							pre
 								code(class="json bg-light", data-lang="json") #{JSON.stringify(electrumHistory, null, 4)}
 

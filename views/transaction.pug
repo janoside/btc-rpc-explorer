@@ -76,7 +76,7 @@ block content
 							div(class="row")
 								div(class="summary-table-label") Status
 								div(class="summary-table-content monospace")
-									span(class="text-danger") Unconfirmed
+									span(class="text-warning") Unconfirmed
 
 						if (isTxConfirmed)
 							div(class="row")
@@ -103,13 +103,14 @@ block content
 						div(class="row")
 							div(class="summary-table-label") Size
 							div(class="summary-table-content monospace")
-								span #{result.getrawtransaction.size.toLocaleString()} B
 								if (result.getrawtransaction.vsize != result.getrawtransaction.size)
+									span #{result.getrawtransaction.vsize.toLocaleString()} 
+									span(title="Virtual Bytes", data-toggle="tooltip") vB
 									br
-									span(class="text-muted")
-										span (
-										span(title="virtual size", data-toggle="tooltip") vsize
-										span : #{result.getrawtransaction.vsize.toLocaleString()} VB)
+									span(class="text-muted") (#{result.getrawtransaction.size.toLocaleString()} B)
+
+								else
+									span #{result.getrawtransaction.size.toLocaleString()} B
 
 						if (result.getrawtransaction.locktime > 0)
 							div(class="row")
@@ -131,7 +132,7 @@ block content
 								div(class="summary-table-label") Confirmations
 								div(class="summary-table-content monospace")
 									if (!result.getrawtransaction.confirmations || result.getrawtransaction.confirmations == 0)
-										strong(class="text-danger") 0 (unconfirmed)
+										strong(class="text-warning") 0 (unconfirmed)
 
 									else if (result.getrawtransaction.confirmations < 6)
 										strong(class="text-warning") #{result.getrawtransaction.confirmations}
@@ -192,10 +193,10 @@ block content
 									div(class="summary-table-label") Fee Rate
 									div(class="summary-table-content monospace")
 										if (result.getrawtransaction.vsize != result.getrawtransaction.size)
-											span #{utils.addThousandsSeparators(new DecimalRounded(totalInputValue).minus(totalOutputValue).dividedBy(result.getrawtransaction.vsize).times(100000000))} sat/VB
+											span #{utils.addThousandsSeparators(new DecimalRounded(totalInputValue).minus(totalOutputValue).dividedBy(result.getrawtransaction.vsize).times(100000000))} sat/vB
 											br
 
-										span #{utils.addThousandsSeparators(new DecimalRounded(totalInputValue).minus(totalOutputValue).dividedBy(result.getrawtransaction.size).times(100000000))} sat/B
+										span(class="text-muted") (#{utils.addThousandsSeparators(new DecimalRounded(totalInputValue).minus(totalOutputValue).dividedBy(result.getrawtransaction.size).times(100000000))} sat/B)
 
 
 				if (result.getrawtransaction.vin[0].coinbase)
