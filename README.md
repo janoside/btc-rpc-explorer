@@ -1,5 +1,8 @@
 # BTC RPC Explorer
 
+[![npm version][npm-ver-img]][npm-ver-url] [![NPM downloads][npm-dl-img]][npm-dl-url]
+
+
 Simple, database-free Bitcoin blockchain explorer, via RPC. Built with Node.js, express, bootstrap-v4.
 
 This tool is intended to be a simple, self-hosted explorer for the Bitcoin blockchain, driven by RPC calls to your own bitcoind node. This tool is easy to run but currently lacks features compared to database-backed explorers.
@@ -66,11 +69,13 @@ See `btc-rpc-explorer --help` for the full list of CLI options.
 1. `docker build -t btc-rpc-explorer .`
 2. `docker run -p 3002:3002 -it btc-rpc-explorer`
 
-# Donate
+# Support
 
-Any support for continued development of this tool is appreciated!
+* [3NPGpNyLLmVKCEcuipBs7G4KpQJoJXjDGe](bitcoin:3NPGpNyLLmVKCEcuipBs7G4KpQJoJXjDGe)
 
-* [Bitcoin](bitcoin:3NPGpNyLLmVKCEcuipBs7G4KpQJoJXjDGe): 3NPGpNyLLmVKCEcuipBs7G4KpQJoJXjDGe
 
-![Bitcoin Donation QR Code](/public/img/qr-btc.png)
+[npm-ver-img]: https://img.shields.io/npm/v/btc-rpc-explorer.svg?style=flat
+[npm-ver-url]: https://www.npmjs.com/package/btc-rpc-explorer
+[npm-dl-img]: http://img.shields.io/npm/dm/btc-rpc-explorer.svg?style=flat
+[npm-dl-url]: https://npmcharts.com/compare/btc-rpc-explorer?minimal=true
 
