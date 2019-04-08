@@ -38,11 +38,12 @@ block content
 							i(class="fas fa-code-branch mr-2")
 							span(class="mr-2") Fork 
 							span(class="badge bg-white text-dark") #{global.sourcecodeProjectMetadata.forks_count}
-							
-						button.btn.btn-primary(type="button", class="btn btn-primary mb-1", data-toggle="modal", data-target="#exampleModalCenter")
-							i(class="fas fa-heart mr-2")
-							span Donate via 
-							span(class="font-weight-light") BTCPay
+						
+						if (!crawlerBot)
+							button.btn.btn-primary(type="button", class="btn btn-primary mb-1", data-toggle="modal", data-target="#exampleModalCenter")
+								i(class="fas fa-heart mr-2")
+								span Donate via 
+								span(class="font-weight-light") BTCPay
 
 					
 

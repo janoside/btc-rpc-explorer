@@ -122,7 +122,7 @@ html(lang="en")
 
 				div(style="margin-bottom: 30px;")
 
-				if (config.demoSite)
+				if (config.demoSite && !crawlerBot)
 					include ./includes/donation-modal.pug
 
 		footer(class="footer border-top border-primary bg-dark pt-3 pb-1 px-3 text-white", style="border-width: 5px !important;")
