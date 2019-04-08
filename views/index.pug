@@ -80,7 +80,7 @@ block content
 
 						p(class="lead")
 							span #{hashrateData[0]} 
-							span(title=(hashrateData[1].name + "-hash / x10^" + hashrateData[1].exponent), data-toggle="tooltip") #{hashrateData[1].abbreviation}H/s
+							span.border-dotted(title=`${hashrateData[1].abbreviation}H = ${hashrateData[1].name}-hash (x10^${hashrateData[1].exponent})`, data-toggle="tooltip") #{hashrateData[1].abbreviation}H/s
 
 					if (txStats)
 						div(class=networkSummaryColumnClass)
@@ -112,13 +112,11 @@ block content
 						span(class="font-weight-bold") Chainwork
 						
 						p(class="lead")
-							span(class="mr-2")
+							span.mr-2.border-dotted(data-toggle="tooltip", title=getblockchaininfo.chainwork.replace(/^0+/, ''))
 								span #{chainworkData[0]}
 								span  x 10
 								sup #{chainworkData[1].exponent}
 								span  hashes
-
-							i(class="fas fa-info-circle fa-xs", data-toggle="tooltip", title=getblockchaininfo.chainwork.replace(/^0+/, ''))
 					
 					div(class=networkSummaryColumnClass)
 						div(class="float-left", style="height: 40px; width: 40px; font-size: 12px;")
@@ -130,12 +128,10 @@ block content
 						span(class="font-weight-bold") Difficulty
 
 						p(class="lead")
-							span(class="mr-2")
+							span.mr-2.border-dotted(data-toggle="tooltip", title=parseFloat(getblockchaininfo.difficulty).toLocaleString())
 								span #{difficultyData[0]}
 								span  x 10
 								sup #{difficultyData[1].exponent}
-
-							i(class="fas fa-info-circle fa-xs monospace", data-toggle="tooltip", title=parseFloat(getblockchaininfo.difficulty).toLocaleString())
 
 					if (getblockchaininfo.size_on_disk)
 						div(class=networkSummaryColumnClass)
@@ -153,9 +149,7 @@ block content
 								span
 									i(class="fas fa-money-bill-wave-alt fa-2x mr-2", style="margin-top: 7px;")
 
-							span(class="font-weight-bold") Exchange Rate 
-								span(data-toggle="tooltip", title=("Exchange-rate data from: " + coinConfig.exchangeRateData.jsonUrl))
-									i(class="fas fa-info-circle")
+							span.font-weight-bold.border-dotted(data-toggle="tooltip", title=("Exchange-rate data from: " + coinConfig.exchangeRateData.jsonUrl)) Exchange Rate 
 
 							if (global.exchangeRates)
 								p(class="lead") #{utils.formatExchangedCurrency(1.0, "usd")}

@@ -40,6 +40,10 @@ code, .monospace {
 	max-width: 1200px;
 }
 
+.border-dotted {
+	border-bottom: 1px dotted #777;
+}
+
 pre {
 	white-space: pre-wrap;
 	white-space: -moz-pre-wrap;
