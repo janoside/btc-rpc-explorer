@@ -149,9 +149,9 @@ function formatCurrencyAmountWithForcedDecimalPlaces(amount, formatType, forcedD
 		var dec = new Decimal(amount);
 
 		var decimalPlaces = formatInfo.decimalPlaces;
-		if (decimalPlaces == 0 && dec < 1) {
-			decimalPlaces = 5;
-		}
+		//if (decimalPlaces == 0 && dec < 1) {
+		//	decimalPlaces = 5;
+		//}
 
 		if (forcedDecimalPlaces >= 0) {
 			decimalPlaces = forcedDecimalPlaces;
@@ -166,7 +166,7 @@ function formatCurrencyAmountWithForcedDecimalPlaces(amount, formatType, forcedD
 			if (global.exchangeRates != null && global.exchangeRates[formatInfo.multiplier] != null) {
 				dec = dec.times(global.exchangeRates[formatInfo.multiplier]);
 
-				return formatInfo.symbol + addThousandsSeparators(dec.toDecimalPlaces(decimalPlaces));
+				return addThousandsSeparators(dec.toDecimalPlaces(decimalPlaces)) + " " + formatInfo.name;
 			}
 		}
 	}
