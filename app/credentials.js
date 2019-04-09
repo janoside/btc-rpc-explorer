@@ -23,6 +23,7 @@ module.exports = {
 		username: btcAuth[0] || process.env.BTCEXP_BITCOIND_USER,
 		password: btcAuth[1] || process.env.BTCEXP_BITCOIND_PASS,
 		cookie: btcUri.query.cookie || process.env.BTCEXP_BITCOIND_COOKIE || path.join(os.homedir(), '.bitcoin', '.cookie'),
+		timeout: parseInt(btcUri.query.timeout || process.env.BTCEXP_BITCOIND_RPC_TIMEOUT || 5000),
 	},
 
 	influxdb:{

@@ -286,13 +286,15 @@ app.runOnStartup = function() {
 	var rpcCred = config.credentials.rpc;
 	console.log(`Connecting via RPC to node at ${rpcCred.host}:${rpcCred.port}`);
 
-	global.client = new bitcoinCore({
+	var rpcClientProperties = {
 		host: rpcCred.host,
 		port: rpcCred.port,
 		username: rpcCred.username,
 		password: rpcCred.password,
-		timeout: 5000
-	});
+		timeout: rpcCred.timeout
+	};
+
+	global.client = new bitcoinCore(rpcClientProperties);
 
 	if (config.credentials.influxdb.active) {
 		global.influxdb = new Influx.InfluxDB(config.credentials.influxdb);
