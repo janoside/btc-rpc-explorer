@@ -167,6 +167,9 @@ function formatCurrencyAmountWithForcedDecimalPlaces(amount, formatType, forcedD
 				dec = dec.times(global.exchangeRates[formatInfo.multiplier]);
 
 				return addThousandsSeparators(dec.toDecimalPlaces(decimalPlaces)) + " " + formatInfo.name;
+
+			} else {
+				return formatCurrencyAmountWithForcedDecimalPlaces(amount, coinConfig.defaultCurrencyUnit.name, forcedDecimalPlaces);
 			}
 		}
 	}
