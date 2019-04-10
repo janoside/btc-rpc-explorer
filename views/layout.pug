@@ -48,7 +48,7 @@ html(lang="en")
 								li(class="nav-item dropdown")
 									a(class="nav-link dropdown-toggle", href="javascript:void(0)", role="button", data-toggle="dropdown", aria-haspopup="true", aria-expanded="false") 
 										span  Tools
-									div(class="dropdown-menu", aria-label="Tools Items")
+									div(class="dropdown-menu shadow", aria-label="Tools Items")
 										each item in config.siteTools
 											a(class="dropdown-item", href=item.url)
 												i(class=item.fontawesome, style="width: 20px; margin-right: 10px;")
@@ -59,7 +59,7 @@ html(lang="en")
 									li(class="nav-item dropdown")
 										a(class="nav-link dropdown-toggle", href="javascript:void(0)", role="button", data-toggle="dropdown", aria-haspopup="true", aria-expanded="false") 
 											span  #{dropdown.title}
-										div(class="dropdown-menu", aria-label=(dropdown.title + " Items"))
+										div(class="dropdown-menu shadow", aria-label=(dropdown.title + " Items"))
 											each dropdownLink in dropdown.links
 												a(class="dropdown-item", href=dropdownLink.url)
 													if (dropdownLink.imgUrl)
@@ -79,7 +79,7 @@ html(lang="en")
 							li(class="nav-item dropdown")
 								a(class="nav-link dropdown-toggle", href="javascript:void(0)", id="navbarDropdown", role="button", data-toggle="dropdown", aria-haspopup="true", aria-expanded="false") 
 									i(class="fas fa-cog mr-1") 
-								div(class="dropdown-menu", aria-labelledby="navbarDropdown")
+								div(class="dropdown-menu dropdown-menu-right shadow", aria-labelledby="navbarDropdown")
 									if (coinConfig.currencyUnits)
 										span(class="dropdown-header") Currency Units
 										each item in coinConfig.currencyUnits
