@@ -13,6 +13,11 @@ configPaths.filter(fs.existsSync).forEach(path => {
 	dotenv.config({ path });
 });
 
+// debug module is already loaded by the time we do dotenv.config
+// so refresh the status of DEBUG env var
+var debug = require("debug");
+debug.enable(process.env.DEBUG);
+
 var express = require('express');
 var favicon = require('serve-favicon');
 var logger = require('morgan');
