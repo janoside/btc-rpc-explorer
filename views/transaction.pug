@@ -151,13 +151,11 @@ block content
 							- var blockRewardMax = coinConfig.blockRewardFunction(result.getblock.height);
 							if (totalOutputValue < blockRewardMax)
 								div(class="row")
-									div(class="summary-table-label") Fees Destroyed
-									div(class="summary-table-content monospace")
+									div(class="summary-table-label")
+										span.border-dotted(data-toggle="tooltip" title="The miner of this transaction's block failed to collect this value. As a result, it is lost.") Fees Destroyed
+									div(class="summary-table-content monospace text-danger")
 										- var currencyValue = new Decimal(blockRewardMax).minus(totalOutputValue);
 										include includes/value-display.pug
-
-										a(class="ml-2", data-toggle="tooltip", title="The miner of this transaction's block failed to collect this value. As a result, it is lost.")
-											i(class="fas fa-info-circle")
 
 							if (minerInfo)
 								- var minerInfo = utils.getMinerFromCoinbaseTx(result.getrawtransaction);
