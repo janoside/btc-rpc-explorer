@@ -1,3 +1,8 @@
+var debug = require("debug");
+
+var debugLog = debug("btcexp:utils");
+var debugErrorLog = debug("btcexp:error");
+
 var Decimal = require("decimal.js");
 var request = require("request");
 var qrcode = require("qrcode");
@@ -303,7 +308,7 @@ function getTxTotalInputOutputValues(tx, txInputs, blockHeight) {
 							totalInputValue = totalInputValue.plus(new Decimal(vout.value));
 						}
 					} catch (err) {
-						console.log("Error getting tx.totalInputValue: err=" + err + ", txid=" + tx.txid + ", index=tx.vin[" + i + "]");
+						utils.logError("2397gs0gsse", err, {txid:tx.txid, vinIndex:i});
 					}
 				}
 			}
@@ -313,7 +318,7 @@ function getTxTotalInputOutputValues(tx, txInputs, blockHeight) {
 			totalOutputValue = totalOutputValue.plus(new Decimal(tx.vout[i].value));
 		}
 	} catch (err) {
-		console.log("Error computing total input/output values for tx: err=" + err + ", tx=" + JSON.stringify(tx) + ", txInputs=" + JSON.stringify(txInputs) + ", blockHeight=" + blockHeight);
+		utils.logError("2308sh0sg44", err, {tx:tx, txInputs:txInputs, blockHeight:blockHeight});
 	}
 
 	return {input:totalInputValue, output:totalOutputValue};
@@ -368,13 +373,13 @@ function refreshExchangeRates() {
 						});
 					}
 
-					console.log("Using exchange rates: " + JSON.stringify(global.exchangeRates) + " starting at " + global.exchangeRatesUpdateTime);
+					debugLog("Using exchange rates: " + JSON.stringify(global.exchangeRates) + " starting at " + global.exchangeRatesUpdateTime);
 
 				} else {
-					console.log("Unable to get exchange rate data");
+					debugLog("Unable to get exchange rate data");
 				}
 			} else {
-				console.log(`Error 39r7h2390fgewfgds: ${error}, StatusCode: ${(response != null) ? response.statusCode : ""}, Response: ${JSON.stringify(response)}`);
+				utils.logError("39r7h2390fgewfgds", {error:error, response:response, body:body});
 			}
 		});
 	}
@@ -400,7 +405,7 @@ function geoLocateIpAddresses(ipAddresses, provider) {
 					if (result.value == null) {
 						var apiUrl = "http://api.ipstack.com/" + result.key + "?access_key=" + config.credentials.ipStackComApiAccessKey;
 						
-						console.log("Requesting IP-geo: " + apiUrl);
+						debugLog("Requesting IP-geo: " + apiUrl);
 
 						request(apiUrl, function(error, response, body) {
 							if (error) {
@@ -438,7 +443,7 @@ function geoLocateIpAddresses(ipAddresses, provider) {
 			resolve(ipDetails);
 
 		}).catch(function(err) {
-			console.log("Error 80342hrf78wgehdf07gds: " + err);
+			utils.logError("80342hrf78wgehdf07gds", err);
 
 			reject(err);
 		});
@@ -507,7 +512,27 @@ function colorHexToHsl(hex) {
 }
 
 function logError(errorId, err, optionalUserData = null) {
-	console.log("Error " + errorId + ": " + err + ", json: " + JSON.stringify(err) + (optionalUserData != null ? (", userData: " + optionalUserData) : ""));
+	if (!global.errorLog) {
+		global.errorLog = [];
+	}
+
+	global.errorLog.push({errorId:errorId, error:err, userData:optionalUserData, date:new Date()});
+	while (global.errorLog.length > 100) {
+		global.errorLog.splice(0, 1);
+	}
+
+	debugErrorLog("Error " + errorId + ": " + err + ", json: " + JSON.stringify(err) + (optionalUserData != null ? (", userData: " + optionalUserData + " (json: " + JSON.stringify(optionalUserData) + ")") : ""));
+	
+	if (err && err.stack) {
+		debugErrorLog("Stack: " + err.stack);
+	}
+
+	var returnVal = {errorId:errorId, error:err};
+	if (optionalUserData) {
+		returnVal.userData = optionalUserData;
+	}
+
+	return returnVal;
 }
 
 function buildQrCodeUrls(strings) {

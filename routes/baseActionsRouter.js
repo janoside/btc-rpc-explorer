@@ -608,13 +608,13 @@ router.get("/address/:address", function(req, res, next) {
 		res.locals.addressObj = bitcoinjs.address.fromBase58Check(address);
 
 	} catch (err) {
-		console.log("Error u3gr02gwef: " + err);
+		utils.logError("u3gr02gwef", err);
 
 		try {
 			res.locals.addressObj = bitcoinjs.address.fromBech32(address);
 
 		} catch (err2) {
-			console.log("Error u02qg02yqge: " + err2);
+			utils.logError("u02qg02yqge", err);
 		}
 	}
 
@@ -754,8 +754,8 @@ router.get("/address/:address", function(req, res, next) {
 				
 				}).catch(function(err) {
 					res.locals.electrumHistoryError = err;
+					utils.logError("23t07ug2wghefud", err);
 
-					console.log("Error 23t07ug2wghefud: " + err + ", error json: " + JSON.stringify(err));
 
 					reject(err);
 				});
@@ -768,7 +768,7 @@ router.get("/address/:address", function(req, res, next) {
 					resolve();
 
 				}).catch(function(err) {
-					console.log("Error 132r80h32rh: " + err + ", error json: " + JSON.stringify(err));
+					utils.logError("132r80h32rh", err);
 
 					reject(err);
 				});
@@ -778,7 +778,7 @@ router.get("/address/:address", function(req, res, next) {
 		promises.push(new Promise(function(resolve, reject) {
 			qrcode.toDataURL(address, function(err, url) {
 				if (err) {
-					console.log("Error 93ygfew0ygf2gf2: " + err);
+					utils.logError("93ygfew0ygf2gf2", err);
 				}
 
 				res.locals.addressQrCodeUrl = url;
@@ -793,7 +793,7 @@ router.get("/address/:address", function(req, res, next) {
 			next();
 
 		}).catch(function(err) {
-			console.log("Error 32197rgh327g2: " + err + ", error json: " + JSON.stringify(err));
+			utils.logError("32197rgh327g2", err);
 
 			res.render("address");
 
@@ -801,6 +801,8 @@ router.get("/address/:address", function(req, res, next) {
 		});
 		
 	}).catch(function(err) {
+		utils.logError("2108hs0gsdfe", err, {address:address});
+
 		res.locals.userMessage = "Failed to load address " + address + " (" + err + ")";
 
 		res.render("address");
