@@ -124,13 +124,14 @@ module.exports = {
 		"walletpassphrasechange",
 	],
 
+	addressApi:process.env.BTCEXP_ADDRESS_API,
 	electrumXServers:electrumXServers,
 
 	redisUrl:process.env.BTCEXP_REDIS_URL,
 
 	site: {
 		blockTxPageSize:20,
-		addressTxPageSize:20,
+		addressTxPageSize:10,
 		txMaxInput:15,
 		browseBlocksPageSize:20,
 		addressPage:{

@@ -14,6 +14,7 @@ var utils = require('./../app/utils.js');
 var coins = require("./../app/coins.js");
 var config = require("./../app/config.js");
 var coreApi = require("./../app/api/coreApi.js");
+var addressApi = require("./../app/api/addressApi.js");
 
 const forceCsrf = csurf({ ignoreMethods: [] });
 
@@ -599,8 +600,9 @@ router.get("/address/:address", function(req, res, next) {
 	res.locals.limit = limit;
 	res.locals.offset = offset;
 	res.locals.sort = sort;
-	res.locals.paginationBaseUrl = ("/address/" + address + "?sort=" + sort);
+	res.locals.paginationBaseUrl = `/address/${address}?sort=${sort}`;
 	res.locals.transactions = [];
+	res.locals.addressApiSupport = addressApi.getCurrentAddressApiFeatureSupport();
 	
 	res.locals.result = {};
 
@@ -626,136 +628,107 @@ router.get("/address/:address", function(req, res, next) {
 		}
 	}
 
-	res.locals.advancedFunctionality = (global.electrumApi != null);
-
 	coreApi.getAddress(address).then(function(validateaddressResult) {
 		res.locals.result.validateaddress = validateaddressResult;
 
 		var promises = [];
-		if (global.electrumApi) {
+		if (!res.locals.crawlerBot) {
 			var addrScripthash = hexEnc.stringify(sha256(hexEnc.parse(validateaddressResult.scriptPubKey)));
 			addrScripthash = addrScripthash.match(/.{2}/g).reverse().join("");
 
 			res.locals.electrumScripthash = addrScripthash;
 
 			promises.push(new Promise(function(resolve, reject) {
-				electrumApi.getAddressBalance(addrScripthash).then(function(result) {
-					res.locals.balance = result;
+				addressApi.getAddressDetails(address, validateaddressResult.scriptPubKey, sort, limit, offset).then(function(addressDetailsResult) {
+					var addressDetails = addressDetailsResult.addressDetails;
 
-					res.locals.electrumBalance = result;
-
-					resolve();
-
-				}).catch(function(err) {
-					reject(err);
-				});
-			}));
-
-			promises.push(new Promise(function(resolve, reject) {
-				electrumApi.getAddressTxids(addrScripthash).then(function(result) {
-					var txidResult = null;
-
-					if (result.conflictedResults) {
-						res.locals.conflictedTxidResults = true;
-
-						txidResult = result.conflictedResults[0];
-
-					} else if (result.result != null) {
-						txidResult = result;
+					if (addressDetailsResult.errors) {
+						res.locals.addressDetailsErrors = addressDetailsResult.errors;
 					}
 
-					res.locals.electrumHistory = txidResult;
+					if (addressDetails) {
+						res.locals.addressDetails = addressDetails;
 
-					var txids = [];
-					var blockHeightsByTxid = {};
-
-					if (txidResult) {
-						for (var i = 0; i < txidResult.result.length; i++) {
-							txids.push(txidResult.result[i].tx_hash);
-							blockHeightsByTxid[txidResult.result[i].tx_hash] = txidResult.result[i].height;
+						if (addressDetails.balanceSat == 0) {
+							// make sure zero balances pass the falsey check in the UI
+							addressDetails.balanceSat = "0";
 						}
-					}
 
-					if (sort == "desc") {
-						txids = txids.reverse();
-					}
-
-					res.locals.txids = txids;
-
-					var pagedTxids = [];
-					for (var i = offset; i < (offset + limit); i++) {
-						if (txids.length > i) {
-							pagedTxids.push(txids[i]);
+						if (addressDetails.txCount == 0) {
+							// make sure txCount=0 pass the falsey check in the UI
+							addressDetails.txCount = "0";
 						}
-					}
 
-					if (txidResult && txidResult.result != null) {
-						// since we always request the first txid (to determine "first seen" info for the address),
-						// remove it for proper paging
-						pagedTxids.unshift(txidResult.result[0].tx_hash);
-					}
-					
-					coreApi.getRawTransactionsWithInputs(pagedTxids).then(function(rawTxResult) {
-						// first result is always the earliest tx, but doesn't fit into the current paging;
-						// store it as firstSeenTransaction then remove from list
-						res.locals.firstSeenTransaction = rawTxResult.transactions[0];
-						rawTxResult.transactions.shift();
+						if (addressDetails.txids) {
+							var txids = addressDetails.txids;
+							var blockHeightsByTxid = addressDetails.blockHeightsByTxid;
 
-						res.locals.transactions = rawTxResult.transactions;
-						res.locals.txInputsByTransaction = rawTxResult.txInputsByTransaction;
-						res.locals.blockHeightsByTxid = blockHeightsByTxid;
+							res.locals.txids = txids;
+							
+							coreApi.getRawTransactionsWithInputs(txids).then(function(rawTxResult) {
+								res.locals.transactions = rawTxResult.transactions;
+								res.locals.txInputsByTransaction = rawTxResult.txInputsByTransaction;
+								res.locals.blockHeightsByTxid = blockHeightsByTxid;
 
-						var addrGainsByTx = {};
-						var addrLossesByTx = {};
+								var addrGainsByTx = {};
+								var addrLossesByTx = {};
 
-						res.locals.addrGainsByTx = addrGainsByTx;
-						res.locals.addrLossesByTx = addrLossesByTx;
+								res.locals.addrGainsByTx = addrGainsByTx;
+								res.locals.addrLossesByTx = addrLossesByTx;
 
-						for (var i = 0; i < rawTxResult.transactions.length; i++) {
-							var tx = rawTxResult.transactions[i];
-							var txInputs = rawTxResult.txInputsByTransaction[tx.txid];
+								for (var i = 0; i < rawTxResult.transactions.length; i++) {
+									var tx = rawTxResult.transactions[i];
+									var txInputs = rawTxResult.txInputsByTransaction[tx.txid];
 
-							for (var j = 0; j < tx.vout.length; j++) {
-								if (tx.vout[j].value > 0 && tx.vout[j].scriptPubKey && tx.vout[j].scriptPubKey.addresses && tx.vout[j].scriptPubKey.addresses.includes(address)) {
-									if (addrGainsByTx[tx.txid] == null) {
-										addrGainsByTx[tx.txid] = new Decimal(0);
-									}
+									for (var j = 0; j < tx.vout.length; j++) {
+										if (tx.vout[j].value > 0 && tx.vout[j].scriptPubKey && tx.vout[j].scriptPubKey.addresses && tx.vout[j].scriptPubKey.addresses.includes(address)) {
+											if (addrGainsByTx[tx.txid] == null) {
+												addrGainsByTx[tx.txid] = new Decimal(0);
+											}
 
-									addrGainsByTx[tx.txid] = addrGainsByTx[tx.txid].plus(new Decimal(tx.vout[j].value));
-								}
-							}
-
-							for (var j = 0; j < tx.vin.length; j++) {
-								var txInput = txInputs[j];
-								var vinJ = tx.vin[j];
-
-								if (txInput != null) {
-									if (txInput.vout[vinJ.vout] && txInput.vout[vinJ.vout].scriptPubKey && txInput.vout[vinJ.vout].scriptPubKey.addresses && txInput.vout[vinJ.vout].scriptPubKey.addresses.includes(address)) {
-										if (addrLossesByTx[tx.txid] == null) {
-											addrLossesByTx[tx.txid] = new Decimal(0);
+											addrGainsByTx[tx.txid] = addrGainsByTx[tx.txid].plus(new Decimal(tx.vout[j].value));
 										}
-
-										addrLossesByTx[tx.txid] = addrLossesByTx[tx.txid].plus(new Decimal(txInput.vout[vinJ.vout].value));
 									}
+
+									for (var j = 0; j < tx.vin.length; j++) {
+										var txInput = txInputs[j];
+										var vinJ = tx.vin[j];
+
+										if (txInput != null) {
+											if (txInput.vout[vinJ.vout] && txInput.vout[vinJ.vout].scriptPubKey && txInput.vout[vinJ.vout].scriptPubKey.addresses && txInput.vout[vinJ.vout].scriptPubKey.addresses.includes(address)) {
+												if (addrLossesByTx[tx.txid] == null) {
+													addrLossesByTx[tx.txid] = new Decimal(0);
+												}
+
+												addrLossesByTx[tx.txid] = addrLossesByTx[tx.txid].plus(new Decimal(txInput.vout[vinJ.vout].value));
+											}
+										}
+									}
+
+									//console.log("tx: " + JSON.stringify(tx));
+									//console.log("txInputs: " + JSON.stringify(txInputs));
 								}
-							}
 
-							//console.log("tx: " + JSON.stringify(tx));
-							//console.log("txInputs: " + JSON.stringify(txInputs));
+								resolve();
+
+							}).catch(function(err) {
+								utils.logError("asdgf07uh23", err);
+
+								reject(err);
+							});
+
+						} else {
+							// no addressDetails.txids available
+							resolve();
 						}
-
+					} else {
+						// no addressDetails available
 						resolve();
-
-					}).catch(function(err) {
-						console.log("Error asdgf07uh23: " + err + ", error json: " + JSON.stringify(err));
-
-						reject(err);
-					});
-				
+					}
 				}).catch(function(err) {
-					res.locals.electrumHistoryError = err;
 					utils.logError("23t07ug2wghefud", err);
 
+					res.locals.addressApiError = err;
 
 					reject(err);
 				});
@@ -787,7 +760,7 @@ router.get("/address/:address", function(req, res, next) {
 			});
 		}));
 
-		Promise.all(promises).then(function() {
+		Promise.all(promises.map(utils.reflectPromise)).then(function() {
 			res.render("address");
 
 			next();

@@ -241,6 +241,15 @@ function logAppStats() {
 	}
 }
 
+function ellipsize(str, length) {
+	if (str.length <= length) {
+		return str;
+
+	} else {
+		return str.substring(0, length - 3) + "...";
+	}
+}
+
 function logMemoryUsage() {
 	var mbUsed = process.memoryUsage().heapUsed / 1024 / 1024;
 	mbUsed = Math.round(mbUsed * 100) / 100;
@@ -511,6 +520,11 @@ function colorHexToHsl(hex) {
 	return rgbToHsl(rgb.r, rgb.g, rgb.b);
 }
 
+
+// https://stackoverflow.com/a/31424853/673828
+const reflectPromise = p => p.then(v => ({v, status: "resolved" }),
+                            e => ({e, status: "rejected" }));
+
 function logError(errorId, err, optionalUserData = null) {
 	if (!global.errorLog) {
 		global.errorLog = [];
@@ -580,6 +594,7 @@ function buildQrCodeUrl(str, results) {
 
 
 module.exports = {
+	reflectPromise: reflectPromise,
 	redirectToConnectPageIfNeeded: redirectToConnectPageIfNeeded,
 	hex2ascii: hex2ascii,
 	splitArrayIntoChunks: splitArrayIntoChunks,
@@ -605,5 +620,6 @@ module.exports = {
 	colorHexToRgb: colorHexToRgb,
 	colorHexToHsl: colorHexToHsl,
 	logError: logError,
-	buildQrCodeUrls: buildQrCodeUrls
+	buildQrCodeUrls: buildQrCodeUrls,
+	ellipsize: ellipsize
 };

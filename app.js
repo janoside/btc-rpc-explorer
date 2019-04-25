@@ -37,7 +37,8 @@ var coreApi = require("./app/api/coreApi.js");
 var coins = require("./app/coins.js");
 var request = require("request");
 var qrcode = require("qrcode");
-var electrumApi = require("./app/api/electrumApi.js");
+var addressApi = require("./app/api/addressApi.js");
+var electrumAddressApi = require("./app/api/electrumAddressApi.js");
 var Influx = require("influx");
 var coreApi = require("./app/api/coreApi.js");
 var auth = require('./app/auth.js');
@@ -357,16 +358,26 @@ app.runOnStartup = function() {
 		});
 	}
 
-	if (config.electrumXServers && config.electrumXServers.length > 0) {
-		electrumApi.connectToServers().then(function() {
-			console.log("Live with ElectrumX API.");
+	if (config.addressApi) {
+		var supportedAddressApis = addressApi.getSupportedAddressApis();
+		if (!supportedAddressApis.includes(config.addressApi)) {
+			utils.logError("32907ghsd0ge", `Unrecognized value for BTCEXP_ADDRESS_API: '${config.addressApi}'. Valid options are: ${supportedAddressApis}`);
+		}
 
-			global.electrumApi = electrumApi;
-			
-		}).catch(function(err) {
-			console.log("Error 31207ugf4e0fed: " + err + ", while initializing ElectrumX API");
-		});
+		if (config.addressApi == "electrumx") {
+			if (config.electrumXServers && config.electrumXServers.length > 0) {
+				electrumAddressApi.connectToServers().then(function() {
+					global.electrumAddressApi = electrumAddressApi;
+					
+				}).catch(function(err) {
+					utils.logError("31207ugf4e0fed", err, {electrumXServers:config.electrumXServers});
+				});
+			} else {
+				utils.logError("327hs0gde", "You must set the 'BTCEXP_ELECTRUMX_SERVERS' environment variable when BTCEXP_ADDRESS_API=electrumx.");
+			}
+		}
 	}
+
 
 	loadMiningPoolConfigs();
 
@@ -467,18 +478,6 @@ app.use(function(req, res, next) {
 
 		} else {
 			req.session.hideHomepageBanner = "false";
-		}
-	}
-
-	// electrum trust warnings on address pages
-	if (!req.session.hideElectrumTrustWarnings) {
-		var cookieValue = req.cookies['user-setting-hideElectrumTrustWarnings'];
-
-		if (cookieValue) {
-			req.session.hideElectrumTrustWarnings = cookieValue;
-
-		} else {
-			req.session.hideElectrumTrustWarnings = "false";
 		}
 	}
 
