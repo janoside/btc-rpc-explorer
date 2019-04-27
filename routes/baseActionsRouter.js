@@ -911,7 +911,14 @@ router.get("/rpc-browser", function(req, res, next) {
 									}
 
 									break;
+
+								} else if (argProperties[j] === "array") {
+									if (req.query.args[i]) {
+										argValues.push(JSON.parse(req.query.args[i]));
+									}
 									
+									break;
+
 								} else {
 									debugLog(`Unknown argument property: ${argProperties[j]}`);
 								}
