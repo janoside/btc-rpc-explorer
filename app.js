@@ -451,6 +451,8 @@ app.use(function(req, res, next) {
 	res.locals.genesisBlockHash = coreApi.getGenesisBlockHash();
 	res.locals.genesisCoinbaseTransactionId = coreApi.getGenesisCoinbaseTransactionId();
 
+	res.locals.pageErrors = [];
+
 
 	// currency format type
 	if (!req.session.currencyFormatType) {

@@ -114,6 +114,14 @@ html(lang="en")
 
 		div(class="pb-4 pt-3 pt-md-4", style=("background-color: " + bodyBgColor))
 			div(class="container px-2 px-sm-3")
+				if (pageErrors && pageErrors.length > 0)
+					include includes/page-errors-modal.pug
+
+					div.float-right
+						div.alert.alert-danger.py-1.px-3.mb-n2.mt-n1.font-weight-bold(title=`This page encountered ${pageErrors.length.toLocaleString()} error(s). Click for details.` data-toggle="tooltip")
+							a.text-danger(href="javascript:void(0)" data-toggle="modal" data-target="#pageErrorsModal") Errors
+							span.badge.badge-danger.ml-2 #{pageErrors.length.toLocaleString()}
+
 				if (userMessage)
 					div(class="alert", class=(userMessageType ? ("alert-"  + userMessageType) : "alert-warning"), role="alert")
 						span !{userMessage}

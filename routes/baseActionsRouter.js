@@ -613,13 +613,13 @@ router.get("/address/:address", function(req, res, next) {
 		res.locals.addressObj = bitcoinjs.address.fromBase58Check(address);
 
 	} catch (err) {
-		utils.logError("u3gr02gwef", err);
+		res.locals.pageErrors.push(utils.logError("u3gr02gwef", err));
 
 		try {
 			res.locals.addressObj = bitcoinjs.address.fromBech32(address);
 
 		} catch (err2) {
-			utils.logError("u02qg02yqge", err);
+			res.locals.pageErrors.push(utils.logError("u02qg02yqge", err));
 		}
 	}
 
@@ -714,7 +714,7 @@ router.get("/address/:address", function(req, res, next) {
 											resolve2();
 
 										}).catch(function(err) {
-											utils.logError("78ewrgwetg3", err);
+											res.locals.pageErrors.push(utils.logError("78ewrgwetg3", err));
 
 											reject2(err);
 										});
@@ -766,13 +766,13 @@ router.get("/address/:address", function(req, res, next) {
 									resolve();
 
 								}).catch(function(err) {
-									utils.logError("230wefrhg0egt3", err);
+									res.locals.pageErrors.push(utils.logError("230wefrhg0egt3", err));
 
 									reject(err);
 								});
 
 							}).catch(function(err) {
-								utils.logError("asdgf07uh23", err);
+								res.locals.pageErrors.push(utils.logError("asdgf07uh23", err));
 
 								reject(err);
 							});
@@ -786,7 +786,7 @@ router.get("/address/:address", function(req, res, next) {
 						resolve();
 					}
 				}).catch(function(err) {
-					utils.logError("23t07ug2wghefud", err);
+					res.locals.pageErrors.push(utils.logError("23t07ug2wghefud", err));
 
 					res.locals.addressApiError = err;
 
@@ -801,7 +801,7 @@ router.get("/address/:address", function(req, res, next) {
 					resolve();
 
 				}).catch(function(err) {
-					utils.logError("132r80h32rh", err);
+					res.locals.pageErrors.push(utils.logError("132r80h32rh", err));
 
 					reject(err);
 				});
@@ -811,7 +811,7 @@ router.get("/address/:address", function(req, res, next) {
 		promises.push(new Promise(function(resolve, reject) {
 			qrcode.toDataURL(address, function(err, url) {
 				if (err) {
-					utils.logError("93ygfew0ygf2gf2", err);
+					res.locals.pageErrors.push(utils.logError("93ygfew0ygf2gf2", err));
 				}
 
 				res.locals.addressQrCodeUrl = url;
@@ -826,7 +826,7 @@ router.get("/address/:address", function(req, res, next) {
 			next();
 
 		}).catch(function(err) {
-			utils.logError("32197rgh327g2", err);
+			res.locals.pageErrors.push(utils.logError("32197rgh327g2", err));
 
 			res.render("address");
 
@@ -834,7 +834,7 @@ router.get("/address/:address", function(req, res, next) {
 		});
 		
 	}).catch(function(err) {
-		utils.logError("2108hs0gsdfe", err, {address:address});
+		res.locals.pageErrors.push(utils.logError("2108hs0gsdfe", err, {address:address}));
 
 		res.locals.userMessage = "Failed to load address " + address + " (" + err + ")";
 
@@ -1003,7 +1003,7 @@ router.get("/rpc-browser", function(req, res, next) {
 							debugLog("RPC Response: err=" + err3 + ", result=" + result3 + ", headers=" + resHeaders3);
 
 							if (err3) {
-								utils.logError("23roewuhfdghe", err3, {method:req.query.method, params:argValues, result:result3, headers:resHeaders3});
+								res.locals.pageErrors.push(utils.logError("23roewuhfdghe", err3, {method:req.query.method, params:argValues, result:result3, headers:resHeaders3}));
 
 								if (result3) {
 									res.locals.methodResult = {error:("" + err3), result:result3};

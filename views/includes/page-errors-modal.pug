@@ -1,0 +1,34 @@
+div.modal.fade(id="pageErrorsModal" role="dialog" aria-hidden="true")
+	div.modal-dialog.modal-xl(role="document")
+		div.modal-content
+			div.modal-header
+				h5.modal-title Page Errors
+
+				button.close(type="button" data-dismiss="modal" aria-label="Close")
+					span(aria-hidden="true") &times;
+
+			div.modal-body
+				each item, itemIndex in pageErrors
+					div.card.shadow-sm(class=(itemIndex < (pageErrors.length - 1) ? "mb-3" : false))
+						div.card-header
+							h6.mb-0 Error ##{(itemIndex + 1).toLocaleString()}
+						div.card-body
+							h6 Error Details
+							pre
+								code.json.bg-light #{JSON.stringify(item.error, null, 4)}
+
+							if (item.error.stack)
+								hr
+								h6 Stacktrace
+								pre
+									code.json.bg-light #{item.error.stack}
+
+							if (item.userData)
+								hr
+
+								h4.h6 User Data
+								pre
+									code.json.bg-light #{JSON.stringify(error.userData, null, 4)}
+
+			div.modal-footer
+				button.btn.btn-secondary(type="button" data-dismiss="modal") Close
