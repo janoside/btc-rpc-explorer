@@ -664,58 +664,112 @@ router.get("/address/:address", function(req, res, next) {
 
 						if (addressDetails.txids) {
 							var txids = addressDetails.txids;
+
+							// if the active addressApi gives us blockHeightsByTxid, it saves us work, so try to use it
 							var blockHeightsByTxid = {};
+							if (addressDetails.blockHeightsByTxid) {
+								blockHeightsByTxid = addressDetails.blockHeightsByTxid;
+							}
 
 							res.locals.txids = txids;
 							
 							coreApi.getRawTransactionsWithInputs(txids).then(function(rawTxResult) {
 								res.locals.transactions = rawTxResult.transactions;
 								res.locals.txInputsByTransaction = rawTxResult.txInputsByTransaction;
-								
-								var addrGainsByTx = {};
-								var addrLossesByTx = {};
 
-								res.locals.addrGainsByTx = addrGainsByTx;
-								res.locals.addrLossesByTx = addrLossesByTx;
-
+								// for coinbase txs, we need the block height in order to calculate subsidy to display
+								var coinbaseTxs = [];
 								for (var i = 0; i < rawTxResult.transactions.length; i++) {
 									var tx = rawTxResult.transactions[i];
-									var txInputs = rawTxResult.txInputsByTransaction[tx.txid];
-
-									blockHeightsByTxid[tx.txid] = tx.height;
-
-									for (var j = 0; j < tx.vout.length; j++) {
-										if (tx.vout[j].value > 0 && tx.vout[j].scriptPubKey && tx.vout[j].scriptPubKey.addresses && tx.vout[j].scriptPubKey.addresses.includes(address)) {
-											if (addrGainsByTx[tx.txid] == null) {
-												addrGainsByTx[tx.txid] = new Decimal(0);
-											}
-
-											addrGainsByTx[tx.txid] = addrGainsByTx[tx.txid].plus(new Decimal(tx.vout[j].value));
-										}
-									}
 
 									for (var j = 0; j < tx.vin.length; j++) {
-										var txInput = txInputs[j];
-										var vinJ = tx.vin[j];
-
-										if (txInput != null) {
-											if (txInput.vout[vinJ.vout] && txInput.vout[vinJ.vout].scriptPubKey && txInput.vout[vinJ.vout].scriptPubKey.addresses && txInput.vout[vinJ.vout].scriptPubKey.addresses.includes(address)) {
-												if (addrLossesByTx[tx.txid] == null) {
-													addrLossesByTx[tx.txid] = new Decimal(0);
-												}
-
-												addrLossesByTx[tx.txid] = addrLossesByTx[tx.txid].plus(new Decimal(txInput.vout[vinJ.vout].value));
+										if (tx.vin[j].coinbase) {
+											// addressApi sometimes has blockHeightByTxid already available, otherwise we need to query for it
+											if (!blockHeightsByTxid[tx.txid]) {
+												coinbaseTxs.push(tx);
 											}
 										}
 									}
-
-									//debugLog("tx: " + JSON.stringify(tx));
-									//debugLog("txInputs: " + JSON.stringify(txInputs));
 								}
 
-								res.locals.blockHeightsByTxid = blockHeightsByTxid;
 
-								resolve();
+								var coinbaseTxBlockHashes = [];
+								var blockHashesByTxid = {};
+								coinbaseTxs.forEach(function(tx) {
+									coinbaseTxBlockHashes.push(tx.blockhash);
+									blockHashesByTxid[tx.txid] = tx.blockhash;
+								});
+
+								var blockHeightsPromises = [];
+								if (coinbaseTxs.length > 0) {
+									// we need to query some blockHeights by hash for some coinbase txs
+									blockHeightsPromises.push(new Promise(function(resolve2, reject2) {
+										coreApi.getBlocksByHash(coinbaseTxBlockHashes).then(function(blocksByHashResult) {
+											for (var txid in blockHashesByTxid) {
+												if (blockHashesByTxid.hasOwnProperty(txid)) {
+													blockHeightsByTxid[txid] = blocksByHashResult[blockHashesByTxid[txid]].height;
+												}
+											}
+
+											resolve2();
+
+										}).catch(function(err) {
+											utils.logError("78ewrgwetg3", err);
+
+											reject2(err);
+										});
+									}));
+								}
+
+								Promise.all(blockHeightsPromises).then(function() {
+									var addrGainsByTx = {};
+									var addrLossesByTx = {};
+
+									res.locals.addrGainsByTx = addrGainsByTx;
+									res.locals.addrLossesByTx = addrLossesByTx;
+
+									for (var i = 0; i < rawTxResult.transactions.length; i++) {
+										var tx = rawTxResult.transactions[i];
+										var txInputs = rawTxResult.txInputsByTransaction[tx.txid];
+										
+										for (var j = 0; j < tx.vout.length; j++) {
+											if (tx.vout[j].value > 0 && tx.vout[j].scriptPubKey && tx.vout[j].scriptPubKey.addresses && tx.vout[j].scriptPubKey.addresses.includes(address)) {
+												if (addrGainsByTx[tx.txid] == null) {
+													addrGainsByTx[tx.txid] = new Decimal(0);
+												}
+
+												addrGainsByTx[tx.txid] = addrGainsByTx[tx.txid].plus(new Decimal(tx.vout[j].value));
+											}
+										}
+
+										for (var j = 0; j < tx.vin.length; j++) {
+											var txInput = txInputs[j];
+											var vinJ = tx.vin[j];
+
+											if (txInput != null) {
+												if (txInput.vout[vinJ.vout] && txInput.vout[vinJ.vout].scriptPubKey && txInput.vout[vinJ.vout].scriptPubKey.addresses && txInput.vout[vinJ.vout].scriptPubKey.addresses.includes(address)) {
+													if (addrLossesByTx[tx.txid] == null) {
+														addrLossesByTx[tx.txid] = new Decimal(0);
+													}
+
+													addrLossesByTx[tx.txid] = addrLossesByTx[tx.txid].plus(new Decimal(txInput.vout[vinJ.vout].value));
+												}
+											}
+										}
+
+										//debugLog("tx: " + JSON.stringify(tx));
+										//debugLog("txInputs: " + JSON.stringify(txInputs));
+									}
+
+									res.locals.blockHeightsByTxid = blockHeightsByTxid;
+
+									resolve();
+
+								}).catch(function(err) {
+									utils.logError("230wefrhg0egt3", err);
+
+									reject(err);
+								});
 
 							}).catch(function(err) {
 								utils.logError("asdgf07uh23", err);

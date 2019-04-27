@@ -588,7 +588,13 @@ function getBlocksByHash(blockHashes) {
 		}
 
 		Promise.all(promises).then(function(results) {
-			resolve(results);
+			var result = {};
+
+			results.forEach(function(item) {
+				result[item.hash] = item;
+			});
+
+			resolve(result);
 
 		}).catch(function(err) {
 			reject(err);
@@ -876,6 +882,7 @@ module.exports = {
 	getBlockByHeight: getBlockByHeight,
 	getBlocksByHeight: getBlocksByHeight,
 	getBlockByHash: getBlockByHash,
+	getBlocksByHash: getBlocksByHash,
 	getBlockByHashWithTransactions: getBlockByHashWithTransactions,
 	getRawTransaction: getRawTransaction,
 	getRawTransactions: getRawTransactions,
