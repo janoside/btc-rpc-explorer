@@ -78,7 +78,7 @@ div(class="tab-content")
 						each vout in result.getblock.coinbaseTx.vout
 							- coinbaseTxTotalOutputValue = coinbaseTxTotalOutputValue.plus(new Decimal(vout.value));
 
-						if (coinbaseTxTotalOutputValue < blockRewardMax)
+						if (parseFloat(coinbaseTxTotalOutputValue) < blockRewardMax)
 							div(class="row")
 								div(class="summary-split-table-label")
 									span.border-dotted(data-toggle="tooltip" title="The miner of this block failed to collect this value. As a result, it is lost.") Fees Destroyed

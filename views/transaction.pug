@@ -149,7 +149,7 @@ block content
 									include includes/value-display.pug
 
 							- var blockRewardMax = coinConfig.blockRewardFunction(result.getblock.height);
-							if (totalOutputValue < blockRewardMax)
+							if (parseFloat(totalOutputValue) < parseFloat(blockRewardMax))
 								div(class="row")
 									div(class="summary-table-label")
 										span.border-dotted(data-toggle="tooltip" title="The miner of this transaction's block failed to collect this value. As a result, it is lost.") Fees Destroyed
