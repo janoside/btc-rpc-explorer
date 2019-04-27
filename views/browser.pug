@@ -54,6 +54,10 @@ block content
 								input(type="hidden", name="method", value=method)
 
 								div(class="h5 mb-3") Arguments
+
+								if (false)
+									pre
+										code.json #{JSON.stringify(argValues, null, 4)}
 								
 								div(class="ml-3")
 									each argX, index in methodhelp.args
@@ -75,9 +79,13 @@ block content
 											if (argValues != null)
 												if (argValues[index] != null)
 													if (("" + argValues[index]) != NaN)
-														- valX = argValues[index].toString();
+														- valX = JSON.stringify(argValues[index]);
+														if (valX.substring(0, 1) == "\"")
+															- valX = valX.substring(1);
+														if (valX.substring(valX.length - 1, valX.length) == "\"")
+															- valX = valX.substring(valX.length - 1);
 
-											input(id=("arg_" + argX.name), type="text", name=("args[" + index + "]"), placeholder=argX.name, class="form-control", value=valX)
+											input(id=("arg_" + argX.name), type="text", name=("args[" + index + "]"), placeholder=argX.name, class="form-control", value=(valX ? valX : ""))
 
 									if (!methodhelp.args || methodhelp.args.length == 0)
 										span(class="text-muted") None
