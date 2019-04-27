@@ -19,6 +19,7 @@ var debug = require("debug");
 debug.enable(process.env.DEBUG);
 
 var debugLog = debug("btcexp:app");
+var debugPerfLog = debug("btcexp:actionPerformace");
 
 var express = require('express');
 var favicon = require('serve-favicon');
@@ -532,6 +533,8 @@ app.use('/', baseActionsRouter);
 app.use(function(req, res, next) {
 	var time = Date.now() - req.startTime;
 	var memdiff = process.memoryUsage().heapUsed - req.startMem;
+
+	debugPerfLog("Finished action '%s' in %d ms", req.path, time);
 
 	if (global.influxdb) {
 		var points = [];
