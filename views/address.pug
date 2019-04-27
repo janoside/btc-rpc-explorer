@@ -98,6 +98,8 @@ block content
 					div(class="card mb-3 shadow-sm")
 						div(class="card-header")
 							span(class="h6") Summary
+								if (config.addressApi)
+										small.text-muted.border-dotted.ml-2(title=`Some details for this address were queried from ${config.addressApi}` data-toggle="tooltip") Trust Note
 						div(class="card-body")
 							div(class="row")
 								div(class="col-md-6")
@@ -248,9 +250,9 @@ block content
 
 									if (config.addressApi)
 										if (config.addressApi == "electrumx")
-											small.text-muted.border-dotted.ml-2(title=`The list of transaction IDs for this address and the address balance were queried from ElectrumX (using the configured server(s))` data-toggle="tooltip") Trust Note
+											small.text-muted.border-dotted.ml-2(title=`The list of transaction IDs for this address was queried from ElectrumX (using the configured server(s))` data-toggle="tooltip") Trust Note
 										else
-											small.text-muted.border-dotted.ml-2(title=`The list of transaction IDs for this address and the address balance were queried from ${config.addressApi}` data-toggle="tooltip") Trust Note
+											small.text-muted.border-dotted.ml-2(title=`The list of transaction IDs for this address was queried from ${config.addressApi}` data-toggle="tooltip") Trust Note
 										
 
 							if (!crawlerBot && txids && txids.length > 1 && addressApiSupport.sortDesc && addressApiSupport.sortAsc)
