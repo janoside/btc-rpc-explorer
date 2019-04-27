@@ -664,15 +664,14 @@ router.get("/address/:address", function(req, res, next) {
 
 						if (addressDetails.txids) {
 							var txids = addressDetails.txids;
-							var blockHeightsByTxid = addressDetails.blockHeightsByTxid;
+							var blockHeightsByTxid = {};
 
 							res.locals.txids = txids;
 							
 							coreApi.getRawTransactionsWithInputs(txids).then(function(rawTxResult) {
 								res.locals.transactions = rawTxResult.transactions;
 								res.locals.txInputsByTransaction = rawTxResult.txInputsByTransaction;
-								res.locals.blockHeightsByTxid = blockHeightsByTxid;
-
+								
 								var addrGainsByTx = {};
 								var addrLossesByTx = {};
 
@@ -682,6 +681,8 @@ router.get("/address/:address", function(req, res, next) {
 								for (var i = 0; i < rawTxResult.transactions.length; i++) {
 									var tx = rawTxResult.transactions[i];
 									var txInputs = rawTxResult.txInputsByTransaction[tx.txid];
+
+									blockHeightsByTxid[tx.txid] = tx.height;
 
 									for (var j = 0; j < tx.vout.length; j++) {
 										if (tx.vout[j].value > 0 && tx.vout[j].scriptPubKey && tx.vout[j].scriptPubKey.addresses && tx.vout[j].scriptPubKey.addresses.includes(address)) {
@@ -711,6 +712,8 @@ router.get("/address/:address", function(req, res, next) {
 									//debugLog("tx: " + JSON.stringify(tx));
 									//debugLog("txInputs: " + JSON.stringify(txInputs));
 								}
+
+								res.locals.blockHeightsByTxid = blockHeightsByTxid;
 
 								resolve();
 

@@ -21,7 +21,7 @@ Live demos are available at:
 * View transaction details, with navigation "backward" via spent transaction outputs
 * View JSON content used to generate most pages
 * Search by transaction ID, block hash/height, and address
-* Optional transaction history for addresses by querying from ElectrumX, blockchain.com, or blockcypher.com
+* Optional transaction history for addresses by querying from ElectrumX, blockchain.com, blockchair.com, or blockcypher.com
 * Mempool summary, with fee, size, and age breakdowns
 * RPC command browser and terminal
 * Currently supports BTC, LTC (support for any Bitcoin-RPC-protocol-compliant coin can be added easily)
