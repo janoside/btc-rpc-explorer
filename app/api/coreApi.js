@@ -125,6 +125,10 @@ function tryCacheThenRpcApi(cache, cacheKey, cacheMaxAge, rpcApiFunction, cacheC
 }
 
 function shouldCacheTransaction(tx) {
+	if (!tx.confirmations) {
+		return false;
+	}
+	
 	if (tx.confirmations < 1) {
 		return false;
 	}
