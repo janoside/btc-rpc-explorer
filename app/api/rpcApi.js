@@ -1,4 +1,6 @@
-var debug = require('debug')('btcexp:rpcApi');
+var debug = require('debug');
+
+var debugLog = debug("btcexp:rpc");
 
 var async = require("async");
 
@@ -10,13 +12,13 @@ var activeQueueTasks = 0;
 
 var rpcQueue = async.queue(function(task, callback) {
 	activeQueueTasks++;
-	//console.log("activeQueueTasks: " + activeQueueTasks);
+	//debugLog("activeQueueTasks: " + activeQueueTasks);
 
 	task.rpcCall(function() {
 		callback();
 
 		activeQueueTasks--;
-		//console.log("activeQueueTasks: " + activeQueueTasks);
+		//debugLog("activeQueueTasks: " + activeQueueTasks);
 	});
 
 }, config.rpcConcurrency);
@@ -75,7 +77,7 @@ function getBlockByHeight(blockHeight) {
 }
 
 function getBlockByHash(blockHash) {
-	debug("getBlockByHash: %s", blockHash);
+	debugLog("getBlockByHash: %s", blockHash);
 
 	return new Promise(function(resolve, reject) {
 		getRpcDataWithParams({method:"getblock", parameters:[blockHash]}).then(function(block) {
@@ -100,7 +102,7 @@ function getAddress(address) {
 }
 
 function getRawTransaction(txid) {
-	debug("getRawTransaction: %s", txid);
+	debugLog("getRawTransaction: %s", txid);
 
 	return new Promise(function(resolve, reject) {
 		if (coins[config.coin].genesisCoinbaseTransactionId && txid == coins[config.coin].genesisCoinbaseTransactionId) {
@@ -144,12 +146,12 @@ function getRpcMethodHelp(methodName) {
 
 function getRpcData(cmd) {
 	return new Promise(function(resolve, reject) {
-		debug(`RPC: ${cmd}`);
+		debugLog(`RPC: ${cmd}`);
 
 		rpcCall = function(callback) {
 			client.command(cmd, function(err, result, resHeaders) {
 				if (err) {
-					console.log(`Error for RPC command '${cmd}': ${err}`);
+					utils.logError("32euofeege", err, {cmd:cmd});
 
 					reject(err);
 
@@ -170,12 +172,12 @@ function getRpcData(cmd) {
 
 function getRpcDataWithParams(request) {
 	return new Promise(function(resolve, reject) {
-		debug(`RPC: ${request}`);
+		debugLog(`RPC: ${JSON.stringify(request)}`);
 
 		rpcCall = function(callback) {
 			client.command([request], function(err, result, resHeaders) {
 				if (err != null) {
-					console.log(`Error for RPC command ${JSON.stringify(request)}: ${err}, headers=${resHeaders}`);
+					utils.logError("38eh39hdee", err, {result:result, headers:resHeaders});
 
 					reject(err);
 

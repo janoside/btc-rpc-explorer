@@ -236,7 +236,7 @@ function logAppStats() {
 		});
 
 		global.influxdb.writePoints(points).catch(err => {
-			console.error(`Error saving data to InfluxDB: ${err.stack}`);
+			utils.logError("3ru3hfgde", err, {desc:"Error saving data to InfluxDB"});
 		});
 	}
 }
@@ -257,7 +257,7 @@ function logMemoryUsage() {
 	var mbTotal = process.memoryUsage().heapTotal / 1024 / 1024;
 	mbTotal = Math.round(mbTotal * 100) / 100;
 
-	//console.log("memoryUsage: heapUsed=" + mbUsed + ", heapTotal=" + mbTotal + ", ratio=" + parseInt(mbUsed / mbTotal * 100));
+	//debugLog("memoryUsage: heapUsed=" + mbUsed + ", heapTotal=" + mbTotal + ", ratio=" + parseInt(mbUsed / mbTotal * 100));
 }
 
 function getMinerFromCoinbaseTx(tx) {
@@ -375,10 +375,10 @@ function refreshExchangeRates() {
 							});
 						}
 
-						//console.log("pts: " + JSON.stringify(points));
+						//debugLog("pts: " + JSON.stringify(points));
 
 						global.influxdb.writePoints(points).catch(err => {
-							console.error(`Error saving data to InfluxDB: ${err.stack}`)
+							utils.logError("32o3h9ehf9ed", err, {desc:"Error saving data to InfluxDB"});
 						});
 					}
 

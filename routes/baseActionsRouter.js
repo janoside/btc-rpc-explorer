@@ -1,3 +1,6 @@
+var debug = require("debug");
+var debugLog = debug("btcexp:router");
+
 var express = require('express');
 var csurf = require('csurf');
 var router = express.Router();
@@ -234,7 +237,7 @@ router.post("/connect", function(req, res, next) {
 		timeout: 30000
 	});
 
-	console.log("created client: " + client);
+	debugLog("created client: " + client);
 
 	global.client = client;
 
@@ -253,7 +256,7 @@ router.get("/disconnect", function(req, res, next) {
 	req.session.port = "";
 	req.session.username = "";
 
-	console.log("destroyed client.");
+	debugLog("destroyed client.");
 
 	global.client = null;
 
@@ -705,8 +708,8 @@ router.get("/address/:address", function(req, res, next) {
 										}
 									}
 
-									//console.log("tx: " + JSON.stringify(tx));
-									//console.log("txInputs: " + JSON.stringify(txInputs));
+									//debugLog("tx: " + JSON.stringify(tx));
+									//debugLog("txInputs: " + JSON.stringify(txInputs));
 								}
 
 								resolve();
@@ -828,12 +831,12 @@ router.post("/rpc-terminal", function(req, res, next) {
 	}
 
 	client.command([{method:cmd, parameters:parsedParams}], function(err, result, resHeaders) {
-		console.log("Result[1]: " + JSON.stringify(result, null, 4));
-		console.log("Error[2]: " + JSON.stringify(err, null, 4));
-		console.log("Headers[3]: " + JSON.stringify(resHeaders, null, 4));
+		debugLog("Result[1]: " + JSON.stringify(result, null, 4));
+		debugLog("Error[2]: " + JSON.stringify(err, null, 4));
+		debugLog("Headers[3]: " + JSON.stringify(resHeaders, null, 4));
 
 		if (err) {
-			console.log(JSON.stringify(err, null, 4));
+			debugLog(JSON.stringify(err, null, 4));
 
 			res.write(JSON.stringify(err, null, 4), function() {
 				res.end();
@@ -907,7 +910,7 @@ router.get("/rpc-browser", function(req, res, next) {
 									break;
 									
 								} else {
-									console.log(`Unknown argument property: ${argProperties[j]}`);
+									debugLog(`Unknown argument property: ${argProperties[j]}`);
 								}
 							}
 						}
@@ -930,12 +933,14 @@ router.get("/rpc-browser", function(req, res, next) {
 							return next(err);
 						}
 
-						console.log("Executing RPC '" + req.query.method + "' with params: [" + argValues + "]");
+						debugLog("Executing RPC '" + req.query.method + "' with params: [" + argValues + "]");
 
 						client.command([{method:req.query.method, parameters:argValues}], function(err3, result3, resHeaders3) {
-							console.log("RPC Response: err=" + err3 + ", result=" + result3 + ", headers=" + resHeaders3);
+							debugLog("RPC Response: err=" + err3 + ", result=" + result3 + ", headers=" + resHeaders3);
 
 							if (err3) {
+								utils.logError("23roewuhfdghe", err3, {method:req.query.method, params:argValues, result:result3, headers:resHeaders3});
+
 								if (result3) {
 									res.locals.methodResult = {error:("" + err3), result:result3};
 
