@@ -1,5 +1,5 @@
 var request = require("request");
-
+var utils = require("./../utils.js");
 
 function getAddressDetails(address, scriptPubkey, sort, limit, offset) {
 	return new Promise(function(resolve, reject) {
