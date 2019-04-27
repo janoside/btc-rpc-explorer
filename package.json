@@ -1,6 +1,6 @@
 {
   "name": "btc-rpc-explorer",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Explorer for Bitcoin and RPC-compatible blockchains",
   "private": false,
   "bin": "bin/cli.js",
