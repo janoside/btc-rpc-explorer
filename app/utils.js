@@ -236,7 +236,7 @@ function logAppStats() {
 		});
 
 		global.influxdb.writePoints(points).catch(err => {
-			utils.logError("3ru3hfgde", err, {desc:"Error saving data to InfluxDB"});
+			logError("3ru3hfgde", err, {desc:"Error saving data to InfluxDB"});
 		});
 	}
 }
@@ -317,7 +317,7 @@ function getTxTotalInputOutputValues(tx, txInputs, blockHeight) {
 							totalInputValue = totalInputValue.plus(new Decimal(vout.value));
 						}
 					} catch (err) {
-						utils.logError("2397gs0gsse", err, {txid:tx.txid, vinIndex:i});
+						logError("2397gs0gsse", err, {txid:tx.txid, vinIndex:i});
 					}
 				}
 			}
@@ -327,7 +327,7 @@ function getTxTotalInputOutputValues(tx, txInputs, blockHeight) {
 			totalOutputValue = totalOutputValue.plus(new Decimal(tx.vout[i].value));
 		}
 	} catch (err) {
-		utils.logError("2308sh0sg44", err, {tx:tx, txInputs:txInputs, blockHeight:blockHeight});
+		logError("2308sh0sg44", err, {tx:tx, txInputs:txInputs, blockHeight:blockHeight});
 	}
 
 	return {input:totalInputValue, output:totalOutputValue};
@@ -378,7 +378,7 @@ function refreshExchangeRates() {
 						//debugLog("pts: " + JSON.stringify(points));
 
 						global.influxdb.writePoints(points).catch(err => {
-							utils.logError("32o3h9ehf9ed", err, {desc:"Error saving data to InfluxDB"});
+							logError("32o3h9ehf9ed", err, {desc:"Error saving data to InfluxDB"});
 						});
 					}
 
@@ -388,7 +388,7 @@ function refreshExchangeRates() {
 					debugLog("Unable to get exchange rate data");
 				}
 			} else {
-				utils.logError("39r7h2390fgewfgds", {error:error, response:response, body:body});
+				logError("39r7h2390fgewfgds", {error:error, response:response, body:body});
 			}
 		});
 	}
@@ -452,7 +452,7 @@ function geoLocateIpAddresses(ipAddresses, provider) {
 			resolve(ipDetails);
 
 		}).catch(function(err) {
-			utils.logError("80342hrf78wgehdf07gds", err);
+			logError("80342hrf78wgehdf07gds", err);
 
 			reject(err);
 		});
@@ -578,7 +578,7 @@ function buildQrCodeUrl(str, results) {
 	return new Promise(function(resolve, reject) {
 		qrcode.toDataURL(str, function(err, url) {
 			if (err) {
-				utils.logError("2q3ur8fhudshfs", err, str);
+				logError("2q3ur8fhudshfs", err, str);
 
 				reject(err);
 
