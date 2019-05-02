@@ -22,7 +22,7 @@ function getAddressDetails(address, scriptPubkey, sort, limit, offset) {
 				result.txids = [];
 
 				// blockchair doesn't support offset for paging, so simulate up to the hard cap of 2,000
-				for (var i = offset; i < Math.min(responseObj.transactions.length, limit); i++) {
+				for (var i = 0; i < Math.min(responseObj.transactions.length, limit); i++) {
 					var txid = responseObj.transactions[i];
 
 					result.txids.push(txid);
