@@ -728,10 +728,18 @@ router.get("/address/:address", function(req, res, next) {
 									res.locals.addrGainsByTx = addrGainsByTx;
 									res.locals.addrLossesByTx = addrLossesByTx;
 
+									var handledTxids = [];
+
 									for (var i = 0; i < rawTxResult.transactions.length; i++) {
 										var tx = rawTxResult.transactions[i];
 										var txInputs = rawTxResult.txInputsByTransaction[tx.txid];
 										
+										if (handledTxids.includes(tx.txid)) {
+											continue;
+										}
+
+										handledTxids.push(tx.txid);
+
 										for (var j = 0; j < tx.vout.length; j++) {
 											if (tx.vout[j].value > 0 && tx.vout[j].scriptPubKey && tx.vout[j].scriptPubKey.addresses && tx.vout[j].scriptPubKey.addresses.includes(address)) {
 												if (addrGainsByTx[tx.txid] == null) {
