@@ -202,8 +202,9 @@ function formatExchangedCurrency(amount, exchangeType) {
 	if (global.exchangeRates != null && global.exchangeRates[exchangeType.toLowerCase()] != null) {
 		var dec = new Decimal(amount);
 		dec = dec.times(global.exchangeRates[exchangeType.toLowerCase()]);
+		var exchangedAmt = parseFloat(Math.round(dec * 100) / 100).toFixed(2);
 
-		return "$" + addThousandsSeparators(dec.toDecimalPlaces(2));
+		return "$" + addThousandsSeparators(exchangedAmt);
 	}
 
 	return "";
