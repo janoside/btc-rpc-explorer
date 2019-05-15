@@ -613,7 +613,9 @@ router.get("/address/:address", function(req, res, next) {
 		res.locals.addressObj = bitcoinjs.address.fromBase58Check(address);
 
 	} catch (err) {
-		res.locals.pageErrors.push(utils.logError("u3gr02gwef", err));
+		if (!err.toString().startsWith("Non-base 58")) {
+			res.locals.pageErrors.push(utils.logError("u3gr02gwef", err));
+		}
 
 		try {
 			res.locals.addressObj = bitcoinjs.address.fromBech32(address);
