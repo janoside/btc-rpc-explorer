@@ -29,7 +29,7 @@ block content
 		if (result.getrawtransaction.vin[0].coinbase)
 			- totalInputValue = totalInputValue.plus(new Decimal(coinConfig.blockRewardFunction(result.getblock.height)));
 		each txInput, txInputIndex in result.txInputs
-			if (txInput)
+			if (txInput && txInput.vout && result && result.getrawtransaction && result.getrawtransaction.vin )
 				- var vout = txInput.vout[result.getrawtransaction.vin[txInputIndex].vout];
 				if (vout.value)
 					- totalInputValue = totalInputValue.plus(new Decimal(vout.value));
