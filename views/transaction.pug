@@ -285,7 +285,7 @@ block content
 												span(class="word-wrap monospace") #{vout.scriptPubKey.asm}
 												if (vout.scriptPubKey.asm.startsWith("OP_RETURN"))
 													br
-													span(class="word-wrap monospace text-muted") (decoded) #{utils.hex2ascii(vout.scriptPubKey.asm)}
+													span(class="word-wrap monospace text-muted") (decoded) #{new Buffer(vout.scriptPubKey.hex, 'hex').toString('utf8')}
 
 			div(id="tab-json", class="tab-pane", role="tabpanel")
 				div(class="highlight")
