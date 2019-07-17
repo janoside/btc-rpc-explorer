@@ -2,11 +2,13 @@
 
 'use strict';
 
-var os = require('os');
-var path = require('path');
-var dotenv = require("dotenv");
-var fs = require('fs');
+var os = require('os'); //운영체제와 시스템 정보를 얻을 수 있는 모듈
+var path = require('path'); //파일의 경로를 다루고 변경하는 유틸리티 모듈
+var dotenv = require("dotenv"); //포트, DB관련 정보 등을 전역으로 필요한 여러 변수가 적용된 외부 환경변수 파일 지원
+var fs = require('fs'); //파일 처리와 관련된 모듈
 
+//os.homedir : 홈 디렉토리 스트링형으로 반환
+//process.cwd() : 현재 프로세스가 실행되는 위치
 var configPaths = [ path.join(os.homedir(), '.config', 'btc-rpc-explorer.env'), path.join(process.cwd(), '.env') ];
 configPaths.filter(fs.existsSync).forEach(path => {
 	console.log('Loading env file:', path);
@@ -373,7 +375,7 @@ app.runOnStartup = function() {
 			if (config.electrumXServers && config.electrumXServers.length > 0) {
 				electrumAddressApi.connectToServers().then(function() {
 					global.electrumAddressApi = electrumAddressApi;
-					
+
 				}).catch(function(err) {
 					utils.logError("31207ugf4e0fed", err, {electrumXServers:config.electrumXServers});
 				});
@@ -393,7 +395,7 @@ app.runOnStartup = function() {
 
 				return;
 			}
-			
+
 			global.sourcecodeVersion = log.all[0].hash.substring(0, 10);
 			global.sourcecodeDate = log.all[0].date.substring(0, "0000-00-00".length);
 		});
@@ -444,7 +446,7 @@ app.use(function(req, res, next) {
 
 	res.locals.config = global.config;
 	res.locals.coinConfig = global.coinConfig;
-	
+
 	res.locals.host = req.session.host;
 	res.locals.port = req.session.port;
 
@@ -501,10 +503,10 @@ app.use(function(req, res, next) {
 
 	if (req.session.userMessage) {
 		res.locals.userMessage = req.session.userMessage;
-		
+
 		if (req.session.userMessageType) {
 			res.locals.userMessageType = req.session.userMessageType;
-			
+
 		} else {
 			res.locals.userMessageType = "warning";
 		}
