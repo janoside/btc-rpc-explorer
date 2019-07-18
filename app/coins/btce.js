@@ -4,17 +4,17 @@ Decimal8 = Decimal.clone({ precision:8, rounding:8 });
 var currencyUnits = [
 	{
 		type:"native",
-		name:"BTC",
+		name:"BTCE",
 		multiplier:1,
 		default:true,
-		values:["", "btc", "BTC"],
+		values:["", "btcee", "BTCEE"],
 		decimalPlaces:8
 	},
 	{
 		type:"native",
-		name:"mBTC",
+		name:"mBTCE",
 		multiplier:1000,
-		values:["mbtc"],
+		values:["mbtce"],
 		decimalPlaces:5
 	},
 	{
