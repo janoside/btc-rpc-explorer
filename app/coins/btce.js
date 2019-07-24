@@ -19,16 +19,16 @@ var currencyUnits = [
 	},
 	{
 		type:"native",
-		name:"bits",
+		name:"bitce",
 		multiplier:1000000,
-		values:["bits"],
+		values:["bitce"],
 		decimalPlaces:2
 	},
 	{
 		type:"native",
-		name:"sat",
+		name:"btceshi",
 		multiplier:100000000,
-		values:["sat", "satoshi"],
+		values:["btceshi", "bshi"],
 		decimalPlaces:0
 	},
 	{
@@ -46,3 +46,20 @@ var currencyUnits = [
 		values:["eur"],
 		decimalPlaces:2,
 		symbol:"
+	},
+];
+
+module.exports = {
+	name:"BitcoinECC",
+	ticker:"BTCE",
+	logoUrl:"/img/logo/btce.svg",
+	siteTitle:"BitcoinECC Explorer",
+	nodeTitle:"BitcoinECC Full Node",
+	maxBlockWeight: 4000000,
+	targetBlockTimeSeconds: 150,
+	currencyUnits:currencyUnits,
+	currencyUnitsByName:{"BTCE":currencyUnits[0], "mBTCE":currencyUnits[1], "bitce":currencyUnits[2], "btceshi":currencyUnits[3]},
+	baseCurrencyUnit:currencyUnits[3],
+	defaultCurrencyUnit:currencyUnits[0],
+	feeSatoshiPerByteBucketMaxima: [5, 10, 25, 50, 100, 150, 200, 250]
+};

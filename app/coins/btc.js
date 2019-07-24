@@ -46,3 +46,5 @@ var currencyUnits = [
 		values:["eur"],
 		decimalPlaces:2,
 		symbol:"
+	},
+];
