@@ -5,7 +5,7 @@ var btce = require("./coins/btce.js");
 module.exports = {
 	"BTC": btc,
 	"LTC": ltc,
-	"BTCE": btce
+	"BTCE": btce,
 
 	"coins":["BTC", "LTC", "BTCE"]
 };
