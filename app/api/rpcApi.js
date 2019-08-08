@@ -134,6 +134,35 @@ function getRawTransaction(txid) {
 	});
 }
 
+function getUtxo(txid, outputIndex) {
+	debugLog("getUtxo: %s (%d)", txid, outputIndex);
+
+	return new Promise(function(resolve, reject) {
+		getRpcDataWithParams({method:"gettxout", parameters:[txid, outputIndex]}).then(function(result) {
+			if (result == null) {
+				console.log("haha: " + JSON.stringify(result));
+				resolve("0");
+
+				return;
+			}
+
+			if (result.code && result.code < 0) {
+				console.log("haha2: " + JSON.stringify(result));
+				reject(result);
+
+				return;
+			}
+
+			console.log("haha3: " + JSON.stringify(result));
+
+			resolve(result);
+
+		}).catch(function(err) {
+			reject(err);
+		});
+	});
+}
+
 function getHelp() {
 	return getRpcData("help");
 }
@@ -206,6 +235,7 @@ module.exports = {
 	getBlockByHeight: getBlockByHeight,
 	getBlockByHash: getBlockByHash,
 	getRawTransaction: getRawTransaction,
+	getUtxo: getUtxo,
 	getRawMempool: getRawMempool,
 	getUptimeSeconds: getUptimeSeconds,
 	getHelp: getHelp,

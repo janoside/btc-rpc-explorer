@@ -295,9 +295,15 @@ block content
 													span(class="text-muted") (decoded) #{utils.hex2ascii(vout.scriptPubKey.asm)}
 
 			div(id="tab-json", class="tab-pane", role="tabpanel")
+				h3.h5 Transaction
 				div(class="highlight")
 					pre
 						code(class="json bg-light", data-lang="json") #{JSON.stringify(result.getrawtransaction, null, 4)}
+
+				h3.h5 UTXOs
+				div(class="highlight")
+					pre
+						code(class="json bg-light", data-lang="json") #{JSON.stringify(utxos, null, 4)}
 
 				//pre #{JSON.stringify(result.txInputs, null, 4)}
 

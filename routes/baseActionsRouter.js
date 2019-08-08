@@ -544,24 +544,54 @@ router.get("/tx/:transactionId", function(req, res, next) {
 	coreApi.getRawTransaction(txid).then(function(rawTxResult) {
 		res.locals.result.getrawtransaction = rawTxResult;
 
-		client.command('getblock', rawTxResult.blockhash, function(err3, result3, resHeaders3) {
-			res.locals.result.getblock = result3;
+		var promises = [];
 
-			var txids = [];
-			for (var i = 0; i < rawTxResult.vin.length; i++) {
-				if (!rawTxResult.vin[i].coinbase) {
-					txids.push(rawTxResult.vin[i].txid);
-				}
-			}
+		promises.push(new Promise(function(resolve, reject) {
+			coreApi.getTxUtxos(rawTxResult).then(function(utxos) {
+				res.locals.utxos = utxos;
+				
+				resolve();
 
-			coreApi.getRawTransactions(txids).then(function(txInputs) {
-				res.locals.result.txInputs = txInputs;
+			}).catch(function(err) {
+				res.locals.pageErrors.push(utils.logError("3208yhdsghssr", err));
 
-				res.render("transaction");
-
-				next();
+				reject(err);
 			});
+		}));
+
+		promises.push(new Promise(function(resolve, reject) {
+			client.command('getblock', rawTxResult.blockhash, function(err3, result3, resHeaders3) {
+				res.locals.result.getblock = result3;
+
+				var txids = [];
+				for (var i = 0; i < rawTxResult.vin.length; i++) {
+					if (!rawTxResult.vin[i].coinbase) {
+						txids.push(rawTxResult.vin[i].txid);
+					}
+				}
+
+				coreApi.getRawTransactions(txids).then(function(txInputs) {
+					res.locals.result.txInputs = txInputs;
+
+					resolve();
+				});
+			});
+		}));
+
+		Promise.all(promises).then(function() {
+			res.render("transaction");
+
+			next();
+
+		}).catch(function(err) {
+			res.locals.pageErrors.push(utils.logError("1237y4ewssgt", err));
+
+			res.render("transaction");
+
+			next();
 		});
+
+		
 	}).catch(function(err) {
 		res.locals.userMessage = "Failed to load transaction with txid=" + txid + ": " + err;
 

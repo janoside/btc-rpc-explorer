@@ -189,8 +189,16 @@ div(class="row monospace")
 											span #{utils.hex2ascii(vout.scriptPubKey.hex)}
 
 							div(class="tx-io-value")
+								if (utxos)
+									if (utxos[voutIndex])
+										i.fas.fa-lock.text-success.mr-2(title="Unspent output." data-toggle="tooltip")
+
+									else if (utxos[voutIndex] == null)
+										i.fas.fa-lock-open.text-secondary.mr-2(title="Spent output." data-toggle="tooltip")
+
 								- var currencyValue = vout.value;
 								include ./value-display.pug
+
 
 				hr
 

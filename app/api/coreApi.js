@@ -614,6 +614,44 @@ function getRawTransaction(txid) {
 	return tryCacheThenRpcApi(txCache, "getRawTransaction-" + txid, 3600000, rpcApiFunction, shouldCacheTransaction);
 }
 
+function getTxUtxos(tx) {
+	return new Promise(function(resolve, reject) {
+		var promises = [];
+
+		for (var i = 0; i < tx.vout.length; i++) {
+			promises.push(getUtxo(tx.txid, i));
+		}
+
+		Promise.all(promises).then(function(results) {
+			resolve(results);
+
+		}).catch(function(err) {
+			reject(err);
+		});
+	});
+}
+
+function getUtxo(txid, outputIndex) {
+	return new Promise(function(resolve, reject) {
+		tryCacheThenRpcApi(miscCache, "utxo-" + txid + "-" + outputIndex, 3600000, function() {
+			return rpcApi.getUtxo(txid, outputIndex);
+
+		}).then(function(result) {
+			// to avoid cache misses, rpcApi.getUtxo returns "0" instead of null
+			if (result == "0") {
+				resolve(null);
+
+				return;
+			}
+
+			resolve(result);
+
+		}).catch(function(err) {
+			reject(err);
+		});
+	});
+}
+
 function getAddress(address) {
 	return tryCacheThenRpcApi(miscCache, "getAddress-" + address, 3600000, function() {
 		return rpcApi.getAddress(address);
@@ -891,6 +929,7 @@ module.exports = {
 	getRawTransaction: getRawTransaction,
 	getRawTransactions: getRawTransactions,
 	getRawTransactionsWithInputs: getRawTransactionsWithInputs,
+	getTxUtxos: getTxUtxos,
 	getMempoolStats: getMempoolStats,
 	getUptimeSeconds: getUptimeSeconds,
 	getHelp: getHelp,
