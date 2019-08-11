@@ -253,7 +253,7 @@ block content
 								ol.mb-0
 									each ancestorTxid, ancestorIndex in mempoolDetails.ancestors
 										li
-											a.text-monospace(href=("/tx/" + ancestorTxid)) #{ancestorTxid}
+											a.monospace(href=("/tx/" + ancestorTxid)) #{ancestorTxid}
 
 					if (mempoolDetails.descendants.length > 0)
 						div(class="card mb-3 shadow-sm")
@@ -270,7 +270,7 @@ block content
 								ol.mb-0
 									each descendantTxid, descendantIndex in mempoolDetails.descendants
 										li
-											a.text-monospace(href=("/tx/" + descendantTxid)) #{descendantTxid}
+											a.monospace(href=("/tx/" + descendantTxid)) #{descendantTxid}
 
 			- var fontawesomeInputName = "sign-in-alt";
 			- var fontawesomeOutputName = "sign-out-alt";
