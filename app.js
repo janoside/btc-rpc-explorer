@@ -16,7 +16,7 @@ configPaths.filter(fs.existsSync).forEach(path => {
 // debug module is already loaded by the time we do dotenv.config
 // so refresh the status of DEBUG env var
 var debug = require("debug");
-debug.enable(process.env.DEBUG);
+debug.enable(process.env.DEBUG || "btcexp:app,btcexp:error");
 
 var debugLog = debug("btcexp:app");
 var debugPerfLog = debug("btcexp:actionPerformace");
