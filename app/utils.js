@@ -220,28 +220,6 @@ function seededRandomIntBetween(seed, min, max) {
 	return (min + (max - min) * rand);
 }
 
-function logAppStats() {
-	if (global.influxdb) {
-		var points = [];
-
-		points.push({
-			measurement:`app.memory_usage`,
-			tags:{app:("btc-rpc-explorer." + global.config.coin)},
-			fields:process.memoryUsage()
-		});
-
-		points.push({
-			measurement:`app.uptime`,
-			tags:{app:("btc-rpc-explorer." + global.config.coin)},
-			fields:{value:Math.floor(process.uptime())}
-		});
-
-		global.influxdb.writePoints(points).catch(err => {
-			logError("3ru3hfgde", err, {desc:"Error saving data to InfluxDB"});
-		});
-	}
-}
-
 function ellipsize(str, length) {
 	if (str.length <= length) {
 		return str;
@@ -366,22 +344,6 @@ function refreshExchangeRates() {
 				if (exchangeRates != null) {
 					global.exchangeRates = exchangeRates;
 					global.exchangeRatesUpdateTime = new Date();
-
-					if (global.influxdb) {
-						var points = [];
-						for (var key in exchangeRates) {
-							points.push({
-								measurement: `exchange_rates.${coins[config.coin].ticker.toLowerCase()}_${key.toLowerCase()}`,
-								fields:{value:parseFloat(exchangeRates[key])}
-							});
-						}
-
-						//debugLog("pts: " + JSON.stringify(points));
-
-						global.influxdb.writePoints(points).catch(err => {
-							logError("32o3h9ehf9ed", err, {desc:"Error saving data to InfluxDB"});
-						});
-					}
 
 					debugLog("Using exchange rates: " + JSON.stringify(global.exchangeRates) + " starting at " + global.exchangeRatesUpdateTime);
 
@@ -608,7 +570,6 @@ module.exports = {
 	formatCurrencyAmountInSmallestUnits: formatCurrencyAmountInSmallestUnits,
 	seededRandom: seededRandom,
 	seededRandomIntBetween: seededRandomIntBetween,
-	logAppStats: logAppStats,
 	logMemoryUsage: logMemoryUsage,
 	getMinerFromCoinbaseTx: getMinerFromCoinbaseTx,
 	getBlockTotalFeesFromCoinbaseTxAndBlockHeight: getBlockTotalFeesFromCoinbaseTxAndBlockHeight,

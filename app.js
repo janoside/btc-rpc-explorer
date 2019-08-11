@@ -42,7 +42,6 @@ var request = require("request");
 var qrcode = require("qrcode");
 var addressApi = require("./app/api/addressApi.js");
 var electrumAddressApi = require("./app/api/electrumAddressApi.js");
-var Influx = require("influx");
 var coreApi = require("./app/api/coreApi.js");
 var auth = require('./app/auth.js');
 
@@ -85,156 +84,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 process.on("unhandledRejection", (reason, p) => {
 	debugLog("Unhandled Rejection at: Promise", p, "reason:", reason, "stack:", (reason != null ? reason.stack : "null"));
-
-	if (global.influxdb) {
-		var points = [];
-		points.push({
-			measurement:`express.unhandled_rejection`,
-			tags:{app:("btc-rpc-explorer." + global.config.coin)},
-			fields:{count:1}
-		});
-
-		global.influxdb.writePoints(points).catch(err => {
-			debugLog(`Error saving data to InfluxDB: ${err.stack}`);
-		});
-	}
 });
-
-
-function logNetworkStats() {
-	if (global.influxdb) {
-		var promises = [];
-
-		promises.push(coreApi.getMempoolInfo());
-		promises.push(coreApi.getMiningInfo());
-
-		promises.push(coreApi.getBlockchainInfo());
-
-		Promise.all(promises).then(function(promiseResults) {
-			var mempoolInfo = promiseResults[0];
-			var miningInfo = promiseResults[1];
-			var blockchainInfo = promiseResults[2];
-
-			//debugLog("mempoolInfo: " + JSON.stringify(mempoolInfo));
-			//debugLog("miningInfo: " + JSON.stringify(miningInfo));
-			//debugLog("blockchainInfo: " + JSON.stringify(blockchainInfo));
-
-			var points = [];
-
-			var mempoolMapping = {size:"tx_count", bytes:"tx_vsize_total", usage:"total_memory_usage"};
-			for (var key in mempoolInfo) {
-				try {
-					if (mempoolMapping[key]) {
-						points.push({measurement:`${global.coinConfig.name.toLowerCase()}.mempool.${mempoolMapping[key]}`, fields:{value:mempoolInfo[key]}});
-					}
-				} catch (err) {
-					utils.logError("3ourhewe", err, {key:key, desc:"Error mapping mempool info"});
-				}
-			}
-
-			var miningMapping = {
-				difficulty:{
-					name:"mining_difficulty",
-					transform:function(rawval) {return parseFloat(rawval);}
-				},
-				networkhashps:{
-					name:"networkhashps",
-					transform:function(rawval) {return parseFloat(rawval);}
-				}
-			};
-
-			for (var key in miningInfo) {
-				try {
-					if (miningMapping[key]) {
-						points.push({measurement:`${global.coinConfig.name.toLowerCase()}.mining.${miningMapping[key].name}`, fields:{value:miningMapping[key].transform(miningInfo[key])}});
-					}
-				} catch (err) {
-					utils.logError("weoufbebfde4", err, {key:key, desc:"Error mapping mining info"});
-				}
-			}
-
-			var blockchainMapping = {size_on_disk:"size_on_disk"};
-			for (var key in blockchainInfo) {
-				try {
-					if (blockchainMapping[key]) {
-						points.push({measurement:`${global.coinConfig.name.toLowerCase()}.blockchain.${blockchainMapping[key]}`, fields:{value:blockchainInfo[key]}});
-					}
-				} catch (err) {
-					utils.logError("3heuuh4wwds", err, {key:key, desc:"Error mapping blockchain info"});
-				}
-			}
-
-			//debugLog("Points to send to InfluxDB: " + JSON.stringify(points, null, 4));
-
-			global.influxdb.writePoints(points).catch(err => {
-				utils.logError("w083rhewhee", err, {desc:"Error saving data to InfluxDB"});
-			});
-		}).catch(err => {
-			utils.logError("u2h3rfsd", err);
-		});
-	}
-}
-
-function logBlockStats() {
-	if (global.influxdb) {
-		if (global.blockStatsStatus == null) {
-			global.blockStatsStatus = {currentBlock:-1};
-		}
-
-		coreApi.getBlockchainInfo().then(function(getblockchaininfo) {
-			var blockHeights = [];
-			if (getblockchaininfo.blocks) {
-				for (var i = 0; i < 5; i++) {
-					blockHeights.push(getblockchaininfo.blocks - i);
-				}
-			}
-
-			coreApi.getBlocksByHeight(blockHeights).then(function(blocks) {
-				var points = [];
-
-				for (var i = 0; i < blocks.length; i++) {
-					var block = blocks[i];
-
-					var totalfees = new Decimal(parseFloat(block.totalFees));
-					var blockreward = new Decimal(parseFloat(global.coinConfig.blockRewardFunction(block.height)));
-					var timestamp = new Date(block.time * 1000);
-
-					var blockInfo = {
-						strippedsize:block.strippedsize,
-						size:block.size,
-						weight:block.weight,
-						version:block.version,
-						nonce:block.nonce,
-						txcount:block.nTx,
-						totalfees:totalfees.toNumber(),
-						avgfee:(block.totalFees / block.nTx),
-						avgfeeperweight:(block.totalFees / block.weight),
-						avgfeepersize:(block.totalFees / block.size),
-						avgtxsize:(block.size / block.nTx),
-						avgtxweight:(block.weight / block.nTx),
-						blockreward:blockreward.toNumber(),
-						timemediantimediff:(block.time - block.mediantime),
-						witnessdatasize:(block.size - block.strippedsize),
-						feeratio:totalfees.dividedBy(totalfees.plus(blockreward)).toNumber()
-					};
-
-					for (var key in blockInfo) {
-						points.push({measurement:`${global.coinConfig.name.toLowerCase()}.blocks.${key}`, fields:{value:blockInfo[key]}, timestamp:timestamp});
-					}
-
-					//debugLog("block: " + block.height + ": " + JSON.stringify(blockInfo, null, 4));
-					//debugLog("points: " + JSON.stringify(points, null, 4));
-				}
-
-				global.influxdb.writePoints(points).catch(err => {
-					utils.logError("3ru032hfudge", err, {desc:"Error saving data to InfluxDB"});
-				});
-			});
-		}).catch(function(err) {
-			utils.logError("23uhsdsgde", err);
-		});
-	}
-}
 
 function loadMiningPoolConfigs() {
 	global.miningPoolsConfigs = [];
@@ -307,22 +157,9 @@ app.runOnStartup = function() {
 
 	global.client = new bitcoinCore(rpcClientProperties);
 
-	if (config.credentials.influxdb.active) {
-		global.influxdb = new Influx.InfluxDB(config.credentials.influxdb);
-
-		debugLog(`Connected to InfluxDB: ${config.credentials.influxdb.host}:${config.credentials.influxdb.port}/${config.credentials.influxdb.database}`);
-	}
-
 	coreApi.getNetworkInfo().then(function(getnetworkinfo) {
 		debugLog(`Connected via RPC to node. Basic info: version=${getnetworkinfo.version}, subversion=${getnetworkinfo.subversion}, protocolversion=${getnetworkinfo.protocolversion}, services=${getnetworkinfo.localservices}`);
 
-		if (global.influxdb != null) {
-			logNetworkStats();
-			setInterval(logNetworkStats, 1 * 60000);
-
-			logBlockStats();
-			setInterval(logBlockStats, 5 * 60000);
-		}
 	}).catch(function(err) {
 		utils.logError("32ugegdfsde", err);
 	});
@@ -410,9 +247,6 @@ app.runOnStartup = function() {
 
 	// refresh exchange rate periodically
 	setInterval(utils.refreshExchangeRates, 1800000);
-
-	utils.logAppStats();
-	setInterval(utils.logAppStats, 5000);
 
 	utils.logMemoryUsage();
 	setInterval(utils.logMemoryUsage, 5000);
@@ -537,19 +371,6 @@ app.use(function(req, res, next) {
 	var memdiff = process.memoryUsage().heapUsed - req.startMem;
 
 	debugPerfLog("Finished action '%s' in %d ms", req.path, time);
-
-	if (global.influxdb) {
-		var points = [];
-		points.push({
-			measurement:`express.request`,
-			tags:{app:("btc-rpc-explorer." + global.config.coin), host:req.hostname, path:req.path, userAgent:req.headers['user-agent']},
-			fields:{count:1, duration:time, memdiff:memdiff}
-		});
-
-		global.influxdb.writePoints(points).catch(err => {
-			utils.logError("3rew08uhfeghd", err, {desc:"Error saving data to InfluxDB"});
-		});
-	}
 });
 
 /// catch 404 and forwarding to error handler

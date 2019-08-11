@@ -31,14 +31,6 @@ const args = require('meow')(`
       --ganalytics-tracking <tid>    tracking id for google analytics [default: disabled]
       --sentry-url <sentry-url>      sentry url [default: disabled]
 
-      --enable-influxdb              enable influxdb for logging network stats [default: false]
-      --influxdb-uri <uri>           connection URI for influxdb (overrides the options below)
-      --influxdb-host <host>         hostname for influxdb [default: 127.0.0.1]
-      --influxdb-port <port>         port for influxdb [default: 8086]
-      --influxdb-user <user>         username for influxdb [default: admin]
-      --influxdb-pass <pass>         password for influxdb [default: admin]
-      --influxdb-dbname <db>         database name for influxdb [default: influxdb]
-
       -e, --node-env <env>           nodejs environment mode [default: production]
       -h, --help                     output usage information
       -v, --version                  output version number
@@ -50,7 +42,6 @@ const args = require('meow')(`
     Or using connection URIs
       $ btc-rpc-explorer -b bitcoin://bob:myPassword@127.0.0.1:18443/
       $ btc-rpc-explorer -b bitcoin://127.0.0.1:18443/?cookie=$HOME/.bitcoin/regtest/.cookie
-      $ btc-rpc-explorer --influxdb-uri influx://bob:myPassword@127.0.0.1:8086/dbName
 
     All options may also be specified as environment variables
       $ BTCEXP_PORT=8080 BTCEXP_BITCOIND_PORT=18443 BTCEXP_BITCOIND_COOKIE=~/.bitcoin/regtest/.cookie btc-rpc-explorer
