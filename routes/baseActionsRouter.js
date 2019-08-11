@@ -559,6 +559,21 @@ router.get("/tx/:transactionId", function(req, res, next) {
 			});
 		}));
 
+		if (rawTxResult.confirmations == null) {
+			promises.push(new Promise(function(resolve, reject) {
+				coreApi.getMempoolTxDetails(txid).then(function(mempoolDetails) {
+					res.locals.mempoolDetails = mempoolDetails;
+					
+					resolve();
+
+				}).catch(function(err) {
+					res.locals.pageErrors.push(utils.logError("0q83hreuwgd", err));
+
+					reject(err);
+				});
+			}));
+		}
+
 		promises.push(new Promise(function(resolve, reject) {
 			client.command('getblock', rawTxResult.blockhash, function(err3, result3, resHeaders3) {
 				res.locals.result.getblock = result3;

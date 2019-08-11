@@ -237,6 +237,41 @@ block content
 							- blockHeight = result.getblock.height;
 						include includes/transaction-io-details.pug
 
+				if (mempoolDetails)
+					if (mempoolDetails.ancestors.length > 0)
+						div(class="card mb-3 shadow-sm")
+							div(class="card-header")
+								h2(class="h6 mb-0")
+									span #{mempoolDetails.ancestors.length.toLocaleString()} 
+									if (mempoolDetails.ancestors.length == 1)
+										span Ancestor
+									else
+										span Ancestors
+
+							
+							div(class="card-body")
+								ol.mb-0
+									each ancestorTxid, ancestorIndex in mempoolDetails.ancestors
+										li
+											a.text-monospace(href=("/tx/" + ancestorTxid)) #{ancestorTxid}
+
+					if (mempoolDetails.descendants.length > 0)
+						div(class="card mb-3 shadow-sm")
+							div(class="card-header")
+								h2(class="h6 mb-0")
+									span #{mempoolDetails.descendants.length.toLocaleString()} 
+									if (mempoolDetails.descendants.length == 1)
+										span Descendant
+									else
+										span Descendants
+
+							
+							div(class="card-body")
+								ol.mb-0
+									each descendantTxid, descendantIndex in mempoolDetails.descendants
+										li
+											a.text-monospace(href=("/tx/" + descendantTxid)) #{descendantTxid}
+
 			- var fontawesomeInputName = "sign-in-alt";
 			- var fontawesomeOutputName = "sign-out-alt";
 
@@ -304,6 +339,12 @@ block content
 				div(class="highlight")
 					pre
 						code(class="json bg-light", data-lang="json") #{JSON.stringify(utxos, null, 4)}
+
+				if (mempoolDetails)
+					h3.h5 Mempool Details
+					div(class="highlight")
+						pre
+							code(class="json bg-light", data-lang="json") #{JSON.stringify(mempoolDetails, null, 4)}
 
 				//pre #{JSON.stringify(result.txInputs, null, 4)}
 

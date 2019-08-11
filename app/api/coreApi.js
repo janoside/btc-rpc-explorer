@@ -652,6 +652,12 @@ function getUtxo(txid, outputIndex) {
 	});
 }
 
+function getMempoolTxDetails(txid) {
+	return tryCacheThenRpcApi(miscCache, "mempoolTxDetails-" + txid, 3600000, function() {
+		return rpcApi.getMempoolTxDetails(txid);
+	});
+}
+
 function getAddress(address) {
 	return tryCacheThenRpcApi(miscCache, "getAddress-" + address, 3600000, function() {
 		return rpcApi.getAddress(address);
@@ -930,6 +936,7 @@ module.exports = {
 	getRawTransactions: getRawTransactions,
 	getRawTransactionsWithInputs: getRawTransactionsWithInputs,
 	getTxUtxos: getTxUtxos,
+	getMempoolTxDetails: getMempoolTxDetails,
 	getMempoolStats: getMempoolStats,
 	getUptimeSeconds: getUptimeSeconds,
 	getHelp: getHelp,

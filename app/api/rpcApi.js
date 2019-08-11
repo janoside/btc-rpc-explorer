@@ -140,22 +140,68 @@ function getUtxo(txid, outputIndex) {
 	return new Promise(function(resolve, reject) {
 		getRpcDataWithParams({method:"gettxout", parameters:[txid, outputIndex]}).then(function(result) {
 			if (result == null) {
-				console.log("haha: " + JSON.stringify(result));
 				resolve("0");
 
 				return;
 			}
 
 			if (result.code && result.code < 0) {
-				console.log("haha2: " + JSON.stringify(result));
 				reject(result);
 
 				return;
 			}
 
-			console.log("haha3: " + JSON.stringify(result));
-
 			resolve(result);
+
+		}).catch(function(err) {
+			reject(err);
+		});
+	});
+}
+
+function getMempoolTxDetails(txid) {
+	debugLog("getMempoolTxDetails: %s", txid);
+
+	var promises = [];
+
+	var mempoolDetails = {};
+
+	promises.push(new Promise(function(resolve, reject) {
+		getRpcDataWithParams({method:"getmempoolentry", parameters:[txid]}).then(function(result) {
+			mempoolDetails.entry = result;
+
+			resolve();
+
+		}).catch(function(err) {
+			reject(err);
+		});
+	}));
+
+	promises.push(new Promise(function(resolve, reject) {
+		getRpcDataWithParams({method:"getmempoolancestors", parameters:[txid]}).then(function(result) {
+			mempoolDetails.ancestors = result;
+
+			resolve();
+
+		}).catch(function(err) {
+			reject(err);
+		});
+	}));
+
+	promises.push(new Promise(function(resolve, reject) {
+		getRpcDataWithParams({method:"getmempooldescendants", parameters:[txid]}).then(function(result) {
+			mempoolDetails.descendants = result;
+
+			resolve();
+
+		}).catch(function(err) {
+			reject(err);
+		});
+	}));
+
+	return new Promise(function(resolve, reject) {
+		Promise.all(promises).then(function() {
+			resolve(mempoolDetails);
 
 		}).catch(function(err) {
 			reject(err);
@@ -236,6 +282,7 @@ module.exports = {
 	getBlockByHash: getBlockByHash,
 	getRawTransaction: getRawTransaction,
 	getUtxo: getUtxo,
+	getMempoolTxDetails: getMempoolTxDetails,
 	getRawMempool: getRawMempool,
 	getUptimeSeconds: getUptimeSeconds,
 	getHelp: getHelp,
