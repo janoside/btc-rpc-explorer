@@ -78,6 +78,26 @@ block content
 								div(class="summary-table-content monospace")
 									span(class="text-warning") Unconfirmed
 
+							div(class="row")
+								div(class="summary-table-label")
+									span.border-dotted(title="Whether this unconfirmed transaction is replaceable using replace-by-fee (RBF)", data-toggle="tooltip") RBF
+								div(class="summary-table-content monospace")
+									- var replaceable = false;
+									each vin, vinIndex in result.getrawtransaction.vin
+										// ref: https://github.com/bitcoin/bips/blob/master/bip-0125.mediawiki#summary
+										if (vin.sequence < 4294967295 - 1)
+											- replaceable = true;
+
+									if (replaceable)
+										span.text-success Yes
+									else if (mempoolDetails.ancestors.length > 0)
+										span.border-dotted(title="RBF may be signaled explicitly or implicitly. This transaction does not explicitly opt in, but if any of its unconfirmed ancestor transactions are replaceable then this one is too.", data-toggle="tooltip") No explicit opt-in
+										a.ml-2(href="https://github.com/bitcoin/bips/blob/master/bip-0125.mediawiki#summary", data-toggle="tooltip", title="More info about RBF", target="_blank")
+											i.fas.fa-info-circle
+									else
+										span No
+
+
 						if (isTxConfirmed)
 							div(class="row")
 								div(class="summary-table-label") Block
