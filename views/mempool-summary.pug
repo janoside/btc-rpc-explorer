@@ -28,7 +28,7 @@ block content
 						td(class="properties-header") Memory Usage
 						td(class="monospace")
 							span #{mem1Data[0]} #{mem1Data[1].abbreviation}B
-							span(class="text-muted")  (virtual size: #{mem2Data[0]} #{mem2Data[1].abbreviation}B)
+							span(class="text-muted")  (#{mem2Data[0]} v#{mem2Data[1].abbreviation}B)
 
 					tr
 						td(class="properties-header") Total Fees
@@ -38,14 +38,15 @@ block content
 							
 					if (getmempoolinfo.size > 0)
 						tr
-							td(class="properties-header") Average Fee
+							td(class="properties-header") Avg Fee
 							td(class="monospace")
 								- var currencyValue = mempoolstats["averageFee"];
 								include ./includes/value-display.pug
 
 						tr
-							td(class="properties-header") Average Fee per Byte
-							td(class="monospace") #{utils.formatCurrencyAmountInSmallestUnits(mempoolstats["averageFeePerByte"], 2)}/B
+							td(class="properties-header") Avg Fee per 
+								span.border-dotted(title="Virtual bytes", data-toggle="tooltip") vByte
+							td(class="monospace") #{utils.formatCurrencyAmountInSmallestUnits(mempoolstats["averageFeePerByte"], 2)}/vB
 
 		if (getmempoolinfo.size > 0)
 			h2(class="h5") Transactions by fee rate
