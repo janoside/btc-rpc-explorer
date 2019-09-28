@@ -66,6 +66,7 @@ module.exports = {
 		"bumpfee",
 		"clearbanned",
 		"createmultisig",
+		"createwallet",
 		"disconnectnode",
 		"dumpprivkey",
 		"dumpwallet",
