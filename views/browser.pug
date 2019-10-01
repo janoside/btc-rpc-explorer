@@ -78,12 +78,12 @@ block content
 											- var valX = false;
 											if (argValues != null)
 												if (argValues[index] != null)
-													if (("" + argValues[index]) != NaN)
+													if (("" + argValues[index]) != "NaN")
 														- valX = JSON.stringify(argValues[index]);
 														if (valX.substring(0, 1) == "\"")
 															- valX = valX.substring(1);
 														if (valX.substring(valX.length - 1, valX.length) == "\"")
-															- valX = valX.substring(valX.length - 1);
+															- valX = valX.substring(0, valX.length - 1);
 
 											input(id=("arg_" + argX.name), type="text", name=("args[" + index + "]"), placeholder=argX.name, class="form-control", value=(valX ? valX : ""))
 
