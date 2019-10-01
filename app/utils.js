@@ -11,6 +11,7 @@ var config = require("./config.js");
 var coins = require("./coins.js");
 var coinConfig = coins[config.coin];
 var redisCache = require("./redisCache.js");
+var heapdump = require("heapdump");
 
 
 var exponentScales = [
@@ -229,6 +230,7 @@ function ellipsize(str, length) {
 	}
 }
 
+global.lastHeapdump = -1;
 function logMemoryUsage() {
 	var mbUsed = process.memoryUsage().heapUsed / 1024 / 1024;
 	mbUsed = Math.round(mbUsed * 100) / 100;
@@ -236,7 +238,26 @@ function logMemoryUsage() {
 	var mbTotal = process.memoryUsage().heapTotal / 1024 / 1024;
 	mbTotal = Math.round(mbTotal * 100) / 100;
 
-	//debugLog("memoryUsage: heapUsed=" + mbUsed + ", heapTotal=" + mbTotal + ", ratio=" + parseInt(mbUsed / mbTotal * 100));
+	if (global.gc) {
+		debugLog("Forcing garbage collection...");
+
+		global.gc();
+	}
+
+	debugLog("MemoryUsage: heapUsed=" + mbUsed + ", heapTotal=" + mbTotal + ", ratio=" + parseInt(mbUsed / mbTotal * 100));
+
+	var minutesBetweenHeapdumps = 10;
+	if (Date.now() - global.lastHeapdump > minutesBetweenHeapdumps * 60000) {
+		global.lastHeapdump = Date.now();
+
+		heapdump.writeSnapshot(function(err, filename) {
+			if (err != null) {
+				debugErrorLog(`Heapdump error: ${err}`);
+			}
+
+			debugLog(`Heapdump written to: ${filename}`);
+		});
+	}
 }
 
 function getMinerFromCoinbaseTx(tx) {

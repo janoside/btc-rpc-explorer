@@ -34,6 +34,7 @@
     "electrum-client": "github:chaintools/node-electrum-client#43a999036f9c5",
     "express": "^4.17.1",
     "express-session": "1.16.1",
+    "heapdump": "0.3.15",
     "jstransformer-markdown-it": "^2.1.0",
     "lru-cache": "5.1.1",
     "meow": "^5.0.0",
