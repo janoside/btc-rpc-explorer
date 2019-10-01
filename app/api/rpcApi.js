@@ -53,8 +53,53 @@ function getPeerInfo() {
 	return getRpcData("getpeerinfo");
 }
 
+function getMempoolTxids() {
+	return getRpcDataWithParams({method:"getrawmempool", parameters:[false]});
+}
+
 function getRawMempool() {
-	return getRpcDataWithParams({method:"getrawmempool", parameters:[true]});
+	return new Promise(function(resolve, reject) {
+		getRpcDataWithParams({method:"getrawmempool", parameters:[false]}).then(function(txids) {
+			var promises = [];
+
+			for (var i = 0; i < txids.length; i++) {
+				var txid = txids[i];
+
+				promises.push(getRawMempoolEntry(txid));
+			}
+
+			Promise.all(promises).then(function(results) {
+				var finalResult = {};
+
+				for (var i = 0; i < results.length; i++) {
+					if (results[i] != null) {
+						finalResult[results[i].txid] = results[i];
+					}
+				}
+
+				resolve(finalResult);
+
+			}).catch(function(err) {
+				reject(err);
+			});
+
+		}).catch(function(err) {
+			reject(err);
+		});
+	});
+}
+
+function getRawMempoolEntry(txid) {
+	return new Promise(function(resolve, reject) {
+		getRpcDataWithParams({method:"getmempoolentry", parameters:[txid]}).then(function(result) {
+			result.txid = txid;
+
+			resolve(result);
+
+		}).catch(function(err) {
+			resolve(null);
+		});
+	});
 }
 
 function getChainTxStats(blockCount) {
@@ -277,6 +322,7 @@ module.exports = {
 	getNetworkInfo: getNetworkInfo,
 	getNetTotals: getNetTotals,
 	getMempoolInfo: getMempoolInfo,
+	getMempoolTxids: getMempoolTxids,
 	getMiningInfo: getMiningInfo,
 	getBlockByHeight: getBlockByHeight,
 	getBlockByHash: getBlockByHash,

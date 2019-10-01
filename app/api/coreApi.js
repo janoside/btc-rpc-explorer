@@ -323,15 +323,11 @@ function getPeerSummary() {
 
 function getMempoolDetails(start, count) {
 	return new Promise(function(resolve, reject) {
-		tryCacheThenRpcApi(miscCache, "getRawMempool", 1000, rpcApi.getRawMempool).then(function(result) {
+		tryCacheThenRpcApi(miscCache, "getMempoolTxids", 1000, rpcApi.getMempoolTxids).then(function(resultTxids) {
 			var txids = [];
-			var txidIndex = 0;
-			for (var txid in result) {
-				if (txidIndex >= start && (txidIndex < (start + count)))  {
-					txids.push(txid);
-				}
 
-				txidIndex++;
+			for (var i = start; (i < resultTxids.length && i < (start + count)); i++) {
+				txids.push(resultTxids[i]);
 			}
 
 			getRawTransactions(txids).then(function(transactions) {
@@ -369,7 +365,8 @@ function getMempoolDetails(start, count) {
 						}
 					});
 
-					resolve({ txCount:txidIndex, transactions:transactions, txInputsByTransaction:txInputsByTransaction });
+					resolve({ txCount:resultTxids.length, transactions:transactions, txInputsByTransaction:txInputsByTransaction });
+
 				}).catch(function(err) {
 					reject(err);
 				});
