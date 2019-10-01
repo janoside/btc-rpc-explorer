@@ -12,7 +12,7 @@ app.set('host', process.env.BTCEXP_HOST || '127.0.0.1');
 var server = app.listen(app.get('port'), app.get('host'), function() {
 	debug('Express server listening on ' + server.address().address + ':' + server.address().port);
 
-	if (app.runOnStartup) {
-		app.runOnStartup();
+	if (app.onStartup) {
+		app.onStartup();
 	}
 });

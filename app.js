@@ -45,6 +45,9 @@ var electrumAddressApi = require("./app/api/electrumAddressApi.js");
 var coreApi = require("./app/api/coreApi.js");
 var auth = require('./app/auth.js');
 
+var package_json = require('./package.json');
+global.appVersion = package_json.version;
+
 var crawlerBotUserAgentStrings = [ "Googlebot", "Bingbot", "Slurp", "DuckDuckBot", "Baiduspider", "YandexBot", "Sogou", "Exabot", "facebot", "ia_archiver" ];
 
 var baseActionsRouter = require('./routes/baseActionsRouter');
@@ -137,15 +140,38 @@ function getSourcecodeProjectMetadata() {
 }
 
 
-app.runOnStartup = function() {
+app.onStartup = function() {
 	global.config = config;
 	global.coinConfig = coins[config.coin];
 	global.coinConfigs = coins;
 
-	debugLog(`Running RPC Explorer for ${global.coinConfig.name}`);
+	if (global.sourcecodeVersion == null && fs.existsSync('.git')) {
+		simpleGit(".").log(["-n 1"], function(err, log) {
+			if (err) {
+				utils.logError("3fehge9ee", err, {desc:"Error accessing git repo"});
 
+				debugLog(`Starting ${global.coinConfig.ticker} RPC Explorer, v${global.appVersion} (code: unknown commit)`);
+
+			} else {
+				global.sourcecodeVersion = log.all[0].hash.substring(0, 10);
+				global.sourcecodeDate = log.all[0].date.substring(0, "0000-00-00".length);
+
+				debugLog(`Starting ${global.coinConfig.ticker} RPC Explorer, v${global.appVersion} (commit: '${global.sourcecodeVersion}', date: ${global.sourcecodeDate})`);
+			}
+
+			app.continueStartup();
+		});
+
+	} else {
+		debugLog(`Starting ${global.coinConfig.ticker} RPC Explorer, v${global.appVersion}`);
+
+		app.continueStartup();
+	}
+}
+
+app.continueStartup = function() {
 	var rpcCred = config.credentials.rpc;
-	debugLog(`Connecting via RPC to node at ${rpcCred.host}:${rpcCred.port}`);
+	debugLog(`Connecting to RPC node at ${rpcCred.host}:${rpcCred.port}`);
 
 	var rpcClientProperties = {
 		host: rpcCred.host,
@@ -223,18 +249,6 @@ app.runOnStartup = function() {
 
 	loadMiningPoolConfigs();
 
-	if (global.sourcecodeVersion == null && fs.existsSync('.git')) {
-		simpleGit(".").log(["-n 1"], function(err, log) {
-			if (err) {
-				utils.logError("3fehge9ee", err, {desc:"Error accessing git repo"});
-
-				return;
-			}
-			
-			global.sourcecodeVersion = log.all[0].hash.substring(0, 10);
-			global.sourcecodeDate = log.all[0].date.substring(0, "0000-00-00".length);
-		});
-	}
 
 	if (config.demoSite) {
 		getSourcecodeProjectMetadata();
