@@ -49,168 +49,174 @@ block content
 							td(class="monospace") #{utils.formatCurrencyAmountInSmallestUnits(mempoolstats["averageFeePerByte"], 2)}/vB
 
 		if (getmempoolinfo.size > 0)
-			h2(class="h5") Transactions by fee rate
-			hr
+			div.card.mb-3.shadow-sm
+				div.card-header
+					span.h6 Transactions by fee rate
+				div.card-body
 
-			if (false)
-				#{JSON.stringify(mempoolstats)}
+					if (false)
+						#{JSON.stringify(mempoolstats)}
 
-			if (true)
-				- var feeBucketLabels = [("[0 - " + mempoolstats["satoshiPerByteBucketMaxima"][0] + ")")];
-				each item, index in mempoolstats["satoshiPerByteBuckets"]
-					if (index > 0 && index < mempoolstats["satoshiPerByteBuckets"].length - 1)
-						- feeBucketLabels.push(("[" + mempoolstats["satoshiPerByteBucketMaxima"][index - 1] + " - " + mempoolstats["satoshiPerByteBucketMaxima"][index] + ")"));
-				
-				- feeBucketLabels.push((mempoolstats.satoshiPerByteBucketMaxima[mempoolstats.satoshiPerByteBucketMaxima.length - 1] + "+"));
-				
-				- var feeBucketTxCounts = mempoolstats["satoshiPerByteBucketCounts"];
-				- var totalfeeBuckets = mempoolstats["satoshiPerByteBucketTotalFees"];
-				
-				canvas(id="mempoolBarChart", height="100", class="mb-4")
-
-				script(src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.bundle.min.js")
-
-				script var feeBucketLabels = [];
-				script var bgColors = [];
-				each feeBucketLabel, index in feeBucketLabels
-					- var percentTx = Math.round(100 * feeBucketTxCounts[index] / getmempoolinfo.size).toLocaleString();
-					script feeBucketLabels.push(["#{feeBucketLabel}","#{feeBucketTxCounts[index]} tx (#{percentTx}%)"]);
-					script bgColors.push("hsl(#{(333 * index / feeBucketLabels.length)}, 100%, 50%)");
-
-				script var feeBucketTxCounts = [#{feeBucketTxCounts}];
-
-				script.
-					var ctx = document.getElementById("mempoolBarChart").getContext('2d');
-					var mempoolBarChart = new Chart(ctx, {
-						type: 'bar',
-						data: {
-							labels: feeBucketLabels,
-							datasets: [{
-								data: feeBucketTxCounts,
-								backgroundColor: bgColors
-							}]
-						},
-						options: {
-							legend: {
-								display: false
-							},
-							scales: {
-								yAxes: [{
-									ticks: {
-										beginAtZero:true
-									}
-								}]
-							}
-						}
-					});
-
-			div(class="table-responsive")
-				table(class="table table-striped mb-4")
-					thead
-						tr
-							th Fee Rate
-							th(class="text-right") Tx Count
-							th(class="text-right") Total Fees
-							th(class="text-right") Average Fee
-							th(class="text-right") Average Fee Rate
-					tbody
+					if (true)
+						- var feeBucketLabels = [("[0 - " + mempoolstats["satoshiPerByteBucketMaxima"][0] + ")")];
 						each item, index in mempoolstats["satoshiPerByteBuckets"]
-							tr
-								td #{mempoolstats["satoshiPerByteBucketLabels"][index]}
-								td(class="text-right monospace") #{item["count"].toLocaleString()}
-								td(class="text-right monospace")
-									- var currencyValue = item["totalFees"];
-									include ./includes/value-display.pug
+							if (index > 0 && index < mempoolstats["satoshiPerByteBuckets"].length - 1)
+								- feeBucketLabels.push(("[" + mempoolstats["satoshiPerByteBucketMaxima"][index - 1] + " - " + mempoolstats["satoshiPerByteBucketMaxima"][index] + ")"));
+						
+						- feeBucketLabels.push((mempoolstats.satoshiPerByteBucketMaxima[mempoolstats.satoshiPerByteBucketMaxima.length - 1] + "+"));
+						
+						- var feeBucketTxCounts = mempoolstats["satoshiPerByteBucketCounts"];
+						- var totalfeeBuckets = mempoolstats["satoshiPerByteBucketTotalFees"];
+						
+						canvas(id="mempoolBarChart", height="100", class="mb-4")
 
-								if (item["totalBytes"] > 0)
-									- var avgFee = item["totalFees"] / item["count"];
-									- var avgFeeRate = item["totalFees"] / item["totalBytes"];
+						script(src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.bundle.min.js")
 
-									td(class="text-right monospace")
-										- var currencyValue = avgFee;
-										include ./includes/value-display.pug
-													
-									td(class="text-right monospace") #{utils.formatCurrencyAmountInSmallestUnits(avgFeeRate, 2)}/B
-								else
-									td(class="text-right monospace") -
-									td(class="text-right monospace") -
+						script var feeBucketLabels = [];
+						script var bgColors = [];
+						each feeBucketLabel, index in feeBucketLabels
+							- var percentTx = Math.round(100 * feeBucketTxCounts[index] / getmempoolinfo.size).toLocaleString();
+							script feeBucketLabels.push(["#{feeBucketLabel}","#{feeBucketTxCounts[index]} tx (#{percentTx}%)"]);
+							script bgColors.push("hsl(#{(333 * index / feeBucketLabels.length)}, 100%, 50%)");
 
+						script var feeBucketTxCounts = [#{feeBucketTxCounts}];
 
-			h2(class="h5") Transactions by size
-			hr
-
-			canvas(id="txSizesBarChart", height="100", class="mb-4")
-
-			script var sizeBucketLabels = [];
-			script var bgColors = [];
-			each sizeBucketLabel, index in mempoolstats["sizeBucketLabels"]
-				- var percentTx = Math.round(100 * mempoolstats["sizeBucketTxCounts"][index] / getmempoolinfo.size).toLocaleString();
-				script sizeBucketLabels.push(["#{sizeBucketLabel} bytes","#{mempoolstats["sizeBucketTxCounts"][index]} tx (#{percentTx}%)"]);
-				script bgColors.push("hsl(#{(333 * index / mempoolstats["sizeBucketLabels"].length)}, 100%, 50%)");
-
-			script var sizeBucketTxCounts = [#{mempoolstats["sizeBucketTxCounts"]}];
-
-			script.
-				var ctx = document.getElementById("txSizesBarChart").getContext('2d');
-				var txSizesBarChart = new Chart(ctx, {
-					type: 'bar',
-					data: {
-						labels: sizeBucketLabels,
-						datasets: [{
-							data: sizeBucketTxCounts,
-							backgroundColor: bgColors
-						}]
-					},
-					options: {
-						legend: {
-							display: false
-						},
-						scales: {
-							yAxes: [{
-								ticks: {
-									beginAtZero:true
+						script.
+							var ctx = document.getElementById("mempoolBarChart").getContext('2d');
+							var mempoolBarChart = new Chart(ctx, {
+								type: 'bar',
+								data: {
+									labels: feeBucketLabels,
+									datasets: [{
+										data: feeBucketTxCounts,
+										backgroundColor: bgColors
+									}]
+								},
+								options: {
+									legend: {
+										display: false
+									},
+									scales: {
+										yAxes: [{
+											ticks: {
+												beginAtZero:true
+											}
+										}]
+									}
 								}
-							}]
-						}
-					}
-				});
+							});
 
-			h2(class="h5") Transactions by age
-			hr
+					div(class="table-responsive")
+						table(class="table table-striped mb-4")
+							thead
+								tr
+									th Fee Rate
+									th(class="text-right") Tx Count
+									th(class="text-right") Total Fees
+									th(class="text-right") Average Fee
+									th(class="text-right") Average Fee Rate
+							tbody
+								each item, index in mempoolstats["satoshiPerByteBuckets"]
+									tr
+										td #{mempoolstats["satoshiPerByteBucketLabels"][index]}
+										td(class="text-right monospace") #{item["count"].toLocaleString()}
+										td(class="text-right monospace")
+											- var currencyValue = item["totalFees"];
+											include ./includes/value-display.pug
 
-			canvas(id="txAgesBarChart", height="100", class="mb-4")
+										if (item["totalBytes"] > 0)
+											- var avgFee = item["totalFees"] / item["count"];
+											- var avgFeeRate = item["totalFees"] / item["totalBytes"];
 
-			script var ageBucketLabels = [];
-			script var bgColors = [];
-			each ageBucketLabel, index in mempoolstats["ageBucketLabels"]
-				- var percentTx = Math.round(100 * mempoolstats["ageBucketTxCounts"][index] / getmempoolinfo.size).toLocaleString();
-				script ageBucketLabels.push(["#{ageBucketLabel} sec","#{mempoolstats["ageBucketTxCounts"][index]} tx (#{percentTx}%)"]);
-				script bgColors.push("hsl(#{(333 * index / mempoolstats["ageBucketLabels"].length)}, 100%, 50%)");
+											td(class="text-right monospace")
+												- var currencyValue = avgFee;
+												include ./includes/value-display.pug
+															
+											td(class="text-right monospace") #{utils.formatCurrencyAmountInSmallestUnits(avgFeeRate, 2)}/B
+										else
+											td(class="text-right monospace") -
+											td(class="text-right monospace") -
 
-			script var ageBucketTxCounts = [#{mempoolstats["ageBucketTxCounts"]}];
+			div.card.mb-3.shadow-sm
+				div.card-header
+					span.h6 Transactions by size
+				div.card-body
 
-			script.
-				var ctx = document.getElementById("txAgesBarChart").getContext('2d');
-				var txAgesBarChart = new Chart(ctx, {
-					type: 'bar',
-					data: {
-						labels: ageBucketLabels,
-						datasets: [{
-							data: ageBucketTxCounts,
-							backgroundColor: bgColors
-						}]
-					},
-					options: {
-						legend: {
-							display: false
-						},
-						scales: {
-							yAxes: [{
-								ticks: {
-									beginAtZero:true
+					canvas(id="txSizesBarChart", height="100", class="mb-4")
+
+					script var sizeBucketLabels = [];
+					script var bgColors = [];
+					each sizeBucketLabel, index in mempoolstats["sizeBucketLabels"]
+						- var percentTx = Math.round(100 * mempoolstats["sizeBucketTxCounts"][index] / getmempoolinfo.size).toLocaleString();
+						script sizeBucketLabels.push(["#{sizeBucketLabel} bytes","#{mempoolstats["sizeBucketTxCounts"][index]} tx (#{percentTx}%)"]);
+						script bgColors.push("hsl(#{(333 * index / mempoolstats["sizeBucketLabels"].length)}, 100%, 50%)");
+
+					script var sizeBucketTxCounts = [#{mempoolstats["sizeBucketTxCounts"]}];
+
+					script.
+						var ctx = document.getElementById("txSizesBarChart").getContext('2d');
+						var txSizesBarChart = new Chart(ctx, {
+							type: 'bar',
+							data: {
+								labels: sizeBucketLabels,
+								datasets: [{
+									data: sizeBucketTxCounts,
+									backgroundColor: bgColors
+								}]
+							},
+							options: {
+								legend: {
+									display: false
+								},
+								scales: {
+									yAxes: [{
+										ticks: {
+											beginAtZero:true
+										}
+									}]
 								}
-							}]
-						}
-					}
-				});
+							}
+						});
+
+
+			div.card.mb-3.shadow-sm
+				div.card-header
+					span.h6 Transactions by age
+				div.card-body
+
+					canvas(id="txAgesBarChart", height="100", class="mb-4")
+
+					script var ageBucketLabels = [];
+					script var bgColors = [];
+					each ageBucketLabel, index in mempoolstats["ageBucketLabels"]
+						- var percentTx = Math.round(100 * mempoolstats["ageBucketTxCounts"][index] / getmempoolinfo.size).toLocaleString();
+						script ageBucketLabels.push(["#{ageBucketLabel}","#{mempoolstats["ageBucketTxCounts"][index]} tx (#{percentTx}%)"]);
+						script bgColors.push("hsl(#{(333 * index / mempoolstats["ageBucketLabels"].length)}, 100%, 50%)");
+
+					script var ageBucketTxCounts = [#{mempoolstats["ageBucketTxCounts"]}];
+
+					script.
+						var ctx = document.getElementById("txAgesBarChart").getContext('2d');
+						var txAgesBarChart = new Chart(ctx, {
+							type: 'bar',
+							data: {
+								labels: ageBucketLabels,
+								datasets: [{
+									data: ageBucketTxCounts,
+									backgroundColor: bgColors
+								}]
+							},
+							options: {
+								legend: {
+									display: false
+								},
+								scales: {
+									yAxes: [{
+										ticks: {
+											beginAtZero:true
+										}
+									}]
+								}
+							}
+						});
 						
