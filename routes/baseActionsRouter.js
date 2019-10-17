@@ -229,7 +229,7 @@ router.post("/connect", function(req, res, next) {
 	req.session.port = port;
 	req.session.username = username;
 
-	var client = new bitcoinCore({
+	var newClient = new bitcoinCore({
 		host: host,
 		port: port,
 		username: username,
@@ -237,9 +237,9 @@ router.post("/connect", function(req, res, next) {
 		timeout: 30000
 	});
 
-	debugLog("created client: " + client);
+	debugLog("created new rpc client: " + newClient);
 
-	global.client = client;
+	global.rpcClient = newClient;
 
 	req.session.userMessage = "<strong>Connected via RPC</strong>: " + username + " @ " + host + ":" + port;
 	req.session.userMessageType = "success";
@@ -256,9 +256,9 @@ router.get("/disconnect", function(req, res, next) {
 	req.session.port = "";
 	req.session.username = "";
 
-	debugLog("destroyed client.");
+	debugLog("destroyed rpc client.");
 
-	global.client = null;
+	global.rpcClient = null;
 
 	req.session.userMessage = "Disconnected from node.";
 	req.session.userMessageType = "success";
@@ -575,7 +575,7 @@ router.get("/tx/:transactionId", function(req, res, next) {
 		}
 
 		promises.push(new Promise(function(resolve, reject) {
-			client.command('getblock', rawTxResult.blockhash, function(err3, result3, resHeaders3) {
+			global.rpcClient.command('getblock', rawTxResult.blockhash, function(err3, result3, resHeaders3) {
 				res.locals.result.getblock = result3;
 
 				var txids = [];
@@ -945,7 +945,7 @@ router.post("/rpc-terminal", function(req, res, next) {
 		return;
 	}
 
-	client.command([{method:cmd, parameters:parsedParams}], function(err, result, resHeaders) {
+	global.rpcClientNoTimeout.command([{method:cmd, parameters:parsedParams}], function(err, result, resHeaders) {
 		debugLog("Result[1]: " + JSON.stringify(result, null, 4));
 		debugLog("Error[2]: " + JSON.stringify(err, null, 4));
 		debugLog("Headers[3]: " + JSON.stringify(resHeaders, null, 4));
@@ -1060,7 +1060,7 @@ router.get("/rpc-browser", function(req, res, next) {
 
 						debugLog("Executing RPC '" + req.query.method + "' with params: [" + argValues + "]");
 
-						client.command([{method:req.query.method, parameters:argValues}], function(err3, result3, resHeaders3) {
+						global.rpcClientNoTimeout.command([{method:req.query.method, parameters:argValues}], function(err3, result3, resHeaders3) {
 							debugLog("RPC Response: err=" + err3 + ", result=" + result3 + ", headers=" + resHeaders3);
 
 							if (err3) {

@@ -181,7 +181,17 @@ app.continueStartup = function() {
 		timeout: rpcCred.timeout
 	};
 
-	global.client = new bitcoinCore(rpcClientProperties);
+	global.rpcClient = new bitcoinCore(rpcClientProperties);
+
+	var rpcClientNoTimeoutProperties = {
+		host: rpcCred.host,
+		port: rpcCred.port,
+		username: rpcCred.username,
+		password: rpcCred.password,
+		timeout: 0
+	};
+
+	global.rpcClientNoTimeout = new bitcoinCore(rpcClientNoTimeoutProperties);
 
 	coreApi.getNetworkInfo().then(function(getnetworkinfo) {
 		debugLog(`Connected via RPC to node. Basic info: version=${getnetworkinfo.version}, subversion=${getnetworkinfo.subversion}, protocolversion=${getnetworkinfo.protocolversion}, services=${getnetworkinfo.localservices}`);

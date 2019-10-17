@@ -269,6 +269,8 @@ function getRpcData(cmd) {
 		debugLog(`RPC: ${cmd}`);
 
 		rpcCall = function(callback) {
+			var client = (cmd == "gettxoutsetinfo" ? global.rpcClientNoTimeout : global.rpcClient);
+
 			client.command(cmd, function(err, result, resHeaders) {
 				if (err) {
 					utils.logError("32euofeege", err, {cmd:cmd});
@@ -295,7 +297,7 @@ function getRpcDataWithParams(request) {
 		debugLog(`RPC: ${JSON.stringify(request)}`);
 
 		rpcCall = function(callback) {
-			client.command([request], function(err, result, resHeaders) {
+			global.rpcClient.command([request], function(err, result, resHeaders) {
 				if (err != null) {
 					utils.logError("38eh39hdee", err, {result:result, headers:resHeaders});
 
