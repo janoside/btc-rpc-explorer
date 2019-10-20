@@ -12,6 +12,7 @@ var bitcoinjs = require('bitcoinjs-lib');
 var sha256 = require("crypto-js/sha256");
 var hexEnc = require("crypto-js/enc-hex");
 var Decimal = require("decimal.js");
+var marked = require("marked");
 
 var utils = require('./../app/utils.js');
 var coins = require("./../app/coins.js");
@@ -1187,6 +1188,14 @@ router.get("/tx-stats", function(req, res, next) {
 
 router.get("/about", function(req, res, next) {
 	res.render("about");
+
+	next();
+});
+
+router.get("/changelog", function(req, res, next) {
+	res.locals.changelogHtml = marked(global.changelogMarkdown);
+
+	res.render("changelog");
 
 	next();
 });

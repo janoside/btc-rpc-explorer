@@ -6,13 +6,11 @@
 				button.close(type='button' data-dismiss='modal' aria-label='Close')
 					span(aria-hidden='true') &times;
 			.modal-body
-				p Any and all support is greatly appreciated!
+				p.lead.text-primary I work on this project because I value it myself and want to give back to the BTC community. If it's valuable to you too, please consider supporting my work with a donation. Thanks!
 
 				if (config.donations.btcpayserver)
 					h6
-						span(class="mr-2") Donate via  
-						img(src="/img/logo/btcpay.png", alt="BTCPay", style="height: 30px;", class="mr-2")
-						a(href="https://github.com/btcpayserver/btcpayserver") BTCPay
+						span(class="mr-2") Donate (via BTCPay)
 					- var amounts = [1, 5, 10, 25, 100];
 					- var icons = [ "thumbs-up", "beer", "hamburger", "utensils", "grin-hearts" ];
 					div(class="mb-2")
@@ -44,17 +42,14 @@
 							link.classList.add("d-none");
 						}
 
-					a(href="javascript:void(0)", onclick="showDonateByAddress(this);") Or donate by address
-
-				div(id="donate-by-address", class="d-none mt-4")
+				div(id="donate-by-address", class="mt-4")
 					h6 Donate by address
 
 					div(class="mb-3")
 						each coin, index in config.donations.addresses.coins
 							div(class="monospace")
 								if (coinConfig.ticker == coin)
-									span #{coin}: 
-									a(href=("/address/" + config.donations.addresses[coin].address), class="text-wrap") #{config.donations.addresses[coin].address}
+									span #{config.donations.addresses[coin].address}
 								else
 									span #{coin}: 
 									a(href=(config.donations.addresses.sites[coin] + "/address/" + config.donations.addresses[coin].address), class="text-wrap") #{config.donations.addresses[coin].address}
@@ -62,8 +57,6 @@
 					each coin, index in config.donations.addresses.coins
 						div(style="display: inline-block; max-width: 150px;", class="text-center mb-3 word-wrap monospace", class=(index > 0 ? "ml-md-3" : false))
 							img(src=donationAddressQrCodeUrls[coin], alt=config.donations.addresses[coin].address, style="border: solid 1px #ccc;")
-							br
-							span #{coin}
 
 			.modal-footer
 				button.btn.btn-secondary(type='button' data-dismiss='modal') Close

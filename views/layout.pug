@@ -155,11 +155,20 @@ html(lang="en")
 											span(class="badge bg-white text-dark") #{global.sourcecodeProjectMetadata.forks_count}
 
 
-							if (sourcecodeVersion)
-								dt Running Version
-								dd
-									a(href=("https://github.com/janoside/btc-rpc-explorer/commit/" + sourcecodeVersion)) #{sourcecodeVersion}
-									span(style="color: #ccc;")  (#{sourcecodeDate})
+							
+							dt App Details
+							dd
+								span version: #{global.appVersion}
+								if (sourcecodeVersion)
+									br
+									span commit: 
+										a(href=("https://github.com/janoside/btc-rpc-explorer/commit/" + sourcecodeVersion)) #{sourcecodeVersion}
+								
+								br
+								span released: #{sourcecodeDate}
+								span(style="font-size: 0.9em;")  (
+									a(href="/changelog") changelog
+									span )
 
 							if (config.demoSite)
 								dt Public Demos
@@ -183,7 +192,7 @@ html(lang="en")
 							dd
 								button.btn.btn-primary(type="button", class="btn btn-primary", data-toggle="modal", data-target="#exampleModalCenter")
 									i(class="fas fa-heart mr-2")
-									span Support Development
+									span Support Project
 		
 		script(src="/js/jquery.min.js", integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=")
 		script(src="/js/popper.min.js", integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut")

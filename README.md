@@ -22,6 +22,10 @@ Live demo available at: [https://btc-explorer.com](https://btc-explorer.com)
 * Mempool summary, with fee, size, and age breakdowns
 * RPC command browser and terminal
 
+# Changelog / Release notes
+
+See [CHANGELOG.md](/CHANGELOG.md).
+
 # Getting started
 
 The below instructions are geared toward BTC, but can be adapted easily to other coins.

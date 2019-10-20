@@ -139,11 +139,26 @@ function getSourcecodeProjectMetadata() {
 	});
 }
 
+function loadChangelog() {
+	var filename = "CHANGELOG.md";
+
+	fs.readFile(filename, 'utf8', function(err, data) {
+		if (err) {
+			utils.logError("2379gsd7sgd334", err);
+
+		} else {
+			global.changelogMarkdown = data;
+		}
+	});
+}
+
 
 app.onStartup = function() {
 	global.config = config;
 	global.coinConfig = coins[config.coin];
 	global.coinConfigs = coins;
+
+	loadChangelog();
 
 	if (global.sourcecodeVersion == null && fs.existsSync('.git')) {
 		simpleGit(".").log(["-n 1"], function(err, log) {
