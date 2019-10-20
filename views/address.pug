@@ -10,7 +10,7 @@ block content
 				br
 				small(class="monospace") #{address}
 		else
-			h1(class="h3") Address
+			h1.h3 Address
 				br
 				small(class="monospace") #{address}
 			
@@ -75,7 +75,7 @@ block content
 
 			if (false)
 				pre
-					code(class="json bg-light") #{JSON.stringify(addressObj, null, 4)}
+					code.json.bg-light #{JSON.stringify(addressObj, null, 4)}
 			
 			ul(class='nav nav-tabs mb-3')
 				li(class="nav-item")
@@ -146,7 +146,7 @@ block content
 												
 												if (false)
 													pre
-														code(class="json bg-light") #{JSON.stringify(firstSeenTransaction)}
+														code.json.bg-light #{JSON.stringify(firstSeenTransaction)}
 
 									if (balance)
 										if (balance.conflictedResults)
@@ -315,7 +315,7 @@ block content
 
 								each tx, txIndex in transactions
 									//pre
-									//	code(class="json bg-light") #{JSON.stringify(tx, null, 4)}
+									//	code.json.bg-light #{JSON.stringify(tx, null, 4)}
 									div(class=("xcard bg-light rounded shadow-sm " + ((txIndex < (transactions.length - 1) || txids.length > limit) ? "mb-4" : "")))
 										div(class="card-header monospace clearfix")
 											div(class="float-left", style="margin-right: 0px;")
@@ -373,7 +373,7 @@ block content
 							
 							if (false)
 								pre
-									code(class="json bg-light") #{JSON.stringify(transactions, null, 4)}
+									code.json.bg-light #{JSON.stringify(transactions, null, 4)}
 
 							if (!crawlerBot && addressDetails && addressDetails.txCount > limit)
 								- var txCount = addressDetails.txCount;

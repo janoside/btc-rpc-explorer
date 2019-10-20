@@ -6,11 +6,11 @@ block content
 
 	if (message)
 		pre
-			code(class="json bg-light") !{message}
+			code.json.bg-light !{message}
 	else
 		p Unknown error
 
 	if (error)
 		h2 #{error.status}
 		pre
-			code(class="json bg-light") #{error.stack}
+			code.json.bg-light #{error.stack}

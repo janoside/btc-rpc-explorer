@@ -4,12 +4,12 @@ block headContent
 	title Mempool Summary
 	
 block content
-	h1(class="h3") Mempool Summary
+	h1.h3 Mempool Summary
 	hr
 
 	if (false)
 		pre
-			code(class="json bg-light") #{JSON.stringify(mempoolstats, null, 4)}
+			code.json.bg-light #{JSON.stringify(mempoolstats, null, 4)}
 
 	if (true)
 		div(class="card mb-3 shadow-sm")
