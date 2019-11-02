@@ -49,7 +49,7 @@ block content
 		script var feeBucketLabels = [];
 		each feeBucketLabel, index in feeBucketLabels
 			- var percentTx = Math.round(100 * feeBucketTxCounts[index] / getmempoolinfo.size).toLocaleString();
-			script feeBucketLabels.push(["#{feeBucketLabel}","#{feeBucketTxCounts[index]} tx (#{percentTx}%)","#{totalfeeBuckets[index].toLocaleString()} BTC"]);
+			script feeBucketLabels.push(["#{feeBucketLabel}","#{feeBucketTxCounts[index]} tx (#{percentTx}%)","#{totalfeeBuckets[index].toLocaleString()} BCA"]);
 
 		script var feeBucketTxCounts = [#{feeBucketTxCounts}];
 
