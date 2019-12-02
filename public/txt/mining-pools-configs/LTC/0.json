@@ -1,6 +1,14 @@
 {
   "coinbase_tags": {
+    "BITFARMS": {
+      "name": "Bitfarms",
+      "link": "https://www.bitarms.io/"
+    },
     "/Huobi/": {
+      "name": "Huobi.pool",
+      "link": "https://www.poolhb.com/"
+    },
+    "/HuoBi/": {
       "name": "Huobi.pool",
       "link": "https://www.poolhb.com/"
     },
@@ -221,13 +229,13 @@
       "link": "https://pool.btcc.com/"
     },
     "BW Pool": {
-	  "name" : "BWPool",
-	  "link" : "https://bwpool.net/"
-	},
-	"BWPool": {
-	  "name" : "BWPool",
-	  "link" : "https://bwpool.net/"
-	},
+      "name": "BWPool",
+      "link": "https://bwpool.net/"
+    },
+    "BWPool": {
+      "name": "BWPool",
+      "link": "https://bwpool.net/"
+    },
     "xbtc.exx.com&bw.com": {
       "name": "EXX&BW",
       "link": "https://xbtc.exx.com/"
@@ -432,10 +440,6 @@
       "name": "Rawpool.com",
       "link": "https://www.rawpool.com/"
     },
-    "tiger": {
-      "name": "tiger",
-      "link": ""
-    },
     "/haominer/": {
       "name": "haominer",
       "link": "http://haominer.com/"
@@ -464,12 +468,40 @@
       "name": "suprnova.cc",
       "link": "https://www.suprnova.cc/"
     },
-	"/SecretSuperstar/": {
-	  "name": "SecretSuperstar",
-	  "link": "http://google.com/search?q=SecretSuperstar"
-	}
+    "/SecretSuperstar/": {
+      "name": "SecretSuperstar",
+      "link": "https://google.com/search?q=SecretSuperstar"
+    },
+    "/poolin.com": {
+      "name": "Poolin",
+      "link": "https://www.poolin.com/"
+    },
+    "/tigerpool.net": {
+      "name": "tigerpool.net",
+      "link": ""
+    },
+    "/SigmaPool.com/": {
+      "name": "sigmapool.com",
+      "link": "https://sigmapool.com"
+    },
+    "/www.okpool.top/": {
+      "name": "okpool.top",
+      "link": "https://www.okpool.top"
+    },
+    "Hummerpool": {
+      "name": "Hummerpool",
+      "link": ""
+    },
+    "/Tangpool/": {
+      "name": "Tangpool",
+      "link": "http://www.tangpool.com/"
+    }
   },
   "payout_addresses": {
+    "3GvEGtnvgeBJ3p3EpdZhvUkxY4pDARkbjd": {
+      "name": "Bitfarms",
+      "link": "https://www.bitfarms.io/"
+    },
     "1CjPR7Z5ZSyWk6WtXvSFgkptmpoi4UM9BC": {
       "name": "GHash.IO",
       "link": "https://ghash.io/"
@@ -826,14 +858,22 @@
       "name": "tiger",
       "link": ""
     },
-	"36n452uGq1x4mK7bfyZR8wgE47AnBb2pzi": {
-	  "name" : "Poolin",
-	  "link" : "https://www.poolin.com/"
-	},
-	"3KJrsjfg1dD6CrsTeHdHVH3KqMpvL2XWQn": {
-	  "name" : "Poolin",
-	  "link" : "https://www.poolin.com/"
-	},
+    "36n452uGq1x4mK7bfyZR8wgE47AnBb2pzi": {
+      "name": "Poolin",
+      "link": "https://www.poolin.com/"
+    },
+    "3KJrsjfg1dD6CrsTeHdHVH3KqMpvL2XWQn": {
+      "name": "Poolin",
+      "link": "https://www.poolin.com/"
+    },
+    "3JQSigWTCHyBLRD979JWgEtWP5YiiFwcQB": {
+      "name": "Poolin",
+      "link": "https://www.poolin.com/"
+    },
+    "12Taz8FFXQ3E2AGn3ZW1SZM5bLnYGX4xR6": {
+      "name": "Tangpool",
+      "link": "http://www.tangpool.com/"
+    },
     "EZBxbLXkHwCRHgbSVGXkTkgNY2RSWaYpAP": {
       "name": "CryptoADHD.com",
       "link": "https://irl.cryptoadhd.com"
@@ -841,90 +881,6 @@
     "EU43PoAHphjbHzcfoVziWd4aLHdZNQ1XKM": {
       "name": "ProHashing",
       "link": "https://prohashing.com/"
-    },
-    "Lhh4idZ9eFgZt9wPGxMVdJmGJoGy2o2sCj": {
-      "name": "hashing.com",
-      "link": "https://hashing.com"
-    },
-    "Ld7Po2mbs1mWtz5aVEVgmEzDp8Zw3ndwhm": {
-      "name": "MultiPool",
-      "link": "https://www.multipool.us"
-    },
-    "LTftBH8seFk7iEJkib7d8bDaaLMFDeq4Sf": {
-      "name": "suprnova.cc",
-      "link": "https://www.suprnova.cc/"
-    },
-    "LSAXhjJBeyQ5nqvgrwF96Wnt2VrDGwV2Wf": {
-      "name": "mining-dutch.nl",
-      "link": "https://www.mining-dutch.nl"
-    },
-    "LhkFjuGkVcdriLU2HWnph1tSLd9Fk7deCn": {
-      "name": "ProHashing",
-      "link": "https://prohashing.com/"
-    },
-    "Lcvd2ka6ecXaxjGbuyWDKURpUf9pXXPVKK": {
-      "name": "Coinotron",
-      "link": "https://www.coinotron.com"
-    },
-    "LeD2fnnDJYZuyt8zgDsZ2oBGmuVcxGKCLd": {
-      "name": "P2P-multipool.eu",
-      "link": "http://p2p-multipool.eu/"
-    },
-    "XjRizKLj64toLfPk2vEDxk8d2pBtkVd6oa": {
-      "name": "CryptoADHD.com",
-      "link": "https://dash.cryptoadhd.com"
-    },
-    "XqPQ26xGigKkq4yCNmTfgkRPdt8FyB547J": {
-      "name": "P2P-multipool.eu",
-      "link": "http://p2p-multipool.eu/"
-    },
-    "XiEFG1tTyXuYbcFvcYYRC8cJgmRJAJi2ue": {
-      "name": "Coinotron",
-      "link": "https://www.coinotron.com"
-    },
-    "bitcoincash:qrgrmfhu5wgpvmgzp0sw0s52erx8pavyqvkhmltum6": {
-      "name": "P2P-multipool.eu",
-      "link": "http://p2p-multipool.eu/"
-    },
-    "bitcoincash:qrr7jtg5nxkq0ry75vyklk5kzt0hv4a2lqs83a25ky": {
-      "name": "BitClub",
-      "link": "https://bitclubpool.com/"
-    },
-    "GK18bp4UzC6wqYKKNLkaJ3hzQazTc3TWBw": {
-      "name": "MiningPoolHub",
-      "link": "https://miningpoolhub.com/"
-    },
-    "GJjz2Du9BoJQ3CPcoyVTHUJZSj62i1693U": {
-      "name": "2miners.com",
-      "link": "https://2miners.com"
-    },
-    "GWViUY2b3HAYWY9BbeGeFjc6rKdrBffzHa": {
-      "name": "Pool.Gold",
-      "link": "http://new.pool.gold"
-    },
-    "GSArGviLRTDBYSY69f7v9o6Dc7jhNY2Txo": {
-      "name": "MinerGate",
-      "link": "https://minergate.com"
-    },
-    "GVQiajM9TTSNVATL3JEGLG9s48TWHTJg8S": {
-      "name": "suprnova.cc",
-      "link": "https://www.suprnova.cc/"
-    },
-    "GPqm77aX5eR1ydAgiCLPqGMYDjVppc391J": {
-      "name": "Mining4",
-      "link": "http://btg.mining4.co.uk/"
-    },
-    "GKgCEhrm9MHVXMXbygFgzeiQQCUGQtgfpQ": {
-      "name": "Gpool.guru",
-      "link": "https://gpool.guru"
-    },
-    "GJVJXJgFvSjyUwaZHy2VSbemvLNzAyXQEs": {
-      "name": "PandaPool",
-      "link": "https://pandapool.io"
-    },
-    "GfdptpRd1m1jtgi32qEf1UU1myysTxQjsg": {
-      "name": "coinfoundry",
-      "link": "https://coinfoundry.org/"
     }
   }
 }

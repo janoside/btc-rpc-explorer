@@ -1,10 +1,18 @@
 {
     "coinbase_tags" : {
+        "/1THash&58COIN/": {
+            "name": "1THash&58COIN",
+            "link": "https://www.1thash.top"
+        },
         "BITFARMS": {
             "name": "Bitfarms",
             "link": "https://www.bitarms.io/"
         },
         "/Huobi/": {
+            "name": "Huobi.pool",
+            "link": "https://www.poolhb.com/"
+        },
+        "/HuoBi/": {
             "name": "Huobi.pool",
             "link": "https://www.poolhb.com/"
         },
@@ -296,6 +304,14 @@
             "name": "Bixin",
             "link": "https://haopool.com/"
         },
+        "HAOBTC" : {
+            "name": "Bixin",
+            "link": "https://haopool.com/"
+        },
+        "/Bixin/" : {
+            "name": "Bixin",
+            "link": "https://haopool.com/"
+        },
         "viabtc.com deploy" : {
             "name": "ViaBTC",
             "link": "https://viabtc.com"
@@ -319,10 +335,6 @@
         "/WATERHOLE.IO/" : {
             "name" : "Waterhole",
             "link" : "https://btc.waterhole.io/"
-        },
-        "/BTC.COM/" : {
-            "name" : "BTC.com",
-            "link" : "https://pool.btc.com"
         },
         "/DCExploration/" : {
             "name" : "DCExploration",
@@ -415,9 +427,33 @@
         "/www.okpool.top/": {
             "name" : "okpool.top",
             "link" : "https://www.okpool.top"
+        },
+        "HummerPool": {
+            "name" : "Hummerpool",
+            "link" : "https://www.hummerpool.com"
+        },
+        "Hummerpool": {
+            "name" : "Hummerpool",
+            "link" : "https://www.hummerpool.com"
+        },
+        "/Tangpool/": {
+            "name" : "Tangpool",
+            "link" : "http://www.tangpool.com/"
+        },
+        "/bytepool.com/": {
+            "name" : "BytePool",
+            "link" : "https://bytepool.com/"
+        },
+        "/SpiderPool.com/": {
+            "name" : "SpiderPool",
+            "link" : "https://www.spiderpool.com/"
         }
     },
     "payout_addresses" : {
+        "3Bmb9Jig8A5kHdDSxvDZ6eryj3AXd3swuJ": {
+            "name" : "NovaBlock",
+            "link" : "https://novablock.com"
+         },
         "3GvEGtnvgeBJ3p3EpdZhvUkxY4pDARkbjd" : {
             "name" : "Bitfarms",
             "link" : "https://www.bitfarms.io/"
@@ -658,6 +694,10 @@
             "name" : "BTC.com",
             "link" : "https://pool.btc.com"
         },
+        "bc1qjl8uwezzlech723lpnyuza0h2cdkvxvh54v3dn" : {
+            "name" : "BTC.com",
+            "link" : "https://pool.btc.com"
+        },
         "18EPLvrs2UE11kWBB3ABS7Crwj5tTBYPoa" : {
             "name" : "GoGreenLight",
             "link" : "http://www.gogreenlight.se/"
@@ -789,6 +829,26 @@
         "3JQSigWTCHyBLRD979JWgEtWP5YiiFwcQB" : {
             "name" : "Poolin",
             "link" : "https://www.poolin.com/"
+        },
+        "12Taz8FFXQ3E2AGn3ZW1SZM5bLnYGX4xR6" : {
+            "name" : "Tangpool",
+            "link" : "http://www.tangpool.com/"
+        },
+        "1MvYASoHjqynMaMnP7SBmenyEWiLsTqoU6" : {
+            "name": "Huobi.pool",
+            "link": "https://www.poolhb.com/"
+        },
+        "1M1Xw2rczxkF3p3wiNHaTmxvbpZZ7M6vaa" : {
+            "name": "1M1X",
+            "link": ""
+        },
+        "39m5Wvn9ZqyhYmCYpsyHuGMt5YYw4Vmh1Z" : {
+            "name": "BytePool",
+            "link": "https://bytepool.com/"
+        },
+        "38u1srayb1oybVB43UWKBJsrwJbdHGtPx2": {
+            "name" : "SpiderPool",
+            "link" : "https://www.spiderpool.com/"
         }
     }
 }
