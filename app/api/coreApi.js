@@ -394,16 +394,16 @@ function getMempoolStats() {
 			for (var txid in result) {
 				var txMempoolInfo = result[txid];
 				var fee = txMempoolInfo.modifiedfee;
-				var feePerByte = txMempoolInfo.modifiedfee / txMempoolInfo.size;
+				var size = txMempoolInfo.vsize ? txMempoolInfo.vsize : txMempoolInfo.size;
+				var feePerByte = txMempoolInfo.modifiedfee / size;
 				var age = Date.now() / 1000 - txMempoolInfo.time;
-				var size = txMempoolInfo.size;
 
 				if (fee > maxFee) {
 					maxFee = txMempoolInfo.modifiedfee;
 				}
 
 				if (feePerByte > maxFeePerByte) {
-					maxFeePerByte = txMempoolInfo.modifiedfee / txMempoolInfo.size;
+					maxFeePerByte = txMempoolInfo.modifiedfee / size;
 				}
 
 				ages.push({age:age, txid:txid});
@@ -506,17 +506,17 @@ function getMempoolStats() {
 			for (var txid in result) {
 				var txMempoolInfo = result[txid];
 				var fee = txMempoolInfo.modifiedfee;
-				var feePerByte = txMempoolInfo.modifiedfee / txMempoolInfo.size;
+				var size = txMempoolInfo.vsize ? txMempoolInfo.vsize : txMempoolInfo.size;
+				var feePerByte = txMempoolInfo.modifiedfee / size;
 				var satoshiPerByte = feePerByte * 100000000;
 				var age = Date.now() / 1000 - txMempoolInfo.time;
-				var size = txMempoolInfo.size;
 
 				var addedToBucket = false;
 				for (var i = 0; i < satoshiPerByteBucketMaxima.length; i++) {
 					if (satoshiPerByteBucketMaxima[i] > satoshiPerByte) {
 						satoshiPerByteBuckets[i]["count"]++;
 						satoshiPerByteBuckets[i]["totalFees"] += fee;
-						satoshiPerByteBuckets[i]["totalBytes"] += txMempoolInfo.size;
+						satoshiPerByteBuckets[i]["totalBytes"] += size;
 
 						addedToBucket = true;
 
@@ -527,12 +527,12 @@ function getMempoolStats() {
 				if (!addedToBucket) {
 					satoshiPerByteBuckets[bucketCount - 1]["count"]++;
 					satoshiPerByteBuckets[bucketCount - 1]["totalFees"] += fee;
-					satoshiPerByteBuckets[bucketCount - 1]["totalBytes"] += txMempoolInfo.size;
+					satoshiPerByteBuckets[bucketCount - 1]["totalBytes"] += size;
 				}
 
 				summary["count"]++;
 				summary["totalFees"] += txMempoolInfo.modifiedfee;
-				summary["totalBytes"] += txMempoolInfo.size;
+				summary["totalBytes"] += size;
 
 				var ageBucketIndex = Math.min(ageBucketCount - 1, parseInt(age / (maxAge / ageBucketCount)));
 				var sizeBucketIndex = Math.min(sizeBucketCount - 1, parseInt(size / (maxSize / sizeBucketCount)));
