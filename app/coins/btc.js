@@ -166,7 +166,8 @@ module.exports = {
 			date: "2011-05-18",
 			txid: "5d80a29be1609db91658b401f85921a86ab4755969729b65257651bb9fd2c10d",
 			summary: "Destroyed bitcoin.",
-			referenceUrl: "https://www.reddit.com/r/Bitcoin/comments/7mhoks/til_in_2011_a_user_running_a_modified_mining/"
+			referenceUrl: "https://bitcointalk.org/index.php?topic=7253.msg184414#msg184414",
+			referenceUrl2: "https://www.reddit.com/r/Bitcoin/comments/7mhoks/til_in_2011_a_user_running_a_modified_mining/"
 		},
 		{
 			type: "blockheight",
