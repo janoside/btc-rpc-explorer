@@ -1,4 +1,5 @@
 var redis = require("redis");
+var bluebird = require("bluebird");
 
 var config = require("./config.js");
 var utils = require("./utils.js");
