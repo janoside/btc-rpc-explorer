@@ -34,7 +34,7 @@ block content
 		div(id="tab-summary", class="tab-pane active", role="tabpanel")
 			
 
-			if (peerIpSummary.ips)
+			if (peerIpSummary && peerIpSummary.ips)
 				div(id="map", class="mb-4")
 
 			div(class="card mb-4 shadow-sm")
@@ -93,7 +93,7 @@ block content
 								th(class="data-header") Address
 								th(class="data-header") Services
 
-								if (peerIpSummary.ips)
+								if (peerIpSummary && peerIpSummary.ips)
 									th(class="data-header") Location
 
 								th(class="data-header") Last Send / Receive
@@ -161,7 +161,7 @@ block endOfBody
 			$(".data-table").DataTable();
 		});
 
-	if (peerIpSummary.ips)
+	if (peerIpSummary && peerIpSummary.ips)
 		script.
 			var mymap = L.map('map').setView([21.505, -0.09], 3);
 

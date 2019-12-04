@@ -74,11 +74,11 @@ if (redisCache.active) {
 
 
 function getGenesisBlockHash() {
-	return coins[config.coin].genesisBlockHash;
+	return coins[config.coin].genesisBlockHashesByNetwork[global.activeBlockchain];
 }
 
 function getGenesisCoinbaseTransactionId() {
-	return coins[config.coin].genesisCoinbaseTransactionId;
+	return coins[config.coin].genesisCoinbaseTransactionIdsByNetwork[global.activeBlockchain];
 }
 
 

@@ -152,6 +152,32 @@ function loadChangelog() {
 	});
 }
 
+function loadHistoricalDataForChain(chain) {
+	global.specialTransactions = {};
+	global.specialBlocks = {};
+	global.specialAddresses = {};
+
+	if (config.donations.addresses && config.donations.addresses[coinConfig.ticker]) {
+		global.specialAddresses[config.donations.addresses[coinConfig.ticker].address] = {type:"donation"};
+	}
+
+	if (global.coinConfig.historicalData) {
+		global.coinConfig.historicalData.forEach(function(item) {
+			if (item.chain == chain) {
+				if (item.type == "blockheight") {
+					global.specialBlocks[item.blockHash] = item;
+
+				} else if (item.type == "tx") {
+					global.specialTransactions[item.txid] = item;
+
+				} else if (item.type == "address") {
+					global.specialAddresses[item.address] = {type:"fun", addressInfo:item};
+				}
+			}
+		});
+	}
+}
+
 
 app.onStartup = function() {
 	global.config = config;
@@ -209,8 +235,20 @@ app.continueStartup = function() {
 	global.rpcClientNoTimeout = new bitcoinCore(rpcClientNoTimeoutProperties);
 
 	coreApi.getNetworkInfo().then(function(getnetworkinfo) {
-		debugLog(`Connected via RPC to node. Basic info: version=${getnetworkinfo.version}, subversion=${getnetworkinfo.subversion}, protocolversion=${getnetworkinfo.protocolversion}, services=${getnetworkinfo.localservices}`);
+		coreApi.getBlockchainInfo().then(function(getblockchaininfo) {
+			global.activeBlockchain = getblockchaininfo.chain;
 
+			// localservicenames introduced in 0.19
+			var services = getnetworkinfo.localservicesnames ? ("[" + getnetworkinfo.localservicesnames.join(", ") + "]") : getnetworkinfo.localservices;
+
+			debugLog(`RPC Connected: version=${getnetworkinfo.version} (${getnetworkinfo.subversion}), protocolversion=${getnetworkinfo.protocolversion}, chain=${getblockchaininfo.chain}, services=${services}`);
+
+			// load historical/fun items for this chain
+			loadHistoricalDataForChain(global.activeBlockchain);
+
+		}).catch(function(err) {
+			utils.logError("329u0wsdgewg6ed", err);
+		});
 	}).catch(function(err) {
 		utils.logError("32ugegdfsde", err);
 	});
@@ -229,27 +267,6 @@ app.continueStartup = function() {
 		});
 	}
 
-	global.specialTransactions = {};
-	global.specialBlocks = {};
-	global.specialAddresses = {};
-
-	if (config.donations.addresses && config.donations.addresses[coinConfig.ticker]) {
-		global.specialAddresses[config.donations.addresses[coinConfig.ticker].address] = {type:"donation"};
-	}
-
-	if (global.coinConfig.historicalData) {
-		global.coinConfig.historicalData.forEach(function(item) {
-			if (item.type == "blockheight") {
-				global.specialBlocks[item.blockHash] = item;
-
-			} else if (item.type == "tx") {
-				global.specialTransactions[item.txid] = item;
-
-			} else if (item.type == "address") {
-				global.specialAddresses[item.address] = {type:"fun", addressInfo:item};
-			}
-		});
-	}
 
 	if (config.addressApi) {
 		var supportedAddressApis = addressApi.getSupportedAddressApis();
@@ -280,12 +297,14 @@ app.continueStartup = function() {
 		setInterval(getSourcecodeProjectMetadata, 3600000);
 	}
 
-	if (global.exchangeRates == null) {
-		utils.refreshExchangeRates();
-	}
+	if (global.activeBlockchain == "main") {
+		if (global.exchangeRates == null) {
+			utils.refreshExchangeRates();
+		}
 
-	// refresh exchange rate periodically
-	setInterval(utils.refreshExchangeRates, 1800000);
+		// refresh exchange rate periodically
+		setInterval(utils.refreshExchangeRates, 1800000);
+	}
 
 	utils.logMemoryUsage();
 	setInterval(utils.logMemoryUsage, 5000);

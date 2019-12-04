@@ -73,7 +73,7 @@ div(class="tab-content")
 									- var currencyValue = new Decimal(result.getblock.totalFees).dividedBy(result.getblock.tx.length);
 									include ./value-display.pug
 
-						- var blockRewardMax = coinConfig.blockRewardFunction(result.getblock.height);
+						- var blockRewardMax = coinConfig.blockRewardFunction(result.getblock.height, global.activeBlockchain);
 						- var coinbaseTxTotalOutputValue = new Decimal(0);
 						each vout in result.getblock.coinbaseTx.vout
 							- coinbaseTxTotalOutputValue = coinbaseTxTotalOutputValue.plus(new Decimal(vout.value));

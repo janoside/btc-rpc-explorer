@@ -44,6 +44,12 @@ html(lang="en")
 									a(href="/about", class="nav-link")
 										span About
 
+							if (global.activeBlockchain != "main")
+								- var chainName = global.activeBlockchain == "test" ? "testnet" : global.activeBlockchain
+
+								li.nav-item
+									a.nav-link.text-warning(title=`Current node's chain: ${global.activeBlockchain}` data-toggle="tooltip") [#{chainName}]
+
 							if (config.siteTools)
 								li(class="nav-item dropdown")
 									a(class="nav-link dropdown-toggle", href="javascript:void(0)", role="button", data-toggle="dropdown", aria-haspopup="true", aria-expanded="false") 
