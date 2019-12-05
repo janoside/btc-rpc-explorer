@@ -1,5 +1,5 @@
 #### v1.1.4
-##### 2019-12-04
+###### 2019-12-04
 
 * First-class support for testnet/regtest
 
