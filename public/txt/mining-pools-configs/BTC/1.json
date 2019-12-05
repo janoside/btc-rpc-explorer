@@ -1,5 +1,9 @@
 {
     "coinbase_tags" : {
+        "/LUXOR/": {
+            "name": "Luxor",
+            "link": "https://mining.luxor.tech"
+        },
         "Rawpool.com" : {
             "name" : "Rawpool.com",
             "link" : "https://www.rawpool.com/"
