@@ -284,7 +284,7 @@ function getTxTotalInputOutputValues(tx, txInputs, blockHeight) {
 	try {
 		for (var i = 0; i < tx.vin.length; i++) {
 			if (tx.vin[i].coinbase) {
-				totalInputValue = totalInputValue.plus(new Decimal(coinConfig.blockRewardFunction(blockHeight)));
+				totalInputValue = totalInputValue.plus(new Decimal(coinConfig.blockRewardFunction(blockHeight, global.activeBlockchain)));
 
 			} else {
 				var txInput = txInputs[i];
@@ -317,7 +317,7 @@ function getBlockTotalFeesFromCoinbaseTxAndBlockHeight(coinbaseTx, blockHeight) 
 		return 0;
 	}
 
-	var blockReward = coinConfig.blockRewardFunction(blockHeight);
+	var blockReward = coinConfig.blockRewardFunction(blockHeight, global.activeBlockchain);
 
 	var totalOutput = new Decimal(0);
 	for (var i = 0; i < coinbaseTx.vout.length; i++) {

@@ -172,7 +172,7 @@ function getAddressTxids(addrScripthash) {
 
 			if (addrScripthash == coinConfig.genesisCoinbaseOutputAddressScripthash) {
 				for (var i = 0; i < results.length; i++) {
-					results[i].result.unshift({tx_hash:coinConfig.genesisCoinbaseTransactionId, height:0});
+					results[i].result.unshift({tx_hash:coinConfig.genesisCoinbaseTransactionIdsByNetwork[global.activeBlockchain], height:0});
 				}
 			}
 
@@ -206,7 +206,7 @@ function getAddressBalance(addrScripthash) {
 
 			if (addrScripthash == coinConfig.genesisCoinbaseOutputAddressScripthash) {
 				for (var i = 0; i < results.length; i++) {
-					var coinbaseBlockReward = coinConfig.blockRewardFunction(0);
+					var coinbaseBlockReward = coinConfig.blockRewardFunction(0, global.activeBlockchain);
 					
 					results[i].result.confirmed += (coinbaseBlockReward * coinConfig.baseCurrencyUnit.multiplier);
 				}

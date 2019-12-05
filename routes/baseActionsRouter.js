@@ -74,6 +74,10 @@ router.get("/", function(req, res, next) {
 			for (var i = 0; i < 10; i++) {
 				blockHeights.push(getblockchaininfo.blocks - i);
 			}
+		} else if (global.activeBlockchain == "regtest") {
+			// hack: default regtest node returns getblockchaininfo.blocks=0, despite having a genesis block
+			// hack this to display the genesis block
+			blockHeights.push(0);
 		}
 
 		if (getblockchaininfo.chain !== 'regtest') {
