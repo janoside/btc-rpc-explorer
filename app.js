@@ -178,6 +178,34 @@ function loadHistoricalDataForChain(chain) {
 	}
 }
 
+function verifyRpcConnection() {
+	if (!global.activeBlockchain) {
+		debugLog(`Trying to verify RPC connection...`);
+
+		coreApi.getNetworkInfo().then(function(getnetworkinfo) {
+			coreApi.getBlockchainInfo().then(function(getblockchaininfo) {
+				global.activeBlockchain = getblockchaininfo.chain;
+
+				// localservicenames introduced in 0.19
+				var services = getnetworkinfo.localservicesnames ? ("[" + getnetworkinfo.localservicesnames.join(", ") + "]") : getnetworkinfo.localservices;
+
+				debugLog(`RPC Connected: version=${getnetworkinfo.version} (${getnetworkinfo.subversion}), protocolversion=${getnetworkinfo.protocolversion}, chain=${getblockchaininfo.chain}, services=${services}`);
+
+				// load historical/fun items for this chain
+				loadHistoricalDataForChain(global.activeBlockchain);
+
+				// we've verified rpc connection, no need to keep trying
+				clearInterval(global.verifyRpcConnectionIntervalId);
+
+			}).catch(function(err) {
+				utils.logError("329u0wsdgewg6ed", err);
+			});
+		}).catch(function(err) {
+			utils.logError("32ugegdfsde", err);
+		});
+	}
+}
+
 
 app.onStartup = function() {
 	global.config = config;
@@ -234,24 +262,12 @@ app.continueStartup = function() {
 
 	global.rpcClientNoTimeout = new bitcoinCore(rpcClientNoTimeoutProperties);
 
-	coreApi.getNetworkInfo().then(function(getnetworkinfo) {
-		coreApi.getBlockchainInfo().then(function(getblockchaininfo) {
-			global.activeBlockchain = getblockchaininfo.chain;
 
-			// localservicenames introduced in 0.19
-			var services = getnetworkinfo.localservicesnames ? ("[" + getnetworkinfo.localservicesnames.join(", ") + "]") : getnetworkinfo.localservices;
+	// keep trying to verify rpc connection until we succeed
+	// note: see verifyRpcConnection() for associated clearInterval() after success
+	verifyRpcConnection();
+	global.verifyRpcConnectionIntervalId = setInterval(verifyRpcConnection, 30000);
 
-			debugLog(`RPC Connected: version=${getnetworkinfo.version} (${getnetworkinfo.subversion}), protocolversion=${getnetworkinfo.protocolversion}, chain=${getblockchaininfo.chain}, services=${services}`);
-
-			// load historical/fun items for this chain
-			loadHistoricalDataForChain(global.activeBlockchain);
-
-		}).catch(function(err) {
-			utils.logError("329u0wsdgewg6ed", err);
-		});
-	}).catch(function(err) {
-		utils.logError("32ugegdfsde", err);
-	});
 
 	if (config.donations.addresses) {
 		var getDonationAddressQrCode = function(coinId) {
