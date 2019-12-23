@@ -186,16 +186,10 @@ function verifyRpcConnection() {
 			coreApi.getBlockchainInfo().then(function(getblockchaininfo) {
 				global.activeBlockchain = getblockchaininfo.chain;
 
-				// localservicenames introduced in 0.19
-				var services = getnetworkinfo.localservicesnames ? ("[" + getnetworkinfo.localservicesnames.join(", ") + "]") : getnetworkinfo.localservices;
-
-				debugLog(`RPC Connected: version=${getnetworkinfo.version} (${getnetworkinfo.subversion}), protocolversion=${getnetworkinfo.protocolversion}, chain=${getblockchaininfo.chain}, services=${services}`);
-
-				// load historical/fun items for this chain
-				loadHistoricalDataForChain(global.activeBlockchain);
-
 				// we've verified rpc connection, no need to keep trying
 				clearInterval(global.verifyRpcConnectionIntervalId);
+
+				onRpcConnectionVerified(getnetworkinfo, getblockchaininfo);
 
 			}).catch(function(err) {
 				utils.logError("329u0wsdgewg6ed", err);
@@ -203,6 +197,25 @@ function verifyRpcConnection() {
 		}).catch(function(err) {
 			utils.logError("32ugegdfsde", err);
 		});
+	}
+}
+
+function onRpcConnectionVerified(getnetworkinfo, getblockchaininfo) {
+	// localservicenames introduced in 0.19
+	var services = getnetworkinfo.localservicesnames ? ("[" + getnetworkinfo.localservicesnames.join(", ") + "]") : getnetworkinfo.localservices;
+
+	debugLog(`RPC Connected: version=${getnetworkinfo.version} (${getnetworkinfo.subversion}), protocolversion=${getnetworkinfo.protocolversion}, chain=${getblockchaininfo.chain}, services=${services}`);
+
+	// load historical/fun items for this chain
+	loadHistoricalDataForChain(global.activeBlockchain);
+
+	if (global.activeBlockchain == "main") {
+		if (global.exchangeRates == null) {
+			utils.refreshExchangeRates();
+		}
+
+		// refresh exchange rate periodically
+		setInterval(utils.refreshExchangeRates, 1800000);
 	}
 }
 
@@ -313,14 +326,6 @@ app.continueStartup = function() {
 		setInterval(getSourcecodeProjectMetadata, 3600000);
 	}
 
-	if (global.activeBlockchain == "main") {
-		if (global.exchangeRates == null) {
-			utils.refreshExchangeRates();
-		}
-
-		// refresh exchange rate periodically
-		setInterval(utils.refreshExchangeRates, 1800000);
-	}
 
 	utils.logMemoryUsage();
 	setInterval(utils.logMemoryUsage, 5000);

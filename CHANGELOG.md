@@ -1,3 +1,8 @@
+#### v1.1.5
+##### 2019-12-22
+
+* Fix startup issues when connecting to a node that's not ready to serve data (e.g. verifying blocks)
+
 #### v1.1.4
 ###### 2019-12-04
 
