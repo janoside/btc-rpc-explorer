@@ -2,6 +2,8 @@
 ##### 2019-12-22
 
 * Fix startup issues when connecting to a node that's not ready to serve data (e.g. verifying blocks)
+* Homepage header: show exchange rate in selected currency (rather than hardcoded USD)
+* Homepage header: show sat/USD or sat/EUR
 
 #### v1.1.4
 ###### 2019-12-04

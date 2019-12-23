@@ -198,13 +198,71 @@ function addThousandsSeparators(x) {
 	return parts.join(".");
 }
 
+function formatValueInActiveCurrency(amount) {
+	if (global.currencyFormatType && global.exchangeRates[global.currencyFormatType.toLowerCase()]) {
+		return formatExchangedCurrency(amount, global.currencyFormatType);
+
+	} else {
+		return formatExchangedCurrency(amount, "usd");
+	}
+}
+
+function satoshisPerUnitOfActiveCurrency() {
+	if (global.currencyFormatType != null && global.exchangeRates != null) {
+		var exchangeType = global.currencyFormatType.toLowerCase();
+
+		if (!global.exchangeRates[global.currencyFormatType.toLowerCase()]) {
+			// if current display currency is a native unit, default to USD for exchange values
+			exchangeType = "usd";
+		}
+
+		var dec = new Decimal(1);
+		var one = new Decimal(1);
+		dec = dec.times(global.exchangeRates[exchangeType]);
+		
+		// USD/BTC -> BTC/USD
+		dec = one.dividedBy(dec);
+
+		var unitName = coins[config.coin].baseCurrencyUnit.name;
+		var formatInfo = getCurrencyFormatInfo(unitName);
+
+		// BTC/USD -> sat/USD
+		dec = dec.times(formatInfo.multiplier);
+
+		var exchangedAmt = parseInt(dec);
+
+		if (exchangeType == "eur") {
+			return addThousandsSeparators(exchangedAmt) + ` ${unitName}/€`;
+
+		} else {
+			return addThousandsSeparators(exchangedAmt) + ` ${unitName}/$`;
+		}
+		
+	}
+
+	return null;
+
+	if (global.currencyFormatType) {
+		return formatExchangedCurrency(amount, global.currencyFormatType);
+
+	} else {
+		return formatExchangedCurrency(amount, "usd");
+	}
+}
+
 function formatExchangedCurrency(amount, exchangeType) {
 	if (global.exchangeRates != null && global.exchangeRates[exchangeType.toLowerCase()] != null) {
 		var dec = new Decimal(amount);
 		dec = dec.times(global.exchangeRates[exchangeType.toLowerCase()]);
 		var exchangedAmt = parseFloat(Math.round(dec * 100) / 100).toFixed(2);
 
-		return "$" + addThousandsSeparators(exchangedAmt);
+		if (exchangeType == "eur") {
+			return "€" + addThousandsSeparators(exchangedAmt);
+
+		} else {
+			return "$" + addThousandsSeparators(exchangedAmt);
+		}
+		
 	}
 
 	return "";
@@ -566,6 +624,8 @@ module.exports = {
 	formatCurrencyAmount: formatCurrencyAmount,
 	formatCurrencyAmountWithForcedDecimalPlaces: formatCurrencyAmountWithForcedDecimalPlaces,
 	formatExchangedCurrency: formatExchangedCurrency,
+	formatValueInActiveCurrency: formatValueInActiveCurrency,
+	satoshisPerUnitOfActiveCurrency: satoshisPerUnitOfActiveCurrency,
 	addThousandsSeparators: addThousandsSeparators,
 	formatCurrencyAmountInSmallestUnits: formatCurrencyAmountInSmallestUnits,
 	seededRandom: seededRandom,

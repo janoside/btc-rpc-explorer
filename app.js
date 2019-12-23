@@ -404,6 +404,7 @@ app.use(function(req, res, next) {
 	}
 
 	res.locals.currencyFormatType = req.session.currencyFormatType;
+	global.currencyFormatType = req.session.currencyFormatType;
 
 
 	if (!["/", "/connect"].includes(req.originalUrl)) {

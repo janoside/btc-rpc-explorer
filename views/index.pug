@@ -159,7 +159,9 @@ block content
 							span.font-weight-bold.border-dotted(data-toggle="tooltip", title=("Exchange-rate data from: " + coinConfig.exchangeRateData.jsonUrl)) Exchange Rate 
 
 							if (global.exchangeRates)
-								p(class="lead") #{utils.formatExchangedCurrency(1.0, "usd")}
+								p(class="lead") #{utils.formatValueInActiveCurrency(1.0)}
+									small.text-muted.font-weight-light  (#{utils.satoshisPerUnitOfActiveCurrency()})
+
 							else
 								p(class="lead") -
 
