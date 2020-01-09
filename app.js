@@ -140,9 +140,9 @@ function getSourcecodeProjectMetadata() {
 }
 
 function loadChangelog() {
-	var filename = "./CHANGELOG.md";
-
-	fs.readFile(filename, 'utf8', function(err, data) {
+	var filename = "CHANGELOG.md";
+	
+	fs.readFile(path.join(__dirname, filename), 'utf8', function(err, data) {
 		if (err) {
 			utils.logError("2379gsd7sgd334", err);
 
