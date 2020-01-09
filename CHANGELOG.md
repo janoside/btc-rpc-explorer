@@ -1,3 +1,9 @@
+#### v1.1.6
+##### 2020-01-09
+
+* Fix for missing changelog file when installed via npm
+* Updated miner configs
+
 #### v1.1.5
 ##### 2019-12-22
 
