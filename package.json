@@ -23,7 +23,7 @@
     "async": "^3.1.0",
     "basic-auth": "^2.0.1",
     "bitcoin-core": "^2.3.0",
-    "bitcoinjs-lib": "^5.1.6",
+    "bitcoinjs-lib": "^5.1.7",
     "bluebird": "^3.7.2",
     "body-parser": "~1.19.0",
     "cookie-parser": "^1.4.4",
@@ -47,7 +47,7 @@
     "redis": "^2.8.0",
     "request": "^2.88.0",
     "serve-favicon": "^2.5.0",
-    "simple-git": "^1.126.0"
+    "simple-git": "^1.129.0"
   },
   "devDependencies": {
     "less": "3.9.0",
