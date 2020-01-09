@@ -51,7 +51,7 @@ const args = require('meow')(`
             , bitcoindUri: {alias:'b'}, bitcoindHost: {alias:'H'}, bitcoindPort: {alias:'P'}
             , bitcoindCookie: {alias:'c'}, bitcoindUser: {alias:'u'}, bitcoindPass: {alias:'w'}
             , demo: {type:'boolean'}, rpcAllowall: {type:'boolean'}, electrumxServers: {alias:'E'}
-            , enableInfluxdb: {type:'boolean'}, nodeEnv: {alias:'e', default:'production'}
+            , nodeEnv: {alias:'e', default:'production'}
             , privacyMode: {type:'boolean'}
             } }
 ).flags;
