@@ -1,4 +1,4 @@
-#### v1.1.6
+#### v1.1.7
 ##### 2020-01-09
 
 * Fix for missing changelog file when installed via npm
