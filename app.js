@@ -7,7 +7,7 @@ var path = require('path');
 var dotenv = require("dotenv");
 var fs = require('fs');
 
-var configPaths = [ path.join(os.homedir(), '.config', 'btc-rpc-explorer.env'), path.join(process.cwd(), '.env') ];
+var configPaths = [ path.join(os.homedir(), '.config', 'bch-rpc-explorer.env'), path.join(process.cwd(), '.env') ];
 configPaths.filter(fs.existsSync).forEach(path => {
   console.log('Loading env file:', path);
   dotenv.config({ path });
@@ -16,10 +16,10 @@ configPaths.filter(fs.existsSync).forEach(path => {
 // debug module is already loaded by the time we do dotenv.config
 // so refresh the status of DEBUG env var
 var debug = require("debug");
-debug.enable(process.env.DEBUG || "btcexp:app,btcexp:error");
+debug.enable(process.env.DEBUG || "bchexp:app,bchexp:error");
 
-var debugLog = debug("btcexp:app");
-var debugPerfLog = debug("btcexp:actionPerformace");
+var debugLog = debug("bchexp:app");
+var debugPerfLog = debug("bchexp:actionPerformace");
 
 var express = require('express');
 var favicon = require('serve-favicon');
@@ -121,7 +121,7 @@ function loadMiningPoolConfigs() {
 
 function getSourcecodeProjectMetadata() {
   var options = {
-    url: "https://api.github.com/repos/janoside/btc-rpc-explorer",
+    url: "https://api.github.com/repos/sickpig/bch-rpc-explorer",
     headers: {
       'User-Agent': 'request'
     }
