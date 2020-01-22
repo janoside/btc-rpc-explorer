@@ -1,233 +1,233 @@
 doctype html
 html(lang="en")
-	head
-		meta(charset="utf-8")
-		meta(name="csrf-token", content=csrfToken)
-		meta(name="viewport", content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0, shrink-to-fit=no")
-		
-		link(rel="stylesheet", href="/css/fonts.css", integrity="sha384-XOmmu8j3C2MFUXRVGg8VWYNwlhEkSNb0rW/4e7bi3F56S6PejEmBUQDGZofQyjbL")
-		link(rel="stylesheet", href="/css/highlight.min.css", integrity="sha384-zhIsEafzyQWHSoMCQ4BfT8ZlRXQyIFwAHAJn32PNdsb8n6tVysGZSLpEEIvCskw4")
+  head
+    meta(charset="utf-8")
+    meta(name="csrf-token", content=csrfToken)
+    meta(name="viewport", content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0, shrink-to-fit=no")
+
+    link(rel="stylesheet", href="/css/fonts.css", integrity="sha384-XOmmu8j3C2MFUXRVGg8VWYNwlhEkSNb0rW/4e7bi3F56S6PejEmBUQDGZofQyjbL")
+    link(rel="stylesheet", href="/css/highlight.min.css", integrity="sha384-zhIsEafzyQWHSoMCQ4BfT8ZlRXQyIFwAHAJn32PNdsb8n6tVysGZSLpEEIvCskw4")
 
 
-		if (session.uiTheme && session.uiTheme == "dark")
-			link(rel="stylesheet", href="/css/bootstrap-dark.css", integrity="")
-			link(rel="stylesheet", href="/css/dark-touchups.css", integrity="")
-				
-		else
-			link(rel="stylesheet", href="/css/bootstrap.min.css", integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T")
+    if (session.uiTheme && session.uiTheme == "dark")
+      link(rel="stylesheet", href="/css/bootstrap-dark.css", integrity="")
+      link(rel="stylesheet", href="/css/dark-touchups.css", integrity="")
 
-		
-		link(rel='stylesheet', href='/css/styling.css')
-
-		link(rel="icon", type="image/png", href=("/img/logo/" + config.coin.toLowerCase() + ".png"))
-
-		block headContent
-			title Explorer
-		
-	body(class="bg-dark")
-		nav(class="navbar navbar-expand-lg navbar-dark bg-dark")
-			div(class="container")
-				a(class="navbar-brand", href="/")
-					span
-						if (coinConfig.logoUrl)
-							img(src=coinConfig.logoUrl, class="header-image", alt="logo")
-						span #{coinConfig.siteTitle}
-						
-				button(type="button", class="navbar-toggler navbar-toggler-right", data-toggle="collapse", data-target="#navbarNav", aria-label="collapse navigation")
-					span(class="navbar-toggler-icon")
-					
-				div(class="collapse navbar-collapse", id="navbarNav")
-					if (rpcClient)
-						ul(class="navbar-nav mr-auto")
-							if (false)
-								li(class="nav-item")
-									a(href="/about", class="nav-link")
-										span About
-
-							if (global.activeBlockchain != "main")
-								- var chainName = global.activeBlockchain == "test" ? "testnet" : global.activeBlockchain
-
-								li.nav-item
-									a.nav-link.text-warning(title=`Current node's chain: ${global.activeBlockchain}` data-toggle="tooltip") [#{chainName}]
-
-							if (config.siteTools)
-								li(class="nav-item dropdown")
-									a(class="nav-link dropdown-toggle", href="javascript:void(0)", role="button", data-toggle="dropdown", aria-haspopup="true", aria-expanded="false") 
-										span  Tools
-									div(class="dropdown-menu shadow", aria-label="Tools Items")
-										each item in config.siteTools
-											a(class="dropdown-item", href=item.url)
-												i(class=item.fontawesome, style="width: 20px; margin-right: 10px;")
-												span  #{item.name}
-
-							if (config.site.header.dropdowns)
-								each dropdown, ddIndex in config.site.header.dropdowns
-									li(class="nav-item dropdown")
-										a(class="nav-link dropdown-toggle", href="javascript:void(0)", role="button", data-toggle="dropdown", aria-haspopup="true", aria-expanded="false") 
-											span  #{dropdown.title}
-										div(class="dropdown-menu shadow", aria-label=(dropdown.title + " Items"))
-											each dropdownLink in dropdown.links
-												a(class="dropdown-item", href=dropdownLink.url)
-													if (dropdownLink.imgUrl)
-														img(src=dropdownLink.imgUrl, style="width: 24px; height: 24px; margin-right: 8px;", alt=dropdownLink.name)
-													span  #{dropdownLink.name}
-
-							
-						form(method="post", action="/search", class="form-inline mr-3")
-							input(type="hidden", name="_csrf", value=csrfToken)
-							div(class="input-group input-group-sm")
-								input(type="text", class="form-control form-control-sm", name="query", placeholder="block height/hash, txid, address", value=(query))
-								div(class="input-group-append")
-									button(type="submit", class="btn btn-primary")
-										i(class="fas fa-search")
-
-						ul(class="navbar-nav")
-							li(class="nav-item dropdown")
-								a(class="nav-link dropdown-toggle", href="javascript:void(0)", id="navbarDropdown", role="button", data-toggle="dropdown", aria-haspopup="true", aria-expanded="false") 
-									i(class="fas fa-cog mr-1") 
-								div(class="dropdown-menu dropdown-menu-right shadow", aria-labelledby="navbarDropdown")
-									if (coinConfig.currencyUnits)
-										span(class="dropdown-header") Currency Units
-										each item in coinConfig.currencyUnits
-											if (item.type == "native" || (config.queryExchangeRates && !config.privacyMode))
-												a(class="dropdown-item", href=("/changeSetting?name=currencyFormatType&value=" + item.values[0]))
-													each valueName in item.values
-														if (currencyFormatType == valueName)
-															i(class="fas fa-check")
-													span  #{item.name}
-
-									span(class="dropdown-header") Theme
-									a(class="dropdown-item", href="/changeSetting?name=uiTheme&value=light")
-										if (session.uiTheme == "light" || session.uiTheme == "")
-											i(class="fas fa-check")
-										span  Light
-									a(class="dropdown-item", href="/changeSetting?name=uiTheme&value=dark")
-										if (session.uiTheme == "dark")
-											i(class="fas fa-check")
-										span  Dark
-		
-		if (host && port && !homepage && config.site.header.showToolsSubheader)
-			div(id="sub-menu", class="container mb-2 pt-2 d-lg-block d-none border-top", style="")
-				ul(class="nav")
-					each item, index in config.siteTools
-						li(class="nav-item")
-							a(href=item.url, class="nav-link text-white px-2 text-decoration-underline")
-								span #{item.name}
-		
-		- var bodyBgColor = "#ffffff;";
-		if (session.uiTheme && session.uiTheme == "dark")
-			- bodyBgColor = "#0c0c0c;";
-
-		div(class="pb-4 pt-3 pt-md-4", style=("background-color: " + bodyBgColor))
-			div(class="container px-2 px-sm-3")
-				if (pageErrors && pageErrors.length > 0)
-					include includes/page-errors-modal.pug
-
-					div.float-right
-						div.alert.alert-danger.py-1.px-3.mb-n2.mt-n1.font-weight-bold(title=`This page encountered ${pageErrors.length.toLocaleString()} error(s). Click for details.` data-toggle="tooltip")
-							a.text-danger(href="javascript:void(0)" data-toggle="modal" data-target="#pageErrorsModal") Errors
-							span.badge.badge-danger.ml-2 #{pageErrors.length.toLocaleString()}
-
-				if (userMessage)
-					div(class="alert", class=(userMessageType ? ("alert-"  + userMessageType) : "alert-warning"), role="alert")
-						span !{userMessage}
-				
-				block content
-
-				div(style="margin-bottom: 30px;")
-
-				if (config.demoSite && !crawlerBot)
-					include ./includes/donation-modal.pug
-
-		footer(class="footer border-top border-primary bg-dark pt-3 pb-1 px-3 text-white", style="border-width: 5px !important;")
-			div(class="container")
-				div(class="row")
-					div(class="col-md-5")
-						dl
-							dt Source
-							dd
-								a(href="https://github.com/janoside/btc-rpc-explorer") github.com/janoside/btc-rpc-explorer
-								
-								if (global.sourcecodeProjectMetadata)
-									div(class="mt-2")
-										a(href="https://github.com/janoside/btc-rpc-explorer", class="btn btn-primary btn-sm mr-3 mb-1 text-decoration-none")
-											i(class="fas fa-star mr-2")
-											span(class="mr-2") Star 
-											span(class="badge bg-white text-dark") #{global.sourcecodeProjectMetadata.stargazers_count}
-
-										a(href="https://github.com/janoside/btc-rpc-explorer/fork", class="btn btn-primary btn-sm mr-3 mb-1 text-decoration-none")
-											i(class="fas fa-code-branch mr-2")
-											span(class="mr-2") Fork 
-											span(class="badge bg-white text-dark") #{global.sourcecodeProjectMetadata.forks_count}
+    else
+      link(rel="stylesheet", href="/css/bootstrap.min.css", integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T")
 
 
-							
-							dt App Details
-							dd
-								span version: #{global.appVersion}
-								if (sourcecodeVersion)
-									br
-									span commit: 
-										a(href=("https://github.com/janoside/btc-rpc-explorer/commit/" + sourcecodeVersion)) #{sourcecodeVersion}
-								
-								br
-								span released: #{sourcecodeDate}
-								span(style="font-size: 0.9em;")  (
-									a(href="/changelog") changelog
-									span )
+    link(rel='stylesheet', href='/css/styling.css')
 
-							if (config.demoSite)
-								dt Public Demos
-								dd
-									if (coinConfig.demoSiteUrl)
-										a(href=coinConfig.demoSiteUrl) #{coinConfig.demoSiteUrl}
-									else
-										a(href="https://btc-explorer.chaintools.io") https://btc-explorer.chaintools.io
-									
-									div(class="mt-2")
-										- var demoSiteCoins = ["BTC"];
-										each demoSiteCoin in demoSiteCoins
-											a(href=coinConfigs[demoSiteCoin].demoSiteUrl, class="mr-2", title=coinConfigs[demoSiteCoin].siteTitle)
-												img(src=("/img/logo/" + demoSiteCoin.toLowerCase() + ".svg"), alt=demoSiteCoin.toLowerCase())
+    link(rel="icon", type="image/x-icon", href=("/img/logo/" + config.coin.toLowerCase() + ".ico"))
 
-										a(href="https://lnd-admin.chaintools.io", class="mr-2", title="LND Admin")
-											img(src=("/img/logo/lnd-admin.png"), style="width: 32px; height: 32px;", alt="LND Admin")
+    block headContent
+      title Explorer
 
-					div(class="col-md-7 text-md-right")
-						dl
-							dd
-								button.btn.btn-primary(type="button", class="btn btn-primary", data-toggle="modal", data-target="#exampleModalCenter")
-									i(class="fas fa-heart mr-2")
-									span Support Project
-		
-		script(src="/js/jquery.min.js", integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=")
-		script(src="/js/popper.min.js", integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut")
-		script(src="/js/bootstrap.min.js", integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM")
-		script(defer, src="/js/fontawesome.min.js", integrity="sha384-eVEQC9zshBn0rFj4+TU78eNA19HMNigMviK/PU/FFjLXqa/GKPgX58rvt5Z8PLs7")
+  body(class="bg-dark")
+    nav(class="navbar navbar-expand-lg navbar-dark bg-dark")
+      div(class="container")
+        a(class="navbar-brand", href="/")
+          span
+            if (coinConfig.logoUrl)
+              img(src=coinConfig.logoUrl, class="header-image", alt="logo")
+            span #{coinConfig.siteTitle}
 
-		script(src="/js/highlight.min.js", integrity="sha384-xLrpH5gNLD6HMLgeDH1/p4FXigQ8T9mgNm+EKtCSXL0OJ5i1bnSi57dnwFuUMM9/")
-		
-		script.
-			$(document).ready(function() {
-				$('[data-toggle="tooltip"]').tooltip();
-				$('[data-toggle="popover"]').popover({html:true, container:"body"});
-			});
+        button(type="button", class="navbar-toggler navbar-toggler-right", data-toggle="collapse", data-target="#navbarNav", aria-label="collapse navigation")
+          span(class="navbar-toggler-icon")
 
-			hljs.initHighlightingOnLoad();
+        div(class="collapse navbar-collapse", id="navbarNav")
+          if (rpcClient)
+            ul(class="navbar-nav mr-auto")
+              if (false)
+                li(class="nav-item")
+                  a(href="/about", class="nav-link")
+                    span About
 
-		if (config.credentials.sentryUrl && config.credentials.sentryUrl.length > 0)
-			script(src="/js/sentry.min.js", integrity="sha384-da/Bo2Ah6Uw3mlhl6VINMblg2SyGbSnULKrukse3P5D9PTJi4np9HoKvR19D7zOL", crossorigin="anonymous")
-			script.
-				Sentry.init({ dsn: '#{config.credentials.sentryUrl}' });
+              if (global.activeBlockchain != "main")
+                - var chainName = global.activeBlockchain == "test" ? "testnet" : global.activeBlockchain
 
-		if (config.credentials.googleAnalyticsTrackingId && config.credentials.googleAnalyticsTrackingId.trim().length > 0)
-			script(async, src=("https://www.googletagmanager.com/gtag/js?id=" + config.credentials.googleAnalyticsTrackingId))
-			script.
-				window.dataLayer = window.dataLayer || [];
-				function gtag(){dataLayer.push(arguments);}
-				gtag('js', new Date());
+                li.nav-item
+                  a.nav-link.text-warning(title=`Current node's chain: ${global.activeBlockchain}` data-toggle="tooltip") [#{chainName}]
 
-				gtag('config', '#{config.credentials.googleAnalyticsTrackingId}');
+              if (config.siteTools)
+                li(class="nav-item dropdown")
+                  a(class="nav-link dropdown-toggle", href="javascript:void(0)", role="button", data-toggle="dropdown", aria-haspopup="true", aria-expanded="false")
+                    span  Tools
+                  div(class="dropdown-menu shadow", aria-label="Tools Items")
+                    each item in config.siteTools
+                      a(class="dropdown-item", href=item.url)
+                        i(class=item.fontawesome, style="width: 20px; margin-right: 10px;")
+                        span  #{item.name}
 
-		
-		block endOfBody
+              if (config.site.header.dropdowns)
+                each dropdown, ddIndex in config.site.header.dropdowns
+                  li(class="nav-item dropdown")
+                    a(class="nav-link dropdown-toggle", href="javascript:void(0)", role="button", data-toggle="dropdown", aria-haspopup="true", aria-expanded="false")
+                      span  #{dropdown.title}
+                    div(class="dropdown-menu shadow", aria-label=(dropdown.title + " Items"))
+                      each dropdownLink in dropdown.links
+                        a(class="dropdown-item", href=dropdownLink.url)
+                          if (dropdownLink.imgUrl)
+                            img(src=dropdownLink.imgUrl, style="width: 24px; height: 24px; margin-right: 8px;", alt=dropdownLink.name)
+                          span  #{dropdownLink.name}
+
+
+            form(method="post", action="/search", class="form-inline mr-3")
+              input(type="hidden", name="_csrf", value=csrfToken)
+              div(class="input-group input-group-sm")
+                input(type="text", class="form-control form-control-sm", name="query", placeholder="block height/hash, txid, address", value=(query))
+                div(class="input-group-append")
+                  button(type="submit", class="btn btn-primary")
+                    i(class="fas fa-search")
+
+            ul(class="navbar-nav")
+              li(class="nav-item dropdown")
+                a(class="nav-link dropdown-toggle", href="javascript:void(0)", id="navbarDropdown", role="button", data-toggle="dropdown", aria-haspopup="true", aria-expanded="false")
+                  i(class="fas fa-cog mr-1")
+                div(class="dropdown-menu dropdown-menu-right shadow", aria-labelledby="navbarDropdown")
+                  if (coinConfig.currencyUnits)
+                    span(class="dropdown-header") Currency Units
+                    each item in coinConfig.currencyUnits
+                      if (item.type == "native" || (config.queryExchangeRates && !config.privacyMode))
+                        a(class="dropdown-item", href=("/changeSetting?name=currencyFormatType&value=" + item.values[0]))
+                          each valueName in item.values
+                            if (currencyFormatType == valueName)
+                              i(class="fas fa-check")
+                          span  #{item.name}
+
+                  span(class="dropdown-header") Theme
+                  a(class="dropdown-item", href="/changeSetting?name=uiTheme&value=light")
+                    if (session.uiTheme == "light" || session.uiTheme == "")
+                      i(class="fas fa-check")
+                    span  Light
+                  a(class="dropdown-item", href="/changeSetting?name=uiTheme&value=dark")
+                    if (session.uiTheme == "dark")
+                      i(class="fas fa-check")
+                    span  Dark
+
+    if (host && port && !homepage && config.site.header.showToolsSubheader)
+      div(id="sub-menu", class="container mb-2 pt-2 d-lg-block d-none border-top", style="")
+        ul(class="nav")
+          each item, index in config.siteTools
+            li(class="nav-item")
+              a(href=item.url, class="nav-link text-white px-2 text-decoration-underline")
+                span #{item.name}
+
+    - var bodyBgColor = "#ffffff;";
+    if (session.uiTheme && session.uiTheme == "dark")
+      - bodyBgColor = "#0c0c0c;";
+
+    div(class="pb-4 pt-3 pt-md-4", style=("background-color: " + bodyBgColor))
+      div(class="container px-2 px-sm-3")
+        if (pageErrors && pageErrors.length > 0)
+          include includes/page-errors-modal.pug
+
+          div.float-right
+            div.alert.alert-danger.py-1.px-3.mb-n2.mt-n1.font-weight-bold(title=`This page encountered ${pageErrors.length.toLocaleString()} error(s). Click for details.` data-toggle="tooltip")
+              a.text-danger(href="javascript:void(0)" data-toggle="modal" data-target="#pageErrorsModal") Errors
+              span.badge.badge-danger.ml-2 #{pageErrors.length.toLocaleString()}
+
+        if (userMessage)
+          div(class="alert", class=(userMessageType ? ("alert-"  + userMessageType) : "alert-warning"), role="alert")
+            span !{userMessage}
+
+        block content
+
+        div(style="margin-bottom: 30px;")
+
+        if (config.demoSite && !crawlerBot)
+          include ./includes/donation-modal.pug
+
+    footer(class="footer border-top border-primary bg-dark pt-3 pb-1 px-3 text-white", style="border-width: 5px !important;")
+      div(class="container")
+        div(class="row")
+          div(class="col-md-5")
+            dl
+              dt Source
+              dd
+                a(href="https://github.com/sickpig/bch-rpc-explorer") github.com/sickpig/bch-rpc-explorer
+
+                if (global.sourcecodeProjectMetadata)
+                  div(class="mt-2")
+                    a(href="https://github.com/sickpig/bch-rpc-explorer", class="btn btn-primary btn-sm mr-3 mb-1 text-decoration-none")
+                      i(class="fas fa-star mr-2")
+                      span(class="mr-2") Star
+                      span(class="badge bg-white text-dark") #{global.sourcecodeProjectMetadata.stargazers_count}
+
+                    a(href="https://github.com/sickpig/bch-rpc-explorer/fork", class="btn btn-primary btn-sm mr-3 mb-1 text-decoration-none")
+                      i(class="fas fa-code-branch mr-2")
+                      span(class="mr-2") Fork
+                      span(class="badge bg-white text-dark") #{global.sourcecodeProjectMetadata.forks_count}
+
+
+
+              dt App Details
+              dd
+                span version: #{global.appVersion}
+                if (sourcecodeVersion)
+                  br
+                  span commit:
+                    a(href=("https://github.com/sickpig/bch-rpc-explorer/commit/" + sourcecodeVersion)) #{sourcecodeVersion}
+
+                br
+                span released: #{sourcecodeDate}
+                span(style="font-size: 0.9em;")  (
+                  a(href="/changelog") changelog
+                  span )
+
+              if (config.demoSite)
+                dt Public Demos
+                dd
+                  if (coinConfig.demoSiteUrl)
+                    a(href=coinConfig.demoSiteUrl) #{coinConfig.demoSiteUrl}
+                  else
+                    a(href="https://btc-explorer.chaintools.io") https://btc-explorer.chaintools.io
+
+                  div(class="mt-2")
+                    - var demoSiteCoins = ["BTC"];
+                    each demoSiteCoin in demoSiteCoins
+                      a(href=coinConfigs[demoSiteCoin].demoSiteUrl, class="mr-2", title=coinConfigs[demoSiteCoin].siteTitle)
+                        img(src=("/img/logo/" + demoSiteCoin.toLowerCase() + ".svg"), alt=demoSiteCoin.toLowerCase())
+
+                    a(href="https://lnd-admin.chaintools.io", class="mr-2", title="LND Admin")
+                      img(src=("/img/logo/lnd-admin.png"), style="width: 32px; height: 32px;", alt="LND Admin")
+
+          div(class="col-md-7 text-md-right")
+            dl
+              dd
+                button.btn.btn-primary(type="button", class="btn btn-primary", data-toggle="modal", data-target="#exampleModalCenter")
+                  i(class="fas fa-heart mr-2")
+                  span Support Project
+
+    script(src="/js/jquery.min.js", integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=")
+    script(src="/js/popper.min.js", integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut")
+    script(src="/js/bootstrap.min.js", integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM")
+    script(defer, src="/js/fontawesome.min.js", integrity="sha384-eVEQC9zshBn0rFj4+TU78eNA19HMNigMviK/PU/FFjLXqa/GKPgX58rvt5Z8PLs7")
+
+    script(src="/js/highlight.min.js", integrity="sha384-xLrpH5gNLD6HMLgeDH1/p4FXigQ8T9mgNm+EKtCSXL0OJ5i1bnSi57dnwFuUMM9/")
+
+    script.
+      $(document).ready(function() {
+        $('[data-toggle="tooltip"]').tooltip();
+        $('[data-toggle="popover"]').popover({html:true, container:"body"});
+      });
+
+      hljs.initHighlightingOnLoad();
+
+    if (config.credentials.sentryUrl && config.credentials.sentryUrl.length > 0)
+      script(src="/js/sentry.min.js", integrity="sha384-da/Bo2Ah6Uw3mlhl6VINMblg2SyGbSnULKrukse3P5D9PTJi4np9HoKvR19D7zOL", crossorigin="anonymous")
+      script.
+        Sentry.init({ dsn: '#{config.credentials.sentryUrl}' });
+
+    if (config.credentials.googleAnalyticsTrackingId && config.credentials.googleAnalyticsTrackingId.trim().length > 0)
+      script(async, src=("https://www.googletagmanager.com/gtag/js?id=" + config.credentials.googleAnalyticsTrackingId))
+      script.
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', '#{config.credentials.googleAnalyticsTrackingId}');
+
+
+    block endOfBody

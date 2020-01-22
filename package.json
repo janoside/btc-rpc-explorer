@@ -1,7 +1,7 @@
 {
-  "name": "btc-rpc-explorer",
-  "version": "1.1.8",
-  "description": "Self-hosted Bitcoin blockchain explorer",
+  "name": "bch-rpc-explorer",
+  "version": "0.0.1",
+  "description": "Self-hosted Bitcoin Cash blockchain explorer",
   "private": false,
   "bin": "bin/cli.js",
   "scripts": {
@@ -9,15 +9,15 @@
     "refresh-mining-pool-configs": "node ./bin/refresh-mining-pool-configs.js"
   },
   "keywords": [
-    "bitcoin",
-    "litecoin",
-    "blockchain"
+    "bitcoin cash",
+    "blockchain",
+    "Peer-to-peer Electronic Cash System"
   ],
-  "author": "Dan Janosik <dan@47.io>",
+  "author": "Andrea (sickpig) Suisani <sickpig@gmail.com>",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/janoside/btc-rpc-explorer.git"
+    "url": "git+https://github.com/sickpig/bch-rpc-explorer.git"
   },
   "dependencies": {
     "async": "^3.1.0",
@@ -26,6 +26,7 @@
     "bitcoinjs-lib": "^5.1.7",
     "bluebird": "^3.7.2",
     "body-parser": "~1.19.0",
+    "cashaddrjs": "~0.3.9",
     "cookie-parser": "^1.4.4",
     "crypto-js": "3.1.9-1",
     "csurf": "^1.10.0",

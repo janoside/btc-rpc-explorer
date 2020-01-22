@@ -123,14 +123,7 @@ block content
 						div(class="row")
 							div(class="summary-table-label") Size
 							div(class="summary-table-content monospace")
-								if (result.getrawtransaction.vsize != result.getrawtransaction.size)
-									span #{result.getrawtransaction.vsize.toLocaleString()} 
-									span.border-dotted(title="Virtual bytes", data-toggle="tooltip") vB
-									br
-									span(class="text-muted") (#{result.getrawtransaction.size.toLocaleString()} B)
-
-								else
-									span #{result.getrawtransaction.size.toLocaleString()} B
+								span #{result.getrawtransaction.size.toLocaleString()} B
 
 						if (result.getrawtransaction.locktime > 0)
 							div(class="row")
@@ -210,11 +203,6 @@ block content
 								div(class="row")
 									div(class="summary-table-label") Fee Rate
 									div(class="summary-table-content monospace")
-										if (result.getrawtransaction.vsize != result.getrawtransaction.size)
-											span #{utils.addThousandsSeparators(new DecimalRounded(totalInputValue).minus(totalOutputValue).dividedBy(result.getrawtransaction.vsize).times(100000000))} sat/
-											span.border-dotted(title="Virtual bytes" data-toggle="tooltip") vB
-											br
-
 										span(class="text-muted") (#{utils.addThousandsSeparators(new DecimalRounded(totalInputValue).minus(totalOutputValue).dividedBy(result.getrawtransaction.size).times(100000000))} sat/B)
 
 
