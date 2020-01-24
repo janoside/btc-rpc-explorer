@@ -1,4 +1,4 @@
-# BTC RPC Explorer
+# BCH RPC Explorer
 
 [![npm version][npm-ver-img]][npm-ver-url] [![NPM downloads][npm-dl-img]][npm-dl-url]
 
@@ -72,7 +72,7 @@ See `bch-rpc-explorer --help` for the full list of CLI options.
 
 # Support
 
-* [pq6snv5fcx2fp6dlzg7s0m9zs8yqh74335tzvvfcmq](bitcoincash:pq6snv5fcx2fp6dlzg7s0m9zs8yqh74335tzvvfcmq)
+* [bitcoincash:pq6snv5fcx2fp6dlzg7s0m9zs8yqh74335tzvvfcmq](bitcoincash:pq6snv5fcx2fp6dlzg7s0m9zs8yqh74335tzvvfcmq)
 
 
 [npm-ver-img]: https://img.shields.io/npm/v/bch-rpc-explorer.svg?style=flat
