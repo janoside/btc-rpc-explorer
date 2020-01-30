@@ -185,13 +185,10 @@ html(lang="en")
                     a(href="https://btc-explorer.chaintools.io") https://btc-explorer.chaintools.io
 
                   div(class="mt-2")
-                    - var demoSiteCoins = ["BTC"];
+                    - var demoSiteCoins = ["BCH"];
                     each demoSiteCoin in demoSiteCoins
                       a(href=coinConfigs[demoSiteCoin].demoSiteUrl, class="mr-2", title=coinConfigs[demoSiteCoin].siteTitle)
                         img(src=("/img/logo/" + demoSiteCoin.toLowerCase() + ".svg"), alt=demoSiteCoin.toLowerCase())
-
-                    a(href="https://lnd-admin.chaintools.io", class="mr-2", title="LND Admin")
-                      img(src=("/img/logo/lnd-admin.png"), style="width: 32px; height: 32px;", alt="LND Admin")
 
           div(class="col-md-7 text-md-right")
             dl

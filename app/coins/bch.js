@@ -57,7 +57,7 @@ module.exports = {
   siteDescriptionHtml:"<b>BCH Explorer</b> is <a href='https://github.com/sickpig/bch-rpc-explorer). If you run your own [Bitcoin Cash Full Node](https://www.bitcoincash.org/nodes.html), **BCH Explorer** can easily run alongside it, communicating via RPC calls. See the project [ReadMe](https://github.com/sickpig/bch-rpc-explorer) for a list of features and instructions for running.",
   nodeTitle:"Bitcoin Cash Full Node",
   nodeUrl:"https://bitcoinunlimited.info/download",
-  demoSiteUrl: "https://explore.bitcoinunlimited.info",
+  demoSiteUrl: "https://explorer.bitcoinunlimited.info",
   miningPoolsConfigUrls:[
     "https://raw.githubusercontent.com/btccom/Blockchain-Known-Pools/master/pools.json",
     "https://raw.githubusercontent.com/blockchain/Blockchain-Known-Pools/master/pools.json"
