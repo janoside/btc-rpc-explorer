@@ -33,7 +33,7 @@ for (var i = 0; i < electrumXServerUriStrings.length; i++) {
   electrumXServers.push({protocol:uri.protocol.substring(0, uri.protocol.length - 1), host:uri.hostname, port:parseInt(uri.port)});
 }
 
-["BTCEXP_DEMO", "BTCEXP_PRIVACY_MODE", "BTCEXP_NO_INMEMORY_RPC_CACHE"].forEach(function(item) {
+["BTCEXP_DEMO", "BTCEXP_PRIVACY_MODE", "BTCEXP_NO_INMEMORY_RPC_CACHE", "BTCEXP_UI_SHOW_RPC"].forEach(function(item) {
   if (process.env[item] === undefined) {
     process.env[item] = "false";
   }
@@ -52,6 +52,7 @@ module.exports = {
 
   privacyMode: (process.env.BTCEXP_PRIVACY_MODE.toLowerCase() == "true"),
   demoSite: (process.env.BTCEXP_DEMO.toLowerCase() == "true"),
+  showRpc: (process.env.BTCEXP_UI_SHOW_RPC.toLowerCase() === "true"),
   queryExchangeRates: (process.env.BTCEXP_NO_RATES.toLowerCase() != "true"),
   noInmemoryRpcCache: (process.env.BTCEXP_NO_INMEMORY_RPC_CACHE.toLowerCase() == "true"),
 
