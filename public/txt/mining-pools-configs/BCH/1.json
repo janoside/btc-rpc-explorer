@@ -375,6 +375,10 @@
         "Hummerpool" : {
             "name" : "Hummerpool",
             "link" : ""
+        },
+	"okex.com": {
+            "name" : "OKEX Pool",
+	    "link" : "https://www.okex.com/pool"
         }
     },
     "payout_addresses" : {

@@ -455,6 +455,10 @@
         "/SpiderPool.com/": {
             "name" : "SpiderPool",
             "link" : "https://www.spiderpool.com/"
+        },
+	"okex.com": {
+            "name" : "OKEX Pool",
+	    "link" : "https://www.okex.com/pool"
         }
     },
     "payout_addresses" : {
