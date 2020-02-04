@@ -10,12 +10,9 @@ div(class="card mb-4 shadow-sm")
               - var siteTool = config.siteTools[toolIndex];
 
               li
-                if (((siteTool.name === "RPC Browser") || (siteTool.name === "RPC Terminal")) && !(config.showRpc))
-                  // do nothing
-                else
-                  div(class="float-left", style="height: 50px; width: 40px; margin-right: 10px;")
-                    span
-                      i(class=siteTool.fontawesome, class="fa-2x mr-2", style="margin-top: 6px;")
-                  a(href=siteTool.url) #{siteTool.name}
-                  br
-                  p #{siteTool.desc}
+                div(class="float-left", style="height: 50px; width: 40px; margin-right: 10px;")
+                  span
+                    i(class=siteTool.fontawesome, class="fa-2x mr-2", style="margin-top: 6px;")
+                a(href=siteTool.url) #{siteTool.name}
+                br
+                p #{siteTool.desc}

@@ -56,13 +56,9 @@ html(lang="en")
                     span  Tools
                   div(class="dropdown-menu shadow", aria-label="Tools Items")
                     each item in config.siteTools
-                      if (((item.name === "RPC Browser") || (item.name === "RPC Terminal")) && !(config.showRpc))
-                        // do nothing
-                      else
-                        console.log(item.name)
-                        a(class="dropdown-item", href=item.url)
-                          i(class=item.fontawesome, style="width: 20px; margin-right: 10px;")
-                          span  #{item.name}
+                      a(class="dropdown-item", href=item.url)
+                        i(class=item.fontawesome, style="width: 20px; margin-right: 10px;")
+                        span  #{item.name}
 
               if (config.site.header.dropdowns)
                 each dropdown, ddIndex in config.site.header.dropdowns
