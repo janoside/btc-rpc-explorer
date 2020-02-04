@@ -1,54 +1,54 @@
 extends layout
 
 block headContent
-	title Unconfirmed Transactions
+  title Unconfirmed Transactions
 
 block content
-	h1(class="h2") Unconfirmed Transactions
-	hr
+  h1(class="h2") Unconfirmed Transactions
+  hr
 
-	if (false)
-		pre
-			code #{JSON.stringify(mempoolDetails.txCount, null, 4)}
+  if (false)
+    pre
+      code #{JSON.stringify(mempoolDetails.txCount, null, 4)}
 
-	if (mempoolDetails)
-		- var txCount = mempoolDetails.txCount;
+  if (mempoolDetails)
+    - var txCount = mempoolDetails.txCount;
 
-		div(class="card mb-3 shadow-sm")
-			div(class="card-header")
-				span(class="h6")
-					if (txCount == 1)
-						span 1 Transaction
-					else
-						span #{txCount.toLocaleString()} Transactions
+    div(class="card mb-3 shadow-sm")
+      div(class="card-header")
+        span(class="h6")
+          if (txCount == 1)
+            span 1 Transaction
+          else
+            span #{txCount.toLocaleString()} Transactions
 
-			div(class="card-body")
-				each tx, txIndex in mempoolDetails.transactions
-					div(class="xcard bg-light rounded shadow-sm mb-4")
-						div(class="card-header monospace")
-							if (tx && tx.txid)
-								strong ##{(txIndex + offset).toLocaleString()}
-								span  &ndash; 
-								a(href=("/tx/" + tx.txid)) #{tx.txid}
-									
-						div(class="card-body")
-							- var txInputs = mempoolDetails.txInputsByTransaction[tx.txid];
-							- var blockHeight = -1;
+      div(class="card-body")
+        each tx, txIndex in mempoolDetails.transactions
+          div(class="xcard bg-light rounded shadow-sm mb-4")
+            div(class="card-header monospace")
+              if (tx && tx.txid)
+                strong ##{(txIndex + offset).toLocaleString()}
+                span  &ndash;
+                a(href=("/tx/" + tx.txid)) #{tx.txid}
 
-							include includes/transaction-io-details.pug
+            div(class="card-body")
+              - var txInputs = mempoolDetails.txInputsByTransaction[tx.txid];
+              - var blockHeight = -1;
 
-				if (txCount > limit)
-					- var pageNumber = offset / limit + 1;
-					- var pageCount = Math.floor(txCount / limit);
-					- if (pageCount * limit < txCount) {
-						- pageCount++;
-					- }
-					- var paginationUrlFunction = function(x) {
-						- return paginationBaseUrl + "?limit=" + limit + "&offset=" + ((x - 1) * limit + "&sort=" + sort);
-					- }
-					
-					hr
+              include includes/transaction-io-details.pug
 
-					include includes/pagination.pug
-	else
-		p No unconfirmed transactions found
+        if (txCount > limit)
+          - var pageNumber = offset / limit + 1;
+          - var pageCount = Math.floor(txCount / limit);
+          - if (pageCount * limit < txCount) {
+            - pageCount++;
+          - }
+          - var paginationUrlFunction = function(x) {
+            - return paginationBaseUrl + "?limit=" + limit + "&offset=" + ((x - 1) * limit + "&sort=" + sort);
+          - }
+
+          hr
+
+          include includes/pagination.pug
+  else
+    p No unconfirmed transactions found
