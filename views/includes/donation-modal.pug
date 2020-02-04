@@ -1,64 +1,29 @@
 #exampleModalCenter.modal.fade(tabindex='-1' role='dialog' aria-labelledby='exampleModalCenterTitle' aria-hidden='true')
-	.modal-dialog.modal-lg.modal-dialog-centered(role='document')
-		.modal-content
-			.modal-header
-				h5#exampleModalCenterTitle.modal-title Support Development
-				button.close(type='button' data-dismiss='modal' aria-label='Close')
-					span(aria-hidden='true') &times;
-			.modal-body
-				p.lead.text-primary I work on this project because I value it myself and want to give back to the BTC community. If it's valuable to you too, please consider supporting my work with a donation. Thanks!
+  .modal-dialog.modal-lg.modal-dialog-centered(role='document')
+    .modal-content
+      .modal-header
+        h5#exampleModalCenterTitle.modal-title Support Development
+        button.close(type='button' data-dismiss='modal' aria-label='Close')
+          span(aria-hidden='true') &times;
+      .modal-body
+        p.lead.text-primary Bitcoin Unlimited works on this project because BCH community lacks of a simple and decent explorer, easy to set up and run. If it's valuable to you too, please consider supporting this project. Thanks!
 
-				if (config.donations.btcpayserver)
-					h6
-						span(class="mr-2") Donate (via BTCPay)
-					- var amounts = [1, 5, 10, 25, 100];
-					- var icons = [ "thumbs-up", "beer", "hamburger", "utensils", "grin-hearts" ];
-					div(class="mb-2")
-						each amount, amtIndex in amounts
-							form(method="POST" action=(config.donations.btcpayserver.host + "/api/v1/invoices"), style="display: inline;")
-								input(type='hidden' name='storeId' value=config.donations.btcpayserver.storeId)
-								input(type='hidden' name='price' value=amount)
-								input(type='hidden' name='currency' value='USD')
-								input(type='hidden' name='notifyEmail' value=config.donations.btcpayserver.notifyEmail)
+        div(id="donate-by-address", class="mt-4")
+          h6 Donate by address
 
-								button.btn.btn-primary.btn-lg(type='submit', class="mr-2 mb-2")
-									i(class=("fas mr-2 fa-" + icons[amtIndex]))
-									span $#{amount.toLocaleString()}
+          div(class="mb-3")
+            each coin, index in config.donations.addresses.coins
+              div(class="monospace")
+                if (coinConfig.ticker == coin)
+                  span #{config.donations.addresses[coin].address}
+                else
+                  span #{coin}: 
+                  a(href=(config.donations.addresses.sites[coin] + "/address/" + config.donations.addresses[coin].address), class="text-wrap") #{config.donations.addresses[coin].address}
 
-						form(method="POST" action=(config.donations.btcpayserver.host + "/api/v1/invoices"), style="display: inline;")
-							input(type='hidden' name='storeId' value=config.donations.btcpayserver.storeId)
-							input(type='hidden' name='price' value="0.00000001")
-							input(type='hidden' name='currency' value='BTC')
-							input(type='hidden' name='notifyEmail' value=config.donations.btcpayserver.notifyEmail)
+          each coin, index in config.donations.addresses.coins
+            div(style="display: inline-block; max-width: 150px;", class="text-center mb-3 word-wrap monospace", class=(index > 0 ? "ml-md-3" : false))
+              img(src=donationAddressQrCodeUrls[coin], alt=config.donations.addresses[coin].address, style="border: solid 1px #ccc;")
 
-							button.btn.btn-primary.btn-lg(type='submit', class="mr-2 mb-2")
-								i(class="fas mr-2 fa-bolt")
-								span 1 satoshi
-
-					script.
-						function showDonateByAddress(link) {
-							var donateByAddressDiv = document.getElementById("donate-by-address");
-							donateByAddressDiv.classList.remove("d-none");
-							link.classList.add("d-none");
-						}
-
-				div(id="donate-by-address", class="mt-4")
-					h6 Donate by address
-
-					div(class="mb-3")
-						each coin, index in config.donations.addresses.coins
-							div(class="monospace")
-								if (coinConfig.ticker == coin)
-									span #{config.donations.addresses[coin].address}
-								else
-									span #{coin}: 
-									a(href=(config.donations.addresses.sites[coin] + "/address/" + config.donations.addresses[coin].address), class="text-wrap") #{config.donations.addresses[coin].address}
-
-					each coin, index in config.donations.addresses.coins
-						div(style="display: inline-block; max-width: 150px;", class="text-center mb-3 word-wrap monospace", class=(index > 0 ? "ml-md-3" : false))
-							img(src=donationAddressQrCodeUrls[coin], alt=config.donations.addresses[coin].address, style="border: solid 1px #ccc;")
-
-			.modal-footer
-				button.btn.btn-secondary(type='button' data-dismiss='modal') Close
-
+      .modal-footer
+        button.btn.btn-secondary(type='button' data-dismiss='modal') Close
 

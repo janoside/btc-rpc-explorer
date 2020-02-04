@@ -320,9 +320,8 @@ app.continueStartup = function() {
 
   loadMiningPoolConfigs();
 
-
+  getSourcecodeProjectMetadata();
   if (config.demoSite) {
-    getSourcecodeProjectMetadata();
     setInterval(getSourcecodeProjectMetadata, 3600000);
   }
 

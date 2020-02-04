@@ -185,15 +185,10 @@ module.exports = {
 
   donations:{
     addresses:{
-      coins:["BTC"],
-      sites:{"BTC":"https://btc.chaintools.io"},
+      coins:["BCH"],
+      sites:{"BCH":"https://bitcoinunlimited.info"},
 
-      "BTC":{address:"3NPGpNyLLmVKCEcuipBs7G4KpQJoJXjDGe"}
-    },
-    btcpayserver:{
-      host:"https://btcpay.chaintools.io",
-      storeId:"DUUExHMvKNAFukrJZHCShMhwZvfPq87QnkUhvE6h5kh2",
-      notifyEmail:"chaintools.io@gmail.com"
+      "BCH":{address:"bitcoincash:pq6snv5fcx2fp6dlzg7s0m9zs8yqh74335tzvvfcmq"}
     }
   }
 };
