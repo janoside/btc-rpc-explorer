@@ -1,5 +1,37 @@
 {
     "coinbase_tags" : {
+        "http://toom.im -- P2pool": {
+            "name": "Toomim p2pool",
+            "link": "http://github.com/jtoomim/p2pool"
+        },
+        "HappyBchPool": {
+            "name": "HappyBchPool",
+            "link": "Unknown"
+        },
+        "WarpHash": {
+            "name": "Warp Pool",
+            "link": "Unknown"
+        },
+        "JV27r16pvYfB": {
+            "name": "JV27r16pvYfB",
+            "link": "Unknown"
+        },
+        "TgNo916VnDAu": {
+            "name": "TgNo916VnDAu",
+            "link": "Unknown"
+        },
+        "KvsSu1byCy6n": {
+            "name": "KvsSu1byCy6n",
+            "link": "Unknown"
+        },
+        "Toomim Bros solo": {
+            "name": "Toomim Bros",
+            "link": "https://toom.im"
+        },
+        "Mined by AntPool59": {
+            "name": "AntPool",
+            "link": "https://"
+        },
         "/LUXOR/": {
             "name": "Luxor",
             "link": "https://mining.luxor.tech"
@@ -459,9 +491,25 @@
 	"okex.com": {
             "name" : "OKEX Pool",
 	    "link" : "https://www.okex.com/pool"
+        },
+	"prohashing.com": {
+            "name" : "Prohashing",
+	    "link" : "https://prohashing.com"
+        },
+	"Global": {
+            "name" : "Global",
+	    "link" : "Unknown"
         }
     },
     "payout_addresses" : {
+        "bitcoincash:qzhpwjj64m5v2mmq45j5n0z48jhv5ngkjg2qh950dy": {
+            "name" : "Unknown2",
+            "link" : "Unknown"
+         },
+        "bitcoincash:qp4ajqctqvx5m5fhpswdkgm9whwsapgst5twl9zd5h": {
+            "name" : "Unknown1",
+            "link" : "Unknown"
+         },
         "3Bmb9Jig8A5kHdDSxvDZ6eryj3AXd3swuJ": {
             "name" : "NovaBlock",
             "link" : "https://novablock.com"
