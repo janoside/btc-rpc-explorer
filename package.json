@@ -1,6 +1,6 @@
 {
   "name": "bch-rpc-explorer",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Self-hosted Bitcoin Cash blockchain explorer",
   "private": false,
   "bin": "bin/cli.js",
