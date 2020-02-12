@@ -171,8 +171,10 @@ module.exports = {
           title:"Related Sites",
           links:[
             // TODO: find better images for this URLs, in the mean time use bch.svg
-            {name: "Bitcoin Unlimited", url:"https://bitcoinunlimited.info", imgUrl:"/img/logo/bch.svg"},
+            {name: "Bitcoin Unlimited", url:"https://bitcoinunlimited.info", imgUrl:"/img/logo/bu.png"},
             {name: "Bitcoin Cash Nodes", url:"https://cashnodes.io", imgUrl:"/img/logo/bch.svg"},
+            {name: "BCH PoW Monitoring", url:"https://fork.lol", imgUrl:"/img/logo/fork.png"},
+            {name: "BCH Specification", url:"https://reference.cash", imgUrl:"/img/logo/refcash.ico"},
           ]
         }
       ]
