@@ -130,7 +130,7 @@ html(lang="en")
 
 				if (userMessage)
 					div(class="alert", class=(userMessageType ? ("alert-"  + userMessageType) : "alert-warning"), role="alert")
-						span !{userMessage}
+						span #{userMessage}
 				
 				block content
 
