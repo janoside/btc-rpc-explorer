@@ -152,7 +152,7 @@ module.exports = {
 				{
 					title:"Related Sites",
 					links:[
-						{name: "Bitcoin Explorer", url:"https://btc.chaintools.io", imgUrl:"/img/logo/btc.svg"},
+						{name: "Bitcoin Explorer", url:"https://explorer.btc21.org", imgUrl:"/img/logo/btc.svg"},
 						{name: "LND Admin", url:"https://lnd-admin.chaintools.io", imgUrl:"/img/logo/lnd-admin.png"},
 						//{name: "Litecoin Explorer", url:"https://ltc.chaintools.io", imgUrl:"/img/logo/ltc.svg"},
 						//{name: "Lightning Explorer", url:"https://lightning.chaintools.io", imgUrl:"/img/logo/lightning.svg"},
@@ -183,14 +183,15 @@ module.exports = {
 	donations:{
 		addresses:{
 			coins:["BTC"],
-			sites:{"BTC":"https://btc.chaintools.io"},
+			sites:{"BTC":"https://explorer.btc21.org"},
 
 			"BTC":{address:"3NPGpNyLLmVKCEcuipBs7G4KpQJoJXjDGe"}
 		},
 		btcpayserver:{
-			host:"https://btcpay.chaintools.io",
-			storeId:"DUUExHMvKNAFukrJZHCShMhwZvfPq87QnkUhvE6h5kh2",
-			notifyEmail:"chaintools.io@gmail.com"
+			host:"https://donate.btc21.org",
+			storeId:"26k74KRh7RYmJcMDqvmdKTb2h3991FMTZSM4GJHnX6st",
+			notifyEmail:"chaintools.io@gmail.com",
+			customAmountUrl: "https://donate.btc21.org/apps/2TBP2GuQnYXGBiHQkmf4jNuMh6eN/pos"
 		}
 	}
 };
