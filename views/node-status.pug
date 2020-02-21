@@ -56,10 +56,7 @@ block content
 									td(class="monospace") #{sizeData[0]} #{sizeData[1].abbreviation}B
 										br
 										span(class="text-muted")  (pruned: #{getblockchaininfo.pruned})
-							tr
-								td(class="properties-header") Connections
-								td(class="monospace") #{getnetworkinfo.connections.toLocaleString()}
-
+							
 							tr
 								td(class="properties-header") Block Count
 								td(class="monospace") #{getblockchaininfo.blocks.toLocaleString()}
@@ -89,6 +86,23 @@ block content
 								td(class="monospace") #{startTimeAgo.format()}
 
 							tr
+								td(class="properties-header") Warnings
+								td(class="monospace")
+									if (getblockchaininfo.warnings && getblockchaininfo.warnings.trim().length > 0)
+										span #{getblockchaininfo.warnings}
+									else
+										span None
+
+				div(class="card mb-3 shadow-sm")
+					div(class="card-header")
+						span(class="h6") Network Info
+					div(class="card-body")
+						table(class="table details-table mb-0")
+							tr
+								td(class="properties-header") Peers
+								td(class="monospace") #{getnetworkinfo.connections.toLocaleString()}
+
+							tr
 								td(class="properties-header") Network Traffic
 								td(class="monospace")
 									- var downData = utils.formatLargeNumber(getnettotals.totalbytesrecv, 2);
@@ -102,13 +116,32 @@ block content
 									span Total Upload: #{upData[0]} #{upData[1].abbreviation}B
 									span(class="text-muted")  (avg #{upRateData[0]} #{upRateData[1].abbreviation}B/s)
 
-							tr
-								td(class="properties-header") Warnings
-								td(class="monospace")
-									if (getblockchaininfo.warnings && getblockchaininfo.warnings.trim().length > 0)
-										span #{getblockchaininfo.warnings}
-									else
-										span None
+							if (global.getnetworkinfo.networks)
+								tr
+									td(class="properties-header") Interfaces
+									td(class="monospace")
+										each item, index in global.getnetworkinfo.networks
+											div
+												span.font-weight-bold #{item.name}: 
+												if (item.reachable)
+													span reachable
+														i.fa.fa-check.ml-2.text-success
+
+												else
+													span unreachable
+														i.fa.fa-times.ml-2.text-danger
+
+												if (item.proxy)
+													span.text-muted.ml-3 (proxy: #{item.proxy})
+
+							td(class="properties-header") Local Addresses
+							td(class="monospace")
+								if (global.getnetworkinfo.localaddresses)
+									each item, index in global.getnetworkinfo.localaddresses
+										div #{item.address}:#{item.port}
+											span.text-muted.ml-3 (score: #{item.score.toLocaleString()})
+
+							
 
 			div(id="tab-json", class="tab-pane", role="tabpanel")
 
