@@ -1,3 +1,12 @@
+#### v1.1.9
+##### 2020-01-09
+
+* Fix for unescaped user search query display (#183)
+* More detailed network info on `/node-status`
+* Updated bootstrap, jquery
+* Disable stacktrace log output by default (#170)
+* Updated miner configs
+
 #### v1.1.8
 ##### 2020-01-09
 
