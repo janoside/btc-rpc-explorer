@@ -2,6 +2,7 @@ var debug = require("debug");
 
 var debugLog = debug("btcexp:utils");
 var debugErrorLog = debug("btcexp:error");
+var debugErrorVerboseLog = debug("btcexp:errorVerbose");
 
 var Decimal = require("decimal.js");
 var request = require("request");
@@ -559,7 +560,7 @@ function logError(errorId, err, optionalUserData = null) {
 	debugErrorLog("Error " + errorId + ": " + err + ", json: " + JSON.stringify(err) + (optionalUserData != null ? (", userData: " + optionalUserData + " (json: " + JSON.stringify(optionalUserData) + ")") : ""));
 	
 	if (err && err.stack) {
-		debugErrorLog("Stack: " + err.stack);
+		debugErrorVerboseLog("Stack: " + err.stack);
 	}
 
 	var returnVal = {errorId:errorId, error:err};
