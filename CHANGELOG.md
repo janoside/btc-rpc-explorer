@@ -1,5 +1,5 @@
 #### v1.1.9
-##### 2020-01-09
+##### 2020-02-23
 
 * Fix for unescaped user search query display (#183)
 * More detailed network info on `/node-status`
