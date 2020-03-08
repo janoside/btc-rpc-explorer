@@ -305,6 +305,11 @@ block content
 											a(href="https://github.com/janoside/btc-rpc-explorer/issues/67") Issue #67
 											span  for more information.
 
+										else if (err.e && err.e.error && err.e.error.message.endsWith("transactions found, query may take a long time"))
+											span Failed to retrieve transaction history from Electrum Rust Server. See 
+											a(href="https://github.com/janoside/btc-rpc-explorer/issues/67") Issue #67
+											span  for more information. Consider starting Electrum Rust Server with a custom --txid-limit argument, to support longer transaction histories.
+											
 										else if (err == "No address API configured")
 											span No address API is configured. See 
 											a(href="https://github.com/janoside/btc-rpc-explorer/blob/master/.env-sample") the example configuration file
