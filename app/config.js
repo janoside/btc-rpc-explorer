@@ -183,9 +183,7 @@ module.exports = {
 	donations:{
 		addresses:{
 			coins:["BTC"],
-			sites:{"BTC":"https://explorer.btc21.org"},
-
-			"BTC":{address:"3NPGpNyLLmVKCEcuipBs7G4KpQJoJXjDGe"}
+			sites:{"BTC":"https://explorer.btc21.org"}
 		},
 		btcpayserver:{
 			host:"https://donate.btc21.org",

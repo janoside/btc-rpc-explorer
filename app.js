@@ -157,10 +157,6 @@ function loadHistoricalDataForChain(chain) {
 	global.specialBlocks = {};
 	global.specialAddresses = {};
 
-	if (config.donations.addresses && config.donations.addresses[coinConfig.ticker]) {
-		global.specialAddresses[config.donations.addresses[coinConfig.ticker].address] = {type:"donation"};
-	}
-
 	if (global.coinConfig.historicalData) {
 		global.coinConfig.historicalData.forEach(function(item) {
 			if (item.chain == chain) {
@@ -282,21 +278,6 @@ app.continueStartup = function() {
 	// note: see verifyRpcConnection() for associated clearInterval() after success
 	verifyRpcConnection();
 	global.verifyRpcConnectionIntervalId = setInterval(verifyRpcConnection, 30000);
-
-
-	if (config.donations.addresses) {
-		var getDonationAddressQrCode = function(coinId) {
-			qrcode.toDataURL(config.donations.addresses[coinId].address, function(err, url) {
-				global.donationAddressQrCodeUrls[coinId] = url;
-			});
-		};
-
-		global.donationAddressQrCodeUrls = {};
-
-		config.donations.addresses.coins.forEach(function(item) {
-			getDonationAddressQrCode(item);
-		});
-	}
 
 
 	if (config.addressApi) {

@@ -71,7 +71,7 @@ See `btc-rpc-explorer --help` for the full list of CLI options.
 
 # Support
 
-* [3NPGpNyLLmVKCEcuipBs7G4KpQJoJXjDGe](bitcoin:3NPGpNyLLmVKCEcuipBs7G4KpQJoJXjDGe)
+* [https://donation.btc21.org](https://donate.btc21.org/apps/2TBP2GuQnYXGBiHQkmf4jNuMh6eN/pos)
 
 
 [npm-ver-img]: https://img.shields.io/npm/v/btc-rpc-explorer.svg?style=flat
