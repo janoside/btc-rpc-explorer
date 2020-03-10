@@ -56,8 +56,8 @@ block content
 										tr(class=(index >= 5 ? "versions-hidden-rows" : false))
 											td(class="data-cell font-weight-bold") #{index + 1}
 
-											td(class="data-cell monospace") #{item[0]}
-											td(class="data-cell monospace") #{item[1].toLocaleString()}
+											td(class="data-cell text-monospace") #{item[0]}
+											td(class="data-cell text-monospace") #{item[1].toLocaleString()}
 
 						div(class="col-md-6")
 							span(class="font-weight-bold") Top Service Flags
@@ -73,8 +73,8 @@ block content
 										tr(class=(index >= 5 ? "services-hidden-rows" : false))
 											td(class="data-cell font-weight-bold") #{index + 1}
 
-											td(class="data-cell monospace") #{item[0]}
-											td(class="data-cell monospace") #{item[1].toLocaleString()}
+											td(class="data-cell text-monospace") #{item[0]}
+											td(class="data-cell text-monospace") #{item[1].toLocaleString()}
 
 			div(class="card mb-4 shadow-sm")
 				div(class="card-header")
@@ -106,12 +106,12 @@ block content
 								tr
 									th(class="data-cell") #{index + 1}
 
-									td(class="data-cell monospace") #{item.subver}
-									td(class="data-cell monospace") #{item.addr}
-									td(class="data-cell monospace") #{item.services}
+									td(class="data-cell text-monospace") #{item.subver}
+									td(class="data-cell text-monospace") #{item.addr}
+									td(class="data-cell text-monospace") #{item.services}
 
 									if (peerIpSummary.ips)
-										td(class="data-cell monospace")
+										td(class="data-cell text-monospace")
 											- var ipAddr = item.addr.substring(0, item.addr.lastIndexOf(":"));
 											if (peerIpSummary.ips && peerIpSummary.ips.includes(ipAddr))
 												- var ipDetails = peerIpSummary.detailsByIp[ipAddr];
@@ -127,7 +127,7 @@ block content
 
 											- var ipAddr = null;
 
-									td(class="data-cell monospace") #{lastSendAgo} / #{lastRecvAgo}
+									td(class="data-cell text-monospace") #{lastSendAgo} / #{lastRecvAgo}
 			
 
 
@@ -137,7 +137,7 @@ block content
 					a(href="javascript:void(0)" onclick=("javascript:var peer = document.getElementById('peerinfo_" + index + "'); peer.style.display = peer.style.display === 'none' ? '' : 'none';"))
 						i(class="fas fa-plus-circle") 
 
-					span(class="monospace")  #{item.addr}
+					span(class="text-monospace")  #{item.addr}
 
 				div(style="display: none;", id=("peerinfo_" + index), class="p-3")
 					h6 Peer Details

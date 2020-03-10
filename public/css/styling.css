@@ -16,8 +16,8 @@ img.header-image {
 	margin-right: 10px;
 }
 
-code, .monospace {
-	font-family: "Source Code Pro", monospace;
+code, .text-monospace {
+	font-family: "Source Code Pro", monospace !important;
 }
 
 .card-body {

@@ -21,7 +21,7 @@ block content
 						div(class="col")
 							h4(style="display: inline-block;")
 								span Command: 
-								span(class="font-weight-light") #{method}
+								span.font-weight-light.text-monospace #{method}
 						div(class="col")
 							a(href=("https://bitcoin.org/en/developer-reference#" + method), class="btn btn-primary float-md-right") See developer docs &raquo;
 								
@@ -120,5 +120,5 @@ block content
 						ol(style="padding-left: 30px;")
 							each methodX, methodIndex in section.methods
 								li
-									a(href=("/rpc-browser?method=" + methodX.name), style=(methodX.name == method ? "font-weight: bold; font-style: italic;" : false), class="monospace") #{methodX.name}
+									a(href=("/rpc-browser?method=" + methodX.name), style=(methodX.name == method ? "font-weight: bold; font-style: italic;" : false), class="text-monospace") #{methodX.name}
 

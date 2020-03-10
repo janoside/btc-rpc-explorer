@@ -19,34 +19,34 @@ block content
 				table(class="table details-table mb-0")
 					tr
 						td(class="properties-header") Transaction Count
-						td #{getmempoolinfo.size.toLocaleString()}
+						td.text-monospace #{getmempoolinfo.size.toLocaleString()}
 
 					tr
 						- var mem1Data = utils.formatLargeNumber(getmempoolinfo.usage, 2);
 						- var mem2Data = utils.formatLargeNumber(getmempoolinfo.bytes, 2);
 
 						td(class="properties-header") Memory Usage
-						td(class="monospace")
+						td.text-monospace
 							span #{mem1Data[0]} #{mem1Data[1].abbreviation}B
 							span(class="text-muted")  (#{mem2Data[0]} v#{mem2Data[1].abbreviation}B)
 
 					tr
 						td(class="properties-header") Total Fees
-						td(class="monospace")
+						td.text-monospace
 							- var currencyValue = mempoolstats["totalFees"];
 							include includes/value-display.pug
 							
 					if (getmempoolinfo.size > 0)
 						tr
 							td(class="properties-header") Avg Fee
-							td(class="monospace")
+							td.text-monospace
 								- var currencyValue = mempoolstats["averageFee"];
 								include ./includes/value-display.pug
 
 						tr
 							td(class="properties-header") Avg Fee per 
 								span.border-dotted(title="Virtual bytes", data-toggle="tooltip") vByte
-							td(class="monospace") #{utils.formatCurrencyAmountInSmallestUnits(mempoolstats["averageFeePerByte"], 2)}/vB
+							td.text-monospace #{utils.formatCurrencyAmountInSmallestUnits(mempoolstats["averageFeePerByte"], 2)}/vB
 
 		if (getmempoolinfo.size > 0)
 			div.card.mb-3.shadow-sm
@@ -118,9 +118,9 @@ block content
 							tbody
 								each item, index in mempoolstats["satoshiPerByteBuckets"]
 									tr
-										td #{mempoolstats["satoshiPerByteBucketLabels"][index]}
-										td(class="text-right monospace") #{item["count"].toLocaleString()}
-										td(class="text-right monospace")
+										td.text-monospace #{mempoolstats["satoshiPerByteBucketLabels"][index]}
+										td.text-monospace.text-right #{item["count"].toLocaleString()}
+										td.text-monospace.text-right
 											- var currencyValue = item["totalFees"];
 											include ./includes/value-display.pug
 
@@ -128,14 +128,14 @@ block content
 											- var avgFee = item["totalFees"] / item["count"];
 											- var avgFeeRate = item["totalFees"] / item["totalBytes"];
 
-											td(class="text-right monospace")
+											td.text-monospace.text-right
 												- var currencyValue = avgFee;
 												include ./includes/value-display.pug
 															
-											td(class="text-right monospace") #{utils.formatCurrencyAmountInSmallestUnits(avgFeeRate, 2)}/B
+											td.text-monospace.text-right #{utils.formatCurrencyAmountInSmallestUnits(avgFeeRate, 2)}/vB
 										else
-											td(class="text-right monospace") -
-											td(class="text-right monospace") -
+											td.text-monospace.text-right -
+											td.text-monospace.text-right -
 
 			div.card.mb-3.shadow-sm
 				div.card-header

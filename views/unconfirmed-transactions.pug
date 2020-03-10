@@ -25,7 +25,7 @@ block content
 			div(class="card-body")
 				each tx, txIndex in mempoolDetails.transactions
 					div(class="xcard bg-light rounded shadow-sm mb-4")
-						div(class="card-header monospace")
+						div(class="card-header text-monospace")
 							if (tx && tx.txid)
 								strong ##{(txIndex + offset).toLocaleString()}
 								span  &ndash; 

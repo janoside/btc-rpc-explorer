@@ -55,7 +55,7 @@
 
 						div(class="mb-3")
 							each coin, index in config.donations.addresses.coins
-								div(class="monospace")
+								div(class="text-monospace")
 									if (coinConfig.ticker == coin)
 										span #{config.donations.addresses[coin].address}
 									else
@@ -63,7 +63,7 @@
 										a(href=(config.donations.addresses.sites[coin] + "/address/" + config.donations.addresses[coin].address), class="text-wrap") #{config.donations.addresses[coin].address}
 
 						each coin, index in config.donations.addresses.coins
-							div(style="display: inline-block; max-width: 150px;", class="text-center mb-3 word-wrap monospace", class=(index > 0 ? "ml-md-3" : false))
+							div(style="display: inline-block; max-width: 150px;", class="text-center mb-3 word-wrap text-monospace", class=(index > 0 ? "ml-md-3" : false))
 								img(src=donationAddressQrCodeUrls[coin], alt=config.donations.addresses[coin].address, style="border: solid 1px #ccc;")
 
 

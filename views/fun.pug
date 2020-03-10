@@ -25,7 +25,7 @@ block content
 
 							td(class="data-cell") #{item.summary}
 							
-							td(class="data-cell monospace")
+							td(class="data-cell text-monospace")
 								if (item.type == "tx")
 									a(href=("/tx/" + item.txid), title=item.txid, data-toggle="tooltip") Tx #{item.txid.substring(0, 23)}...
 								else if (item.type == "block")

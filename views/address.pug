@@ -8,11 +8,11 @@ block content
 		if (!result.validateaddress.isvalid)
 			h1(class="h3 text-danger") Invalid Address
 				br
-				small(class="monospace") #{address}
+				small(class="text-monospace") #{address}
 		else
 			h1.h3 Address
 				br
-				small(class="monospace") #{address}
+				small(class="text-monospace") #{address}
 			
 			hr
 
@@ -107,32 +107,32 @@ block content
 									if (addressObj.hash)
 										div(class="row")
 											div(class="summary-split-table-label") Hash 160
-											div(class="summary-split-table-content monospace") #{addressObj.hash.toString("hex")}
+											div(class="summary-split-table-content text-monospace") #{addressObj.hash.toString("hex")}
 
 									if (result.validateaddress.scriptPubKey)
 										div(class="row")
 											div(class="summary-split-table-label") Script Public Key
-											div(class="summary-split-table-content monospace") #{result.validateaddress.scriptPubKey}
+											div(class="summary-split-table-content text-monospace") #{result.validateaddress.scriptPubKey}
 
 									if (addressObj.hasOwnProperty("version"))
 										div(class="row")
 											div(class="summary-split-table-label") Version
-											div(class="summary-split-table-content monospace") #{addressObj.version}
+											div(class="summary-split-table-content text-monospace") #{addressObj.version}
 
 									if (result.validateaddress.hasOwnProperty("witness_version"))
 										div(class="row")
 											div(class="summary-split-table-label") Witness Version
-											div(class="summary-split-table-content monospace") #{result.validateaddress.witness_version}
+											div(class="summary-split-table-content text-monospace") #{result.validateaddress.witness_version}
 
 									if (result.validateaddress.witness_program)
 										div(class="row")
 											div(class="summary-split-table-label") Witness Program
-											div(class="summary-split-table-content monospace") #{result.validateaddress.witness_program}
+											div(class="summary-split-table-content text-monospace") #{result.validateaddress.witness_program}
 
 									if (firstSeenTransaction && firstSeenTransaction.confirmations > 0)
 										div(class="row")
 											div(class="summary-split-table-label") First Seen
-											div(class="summary-split-table-content monospace")
+											div(class="summary-split-table-content text-monospace")
 												if (getblockchaininfo)
 													span Block ##{(getblockchaininfo.blocks - firstSeenTransaction.confirmations).toLocaleString()}
 												else
@@ -152,7 +152,7 @@ block content
 										if (balance.conflictedResults)
 											div(class="row")
 												div(class="summary-split-table-label") Balance
-												div(class="summary-split-table-content monospace")
+												div(class="summary-split-table-content text-monospace")
 													span(class="text-warning") Conflicted ElectrumX Results
 
 													each item in balance.conflictedResults
@@ -163,39 +163,39 @@ block content
 										else
 											div(class="row")
 												div(class="summary-split-table-label") Balance
-												div(class="summary-split-table-content monospace")
+												div(class="summary-split-table-content text-monospace")
 													- var currencyValue = balance.result.confirmed / coinConfig.baseCurrencyUnit.multiplier;
 													include includes/value-display.pug
 
 											if (balance.unconfirmed)
 												div(class="row")
 													div(class="summary-split-table-label") Unconfirmed
-													div(class="summary-split-table-content monospace")
+													div(class="summary-split-table-content text-monospace")
 														- var currencyValue = balance.unconfirmed / coinConfig.baseCurrencyUnit.multiplier;
 														include includes/value-display.pug
 
 									if (addressDetails && addressDetails.balanceSat)
 										div(class="row")
 											div(class="summary-split-table-label") Balance
-											div(class="summary-split-table-content monospace")
+											div(class="summary-split-table-content text-monospace")
 												- var currencyValue = new Decimal(addressDetails.balanceSat).dividedBy(coinConfig.baseCurrencyUnit.multiplier);
 												include includes/value-display.pug
 
 									if (addressDetails && addressDetails.txCount)
 										div(class="row")
 											div(class="summary-split-table-label") Transactions
-											div(class="summary-split-table-content monospace") #{addressDetails.txCount.toLocaleString()}
+											div(class="summary-split-table-content text-monospace") #{addressDetails.txCount.toLocaleString()}
 
 									div(class="row")
 										div(class="summary-split-table-label") QR Code
-										div(class="summary-split-table-content monospace")
+										div(class="summary-split-table-content text-monospace")
 											img(src=addressQrCodeUrl, alt=address, style="border: solid 1px #ccc;")
 
 								div(class="col-md-6")
 									if (electrumScripthash)
 										div(class="row")
 											div(class="summary-split-table-label") Scripthash
-											div(class="summary-split-table-content monospace") #{electrumScripthash}
+											div(class="summary-split-table-content text-monospace") #{electrumScripthash}
 
 									- var x = result.validateaddress;
 									- var flagNames = ["Is Valid?", "Is Script?", "Is Witness?", "Is Mine?", "Is Watch-Only?"];
@@ -204,7 +204,7 @@ block content
 									each flagName, index in flagNames
 										div(class="row")
 											div(class="summary-split-table-label") #{flagName}
-											div(class="summary-split-table-content monospace")
+											div(class="summary-split-table-content text-monospace")
 												if (flags[index])
 													i(class="fas fa-check text-success")
 												else
@@ -317,7 +317,7 @@ block content
 									//pre
 									//	code.json.bg-light #{JSON.stringify(tx, null, 4)}
 									div(class=("xcard bg-light rounded shadow-sm " + ((txIndex < (transactions.length - 1) || txids.length > limit) ? "mb-4" : "")))
-										div(class="card-header monospace clearfix")
+										div(class="card-header text-monospace clearfix")
 											div(class="float-left", style="margin-right: 0px;")
 												if (sort == "desc")
 													span ##{(addressDetails.txCount - offset - txIndex).toLocaleString()}
