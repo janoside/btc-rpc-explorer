@@ -25,6 +25,7 @@ const args = require('meow')(`
       --cookie-secret <secret>       secret key for signed cookie hmac generation [default: hmac derive from bitcoind pass]
       --demo                         enable demoSite mode [default: disabled]
       --no-rates                     disable fetching of currency exchange rates [default: enabled]
+      --slow-device-mode             disable performance-intensive tasks (e.g. UTXO set fetching) [default: enabled]
       --privacy-mode                 enable privacyMode to disable external data requests [default: disabled]
       --max-mem <bytes>              value for max_old_space_size [default: 1024 (1 GB)]
 
@@ -52,7 +53,7 @@ const args = require('meow')(`
             , bitcoindCookie: {alias:'c'}, bitcoindUser: {alias:'u'}, bitcoindPass: {alias:'w'}
             , demo: {type:'boolean'}, rpcAllowall: {type:'boolean'}, electrumxServers: {alias:'E'}
             , nodeEnv: {alias:'e', default:'production'}
-            , privacyMode: {type:'boolean'}
+            , privacyMode: {type:'boolean'}, slowDeviceMode: {type:'boolean'}
             } }
 ).flags;
 

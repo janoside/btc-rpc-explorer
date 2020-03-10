@@ -173,6 +173,10 @@ function getChainTxStats(blockCount) {
 	});
 }
 
+function getUtxoSetSummary() {
+	return tryCacheThenRpcApi(miscCache, "getUtxoSetSummary", 15 * 60 * 1000, rpcApi.getUtxoSetSummary);
+}
+
 function getTxCountStats(dataPtCount, blockStart, blockEnd) {
 	return new Promise(function(resolve, reject) {
 		var dataPoints = dataPtCount;
@@ -956,5 +960,6 @@ module.exports = {
 	getPeerSummary: getPeerSummary,
 	getChainTxStats: getChainTxStats,
 	getMempoolDetails: getMempoolDetails,
-	getTxCountStats: getTxCountStats
+	getTxCountStats: getTxCountStats,
+	getUtxoSetSummary: getUtxoSetSummary,
 };

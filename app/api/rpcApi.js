@@ -57,6 +57,10 @@ function getMempoolTxids() {
 	return getRpcDataWithParams({method:"getrawmempool", parameters:[false]});
 }
 
+function getUtxoSetSummary() {
+	return getRpcData("gettxoutsetinfo");
+}
+
 function getRawMempool() {
 	return new Promise(function(resolve, reject) {
 		getRpcDataWithParams({method:"getrawmempool", parameters:[false]}).then(function(txids) {
@@ -343,5 +347,6 @@ module.exports = {
 	getRpcMethodHelp: getRpcMethodHelp,
 	getAddress: getAddress,
 	getPeerInfo: getPeerInfo,
-	getChainTxStats: getChainTxStats
+	getChainTxStats: getChainTxStats,
+	getUtxoSetSummary: getUtxoSetSummary,
 };
