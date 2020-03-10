@@ -1,3 +1,8 @@
+#### v1.2.0
+##### 2020-02-23
+
+* New tool `/mining-summary` for viewing summarized mining data from recent blocks
+
 #### v1.1.9
 ##### 2020-02-23
 

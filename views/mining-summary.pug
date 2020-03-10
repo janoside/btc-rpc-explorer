@@ -1,0 +1,280 @@
+extends layout
+
+block headContent
+	title Mining Summary
+
+block content
+	h1.h3 Mining Summary
+	hr
+
+	div.mb-4(id="time-range-buttons")
+		h3.h5 Block Count
+		div.btn-group
+			a.btn.btn-primary.block-count-btn(href="javascript:void(0)", data-blockCount="144") 144
+				small.ml-2 (~1d)
+			a.btn.btn-outline-primary.block-count-btn(href="javascript:void(0)", data-blockCount="432") 432
+				small.ml-2 (~3d)
+			a.btn.btn-outline-primary.block-count-btn(href="javascript:void(0)", data-blockCount="1008") 1,008
+				small.ml-2 (~7d)
+			a.btn.btn-outline-primary.block-count-btn(href="javascript:void(0)", data-blockCount="4320") 4,320
+				small.ml-2 (~30d)
+
+	div#progress-wrapper
+		h4.h6 Loading blocks: 
+			span(id="block-progress-text")
+		div.progress(id="progress-bar", style="height: 7px; margin-bottom: 200px;")
+			div.progress-bar(id="data-progress", role="progressbar", aria-valuenow="0", aria-valuemin="0" ,aria-valuemax="100")
+	
+
+	div.table-responsive.mb-5(id="summary-table", style="display: none;")
+		table.table.table-striped.mb-0
+			thead
+				tr
+					th.data-header Miner
+					th.data-header.text-right Blocks
+					th.data-header.text-right Transactions
+					th.data-header.text-right Block Rewards
+					th.data-header.text-right Fees Collected
+					
+			tbody(id="summary-table-body")
+				tr(id="miner-summary-prototype", style="display: none;")
+					td.data-cell.text-monospace.miner-name
+					td.data-cell.text-monospace.text-right
+						span.miner-block-count
+						small.text-muted.miner-block-percent.ml-2
+					td.data-cell.text-monospace.text-right
+						span.miner-tx-count
+						small.text-muted.miner-tx-percent.ml-2
+					td.data-cell.text-monospace.text-right
+						span.miner-subsidy
+						small.text-muted.miner-subsidy-percent.ml-2
+						//- var currencyValue = new Decimal(summary.totalSubsidiesCollected);
+						//include ./includes/value-display.pug
+					td.data-cell.text-monospace.text-right
+						span.miner-fees
+						small.text-muted.miner-fees-percent.ml-2
+						//- var currencyValue = new Decimal(summary.totalFeesCollected);
+						//include ./includes/value-display.pug
+
+				tr(id="miner-summary-totals", style="display: none;")
+					th.data-cell.text-monospace.miner-name Total
+					th.data-cell.text-monospace.text-right
+						span.miner-block-count
+						small.text-muted.miner-block-percent.ml-2 (100%)
+					th.data-cell.text-monospace.text-right
+						span.miner-tx-count
+						small.text-muted.miner-tx-percent.ml-2 (100%)
+					th.data-cell.text-monospace.text-right
+						span.miner-subsidy
+						//- var currencyValue = new Decimal(summary.totalSubsidiesCollected);
+						//include ./includes/value-display.pug
+					th.data-cell.text-monospace.text-right
+						span.miner-fees
+						//- var currencyValue = new Decimal(summary.totalFeesCollected);
+						//include ./includes/value-display.pug
+
+	if (false)
+		pre
+			code.json #{JSON.stringify(summariesByMiner, null, 4)}
+
+block endOfBody
+	script(src='/js/decimal.js')
+	script.
+		var currentBlockHeight = !{currentBlockHeight};
+		$(document).ready(function() {
+			$("#time-range-buttons .block-count-btn").on("click", function() {
+				// highlight current selection
+				$("#time-range-buttons .block-count-btn").removeClass("btn-primary").addClass("btn-outline-primary");
+				$(this).addClass("btn-primary").removeClass("btn-outline-primary");
+				
+				var blockCount = parseInt($(this).attr("data-blockCount"));
+				
+				$(".miner-summary-row").remove();
+
+				$("#data-progress").css("width", "0%");
+				$("#block-progress-text").text("");
+
+				$("#summary-table").hide();
+				$("#progress-wrapper").show();
+
+				getData(currentBlockHeight, blockCount, 15);
+			});
+
+			getData(currentBlockHeight, 144, 15);
+		});
+
+		function getData(blockStart, count, chunkSize) {
+			$("#time-range-buttons .block-count-btn").addClass("disabled");
+
+			var chunks = [];
+			var blockIndex = blockStart;
+			while (blockIndex > blockStart - count) {
+				var chunk = [];
+				for (var i = blockIndex; (i > (blockIndex - chunkSize) && i > (currentBlockHeight - count)); i--) {
+					chunk.push(i);
+				}
+
+				blockIndex -= chunkSize;
+				chunks.push(chunk);
+			}
+
+			//alert(JSON.stringify(chunks));
+
+			var results = [];
+
+			var statusCallback = function(chunkIndexDone, chunkCount) {
+				console.log("Done: " + Math.min(((chunkIndexDone + 1) * chunkSize), count) + " of " + count);
+
+				var wPercent = `${parseInt(100 * (chunkIndexDone + 1) / parseFloat(chunkCount))}%`;
+				
+				$("#data-progress").css("width", wPercent);
+				$("#block-progress-text").text(`${Math.min(((chunkIndexDone + 1) * chunkSize), count).toLocaleString()} of ${count.toLocaleString()} (${wPercent})`);
+			};
+
+			var finishedCallback = function() {
+				$("#time-range-buttons .block-count-btn").removeClass("disabled");
+
+				console.log(JSON.stringify(results));
+
+				var summary = summarizeBlockData(results);
+
+
+				for (var i = 0; i < summary.minerNamesSortedByBlockCount.length; i++) {
+					var minerName = summary.minerNamesSortedByBlockCount[i];
+					var minerSummary = summary.summariesByMiner[minerName];
+
+					var row = $("#miner-summary-prototype").clone();
+					row.attr("id", null);
+					row.addClass("miner-summary-row");
+					
+					row.find(".miner-name").text(minerName);
+					
+					row.find(".miner-block-count").text(minerSummary.blockCount.toLocaleString());
+					row.find(".miner-block-percent").text(`(${new Decimal(minerSummary.blockCount).dividedBy(summary.overallSummary.blockCount).times(100).toDecimalPlaces(1)}%)`);
+					
+					row.find(".miner-tx-count").text(minerSummary.transactionCount.toLocaleString());
+					row.find(".miner-tx-percent").text(`(${new Decimal(minerSummary.transactionCount).dividedBy(summary.overallSummary.transactionCount).times(100).toDecimalPlaces(1)}%)`);
+
+					row.find(".miner-subsidy").text(minerSummary.totalSubsidiesCollected.toLocaleString());
+					row.find(".miner-subsidy-percent").text(`(${new Decimal(minerSummary.totalSubsidiesCollected).dividedBy(summary.overallSummary.totalSubsidiesCollected).times(100).toDecimalPlaces(1)}%)`);
+
+					row.find(".miner-fees").text(minerSummary.totalFeesCollected.toLocaleString());
+					row.find(".miner-fees-percent").text(`(${new Decimal(minerSummary.totalFeesCollected).dividedBy(summary.overallSummary.totalFeesCollected).times(100).toDecimalPlaces(1)}%)`);
+
+					row.show();
+
+					$("#summary-table-body").append(row);
+				}
+
+
+				var totalsRow = $("#miner-summary-totals");
+				totalsRow.find(".miner-block-count").text(summary.overallSummary.blockCount.toLocaleString());
+				totalsRow.find(".miner-tx-count").text(summary.overallSummary.transactionCount.toLocaleString());
+				totalsRow.find(".miner-subsidy").text(summary.overallSummary.totalSubsidiesCollected.toLocaleString());
+				totalsRow.find(".miner-fees").text(summary.overallSummary.totalFeesCollected.toLocaleString());
+
+				var parent = totalsRow.parent();
+				parent.remove(totalsRow);
+				parent.append(totalsRow);
+
+				totalsRow.show();+
+
+				$("#summary-table").show();
+				$("#progress-wrapper").hide();
+
+				//$("#xyz").html(JSON.stringify(summary, null, 4));
+			};
+
+			getBlockData(results, chunks, 0, statusCallback, finishedCallback);
+		}
+
+		function getBlockData(results, chunks, chunkIndex, statusCallback, finishedCallback) {
+			if (chunkIndex > chunks.length - 1) {
+				finishedCallback();
+
+				return;
+			}
+
+			var url = `/api/blocks-by-height/${chunks[chunkIndex]}`;
+			
+			//console.log(url);
+
+			$.ajax({
+				url: url
+
+			}).done(function(result) {
+				for (var i = 0; i < result.length; i++) {
+					results.push(result[i]);
+				}
+
+				statusCallback(chunkIndex, chunks.length);
+				
+				getBlockData(results, chunks, chunkIndex + 1, statusCallback, finishedCallback);
+			});
+		}
+
+		function summarizeBlockData(blocks) {
+			var summariesByMiner = {};
+			var minerNamesSortedByBlockCount = [];
+			
+			var overallSummary = {};
+			overallSummary.blockCount = 0;
+			overallSummary.transactionCount = 0;
+			overallSummary.totalSubsidiesCollected = new Decimal(0);
+			overallSummary.totalFeesCollected = new Decimal(0);
+			overallSummary.blockSizeTotal = 0;
+
+			for (var i = 0; i < blocks.length; i++) {
+				var block = blocks[i];
+
+				var miner = block.miner;
+				if (!miner) {
+					miner = {name:"Unknown"};
+				}
+
+				if (!summariesByMiner[miner.name]) {
+					minerNamesSortedByBlockCount.push(miner.name);
+
+					summariesByMiner[miner.name] = {};
+					summariesByMiner[miner.name].miner = miner;
+
+					summariesByMiner[miner.name].blockCount = 0;
+					summariesByMiner[miner.name].transactionCount = 0;
+					summariesByMiner[miner.name].totalSubsidiesCollected = new Decimal(0);
+					summariesByMiner[miner.name].totalFeesCollected = new Decimal(0);
+					summariesByMiner[miner.name].blockSizeTotal = 0;
+
+
+					if (blocks[0].weight) {
+						summariesByMiner[miner.name].blockWeightTotal = 0;
+					}
+				}
+
+				summariesByMiner[miner.name].blockCount++;
+				summariesByMiner[miner.name].transactionCount += block.tx.length;
+				summariesByMiner[miner.name].totalSubsidiesCollected = summariesByMiner[miner.name].totalSubsidiesCollected.add(new Decimal(block.subsidy));
+				summariesByMiner[miner.name].totalFeesCollected = summariesByMiner[miner.name].totalFeesCollected.add(new Decimal(block.totalFees));
+				summariesByMiner[miner.name].blockSizeTotal += block.size;
+
+				if (blocks[0].weight) {
+					summariesByMiner[miner.name].blockWeightTotal += block.weight;
+				}
+
+
+				overallSummary.blockCount++;
+				overallSummary.transactionCount += block.tx.length;
+				overallSummary.totalSubsidiesCollected = overallSummary.totalSubsidiesCollected.add(new Decimal(block.subsidy));
+				overallSummary.totalFeesCollected = overallSummary.totalFeesCollected.add(new Decimal(block.totalFees));
+				overallSummary.blockSizeTotal += block.size;
+
+				if (blocks[0].weight) {
+					overallSummary.blockWeightTotal += block.weight;
+				}
+			}
+
+			minerNamesSortedByBlockCount.sort(function(a, b) {
+				return ((summariesByMiner[a].blockCount > summariesByMiner[b].blockCount) ? -1 : 1);
+			});
+
+			return {summariesByMiner:summariesByMiner, minerNamesSortedByBlockCount:minerNamesSortedByBlockCount, overallSummary:overallSummary};
+		}
