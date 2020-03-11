@@ -4,6 +4,7 @@
 * Optional querying of UTXO set summary
     * Note: this is disabled by default to protect slow nodes. Set 'BTCEXP_SLOW_DEVICE_MODE' to false in your `.env` file to enjoy this feature.
 * New tool `/mining-summary` for viewing summarized mining data from recent blocks
+* Updated miner configs
 
 #### v1.1.9
 ##### 2020-02-23
