@@ -21,6 +21,7 @@
 * New tool `/mining-summary` for viewing summarized mining data from recent blocks
 * Zero-indexing for tx inputs/outputs (#173)
 * Labels for transaction output types
+* Configurable UI "sub-header" links
 * Tweaked styling
 * Updated miner configs
 
