@@ -91,6 +91,8 @@ process.on("unhandledRejection", (reason, p) => {
 });
 
 function loadMiningPoolConfigs() {
+	debugLog("Loading mining pools config");
+
 	global.miningPoolsConfigs = [];
 
 	var miningPoolsConfigDir = path.join(__dirname, "public", "txt", "mining-pools-configs", global.coinConfig.ticker);
@@ -109,15 +111,15 @@ function loadMiningPoolConfigs() {
 
 			global.miningPoolsConfigs.push(JSON.parse(contents));
 		});
-	});
 
-	for (var i = 0; i < global.miningPoolsConfigs.length; i++) {
-		for (var x in global.miningPoolsConfigs[i].payout_addresses) {
-			if (global.miningPoolsConfigs[i].payout_addresses.hasOwnProperty(x)) {
-				global.specialAddresses[x] = {type:"minerPayout", minerInfo:global.miningPoolsConfigs[i].payout_addresses[x]};
+		for (var i = 0; i < global.miningPoolsConfigs.length; i++) {
+			for (var x in global.miningPoolsConfigs[i].payout_addresses) {
+				if (global.miningPoolsConfigs[i].payout_addresses.hasOwnProperty(x)) {
+					global.specialAddresses[x] = {type:"minerPayout", minerInfo:global.miningPoolsConfigs[i].payout_addresses[x]};
+				}
 			}
 		}
-	}
+	});
 }
 
 function getSourcecodeProjectMetadata() {
@@ -154,9 +156,7 @@ function loadChangelog() {
 }
 
 function loadHistoricalDataForChain(chain) {
-	global.specialTransactions = {};
-	global.specialBlocks = {};
-	global.specialAddresses = {};
+	debugLog(`Loading historical data for chain=${chain}`);
 
 	if (global.coinConfig.historicalData) {
 		global.coinConfig.historicalData.forEach(function(item) {
@@ -245,6 +245,10 @@ app.onStartup = function() {
 	global.config = config;
 	global.coinConfig = coins[config.coin];
 	global.coinConfigs = coins;
+
+	global.specialTransactions = {};
+	global.specialBlocks = {};
+	global.specialAddresses = {};
 
 	loadChangelog();
 
