@@ -16,7 +16,7 @@ block content
 			#{JSON.stringify(txStats.txCounts.length)}
 
 		if (true)
-			div(class="row")
+			div.row
 				div(class="col-lg-6")
 					script var txCountDataDay = [];
 					each item, index in txStatsDay.txCounts
@@ -50,7 +50,7 @@ block content
 					include ./includes/line-graph.pug
 
 
-			div(class="row")
+			div.row
 				div(class="col-lg-6")
 					script var txRateDataDay = [];
 					each item, index in txStatsDay.txRates

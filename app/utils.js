@@ -21,11 +21,11 @@ var exponentScales = [
 	{val:1000000000000000000000000, name:"yotta", abbreviation:"Y", exponent:"24"},
 	{val:1000000000000000000000, name:"zetta", abbreviation:"Z", exponent:"21"},
 	{val:1000000000000000000, name:"exa", abbreviation:"E", exponent:"18"},
-	{val:1000000000000000, name:"peta", abbreviation:"P", exponent:"15"},
-	{val:1000000000000, name:"tera", abbreviation:"T", exponent:"12"},
-	{val:1000000000, name:"giga", abbreviation:"G", exponent:"9"},
-	{val:1000000, name:"mega", abbreviation:"M", exponent:"6"},
-	{val:1000, name:"kilo", abbreviation:"K", exponent:"3"}
+	{val:1000000000000000, name:"peta", abbreviation:"P", exponent:"15", textDesc:"Q"},
+	{val:1000000000000, name:"tera", abbreviation:"T", exponent:"12", textDesc:"T"},
+	{val:1000000000, name:"giga", abbreviation:"G", exponent:"9", textDesc:"B"},
+	{val:1000000, name:"mega", abbreviation:"M", exponent:"6", textDesc:"M"},
+	{val:1000, name:"kilo", abbreviation:"K", exponent:"3", textDesc:"thou"}
 ];
 
 var ipMemoryCache = {};
@@ -166,13 +166,43 @@ function formatCurrencyAmountWithForcedDecimalPlaces(amount, formatType, forcedD
 		if (formatInfo.type == "native") {
 			dec = dec.times(formatInfo.multiplier);
 
-			return addThousandsSeparators(dec.toDecimalPlaces(decimalPlaces)) + " " + formatInfo.name;
+			if (forcedDecimalPlaces >= 0) {
+				// toFixed will keep trailing zeroes
+				var baseStr = addThousandsSeparators(dec.toFixed(decimalPlaces));
 
+				return {val:baseStr, currencyUnit:formatInfo.name, simpleVal:baseStr};
+
+			} else {
+				// toDP will strip trailing zeroes
+				var baseStr = addThousandsSeparators(dec.toDP(decimalPlaces));
+
+				var returnVal = {currencyUnit:formatInfo.name, simpleVal:baseStr};
+
+				// max digits in "val"
+				var maxValDigits = config.site.valueDisplayMaxLargeDigits;
+
+				if (baseStr.indexOf(".") == -1) {
+					returnVal.val = baseStr;
+					
+				} else {
+					if (baseStr.length - baseStr.indexOf(".") - 1 > maxValDigits) {
+						returnVal.val = baseStr.substring(0, baseStr.indexOf(".") + maxValDigits + 1);
+						returnVal.lessSignificantDigits = baseStr.substring(baseStr.indexOf(".") + maxValDigits + 1);
+
+					} else {
+						returnVal.val = baseStr;
+					}
+				}
+
+				return returnVal;
+			}
 		} else if (formatInfo.type == "exchanged") {
 			if (global.exchangeRates != null && global.exchangeRates[formatInfo.multiplier] != null) {
 				dec = dec.times(global.exchangeRates[formatInfo.multiplier]);
 
-				return addThousandsSeparators(dec.toDecimalPlaces(decimalPlaces)) + " " + formatInfo.name;
+				var baseStr = addThousandsSeparators(dec.toDecimalPlaces(decimalPlaces));
+
+				return {val:baseStr, currencyUnit:formatInfo.name, simpleVal:baseStr};
 
 			} else {
 				return formatCurrencyAmountWithForcedDecimalPlaces(amount, coinConfig.defaultCurrencyUnit.name, forcedDecimalPlaces);
@@ -233,10 +263,10 @@ function satoshisPerUnitOfActiveCurrency() {
 		var exchangedAmt = parseInt(dec);
 
 		if (exchangeType == "eur") {
-			return addThousandsSeparators(exchangedAmt) + ` ${unitName}/€`;
+			return {amt:addThousandsSeparators(exchangedAmt), unit:`${unitName}/€`};
 
 		} else {
-			return addThousandsSeparators(exchangedAmt) + ` ${unitName}/$`;
+			return {amt:addThousandsSeparators(exchangedAmt), unit:`${unitName}/$`};
 		}
 		
 	}
@@ -279,13 +309,35 @@ function seededRandomIntBetween(seed, min, max) {
 	return (min + (max - min) * rand);
 }
 
-function ellipsize(str, length) {
+function ellipsize(str, length, ending="…") {
 	if (str.length <= length) {
 		return str;
 
 	} else {
-		return str.substring(0, length - 3) + "...";
+		return str.substring(0, length - ending.length) + ending;
 	}
+}
+
+function shortenTimeDiff(str) {
+	str = str.replace(" years", "y");
+	str = str.replace(" year", "y");
+
+	str = str.replace(" months", "m");
+	str = str.replace(" month", "m");
+
+	str = str.replace(" weeks", "w");
+	str = str.replace(" week", "w");
+
+	str = str.replace(" days", "d");
+	str = str.replace(" day", "d");
+
+	str = str.replace(" hours", "hr");
+	str = str.replace(" hour", "hr");
+
+	str = str.replace(" minutes", "min");
+	str = str.replace(" minute", "min");
+
+	return str;
 }
 
 function logMemoryUsage() {
@@ -644,5 +696,6 @@ module.exports = {
 	colorHexToHsl: colorHexToHsl,
 	logError: logError,
 	buildQrCodeUrls: buildQrCodeUrls,
-	ellipsize: ellipsize
+	ellipsize: ellipsize,
+	shortenTimeDiff: shortenTimeDiff
 };

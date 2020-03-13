@@ -140,13 +140,17 @@ module.exports = {
 	redisUrl:process.env.BTCEXP_REDIS_URL,
 
 	site: {
+		homepage:{
+			recentBlocksCount:10
+		},
 		blockTxPageSize:20,
 		addressTxPageSize:10,
 		txMaxInput:15,
-		browseBlocksPageSize:20,
+		browseBlocksPageSize:50,
 		addressPage:{
 			txOutputMaxDefaultDisplay:10
 		},
+		valueDisplayMaxLargeDigits: 4,
 		header:{
 			showToolsSubheader:(process.env.BTCEXP_UI_SHOW_TOOLS_SUBHEADER == "true"),
 			dropdowns:[
@@ -160,27 +164,29 @@ module.exports = {
 					]
 				}
 			]
-		}
+		},
+		subHeaderToolsList:[0, 1, 4, 9, 6, 7], // indexes in "siteTools" below that are shown in the site "sub menu" (visible on all pages except homepage)
+		toolsDropdownIndexList: [0, 1, 4, 9, 3, 2, 5, 6, 7, 8],
 	},
 
 	credentials: credentials,
 
 	siteTools:[
-		{name:"Node Status", url:"/node-status", desc:"Summary of this node: version, network, uptime, etc.", fontawesome:"fas fa-broadcast-tower"},
-		{name:"Peers", url:"/peers", desc:"Detailed info about the peers connected to this node.", fontawesome:"fas fa-sitemap"},
+	/* 0 */		{name:"Node Status", url:"/node-status", desc:"Summary of this node: version, network, uptime, etc.", fontawesome:"fas fa-broadcast-tower"},
+	/* 1 */		{name:"Peers", url:"/peers", desc:"Detailed info about the peers connected to this node.", fontawesome:"fas fa-sitemap"},
 
-		{name:"Browse Blocks", url:"/blocks", desc:"Browse all blocks in the blockchain.", fontawesome:"fas fa-cubes"},
-		{name:"Transaction Stats", url:"/tx-stats", desc:"See graphs of total transaction volume and transaction rates.", fontawesome:"fas fa-chart-bar"},
+	/* 2 */		{name:"Browse Blocks", url:"/blocks", desc:"Browse all blocks in the blockchain.", fontawesome:"fas fa-cubes"},
+	/* 3 */		{name:"Transaction Stats", url:"/tx-stats", desc:"See graphs of total transaction volume and transaction rates.", fontawesome:"fas fa-chart-bar"},
 
-		{name:"Mempool Summary", url:"/mempool-summary", desc:"Detailed summary of the current mempool for this node.", fontawesome:"fas fa-clipboard-list"},
-		{name:"Unconfirmed Transactions", url:"/unconfirmed-tx", desc:"Browse unconfirmed/pending transactions.", fontawesome:"fas fa-unlock-alt"},
+	/* 4 */		{name:"Mempool Summary", url:"/mempool-summary", desc:"Detailed summary of the current mempool for this node.", fontawesome:"fas fa-clipboard-list"},
+	/* 5 */		{name:"Pending Transactions", url:"/unconfirmed-tx", desc:"Browse unconfirmed/pending transactions.", fontawesome:"fas fa-unlock-alt"},
 
-		{name:"RPC Browser", url:"/rpc-browser", desc:"Browse the RPC functionality of this node. See docs and execute commands.", fontawesome:"fas fa-book"},
-		{name:"RPC Terminal", url:"/rpc-terminal", desc:"Directly execute RPCs against this node.", fontawesome:"fas fa-terminal"},
+	/* 6 */		{name:"RPC Browser", url:"/rpc-browser", desc:"Browse the RPC functionality of this node. See docs and execute commands.", fontawesome:"fas fa-book"},
+	/* 7 */		{name:"RPC Terminal", url:"/rpc-terminal", desc:"Directly execute RPCs against this node.", fontawesome:"fas fa-terminal"},
 
-		{name:(coins[currentCoin].name + " Fun"), url:"/fun", desc:"See fun/interesting historical blockchain data.", fontawesome:"fas fa-certificate"},
+	/* 8 */		{name:(coins[currentCoin].name + " Fun"), url:"/fun", desc:"See fun/interesting historical blockchain data.", fontawesome:"fas fa-certificate"},
 
-		{name:"Mining Summary", url:"/mining-summary", desc:"Summary of recent data about miners.", fontawesome:"fas fa-chart-pie"},
+	/* 9 */		{name:"Mining Summary", url:"/mining-summary", desc:"Summary of recent data about miners.", fontawesome:"fas fa-chart-pie"},
 	],
 
 	donations:{

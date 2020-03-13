@@ -12,47 +12,49 @@ block content
 			code.json.bg-light #{JSON.stringify(mempoolstats, null, 4)}
 
 	if (true)
-		div(class="card mb-3 shadow-sm")
-			div(class="card-header")
-				span(class="h6") Summary
-			div(class="card-body")
-				table(class="table details-table mb-0")
+		div.card.shadow-sm.mb-3
+			div.card-body.px-2.px-md-3
+				h3.h6 Summary
+				hr
+
+				table.table.details-table.mb-0
 					tr
-						td(class="properties-header") Transaction Count
+						td.properties-header Transaction Count
 						td.text-monospace #{getmempoolinfo.size.toLocaleString()}
 
 					tr
 						- var mem1Data = utils.formatLargeNumber(getmempoolinfo.usage, 2);
 						- var mem2Data = utils.formatLargeNumber(getmempoolinfo.bytes, 2);
 
-						td(class="properties-header") Memory Usage
+						td.properties-header Memory Usage
 						td.text-monospace
 							span #{mem1Data[0]} #{mem1Data[1].abbreviation}B
-							span(class="text-muted")  (#{mem2Data[0]} v#{mem2Data[1].abbreviation}B)
+							span.text-muted  (#{mem2Data[0]} v#{mem2Data[1].abbreviation}B)
 
 					tr
-						td(class="properties-header") Total Fees
+						td.properties-header Total Fees
 						td.text-monospace
 							- var currencyValue = mempoolstats["totalFees"];
 							include includes/value-display.pug
 							
 					if (getmempoolinfo.size > 0)
 						tr
-							td(class="properties-header") Avg Fee
+							td.properties-header Avg Fee
 							td.text-monospace
 								- var currencyValue = mempoolstats["averageFee"];
 								include ./includes/value-display.pug
 
 						tr
-							td(class="properties-header") Avg Fee per 
-								span.border-dotted(title="Virtual bytes", data-toggle="tooltip") vByte
-							td.text-monospace #{utils.formatCurrencyAmountInSmallestUnits(mempoolstats["averageFeePerByte"], 2)}/vB
+							td.properties-header Avg Fee per vB
+							td.text-monospace
+								- var feeRateData = utils.formatCurrencyAmountInSmallestUnits(mempoolstats["averageFeePerByte"], 2);
+								span #{feeRateData.val} #{feeRateData.currencyUnit}/vB
 
 		if (getmempoolinfo.size > 0)
-			div.card.mb-3.shadow-sm
-				div.card-header
-					span.h6 Transactions by fee rate
-				div.card-body
+			div.card.shadow-sm.mb-3
+				div.card-body.px-2.px-md-3
+					h3.h6 Transactions by fee rate
+					hr
 
 					if (false)
 						#{JSON.stringify(mempoolstats)}
@@ -68,7 +70,7 @@ block content
 						- var feeBucketTxCounts = mempoolstats["satoshiPerByteBucketCounts"];
 						- var totalfeeBuckets = mempoolstats["satoshiPerByteBucketTotalFees"];
 						
-						canvas(id="mempoolBarChart", height="100", class="mb-4")
+						canvas.mb-4(id="mempoolBarChart", height="100")
 
 						script(src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.bundle.min.js")
 
@@ -132,17 +134,19 @@ block content
 												- var currencyValue = avgFee;
 												include ./includes/value-display.pug
 															
-											td.text-monospace.text-right #{utils.formatCurrencyAmountInSmallestUnits(avgFeeRate, 2)}/vB
+											td.text-monospace.text-right
+												- var feeRateData = utils.formatCurrencyAmountInSmallestUnits(avgFeeRate, 2);
+												span #{feeRateData.val} #{feeRateData.currencyUnit}/vB
 										else
 											td.text-monospace.text-right -
 											td.text-monospace.text-right -
 
-			div.card.mb-3.shadow-sm
-				div.card-header
-					span.h6 Transactions by size
-				div.card-body
+			div.card.shadow-sm.mb-3
+				div.card-body.px-2.px-md-3
+					h3.h6 Transactions by size
+					hr
 
-					canvas(id="txSizesBarChart", height="100", class="mb-4")
+					canvas.mb-4(id="txSizesBarChart", height="100")
 
 					script var sizeBucketLabels = [];
 					script var bgColors = [];
@@ -179,12 +183,13 @@ block content
 						});
 
 
-			div.card.mb-3.shadow-sm
-				div.card-header
-					span.h6 Transactions by age
-				div.card-body
 
-					canvas(id="txAgesBarChart", height="100", class="mb-4")
+			div.card.shadow-sm.mb-3
+				div.card-body.px-2.px-md-3
+					h3.h6 Transactions by age
+					hr
+
+					canvas.mb-4(id="txAgesBarChart", height="100")
 
 					script var ageBucketLabels = [];
 					script var bgColors = [];

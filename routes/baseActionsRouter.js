@@ -44,10 +44,29 @@ router.get("/", function(req, res, next) {
 
 	res.locals.homepage = true;
 
+	// variables used by blocks-list.pug
+	res.locals.offset = 0;
+	res.locals.sort = "desc";
+
+	var feeConfTargets = [1, 6, 144, 1008];
+	res.locals.feeConfTargets = feeConfTargets;
+
+
 	var promises = [];
 
+	// promiseResults[0]
 	promises.push(coreApi.getMempoolInfo());
+
+	// promiseResults[1]
 	promises.push(coreApi.getMiningInfo());
+
+	// promiseResults[2]
+	promises.push(coreApi.getSmartFeeEstimates("CONSERVATIVE", feeConfTargets));
+
+	// promiseResults[3] and [4]
+	promises.push(coreApi.getNetworkHashrate(144));
+	promises.push(coreApi.getNetworkHashrate(1008));
+
 
 	coreApi.getBlockchainInfo().then(function(getblockchaininfo) {
 		res.locals.getblockchaininfo = getblockchaininfo;
@@ -55,6 +74,7 @@ router.get("/", function(req, res, next) {
 		if (getblockchaininfo.chain !== 'regtest') {
 			var targetBlocksPerDay = 24 * 60 * 60 / global.coinConfig.targetBlockTimeSeconds;
 
+			// promiseResults[4] (if not regtest)
 			promises.push(coreApi.getTxCountStats(targetBlocksPerDay / 4, -targetBlocksPerDay, "latest"));
 
 			var chainTxStatsIntervals = [ targetBlocksPerDay, targetBlocksPerDay * 7, targetBlocksPerDay * 30, targetBlocksPerDay * 365 ]
@@ -71,7 +91,8 @@ router.get("/", function(req, res, next) {
 
 		var blockHeights = [];
 		if (getblockchaininfo.blocks) {
-			for (var i = 0; i < 10; i++) {
+			// +1 to page size here so we have the next block to calculate T.T.M.
+			for (var i = 0; i < (config.site.homepage.recentBlocksCount + 1); i++) {
 				blockHeights.push(getblockchaininfo.blocks - i);
 			}
 		} else if (global.activeBlockchain == "regtest") {
@@ -91,12 +112,25 @@ router.get("/", function(req, res, next) {
 				res.locals.mempoolInfo = promiseResults[0];
 				res.locals.miningInfo = promiseResults[1];
 
+				var rawSmartFeeEsimates = promiseResults[2];
+				var smartFeeEsimates = {};
+
+				for (var i = 0; i < feeConfTargets.length; i++) {
+					smartFeeEsimates[feeConfTargets[i]] = parseInt(new Decimal(rawSmartFeeEsimates[i].feerate).times(coinConfig.baseCurrencyUnit.multiplier).dividedBy(1000));
+				}
+
+
+				res.locals.smartFeeEsimates = smartFeeEsimates;
+
+				res.locals.hashrate1d = promiseResults[3];
+				res.locals.hashrate7d = promiseResults[4];
+
 				if (getblockchaininfo.chain !== 'regtest') {
-					res.locals.txStats = promiseResults[2];
+					res.locals.txStats = promiseResults[5];
 
 					var chainTxStats = [];
 					for (var i = 0; i < res.locals.chainTxStatsLabels.length; i++) {
-						chainTxStats.push(promiseResults[i + 3]);
+						chainTxStats.push(promiseResults[i + 6]);
 					}
 
 					res.locals.chainTxStats = chainTxStats;
@@ -309,13 +343,13 @@ router.get("/blocks", function(req, res, next) {
 
 		var blockHeights = [];
 		if (sort == "desc") {
-			for (var i = (getblockchaininfo.blocks - offset); i > (getblockchaininfo.blocks - offset - limit); i--) {
+			for (var i = (getblockchaininfo.blocks - offset); i > (getblockchaininfo.blocks - offset - limit - 1); i--) {
 				if (i >= 0) {
 					blockHeights.push(i);
 				}
 			}
 		} else {
-			for (var i = offset; i < (offset + limit); i++) {
+			for (var i = offset - 1; i < (offset + limit); i++) {
 				if (i >= 0) {
 					blockHeights.push(i);
 				}

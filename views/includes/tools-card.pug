@@ -1,19 +1,100 @@
-div(class="card mb-4 shadow-sm")
-	div(class="card-header")
-		h2(class="h6 mb-0") Tools
-	div(class="card-body")
-		div(class="row")
-			each item, index in [[0, 1, 2], [4, 3, 5], [6, 7, 8]]
-				div(class="col-md-4")
-					ul(style="list-style-type: none;", class="pl-0")
-						each toolIndex, toolIndexIndex in item
-							- var siteTool = config.siteTools[toolIndex];
+if (false)
+	div.card.mb-4.shadow-sm
+		div.card-header
+			h2.h6.mb-0 Tools
+		div.card-body
+			div.row
+				each item, index in [[0, 1, 2], [4, 3, 5], [6, 7, 8]]
+					div.col-md-4
+						ul.pl-0(style="list-style-type: none;")
+							each toolIndex, toolIndexIndex in item
+								- var siteTool = config.siteTools[toolIndex];
 
-							li
-								div(class="float-left", style="height: 50px; width: 40px; margin-right: 10px;")
-									span
-										i(class=siteTool.fontawesome, class="fa-2x mr-2", style="margin-top: 6px;")
+								li
+									div.float-left(style="height: 50px; width: 40px; margin-right: 10px;")
+										span
+											i(class=siteTool.fontawesome, class="fa-2x mr-2", style="margin-top: 6px;")
 
-								a(href=siteTool.url) #{siteTool.name}
-								br
-								p #{siteTool.desc}
+									a(href=siteTool.url) #{siteTool.name}
+									br
+									p #{siteTool.desc}
+
+if (false)
+	div.row
+		each list, listIndex in [[0, 1], [2, 3], [4, 9], [5, 6], [7, 8]]
+			div.col
+				ul.list-unstyled
+					each listItem in list
+						- var siteTool = config.siteTools[listItem];
+						li.mb-2
+							span(title=siteTool.desc, data-toggle="tooltip")
+								i.mr-2.fa-lg(class=siteTool.fontawesome, style="width: 30px;")
+							a(href=siteTool.url)
+								span #{siteTool.name}
+
+if (false)
+	div.row
+		each list, listIndex in [[0, 1, 2, 3, 4], [9, 5, 6, 7, 8]]
+			div.col
+				ul.list-unstyled
+					each listItem in list
+						- var siteTool = config.siteTools[listItem];
+						li.mb-2
+							span(title=siteTool.desc, data-toggle="tooltip")
+								i.mr-2.fa-sm(class=siteTool.fontawesome, style="width: 30px;")
+							a(href=siteTool.url)
+								span #{siteTool.name}
+
+if (true)
+	div.row
+		// split into 4 segments:
+		// xxl: 2 columns (2 col because on xxl the tools card is in the same row as the "Network Summary" card)
+		// md: 3 columns (requires separate layout implementation...see below)
+		// lg, xl: 4 columns
+		// xm: 2 columns
+		- var indexLists = [[0, 1, 2], [3, 4, 9], [5, 6], [7, 8]];
+		- var indexListsMediumWidth = [[0, 1, 2, 3], [4, 9, 5], [6, 7, 8]];
+
+		// special case for medium-width layout
+		div.col.d-none.d-md-block.d-lg-none
+			div.row
+				div.col-md-4
+					ul.list-unstyled.mb-0
+						each toolsItemIndex in indexListsMediumWidth[0]
+							include tools-card-block.pug
+
+				div.col-md-4
+					ul.list-unstyled.mb-0
+						each toolsItemIndex in indexListsMediumWidth[1]
+							include tools-card-block.pug
+
+				div.col-md-4
+					ul.list-unstyled.mb-0
+						each toolsItemIndex in indexListsMediumWidth[2]
+							include tools-card-block.pug
+
+
+		// the below 2 div.col's are the default layout, used everywhere except medium-width layout
+		div.col.d-sm-block.d-md-none.d-lg-block
+			div.row
+				div.col-md-6.col-xxl-12
+					ul.list-unstyled.mb-0
+						each toolsItemIndex in indexLists[0]
+							include tools-card-block.pug
+
+				div.col-md-6.col-xxl-12
+					ul.list-unstyled.mb-0
+						each toolsItemIndex in indexLists[1]
+							include tools-card-block.pug
+
+		div.col.d-md-none.d-lg-block
+			div.row
+				div.col-md-6.col-xxl-12
+					ul.list-unstyled.mb-0
+						each toolsItemIndex in indexLists[2]
+							include tools-card-block.pug
+
+				div.col-md-6.col-xxl-12
+					ul.list-unstyled.mb-0
+						each toolsItemIndex in indexLists[3]
+							include tools-card-block.pug

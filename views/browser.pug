@@ -14,31 +14,31 @@ block content
 	hr
 
 	if (gethelp)
-		div(class="row")
+		div.row
 			div(class="col-md-9")
 				if (methodhelp)
-					div(class="row")
-						div(class="col")
+					div.row
+						div.col
 							h4(style="display: inline-block;")
 								span Command: 
 								span.font-weight-light.text-monospace #{method}
-						div(class="col")
+						div.col
 							a(href=("https://bitcoin.org/en/developer-reference#" + method), class="btn btn-primary float-md-right") See developer docs &raquo;
 								
 					
 					hr
 
-					ul(class='nav nav-tabs mb-3')
-						li(class="nav-item")
-							a(data-toggle="tab", href="#tab-execute", class="nav-link active", role="tab") Execute
-						li(class="nav-item")
-							a(data-toggle="tab", href="#tab-help-content", class="nav-link", role="tab") Help Content
+					ul.nav.nav-tabs.mb-3
+						li.nav-item
+							a.nav-link.active(data-toggle="tab", href="#tab-execute", role="tab") Execute
+						li.nav-item
+							a.nav-link(data-toggle="tab", href="#tab-help-content", role="tab") Help Content
 
 						if (methodhelp.args && methodhelp.args.length > 0)
-							li(class="nav-item")
+							li.nav-item
 								a(data-toggle="tab", href="#tab-parsed-args", class="nav-link", role="tab") Arguments Details
 
-					div(class="tab-content")
+					div.tab-content
 						div(id="tab-execute", class="tab-pane active pb-3", role="tabpanel")
 							if (methodResult)
 								div(class="mt-4")
@@ -88,7 +88,7 @@ block content
 											input(id=("arg_" + argX.name), type="text", name=("args[" + index + "]"), placeholder=argX.name, class="form-control", value=(valX ? valX : ""))
 
 									if (!methodhelp.args || methodhelp.args.length == 0)
-										span(class="text-muted") None
+										span.text-muted None
 
 								hr
 

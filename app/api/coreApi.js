@@ -173,6 +173,12 @@ function getChainTxStats(blockCount) {
 	});
 }
 
+function getNetworkHashrate(blockCount) {
+	return tryCacheThenRpcApi(miscCache, "getNetworkHashrate-" + blockCount, 20 * 60 * 1000, function() {
+		return rpcApi.getNetworkHashrate(blockCount);
+	});
+}
+
 function getUtxoSetSummary() {
 	return tryCacheThenRpcApi(miscCache, "getUtxoSetSummary", 15 * 60 * 1000, rpcApi.getUtxoSetSummary);
 }
@@ -242,6 +248,28 @@ function getTxCountStats(dataPtCount, blockStart, blockEnd) {
 		}).catch(function(err) {
 			reject(err);
 		});
+	});
+}
+
+function getSmartFeeEstimates(mode, confTargetBlockCounts) {
+	return new Promise(function(resolve, reject) {
+		var promises = [];
+		for (var i = 0; i < confTargetBlockCounts.length; i++) {
+			promises.push(getSmartFeeEstimate(mode, confTargetBlockCounts[i]));
+		}
+
+		Promise.all(promises).then(function(results) {
+			resolve(results);
+
+		}).catch(function(err) {
+			reject(err);
+		});
+	});
+}
+
+function getSmartFeeEstimate(mode, confTargetBlockCount) {
+	return tryCacheThenRpcApi(miscCache, "getSmartFeeEstimate-" + mode + "-" + confTargetBlockCount, 10 * 60 * 1000, function() {
+		return rpcApi.getSmartFeeEstimate(mode, confTargetBlockCount);
 	});
 }
 
@@ -961,5 +989,8 @@ module.exports = {
 	getChainTxStats: getChainTxStats,
 	getMempoolDetails: getMempoolDetails,
 	getTxCountStats: getTxCountStats,
+	getSmartFeeEstimates: getSmartFeeEstimates,
+	getSmartFeeEstimate: getSmartFeeEstimate,
 	getUtxoSetSummary: getUtxoSetSummary,
+	getNetworkHashrate: getNetworkHashrate
 };

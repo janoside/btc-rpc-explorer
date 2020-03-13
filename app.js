@@ -367,6 +367,7 @@ app.use(function(req, res, next) {
 
 	res.locals.config = global.config;
 	res.locals.coinConfig = global.coinConfig;
+	res.locals.exchangeRates = global.exchangeRates;
 	res.locals.utxoSetSummary = global.utxoSetSummary;
 	res.locals.utxoSetSummaryPending = global.utxoSetSummaryPending;
 	

@@ -14,24 +14,24 @@ block content
 	if (mempoolDetails)
 		- var txCount = mempoolDetails.txCount;
 
-		div(class="card mb-3 shadow-sm")
-			div(class="card-header")
-				span(class="h6")
+		div.card.shadow-sm.mb-3
+			div.card-header
+				h3.h6
 					if (txCount == 1)
 						span 1 Transaction
 					else
 						span #{txCount.toLocaleString()} Transactions
 
-			div(class="card-body")
+			div.card-body
 				each tx, txIndex in mempoolDetails.transactions
-					div(class="xcard bg-light rounded shadow-sm mb-4")
-						div(class="card-header text-monospace")
+					div.card.shadow-sm.mb-3
+						div.card-header.text-monospace
 							if (tx && tx.txid)
 								strong ##{(txIndex + offset).toLocaleString()}
 								span  &ndash; 
 								a(href=("/tx/" + tx.txid)) #{tx.txid}
 									
-						div(class="card-body")
+						div.card-body
 							- var txInputs = mempoolDetails.txInputsByTransaction[tx.txid];
 							- var blockHeight = -1;
 

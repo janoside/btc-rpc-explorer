@@ -4,11 +4,11 @@ block headContent
 	title RPC Terminal
 
 block content
-	div(class="row")
-		div(class="col")
+	div.row
+		div.col
 			h1.h3 RPC Terminal
 
-		div(class="col")
+		div.col
 			if (!config.demoSite && (!config.credentials.rpc || !config.credentials.rpc.rpc))
 				span(style="float: right;")
 					a(href="/disconnect", class="btn btn-secondary") Disconnect from node
@@ -19,7 +19,7 @@ block content
 		Use this interactive terminal to send RPC commands to your node. Results will be shown inline. To browse all available RPC commands you can use the [RPC Browser](/rpc-browser).
 
 	div(class="card mb-3 shadow-sm")
-		div(class="card-body")
+		div.card-body
 			form(id="terminal-form")
 				div(class="form-group")
 					label(for="input-cmd") Command

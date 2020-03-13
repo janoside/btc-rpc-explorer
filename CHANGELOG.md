@@ -3,7 +3,25 @@
 
 * Optional querying of UTXO set summary
     * Note: this is disabled by default to protect slow nodes. Set 'BTCEXP_SLOW_DEVICE_MODE' to false in your `.env` file to enjoy this feature.
+* More data in homepage "Network Summary":
+    * Fee estimates (estimatesmartfee) for 1, 6, 144, 1008 blocks
+    * Hashrate estimate for 1+7 days
+    * New item for 'Chain Rewrite Days', using 7day hashrate
+    * New data based on optional UTXO set summary (see note above):
+        * UTXO set size
+        * Total coins in circulation
+        * Market cap
+* Tweaks to data in blocks lists:
+    * Simpler timestamp formatting for easy reading
+    * Include "Time-to-Mine" (TTM) for each block (with green/red highlighting for "fast"/"slow" (<5min/>15min) blocks)
+    * Display average fee in sat/vB
+    * Add total fees display
+    * Demote display of "block size" value to hover
+    * Show weight in kWu instead of Wu
 * New tool `/mining-summary` for viewing summarized mining data from recent blocks
+* Zero-indexing for tx inputs/outputs (#173)
+* Labels for transaction output types
+* Tweaked styling
 * Updated miner configs
 
 #### v1.1.9

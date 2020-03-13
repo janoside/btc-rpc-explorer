@@ -10,38 +10,40 @@ html(lang="en")
 
 
 		if (session.uiTheme && session.uiTheme == "dark")
-			link(rel="stylesheet", href="/css/bootstrap-dark.css", integrity="")
-			link(rel="stylesheet", href="/css/dark-touchups.css", integrity="")
+			link(rel="stylesheet", href="/css/bootstrap-dark.min.css", integrity="sha384-oqee0tym2HUHJW9STPyrefrgfODvg8w9lfqk+s/IbxHhuJpoPbAbPqj8ylGM3TUK")
+			link(rel="stylesheet", href="/css/dark-touchups.css", integrity="sha384-nUVK/u/fwyNP4THfHo2CtWSoyZaxa65KenBmn/46NaEgGD5uaUFz+N6cqgg8n5t0")
 				
 		else
-			link(rel="stylesheet", href="/css/bootstrap.min.css", integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh")
+			link(rel="stylesheet", href="/css/bootstrap.min.css", integrity="sha384-Jo2q7h5Bg8GPJ+O6zM58Rvi6URN9ux4TSqZ4TlNnJzRWwVmEgDrqniWV//1yqqiR")
 
 		
 		link(rel='stylesheet', href='/css/styling.css')
 
 		link(rel="icon", type="image/png", href=("/img/logo/" + config.coin.toLowerCase() + ".png"))
 
+		include includes/debug-overrides.pug
+
 		block headContent
 			title Explorer
 		
-	body(class="bg-dark")
-		nav(class="navbar navbar-expand-lg navbar-dark bg-dark")
-			div(class="container")
-				a(class="navbar-brand", href="/")
+	body.bg-dark
+		nav.navbar.navbar-expand-lg.navbar-dark.bg-dark
+			div.container
+				a.navbar-brand(href="/")
 					span
 						if (coinConfig.logoUrl)
-							img(src=coinConfig.logoUrl, class="header-image", alt="logo")
+							img.header-image(src=coinConfig.logoUrl, alt="logo")
 						span #{coinConfig.siteTitle}
 						
-				button(type="button", class="navbar-toggler navbar-toggler-right", data-toggle="collapse", data-target="#navbarNav", aria-label="collapse navigation")
-					span(class="navbar-toggler-icon")
+				button.navbar-toggler.navbar-toggler-right(type="button", data-toggle="collapse", data-target="#navbarNav", aria-label="collapse navigation")
+					span.navbar-toggler-icon
 					
-				div(class="collapse navbar-collapse", id="navbarNav")
+				div.collapse.navbar-collapse(id="navbarNav")
 					if (rpcClient)
-						ul(class="navbar-nav mr-auto")
+						ul.navbar-nav.mr-auto
 							if (false)
-								li(class="nav-item")
-									a(href="/about", class="nav-link")
+								li.nav-item
+									a.nav-link(href="/about")
 										span About
 
 							if (global.activeBlockchain != "main")
@@ -51,75 +53,79 @@ html(lang="en")
 									a.nav-link.text-warning(title=`Current node's chain: ${global.activeBlockchain}` data-toggle="tooltip") [#{chainName}]
 
 							if (config.siteTools)
-								li(class="nav-item dropdown")
-									a(class="nav-link dropdown-toggle", href="javascript:void(0)", role="button", data-toggle="dropdown", aria-haspopup="true", aria-expanded="false") 
+								li.nav-item.dropdown
+									a.nav-link.dropdown-toggle(href="javascript:void(0)", role="button", data-toggle="dropdown", aria-haspopup="true", aria-expanded="false") 
 										span  Tools
-									div(class="dropdown-menu shadow", aria-label="Tools Items")
-										each item in config.siteTools
-											a(class="dropdown-item", href=item.url)
+									div.dropdown-menu.shadow(aria-label="Tools Items")
+										each itemIndex in config.site.toolsDropdownIndexList
+											- var item = config.siteTools[itemIndex];
+
+											a.dropdown-item(href=item.url)
 												i(class=item.fontawesome, style="width: 20px; margin-right: 10px;")
 												span  #{item.name}
 
 							if (config.site.header.dropdowns)
 								each dropdown, ddIndex in config.site.header.dropdowns
-									li(class="nav-item dropdown")
-										a(class="nav-link dropdown-toggle", href="javascript:void(0)", role="button", data-toggle="dropdown", aria-haspopup="true", aria-expanded="false") 
+									li.nav-item.dropdown
+										a.nav-link.dropdown-toggle(href="javascript:void(0)", role="button", data-toggle="dropdown", aria-haspopup="true", aria-expanded="false") 
 											span  #{dropdown.title}
-										div(class="dropdown-menu shadow", aria-label=(dropdown.title + " Items"))
+										div.dropdown-menu.shadow(aria-label=(dropdown.title + " Items"))
 											each dropdownLink in dropdown.links
-												a(class="dropdown-item", href=dropdownLink.url)
+												a.dropdown-item(href=dropdownLink.url)
 													if (dropdownLink.imgUrl)
 														img(src=dropdownLink.imgUrl, style="width: 24px; height: 24px; margin-right: 8px;", alt=dropdownLink.name)
 													span  #{dropdownLink.name}
 
 							
-						form(method="post", action="/search", class="form-inline mr-3")
+						form.form-inline.mr-3(method="post", action="/search")
 							input(type="hidden", name="_csrf", value=csrfToken)
-							div(class="input-group input-group-sm")
-								input(type="text", class="form-control form-control-sm", name="query", placeholder="block height/hash, txid, address", value=(query))
-								div(class="input-group-append")
-									button(type="submit", class="btn btn-primary")
-										i(class="fas fa-search")
+							div.input-group.input-group-sm
+								input.form-control.form-control-sm(type="text", name="query", placeholder="block height/hash, txid, address", value=(query))
+								div.input-group-append
+									button.btn.btn-primary(type="submit")
+										i.fas.fa-search
 
-						ul(class="navbar-nav")
-							li(class="nav-item dropdown")
-								a(class="nav-link dropdown-toggle", href="javascript:void(0)", id="navbarDropdown", role="button", data-toggle="dropdown", aria-haspopup="true", aria-expanded="false") 
-									i(class="fas fa-cog mr-1") 
-								div(class="dropdown-menu dropdown-menu-right shadow", aria-labelledby="navbarDropdown")
+						ul.navbar-nav
+							li.nav-item.dropdown
+								a.nav-link.dropdown-toggle(href="javascript:void(0)", id="navbarDropdown", role="button", data-toggle="dropdown", aria-haspopup="true", aria-expanded="false") 
+									i.fas.fa-cog.mr-1 
+								div.dropdown-menu.dropdown-menu-right.shadow(aria-labelledby="navbarDropdown")
 									if (coinConfig.currencyUnits)
-										span(class="dropdown-header") Currency Units
+										span.dropdown-header Currency Units
 										each item in coinConfig.currencyUnits
 											if (item.type == "native" || (config.queryExchangeRates && !config.privacyMode))
-												a(class="dropdown-item", href=("/changeSetting?name=currencyFormatType&value=" + item.values[0]))
+												a.dropdown-item(href=("/changeSetting?name=currencyFormatType&value=" + item.values[0]))
 													each valueName in item.values
 														if (currencyFormatType == valueName)
-															i(class="fas fa-check")
+															i.fas.fa-check
 													span  #{item.name}
 
-									span(class="dropdown-header") Theme
-									a(class="dropdown-item", href="/changeSetting?name=uiTheme&value=light")
+									span.dropdown-header Theme
+									a.dropdown-item(href="/changeSetting?name=uiTheme&value=light")
 										if (session.uiTheme == "light" || session.uiTheme == "")
-											i(class="fas fa-check")
+											i.fas.fa-check
 										span  Light
-									a(class="dropdown-item", href="/changeSetting?name=uiTheme&value=dark")
+									a.dropdown-item(href="/changeSetting?name=uiTheme&value=dark")
 										if (session.uiTheme == "dark")
-											i(class="fas fa-check")
+											i.fas.fa-check
 										span  Dark
 		
 		if (host && port && !homepage && config.site.header.showToolsSubheader)
-			div(id="sub-menu", class="container mb-2 pt-2 d-lg-block d-none border-top", style="")
-				ul(class="nav")
-					each item, index in config.siteTools
-						li(class="nav-item")
-							a(href=item.url, class="nav-link text-white px-2 text-decoration-underline")
+			div.container.mb-2.pt-2.d-lg-block.d-none.border-top(id="sub-menu", style="")
+				ul.nav
+					each itemIndex in config.site.subHeaderToolsList
+						- var item = config.siteTools[itemIndex];
+						li.nav-item
+							a.nav-link.text-white.px-2.text-decoration-underline.mr-3(href=item.url)
+								i.mr-1(class=item.fontawesome)
 								span #{item.name}
 		
-		- var bodyBgColor = "#ffffff;";
+		- var bodyBgColor = "#f8f9fa;";
 		if (session.uiTheme && session.uiTheme == "dark")
 			- bodyBgColor = "#0c0c0c;";
 
-		div(class="pb-4 pt-3 pt-md-4", style=("background-color: " + bodyBgColor))
-			div(class="container px-2 px-sm-3")
+		div.pb-4.pt-3.pt-md-4(style=("background-color: " + bodyBgColor))
+			div.container.px-2.px-sm-3
 				if (pageErrors && pageErrors.length > 0)
 					include includes/page-errors-modal.pug
 
@@ -129,7 +135,7 @@ html(lang="en")
 							span.badge.badge-danger.ml-2 #{pageErrors.length.toLocaleString()}
 
 				if (userMessage)
-					div(class="alert", class=(userMessageType ? ("alert-"  + userMessageType) : "alert-warning"), role="alert")
+					div.alert(class=(userMessageType ? ("alert-"  + userMessageType) : "alert-warning"), role="alert")
 						span #{userMessage}
 				
 				block content
@@ -139,26 +145,26 @@ html(lang="en")
 				if (config.demoSite && !crawlerBot)
 					include ./includes/donation-modal.pug
 
-		footer(class="footer border-top border-primary bg-dark pt-3 pb-1 px-3 text-white", style="border-width: 5px !important;")
-			div(class="container")
-				div(class="row")
-					div(class="col-md-5")
+		footer.footer.border-top.border-primary.bg-dark.pt-3.pb-1.px-3.text-white(style="border-width: 5px !important;")
+			div.container
+				div.row
+					div.col-md-5
 						dl
 							dt Source
 							dd
 								a(href="https://github.com/janoside/btc-rpc-explorer") github.com/janoside/btc-rpc-explorer
 								
 								if (global.sourcecodeProjectMetadata)
-									div(class="mt-2")
-										a(href="https://github.com/janoside/btc-rpc-explorer", class="btn btn-primary btn-sm mr-3 mb-1 text-decoration-none")
-											i(class="fas fa-star mr-2")
-											span(class="mr-2") Star 
-											span(class="badge bg-white text-dark") #{global.sourcecodeProjectMetadata.stargazers_count}
+									div.mt-2
+										a.btn.btn-primary.btn-sm.mr-3.mb-1.text-decoration-none(href="https://github.com/janoside/btc-rpc-explorer")
+											i.fas.fa-star.mr-2
+											span.mr-2 Star 
+											span.badge.bg-white.text-dark #{global.sourcecodeProjectMetadata.stargazers_count}
 
-										a(href="https://github.com/janoside/btc-rpc-explorer/fork", class="btn btn-primary btn-sm mr-3 mb-1 text-decoration-none")
-											i(class="fas fa-code-branch mr-2")
-											span(class="mr-2") Fork 
-											span(class="badge bg-white text-dark") #{global.sourcecodeProjectMetadata.forks_count}
+										a.btn.btn-primary.btn-sm.mr-3.mb-1.text-decoration-none(href="https://github.com/janoside/btc-rpc-explorer/fork")
+											i.fas.fa-code-branch.mr-2
+											span.mr-2 Fork 
+											span.badge.bg-white.text-dark #{global.sourcecodeProjectMetadata.forks_count}
 
 
 							
@@ -184,20 +190,20 @@ html(lang="en")
 									else
 										a(href="https://explorer.btc21.org") https://explorer.btc21.org
 									
-									div(class="mt-2")
+									div.mt-2
 										- var demoSiteCoins = ["BTC"];
 										each demoSiteCoin in demoSiteCoins
-											a(href=coinConfigs[demoSiteCoin].demoSiteUrl, class="mr-2", title=coinConfigs[demoSiteCoin].siteTitle)
+											a.mr-2(href=coinConfigs[demoSiteCoin].demoSiteUrl, title=coinConfigs[demoSiteCoin].siteTitle)
 												img(src=("/img/logo/" + demoSiteCoin.toLowerCase() + ".svg"), alt=demoSiteCoin.toLowerCase())
 
-										a(href="https://lnd-admin.chaintools.io", class="mr-2", title="LND Admin")
+										a.mr-2(href="https://lnd-admin.chaintools.io", title="LND Admin")
 											img(src=("/img/logo/lnd-admin.png"), style="width: 32px; height: 32px;", alt="LND Admin")
 
-					div(class="col-md-7 text-md-right")
+					div.col-md-7.text-md-right
 						dl
 							dd
-								button.btn.btn-primary(type="button", class="btn btn-primary", data-toggle="modal", data-target="#exampleModalCenter")
-									i(class="fas fa-heart mr-2")
+								button.btn.btn-primary(type="button", data-toggle="modal", data-target="#exampleModalCenter")
+									i.fas.fa-heart.mr-2
 									span Support Project
 		
 		script(src="/js/jquery.min.js", integrity="sha384-vk5WoKIaW/vJyUAd9n/wmopsmNhiy+L2Z+SBxGYnUkunIxVxAv/UtMOhba/xskxh")

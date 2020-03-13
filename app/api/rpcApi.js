@@ -57,6 +57,18 @@ function getMempoolTxids() {
 	return getRpcDataWithParams({method:"getrawmempool", parameters:[false]});
 }
 
+function getSmartFeeEstimate(mode="CONSERVATIVE", confTargetBlockCount) {
+	return getRpcDataWithParams({method:"estimatesmartfee", parameters:[confTargetBlockCount, mode]});
+}
+
+function getNetworkHashrate(blockCount=144) {
+	return getRpcDataWithParams({method:"getnetworkhashps", parameters:[blockCount]});
+}
+
+function getBlockStats(hash) {
+	return getRpcDataWithParams({method:"getblockstats", parameters:[hash]});
+}
+
 function getUtxoSetSummary() {
 	return getRpcData("gettxoutsetinfo");
 }
@@ -133,6 +145,7 @@ function getBlockByHash(blockHash) {
 			getRawTransaction(block.tx[0]).then(function(tx) {
 				block.coinbaseTx = tx;
 				block.totalFees = utils.getBlockTotalFeesFromCoinbaseTxAndBlockHeight(tx, block.height);
+				block.subsidy = coinConfig.blockRewardFunction(block.height, global.activeBlockchain);
 				block.miner = utils.getMinerFromCoinbaseTx(tx);
 
 				resolve(block);
@@ -348,5 +361,7 @@ module.exports = {
 	getAddress: getAddress,
 	getPeerInfo: getPeerInfo,
 	getChainTxStats: getChainTxStats,
+	getSmartFeeEstimate: getSmartFeeEstimate,
 	getUtxoSetSummary: getUtxoSetSummary,
+	getNetworkHashrate: getNetworkHashrate,
 };

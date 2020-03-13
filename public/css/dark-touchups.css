@@ -2,6 +2,16 @@ hr {
 	background-color: #555555;
 }
 
+.nav-tabs .nav-link.active {
+	border-color: #9a9b9c #9a9b9c #0c0c0c !important;
+}
+
+.data-tag {
+	color: #111 !important;
+	background-color: #aaa !important;
+	border-color: #cccccc !important;
+}
+
 .hljs-attr {
 	color: #eeeeee;
 }

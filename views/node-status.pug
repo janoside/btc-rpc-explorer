@@ -20,51 +20,70 @@ block content
 			pre
 				code.json.bg-light #{JSON.stringify(getblockchaininfo, null, 4)}
 
-		ul(class='nav nav-tabs mb-3')
-			li(class="nav-item")
-				a(data-toggle="tab", href="#tab-details", class="nav-link active", role="tab") Details
-			li(class="nav-item")
-				a(data-toggle="tab", href="#tab-json", class="nav-link", role="tab") JSON
+		ul.nav.nav-tabs.mb-3
+			li.nav-item
+				a.nav-link.active(data-toggle="tab", href="#tab-details", role="tab") Details
+			li.nav-item
+				a.nav-link(data-toggle="tab", href="#tab-json", role="tab") JSON
 
 
-		div(class="tab-content")
-			div(id="tab-details", class="tab-pane active", role="tabpanel")
-				div(class="card mb-3 shadow-sm")
-					div(class="card-header")
-						span(class="h6") Summary
-					div(class="card-body")
+		div.tab-content
+			div.tab-pane.active(id="tab-details", role="tabpanel")
+				div.card.shadow-sm.mb-3
+					div.card-body.px-2.px-sm-3
+						h3.h6 Summary
+						hr
+
 						table(class="table details-table mb-0")
 							tr
-								td(class="properties-header") Host : Port
-								td(class="monospace") #{global.rpcClient.host + " : " + global.rpcClient.port}
+								td.properties-header Host : Port
+								td.text-monospace #{global.rpcClient.host + " : " + global.rpcClient.port}
 
 							tr
-								td(class="properties-header") Chain
-								td(class="monospace") #{getblockchaininfo.chain}
+								td.properties-header Chain
+								td.text-monospace #{getblockchaininfo.chain}
 							tr
-								td(class="properties-header") Version
-								td(class="monospace") #{getnetworkinfo.version}
-									span(class="monospace")  (#{getnetworkinfo.subversion})
+								td.properties-header Version
+								td.text-monospace #{getnetworkinfo.version}
+									span(class="text-monospace")  (#{getnetworkinfo.subversion})
 							tr
-								td(class="properties-header") Protocol Version
-								td(class="monospace") #{getnetworkinfo.protocolversion}
+								td.properties-header Protocol Version
+								td.text-monospace #{getnetworkinfo.protocolversion}
 
 							if (getblockchaininfo.size_on_disk)
 								- var sizeData = utils.formatLargeNumber(getblockchaininfo.size_on_disk, 2);
 								tr
-									td(class="properties-header") Blockchain Size
-									td(class="monospace") #{sizeData[0]} #{sizeData[1].abbreviation}B
+									td.properties-header Blockchain Size
+									td.text-monospace #{sizeData[0]} #{sizeData[1].abbreviation}B
 										br
-										span(class="text-muted")  (pruned: #{getblockchaininfo.pruned})
+										span.text-muted  (pruned: #{getblockchaininfo.pruned})
+
+							if (getblockchaininfo.softforks)
+								tr
+									td.properties-header Soft Forks
+									td.text-monospace
+										ul.list-unstyled
+											each item, itemName in getblockchaininfo.softforks
+												li
+													div.d-inline-block.text-right(style="width: 75px;")
+														span #{itemName}:
+													
+													span.mr-2.ml-2 type=#{item.type},
+
+													if (item.active)
+														span.mr-2
+															span status=
+															span.text-success active
+															small.text-muted.ml-2 (height: #{item.height.toLocaleString()})
 							
 							tr
-								td(class="properties-header") Block Count
-								td(class="monospace") #{getblockchaininfo.blocks.toLocaleString()}
+								td.properties-header Block Count
+								td.text-monospace #{getblockchaininfo.blocks.toLocaleString()}
 									br
-									span(class="text-muted") (headers: #{getblockchaininfo.headers.toLocaleString()})
+									span.text-muted (headers: #{getblockchaininfo.headers.toLocaleString()})
 							tr
-								td(class="properties-header") Difficulty
-								td(class="monospace")
+								td.properties-header Difficulty
+								td.text-monospace
 									- var difficultyData = utils.formatLargeNumber(getblockchaininfo.difficulty, 3);
 									
 									span(title=parseFloat(getblockchaininfo.difficulty).toLocaleString(), data-toggle="tooltip")
@@ -73,8 +92,8 @@ block content
 										sup #{difficultyData[1].exponent}
 
 							tr
-								td(class="properties-header") Status
-								td(class="monospace")
+								td.properties-header Status
+								td.text-monospace
 									if (getblockchaininfo.initialblockdownload || getblockchaininfo.headers > getblockchaininfo.blocks)
 										span Initial block download progress #{(100 * getblockchaininfo.verificationprogress).toLocaleString()}%
 									else
@@ -82,44 +101,45 @@ block content
 
 							tr
 								- var startTimeAgo = moment.duration(uptimeSeconds * 1000);
-								td(class="properties-header") Uptime
-								td(class="monospace") #{startTimeAgo.format()}
+								td.properties-header Uptime
+								td.text-monospace #{startTimeAgo.format()}
 
 							tr
-								td(class="properties-header") Warnings
-								td(class="monospace")
+								td.properties-header Warnings
+								td.text-monospace
 									if (getblockchaininfo.warnings && getblockchaininfo.warnings.trim().length > 0)
 										span #{getblockchaininfo.warnings}
 									else
 										span None
 
-				div(class="card mb-3 shadow-sm")
-					div(class="card-header")
-						span(class="h6") Network Info
-					div(class="card-body")
-						table(class="table details-table mb-0")
+				div.card.shadow-sm.mb-3
+					div.card-body.px-2.px-sm-3
+						h3.h6 Network Info
+						hr
+							
+						table.table.details-table.mb-0
 							tr
-								td(class="properties-header") Peers
-								td(class="monospace") #{getnetworkinfo.connections.toLocaleString()}
+								td.properties-header Peers
+								td.text-monospace #{getnetworkinfo.connections.toLocaleString()}
 
 							tr
-								td(class="properties-header") Network Traffic
-								td(class="monospace")
+								td.properties-header Network Traffic
+								td.text-monospace
 									- var downData = utils.formatLargeNumber(getnettotals.totalbytesrecv, 2);
 									- var downRateData = utils.formatLargeNumber(getnettotals.totalbytesrecv / uptimeSeconds, 2);
 									- var upData = utils.formatLargeNumber(getnettotals.totalbytessent, 2);
 									- var upRateData = utils.formatLargeNumber(getnettotals.totalbytessent / uptimeSeconds, 2);
 
 									span Total Download: #{downData[0]} #{downData[1].abbreviation}B
-									span(class="text-muted")  (avg #{downRateData[0]} #{downRateData[1].abbreviation}B/s)
+									span.text-muted  (avg #{downRateData[0]} #{downRateData[1].abbreviation}B/s)
 									br
 									span Total Upload: #{upData[0]} #{upData[1].abbreviation}B
-									span(class="text-muted")  (avg #{upRateData[0]} #{upRateData[1].abbreviation}B/s)
+									span.text-muted  (avg #{upRateData[0]} #{upRateData[1].abbreviation}B/s)
 
 							if (global.getnetworkinfo.networks)
 								tr
-									td(class="properties-header") Interfaces
-									td(class="monospace")
+									td.properties-header Interfaces
+									td.text-monospace
 										each item, index in global.getnetworkinfo.networks
 											div
 												span.font-weight-bold #{item.name}: 
@@ -134,8 +154,8 @@ block content
 												if (item.proxy)
 													span.text-muted.ml-3 (proxy: #{item.proxy})
 
-							td(class="properties-header") Local Addresses
-							td(class="monospace")
+							td.properties-header Local Addresses
+							td.text-monospace
 								if (global.getnetworkinfo.localaddresses)
 									each item, index in global.getnetworkinfo.localaddresses
 										div #{item.address}:#{item.port}
@@ -146,14 +166,14 @@ block content
 			div(id="tab-json", class="tab-pane", role="tabpanel")
 
 				ul(class='nav nav-pills mb-3')
-					li(class="nav-item")
+					li.nav-item
 						a(data-toggle="tab", href="#tab-getblockchaininfo", class="nav-link active", role="tab") getblockchaininfo
-					li(class="nav-item")
+					li.nav-item
 						a(data-toggle="tab", href="#tab-getnettotals", class="nav-link", role="tab") getnettotals
-					li(class="nav-item")
+					li.nav-item
 						a(data-toggle="tab", href="#tab-getnetworkinfo", class="nav-link", role="tab") getnetworkinfo
 				
-				div(class="tab-content")
+				div.tab-content
 					div(id="tab-getblockchaininfo", class="tab-pane active", role="tabpanel")
 						pre
 							code.json.bg-light(data-lang="json") #{JSON.stringify(getblockchaininfo, null, 4)}

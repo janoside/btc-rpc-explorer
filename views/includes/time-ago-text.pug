@@ -1,0 +1,3 @@
+- var timeAgo = moment.duration(moment.utc(new Date()).diff(moment.utc(new Date(parseInt(timeAgoTime) * 1000))));
+
+span #{utils.shortenTimeDiff(timeAgo.format())} ago
