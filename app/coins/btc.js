@@ -264,6 +264,14 @@ module.exports = {
 			referenceUrl: "https://bitcointalk.org/index.php?topic=91806.msg1012234#msg1012234"
 		},
 		{
+			type: "tx",
+			date: "2009-01-12",
+			chain: "main",
+			txid: "f4184fc596403b9d638783cf57adfe4c75c605f6356fbc91338530e9831e9e16",
+			summary: "The first transfer of bitcoin.",
+			alertBodyHtml: "This transaction is the first instance of the transfer of bitcoin from one person to another. It also has the added distinction of being (one of?) the only known transfers of bitcoin from Satoshi Nakamoto, in this case sending bitcoin to Hal Finney as a test."
+		},
+		{
 			type: "blockheight",
 			date: "2017-08-25",
 			chain: "main",
