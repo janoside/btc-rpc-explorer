@@ -104,10 +104,7 @@ block content
 								div.row
 									div.summary-table-label Block
 									div.summary-table-content.text-monospace
-										a(href=("/block/" + result.getrawtransaction.blockhash)) #{result.getrawtransaction.blockhash}
-										if (result.getblock.height)
-											br
-											span (##{result.getblock.height.toLocaleString()})
+										a(href=("/block/" + result.getrawtransaction.blockhash)) ##{result.getblock.height.toLocaleString()}
 
 							if (isTxConfirmed)
 								div.row
