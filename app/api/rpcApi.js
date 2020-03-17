@@ -3,6 +3,7 @@ var debug = require('debug');
 var debugLog = debug("btcexp:rpc");
 
 var async = require("async");
+var semver = require("semver");
 
 var utils = require("../utils.js");
 var config = require("../config.js");
@@ -66,7 +67,13 @@ function getNetworkHashrate(blockCount=144) {
 }
 
 function getBlockStats(hash) {
-	return getRpcDataWithParams({method:"getblockstats", parameters:[hash]});
+	if (semver.gte(global.btcNodeSemver, "0.17.0")) {
+		return getRpcDataWithParams({method:"getblockstats", parameters:[hash]});
+
+	} else {
+		// unsupported
+		return nullPromise();
+	}
 }
 
 function getUtxoSetSummary() {
@@ -341,6 +348,12 @@ function getRpcDataWithParams(request) {
 	});
 }
 
+function nullPromise() {
+	return new Promise(function(resolve, reject) {
+		resolve(null);
+	});
+}
+
 
 module.exports = {
 	getBlockchainInfo: getBlockchainInfo,
@@ -364,4 +377,5 @@ module.exports = {
 	getSmartFeeEstimate: getSmartFeeEstimate,
 	getUtxoSetSummary: getUtxoSetSummary,
 	getNetworkHashrate: getNetworkHashrate,
+	getBlockStats: getBlockStats
 };

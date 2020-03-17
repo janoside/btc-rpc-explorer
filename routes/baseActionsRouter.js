@@ -525,15 +525,49 @@ router.get("/block-height/:blockHeight", function(req, res, next) {
 	coreApi.getBlockByHeight(blockHeight).then(function(result) {
 		res.locals.result.getblockbyheight = result;
 
-		coreApi.getBlockByHashWithTransactions(result.hash, limit, offset).then(function(result) {
-			res.locals.result.getblock = result.getblock;
-			res.locals.result.transactions = result.transactions;
-			res.locals.result.txInputsByTransaction = result.txInputsByTransaction;
+		var promises = [];
+
+		promises.push(new Promise(function(resolve, reject) {
+			coreApi.getBlockByHashWithTransactions(result.hash, limit, offset).then(function(result) {
+				res.locals.result.getblock = result.getblock;
+				res.locals.result.transactions = result.transactions;
+				res.locals.result.txInputsByTransaction = result.txInputsByTransaction;
+
+				resolve();
+			});
+		}));
+
+		promises.push(new Promise(function(resolve, reject) {
+			coreApi.getBlockStats(result.hash).then(function(result) {
+				res.locals.result.blockstats = result;
+
+				resolve();
+
+			}).catch(function(err) {
+				res.locals.userMessage = "Error getting block stats";
+
+				reject(err);
+			});
+		}));
+
+		Promise.all(promises).then(function() {
+			res.render("block");
+
+			next();
+
+		}).catch(function(err) {
+			res.locals.pageErrors.push(utils.logError("3249y2ewgfee", err));
 
 			res.render("block");
 
 			next();
 		});
+	}).catch(function(err) {
+		res.locals.pageErrors.push(utils.logError("389wer07eghdd", err));
+
+		res.render("block");
+
+		next();
 	});
 });
 
@@ -565,18 +599,44 @@ router.get("/block/:blockHash", function(req, res, next) {
 	res.locals.limit = limit;
 	res.locals.offset = offset;
 	res.locals.paginationBaseUrl = "/block/" + blockHash;
-	
-	coreApi.getBlockByHashWithTransactions(blockHash, limit, offset).then(function(result) {
-		res.locals.result.getblock = result.getblock;
-		res.locals.result.transactions = result.transactions;
-		res.locals.result.txInputsByTransaction = result.txInputsByTransaction;
 
+	var promises = [];
+
+	promises.push(new Promise(function(resolve, reject) {
+		coreApi.getBlockByHashWithTransactions(blockHash, limit, offset).then(function(result) {
+			res.locals.result.getblock = result.getblock;
+			res.locals.result.transactions = result.transactions;
+			res.locals.result.txInputsByTransaction = result.txInputsByTransaction;
+
+			resolve();
+
+		}).catch(function(err) {
+			res.locals.userMessage = "Error getting block data";
+
+			reject(err);
+		});
+	}));
+
+	promises.push(new Promise(function(resolve, reject) {
+		coreApi.getBlockStats(blockHash).then(function(result) {
+			res.locals.result.blockstats = result;
+
+			resolve();
+
+		}).catch(function(err) {
+			res.locals.userMessage = "Error getting block stats";
+
+			reject(err);
+		});
+	}));
+
+	Promise.all(promises).then(function() {
 		res.render("block");
 
 		next();
 
 	}).catch(function(err) {
-		res.locals.userMessage = "Error getting block data";
+		res.locals.pageErrors.push(utils.logError("3217wfeghy9sdgs", err));
 
 		res.render("block");
 

@@ -179,6 +179,12 @@ function getNetworkHashrate(blockCount) {
 	});
 }
 
+function getBlockStats(hash) {
+	return tryCacheThenRpcApi(miscCache, "getBlockStats-" + hash, 1000 * 60 * 1000, function() {
+		return rpcApi.getBlockStats(hash);
+	});
+}
+
 function getUtxoSetSummary() {
 	return tryCacheThenRpcApi(miscCache, "getUtxoSetSummary", 15 * 60 * 1000, rpcApi.getUtxoSetSummary);
 }
@@ -992,5 +998,6 @@ module.exports = {
 	getSmartFeeEstimates: getSmartFeeEstimates,
 	getSmartFeeEstimate: getSmartFeeEstimate,
 	getUtxoSetSummary: getUtxoSetSummary,
-	getNetworkHashrate: getNetworkHashrate
+	getNetworkHashrate: getNetworkHashrate,
+	getBlockStats: getBlockStats,
 };
