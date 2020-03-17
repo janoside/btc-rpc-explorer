@@ -214,7 +214,7 @@ div.tab-content
 								if (result.blockstats)
 									div.row
 										div.summary-split-table-label
-											span.border-dotted(title="These are the min and max fees for individual transactions included in this block.", data-toggle="tooltip") Min, Max Total
+											span.border-dotted(title="These are the min and max fees for individual transactions included in this block.", data-toggle="tooltip") Min, Max Fee
 										div.summary-split-table-content.text-monospace
 											- var currencyValue = new Decimal(result.blockstats.minfee).dividedBy(coinConfig.baseCurrencyUnit.multiplier);
 											include ./value-display.pug
