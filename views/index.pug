@@ -4,9 +4,6 @@ block headContent
 	title Home
 	
 block content
-	h1.h3 #{coinConfig.siteTitle}
-	hr
-
 	if (getblockchaininfo == null)
 		div(class="alert alert-warning")
 			p.font-weight-bold Unable to get basic blockchain data
