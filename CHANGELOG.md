@@ -26,6 +26,7 @@
     * Outputs total value
     * UTXO count change
     * Min / Max tx sizes
+* New tool `/block-stats` for viewing summarized block data from recent blocks
 * New tool `/mining-summary` for viewing summarized mining data from recent blocks
 * Zero-indexing for tx inputs/outputs (#173)
 * Labels for transaction output types

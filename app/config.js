@@ -165,8 +165,8 @@ module.exports = {
 				}
 			]
 		},
-		subHeaderToolsList:[0, 1, 4, 9, 6, 7], // indexes in "siteTools" below that are shown in the site "sub menu" (visible on all pages except homepage)
-		toolsDropdownIndexList: [0, 1, 4, 9, 3, 2, 5, 6, 7, 8],
+		subHeaderToolsList:[0, 1, 4, 9, 10, 6, 7], // indexes in "siteTools" below that are shown in the site "sub menu" (visible on all pages except homepage)
+		toolsDropdownIndexList: [0, 1, 4, 10, 9, 3, 2, 5, 6, 7, 8],
 	},
 
 	credentials: credentials,
@@ -187,6 +187,7 @@ module.exports = {
 	/* 8 */		{name:(coins[currentCoin].name + " Fun"), url:"/fun", desc:"See fun/interesting historical blockchain data.", fontawesome:"fas fa-certificate"},
 
 	/* 9 */		{name:"Mining Summary", url:"/mining-summary", desc:"Summary of recent data about miners.", fontawesome:"fas fa-chart-pie"},
+	/* 10 */	{name:"Block Stats", url:"/block-stats", desc:"Summary data for blocks in configurable range.", fontawesome:"fas fa-layer-group"},
 	],
 
 	donations:{

@@ -436,6 +436,23 @@ router.get("/mining-summary", function(req, res, next) {
 	});
 });
 
+router.get("/block-stats", function(req, res, next) {
+	coreApi.getBlockchainInfo().then(function(getblockchaininfo) {
+		res.locals.currentBlockHeight = getblockchaininfo.blocks;
+
+		res.render("block-stats");
+
+		next();
+
+	}).catch(function(err) {
+		res.locals.userMessage = "Error: " + err;
+
+		res.render("block-stats");
+
+		next();
+	});
+});
+
 router.get("/search", function(req, res, next) {
 	if (!req.body.query) {
 		req.session.userMessage = "Enter a block height, block hash, or transaction id.";

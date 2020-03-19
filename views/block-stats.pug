@@ -1,0 +1,266 @@
+extends layout
+
+block headContent
+	title Block Block
+
+block content
+	h1.h3 Block Stats
+	hr
+
+	div.mb-4(id="time-range-buttons")
+		h3.h5 Block Count
+		div.btn-group
+			a.btn.btn-primary.block-count-btn(href="javascript:void(0)", data-blockCount="144") 144
+				small.ml-2 (~1d)
+			a.btn.btn-outline-primary.block-count-btn(href="javascript:void(0)", data-blockCount="432") 432
+				small.ml-2 (~3d)
+			a.btn.btn-outline-primary.block-count-btn(href="javascript:void(0)", data-blockCount="1008") 1,008
+				small.ml-2 (~7d)
+			a.btn.btn-outline-primary.block-count-btn(href="javascript:void(0)", data-blockCount="4320") 4,320
+				small.ml-2 (~30d)
+
+	div#progress-wrapper
+		h4.h6 Loading blocks: 
+			span(id="block-progress-text")
+		div.progress(id="progress-bar", style="height: 7px; margin-bottom: 200px;")
+			div.progress-bar(id="data-progress", role="progressbar", aria-valuenow="0", aria-valuemin="0" ,aria-valuemax="100")
+	
+
+	div(id="main-content", style="display: none;")
+		canvas.mb-3(id="fee-rates")
+
+		canvas.mb-3(id="max-fee-rates")
+
+		canvas.mb-3(id="min-fees")
+		canvas.mb-3(id="max-fees")
+
+		canvas.mb-3(id="inputs-outputs")
+
+		canvas.mb-3(id="tx-sizes")
+		canvas.mb-3(id="max-tx-sizes")
+
+		canvas.mb-3(id="volumes")
+
+		canvas.mb-3(id="weights-sizes")
+
+		
+
+
+block endOfBody
+	script(src="/js/chart.bundle.min.js", integrity="sha384-qgOtiGNaHh9fVWUnRjyHlV39rfbDcvPPkEzL1RHvsHKbuqUqM6uybNuVnghY2z4/")
+
+	script(src='/js/decimal.js')
+
+	script.
+		var currentBlockHeight = !{currentBlockHeight};
+		$(document).ready(function() {
+			$("#time-range-buttons .block-count-btn").on("click", function() {
+				// highlight current selection
+				$("#time-range-buttons .block-count-btn").removeClass("btn-primary").addClass("btn-outline-primary");
+				$(this).addClass("btn-primary").removeClass("btn-outline-primary");
+				
+				var blockCount = parseInt($(this).attr("data-blockCount"));
+				
+				$(".miner-summary-row").remove();
+
+				$("#data-progress").css("width", "0%");
+				$("#block-progress-text").text("");
+
+				$("#main-content").hide();
+				$("#progress-wrapper").show();
+
+				getData(currentBlockHeight, blockCount, 15);
+			});
+
+			getData(currentBlockHeight, 144, 15);
+		});
+
+		function getData(blockStart, count, chunkSize) {
+			$("#time-range-buttons .block-count-btn").addClass("disabled");
+
+			var chunks = [];
+			var blockIndex = blockStart;
+			while (blockIndex > blockStart - count) {
+				var chunk = [];
+				for (var i = blockIndex; (i > (blockIndex - chunkSize) && i > (currentBlockHeight - count)); i--) {
+					chunk.push(i);
+				}
+
+				blockIndex -= chunkSize;
+				chunks.push(chunk);
+			}
+
+			//alert(JSON.stringify(chunks));
+
+			var results = [];
+
+			var statusCallback = function(chunkIndexDone, chunkCount) {
+				console.log("Done: " + Math.min(((chunkIndexDone + 1) * chunkSize), count) + " of " + count);
+
+				var wPercent = `${parseInt(100 * (chunkIndexDone + 1) / parseFloat(chunkCount))}%`;
+				
+				$("#data-progress").css("width", wPercent);
+				$("#block-progress-text").text(`${Math.min(((chunkIndexDone + 1) * chunkSize), count).toLocaleString()} of ${count.toLocaleString()} (${wPercent})`);
+			};
+
+			var finishedCallback = function() {
+				$("#time-range-buttons .block-count-btn").removeClass("disabled");
+
+				var summary = summarizeData(results);
+
+				var red = "#dc3545";
+				var green = "#28a745";
+				var blue = "#007bff";
+
+				createGraph("fee-rates", ["avg-fee-rate", "median-fee-rate", "min-fee-rate"], [summary.avgfeerate, summary.medianfeerate, summary.minfeerate], [blue, red, green]);
+				
+				createGraph("max-fee-rates", ["max-fee-rate"], [summary.maxfeerate], [blue]);
+
+				createGraph("min-fees", ["min-fee"], [summary.minfee], [blue]);
+				createGraph("max-fees", ["max-fee"], [summary.maxfee], [blue]);
+
+				createGraph("inputs-outputs", ["inputs", "outputs"], [summary.inputs, summary.outputs], [blue, green]);
+
+				createGraph("tx-sizes", ["avg-tx-size", "median-tx-size", "min-tx-size"], [summary.avgtxsize, summary.mediantxsize, summary.mintxsize], [blue, red, green]);
+
+				createGraph("max-tx-sizes", ["max-tx-size"], [summary.maxtxsize], [blue]);
+
+				createGraph("volumes", ["volume"], [summary.totaloutput], [blue]);
+
+				createGraph("weights-sizes", ["weight", "size"], [summary.weight, summary.size], [blue, green]);
+
+
+				$("#main-content").show();
+				$("#progress-wrapper").hide();
+			};
+
+			getBlockData(results, chunks, 0, statusCallback, finishedCallback);
+		}
+
+		function getBlockData(results, chunks, chunkIndex, statusCallback, finishedCallback) {
+			if (chunkIndex > chunks.length - 1) {
+				finishedCallback();
+
+				return;
+			}
+
+			var url = `/api/block-stats-by-height/${chunks[chunkIndex]}`;
+			
+			//console.log(url);
+
+			$.ajax({
+				url: url
+
+			}).done(function(result) {
+				for (var i = 0; i < result.length; i++) {
+					results.push(result[i]);
+				}
+
+				statusCallback(chunkIndex, chunks.length);
+				
+				getBlockData(results, chunks, chunkIndex + 1, statusCallback, finishedCallback);
+			});
+		}
+
+		function summarizeData(results) {
+			var summary = {};
+
+			summary.avgfeerate = [];
+			summary.medianfeerate = [];
+			summary.minfeerate = [];
+
+			summary.maxfeerate = [];
+
+			summary.minfee = [];
+			summary.maxfee = [];
+
+			summary.inputs = [];
+			summary.outputs = [];
+
+			summary.avgtxsize = [];
+			summary.mediantxsize = [];
+			summary.mintxsize = [];
+
+			summary.maxtxsize = [];
+			
+			summary.totaloutput = [];
+
+			summary.weight = [];
+			summary.size = [];
+
+			for (var i = results.length - 1; i >= 0; i--) {
+				summary.avgfeerate.push({x:results[i].height, y:results[i].avgfeerate});
+				summary.medianfeerate.push({x:results[i].height, y:results[i].feerate_percentiles[2]});
+				summary.minfeerate.push({x:results[i].height, y:results[i].minfeerate});
+				summary.maxfeerate.push({x:results[i].height, y:results[i].maxfeerate});
+				summary.minfee.push({x:results[i].height, y:results[i].minfee});
+				summary.maxfee.push({x:results[i].height, y:results[i].maxfee});
+				summary.inputs.push({x:results[i].height, y:results[i].ins});
+				summary.outputs.push({x:results[i].height, y:results[i].outs});
+				summary.avgtxsize.push({x:results[i].height, y:results[i].avgtxsize});
+				summary.mintxsize.push({x:results[i].height, y:results[i].mintxsize});
+				summary.maxtxsize.push({x:results[i].height, y:results[i].maxtxsize});
+				summary.mediantxsize.push({x:results[i].height, y:results[i].mediantxsize});
+				summary.totaloutput.push({x:results[i].height, y:new Decimal(results[i].total_out).dividedBy(100000000)});
+				summary.weight.push({x:results[i].height, y:results[i].total_weight});
+				summary.size.push({x:results[i].height, y:results[i].total_size});
+			}
+
+			return summary;
+		}
+
+		function createGraph(chartid, names, datas, colors) {
+			console.log(chartid + " - " + JSON.stringify(datas));
+
+			var datasets = [];
+			var yaxes = [];
+
+			for (var i = 0; i < names.length; i++) {
+				datasets.push({
+					label: names[i],
+					data: datas[i],
+					borderWidth: 2,
+					borderColor: colors[i],
+					backgroundColor: 'rgba(0, 0, 0, 0)'
+				});
+
+				yaxes.push({
+					scaleLabel: {
+						display: true,
+						labelString: names[i]
+					}
+				});
+			}
+
+			var ctx = document.getElementById(chartid).getContext('2d');
+			var myChart = new Chart(ctx, {
+				type: 'line',
+				data: {
+					datasets: datasets
+				},
+				options: {
+					animation:{
+						duration:0
+					},
+					title: {
+						display: true,
+						text: chartid
+					},
+					legend: {
+						display: true
+					},
+					scales: {
+						xAxes: [{
+							type: 'linear',
+							position: 'bottom',
+							scaleLabel: {
+								display: true,
+								labelString: 'Block'
+							},
+						}],
+						//yAxes: yaxes
+					}
+				}
+			});
+		}
+		
