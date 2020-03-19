@@ -28,8 +28,11 @@ block content
 
 						td.properties-header Memory Usage
 						td.text-monospace
-							span #{mem1Data[0]} #{mem1Data[1].abbreviation}B
-							span.text-muted  (#{mem2Data[0]} v#{mem2Data[1].abbreviation}B)
+							span #{mem1Data[0]} 
+								small #{mem1Data[1].abbreviation}B
+							span.text-muted  (#{mem2Data[0]} 
+								small v#{mem2Data[1].abbreviation}B
+								span )
 
 					tr
 						td.properties-header Total Fees
@@ -45,10 +48,11 @@ block content
 								include ./includes/value-display.pug
 
 						tr
-							td.properties-header Avg Fee per vB
+							td.properties-header Avg Fee Rate
 							td.text-monospace
 								- var feeRateData = utils.formatCurrencyAmountInSmallestUnits(mempoolstats["averageFeePerByte"], 2);
-								span #{feeRateData.val} #{feeRateData.currencyUnit}/vB
+								span #{feeRateData.val} 
+									small #{feeRateData.currencyUnit}/vB
 
 		if (getmempoolinfo.size > 0)
 			div.card.shadow-sm.mb-3
@@ -115,8 +119,8 @@ block content
 									th Fee Rate
 									th(class="text-right") Tx Count
 									th(class="text-right") Total Fees
-									th(class="text-right") Average Fee
-									th(class="text-right") Average Fee Rate
+									th(class="text-right") Avg Fee
+									th(class="text-right") Avg Fee Rate
 							tbody
 								each item, index in mempoolstats["satoshiPerByteBuckets"]
 									tr
@@ -136,7 +140,8 @@ block content
 															
 											td.text-monospace.text-right
 												- var feeRateData = utils.formatCurrencyAmountInSmallestUnits(avgFeeRate, 2);
-												span #{feeRateData.val} #{feeRateData.currencyUnit}/vB
+												span #{feeRateData.val} 
+												small #{feeRateData.currencyUnit}/vB
 										else
 											td.text-monospace.text-right -
 											td.text-monospace.text-right -
