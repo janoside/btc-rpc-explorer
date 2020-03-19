@@ -2,7 +2,7 @@
 
 if (timeAgo.asHours() < 1)
 	if (timeAgo.asMinutes() < 1)
-		span <1m
+		span #{timeAgo.seconds()}s 
 	else
 		span #{timeAgo.minutes()}m 
 
