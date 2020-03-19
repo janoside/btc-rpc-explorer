@@ -24,6 +24,8 @@ var rpcQueue = async.queue(function(task, callback) {
 
 }, config.rpcConcurrency);
 
+var minRpcVersions = {getblockstats:"0.17.0"};
+
 
 
 function getBlockchainInfo() {
@@ -67,7 +69,7 @@ function getNetworkHashrate(blockCount=144) {
 }
 
 function getBlockStats(hash) {
-	if (semver.gte(global.btcNodeSemver, "0.17.0")) {
+	if (semver.gte(global.btcNodeSemver, minRpcVersions.getblockstats)) {
 		if (hash == coinConfig.genesisBlockHashesByNetwork[global.activeBlockchain] && coinConfig.genesisBlockStatsByNetwork[global.activeBlockchain]) {
 			return new Promise(function(resolve, reject) {
 				resolve(coinConfig.genesisBlockStatsByNetwork[global.activeBlockchain]);
@@ -78,12 +80,12 @@ function getBlockStats(hash) {
 		}
 	} else {
 		// unsupported
-		return nullPromise();
+		return unsupportedPromise(minRpcVersions.getblockstats);
 	}
 }
 
 function getBlockStatsByHeight(height) {
-	if (semver.gte(global.btcNodeSemver, "0.17.0")) {
+	if (semver.gte(global.btcNodeSemver, minRpcVersions.getblockstats)) {
 		if (height == 0 && coinConfig.genesisBlockStatsByNetwork[global.activeBlockchain]) {
 			return new Promise(function(resolve, reject) {
 				resolve(coinConfig.genesisBlockStatsByNetwork[global.activeBlockchain]);
@@ -94,7 +96,7 @@ function getBlockStatsByHeight(height) {
 		}
 	} else {
 		// unsupported
-		return nullPromise();
+		return unsupportedPromise(minRpcVersions.getblockstats);
 	}
 }
 
@@ -256,7 +258,7 @@ function getUtxo(txid, outputIndex) {
 	});
 }
 
-function getMempoolTxDetails(txid) {
+function getMempoolTxDetails(txid, includeAncDec=true) {
 	debugLog("getMempoolTxDetails: %s", txid);
 
 	var promises = [];
@@ -274,27 +276,29 @@ function getMempoolTxDetails(txid) {
 		});
 	}));
 
-	promises.push(new Promise(function(resolve, reject) {
-		getRpcDataWithParams({method:"getmempoolancestors", parameters:[txid]}).then(function(result) {
-			mempoolDetails.ancestors = result;
+	if (includeAncDec) {
+		promises.push(new Promise(function(resolve, reject) {
+			getRpcDataWithParams({method:"getmempoolancestors", parameters:[txid]}).then(function(result) {
+				mempoolDetails.ancestors = result;
 
-			resolve();
+				resolve();
 
-		}).catch(function(err) {
-			reject(err);
-		});
-	}));
+			}).catch(function(err) {
+				reject(err);
+			});
+		}));
 
-	promises.push(new Promise(function(resolve, reject) {
-		getRpcDataWithParams({method:"getmempooldescendants", parameters:[txid]}).then(function(result) {
-			mempoolDetails.descendants = result;
+		promises.push(new Promise(function(resolve, reject) {
+			getRpcDataWithParams({method:"getmempooldescendants", parameters:[txid]}).then(function(result) {
+				mempoolDetails.descendants = result;
 
-			resolve();
+				resolve();
 
-		}).catch(function(err) {
-			reject(err);
-		});
-	}));
+			}).catch(function(err) {
+				reject(err);
+			});
+		}));
+	}
 
 	return new Promise(function(resolve, reject) {
 		Promise.all(promises).then(function() {
@@ -370,9 +374,9 @@ function getRpcDataWithParams(request) {
 	});
 }
 
-function nullPromise() {
+function unsupportedPromise(minRpcVersionNeeded) {
 	return new Promise(function(resolve, reject) {
-		resolve(null);
+		resolve({success:false, error:"Unsupported", minRpcVersionNeeded:minRpcVersionNeeded});
 	});
 }
 
@@ -401,4 +405,6 @@ module.exports = {
 	getNetworkHashrate: getNetworkHashrate,
 	getBlockStats: getBlockStats,
 	getBlockStatsByHeight: getBlockStatsByHeight,
+
+	minRpcVersions: minRpcVersions
 };

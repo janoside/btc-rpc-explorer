@@ -78,7 +78,7 @@ block content
 			div.mb-3.pr-xxl-0(class=`col-xxl-${summaryColCount}`)
 				div.card.shadow-sm(style="height: 100%;")
 					div.card-body.px-2.px-sm-3
-						h3.h6 Network Summary
+						h3.h6.mb-0 Network Summary
 						hr
 
 						include includes/index-network-summary.pug
@@ -86,7 +86,7 @@ block content
 			div.mb-3(class=`col-xxl-${12 - summaryColCount}`)
 				div.card.shadow-sm(style="height: 100%;")
 					div.card-body.px-2.px-sm-3
-						h3.h6 Tools
+						h3.h6.mb-0 Tools
 						hr
 
 						include includes/tools-card.pug
@@ -99,10 +99,10 @@ block content
 						div.card-body.px-2.px-sm-3
 							div.row
 								div.col
-									h3.h6 Latest Blocks
+									h3.h6.mb-0 Latest Blocks
 									
 								div.col.text-right
-									a(href="/blocks") Browse blocks &raquo;
+									a(href="/blocks") See more &raquo;
 
 							hr
 
@@ -140,7 +140,7 @@ block content
 						div.card-body.px-2.px-sm-3
 							div.row
 								div.col
-									h3.h6 Transaction Stats
+									h3.h6.mb-0 Transaction Stats
 									
 								div.col.text-right
 									a(href="/tx-stats") See more &raquo;

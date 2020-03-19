@@ -159,6 +159,11 @@ function getMempoolInfo() {
 	return tryCacheThenRpcApi(miscCache, "getMempoolInfo", 1000, rpcApi.getMempoolInfo);
 }
 
+function getMempoolTxids() {
+	// no caching, that would be dumb
+	return rpcApi.getMempoolTxids();
+}
+
 function getMiningInfo() {
 	return tryCacheThenRpcApi(miscCache, "getMiningInfo", 30 * 1000, rpcApi.getMiningInfo);
 }
@@ -722,9 +727,9 @@ function getUtxo(txid, outputIndex) {
 	});
 }
 
-function getMempoolTxDetails(txid) {
-	return tryCacheThenRpcApi(miscCache, "mempoolTxDetails-" + txid, 3600000, function() {
-		return rpcApi.getMempoolTxDetails(txid);
+function getMempoolTxDetails(txid, includeAncDec) {
+	return tryCacheThenRpcApi(miscCache, "mempoolTxDetails-" + txid + "-" + includeAncDec, 3600000, function() {
+		return rpcApi.getMempoolTxDetails(txid, includeAncDec);
 	});
 }
 
@@ -996,6 +1001,7 @@ module.exports = {
 	getNetworkInfo: getNetworkInfo,
 	getNetTotals: getNetTotals,
 	getMempoolInfo: getMempoolInfo,
+	getMempoolTxids: getMempoolTxids,
 	getMiningInfo: getMiningInfo,
 	getBlockByHeight: getBlockByHeight,
 	getBlocksByHeight: getBlocksByHeight,

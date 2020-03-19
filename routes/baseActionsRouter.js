@@ -13,12 +13,14 @@ var sha256 = require("crypto-js/sha256");
 var hexEnc = require("crypto-js/enc-hex");
 var Decimal = require("decimal.js");
 var marked = require("marked");
+var semver = require("semver");
 
 var utils = require('./../app/utils.js');
 var coins = require("./../app/coins.js");
 var config = require("./../app/config.js");
 var coreApi = require("./../app/api/coreApi.js");
 var addressApi = require("./../app/api/addressApi.js");
+var rpcApi = require("./../app/api/rpcApi.js");
 
 const forceCsrf = csurf({ ignoreMethods: [] });
 
@@ -220,16 +222,28 @@ router.get("/node-status", function(req, res, next) {
 });
 
 router.get("/mempool-summary", function(req, res, next) {
-	coreApi.getMempoolInfo().then(function(getmempoolinfo) {
-		res.locals.getmempoolinfo = getmempoolinfo;
+	res.locals.satoshiPerByteBucketMaxima = coinConfig.feeSatoshiPerByteBucketMaxima;
 
-		coreApi.getMempoolStats().then(function(mempoolstats) {
-			res.locals.mempoolstats = mempoolstats;
+	coreApi.getMempoolTxids().then(function(mempooltxids) {
+		var debugMaxCount = 0;
 
-			res.render("mempool-summary");
+		if (debugMaxCount > 0) {
+			var debugtxids = [];
+			for (var i = 0; i < Math.min(10000, mempooltxids.length); i++) {
+				debugtxids.push(mempooltxids[i]);
+			}
 
-			next();
-		});
+			res.locals.mempooltxidChunks = utils.splitArrayIntoChunks(debugtxids, 25);
+
+		} else {
+			res.locals.mempooltxidChunks = utils.splitArrayIntoChunks(mempooltxids, 25);
+		}
+		
+
+		res.render("mempool-summary");
+
+		next();
+
 	}).catch(function(err) {
 		res.locals.userMessage = "Error: " + err;
 
@@ -437,6 +451,10 @@ router.get("/mining-summary", function(req, res, next) {
 });
 
 router.get("/block-stats", function(req, res, next) {
+	if (semver.lt(global.btcNodeSemver, rpcApi.minRpcVersions.getblockstats)) {
+		res.locals.rpcApiUnsupportedError = {rpc:"getblockstats", version:rpcApi.minRpcVersions.getblockstats};
+	}
+
 	coreApi.getBlockchainInfo().then(function(getblockchaininfo) {
 		res.locals.currentBlockHeight = getblockchaininfo.blocks;
 
@@ -741,7 +759,7 @@ router.get("/tx/:transactionId", function(req, res, next) {
 
 		if (rawTxResult.confirmations == null) {
 			promises.push(new Promise(function(resolve, reject) {
-				coreApi.getMempoolTxDetails(txid).then(function(mempoolDetails) {
+				coreApi.getMempoolTxDetails(txid, true).then(function(mempoolDetails) {
 					res.locals.mempoolDetails = mempoolDetails;
 					
 					resolve();

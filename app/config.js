@@ -165,7 +165,7 @@ module.exports = {
 				}
 			]
 		},
-		subHeaderToolsList:[0, 1, 4, 9, 10, 6, 7], // indexes in "siteTools" below that are shown in the site "sub menu" (visible on all pages except homepage)
+		subHeaderToolsList:[0, 10, 9, 4, 1, 6, 7], // indexes in "siteTools" below that are shown in the site "sub menu" (visible on all pages except homepage)
 		toolsDropdownIndexList: [0, 1, 4, 10, 9, 3, 2, 5, 6, 7, 8],
 	},
 

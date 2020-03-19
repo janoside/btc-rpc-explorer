@@ -51,8 +51,9 @@ global.appVersion = package_json.version;
 
 var crawlerBotUserAgentStrings = [ "Googlebot", "Bingbot", "Slurp", "DuckDuckBot", "Baiduspider", "YandexBot", "Sogou", "Exabot", "facebot", "ia_archiver" ];
 
-var baseActionsRouter = require('./routes/baseActionsRouter');
-var apiActionsRouter = require('./routes/api');
+var baseActionsRouter = require('./routes/baseActionsRouter.js');
+var apiActionsRouter = require('./routes/apiRouter.js');
+var snippetActionsRouter = require('./routes/snippetRouter.js');
 
 var app = express();
 
@@ -584,6 +585,7 @@ app.use(csurf(), (req, res, next) => {
 
 app.use('/', baseActionsRouter);
 app.use('/api/', apiActionsRouter);
+app.use('/snippet/', snippetActionsRouter);
 
 app.use(function(req, res, next) {
 	var time = Date.now() - req.startTime;

@@ -7,71 +7,105 @@ block content
 	h1.h3 Mining Summary
 	hr
 
-	div.mb-4(id="time-range-buttons")
-		h3.h5 Block Count
-		div.btn-group
-			a.btn.btn-primary.block-count-btn(href="javascript:void(0)", data-blockCount="144") 144
-				small.ml-2 (~1d)
-			a.btn.btn-outline-primary.block-count-btn(href="javascript:void(0)", data-blockCount="432") 432
-				small.ml-2 (~3d)
-			a.btn.btn-outline-primary.block-count-btn(href="javascript:void(0)", data-blockCount="1008") 1,008
-				small.ml-2 (~7d)
-			a.btn.btn-outline-primary.block-count-btn(href="javascript:void(0)", data-blockCount="4320") 4,320
-				small.ml-2 (~30d)
+	div.card.shadow-sm.mb-3
+		div.card-body
+			h3.h6.mb-0 Selected Blocks
+			hr
+
+			div.clearfix
+				div.float-left.mr-4
+					div(id="time-range-buttons")
+						h3.h6 Latest N Blocks
+						div.btn-group
+							a.btn.btn-primary.block-count-btn(href="javascript:void(0)", data-blockCount="144") 144
+								small.ml-2 (~1d)
+							a.btn.btn-outline-primary.block-count-btn(href="javascript:void(0)", data-blockCount="432") 432
+								small.ml-2 (~3d)
+							a.btn.btn-outline-primary.block-count-btn(href="javascript:void(0)", data-blockCount="1008") 1,008
+								small.ml-2 (~7d)
+							a.btn.btn-outline-primary.block-count-btn(href="javascript:void(0)", data-blockCount="4320") 4,320
+								small.ml-2 (~30d)
+
+				div.float-left.mr-4
+					div(id="block-selections-buttons")
+						h3.h6 Preconfigured
+
+						div.dropdown
+							button.btn.btn-outline-primary.dropdown-toggle(type="button", id="preconfigured-dropdown", data-toggle="dropdown", aria-haspopup="true", aria-expanded="false") Selections
+							div.dropdown-menu(aria-labelledby="preconfigured-dropdown")
+								a.dropdown-item(href="javascript:void(0)", data-blocks="0-199") First 200 Blocks
+								a.dropdown-item(href="javascript:void(0)", data-blocks="209900-210100") First Halving
+								a.dropdown-item(href="javascript:void(0)", data-blocks="419900-420100") Second Halving
+								a.dropdown-item(href="javascript:void(0)", data-blocks="481724-481924") SegWit Activation Window
+
+				div.float-left
+					div(id="time-range-buttons")
+						h3.h6 Custom Range
+
+						form.form-inline.mr-3(id="custom-range-form")
+							div.input-group
+								input.form-control(type="text", id="custom-range-start", placeholder="min height", style="width: 125px;")
+								input.form-control(type="text", id="custom-range-end", placeholder="max height", style="width: 125px;")
+								div.input-group-append
+									button.btn.btn-primary(type="submit") Go
 
 	div#progress-wrapper
-		h4.h6 Loading blocks: 
-			span(id="block-progress-text")
-		div.progress(id="progress-bar", style="height: 7px; margin-bottom: 200px;")
-			div.progress-bar(id="data-progress", role="progressbar", aria-valuenow="0", aria-valuemin="0" ,aria-valuemax="100")
+		div.card.shadow-sm.mb-3
+			div.card-body
+				h4.h6 Loading blocks: 
+					span(id="block-progress-text")
+				div.progress(id="progress-bar", style="height: 7px;")
+					div.progress-bar(id="data-progress", role="progressbar", aria-valuenow="0", aria-valuemin="0" ,aria-valuemax="100")
 	
 
-	div.table-responsive.mb-5(id="summary-table", style="display: none;")
-		table.table.table-striped.mb-0
-			thead
-				tr
-					th.data-header Miner
-					th.data-header.text-right Blocks
-					th.data-header.text-right Transactions
-					th.data-header.text-right Block Rewards
-					th.data-header.text-right Fees Collected
-					
-			tbody(id="summary-table-body")
-				tr(id="miner-summary-prototype", style="display: none;")
-					td.data-cell.text-monospace.miner-name
-					td.data-cell.text-monospace.text-right
-						span.miner-block-count
-						small.text-muted.miner-block-percent.ml-2
-					td.data-cell.text-monospace.text-right
-						span.miner-tx-count
-						small.text-muted.miner-tx-percent.ml-2
-					td.data-cell.text-monospace.text-right
-						span.miner-subsidy
-						small.text-muted.miner-subsidy-percent.ml-2
-						//- var currencyValue = new Decimal(summary.totalSubsidiesCollected);
-						//include ./includes/value-display.pug
-					td.data-cell.text-monospace.text-right
-						span.miner-fees
-						small.text-muted.miner-fees-percent.ml-2
-						//- var currencyValue = new Decimal(summary.totalFeesCollected);
-						//include ./includes/value-display.pug
+	div.card.shadow-sm.mb-3(id="summary-table", style="display: none;")
+		div.card-body
+			div.table-responsive
+				table.table.table-striped.mb-0
+					thead
+						tr
+							th.data-header Miner
+							th.data-header.text-right Blocks
+							th.data-header.text-right Transactions
+							th.data-header.text-right Block Rewards
+							th.data-header.text-right Fees Collected
+							
+					tbody(id="summary-table-body")
+						tr(id="miner-summary-prototype", style="display: none;")
+							td.data-cell.text-monospace.miner-name
+							td.data-cell.text-monospace.text-right
+								span.miner-block-count
+								small.text-muted.miner-block-percent.ml-2
+							td.data-cell.text-monospace.text-right
+								span.miner-tx-count
+								small.text-muted.miner-tx-percent.ml-2
+							td.data-cell.text-monospace.text-right
+								span.miner-subsidy
+								small.text-muted.miner-subsidy-percent.ml-2
+								//- var currencyValue = new Decimal(summary.totalSubsidiesCollected);
+								//include ./includes/value-display.pug
+							td.data-cell.text-monospace.text-right
+								span.miner-fees
+								small.text-muted.miner-fees-percent
+								//- var currencyValue = new Decimal(summary.totalFeesCollected);
+								//include ./includes/value-display.pug
 
-				tr(id="miner-summary-totals", style="display: none;")
-					th.data-cell.text-monospace.miner-name Total
-					th.data-cell.text-monospace.text-right
-						span.miner-block-count
-						small.text-muted.miner-block-percent.ml-2 (100%)
-					th.data-cell.text-monospace.text-right
-						span.miner-tx-count
-						small.text-muted.miner-tx-percent.ml-2 (100%)
-					th.data-cell.text-monospace.text-right
-						span.miner-subsidy
-						//- var currencyValue = new Decimal(summary.totalSubsidiesCollected);
-						//include ./includes/value-display.pug
-					th.data-cell.text-monospace.text-right
-						span.miner-fees
-						//- var currencyValue = new Decimal(summary.totalFeesCollected);
-						//include ./includes/value-display.pug
+						tr(id="miner-summary-totals", style="display: none;")
+							th.data-cell.text-monospace.miner-name Total
+							th.data-cell.text-monospace.text-right
+								span.miner-block-count
+								small.text-muted.miner-block-percent.ml-2 (100%)
+							th.data-cell.text-monospace.text-right
+								span.miner-tx-count
+								small.text-muted.miner-tx-percent.ml-2 (100%)
+							th.data-cell.text-monospace.text-right
+								span.miner-subsidy
+								//- var currencyValue = new Decimal(summary.totalSubsidiesCollected);
+								//include ./includes/value-display.pug
+							th.data-cell.text-monospace.text-right
+								span.miner-fees
+								//- var currencyValue = new Decimal(summary.totalFeesCollected);
+								//include ./includes/value-display.pug
 
 	if (false)
 		pre
@@ -86,6 +120,7 @@ block endOfBody
 				// highlight current selection
 				$("#time-range-buttons .block-count-btn").removeClass("btn-primary").addClass("btn-outline-primary");
 				$(this).addClass("btn-primary").removeClass("btn-outline-primary");
+				$("#preconfigured-dropdown").removeClass("btn-primary").addClass("btn-outline-primary");
 				
 				var blockCount = parseInt($(this).attr("data-blockCount"));
 				
@@ -100,17 +135,60 @@ block endOfBody
 				getData(currentBlockHeight, blockCount, 15);
 			});
 
+			$("#block-selections-buttons .dropdown-item").on("click", function() {
+				// highlight current selection
+				$("#time-range-buttons .block-count-btn").removeClass("btn-primary").addClass("btn-outline-primary");
+				$("#preconfigured-dropdown").removeClass("btn-outline-primary").addClass("btn-primary");
+				
+				var blocks = $(this).attr("data-blocks");
+				var bStartEnd = blocks.split("-");
+				var bStart = parseInt(bStartEnd[0]);
+				var bEnd = parseInt(bStartEnd[1]);
+
+				$(".miner-summary-row").remove();
+
+				$("#data-progress").css("width", "0%");
+				$("#block-progress-text").text("");
+
+				$("#main-content").hide();
+				$("#progress-wrapper").show();
+
+				getData(bEnd, bEnd - bStart + 1, 15);
+			});
+
+			$("#custom-range-form").on("submit", function() {
+				// highlight current selection
+				$("#time-range-buttons .block-count-btn").removeClass("btn-primary").addClass("btn-outline-primary");
+				$("#preconfigured-dropdown").removeClass("btn-primary").addClass("btn-outline-primary");
+				
+				var bStart = parseInt($("#custom-range-start").val());
+				var bEnd = parseInt($("#custom-range-end").val());
+
+				$(".miner-summary-row").remove();
+
+				$("#data-progress").css("width", "0%");
+				$("#block-progress-text").text("");
+
+				$("#main-content").hide();
+				$("#progress-wrapper").show();
+
+				getData(bEnd, bEnd - bStart + 1, 15);
+
+				return false;
+			});
+
 			getData(currentBlockHeight, 144, 15);
 		});
 
 		function getData(blockStart, count, chunkSize) {
 			$("#time-range-buttons .block-count-btn").addClass("disabled");
+			$("#block-selections-buttons .dropdown-item").addClass("disabled");
 
 			var chunks = [];
 			var blockIndex = blockStart;
 			while (blockIndex > blockStart - count) {
 				var chunk = [];
-				for (var i = blockIndex; (i > (blockIndex - chunkSize) && i > (currentBlockHeight - count)); i--) {
+				for (var i = blockIndex; (i > (blockIndex - chunkSize) && i > (blockStart - count)); i--) {
 					chunk.push(i);
 				}
 
@@ -118,6 +196,7 @@ block endOfBody
 				chunks.push(chunk);
 			}
 
+			console.log(JSON.stringify(chunks));
 			//alert(JSON.stringify(chunks));
 
 			var results = [];
@@ -133,6 +212,7 @@ block endOfBody
 
 			var finishedCallback = function() {
 				$("#time-range-buttons .block-count-btn").removeClass("disabled");
+				$("#block-selections-buttons .dropdown-item").removeClass("disabled");
 
 				console.log(JSON.stringify(results));
 
@@ -159,7 +239,15 @@ block endOfBody
 					row.find(".miner-subsidy-percent").text(`(${new Decimal(minerSummary.totalSubsidiesCollected).dividedBy(summary.overallSummary.totalSubsidiesCollected).times(100).toDecimalPlaces(1)}%)`);
 
 					row.find(".miner-fees").text(minerSummary.totalFeesCollected.toLocaleString());
-					row.find(".miner-fees-percent").text(`(${new Decimal(minerSummary.totalFeesCollected).dividedBy(summary.overallSummary.totalFeesCollected).times(100).toDecimalPlaces(1)}%)`);
+
+					if (summary.overallSummary.totalFeesCollected > 0) {
+						row.find(".miner-fees-percent").text(` (${new Decimal(minerSummary.totalFeesCollected).dividedBy(summary.overallSummary.totalFeesCollected).times(100).toDecimalPlaces(1)}%)`);
+					}
+
+
+					updateCurrencyValue(row.find(".miner-subsidy"), minerSummary.totalSubsidiesCollected);
+					updateCurrencyValue(row.find(".miner-fees"), minerSummary.totalFeesCollected);
+					
 
 					row.show();
 
@@ -210,6 +298,16 @@ block endOfBody
 				statusCallback(chunkIndex, chunks.length);
 				
 				getBlockData(results, chunks, chunkIndex + 1, statusCallback, finishedCallback);
+			});
+		}
+
+		function updateCurrencyValue(element, val) {
+			$.ajax({
+				url: `/snippet/formatCurrencyAmount/${val}`
+
+			}).done(function(result) {
+				element.html(result);
+				$('[data-toggle="tooltip"]').tooltip();
 			});
 		}
 

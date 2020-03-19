@@ -1,5 +1,5 @@
 - var colClass = "col-lg-6 px-3";
-if (exchangeRates)
+if (exchangeRates || networkVolume)
 	- colClass = "col-lg-4 px-3";
 
 - var utxoCalculatingDesc = "At startup the app pulls a summary of the UTXO set. Until this summary is retrieved this data can't be displayed. Wait for the summary request to your node to return, then refresh this page.";
@@ -63,7 +63,7 @@ div.row.index-summary
 
 				tr
 					th.px-2.px-lg-0.px-xl-2
-						i.fas.fa-poll.mr-1.summary-icon
+						i.fas.fa-bullseye.mr-1.summary-icon
 						span.border-dotted(title="Current fee estimates (using 'estimatesmartfee') for getting a transaction included in 1 block, 6 blocks (1 hr), 144 blocks (1 day), or 1,008 blocks (1 week).", data-toggle="tooltip") Fee Targets
 						if (false)
 							small.ml-1 (1/h/d/w)

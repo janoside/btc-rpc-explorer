@@ -185,20 +185,16 @@ block content
 											- var currencyValue = new Decimal(blockRewardMax).minus(totalOutputValue);
 											include includes/value-display.pug
 
+								- var minerInfo = utils.getMinerFromCoinbaseTx(result.getrawtransaction);
 								if (minerInfo)
-									- var minerInfo = utils.getMinerFromCoinbaseTx(result.getrawtransaction);
 									div.row
 										div.summary-table-label Miner
 										div.summary-table-content.text-monospace
-											if (minerInfo)
-												span #{minerInfo.name} 
-												if (minerInfo.identifiedBy)
-													span(data-toggle="tooltip", title=("Identified by: " + minerInfo.identifiedBy))
-														i.fas.fa-info-circle
+											if (minerInfo.identifiedBy)
+												small.data-tag.bg-primary(data-toggle="tooltip", title=("Identified by: " + minerInfo.identifiedBy)) #{minerInfo.name}
+
 											else
-												span ? 
-												span(data-toggle="tooltip", title="Unable to identify miner")
-													i.fas.fa-info-circle
+												small.data-tag.bg-primary #{minerInfo.name}
 
 							else
 
