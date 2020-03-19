@@ -180,6 +180,45 @@ module.exports = {
 			"blocktime": 1296688602
 		}
 	},
+	genesisBlockStatsByNetwork:{
+		"main": {
+			"avgfee": 0,
+			"avgfeerate": 0,
+			"avgtxsize": 0,
+			"blockhash": "000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f",
+			"feerate_percentiles": [
+				0,
+				0,
+				0,
+				0,
+				0
+			],
+			"height": 0,
+			"ins": 0,
+			"maxfee": 0,
+			"maxfeerate": 0,
+			"maxtxsize": 0,
+			"medianfee": 0,
+			"mediantime": 1231006505,
+			"mediantxsize": 0,
+			"minfee": 0,
+			"minfeerate": 0,
+			"mintxsize": 0,
+			"outs": 1,
+			"subsidy": 5000000000,
+			"swtotal_size": 0,
+			"swtotal_weight": 0,
+			"swtxs": 0,
+			"time": 1231006505,
+			"total_out": 0,
+			"total_size": 0,
+			"total_weight": 0,
+			"totalfee": 0,
+			"txs": 1,
+			"utxo_increase": 1,
+			"utxo_size_inc": 117
+		}
+	},
 	genesisCoinbaseOutputAddressScripthash:"8b01df4e368ea28f8dc0423bcf7a4923e3a12d307c875e47a0cfbf90b5c39161",
 	historicalData: [
 		{

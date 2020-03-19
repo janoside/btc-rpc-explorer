@@ -232,7 +232,7 @@ block content
 						div.card-body
 							div.clearfix
 								div.float-left
-									h3.h6
+									h3.h6.mb-0
 										if (addressDetails && addressDetails.txCount)
 											if (addressDetails.txCount == 1)
 												span 1 Transaction
@@ -354,7 +354,7 @@ block content
 															- var timeAgoTime = tx.time;
 															small.text-muted (
 																include includes/time-ago-text.pug
-																span )
+																span  ago)
 
 														else
 															span.text-danger Unconfirmed

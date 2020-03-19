@@ -10,7 +10,8 @@ div.mb-2
 
 	if (result.getblock.nextblockhash)
 		a.btn.btn-sm.btn-primary.mb-1(href=("/block/" + result.getblock.nextblockhash)) Next Block: 
-			span.text-monospace ##{(result.getblock.height + 1).toLocaleString()} &raquo; 
+			span.text-monospace ##{(result.getblock.height + 1).toLocaleString()}
+			span  &raquo;
 	else
 		a.btn.btn-sm.btn-secondary.disabled.mb-1 Next Block: N/A 
 			small (latest block)
@@ -70,7 +71,7 @@ div.tab-content
 									- var timeAgoTime = result.getblock.time;
 									span.text-muted.ml-2 (
 										include ./time-ago-text.pug
-										span )
+										span  ago)
 
 							if (result.blockstats)
 								div.row
@@ -78,8 +79,11 @@ div.tab-content
 										span.border-dotted(title="Total value of all transaction outputs (excluding the coinbase transaction)", data-toggle="tooltip")
 											span Total Output
 									div.text-monospace(class=sumTableValueClass)
-										- var currencyValue = new Decimal(result.blockstats.total_out).dividedBy(coinConfig.baseCurrencyUnit.multiplier);
-										include ./value-display.pug
+										if (result.blockstats.total_out)
+											- var currencyValue = new Decimal(result.blockstats.total_out).dividedBy(coinConfig.baseCurrencyUnit.multiplier);
+											include ./value-display.pug
+										else
+											span 0
 
 							if (result.blockstats)
 								div.row
@@ -89,9 +93,17 @@ div.tab-content
 											span.text-muted.font-weight-normal.mx-1 /
 											span Out #
 									div.text-monospace(class=sumTableValueClass)
-										span #{result.blockstats.ins.toLocaleString()}
+										if (result.blockstats.ins)
+											span #{result.blockstats.ins.toLocaleString()}
+										else
+											span 0
+
 										span.text-muted.mx-1 /
-										span #{result.blockstats.outs.toLocaleString()}
+
+										if (result.blockstats.outs)
+											span #{result.blockstats.outs.toLocaleString()}
+										else
+											span 1
 
 							if (result.blockstats)
 								div.row
@@ -102,16 +114,30 @@ div.tab-content
 										- var sizePlusMinus = (result.blockstats.utxo_size_inc > 0) ? "+" : "-";
 										- var sizeDeltaData = utils.formatLargeNumber(Math.abs(result.blockstats.utxo_size_inc), 1);
 										- var plusMinus = (result.blockstats.utxo_increase > 0) ? "+" : "";
-										span #{plusMinus}#{result.blockstats.utxo_increase.toLocaleString()} 
-											span.text-muted (#{sizePlusMinus}#{sizeDeltaData[0]} #{sizeDeltaData[1].abbreviation}B)
+										if (result.blockstats.utxo_increase)
+											span #{plusMinus}#{result.blockstats.utxo_increase.toLocaleString()} 
+												span.text-muted (#{sizePlusMinus}#{sizeDeltaData[0]} 
+													small #{sizeDeltaData[1].abbreviation}B
+													span )
+										else
+											span 0
 
 							if (result.blockstats)
 								div.row
-									div(class=sumTableLabelClass) Min - Max Tx Size
+									div(class=sumTableLabelClass) Min, Max Tx Size
 									div.text-monospace(class=sumTableValueClass)
-										span #{result.blockstats.mintxsize.toLocaleString()}
+										if (result.blockstats.mintxsize)
+											span #{result.blockstats.mintxsize.toLocaleString()}
+										else
+											span 0
+
 										span.text-muted.mx-1 -
-										span #{result.blockstats.maxtxsize.toLocaleString()} B
+
+										if (result.blockstats.maxtxsize)
+											span #{result.blockstats.maxtxsize.toLocaleString()} 
+											small B
+										else
+											span 0
 
 							- var blockRewardMax = coinConfig.blockRewardFunction(result.getblock.height, global.activeBlockchain);
 							- var coinbaseTxTotalOutputValue = new Decimal(0);
@@ -121,7 +147,7 @@ div.tab-content
 							if (parseFloat(coinbaseTxTotalOutputValue) < blockRewardMax)
 								div.row
 									div(class=sumTableLabelClass)
-										span.border-dotted(data-toggle="tooltip" title="The miner of this block failed to collect this value. As a result, it is lost.") Fees Destroyed
+										span.border-dotted(data-toggle="tooltip" title="The miner of this block failed to collect this value. As a result, it is permanently lost.") Fees Destroyed
 									div.text-monospace.text-danger(class=sumTableValueClass)
 										- var currencyValue = new Decimal(blockRewardMax).minus(coinbaseTxTotalOutputValue);
 										include ./value-display.pug
@@ -130,14 +156,16 @@ div.tab-content
 								div.row
 									div(class=sumTableLabelClass) Weight
 									div.text-monospace(class=sumTableValueClass)
-										span(style="") #{result.getblock.weight.toLocaleString()} wu 
+										span #{result.getblock.weight.toLocaleString()} 
+											small wu 
 
 										span.text-muted  (#{new Decimal(100 * result.getblock.weight / coinConfig.maxBlockWeight).toDecimalPlaces(2)}% full)
 										
 
 							div.row
 								div(class=sumTableLabelClass) Size
-								div.text-monospace(class=sumTableValueClass) #{result.getblock.size.toLocaleString()} bytes
+								div.text-monospace(class=sumTableValueClass) #{result.getblock.size.toLocaleString()} 
+									small B
 
 							div.row
 								div(class=sumTableLabelClass) Confirmations
@@ -159,70 +187,104 @@ div.tab-content
 							hr
 
 							div.clearfix
-								div.row
-									div.summary-split-table-label Total
-									div.summary-split-table-content.text-monospace
-										- var currencyValue = new Decimal(result.getblock.totalFees);
-										include ./value-display.pug
+								if (result.blockstats.ins == 0 || !result.blockstats.ins)
+									span.text-monospace N/A (no inputs)
 
-								if (result.blockstats)
+								else
 									div.row
-										div.summary-split-table-label Percentiles
-											br
-											small.font-weight-normal (sat/vB)
+										div.summary-split-table-label Total
 										div.summary-split-table-content.text-monospace
-											div.clearfix
-												each item, itemIndex in [10, 25, 50, 75, 90]
-													div.float-left.mr-3
-														span.font-weight-bold #{item}%
-														br
-														span #{JSON.stringify(result.blockstats.feerate_percentiles[itemIndex])}
-
-								if (result.getblock.totalFees > 0)
-									div.row
-										div.summary-split-table-label Average Rate
-										div.summary-split-table-content.text-monospace
-											- var currencyValue = new Decimal(result.getblock.totalFees).dividedBy(result.getblock.strippedsize).times(coinConfig.baseCurrencyUnit.multiplier).toDecimalPlaces(1);
-											span #{currencyValue} sat/vB
-											br
-											span.text-muted (
-												- var currencyValue = new Decimal(result.getblock.totalFees).dividedBy(result.getblock.tx.length);
+											if (result.blockstats.totalfee)
+												- var currencyValue = new Decimal(result.blockstats.totalfee).dividedBy(coinConfig.baseCurrencyUnit.multiplier);
 												include ./value-display.pug
-												span )
 
-								if (result.blockstats)
-									div.row
-										div.summary-split-table-label Median Rate
-										div.summary-split-table-content.text-monospace
-											- var currencyValue = new Decimal(result.blockstats.medianfee).dividedBy(1000).toDecimalPlaces(1);
-											span #{currencyValue} sat/vB
+											else
+												- var currencyValue = new Decimal(result.getblock.totalFees);
+												include ./value-display.pug
 
-								if (result.blockstats)
-									div.row
-										div.summary-split-table-label Min, Max Rate
-										div.summary-split-table-content.text-monospace
-											- var currencyValue = new Decimal(result.blockstats.minfeerate).toDecimalPlaces(1);
-											span #{currencyValue}
-											
-											span.text-muted.mx-1 -
+									if (result.blockstats)
+										div.row
+											div.summary-split-table-label Percentiles
+												br
+												small.font-weight-normal (sat/vB)
+											div.summary-split-table-content.text-monospace
+												div.clearfix
+													each item, itemIndex in [10, 25, 50, 75, 90]
+														div.float-left.mr-3
+															span.font-weight-bold #{item}%
+															br
 
-											- var currencyValue = new Decimal(result.blockstats.maxfeerate).toDecimalPlaces(1);
-											span #{currencyValue}
+															if (result.blockstats.feerate_percentiles)
+																span #{JSON.stringify(result.blockstats.feerate_percentiles[itemIndex])}
+															else
+																span -
 
-											small.ml-1 sat/vB
+									if (result.getblock.totalFees > 0)
+										div.row
+											div.summary-split-table-label Average Rate
+											div.summary-split-table-content.text-monospace
+												if (result.blockstats)
+													span #{result.blockstats.avgfeerate}
 
-								if (result.blockstats)
-									div.row
-										div.summary-split-table-label
-											span.border-dotted(title="These are the min and max fees for individual transactions included in this block.", data-toggle="tooltip") Min, Max Fee
-										div.summary-split-table-content.text-monospace
-											- var currencyValue = new Decimal(result.blockstats.minfee).dividedBy(coinConfig.baseCurrencyUnit.multiplier);
-											include ./value-display.pug
-											
-											br
+												else
+													- var currencyValue = new Decimal(result.getblock.totalFees).dividedBy(result.getblock.strippedsize).times(coinConfig.baseCurrencyUnit.multiplier).toDecimalPlaces(1);
+													span #{currencyValue}
 
-											- var currencyValue = new Decimal(result.blockstats.maxfee).dividedBy(coinConfig.baseCurrencyUnit.multiplier);
-											include ./value-display.pug
+												small.ml-1 sat/vB
+
+												br
+												span.text-muted (
+													- var currencyValue = new Decimal(result.getblock.totalFees).dividedBy(result.getblock.tx.length);
+													include ./value-display.pug
+													span )
+
+									if (result.blockstats)
+										div.row
+											div.summary-split-table-label Median Rate
+											div.summary-split-table-content.text-monospace
+												if (result.blockstats.medianfee)
+													- var currencyValue = new Decimal(result.blockstats.medianfee).dividedBy(1000).toDecimalPlaces(1);
+													span #{currencyValue} 
+														small sat/vB
+												else
+													span 0
+
+									if (result.blockstats)
+										div.row
+											div.summary-split-table-label Min, Max Rate
+											div.summary-split-table-content.text-monospace
+												if (result.blockstats.minfeerate)
+													span #{result.blockstats.minfeerate.toLocaleString()}
+												else
+													span 0
+												
+												span.text-muted.mx-1 -
+
+												if (result.blockstats.maxfeerate)
+													span #{result.blockstats.maxfeerate.toLocaleString()}
+												else
+													span 0
+
+												small.ml-1 sat/vB
+
+									if (result.blockstats)
+										div.row
+											div.summary-split-table-label
+												span.border-dotted(title="These are the min and max fees for individual transactions included in this block.", data-toggle="tooltip") Min, Max Fee
+											div.summary-split-table-content.text-monospace
+												if (result.blockstats.minfee)
+													- var currencyValue = new Decimal(result.blockstats.minfee).dividedBy(coinConfig.baseCurrencyUnit.multiplier);
+													include ./value-display.pug
+												else
+													span 0
+												
+												br
+
+												if (result.blockstats.maxfee)
+													- var currencyValue = new Decimal(result.blockstats.maxfee).dividedBy(coinConfig.baseCurrencyUnit.multiplier);
+													include ./value-display.pug
+												else
+													span 0
 
 		div.card.shadow-sm.mb-3
 			div.card-body.px-2.px-md-3
@@ -276,7 +338,7 @@ div.tab-content
 									span #{chainworkData[0]}
 									span  x 10
 									sup #{chainworkData[1].exponent}
-									span  hashes
+									small  hashes
 									
 									span.text-muted  (#{result.getblock.chainwork.replace(/^0+/, '')})
 

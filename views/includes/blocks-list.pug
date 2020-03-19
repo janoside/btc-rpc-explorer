@@ -5,22 +5,31 @@ div.table-responsive
 				//th
 				th
 				th.data-header.text-right Height
-				th.data-header.text-right Date
-					small  (utc)
+
+				if (!hideTimestampColumn)
+					th.data-header.text-right
+						span.border-dotted(title="UTC timestamp of the block.", data-toggle="tooltip") Date
+
 				th.data-header.text-right Age
 				th.data-header.text-right
 					span.border-dotted(title="Time To Mine - The time it took to mine this block after the previous block. 'Fast' blocks (mined in < 5min) are shown in green; 'slow' blocks (mined in > 15min) are shown in red.", data-toggle="tooltip") T.T.M.
 				th.data-header.text-right Miner
-				th.data-header.text-right Transactions
-				th.data-header.text-right Avg Fee
-					small  (sat/vB)
-				th.data-header.text-right Total Fees
+				th.data-header.text-right
+					span.border-dotted(title="The number of transactions included in each block.", data-toggle="tooltip") N(tx)
+
+				if (blockstatsByHeight)
+					th.data-header.text-right
+						span.border-dotted(title="The total output of all transactions in each block (excluding coinbase transactions).", data-toggle="tooltip") Volume
+
+				th.data-header.text-right
+					span.border-dotted(title="The average fee (sat/vB) for all block transactions.", data-toggle="tooltip") Avg Fee
+				th.data-header.text-right Σ Fees
 				
 				//th.data-header.text-right Size (kB)
 
 				if (blocks && blocks.length > 0 && blocks[0].weight)
-					th.data-header.text-right Weight
-						small  (kWu)
+					th.data-header.text-right % Full
+						//span.border-dotted(title="Block weight, in kWu.", data-toggle="tooltip") Weight
 
 				else
 					th.data-header.text-right Size
@@ -56,16 +65,20 @@ div.table-responsive
 							if (blockIndex < blocks.length - 1)
 								- var timeDiff = moment.duration(moment.utc(new Date(parseInt(block.time) * 1000)).diff(moment.utc(new Date(parseInt(blocks[blockIndex + 1].time) * 1000))));
 
-						td.data-cell.text-monospace.text-right
-							- var timestampHuman = block.time;
-							include timestamp-human.pug
+						if (!hideTimestampColumn)
+							td.data-cell.text-monospace.text-right
+								- var timestampHuman = block.time;
+								include timestamp-human.pug
 							
 
 						td.data-cell.text-monospace.text-right
 							if (sort != "asc" && blockIndex == 0 && offset == 0 && timeAgoTime > (15 * 60 * 1000))
-								span.text-danger.border-dotted(title="It's been > 15 min since this latest block.", data-toggle="tooltip") #{utils.shortenTimeDiff(timeAgo.format())}
+								- var timeAgoTime = block.time;
+								span.text-danger.border-dotted(title="It's been > 15 min since this latest block.", data-toggle="tooltip")
+									include ./time-ago-text.pug
 							else
-								span #{utils.shortenTimeDiff(timeAgo.format())}
+								- var timeAgoTime = block.time;
+								include ./time-ago-text.pug
 
 						td.data-cell.text-monospace.text-right
 							if (timeDiff)
@@ -75,7 +88,14 @@ div.table-responsive
 								if (timeDiff > 900000)
 									- var colorClass = "text-danger";
 
-								span.font-weight-light(class=colorClass) #{utils.shortenTimeDiff(timeDiff.format())}
+								span.font-weight-light(class=colorClass)
+									span #{timeDiff.format()}
+									
+									if (false)
+										if (timeDiff.asMinutes() < 1)
+											span #{parseInt(timeDiff.asSeconds())}s
+										else
+											span #{parseInt(timeDiff.asMinutes())}m #{parseInt(timeDiff.asSeconds())}s
 
 							else
 								if (block.height == 0)
@@ -91,6 +111,16 @@ div.table-responsive
 
 						
 						td.data-cell.text-monospace.text-right #{block.tx.length.toLocaleString()}
+
+						if (blockstatsByHeight)
+							td.data-cell.text-monospace.text-right
+								if (blockstatsByHeight[block.height])
+									- var currencyValue = parseInt(new Decimal(blockstatsByHeight[block.height].total_out).dividedBy(coinConfig.baseCurrencyUnit.multiplier));
+									- var currencyValueDecimals = 0;
+									include ./value-display.pug
+
+								else
+									span 0
 
 						td.data-cell.text-monospace.text-right
 							- var currencyValue = new Decimal(block.totalFees).dividedBy(block.strippedsize).times(coinConfig.baseCurrencyUnit.multiplier).toDecimalPlaces(1);
@@ -115,18 +145,33 @@ div.table-responsive
 
 						if (blocks && blocks.length > 0 && blocks[0].weight)
 							td.data-cell.text-monospace.text-right
-								- var bWeightK = parseInt(block.weight / 1000);
-								- var fullPercent = new Decimal(100 * block.weight / coinConfig.maxBlockWeight).toDecimalPlaces(1);
+								if (true)
+									- var full = new Decimal(block.weight).dividedBy(coinConfig.maxBlockWeight).times(100);
+									- var full2 = full.toDP(2);
 
-								span #{bWeightK.toLocaleString()} 
-								small.font-weight-light.text-muted (#{fullPercent}%)
+									span #{full2} 
+									if (full > 90)
+										img(src="/img/block-fullness-3.png", style="width: 18px; height: 18px;")
+									else if (full > 50)
+										img(src="/img/block-fullness-2.png", style="width: 18px; height: 18px;")
+									else if (full > 25)
+										img(src="/img/block-fullness-1.png", style="width: 18px; height: 18px;")
+									else
+										img(src="/img/block-fullness-0.png", style="width: 18px; height: 18px;")
 
-								- var bSizeK = parseInt(block.size / 1000);
-								span.ml-1(data-toggle="tooltip", title=`Size: ${bSizeK.toLocaleString()} kB`)
-									i.fas.fa-ellipsis-h.text-muted
+								else
+									- var bWeightK = parseInt(block.weight / 1000);
+									- var fullPercent = new Decimal(100 * block.weight / coinConfig.maxBlockWeight).toDecimalPlaces(1);
 
-								div(class="progress", style="height: 4px;")
-									div(class="progress-bar", role="progressbar", style=("width: " + fullPercent + "%;"), aria-valuenow=parseInt(100 * block.weight / coinConfig.maxBlockWeight), aria-valuemin="0" ,aria-valuemax="100")
+									span #{bWeightK.toLocaleString()} 
+									small.font-weight-light.text-muted (#{fullPercent}%)
+
+									- var bSizeK = parseInt(block.size / 1000);
+									span.ml-1(data-toggle="tooltip", title=`Size: ${bSizeK.toLocaleString()} kB`)
+										i.fas.fa-ellipsis-h.text-muted
+
+									div(class="progress", style="height: 4px;")
+										div(class="progress-bar", role="progressbar", style=("width: " + fullPercent + "%;"), aria-valuenow=parseInt(100 * block.weight / coinConfig.maxBlockWeight), aria-valuemin="0" ,aria-valuemax="100")
 
 						else
 							td.data-cell.text-monospace.text-right

@@ -258,6 +258,15 @@ function onRpcConnectionVerified(getnetworkinfo, getblockchaininfo) {
 		// refresh exchange rate periodically
 		setInterval(utils.refreshExchangeRates, 1800000);
 	}
+
+	// UTXO pull
+	refreshUtxoSetSummary();
+	setInterval(refreshUtxoSetSummary, 30 * 60 * 1000);
+
+
+	// 1d / 7d volume
+	refreshNetworkVolumes();
+	setInterval(refreshNetworkVolumes, 30 * 60 * 1000);
 }
 
 function refreshUtxoSetSummary() {
@@ -279,6 +288,67 @@ function refreshUtxoSetSummary() {
 		result.lastUpdated = Date.now();
 
 		debugLog("Refreshed utxo summary: " + JSON.stringify(result));
+	});
+}
+
+function refreshNetworkVolumes() {
+	var cutoff1d = new Date().getTime() - (60 * 60 * 24 * 1000);
+	var cutoff7d = new Date().getTime() - (60 * 60 * 24 * 7 * 1000);
+
+	coreApi.getBlockchainInfo().then(function(result) {
+		var promises = [];
+
+		var blocksPerDay = 144 + 20; // 20 block padding
+
+		for (var i = 0; i < (blocksPerDay * 1); i++) {
+			promises.push(coreApi.getBlockStatsByHeight(result.blocks - i));
+		}
+
+		var startBlock = result.blocks;
+
+		var endBlock1d = result.blocks;
+		var endBlock7d = result.blocks;
+
+		var endBlockTime1d = 0;
+		var endBlockTime7d = 0;
+
+		Promise.all(promises).then(function(results) {
+			var volume1d = new Decimal(0);
+			var volume7d = new Decimal(0);
+
+			var blocks1d = 0;
+			var blocks7d = 0;
+
+			if (results && results.length > 0 && results[0] != null) {
+				for (var i = 0; i < results.length; i++) {
+					if (results[i].time * 1000 > cutoff1d) {
+						volume1d = volume1d.plus(new Decimal(results[i].total_out));
+						blocks1d++;
+
+						endBlock1d = results[i].height;
+						endBlockTime1d = results[i].time;
+					}
+
+					if (results[i].time * 1000 > cutoff7d) {
+						volume7d = volume7d.plus(new Decimal(results[i].total_out));
+						blocks7d++;
+
+						endBlock7d = results[i].height;
+						endBlockTime7d = results[i].time;
+					}
+				}
+
+				volume1d = volume1d.dividedBy(coinConfig.baseCurrencyUnit.multiplier);
+				volume7d = volume7d.dividedBy(coinConfig.baseCurrencyUnit.multiplier);
+
+				global.networkVolume = {d1:{amt:volume1d, blocks:blocks1d, startBlock:startBlock, endBlock:endBlock1d, startTime:results[0].time, endTime:endBlockTime1d}};
+
+				debugLog(`Network volume: ${JSON.stringify(global.networkVolume)}`);
+
+			} else {
+				debugLog("Unable to load network volume, likely due to bitcoind version older than 0.17.0 (the first version to support getblockstats).");
+			}
+		});
 	});
 }
 
@@ -381,10 +451,6 @@ app.continueStartup = function() {
 
 	utils.logMemoryUsage();
 	setInterval(utils.logMemoryUsage, 5000);
-
-
-	refreshUtxoSetSummary();
-	setInterval(refreshUtxoSetSummary, 30 * 60 * 1000);
 };
 
 app.use(function(req, res, next) {
@@ -416,6 +482,7 @@ app.use(function(req, res, next) {
 	res.locals.exchangeRates = global.exchangeRates;
 	res.locals.utxoSetSummary = global.utxoSetSummary;
 	res.locals.utxoSetSummaryPending = global.utxoSetSummaryPending;
+	res.locals.networkVolume = global.networkVolume;
 	
 	res.locals.host = req.session.host;
 	res.locals.port = req.session.port;

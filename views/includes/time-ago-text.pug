@@ -1,3 +1,17 @@
 - var timeAgo = moment.duration(moment.utc(new Date()).diff(moment.utc(new Date(parseInt(timeAgoTime) * 1000))));
 
-span #{utils.shortenTimeDiff(timeAgo.format())} ago
+if (timeAgo.asHours() < 1)
+	if (timeAgo.asMinutes() < 1)
+		span <1m
+	else
+		span #{timeAgo.minutes()}m 
+
+else
+	if (timeAgo.asHours() >= 1 && timeAgo.asHours() < 24)
+		span #{timeAgo.hours()}h 
+
+		if (timeAgo.minutes() > 0)
+			span #{timeAgo.minutes()}m
+
+	else
+		span #{utils.shortenTimeDiff(timeAgo.format())}

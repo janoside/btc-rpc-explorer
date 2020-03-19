@@ -43,6 +43,10 @@ router.get("/", function(req, res, next) {
 	}
 
 	res.locals.homepage = true;
+	
+	// don't need timestamp on homepage "blocks-list", this flag disables
+	res.locals.hideTimestampColumn = true;
+
 
 	// variables used by blocks-list.pug
 	res.locals.offset = 0;
@@ -71,24 +75,6 @@ router.get("/", function(req, res, next) {
 	coreApi.getBlockchainInfo().then(function(getblockchaininfo) {
 		res.locals.getblockchaininfo = getblockchaininfo;
 
-		if (getblockchaininfo.chain !== 'regtest') {
-			var targetBlocksPerDay = 24 * 60 * 60 / global.coinConfig.targetBlockTimeSeconds;
-
-			// promiseResults[4] (if not regtest)
-			promises.push(coreApi.getTxCountStats(targetBlocksPerDay / 4, -targetBlocksPerDay, "latest"));
-
-			var chainTxStatsIntervals = [ targetBlocksPerDay, targetBlocksPerDay * 7, targetBlocksPerDay * 30, targetBlocksPerDay * 365 ]
-				.filter(numBlocks => numBlocks <= getblockchaininfo.blocks);
-
-			res.locals.chainTxStatsLabels = [ "24 hours", "1 week", "1 month", "1 year" ]
-				.slice(0, chainTxStatsIntervals.length)
-				.concat("All time");
-
-			for (var i = 0; i < chainTxStatsIntervals.length; i++) {
-				promises.push(coreApi.getChainTxStats(chainTxStatsIntervals[i]));
-			}
-		}
-
 		var blockHeights = [];
 		if (getblockchaininfo.blocks) {
 			// +1 to page size here so we have the next block to calculate T.T.M.
@@ -99,6 +85,28 @@ router.get("/", function(req, res, next) {
 			// hack: default regtest node returns getblockchaininfo.blocks=0, despite having a genesis block
 			// hack this to display the genesis block
 			blockHeights.push(0);
+		}
+
+		// promiseResults[5]
+		promises.push(coreApi.getBlocksStatsByHeight(blockHeights));
+
+		if (getblockchaininfo.chain !== 'regtest') {
+			var targetBlocksPerDay = 24 * 60 * 60 / global.coinConfig.targetBlockTimeSeconds;
+
+			// promiseResults[6] (if not regtest)
+			promises.push(coreApi.getTxCountStats(targetBlocksPerDay / 4, -targetBlocksPerDay, "latest"));
+
+			var chainTxStatsIntervals = [ targetBlocksPerDay, targetBlocksPerDay * 7, targetBlocksPerDay * 30, targetBlocksPerDay * 365 ]
+				.filter(numBlocks => numBlocks <= getblockchaininfo.blocks);
+
+			res.locals.chainTxStatsLabels = [ "24 hours", "1 week", "1 month", "1 year" ]
+				.slice(0, chainTxStatsIntervals.length)
+				.concat("All time");
+
+			// promiseResults[7-X] (if not regtest)
+			for (var i = 0; i < chainTxStatsIntervals.length; i++) {
+				promises.push(coreApi.getChainTxStats(chainTxStatsIntervals[i]));
+			}
 		}
 
 		if (getblockchaininfo.chain !== 'regtest') {
@@ -113,6 +121,7 @@ router.get("/", function(req, res, next) {
 				res.locals.miningInfo = promiseResults[1];
 
 				var rawSmartFeeEsimates = promiseResults[2];
+
 				var smartFeeEsimates = {};
 
 				for (var i = 0; i < feeConfTargets.length; i++) {
@@ -125,12 +134,25 @@ router.get("/", function(req, res, next) {
 				res.locals.hashrate1d = promiseResults[3];
 				res.locals.hashrate7d = promiseResults[4];
 
+				
+				var rawblockstats = promiseResults[5];
+				if (rawblockstats && rawblockstats.length > 0 && rawblockstats[0] != null) {
+					res.locals.blockstatsByHeight = {};
+
+					for (var i = 0; i < rawblockstats.length; i++) {
+						var blockstats = rawblockstats[i];
+
+						res.locals.blockstatsByHeight[blockstats.height] = blockstats;
+					}
+				}
+				
+
 				if (getblockchaininfo.chain !== 'regtest') {
-					res.locals.txStats = promiseResults[5];
+					res.locals.txStats = promiseResults[6];
 
 					var chainTxStats = [];
 					for (var i = 0; i < res.locals.chainTxStatsLabels.length; i++) {
-						chainTxStats.push(promiseResults[i + 6]);
+						chainTxStats.push(promiseResults[i + 7]);
 					}
 
 					res.locals.chainTxStats = chainTxStats;
@@ -355,14 +377,39 @@ router.get("/blocks", function(req, res, next) {
 				}
 			}
 		}
-		
-		coreApi.getBlocksByHeight(blockHeights).then(function(blocks) {
-			res.locals.blocks = blocks;
+
+		var promises = [];
+
+		promises.push(coreApi.getBlocksByHeight(blockHeights));
+
+		promises.push(coreApi.getBlocksStatsByHeight(blockHeights));
+
+		Promise.all(promises).then(function(promiseResults) {
+			res.locals.blocks = promiseResults[0];
+			var rawblockstats = promiseResults[1];
+
+			if (rawblockstats != null && rawblockstats.length > 0 && rawblockstats[0] != null) {
+				res.locals.blockstatsByHeight = {};
+
+				for (var i = 0; i < rawblockstats.length; i++) {
+					var blockstats = rawblockstats[i];
+
+					res.locals.blockstatsByHeight[blockstats.height] = blockstats;
+				}
+			}
+
+			res.render("blocks");
+
+			next();
+
+		}).catch(function(err) {
+			res.locals.pageErrors.push(utils.logError("32974hrbfbvc", err));
 
 			res.render("blocks");
 
 			next();
 		});
+
 	}).catch(function(err) {
 		res.locals.userMessage = "Error: " + err;
 

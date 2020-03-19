@@ -322,8 +322,8 @@ function shortenTimeDiff(str) {
 	str = str.replace(" years", "y");
 	str = str.replace(" year", "y");
 
-	str = str.replace(" months", "m");
-	str = str.replace(" month", "m");
+	str = str.replace(" months", "mo");
+	str = str.replace(" month", "mo");
 
 	str = str.replace(" weeks", "w");
 	str = str.replace(" week", "w");

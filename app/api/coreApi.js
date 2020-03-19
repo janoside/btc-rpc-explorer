@@ -185,6 +185,12 @@ function getBlockStats(hash) {
 	});
 }
 
+function getBlockStatsByHeight(height) {
+	return tryCacheThenRpcApi(miscCache, "getBlockStatsByHeight-" + height, 1000 * 60 * 1000, function() {
+		return rpcApi.getBlockStatsByHeight(height);
+	});
+}
+
 function getUtxoSetSummary() {
 	return tryCacheThenRpcApi(miscCache, "getUtxoSetSummary", 15 * 60 * 1000, rpcApi.getUtxoSetSummary);
 }
@@ -626,6 +632,22 @@ function getBlocksByHeight(blockHeights) {
 	});
 }
 
+function getBlocksStatsByHeight(blockHeights) {
+	return new Promise(function(resolve, reject) {
+		var promises = [];
+		for (var i = 0; i < blockHeights.length; i++) {
+			promises.push(getBlockStatsByHeight(blockHeights[i]));
+		}
+
+		Promise.all(promises).then(function(results) {
+			resolve(results);
+
+		}).catch(function(err) {
+			reject(err);
+		});
+	});
+}
+
 function getBlockByHash(blockHash) {
 	return tryCacheThenRpcApi(blockCache, "getBlockByHash-" + blockHash, 3600000, function() {
 		return rpcApi.getBlockByHash(blockHash);
@@ -1000,4 +1022,6 @@ module.exports = {
 	getUtxoSetSummary: getUtxoSetSummary,
 	getNetworkHashrate: getNetworkHashrate,
 	getBlockStats: getBlockStats,
+	getBlockStatsByHeight: getBlockStatsByHeight,
+	getBlocksStatsByHeight: getBlocksStatsByHeight,
 };

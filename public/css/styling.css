@@ -219,20 +219,20 @@ strong {
 	}
 
 	.summary-table-label {
-		max-width: 11%;
+		max-width: 13%;
 		text-align: right;
 	}
 	.summary-table-content {
-		max-width: 89%;
+		max-width: 87%;
 		margin-bottom: 5px;
 	}
 
 	.summary-split-table-label {
-		max-width: 22%;
+		max-width: 24%;
 		text-align: right;
 	}
 	.summary-split-table-content {
-		max-width: 78%;
+		max-width: 76%;
 		margin-bottom: 5px;
 	}
 

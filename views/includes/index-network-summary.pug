@@ -150,52 +150,65 @@ div.row.index-summary
 							else
 								small.text-muted.border-dotted(title=utxoCalculatingDesc, data-toggle="tooltip") calculating...
 
-
-	if (exchangeRates)
+	if (networkVolume || exchangeRates)
 		div(class=colClass)
 			h5.h6 Financials
 
 			table.table.table-borderless.table-sm.table-hover
 				tbody
-					tr
-						th.px-2.px-lg-0.px-xl-2
-							i.fas.fa-money-bill-wave-alt.mr-1.summary-icon
-							span.border-dotted(data-toggle="tooltip", title=("Exchange-rate data from: " + coinConfig.exchangeRateData.jsonUrl)) Exchange Rate
-						td.text-right.text-monospace
-							span #{utils.formatValueInActiveCurrency(1.0)}
-
-					tr
-						th.px-2.px-lg-0.px-xl-2
-							i.fab.fa-btc.mr-1.summary-icon
-							span Sats Rate
-						td.text-right.text-monospace
-							- var satsRateData = utils.satoshisPerUnitOfActiveCurrency();
-							span #{satsRateData.amt}
-								small  #{satsRateData.unit}
-
-					if (utxoSetSummary || utxoSetSummaryPending)
+					if (exchangeRates)
 						tr
 							th.px-2.px-lg-0.px-xl-2
-								i.fas.fa-globe.mr-1.summary-icon
-								span Market Cap
+								i.fas.fa-money-bill-wave-alt.mr-1.summary-icon
+								span.border-dotted(data-toggle="tooltip", title=("Exchange-rate data from: " + coinConfig.exchangeRateData.jsonUrl)) Exchange Rate
 							td.text-right.text-monospace
-								if (utxoSetSummary)
-									- var activeCurrency = global.currencyFormatType.length > 0 ? global.currencyFormatType : "usd";
-									- var xxx = utils.formatLargeNumber(parseFloat(utxoSetSummary.total_amount) * exchangeRates[activeCurrency], 1);
+								span #{utils.formatValueInActiveCurrency(1.0)}
 
-									if (activeCurrency == "eur")
-										span €
+					if (exchangeRates)
+						tr
+							th.px-2.px-lg-0.px-xl-2
+								i.fab.fa-btc.mr-1.summary-icon
+								span Sats Rate
+							td.text-right.text-monospace
+								- var satsRateData = utils.satoshisPerUnitOfActiveCurrency();
+								span #{satsRateData.amt}
+									small  #{satsRateData.unit}
+
+					if (exchangeRates)
+						if (utxoSetSummary || utxoSetSummaryPending)
+							tr
+								th.px-2.px-lg-0.px-xl-2
+									i.fas.fa-globe.mr-1.summary-icon
+									span Market Cap
+								td.text-right.text-monospace
+									if (utxoSetSummary)
+										- var activeCurrency = global.currencyFormatType.length > 0 ? global.currencyFormatType : "usd";
+										- var xxx = utils.formatLargeNumber(parseFloat(utxoSetSummary.total_amount) * exchangeRates[activeCurrency], 1);
+
+										if (activeCurrency == "eur")
+											span €
+										else
+											span $
+
+										span #{xxx[0]}
+										if (xxx[1].textDesc)
+											span  #{xxx[1].textDesc}
+										else
+											span  x 10
+											sup #{xxx[1].exponent}
+										// ["154.9",{"val":1000000000,"name":"giga","abbreviation":"G","exponent":"9"}]
+
 									else
-										span $
+										small.text-muted.border-dotted(title=utxoCalculatingDesc, data-toggle="tooltip") calculating...
 
-									span #{xxx[0]}
-									if (xxx[1].textDesc)
-										span  #{xxx[1].textDesc}
-									else
-										span  x 10
-										sup #{xxx[1].exponent}
-									// ["154.9",{"val":1000000000,"name":"giga","abbreviation":"G","exponent":"9"}]
-
-								else
-									small.text-muted.border-dotted(title=utxoCalculatingDesc, data-toggle="tooltip") calculating...
-								
+					if (networkVolume)
+						tr
+							th.px-2.px-lg-0.px-xl-2
+								i.fas.fa-history.mr-1.summary-icon
+								span.border-dotted(title=`Total output of all transactions (excluding coinbase transactions) over the last 24 hrs (blocks: [#${networkVolume.d1.endBlock.toLocaleString()} - #${networkVolume.d1.startBlock.toLocaleString()}]).`, data-toggle="tooltip") Volume
+								small.ml-1 (24h)
+							td.text-right.text-monospace
+								- var currencyValue = parseInt(networkVolume.d1.amt);
+								- var currencyValueDecimals = 0;
+								include ./value-display.pug
+									

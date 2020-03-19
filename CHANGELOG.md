@@ -11,13 +11,14 @@
         * UTXO set size
         * Total coins in circulation
         * Market cap
+    * 24-hour network volume (sum of outputs)
 * Tweaks to data in blocks lists:
     * Simpler timestamp formatting for easy reading
     * Include "Time-to-Mine" (TTM) for each block (with green/red highlighting for "fast"/"slow" (<5min/>15min) blocks)
     * Display average fee in sat/vB
-    * Add total fees display
-    * Demote display of "block size" value to hover
-    * Show weight in kWu instead of Wu
+    * Add total fees
+    * Add output volume (if `getblockstats` rpc call is supported, i.e. 0.17.0+)
+    * Show %Full instead of weight/size
 * New data in "Summary" on Block pages (supported for bitcoind v0.17.0+)
     * Fee percentiles
     * Min / Max fees
@@ -31,7 +32,9 @@
 * Configurable UI "sub-header" links
 * Start of RPC API versioning support
 * Tweaked styling
-* Remove "Bitcoin Explorer" H1 from homepage (it's redundant)
+* Homepage tweaks
+    * Remove "Bitcoin Explorer" H1 (it's redundant)
+    * Hide the "Date" (timestamp) column for recent blocks (the Age+TTM is more valuable)
 * Updated miner configs
 
 #### v1.1.9
