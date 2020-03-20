@@ -18,10 +18,10 @@ script.
 		labels: [#{graphData.labels}],
 		data: {
 			datasets: [{
-				borderColor: '#36a2eb',
-				borderWidth: 1,
-				backgroundColor: '#84CBFA',
-				data: #{graphData.dataVar}
+				borderColor: '#007bff',
+				borderWidth: 2,
+				backgroundColor: 'rgba(0,0,0,0)',
+				data: #{graphData.dataVar},
 			}]
 		},
 		options: {
@@ -29,7 +29,7 @@ script.
 				duration:0
 			},
 			title: {
-				display: true,
+				display: false,
 				text: '#{graphData.title}'
 			},
 			legend: {

@@ -224,25 +224,29 @@ router.get("/node-status", function(req, res, next) {
 router.get("/mempool-summary", function(req, res, next) {
 	res.locals.satoshiPerByteBucketMaxima = coinConfig.feeSatoshiPerByteBucketMaxima;
 
-	coreApi.getMempoolTxids().then(function(mempooltxids) {
-		var debugMaxCount = 0;
+	coreApi.getMempoolInfo().then(function(mempoolinfo) {
+		res.locals.mempoolinfo = mempoolinfo;
 
-		if (debugMaxCount > 0) {
-			var debugtxids = [];
-			for (var i = 0; i < Math.min(10000, mempooltxids.length); i++) {
-				debugtxids.push(mempooltxids[i]);
+		coreApi.getMempoolTxids().then(function(mempooltxids) {
+			var debugMaxCount = 0;
+
+			if (debugMaxCount > 0) {
+				var debugtxids = [];
+				for (var i = 0; i < Math.min(debugMaxCount, mempooltxids.length); i++) {
+					debugtxids.push(mempooltxids[i]);
+				}
+
+				res.locals.mempooltxidChunks = utils.splitArrayIntoChunks(debugtxids, 25);
+
+			} else {
+				res.locals.mempooltxidChunks = utils.splitArrayIntoChunks(mempooltxids, 25);
 			}
+			
 
-			res.locals.mempooltxidChunks = utils.splitArrayIntoChunks(debugtxids, 25);
+			res.render("mempool-summary");
 
-		} else {
-			res.locals.mempooltxidChunks = utils.splitArrayIntoChunks(mempooltxids, 25);
-		}
-		
-
-		res.render("mempool-summary");
-
-		next();
+			next();
+		});
 
 	}).catch(function(err) {
 		res.locals.userMessage = "Error: " + err;

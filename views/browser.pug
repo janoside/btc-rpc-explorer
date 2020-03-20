@@ -10,98 +10,99 @@ block headContent
 		}
 
 block content
-	h1.h3 RPC Browser
+	h1.h3.mb-0 RPC Browser
 	hr
 
 	if (gethelp)
 		div.row
-			div(class="col-md-9")
+			div.col-md-9
 				if (methodhelp)
-					div.row
-						div.col
-							h4(style="display: inline-block;")
-								span Command: 
-								span.font-weight-light.text-monospace #{method}
-						div.col
-							a(href=("https://bitcoin.org/en/developer-reference#" + method), class="btn btn-primary float-md-right") See developer docs &raquo;
-								
-					
-					hr
+					div.card.shadow-sm.mb-3
+						div.card-body
+							div.clearfix
+								div.float-left
+									h3.h6.mb-0
+										span.font-weight-bold #{method}
+										span  Command
 
-					ul.nav.nav-tabs.mb-3
-						li.nav-item
-							a.nav-link.active(data-toggle="tab", href="#tab-execute", role="tab") Execute
-						li.nav-item
-							a.nav-link(data-toggle="tab", href="#tab-help-content", role="tab") Help Content
+								div.float-right
+									a(href=("https://bitcoin.org/en/developer-reference#" + method)) Docs for #{method} &raquo;
+							hr
 
-						if (methodhelp.args && methodhelp.args.length > 0)
-							li.nav-item
-								a(data-toggle="tab", href="#tab-parsed-args", class="nav-link", role="tab") Arguments Details
+							ul.nav.nav-tabs.mb-3
+								li.nav-item
+									a.nav-link.active(data-toggle="tab", href="#tab-execute", role="tab") Execute
+								li.nav-item
+									a.nav-link(data-toggle="tab", href="#tab-help-content", role="tab") Help Content
 
-					div.tab-content
-						div(id="tab-execute", class="tab-pane active pb-3", role="tabpanel")
-							if (methodResult)
-								div(class="mt-4")
-									h5(class="mt-3") Result
+								if (methodhelp.args && methodhelp.args.length > 0)
+									li.nav-item
+										a.nav-link(data-toggle="tab", href="#tab-parsed-args", role="tab") Arguments Details
 
-									pre(style="border: solid 1px #ccc;")
-										code(class="json bg-light", data-lang="json") #{JSON.stringify(methodResult, null, 4)}
+							div.tab-content
+								div.tab-pane.active(id="tab-execute", role="tabpanel")
+									if (methodResult)
+										div.mt-4
+											h3.h6.mt-3.mb-0 Result
 
-								hr
+											pre.border
+												code.json.bg-light(data-lang="json") #{JSON.stringify(methodResult, null, 4)}
 
-							form(method="get")
-								input(type="hidden", name="_csrf", value=csrfToken)
-								input(type="hidden", name="method", value=method)
+										hr
 
-								div(class="h5 mb-3") Arguments
+									form(method="get")
+										input(type="hidden", name="_csrf", value=csrfToken)
+										input(type="hidden", name="method", value=method)
 
-								if (false)
-									pre
-										code.json #{JSON.stringify(argValues, null, 4)}
-								
-								div(class="ml-3")
-									each argX, index in methodhelp.args
-										div(class="form-group")
-											label(for=("arg_" + argX.name))
-												strong #{argX.name}
-												span  (#{argX.properties.join(", ")})
-												if (argX.description)
-													span  - #{argX.description}
-												if (false && argX.detailsLines && argX.detailsLines.length > 0)
-													- var detailsLines = "";
-													each detailsLine in argX.detailsLines
-														- detailsLines = (detailsLines + "<br/>" + detailsLine);
-													i(class="fas fa-info-circle", data-toggle="tooltip", title=detailsLines)
-														
+										div.h6.mb-3 Arguments
+
+										if (false)
+											pre
+												code.json #{JSON.stringify(argValues, null, 4)}
+										
+										div.ml-3
+											each argX, index in methodhelp.args
+												div.form-group
+													label(for=("arg_" + argX.name))
+														strong #{argX.name}
+														span  (#{argX.properties.join(", ")})
+														if (argX.description)
+															span  - #{argX.description}
+														if (false && argX.detailsLines && argX.detailsLines.length > 0)
+															- var detailsLines = "";
+															each detailsLine in argX.detailsLines
+																- detailsLines = (detailsLines + "<br/>" + detailsLine);
+															i.fas.fa-info-circle(data-toggle="tooltip", title=detailsLines)
+																
 
 
-											- var valX = false;
-											if (argValues != null)
-												if (argValues[index] != null)
-													if (("" + argValues[index]) != "NaN")
-														- valX = JSON.stringify(argValues[index]);
-														if (valX.substring(0, 1) == "\"")
-															- valX = valX.substring(1);
-														if (valX.substring(valX.length - 1, valX.length) == "\"")
-															- valX = valX.substring(0, valX.length - 1);
+													- var valX = false;
+													if (argValues != null)
+														if (argValues[index] != null)
+															if (("" + argValues[index]) != "NaN")
+																- valX = JSON.stringify(argValues[index]);
+																if (valX.substring(0, 1) == "\"")
+																	- valX = valX.substring(1);
+																if (valX.substring(valX.length - 1, valX.length) == "\"")
+																	- valX = valX.substring(0, valX.length - 1);
 
-											input(id=("arg_" + argX.name), type="text", name=("args[" + index + "]"), placeholder=argX.name, class="form-control", value=(valX ? valX : ""))
+													input.form-control(id=("arg_" + argX.name), type="text", name=("args[" + index + "]"), placeholder=argX.name, value=(valX ? valX : ""))
 
-									if (!methodhelp.args || methodhelp.args.length == 0)
-										span.text-muted None
+											if (!methodhelp.args || methodhelp.args.length == 0)
+												span.text-muted None
 
-								hr
+										hr
 
-								input(type="submit", name="execute", value="Execute", class="btn btn-primary btn-block")
+										input.btn.btn-primary.px-3(type="submit", name="execute", value="Execute")
 
-						div(id="tab-help-content", class="tab-pane", role="tabpanel")
-							pre
-								code(data-lang="txt", class="json bg-light") #{methodhelp.string}
+								div.tab-pane(id="tab-help-content", role="tabpanel")
+									pre.border
+										code.json.bg-light(data-lang="txt") #{methodhelp.string}
 
-						if (methodhelp.args && methodhelp.args.length > 0)
-							div(id="tab-parsed-args", class="tab-pane", role="tabpanel")
-								pre
-									code(data-lang="json", class="json bg-light") #{JSON.stringify(methodhelp.args, null, 4)}
+								if (methodhelp.args && methodhelp.args.length > 0)
+									div.tab-pane(id="tab-parsed-args", role="tabpanel")
+										pre.border
+											code.json.bg-light(data-lang="json") #{JSON.stringify(methodhelp.args, null, 4)}
 
 					
 							
@@ -110,15 +111,16 @@ block content
 					:markdown-it
 						Browse RPC commands from the list. The list is built from the results of the `help` command and organized into sections accordingly.
 
-			div(class="col-md-3")
+			div.col-md-3
 				each section, sectionIndex in gethelp
-					h4 #{section.name}
-						small  (#{section.methods.length})
-					hr
-					
-					div(class="mb-4")
-						ol(style="padding-left: 30px;")
-							each methodX, methodIndex in section.methods
-								li
-									a(href=("/rpc-browser?method=" + methodX.name), style=(methodX.name == method ? "font-weight: bold; font-style: italic;" : false), class="text-monospace") #{methodX.name}
+					div.card.shadow-sm.mb-3
+						div.card-body
+							h4.h6.mb-0 #{section.name}
+								small  (#{section.methods.length})
+							hr
+							
+							ol(style="padding-left: 30px;")
+								each methodX, methodIndex in section.methods
+									li
+										a.text-monospace(href=("/rpc-browser?method=" + methodX.name), style=(methodX.name == method ? "font-weight: bold; font-style: italic;" : false)) #{methodX.name}
 
