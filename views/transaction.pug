@@ -39,7 +39,7 @@ block content
 			- totalOutputValue = totalOutputValue.plus(new Decimal(vout.value));
 
 		div.tab-content
-			div(id="tab-details", class="tab-pane active", role="tabpanel")
+			div.tab-pane.active(id="tab-details", role="tabpanel")
 				if (global.specialTransactions && global.specialTransactions[txid])
 					div(class="alert alert-primary shadow-sm", style="padding-bottom: 0;")
 						div(class="float-left", style="width: 55px; height: 55px; font-size: 18px;")
@@ -78,7 +78,7 @@ block content
 								div.row
 									div.summary-table-label Status
 									div.summary-table-content.text-monospace
-										span(class="text-warning") Unconfirmed
+										span.text-warning Unconfirmed
 
 								div.row
 									div.summary-table-label
@@ -149,24 +149,25 @@ block content
 											a(href=("/block-height/" + result.getrawtransaction.locktime)) #{result.getrawtransaction.locktime.toLocaleString()}
 											span  or later 
 											a(href="https://bitcoin.org/en/developer-guide#locktime-and-sequence-number", data-toggle="tooltip", title="More info about locktime", target="_blank") 
-												i(class="fas fa-info-circle")
+												i.fas.fa-info-circle
 										else
-											span Spendable after #{moment.utc(new Date(result.getrawtransaction.locktime * 1000)).format("Y-MM-DD HH:mm:ss")} (utc) 
+											span Spendable after #{moment.utc(new Date(result.getrawtransaction.locktime * 1000)).format("Y-MM-DD HH:mm:ss")} 
+												small utc 
 											a(href="https://bitcoin.org/en/developer-guide#locktime-and-sequence-number", data-toggle="tooltip", title="More info about locktime", target="_blank") 
-												i(class="fas fa-info-circle")
+												i.fas.fa-info-circle
 
 							if (isTxConfirmed)
 								div.row
 									div.summary-table-label Confirmations
 									div.summary-table-content.text-monospace
 										if (!result.getrawtransaction.confirmations || result.getrawtransaction.confirmations == 0)
-											strong(class="text-warning") 0 (unconfirmed)
+											span.text-warning.font-weight-bold 0 (unconfirmed)
 
 										else if (result.getrawtransaction.confirmations < 6)
-											strong(class="text-warning") #{result.getrawtransaction.confirmations}
+											span.text-warning.font-weight-bold #{result.getrawtransaction.confirmations}
 
 										else
-											strong(class="text-success") #{result.getrawtransaction.confirmations.toLocaleString()}
+											span.text-success.font-weight-bold #{result.getrawtransaction.confirmations.toLocaleString()}
 
 
 							if (result.getrawtransaction.vin[0].coinbase)
@@ -305,10 +306,7 @@ block content
 										li
 											a.text-monospace(href=("/tx/" + descendantTxid)) #{descendantTxid}
 
-			- var fontawesomeInputName = "sign-in-alt";
-			- var fontawesomeOutputName = "sign-out-alt";
-
-			div(id="tab-scripts", class="tab-pane", role="tabpanel")
+			div.tab-pane(id="tab-scripts", role="tabpanel")
 				div.card.shadow-sm.mb-3
 					div.card-body.px-2.px-md-3
 						h3.h6.mb-0 Input Scripts
@@ -322,10 +320,10 @@ block content
 							tbody
 								each vin, vinIndex in result.getrawtransaction.vin
 									tr
-										th(class="pl-0")
+										th.text-monospace
 											a(data-toggle="tooltip", title=("Input #" + vinIndex), style="white-space: nowrap;")
-												i(class=("fas fa-" + fontawesomeInputName + " mr-2"))
-												small ##{vinIndex.toLocaleString()}
+												span > 
+												span.font-weight-normal ##{vinIndex.toLocaleString()}
 
 										td.word-wrap.text-break.text-monospace
 											if (vin.scriptSig && vin.scriptSig.asm)
@@ -352,34 +350,34 @@ block content
 							tbody
 								each vout, voutIndex in result.getrawtransaction.vout
 									tr
-										th(class="pl-0")
+										th.text-monospace
 											a(data-toggle="tooltip", title=("Output #" + (voutIndex + 1)), style="white-space: nowrap;")
-												i(class=("fas fa-" + fontawesomeOutputName + " mr-2"))
-												small ##{voutIndex.toLocaleString()}
+												span < 
+												span.font-weight-normal ##{voutIndex.toLocaleString()}
 
-										td(class="word-wrap text-monospace")
+										td.text-monospace.word-wrap
 											if (vout.scriptPubKey && vout.scriptPubKey.asm)
 												span #{vout.scriptPubKey.asm}
 												if (vout.scriptPubKey.asm.startsWith("OP_RETURN"))
 													br
 													span.text-muted (decoded) #{utils.hex2ascii(vout.scriptPubKey.asm)}
 
-			div(id="tab-json", class="tab-pane", role="tabpanel")
+			div.tab-pane(id="tab-json", role="tabpanel")
 				h3.h5 Transaction
-				div(class="highlight")
+				div.highlight
 					pre
-						code(class="json bg-light", data-lang="json") #{JSON.stringify(result.getrawtransaction, null, 4)}
+						code.json.bg-light(data-lang="json") #{JSON.stringify(result.getrawtransaction, null, 4)}
 
 				h3.h5 UTXOs
-				div(class="highlight")
+				div.highlight
 					pre
-						code(class="json bg-light", data-lang="json") #{JSON.stringify(utxos, null, 4)}
+						code.json.bg-light(data-lang="json") #{JSON.stringify(utxos, null, 4)}
 
 				if (mempoolDetails)
 					h3.h5 Mempool Details
-					div(class="highlight")
+					div.highlight
 						pre
-							code(class="json bg-light", data-lang="json") #{JSON.stringify(mempoolDetails, null, 4)}
+							code.json.bg-light(data-lang="json") #{JSON.stringify(mempoolDetails, null, 4)}
 
 				//pre #{JSON.stringify(result.txInputs, null, 4)}
 

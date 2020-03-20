@@ -204,7 +204,7 @@ div.tab-content
 
 									if (result.blockstats)
 										div.row
-											div.summary-split-table-label Percentiles
+											div.summary-split-table-label Rate Percentiles
 												br
 												small.font-weight-normal (sat/vB)
 											div.summary-split-table-content.text-monospace
@@ -221,59 +221,53 @@ div.tab-content
 
 									if (result.getblock.totalFees > 0)
 										div.row
-											div.summary-split-table-label Average Rate
+											div.summary-split-table-label
+												span.border-dotted(title="These are the fee rates (fee per tx weight) for transactions in this block - min, avg, and max.", data-toggle="tooltip") Fee Rates
+												br
+												small (min, avg, max)
+												
 											div.summary-split-table-content.text-monospace
-												if (result.blockstats)
+												if (result.blockstats.minfeerate)
+													span #{result.blockstats.minfeerate}
+													small.ml-1 sat/vB
+												else
+													span ?
+
+												br
+
+												if (result.blockstats.avgfeerate)
 													span #{result.blockstats.avgfeerate}
+													small.ml-1 sat/vB
 
 												else
 													- var currencyValue = new Decimal(result.getblock.totalFees).dividedBy(result.getblock.strippedsize).times(coinConfig.baseCurrencyUnit.multiplier).toDecimalPlaces(1);
 													span #{currencyValue}
 
-												small.ml-1 sat/vB
-
 												br
-												span.text-muted (
-													- var currencyValue = new Decimal(result.getblock.totalFees).dividedBy(result.getblock.tx.length);
-													include ./value-display.pug
-													span )
-
-									if (result.blockstats)
-										div.row
-											div.summary-split-table-label Median Rate
-											div.summary-split-table-content.text-monospace
-												if (result.blockstats.medianfee)
-													- var currencyValue = new Decimal(result.blockstats.medianfee).dividedBy(1000).toDecimalPlaces(1);
-													span #{currencyValue} 
-														small sat/vB
-												else
-													span 0
-
-									if (result.blockstats)
-										div.row
-											div.summary-split-table-label Min, Max Rate
-											div.summary-split-table-content.text-monospace
-												if (result.blockstats.minfeerate)
-													span #{result.blockstats.minfeerate.toLocaleString()}
-												else
-													span 0
-												
-												span.text-muted.mx-1 -
 
 												if (result.blockstats.maxfeerate)
-													span #{result.blockstats.maxfeerate.toLocaleString()}
+													span #{result.blockstats.maxfeerate}
+													small.ml-1 sat/vB
 												else
-													span 0
-
-												small.ml-1 sat/vB
+													span ?
 
 									if (result.blockstats)
 										div.row
 											div.summary-split-table-label
-												span.border-dotted(title="These are the min and max fees for individual transactions included in this block.", data-toggle="tooltip") Min, Max Fee
+												span.border-dotted(title="These are the overall fee values (min, avg, max) for transactions included in this block. The min and max values correspond to specific transactions in this block; the avg is an estimate.", data-toggle="tooltip") Fee Values
+												br
+												small (min, avg, max)
 											div.summary-split-table-content.text-monospace
 												if (result.blockstats.minfee)
 													- var currencyValue = new Decimal(result.blockstats.minfee).dividedBy(coinConfig.baseCurrencyUnit.multiplier);
+													include ./value-display.pug
+												else
+													span 0
+
+												br
+
+												if (result.blockstats.avgfee)
+													- var currencyValue = new Decimal(result.blockstats.avgfee).dividedBy(coinConfig.baseCurrencyUnit.multiplier);
 													include ./value-display.pug
 												else
 													span 0

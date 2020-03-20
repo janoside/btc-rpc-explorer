@@ -64,10 +64,12 @@ block content
 											each argX, index in methodhelp.args
 												div.form-group
 													label(for=("arg_" + argX.name))
-														strong #{argX.name}
-														span  (#{argX.properties.join(", ")})
+														div
+															span.text-monospace.font-weight-bold #{argX.name}
+															span.text-monospace : 
+																span  #{argX.properties.join(", ")}
 														if (argX.description)
-															span  - #{argX.description}
+															span.text-muted Description: #{argX.description}
 														if (false && argX.detailsLines && argX.detailsLines.length > 0)
 															- var detailsLines = "";
 															each detailsLine in argX.detailsLines
