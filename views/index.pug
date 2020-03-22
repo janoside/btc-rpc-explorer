@@ -13,7 +13,7 @@ block content
 	else
 
 		if (config.demoSite && session.hideHomepageBanner != "true")
-			div(class="alert alert-primary alert-dismissible shadow-sm mb-4", role="alert")
+			div.alert.alert-primary.alert-dismissible.shadow-sm.mb-3(role="alert")
 				span
 					strong #{coinConfig.siteTitle}
 					span  is 
@@ -52,6 +52,15 @@ block content
 
 				a(href="/changeSetting?name=hideHomepageBanner&value=true", class="close", aria-label="Close", style="text-decoration: none;")
 					span(aria-hidden="true") &times;
+
+		if (getblockchaininfo.initialblockdownload)
+			div.alert.alert-warning.shadow-sm.border.mb-3
+				div.font-weight-bold.mb-1 Initial Block Download (IBD) - In Progress...
+
+				div.mb-1 Your node is currently downloading and verifying blockchain data. Until the process is finished, some features of this tool will be unusable and/or unreliable.
+
+				span.font-weight-bold Progress: 
+				span.text-monospace #{new Decimal(getblockchaininfo.verificationprogress).times(100).toDP(3)}%
 
 
 		div.row

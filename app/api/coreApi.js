@@ -242,6 +242,13 @@ function getTxCountStats(dataPtCount, blockStart, blockEnd) {
 			}
 
 			Promise.all(promises).then(function(results) {
+				if (results[0].name == "RpcError" && results[0].code == -8) {
+					// recently started node - no meaningful data to return
+					resolve(null);
+
+					return;
+				}
+
 				var txStats = {
 					txCounts: [],
 					txLabels: [],

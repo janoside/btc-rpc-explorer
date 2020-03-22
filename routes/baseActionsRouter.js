@@ -122,16 +122,23 @@ router.get("/", function(req, res, next) {
 				res.locals.mempoolInfo = promiseResults[0];
 				res.locals.miningInfo = promiseResults[1];
 
-				var rawSmartFeeEsimates = promiseResults[2];
+				var rawSmartFeeEstimates = promiseResults[2];
 
-				var smartFeeEsimates = {};
+				var smartFeeEstimates = {};
 
 				for (var i = 0; i < feeConfTargets.length; i++) {
-					smartFeeEsimates[feeConfTargets[i]] = parseInt(new Decimal(rawSmartFeeEsimates[i].feerate).times(coinConfig.baseCurrencyUnit.multiplier).dividedBy(1000));
+					var rawSmartFeeEstimate = rawSmartFeeEstimates[i];
+
+					if (rawSmartFeeEstimate.errors) {
+						smartFeeEstimates[feeConfTargets[i]] = "?";
+
+					} else {
+						smartFeeEstimates[feeConfTargets[i]] = parseInt(new Decimal(rawSmartFeeEstimate.feerate).times(coinConfig.baseCurrencyUnit.multiplier).dividedBy(1000));
+					}
 				}
 
+				res.locals.smartFeeEstimates = smartFeeEstimates;
 
-				res.locals.smartFeeEsimates = smartFeeEsimates;
 
 				res.locals.hashrate1d = promiseResults[3];
 				res.locals.hashrate7d = promiseResults[4];

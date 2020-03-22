@@ -67,14 +67,14 @@ div.row.index-summary
 						span.border-dotted(title="Current fee estimates (using 'estimatesmartfee') for getting a transaction included in 1 block, 6 blocks (1 hr), 144 blocks (1 day), or 1,008 blocks (1 week).", data-toggle="tooltip") Fee Targets
 						if (false)
 							small.ml-1 (1/h/d/w)
-					td.text-right.text-monospace #{smartFeeEsimates[1]}
+					td.text-right.text-monospace #{smartFeeEstimates[1]}
 						small.d-md-none  
 						small.text-muted /
-						span #{smartFeeEsimates[6]}
+						span #{smartFeeEstimates[6]}
 						small.text-muted /
-						span #{smartFeeEsimates[144]}
+						span #{smartFeeEstimates[144]}
 						small.text-muted /
-						span #{smartFeeEsimates[1008]}
+						span #{smartFeeEstimates[1008]}
 						small  sat/vB
 
 	div(class=colClass)
@@ -88,8 +88,11 @@ div.row.index-summary
 						//span Total Transactions
 						span Total Txs
 					td.text-right.text-monospace
-						- var totalTxData = utils.formatLargeNumber(txStats.totalTxCount, 2);
-						span.border-dotted(title=`${txStats.totalTxCount.toLocaleString()}`, data-toggle="tooltip") #{totalTxData[0]} #{totalTxData[1].abbreviation}
+						if (txStats && txStats.totalTxCount)
+							- var totalTxData = utils.formatLargeNumber(txStats.totalTxCount, 2);
+							span.border-dotted(title=`${txStats.totalTxCount.toLocaleString()}`, data-toggle="tooltip") #{totalTxData[0]} #{totalTxData[1].abbreviation}
+						else
+							span ???
 
 				if (getblockchaininfo.size_on_disk)
 					- var sizeData = utils.formatLargeNumber(getblockchaininfo.size_on_disk, 2);
