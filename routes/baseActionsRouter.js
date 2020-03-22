@@ -730,6 +730,41 @@ router.get("/block/:blockHash", function(req, res, next) {
 	});
 });
 
+router.get("/block-analysis/:blockHash", function(req, res, next) {
+	var blockHash = req.params.blockHash;
+
+	res.locals.blockHash = blockHash;
+
+	res.locals.result = {};
+
+	var txResults = [];
+
+	var promises = [];
+
+	res.locals.result = {};
+
+	coreApi.getBlockByHash(blockHash).then(function(block) {
+		res.locals.result.getblock = block;
+
+		res.render("block-analysis");
+
+		next();
+
+	}).catch(function(err) {
+		res.locals.pageErrors.push(utils.logError("943h84ehedr", err));
+
+		res.render("block-analysis");
+
+		next();
+	});
+});
+
+router.get("/block-analysis", function(req, res, next) {
+	res.render("block-analysis");
+
+	next();
+});
+
 router.get("/tx/:transactionId", function(req, res, next) {
 	var txid = req.params.transactionId;
 

@@ -43,7 +43,7 @@ div.row.text-monospace
 										span Newly minted coins
 									else
 										div.word-wrap
-											small.data-tag.bg-dark.mr-2 txo
+											small.data-tag.bg-dark.mr-2 #{utils.outputTypeAbbreviation(vout.scriptPubKey.type)}
 											a(href=("/tx/" + txInput.txid + "#output-" + txVin.vout)) #{utils.ellipsize(txInput.txid, 26)}
 												span  ##{txVin.vout}
 
@@ -155,20 +155,7 @@ div.row.text-monospace
 										if (true)
 											div.mb-tiny
 												small.data-tag.bg-dark
-													if (vout.scriptPubKey.type == "pubkey")
-														span(title="Output Type: Pay to Public Key", data-toggle="tooltip") p2pk
-													else if (vout.scriptPubKey.type == "pubkeyhash")
-														span(title="Output Type: Pay to Public Key Hash", data-toggle="tooltip") p2pkh
-													else if (vout.scriptPubKey.type == "scripthash")
-														span(title="Output Type: Pay to Script Hash", data-toggle="tooltip") p2sh
-													else if (vout.scriptPubKey.type == "witness_v0_keyhash")
-														span(title="Output Type: Witness, v0 Key Hash", data-toggle="tooltip") v0_p2wpkh
-													else if (vout.scriptPubKey.type == "witness_v0_scripthash")
-														span(title="Output Type: Witness, v0 Script Hash", data-toggle="tooltip") v0_p2wsh
-													else if (vout.scriptPubKey.type == "nonstandard")
-														span(title="Output Type: Non-Standard", data-toggle="tooltip") nonstandard
-													else
-														span ???
+													span(title=`Output Type: ${utils.outputTypeName(vout.scriptPubKey.type)}`, data-toggle="tooltip") #{utils.outputTypeAbbreviation(vout.scriptPubKey.type)}
 
 										each addr in vout.scriptPubKey.addresses
 											a(id=("output-" + voutIndex), href=("/address/" + addr))
@@ -200,20 +187,7 @@ div.row.text-monospace
 									else
 										div.mb-tiny
 											small.data-tag.bg-dark
-												if (vout.scriptPubKey.type == "pubkey")
-													span(title="Output Type: Pay to Public Key", data-toggle="tooltip") p2pk
-												else if (vout.scriptPubKey.type == "pubkeyhash")
-													span(title="Output Type: Pay to Public Key Hash", data-toggle="tooltip") p2pkh
-												else if (vout.scriptPubKey.type == "scripthash")
-													span(title="Output Type: Pay to Script Hash", data-toggle="tooltip") p2sh
-												else if (vout.scriptPubKey.type == "witness_v0_keyhash")
-													span(title="Output Type: Witness, v0 Key Hash", data-toggle="tooltip") v0_p2wpkh
-												else if (vout.scriptPubKey.type == "witness_v0_scripthash")
-													span(title="Output Type: Witness, v0 Script Hash", data-toggle="tooltip") v0_p2wsh
-												else if (vout.scriptPubKey.type == "nonstandard")
-													span(title="Output Type: Non-Standard", data-toggle="tooltip") nonstandard
-												else
-													span ???
+												span(title=`Output Type: ${utils.outputTypeName(vout.scriptPubKey.type)}`, data-toggle="tooltip") #{utils.outputTypeAbbreviation(vout.scriptPubKey.type)}
 
 										span
 											small.font-weight-bold asm: 

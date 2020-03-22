@@ -675,6 +675,44 @@ function buildQrCodeUrl(str, results) {
 	});
 }
 
+function outputTypeAbbreviation(outputType) {
+	var map = {
+		"pubkey": "p2pk",
+		"pubkeyhash": "p2pkh",
+		"scripthash": "p2sh",
+		"witness_v0_keyhash": "v0_p2wpkh",
+		"witness_v0_scripthash": "v0_p2wsh",
+		"nonstandard": "nonstandard",
+		"nulldata": "nulldata"
+	};
+
+	if (map[outputType]) {
+		return map[outputType];
+
+	} else {
+		return "???";
+	}
+}
+
+function outputTypeName(outputType) {
+	var map = {
+		"pubkey": "Pay to Public Key",
+		"pubkeyhash": "Pay to Public Key Hash",
+		"scripthash": "Pay to Script Hash",
+		"witness_v0_keyhash": "Witness, v0 Key Hash",
+		"witness_v0_scripthash": "Witness, v0 Script Hash",
+		"nonstandard": "Non-Standard",
+		"nulldata": "Null Data"
+	};
+
+	if (map[outputType]) {
+		return map[outputType];
+
+	} else {
+		return "???";
+	}
+}
+
 
 module.exports = {
 	reflectPromise: reflectPromise,
@@ -706,5 +744,7 @@ module.exports = {
 	logError: logError,
 	buildQrCodeUrls: buildQrCodeUrls,
 	ellipsize: ellipsize,
-	shortenTimeDiff: shortenTimeDiff
+	shortenTimeDiff: shortenTimeDiff,
+	outputTypeAbbreviation: outputTypeAbbreviation,
+	outputTypeName: outputTypeName
 };

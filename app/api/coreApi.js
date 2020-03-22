@@ -557,7 +557,7 @@ function getMempoolStats() {
 				var fee = txMempoolInfo.modifiedfee;
 				var size = txMempoolInfo.vsize ? txMempoolInfo.vsize : txMempoolInfo.size;
 				var feePerByte = txMempoolInfo.modifiedfee / size;
-				var satoshiPerByte = feePerByte * 100000000; // TODO: magic number - replace with coinConfig.baseCurrencyUnit.multiplier
+				var satoshiPerByte = feePerByte * global.coinConfig.baseCurrencyUnit.multiplier;
 				var age = Date.now() / 1000 - txMempoolInfo.time;
 
 				var addedToBucket = false;
@@ -753,6 +753,98 @@ function getRawTransactions(txids) {
 			reject(err);
 		});
 	});
+}
+
+function buildBlockAnalysisData(blockHeight, txids, txIndex, results, callback) {
+	if (txIndex >= txids.length) {
+		callback();
+
+		return;
+	}
+
+	var txid = txids[txIndex];
+
+	getRawTransactionsWithInputs([txid]).then(function(txData) {
+		results.push(summarizeBlockAnalysisData(blockHeight, txData.transactions[0], txData.txInputsByTransaction[txid]));
+		
+		buildBlockAnalysisData(blockHeight, txids, txIndex + 1, results, callback);
+	});
+}
+
+function summarizeBlockAnalysisData(blockHeight, tx, inputs) {
+	var txSummary = {};
+
+	txSummary.txid = tx.txid;
+	txSummary.version = tx.version;
+	txSummary.size = tx.size;
+
+	if (tx.vsize) {
+		txSummary.vsize = tx.vsize;
+	}
+
+	if (tx.weight) {
+		txSummary.weight = tx.weight;
+	}
+
+	if (tx.vin[0].coinbase) {
+		txSummary.coinbase = true;
+	}
+
+	txSummary.vin = [];
+	txSummary.totalInput = new Decimal(0);
+
+	if (txSummary.coinbase) {
+		var subsidy = global.coinConfig.blockRewardFunction(blockHeight, global.activeBlockchain);
+
+		txSummary.totalInput = txSummary.totalInput.plus(new Decimal(subsidy));
+
+		txSummary.vin.push({
+			coinbase: true,
+			value: subsidy
+		});
+
+	} else {
+		for (var i = 0; i < tx.vin.length; i++) {
+			var vin = tx.vin[i];
+			var inputVout = inputs[i].vout[vin.vout];
+
+			txSummary.totalInput = txSummary.totalInput.plus(new Decimal(inputVout.value));
+
+			txSummary.vin.push({
+				txid: tx.vin[i].txid,
+				vout: tx.vin[i].vout,
+				sequence: tx.vin[i].sequence,
+				value: inputVout.value,
+				type: inputVout.scriptPubKey.type,
+				reqSigs: inputVout.scriptPubKey.reqSigs,
+				addressCount: (inputVout.scriptPubKey.addresses ? inputVout.scriptPubKey.addresses.length : 0)
+			});
+		}
+	}
+
+
+	txSummary.vout = [];
+	txSummary.totalOutput = new Decimal(0);
+
+	for (var i = 0; i < tx.vout.length; i++) {
+		txSummary.totalOutput = txSummary.totalOutput.plus(new Decimal(tx.vout[i].value));
+
+		txSummary.vout.push({
+			value: tx.vout[i].value,
+			type: tx.vout[i].scriptPubKey.type,
+			reqSigs: tx.vout[i].scriptPubKey.reqSigs,
+			addressCount: tx.vout[i].scriptPubKey.addresses ? tx.vout[i].scriptPubKey.addresses.length : 0
+		});
+	}
+
+	if (txSummary.coinbase) {
+		txSummary.totalFee = new Decimal(0);
+		
+	} else {
+		txSummary.totalFee = txSummary.totalInput.minus(txSummary.totalOutput);
+	}
+
+	return txSummary;
 }
 
 function getRawTransactionsWithInputs(txids, maxInputs=-1) {
@@ -1030,4 +1122,5 @@ module.exports = {
 	getBlockStats: getBlockStats,
 	getBlockStatsByHeight: getBlockStatsByHeight,
 	getBlocksStatsByHeight: getBlocksStatsByHeight,
+	buildBlockAnalysisData: buildBlockAnalysisData
 };

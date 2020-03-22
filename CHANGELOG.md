@@ -1,4 +1,4 @@
-#### v1.2.0
+#### v2.0.0
 ##### 2020-02-23
 
 * Optional querying of UTXO set summary
@@ -28,6 +28,7 @@
     * Min / Max tx sizes
 * New tool `/block-stats` for viewing summarized block data from recent blocks
 * New tool `/mining-summary` for viewing summarized mining data from recent blocks
+* New tool `/block-analysis` for analyzing the details of transactions in a block
 * Change `/mempool-summary` to load data via ajax (UX improvement to give feedback while loading large data sets)
 * Zero-indexing for tx inputs/outputs (#173)
 * Labels for transaction output types

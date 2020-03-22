@@ -11,7 +11,7 @@ block content
 		div.card.shadow-sm.mb-3
 			div.card-body
 				h4.h6 Loading mempool transactions: 
-					span(id="block-progress-text")
+					span(id="progress-text")
 				div.progress(id="progress-bar", style="height: 7px;")
 					div.progress-bar(id="data-progress", role="progressbar", aria-valuenow="0", aria-valuemin="0" ,aria-valuemax="100")
 	
@@ -122,7 +122,7 @@ block endOfBody
 				var wPercent = `${parseInt(100 * (chunkIndexDone + 1) / parseFloat(chunkCount))}%`;
 				
 				$("#data-progress").css("width", wPercent);
-				$("#block-progress-text").text(`${Math.min(((chunkIndexDone + 1) * chunkSize), count).toLocaleString()} of ${count.toLocaleString()} (${wPercent})`);
+				$("#progress-text").text(`${Math.min(((chunkIndexDone + 1) * chunkSize), count).toLocaleString()} of ${count.toLocaleString()} (${wPercent})`);
 			};
 
 			var finishedCallback = function() {
@@ -263,29 +263,10 @@ block endOfBody
 				$("#progress-wrapper").hide();
 			};
 
-			getBlockData(results, chunkStrs, 0, statusCallback, finishedCallback);
+			getTxData(results, chunkStrs, 0, statusCallback, finishedCallback);
 		}
 
-		function updateCurrencyValue(element, val) {
-			$.ajax({
-				url: `/snippet/formatCurrencyAmount/${val}`
-
-			}).done(function(result) {
-				element.html(result);
-				$('[data-toggle="tooltip"]').tooltip();
-			});
-		}
-
-		function updateFeeRateValue(element, val, digits) {
-			$.ajax({
-				url: `/api/utils/formatCurrencyAmountInSmallestUnits/${val},${digits}`
-
-			}).done(function(result) {
-				element.html(`<span>${result.val} <small>${result.currencyUnit}/vB</small></span>`);
-			});
-		}
-
-		function getBlockData(results, chunkStrs, chunkIndex, statusCallback, finishedCallback) {
+		function getTxData(results, chunkStrs, chunkIndex, statusCallback, finishedCallback) {
 			if (chunkIndex > chunkStrs.length - 1) {
 				finishedCallback();
 
@@ -306,7 +287,7 @@ block endOfBody
 
 				statusCallback(chunkIndex, chunkStrs.length);
 				
-				getBlockData(results, chunkStrs, chunkIndex + 1, statusCallback, finishedCallback);
+				getTxData(results, chunkStrs, chunkIndex + 1, statusCallback, finishedCallback);
 			});
 		}
 

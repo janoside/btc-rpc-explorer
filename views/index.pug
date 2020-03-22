@@ -54,22 +54,6 @@ block content
 					span(aria-hidden="true") &times;
 
 
-		- var networkSummaryItemCount = 4;
-
-		if (getblockchaininfo.size_on_disk)
-			- networkSummaryItemCount++;
-
-		if (exchangeRates)
-			- networkSummaryItemCount++;
-
-		if (txStats)
-			- networkSummaryItemCount++;
-
-		- var networkSummaryColumnClass = "col-md-4";
-		if (networkSummaryItemCount > 6)
-			- networkSummaryColumnClass = "col-md-3";
-
-
 		div.row
 			- var summaryColCount = 8;
 			if (exchangeRates)

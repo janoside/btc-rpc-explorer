@@ -214,7 +214,7 @@ block endOfBody
 				$("#time-range-buttons .block-count-btn").removeClass("disabled");
 				$("#block-selections-buttons .dropdown-item").removeClass("disabled");
 
-				console.log(JSON.stringify(results));
+				//console.log(JSON.stringify(results));
 
 				var summary = summarizeBlockData(results);
 
@@ -269,8 +269,6 @@ block endOfBody
 
 				$("#summary-table").show();
 				$("#progress-wrapper").hide();
-
-				//$("#xyz").html(JSON.stringify(summary, null, 4));
 			};
 
 			getBlockData(results, chunks, 0, statusCallback, finishedCallback);
@@ -298,16 +296,6 @@ block endOfBody
 				statusCallback(chunkIndex, chunks.length);
 				
 				getBlockData(results, chunks, chunkIndex + 1, statusCallback, finishedCallback);
-			});
-		}
-
-		function updateCurrencyValue(element, val) {
-			$.ajax({
-				url: `/snippet/formatCurrencyAmount/${val}`
-
-			}).done(function(result) {
-				element.html(result);
-				$('[data-toggle="tooltip"]').tooltip();
 			});
 		}
 

@@ -146,7 +146,7 @@ block content
 									div.summary-table-content.text-monospace
 										if (result.getrawtransaction.locktime < 500000000)
 											span Spendable in block 
-											a(href=("/block-height/" + result.getrawtransaction.locktime)) #{result.getrawtransaction.locktime.toLocaleString()}
+											a(href=("/block-height/" + result.getrawtransaction.locktime)) ##{result.getrawtransaction.locktime.toLocaleString()}
 											span  or later 
 											a(href="https://bitcoin.org/en/developer-guide#locktime-and-sequence-number", data-toggle="tooltip", title="More info about locktime", target="_blank") 
 												i.fas.fa-info-circle

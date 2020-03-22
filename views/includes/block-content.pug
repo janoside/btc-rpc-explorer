@@ -25,7 +25,7 @@ ul.nav.nav-tabs.mb-3
 - var txCount = result.getblock.tx.length;
 
 div.tab-content
-	div(id="tab-details", class="tab-pane active", role="tabpanel")
+	div.tab-pane.active(id="tab-details", role="tabpanel")
 		if (global.specialBlocks && global.specialBlocks[result.getblock.hash])
 			div(class="alert alert-primary shadow-sm", style="padding-bottom: 0;")
 				div(class="float-left", style="width: 55px; height: 55px; font-size: 18px;")
@@ -76,11 +76,12 @@ div.tab-content
 							if (result.blockstats)
 								div.row
 									div(class=sumTableLabelClass)
-										span.border-dotted(title="Total value of all transaction outputs (excluding the coinbase transaction)", data-toggle="tooltip")
+										span.border-dotted(title="Total value of all transaction outputs", data-toggle="tooltip")
 											span Total Output
 									div.text-monospace(class=sumTableValueClass)
 										if (result.blockstats.total_out)
-											- var currencyValue = new Decimal(result.blockstats.total_out).dividedBy(coinConfig.baseCurrencyUnit.multiplier);
+											- var currencyValue = new Decimal(result.blockstats.total_out).plus(new Decimal(result.blockstats.totalfee)).plus(new Decimal(result.blockstats.subsidy));
+											- currencyValue = currencyValue.dividedBy(coinConfig.baseCurrencyUnit.multiplier);
 											include ./value-display.pug
 										else
 											span 0
@@ -228,7 +229,7 @@ div.tab-content
 												
 											div.summary-split-table-content.text-monospace
 												if (result.blockstats.minfeerate)
-													span #{result.blockstats.minfeerate}
+													span #{result.blockstats.minfeerate.toLocaleString()}
 													small.ml-1 sat/vB
 												else
 													span ?
@@ -236,7 +237,7 @@ div.tab-content
 												br
 
 												if (result.blockstats.avgfeerate)
-													span #{result.blockstats.avgfeerate}
+													span #{result.blockstats.avgfeerate.toLocaleString()}
 													small.ml-1 sat/vB
 
 												else
@@ -246,7 +247,7 @@ div.tab-content
 												br
 
 												if (result.blockstats.maxfeerate)
-													span #{result.blockstats.maxfeerate}
+													span #{result.blockstats.maxfeerate.toLocaleString()}
 													small.ml-1 sat/vB
 												else
 													span ?
@@ -357,11 +358,13 @@ div.tab-content
 			div.card-body.px-2.px-md-3
 				div.row
 					div.col-md-4
-						h2.h6.mb-0 #{txCount.toLocaleString()} 
+						h2.h6.mb-0.d-inline-block #{txCount.toLocaleString()} 
 							if (txCount == 1)
 								span Transaction
 							else
 								span Transactions
+
+						a.ml-2(href=`/block-analysis/${result.getblock.hash}`) See Transaction Analysis &raquo;
 
 					if (false || (!config.demoSite && !crawlerBot && txCount > 20))
 						div(class="col-md-8 text-right")

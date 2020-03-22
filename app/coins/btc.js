@@ -401,6 +401,13 @@ module.exports = {
 			referenceUrl: "https://bitcoin.stackexchange.com/questions/38994/will-there-be-21-million-bitcoins-eventually/38998#38998",
 			alertBodyHtml: "This is one of 2 'duplicate coinbase' transactions. An early bitcoin bug (fixed by <a href='https://github.com/bitcoin/bips/blob/master/bip-0030.mediawiki'>BIP30</a>) allowed identical coinbase transactions - a newer duplicate would overwrite older copies. This transaction was the coinbase transaction for <a href='/block-height/91812'>Block #91,812</a> and, ~3 hours later, <a href='/block-height/91842'>Block #91,842</a>. The 50 BTC claimed as the coinbase for block 91,812 were also overwritten and lost."
 		},
+		{
+			type: "tx",
+			date: "2020-03-11",
+			chain: "main",
+			txid: "eeea72f5c9fe07178013eac84c3705443321d5453befd7591f52d22ac39b3963",
+			summary: "500+ million USD transferred for < 1 USD fee (2020 prices)."
+		},
 
 
 		// testnet

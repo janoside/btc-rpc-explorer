@@ -1,0 +1,604 @@
+extends layout
+
+block headContent
+	title Block Analysis ##{result.getblock.height.toLocaleString()}, #{result.getblock.hash}
+
+block content
+	h1.h3 Block Analysis 
+		small.text-monospace(style="width: 100%;") ##{result.getblock.height.toLocaleString()}
+		br
+		small.text-monospace.word-wrap(style="width: 100%;") #{result.getblock.hash}
+	hr
+
+	div.mb-2
+		if (result.getblock)
+			a.btn.btn-sm.btn-primary.mb-1(href=("/block/" + result.getblock.hash)) &laquo; Back to Block Details: 
+				span.text-monospace ##{result.getblock.height.toLocaleString()}
+
+	div.row
+		- var sumTableLabelClass = (result.blockstats != null ? "summary-split-table-label" : "summary-table-label");
+		- var sumTableValueClass = (result.blockstats != null ? "summary-split-table-content" : "summary-table-content");
+
+		div.mb-3.col
+			div.card.shadow-sm(style="height: 100%;")
+				div.card-body.px-2.px-md-3
+					h3.h6.mb-0 Summary
+					hr
+
+					div.clearfix
+						div.row
+							div.summary-table-label Date
+							div.summary-table-content.text-monospace
+								- var timestampHuman = result.getblock.time;
+								include includes/timestamp-human.pug
+								small.ml-1 utc
+
+								- var timeAgoTime = result.getblock.time;
+								span.text-muted.ml-2 (
+									include includes/time-ago-text.pug
+									span  ago)
+
+						if (result.getblock.weight)
+							div.row
+								div.summary-table-label Weight
+								div.summary-table-content.text-monospace
+									span #{result.getblock.weight.toLocaleString()} 
+										small wu 
+
+									span.text-muted  (#{new Decimal(100 * result.getblock.weight / coinConfig.maxBlockWeight).toDecimalPlaces(2)}% full)
+									
+						else
+							div.row
+								div.summary-table-label Size
+								div.summary-table-content.text-monospace #{result.getblock.size.toLocaleString()}
+									small B
+
+						div.row
+							div.summary-table-label Transactions
+							div.summary-table-content.text-monospace #{result.getblock.tx.length.toLocaleString()}
+
+						div.row
+							div.summary-table-label Confirmations
+							div.summary-table-content.text-monospace
+								if (result.getblock.confirmations < 6)
+									span.font-weight-bold.text-warning #{result.getblock.confirmations.toLocaleString()} 
+										a(data-toggle="tooltip", title="Fewer than 6 confirmations is generally considered 'unsettled' for high-value transactions. The applicability of this guidance may vary.")
+											i(class="fas fa-unlock-alt")
+								else
+									span.font-weight-bold.text-success #{result.getblock.confirmations.toLocaleString()} 
+										a(data-toggle="tooltip", title="6 confirmations is generally considered 'settled'. High-value transactions may require more; low-value transactions may require less.")
+											i.fas.fa-lock
+
+	div#progress-wrapper
+		div.card.shadow-sm.mb-3
+			div.card-body
+				h4.h6 Loading transactions: 
+					span(id="progress-text")
+				div.progress(id="progress-bar", style="height: 7px;")
+					div.progress-bar(id="data-progress", role="progressbar", aria-valuenow="0", aria-valuemin="0" ,aria-valuemax="100")
+
+
+	div#main-content(style="display: none;")
+		div.row
+			div.col-lg-6.col-lg-left
+				div.card.shadow-sm.mb-3
+					div.card-body
+						h3.h6.mb-0 Top Value Transactions
+						hr
+
+						div.table-responsive
+							table.table.table-striped.mb-0
+								thead
+									tr
+										th
+										th.data-header Transaction
+										th.data-header.text-right Output Value
+
+								tbody(id="tbody-top-value-tx")
+									tr.text-monospace.row-prototype(style="display: none;")
+										td
+											small.text-muted.data-index
+
+										td.data-tx-link
+										td.text-right.data-tx-value
+
+			div.col-lg-6.col-lg-right
+				div.card.shadow-sm.mb-3
+					div.card-body
+						h3.h6.mb-0 Top Fee Transactions
+						hr
+
+						div.table-responsive
+							table.table.table-striped.mb-0
+								thead
+									tr
+										th
+										th.data-header Transaction
+										th.data-header.text-right Fee
+
+								tbody(id="tbody-top-fee-tx")
+									tr.text-monospace.row-prototype(style="display: none;")
+										td
+											small.text-muted.data-index
+
+										td.data-tx-link
+										td.text-right.data-tx-value
+
+			div.col-lg-6.col-lg-left.mb-3
+				div.card.shadow-sm(style="height: 100%;")
+					div.card-body
+						h3.h6.mb-0 Input Types
+						hr
+
+						table.table.table-striped.mb-0
+							tbody(id="tbody-input-types")
+								tr.text-monospace.row-prototype(style="display: none;")
+									td
+										small.data-tag.bg-dark.data-type
+
+									td.data-count
+								
+			div.col-lg-6.col-lg-right.mb-3
+				div.card.shadow-sm(style="height: 100%;")
+					div.card-body
+						h3.h6.mb-0 Output Types
+						hr
+
+						table.table.table-striped.mb-0
+							tbody(id="tbody-output-types")
+								tr.text-monospace.row-prototype(style="display: none;")
+									td
+										small.data-tag.bg-dark.data-type
+
+									td.data-count
+
+		div.row
+			div.col-lg-6.col-lg-left
+				div.card.shadow-sm.mb-3
+					div.card-body
+						h3.h6.mb-0 Transaction Value
+						hr
+
+						canvas(id="graph-tx-value")
+
+			div.col-lg-6.col-lg-right
+				div.card.shadow-sm.mb-3
+					div.card-body
+						h3.h6.mb-0 Transaction Value Distribution
+						hr
+
+						canvas(id="chart-tx-value-distribution")
+
+			div.col-lg-6.col-lg-left
+				div.card.shadow-sm.mb-3
+					div.card-body
+						h3.h6.mb-0 Transaction Fee
+						hr
+
+						canvas(id="graph-tx-fee")
+
+			div.col-lg-6.col-lg-right
+				div.card.shadow-sm.mb-3
+					div.card-body
+						h3.h6.mb-0 Transaction Fee Distribution
+						hr
+
+						canvas(id="chart-tx-fee-distribution")
+
+			div.col-lg-6.col-lg-left
+				div.card.shadow-sm.mb-3
+					div.card-body
+						h3.h6.mb-0 Transaction Input Count
+						hr
+
+						canvas(id="graph-tx-inputs")
+
+			div.col-lg-6.col-lg-right
+				div.card.shadow-sm.mb-3
+					div.card-body
+						h3.h6.mb-0 Transaction Output Count
+						hr
+
+						canvas(id="graph-tx-outputs")
+
+			div.col-lg-6.col-lg-left
+				div.card.shadow-sm.mb-3
+					div.card-body
+						h3.h6.mb-0 Transaction Size
+						hr
+
+						canvas(id="graph-tx-size")
+	
+
+
+block endOfBody
+	- var txidChunkSize = 10;
+
+	script(src="/js/chart.bundle.min.js", integrity="sha384-qgOtiGNaHh9fVWUnRjyHlV39rfbDcvPPkEzL1RHvsHKbuqUqM6uybNuVnghY2z4/")
+	script(src='/js/decimal.js')
+	script.
+		var txidChunkSize = !{txidChunkSize};
+		var txidChunks = !{JSON.stringify(utils.splitArrayIntoChunks(result.getblock.tx, txidChunkSize))};
+		var blockHeight = !{result.getblock.height};
+		var satsMultiplier = !{coinConfig.baseCurrencyUnit.multiplier};
+
+		$(document).ready(function() {
+			loadTransactions(txidChunks, txidChunkSize, txidChunks.length * txidChunkSize);
+		});
+
+		function loadTransactions(txidChunks, chunkSize, count) {
+			var chunkStrs = [];
+			
+			for (var i = 0; i < txidChunks.length; i++) {
+				var txidChunk = txidChunks[i];
+
+				var chunkStr = "";
+
+				for (var j = 0; j < txidChunk.length; j++) {
+					if (j > 0) {
+						chunkStr += ",";
+					}
+
+					chunkStr += txidChunk[j];
+				}
+
+				chunkStrs.push(chunkStr);
+			}
+
+			//alert(JSON.stringify(chunks));
+
+			var results = [];
+
+			var statusCallback = function(chunkIndexDone, chunkCount) {
+				//console.log("Done: " + Math.min(((chunkIndexDone + 1) * chunkSize), count) + " of " + count);
+
+				var wPercent = `${parseInt(100 * (chunkIndexDone + 1) / parseFloat(chunkCount))}%`;
+				
+				$("#data-progress").css("width", wPercent);
+				$("#progress-text").text(`${Math.min(((chunkIndexDone + 1) * chunkSize), count).toLocaleString()} of ${count.toLocaleString()} (${wPercent})`);
+			};
+
+			var finishedCallback = function() {
+				var summary = summarizeData(results);
+
+				fillTopValueTxTable(summary);
+				fillTopFeeTxTable(summary);
+				fillInputOutputTypesTable(summary);
+
+				createGraph("graph-tx-value", summary.txValueGraphData, "Value");
+				createGraph("graph-tx-fee", summary.txFeeGraphData, "Fee");
+				createGraph("graph-tx-inputs", summary.txInputCountGraphData, "Input Count");
+				createGraph("graph-tx-outputs", summary.txOutputCountGraphData, "Output Count");
+				createGraph("graph-tx-size", summary.txSizeGraphData, "Size");
+
+				createChart("chart-tx-value-distribution", summary.valueDistribution, summary.valueDistributionLabels);
+				createChart("chart-tx-fee-distribution", summary.feeDistribution, summary.feeDistributionLabels);
+
+				//$(".abc").text(JSON.stringify(summary));
+
+				$("#main-content").show();
+				$("#progress-wrapper").hide();
+			};
+
+			getTxData(results, chunkStrs, 0, statusCallback, finishedCallback);
+		}
+
+		function fillTopValueTxTable(data) {
+			var count = Math.min(10, data.topValueTxs.length);
+			
+			for (var i = 0; i < count; i++) {
+				var item = data.topValueTxs[i];
+
+				var row = $("#tbody-top-value-tx .row-prototype").clone();
+
+				row.removeClass("row-prototype");
+
+				row.find(".data-index").text((i + 1).toLocaleString());
+				row.find(".data-tx-link").html(`<a href='/tx/${item.txid}'>${item.txid}</a>`);
+				row.find(".data-tx-value").text(item.value);
+				
+				updateCurrencyValue(row.find(".data-tx-value"), item.value);
+
+				row.show();
+
+				$("#tbody-top-value-tx").append(row);
+			}
+		}
+
+		function fillTopFeeTxTable(data) {
+			var count = Math.min(10, data.topFeeTxs.length);
+			
+			for (var i = 0; i < count; i++) {
+				var item = data.topFeeTxs[i];
+
+				var row = $("#tbody-top-fee-tx .row-prototype").clone();
+
+				row.removeClass("row-prototype");
+
+				row.find(".data-index").text((i + 1).toLocaleString());
+				row.find(".data-tx-link").html(`<a href='/tx/${item.txid}'>${item.txid}</a>`);
+				row.find(".data-tx-value").text(item.value);
+				
+				updateCurrencyValue(row.find(".data-tx-value"), item.value);
+
+				row.show();
+
+				$("#tbody-top-fee-tx").append(row);
+			}
+		}
+
+		function fillInputOutputTypesTable(data) {
+			var sortedInputs = [];
+			for (var key in data.inputTypeCounts) {
+				if (data.inputTypeCounts.hasOwnProperty(key)) {
+					sortedInputs.push({type:key, count:data.inputTypeCounts[key]});
+				}
+			}
+
+			var sortedOutputs = [];
+			for (var key in data.outputTypeCounts) {
+				if (data.outputTypeCounts.hasOwnProperty(key)) {
+					sortedOutputs.push({type:key, count:data.outputTypeCounts[key]});
+				}
+			}
+
+			sortedInputs.sort(function(a, b) {
+				return b.count - a.count;
+			});
+
+			sortedOutputs.sort(function(a, b) {
+				return b.count - a.count;
+			});
+
+			for (var i = 0; i < sortedInputs.length; i++) {
+				var item = sortedInputs[i];
+
+				var row = $("#tbody-input-types .row-prototype").clone();
+
+				row.removeClass("row-prototype");
+
+				if (i == 0) {
+					row.addClass("table-borderless");
+				}
+				
+				// span(title=`Output Type: ${utils.outputTypeName(inputTypeKey)}`, data-toggle="tooltip") #{utils.outputTypeAbbreviation(inputTypeKey)}
+				row.find(".data-type").html(`<span title='Type: ${item.type}' data-toggle='tooltip'>${item.type}</span>`);
+				row.find(".data-count").text(item.count.toLocaleString());
+
+				row.show();
+
+				$("#tbody-input-types").append(row);
+			}
+
+			for (var i = 0; i < sortedOutputs.length; i++) {
+				var item = sortedOutputs[i];
+
+				var row = $("#tbody-output-types .row-prototype").clone();
+
+				row.removeClass("row-prototype");
+
+				if (i == 0) {
+					row.addClass("table-borderless");
+				}
+				
+				// span(title=`Output Type: ${utils.outputTypeName(inputTypeKey)}`, data-toggle="tooltip") #{utils.outputTypeAbbreviation(inputTypeKey)}
+				row.find(".data-type").html(`<span title='Type: ${item.type}' data-toggle='tooltip'>${item.type}</span>`);
+				row.find(".data-count").text(item.count.toLocaleString());
+
+				row.show();
+
+				$("#tbody-output-types").append(row);
+			}
+		}
+
+		function createGraph(graphId, data, yLabelStr) {
+			var ctx = document.getElementById(graphId).getContext('2d');
+			var graph = new Chart(ctx, {
+				type: 'line',
+				data: {
+					datasets: [{
+						borderColor: '#007bff',
+						borderWidth: 2,
+						backgroundColor: 'rgba(0,0,0,0)',
+						data: data,
+						pointRadius: 1
+					}]
+				},
+				options: {
+					legend: { display: false },
+					scales: {
+						xAxes: [{
+							type: 'linear',
+							position: 'bottom',
+							scaleLabel: {
+								display: true,
+								labelString: 'Index in Block'
+							},
+							//ticks: {
+							//	stepSize: 100,
+							//}
+						}],
+						yAxes: [{
+							scaleLabel: {
+								display: true,
+								labelString: yLabelStr
+							}
+						}]
+					}
+				}
+			});
+		}
+
+		function createChart(chartId, data, labels) {
+			var bgColors = [];
+
+			for (var i = 0; i < labels.length; i++) {
+				bgColors.push(`hsl(${(333 * i / labels.length)}, 100%, 50%)`);
+			}
+
+			var ctx1 = document.getElementById(chartId).getContext('2d');
+			var chart = new Chart(ctx1, {
+				type: 'bar',
+				data: {
+					labels: labels,
+					datasets: [{
+						data: data,
+						backgroundColor: bgColors
+					}]
+				},
+				options: {
+					legend: {
+						display: false
+					},
+					scales: {
+						yAxes: [{
+							ticks: {
+								beginAtZero:true
+							}
+						}]
+					}
+				}
+			});
+		}
+
+		function getTxData(results, chunks, chunkIndex, statusCallback, finishedCallback) {
+			if (chunkIndex > chunks.length - 1) {
+				finishedCallback();
+
+				return;
+			}
+
+			var url = `/api/block-tx-summaries/${blockHeight}/${chunks[chunkIndex]}`;
+			
+			//console.log(url);
+
+			$.ajax({
+				url: url
+
+			}).done(function(result) {
+				for (var i = 0; i < result.length; i++) {
+					results.push(result[i]);
+				}
+
+				statusCallback(chunkIndex, chunks.length);
+				
+				getTxData(results, chunks, chunkIndex + 1, statusCallback, finishedCallback);
+			});
+		}
+
+		function summarizeData(txResults) {
+			var analysis = {};
+
+			analysis.inputTypeCounts = {};
+			analysis.outputTypeCounts = {};
+			
+			analysis.txValues = [];
+			analysis.txValueGraphData = [];
+			
+			analysis.txFees = [];
+			analysis.txFeeGraphData = [];
+			analysis.txSizeGraphData = [];
+			analysis.txInputCountGraphData = [];
+			analysis.txOutputCountGraphData = [];
+
+			for (var i = 0; i < txResults.length; i++) {
+				var txSummary = txResults[i];
+
+				//console.log(JSON.stringify(txSummary));
+				
+				for (var j = 0; j < txSummary.vout.length; j++) {
+					var vout = txSummary.vout[j];
+					var outputType = vout.type;
+					
+					if (!analysis.outputTypeCounts[outputType]) {
+						analysis.outputTypeCounts[outputType] = 0;
+					}
+
+					analysis.outputTypeCounts[outputType]++;
+				}
+
+				analysis.txValues.push({txid:txSummary.txid, value:new Decimal(txSummary.totalOutput)});
+				analysis.txValueGraphData.push({x:i, y:new Decimal(txSummary.totalOutput).toNumber()});
+				
+				analysis.txFees.push({txid:txSummary.txid, value:new Decimal(txSummary.totalFee)});
+				analysis.txFeeGraphData.push({x:i, y:new Decimal(txSummary.totalFee).toNumber()});
+
+				analysis.txSizeGraphData.push({x:i, y:(txSummary.vsize ? txSummary.vsize : txSummary.size)});
+
+				analysis.txInputCountGraphData.push({x:i, y:txSummary.vin.length});
+				analysis.txOutputCountGraphData.push({x:i, y:txSummary.vout.length});
+
+				if (!txSummary.coinbase) {
+					for (var j = 0; j < txSummary.vin.length; j++) {
+						var vin = txSummary.vin[j];
+						
+						var inputType = vin.type;
+						
+						if (!analysis.inputTypeCounts[inputType]) {
+							analysis.inputTypeCounts[inputType] = 0;
+						}
+
+						analysis.inputTypeCounts[inputType]++;
+					}
+				}
+			}
+
+			analysis.txValues.sort(function(a, b) {
+				return b.value.cmp(a.value);
+			});
+
+			analysis.txFees.sort(function(a, b) {
+				return b.value.cmp(a.value);
+			});
+
+			analysis.topValueTxs = analysis.txValues.slice(0, Math.min(100, analysis.txValues.length));
+			analysis.topFeeTxs = analysis.txFees.slice(0, Math.min(100, analysis.txFees.length));
+
+			var topValue = new Decimal(analysis.txValues[parseInt(analysis.txValues.length * 0.1)].value).times(satsMultiplier);
+			var topFee = new Decimal(analysis.txFees[parseInt(analysis.txFees.length * 0.1)].value).times(satsMultiplier);
+
+			var topValueSats = parseInt(topValue);
+			var topFeeSats = parseInt(topFee);
+
+			var distributionBucketCount = 25;
+			
+			analysis.valueDistribution = [];
+			analysis.valueDistributionLabels = [];
+
+			analysis.feeDistribution = [];
+			analysis.feeDistributionLabels = [];
+
+			for (var i = 0; i < distributionBucketCount; i++) {
+				analysis.valueDistribution.push(0);
+				analysis.valueDistributionLabels.push(`[${new Decimal(i * topValueSats / distributionBucketCount).dividedBy(satsMultiplier).toDP(3)} - ${new Decimal((i + 1) * topValueSats / distributionBucketCount).dividedBy(satsMultiplier).toDP(3)})`);
+
+				analysis.feeDistribution.push(0);
+				analysis.feeDistributionLabels.push(`[${new Decimal(i * topFeeSats / distributionBucketCount).toDP(0)} - ${new Decimal((i + 1) * topFeeSats / distributionBucketCount).toDP(0)})`);
+			}
+
+			analysis.valueDistributionLabels[distributionBucketCount - 1] = `${new Decimal(topValueSats).dividedBy(satsMultiplier).toDP(3)}+`;
+			analysis.feeDistributionLabels[distributionBucketCount - 1] = `${topFeeSats}+`;
+
+			for (var i = 0; i < txResults.length; i++) {
+				var txSummary = txResults[i];
+
+				var valueSats = new Decimal(txSummary.totalOutput).times(satsMultiplier);
+				var feeSats = new Decimal(txSummary.totalFee).times(satsMultiplier);
+
+				var valueBucket = parseInt(distributionBucketCount * valueSats / topValueSats);
+				if (valueBucket >= distributionBucketCount) {
+					valueBucket = distributionBucketCount - 1;
+				}
+
+				var feeBucket = parseInt(distributionBucketCount * feeSats / topFeeSats);
+				if (feeBucket >= distributionBucketCount) {
+					feeBucket = distributionBucketCount - 1;
+				}
+
+				analysis.valueDistribution[valueBucket]++;
+				analysis.feeDistribution[feeBucket]++;
+			}
+
+			return analysis;
+		}
+

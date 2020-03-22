@@ -88,7 +88,7 @@ block content
 
 		div.row.clearfix
 			each graphId, graphIndex in graphIds
-				div.col-lg-6.float-left
+				div.col-lg-6.float-left(class=(graphIndex % 2 == 0 ? "col-lg-left" : "col-lg-right"))
 					div.card.shadow-sm.mb-3.graph-wrapper(id=`graph-wrapper-${graphId}`)
 						div.card-body
 							h3.h6.mb-0 #{graphTitles[graphIndex]}
@@ -381,6 +381,7 @@ block endOfBody
 					borderWidth: 2,
 					borderColor: colors[i],
 					backgroundColor: 'rgba(0, 0, 0, 0)',
+					pointRadius: 1
 				});
 
 				yaxes.push({

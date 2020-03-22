@@ -77,6 +77,49 @@ router.get("/mempool-txs/:txids", function(req, res, next) {
 	});
 });
 
+router.get("/raw-tx-with-inputs/:txid", function(req, res, next) {
+	var txid = req.params.txid;
+
+	var promises = [];
+
+	promises.push(coreApi.getRawTransactionsWithInputs([txid]));
+
+	Promise.all(promises).then(function(results) {
+		res.json(results);
+
+		next();
+
+	}).catch(function(err) {
+		res.json({success:false, error:err});
+
+		next();
+	});
+});
+
+router.get("/block-tx-summaries/:blockHeight/:txids", function(req, res, next) {
+	var blockHeight = parseInt(req.params.blockHeight);
+	var txids = req.params.txids.split(",");
+
+	var promises = [];
+
+	var results = [];
+
+	promises.push(new Promise(function(resolve, reject) {
+		coreApi.buildBlockAnalysisData(blockHeight, txids, 0, results, resolve);
+	}));
+
+	Promise.all(promises).then(function() {
+		res.json(results);
+
+		next();
+
+	}).catch(function(err) {
+		res.json({success:false, error:err});
+
+		next();
+	});
+});
+
 router.get("/utils/:func/:params", function(req, res, next) {
 	var func = req.params.func;
 	var params = req.params.params;
@@ -96,8 +139,6 @@ router.get("/utils/:func/:params", function(req, res, next) {
 		var parts = params.split(",");
 
 		data = utils.formatCurrencyAmountInSmallestUnits(new Decimal(parts[0]), parseInt(parts[1]));
-
-		console.log("ABC: " + JSON.stringify(data));
 
 	} else {
 		data = {success:false, error:`Unknown function: ${func}`};

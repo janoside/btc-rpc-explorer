@@ -205,7 +205,7 @@ div.row.index-summary
 						tr
 							th.px-2.px-lg-0.px-xl-2
 								i.fas.fa-history.mr-1.summary-icon
-								span.border-dotted(title=`Total output of all transactions (excluding coinbase transactions) over the last 24 hrs (blocks: [#${networkVolume.d1.endBlock.toLocaleString()} - #${networkVolume.d1.startBlock.toLocaleString()}]).`, data-toggle="tooltip") Volume
+								span.border-dotted(title=`Total output of all transactions over the last 24 hrs (blocks: [#${networkVolume.d1.endBlock.toLocaleString()} - #${networkVolume.d1.startBlock.toLocaleString()}]).`, data-toggle="tooltip") Volume
 								small.ml-1 (24h)
 							td.text-right.text-monospace
 								- var currencyValue = parseInt(networkVolume.d1.amt);
