@@ -63,13 +63,13 @@ block content
 								if (result.getblock.confirmations < 6)
 									span.font-weight-bold.text-warning #{result.getblock.confirmations.toLocaleString()} 
 										a(data-toggle="tooltip", title="Fewer than 6 confirmations is generally considered 'unsettled' for high-value transactions. The applicability of this guidance may vary.")
-											i(class="fas fa-unlock-alt")
+											i.fas.fa-unlock-alt
 								else
 									span.font-weight-bold.text-success #{result.getblock.confirmations.toLocaleString()} 
 										a(data-toggle="tooltip", title="6 confirmations is generally considered 'settled'. High-value transactions may require more; low-value transactions may require less.")
 											i.fas.fa-lock
 
-	div#progress-wrapper
+	div#progress-wrapper.mb-huge
 		div.card.shadow-sm.mb-3
 			div.card-body
 				h4.h6 Loading transactions: 
@@ -80,7 +80,7 @@ block content
 
 	div#main-content(style="display: none;")
 		div.row
-			div.col-lg-6.col-lg-left
+			div.col-xl-4
 				div.card.shadow-sm.mb-3
 					div.card-body
 						h3.h6.mb-0 Top Value Transactions
@@ -90,19 +90,15 @@ block content
 							table.table.table-striped.mb-0
 								thead
 									tr
-										th
 										th.data-header Transaction
 										th.data-header.text-right Output Value
 
 								tbody(id="tbody-top-value-tx")
 									tr.text-monospace.row-prototype(style="display: none;")
-										td
-											small.text-muted.data-index
-
 										td.data-tx-link
 										td.text-right.data-tx-value
 
-			div.col-lg-6.col-lg-right
+			div.col-xl-4
 				div.card.shadow-sm.mb-3
 					div.card-body
 						h3.h6.mb-0 Top Fee Transactions
@@ -112,19 +108,33 @@ block content
 							table.table.table-striped.mb-0
 								thead
 									tr
-										th
 										th.data-header Transaction
 										th.data-header.text-right Fee
 
 								tbody(id="tbody-top-fee-tx")
 									tr.text-monospace.row-prototype(style="display: none;")
-										td
-											small.text-muted.data-index
-
 										td.data-tx-link
 										td.text-right.data-tx-value
 
-			div.col-lg-6.col-lg-left.mb-3
+			div.col-xl-4
+				div.card.shadow-sm.mb-3
+					div.card-body
+						h3.h6.mb-0 Top Size Transactions
+						hr
+
+						div.table-responsive
+							table.table.table-striped.mb-0
+								thead
+									tr
+										th.data-header Transaction
+										th.data-header.text-right Size
+
+								tbody(id="tbody-top-size-tx")
+									tr.text-monospace.row-prototype(style="display: none;")
+										td.data-tx-link
+										td.text-right.data-tx-value
+
+			div.col-lg-6.mb-3
 				div.card.shadow-sm(style="height: 100%;")
 					div.card-body
 						h3.h6.mb-0 Input Types
@@ -138,7 +148,7 @@ block content
 
 									td.data-count
 								
-			div.col-lg-6.col-lg-right.mb-3
+			div.col-lg-6.mb-3
 				div.card.shadow-sm(style="height: 100%;")
 					div.card-body
 						h3.h6.mb-0 Output Types
@@ -153,7 +163,7 @@ block content
 									td.data-count
 
 		div.row
-			div.col-lg-6.col-lg-left
+			div.col-lg-6
 				div.card.shadow-sm.mb-3
 					div.card-body
 						h3.h6.mb-0 Transaction Value
@@ -161,7 +171,7 @@ block content
 
 						canvas(id="graph-tx-value")
 
-			div.col-lg-6.col-lg-right
+			div.col-lg-6
 				div.card.shadow-sm.mb-3
 					div.card-body
 						h3.h6.mb-0 Transaction Value Distribution
@@ -169,7 +179,7 @@ block content
 
 						canvas(id="chart-tx-value-distribution")
 
-			div.col-lg-6.col-lg-left
+			div.col-lg-6
 				div.card.shadow-sm.mb-3
 					div.card-body
 						h3.h6.mb-0 Transaction Fee
@@ -177,7 +187,7 @@ block content
 
 						canvas(id="graph-tx-fee")
 
-			div.col-lg-6.col-lg-right
+			div.col-lg-6
 				div.card.shadow-sm.mb-3
 					div.card-body
 						h3.h6.mb-0 Transaction Fee Distribution
@@ -185,7 +195,23 @@ block content
 
 						canvas(id="chart-tx-fee-distribution")
 
-			div.col-lg-6.col-lg-left
+			div.col-lg-6
+				div.card.shadow-sm.mb-3
+					div.card-body
+						h3.h6.mb-0 Transaction Size
+						hr
+
+						canvas(id="graph-tx-size")
+
+			div.col-lg-6
+				div.card.shadow-sm.mb-3
+					div.card-body
+						h3.h6.mb-0 Transaction Size Distribution
+						hr
+
+						canvas(id="chart-tx-size-distribution")
+
+			div.col-lg-6
 				div.card.shadow-sm.mb-3
 					div.card-body
 						h3.h6.mb-0 Transaction Input Count
@@ -193,21 +219,13 @@ block content
 
 						canvas(id="graph-tx-inputs")
 
-			div.col-lg-6.col-lg-right
+			div.col-lg-6
 				div.card.shadow-sm.mb-3
 					div.card-body
 						h3.h6.mb-0 Transaction Output Count
 						hr
 
 						canvas(id="graph-tx-outputs")
-
-			div.col-lg-6.col-lg-left
-				div.card.shadow-sm.mb-3
-					div.card-body
-						h3.h6.mb-0 Transaction Size
-						hr
-
-						canvas(id="graph-tx-size")
 	
 
 
@@ -221,6 +239,7 @@ block endOfBody
 		var txidChunks = !{JSON.stringify(utils.splitArrayIntoChunks(result.getblock.tx, txidChunkSize))};
 		var blockHeight = !{result.getblock.height};
 		var satsMultiplier = !{coinConfig.baseCurrencyUnit.multiplier};
+		var vByteSizes = false;
 
 		$(document).ready(function() {
 			loadTransactions(txidChunks, txidChunkSize, txidChunks.length * txidChunkSize);
@@ -263,6 +282,8 @@ block endOfBody
 
 				fillTopValueTxTable(summary);
 				fillTopFeeTxTable(summary);
+				fillTopSizeTxTable(summary);
+
 				fillInputOutputTypesTable(summary);
 
 				createGraph("graph-tx-value", summary.txValueGraphData, "Value");
@@ -273,6 +294,7 @@ block endOfBody
 
 				createChart("chart-tx-value-distribution", summary.valueDistribution, summary.valueDistributionLabels);
 				createChart("chart-tx-fee-distribution", summary.feeDistribution, summary.feeDistributionLabels);
+				createChart("chart-tx-size-distribution", summary.sizeDistribution, summary.sizeDistributionLabels);
 
 				//$(".abc").text(JSON.stringify(summary));
 
@@ -293,8 +315,7 @@ block endOfBody
 
 				row.removeClass("row-prototype");
 
-				row.find(".data-index").text((i + 1).toLocaleString());
-				row.find(".data-tx-link").html(`<a href='/tx/${item.txid}'>${item.txid}</a>`);
+				row.find(".data-tx-link").html(`<a href='/tx/${item.txid}'>${item.txid.substring(0, 14)}<span class='d-inline d-xl-none'>${item.txid.substring(14, 32)}</span><span class='d-none d-xxl-inline'>${item.txid.substring(14, 30)}</span>…</a>`);
 				row.find(".data-tx-value").text(item.value);
 				
 				updateCurrencyValue(row.find(".data-tx-value"), item.value);
@@ -315,8 +336,7 @@ block endOfBody
 
 				row.removeClass("row-prototype");
 
-				row.find(".data-index").text((i + 1).toLocaleString());
-				row.find(".data-tx-link").html(`<a href='/tx/${item.txid}'>${item.txid}</a>`);
+				row.find(".data-tx-link").html(`<a href='/tx/${item.txid}'>${item.txid.substring(0, 14)}<span class='d-inline d-xl-none'>${item.txid.substring(14, 32)}</span><span class='d-none d-xxl-inline'>${item.txid.substring(14, 30)}</span>…</a>`);
 				row.find(".data-tx-value").text(item.value);
 				
 				updateCurrencyValue(row.find(".data-tx-value"), item.value);
@@ -324,6 +344,25 @@ block endOfBody
 				row.show();
 
 				$("#tbody-top-fee-tx").append(row);
+			}
+		}
+
+		function fillTopSizeTxTable(data) {
+			var count = Math.min(10, data.topSizeTxs.length);
+			
+			for (var i = 0; i < count; i++) {
+				var item = data.topSizeTxs[i];
+
+				var row = $("#tbody-top-size-tx .row-prototype").clone();
+
+				row.removeClass("row-prototype");
+
+				row.find(".data-tx-link").html(`<a href='/tx/${item.txid}'>${item.txid.substring(0, 14)}<span class='d-inline d-xl-none'>${item.txid.substring(14, 32)}</span><span class='d-none d-xxl-inline'>${item.txid.substring(14, 30)}</span>…</a>`);
+				row.find(".data-tx-value").html(`<span>${parseInt(item.value).toLocaleString()} <small>${vByteSizes ? "v" : ""}B</small></span>`);
+
+				row.show();
+
+				$("#tbody-top-size-tx").append(row);
 			}
 		}
 
@@ -497,6 +536,8 @@ block endOfBody
 			
 			analysis.txFees = [];
 			analysis.txFeeGraphData = [];
+
+			analysis.txSizes = [];
 			analysis.txSizeGraphData = [];
 			analysis.txInputCountGraphData = [];
 			analysis.txOutputCountGraphData = [];
@@ -517,12 +558,17 @@ block endOfBody
 					analysis.outputTypeCounts[outputType]++;
 				}
 
+				if (txSummary.vsize) {
+					vByteSizes = true;
+				}
+
 				analysis.txValues.push({txid:txSummary.txid, value:new Decimal(txSummary.totalOutput)});
 				analysis.txValueGraphData.push({x:i, y:new Decimal(txSummary.totalOutput).toNumber()});
 				
 				analysis.txFees.push({txid:txSummary.txid, value:new Decimal(txSummary.totalFee)});
 				analysis.txFeeGraphData.push({x:i, y:new Decimal(txSummary.totalFee).toNumber()});
 
+				analysis.txSizes.push({txid:txSummary.txid, value:new Decimal(txSummary.vsize ? txSummary.vsize : txSummary.size)});
 				analysis.txSizeGraphData.push({x:i, y:(txSummary.vsize ? txSummary.vsize : txSummary.size)});
 
 				analysis.txInputCountGraphData.push({x:i, y:txSummary.vin.length});
@@ -551,11 +597,17 @@ block endOfBody
 				return b.value.cmp(a.value);
 			});
 
+			analysis.txSizes.sort(function(a, b) {
+				return b.value.cmp(a.value);
+			});
+
 			analysis.topValueTxs = analysis.txValues.slice(0, Math.min(100, analysis.txValues.length));
 			analysis.topFeeTxs = analysis.txFees.slice(0, Math.min(100, analysis.txFees.length));
+			analysis.topSizeTxs = analysis.txSizes.slice(0, Math.min(100, analysis.txSizes.length));
 
 			var topValue = new Decimal(analysis.txValues[parseInt(analysis.txValues.length * 0.1)].value).times(satsMultiplier);
 			var topFee = new Decimal(analysis.txFees[parseInt(analysis.txFees.length * 0.1)].value).times(satsMultiplier);
+			var topSize = new Decimal(analysis.txSizes[parseInt(analysis.txSizes.length * 0.1)].value);
 
 			var topValueSats = parseInt(topValue);
 			var topFeeSats = parseInt(topFee);
@@ -568,22 +620,30 @@ block endOfBody
 			analysis.feeDistribution = [];
 			analysis.feeDistributionLabels = [];
 
+			analysis.sizeDistribution = [];
+			analysis.sizeDistributionLabels = [];
+
 			for (var i = 0; i < distributionBucketCount; i++) {
 				analysis.valueDistribution.push(0);
 				analysis.valueDistributionLabels.push(`[${new Decimal(i * topValueSats / distributionBucketCount).dividedBy(satsMultiplier).toDP(3)} - ${new Decimal((i + 1) * topValueSats / distributionBucketCount).dividedBy(satsMultiplier).toDP(3)})`);
 
 				analysis.feeDistribution.push(0);
 				analysis.feeDistributionLabels.push(`[${new Decimal(i * topFeeSats / distributionBucketCount).toDP(0)} - ${new Decimal((i + 1) * topFeeSats / distributionBucketCount).toDP(0)})`);
+
+				analysis.sizeDistribution.push(0);
+				analysis.sizeDistributionLabels.push(`[${new Decimal(i * topSize / distributionBucketCount).toDP(0)} - ${new Decimal((i + 1) * topSize / distributionBucketCount).toDP(0)})`);
 			}
 
 			analysis.valueDistributionLabels[distributionBucketCount - 1] = `${new Decimal(topValueSats).dividedBy(satsMultiplier).toDP(3)}+`;
 			analysis.feeDistributionLabels[distributionBucketCount - 1] = `${topFeeSats}+`;
+			analysis.sizeDistributionLabels[distributionBucketCount - 1] = `${topSize}+`;
 
 			for (var i = 0; i < txResults.length; i++) {
 				var txSummary = txResults[i];
 
 				var valueSats = new Decimal(txSummary.totalOutput).times(satsMultiplier);
 				var feeSats = new Decimal(txSummary.totalFee).times(satsMultiplier);
+				var size = new Decimal(txSummary.vsize ? txSummary.vsize : txSummary.size);
 
 				var valueBucket = parseInt(distributionBucketCount * valueSats / topValueSats);
 				if (valueBucket >= distributionBucketCount) {
@@ -595,8 +655,14 @@ block endOfBody
 					feeBucket = distributionBucketCount - 1;
 				}
 
+				var sizeBucket = parseInt(distributionBucketCount * size / topSize);
+				if (sizeBucket >= distributionBucketCount) {
+					sizeBucket = distributionBucketCount - 1;
+				}
+
 				analysis.valueDistribution[valueBucket]++;
 				analysis.feeDistribution[feeBucket]++;
+				analysis.sizeDistribution[sizeBucket]++;
 			}
 
 			return analysis;

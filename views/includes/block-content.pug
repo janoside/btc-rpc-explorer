@@ -27,10 +27,10 @@ ul.nav.nav-tabs.mb-3
 div.tab-content
 	div.tab-pane.active(id="tab-details", role="tabpanel")
 		if (global.specialBlocks && global.specialBlocks[result.getblock.hash])
-			div(class="alert alert-primary shadow-sm", style="padding-bottom: 0;")
-				div(class="float-left", style="width: 55px; height: 55px; font-size: 18px;")
-					i(class="fas fa-certificate fa-2x", style="margin-top: 10px;")
-				h4(class="alert-heading h6 font-weight-bold") #{coinConfig.name} Fun
+			div.alert.alert-primary.shadow-sm.pb-0
+				div.float-left(style="width: 55px; height: 55px; font-size: 18px;")
+					i.fas.fa-certificate.fa-2x(style="margin-top: 10px;")
+				h4.alert-heading.h6.font-weight-bold #{coinConfig.name} Fun
 
 				// special transaction info
 				- var sbInfo = global.specialBlocks[result.getblock.hash];
@@ -172,11 +172,11 @@ div.tab-content
 								div(class=sumTableLabelClass) Confirmations
 								div.text-monospace(class=sumTableValueClass)
 									if (result.getblock.confirmations < 6)
-										span(class="font-weight-bold text-warning") #{result.getblock.confirmations.toLocaleString()} 
+										span.font-weight-bold.text-warning #{result.getblock.confirmations.toLocaleString()} 
 											a(data-toggle="tooltip", title="Fewer than 6 confirmations is generally considered 'unsettled' for high-value transactions. The applicability of this guidance may vary.")
-												i(class="fas fa-unlock-alt")
+												i.fas.fa-unlock-alt
 									else
-										span(class="font-weight-bold text-success font-weight-bold") #{result.getblock.confirmations.toLocaleString()} 
+										span.font-weight-bold.text-success #{result.getblock.confirmations.toLocaleString()} 
 											a(data-toggle="tooltip", title="6 confirmations is generally considered 'settled'. High-value transactions may require more; low-value transactions may require less.")
 												i.fas.fa-lock
 
@@ -367,7 +367,7 @@ div.tab-content
 						a.ml-2(href=`/block-analysis/${result.getblock.hash}`) See Transaction Analysis &raquo;
 
 					if (false || (!config.demoSite && !crawlerBot && txCount > 20))
-						div(class="col-md-8 text-right")
+						div.col-md-8.text-right
 							small.mr-1.text-muted Show
 							div.btn-group(role="group")
 								a.btn.btn-sm.btn-primary.px-2.py-0(href=(paginationBaseUrl + "?limit=20"), class=((limit == 20 && txCount > limit) ? "active" : false)) 20
@@ -427,7 +427,7 @@ div.tab-content
 
 						include ./pagination.pug
 					
-	div(id="tab-json", class="tab-pane", role="tabpanel")
+	div.tab-pane(id="tab-json", role="tabpanel")
 		- var blockDetails = JSON.parse(JSON.stringify(result.getblock));
 		- blockDetails.tx = "See 'Transaction IDs'";
 
@@ -443,15 +443,33 @@ div.tab-content
 
 		div.tab-content
 			div.tab-pane.active(id="tab-json-block-summary", role="tabpanel")
-				pre
-					code.json.bg-light #{JSON.stringify(blockDetails, null, 4)}
+				div.card.shadow-sm.mb-3
+					div.card-body
+						h4.h6.mb-0 Block Summary
+						hr
+
+						div.highlight
+							pre
+								code.json.bg-light #{JSON.stringify(blockDetails, null, 4)}
 
 			div.tab-pane(id="tab-json-tx-ids", role="tabpanel")
-				pre
-					code.json.bg-light #{JSON.stringify(result.getblock.tx, null, 4)}
+				div.card.shadow-sm.mb-3
+					div.card-body
+						h4.h6.mb-0 Transaction IDs
+						hr
+
+						div.highlight
+							pre
+								code.json.bg-light #{JSON.stringify(result.getblock.tx, null, 4)}
 
 			if (result.blockstats)
 				div.tab-pane(id="tab-json-blockstats", role="tabpanel")
-					pre
-						code.json.bg-light #{JSON.stringify(result.blockstats, null, 4)}
+					div.card.shadow-sm.mb-3
+						div.card-body
+							h4.h6.mb-0 Block Stats
+							hr
+
+							div.highlight
+								pre
+									code.json.bg-light #{JSON.stringify(result.blockstats, null, 4)}
 

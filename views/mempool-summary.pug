@@ -7,7 +7,7 @@ block content
 	h1.h3 Mempool Summary
 	hr
 
-	div#progress-wrapper
+	div#progress-wrapper.mb-huge
 		div.card.shadow-sm.mb-3
 			div.card-body
 				h4.h6 Loading mempool transactions: 
@@ -48,10 +48,10 @@ block content
 				h3.h6.mb-0 Transactions by fee rate
 				hr
 
-				canvas.mb-4(id="mempoolBarChart", height="100")
+				canvas.mb-3(id="mempoolBarChart", height="100")
 
 				div.table-responsive
-					table.table.table-striped.mb-4
+					table.table.table-striped.mb-3
 						thead
 							tr
 								th Fee Rate
@@ -72,14 +72,14 @@ block content
 				h3.h6.mb-0 Transactions by size
 				hr
 
-				canvas.mb-4(id="txSizesBarChart", height="100")
+				canvas.mb-3(id="txSizesBarChart", height="100")
 
 		div.card.shadow-sm.mb-3
 			div.card-body.px-2.px-md-3
 				h3.h6.mb-0 Transactions by age
 				hr
 
-				canvas.mb-4(id="txAgesBarChart", height="100")
+				canvas.mb-3(id="txAgesBarChart", height="100")
 		
 
 block endOfBody

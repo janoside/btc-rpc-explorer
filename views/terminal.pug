@@ -11,21 +11,21 @@ block content
 		div.col
 			if (!config.demoSite && (!config.credentials.rpc || !config.credentials.rpc.rpc))
 				span(style="float: right;")
-					a(href="/disconnect", class="btn btn-secondary") Disconnect from node
+					a.btn.btn-secondary(href="/disconnect") Disconnect from node
 	
 	hr
 
 	:markdown-it
 		Use this interactive terminal to send RPC commands to your node. Results will be shown inline. To browse all available RPC commands you can use the [RPC Browser](/rpc-browser).
 
-	div(class="card mb-3 shadow-sm")
+	div.card.shadow-sm.mb-3
 		div.card-body
 			form(id="terminal-form")
-				div(class="form-group")
+				div.form-group
 					label(for="input-cmd") Command
-					input(type="text", id="input-cmd", name="cmd", class="form-control")
+					input.form-control(type="text", id="input-cmd", name="cmd")
 
-				input(type="submit", class="btn btn-primary btn-block", value="Send")
+				input.btn.btn-primary.btn-block(type="submit", value="Send")
 
 	hr
 	

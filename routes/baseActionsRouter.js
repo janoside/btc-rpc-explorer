@@ -327,7 +327,7 @@ router.post("/connect", function(req, res, next) {
 
 	global.rpcClient = newClient;
 
-	req.session.userMessage = "<strong>Connected via RPC</strong>: " + username + " @ " + host + ":" + port;
+	req.session.userMessage = "<span class='font-weight-bold'>Connected via RPC</span>: " + username + " @ " + host + ":" + port;
 	req.session.userMessageType = "success";
 
 	res.redirect("/");

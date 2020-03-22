@@ -11,23 +11,23 @@ block content
 		div.card-body
 			p Below is a list of fun/interesting things in the #{coinConfig.name} blockchain. Some are historical firsts, others are just fun or cool.
 			
-			div(class="table-responsive")
-				table(class="table table-striped mt-4")
+			div.table-responsive
+				table.table.table-striped
 					thead
 						tr
-							th(class="data-header") Date
-							th(class="data-header") Description
-							th(class="data-header") Link
-							th(class="data-header") Reference
+							th.data-header Date
+							th.data-header Description
+							th.data-header Link
+							th.data-header Reference
 					tbody
 						each item, index in coinConfig.historicalData
 							if (item.chain == global.activeBlockchain)
 								tr
-									td(class="data-cell") #{item.date}
+									td.data-cell #{item.date}
 
-									td(class="data-cell") #{item.summary}
+									td.data-cell #{item.summary}
 									
-									td(class="data-cell text-monospace")
+									td.data-cell.text-monospace
 										if (item.type == "tx")
 											a(href=("/tx/" + item.txid), title=item.txid, data-toggle="tooltip") Tx #{item.txid.substring(0, 23)}...
 										else if (item.type == "block")
@@ -39,7 +39,7 @@ block content
 										else if (item.type == "link")
 											a(href=item.url) #{item.url.substring(0, 20)}...
 
-									td(class="data-cell")
+									td.data-cell
 										if (item.referenceUrl && item.referenceUrl.trim().length > 0)
 											- var matches = item.referenceUrl.match(/^https?\:\/\/([^\/:?#]+)(?:[\/:?#]|$)/i);
 
@@ -48,7 +48,7 @@ block content
 
 											if (domain)
 												a(href=item.referenceUrl, rel="nofollow") #{domain} 
-													i(class="fas fa-external-link-alt")
+													i.fas.fa-external-link-alt
 											else
 												a(href=item.referenceUrl, rel="nofollow") Reference
 										else

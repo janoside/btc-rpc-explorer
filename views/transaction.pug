@@ -41,11 +41,11 @@ block content
 		div.tab-content
 			div.tab-pane.active(id="tab-details", role="tabpanel")
 				if (global.specialTransactions && global.specialTransactions[txid])
-					div(class="alert alert-primary shadow-sm", style="padding-bottom: 0;")
-						div(class="float-left", style="width: 55px; height: 55px; font-size: 18px;")
-							i(class="fas fa-certificate fa-2x", style="margin-top: 10px;")
+					div.alert.alert-primary.shadow-sm.pb-0
+						div.float-left(style="width: 55px; height: 55px; font-size: 18px;")
+							i.fas.fa-certificate.fa-2x(style="margin-top: 10px;")
 
-						h4(class="alert-heading h6 font-weight-bold") #{coinConfig.name} Fun
+						h4.alert-heading.h6.font-weight-bold #{coinConfig.name} Fun
 
 						// special transaction info
 						- var stInfo = global.specialTransactions[txid];
@@ -211,7 +211,7 @@ block content
 											- var item1 = utils.formatCurrencyAmount(totalInputValue, currencyFormatType);
 											- var item2 = utils.formatCurrencyAmount(totalOutputValue, currencyFormatType);
 											span.ml-2(title=(item1.simpleVal + " - " + item2.simpleVal), data-toggle="tooltip")
-												i(class="fas fa-ellipsis-h")
+												i.fas.fa-ellipsis-h
 
 								if (feePaid > 0)
 									div.row
@@ -363,15 +363,23 @@ block content
 													span.text-muted (decoded) #{utils.hex2ascii(vout.scriptPubKey.asm)}
 
 			div.tab-pane(id="tab-json", role="tabpanel")
-				h3.h5 Transaction
-				div.highlight
-					pre
-						code.json.bg-light(data-lang="json") #{JSON.stringify(result.getrawtransaction, null, 4)}
+				div.card.shadow-sm.mb-3
+					div.card-body
+						h3.h6.mb-0 Transaction
+						hr
 
-				h3.h5 UTXOs
-				div.highlight
-					pre
-						code.json.bg-light(data-lang="json") #{JSON.stringify(utxos, null, 4)}
+						div.highlight
+							pre
+								code.json.bg-light(data-lang="json") #{JSON.stringify(result.getrawtransaction, null, 4)}
+
+				div.card.shadow-sm.mb-3
+					div.card-body
+						h3.h6.mb-0 UTXOs
+						hr
+							
+						div.highlight
+							pre
+								code.json.bg-light(data-lang="json") #{JSON.stringify(utxos, null, 4)}
 
 				if (mempoolDetails)
 					h3.h5 Mempool Details

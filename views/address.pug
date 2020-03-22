@@ -6,26 +6,27 @@ block headContent
 block content
 	if (result && result.validateaddress)
 		if (!result.validateaddress.isvalid)
-			h1(class="h3 text-danger") Invalid Address
-				br
-				small(class="text-monospace") #{address}
+			div.alert.alert-danger.border-danger.mb-huge
+				h1.h6.font-weight-bold Invalid Address
+				span.text-monospace #{address}
+				
 		else
 			h1.h3 Address
 				br
-				small(class="text-monospace") #{address}
+				small.text-monospace #{address}
 			
 			hr
 
 			if (payoutAddressForMiner)
-				div(class="alert alert-primary shadow-sm", style="padding-bottom: 0;")
-					div(class="float-left", style="width: 50px; height: 50px; font-size: 18px;")
-						i(class="fas fa-certificate fa-2x", style="margin-top: 10px;")
+				div.alert.alert-primary.shadow-sm.pb-0
+					div.float-left(style="width: 50px; height: 50px; font-size: 18px;")
+						i.fas.fa-certificate.fa-2x(style="margin-top: 10px;")
 
-					h4(class="alert-heading h6 font-weight-bold") #{coinConfig.name} Fun
+					h4.alert-heading.h6.font-weight-bold #{coinConfig.name} Fun
 
 					p
 						span This looks like a miner payout address for  
-						span(class="font-weight-bold") #{payoutAddressForMiner.name}
+						span.font-weight-bold #{payoutAddressForMiner.name}
 						if (coinConfig.miningPoolsConfigUrls.length > 1)
 							span  (see the configurations: 
 							each item, index in coinConfig.miningPoolsConfigUrls
@@ -39,11 +40,11 @@ block content
 							span )
 
 			else if (global.specialAddresses[address] && global.specialAddresses[address].type == "fun")
-				div(class="alert alert-primary shadow-sm", style="padding-bottom: 0;")
-					div(class="float-left", style="width: 50px; height: 50px; font-size: 18px;")
-						i(class="fas fa-certificate fa-2x", style="margin-top: 10px;")
+				div.alert.alert-primary.shadow-sm.pb-0
+					div.float-left(style="width: 50px; height: 50px; font-size: 18px;")
+						i.fas.fa-certificate.fa-2x(style="margin-top: 10px;")
 
-					h4(class="alert-heading h6 font-weight-bold") #{coinConfig.name} Fun
+					h4.alert-heading.h6.font-weight-bold #{coinConfig.name} Fun
 
 					// special address info
 					- var saInfo = global.specialAddresses[address].addressInfo;
@@ -76,14 +77,14 @@ block content
 
 
 			div.tab-content
-				div(id="tab-details", class="tab-pane active", role="tabpanel")
+				div.tab-pane.active(id="tab-details", role="tabpanel")
 
 					if (false && config.electrumXServers && config.electrumXServers.length > 0)
 						if (session.hideElectrumTrustWarnings != "true")
-							div(class="alert alert-primary alert-dismissible clearfix shadow-sm", role="alert")
+							div.alert.alert-primary.alert-dismissible.clearfix.shadow-sm(role="alert")
 								span  this explorer is database-free, it doesn't natively support address balances and transaction histories. In order to provide this functionality, address balances and transaction history can be requested from a configurable set of ElectrumX servers. If multiple ElectrumX servers are configured, the results are cross-referenced and conflicts noted. For the transaction history displayed below, only the transaction identifiers from ElectrumX are used; the transaction details are requested via RPC from this app's primary node, as usual.
 
-								a(href="/changeSetting?name=hideElectrumTrustWarnings&value=true", class="close", aria-label="Close", style="text-decoration: none;")
+								a.close(href="/changeSetting?name=hideElectrumTrustWarnings&value=true", aria-label="Close", style="text-decoration: none;")
 									span(aria-hidden="true") &times;
 
 					div.card.shadow-sm.mb-3
@@ -145,7 +146,7 @@ block content
 											div.row
 												div.summary-split-table-label Balance
 												div.summary-split-table-content.text-monospace
-													span(class="text-warning") Conflicted ElectrumX Results
+													span.text-warning Conflicted ElectrumX Results
 
 													each item in balance.conflictedResults
 														- var currencyValue = item.confirmed / coinConfig.baseCurrencyUnit.multiplier;
@@ -198,17 +199,17 @@ block content
 											div.summary-split-table-label #{flagName}
 											div.summary-split-table-content.text-monospace
 												if (flags[index])
-													i(class="fas fa-check text-success")
+													i.fas.fa-check.text-success
 												else
-													i(class="fas fa-times text-warning")
+													i.fas.fa-times.text-warning
 
 					if (false)
-						div(class="card mb-3 shadow-sm")
+						div.card.shadow-sm.mb-3
 							div.card-header
-								span(class="h6") Flags
+								span.h6 Flags
 							div.card-body
-								div(class="table-responsive")
-									table(class="table text-center")
+								div.table-responsive
+									table.table.text-center
 										thead
 											tr
 												th Is Valid?
@@ -224,9 +225,9 @@ block content
 												each flag in flags
 													td
 														if (flag)
-															i(class="fas fa-check text-success")
+															i.fas.fa-check.text-success
 														else
-															i(class="fas fa-times text-warning")
+															i.fas.fa-times.text-warning
 
 					div.card.shadow-sm.mb-3
 						div.card-body
@@ -248,21 +249,21 @@ block content
 												small.text-muted.border-dotted.ml-2(title=`The list of transaction IDs for this address was queried from ${config.addressApi}` data-toggle="tooltip") Trust Note
 
 								if (!crawlerBot && txids && txids.length > 1 && addressApiSupport.sortDesc && addressApiSupport.sortAsc)
-									div(class="float-right")
-										a(href="#", class="pull-right dropdown-toggle", data-toggle="dropdown", aria-haspopup="true", aria-expanded="false")
+									div.float-right
+										a.pull-right.dropdown-toggle(href="#", data-toggle="dropdown", aria-haspopup="true", aria-expanded="false")
 											if (sort == "desc")
 												span Newest First
 											else
 												span Oldest First
 
-										div(class="dropdown-menu dropdown-menu-right")
-											a(href=("/address/" + address), class="dropdown-item")
+										div.dropdown-menu.dropdown-menu-right
+											a.dropdown-item(href=("/address/" + address))
 												if (sort == "desc")
-													i(class="fa fa-check") 
+													i.fa.fa-check 
 												span  Newest First
-											a(href=("/address/" + address + "?sort=asc"), class="dropdown-item")
+											a.dropdown-item(href=("/address/" + address + "?sort=asc"))
 												if (sort != "desc")
-													i(class="fa fa-check") 
+													i.fa.fa-check 
 												span  Oldest First
 
 								else if (txids && txids.length > 1 && addressApiSupport.sortDesc && !addressApiSupport.sortAsc)
@@ -272,13 +273,13 @@ block content
 							hr
 
 							if (conflictedTxidResults)
-								div(class="alert alert-warning", style="padding-bottom: 0;")
-									div(class="float-left", style="width: 55px; height: 50px; font-size: 18px;")
-										i(class="fas fa-exclamation-triangle fa-2x", style="margin-top: 10px;")
-									h4(class="alert-heading h6 font-weight-bold") Trust Warning
+								div.alert.alert-warning.pb-0
+									div.float-left(style="width: 55px; height: 50px; font-size: 18px;")
+										i.fas.fa-exclamation-triangle.fa-2x(style="margin-top: 10px;")
+									h4.alert-heading.h6.font-weight-bold Trust Warning
 									p
 										span The transaction history for this address was requested from mulitple ElectrumX servers and the results did not match. The results below were obtained only from 
-										span(class="font-weight-bold") #{electrumHistory.server}
+										span.font-weight-bold #{electrumHistory.server}
 
 
 							if (true)
@@ -332,7 +333,7 @@ block content
 
 													if (addrGainsByTx[tx.txid])
 														- var currencyValue = addrGainsByTx[tx.txid];
-														span(class="text-success") +
+														span.text-success +
 															include includes/value-display.pug
 
 														if (addrLossesByTx[tx.txid])
@@ -340,7 +341,7 @@ block content
 
 													if (addrLossesByTx[tx.txid])
 														- var currencyValue = addrLossesByTx[tx.txid];
-														span(class="text-danger") -
+														span.text-danger -
 															include includes/value-display.pug
 
 												div.col-md-4
@@ -393,15 +394,24 @@ block content
 							
 				
 
-				div(id="tab-json", class="tab-pane", role="tabpanel")
-					div.highlight
-						h4 validateaddress
-						pre
-							code.json.bg-light(data-lang="json") #{JSON.stringify(result.validateaddress, null, 4)}
+				div.tab-pane(id="tab-json", role="tabpanel")
+					div.card.shadow-sm.mb-3
+						div.card-body
+							h4.h6.mb-0 validateaddress
+							hr
 
-						if (addressDetails)
-							h4 addressDetails
-							pre
-								code.json.bg-light #{JSON.stringify(addressDetails, null, 4)}
+							div.highlight
+								pre
+									code.json.bg-light(data-lang="json") #{JSON.stringify(result.validateaddress, null, 4)}
+
+					if (addressDetails)
+						div.card.shadow-sm.mb-3
+							div.card-body
+								h4.h6.mb-0 addressDetails
+								hr
+
+								div.highlight
+									pre
+										code.json.bg-light #{JSON.stringify(addressDetails, null, 4)}
 
 		

@@ -345,7 +345,7 @@ module.exports = {
 			chain: "main",
 			txid: "f4184fc596403b9d638783cf57adfe4c75c605f6356fbc91338530e9831e9e16",
 			summary: "The first transfer of bitcoin.",
-			alertBodyHtml: "This transaction is the first instance of the transfer of bitcoin from one person to another. It also has the added distinction of being (one of?) the only known transfers of bitcoin from Satoshi Nakamoto, in this case sending bitcoin to Hal Finney as a test."
+			alertBodyHtml: "This transaction represents the first ever transfer of bitcoin from one person to another. It also has the added distinction of being (one of?) the only known transfers of bitcoin from Satoshi Nakamoto, in this case sending bitcoin to Hal Finney as a test."
 		},
 		{
 			type: "blockheight",

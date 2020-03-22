@@ -34,7 +34,7 @@ block content
 						h3.h6.mb-0 Summary
 						hr
 
-						table(class="table details-table mb-0")
+						table.table.details-table.mb-0
 							tr
 								td.properties-header Host : Port
 								td.text-monospace #{global.rpcClient.host + " : " + global.rpcClient.port}
@@ -45,7 +45,7 @@ block content
 							tr
 								td.properties-header Version
 								td.text-monospace #{getnetworkinfo.version}
-									span(class="text-monospace")  (#{getnetworkinfo.subversion})
+									span.text-monospace  (#{getnetworkinfo.subversion})
 							tr
 								td.properties-header Protocol Version
 								td.text-monospace #{getnetworkinfo.protocolversion}
@@ -163,27 +163,45 @@ block content
 
 							
 
-			div(id="tab-json", class="tab-pane", role="tabpanel")
+			div.tab-pane(id="tab-json", role="tabpanel")
 
 				ul.nav.nav-pills.mb-3
 					li.nav-item
-						a(data-toggle="tab", href="#tab-getblockchaininfo", class="nav-link active", role="tab") getblockchaininfo
+						a.nav-link.active(data-toggle="tab", href="#tab-getblockchaininfo", role="tab") getblockchaininfo
 					li.nav-item
-						a(data-toggle="tab", href="#tab-getnettotals", class="nav-link", role="tab") getnettotals
+						a.nav-link(data-toggle="tab", href="#tab-getnettotals", role="tab") getnettotals
 					li.nav-item
-						a(data-toggle="tab", href="#tab-getnetworkinfo", class="nav-link", role="tab") getnetworkinfo
+						a.nav-link(data-toggle="tab", href="#tab-getnetworkinfo", role="tab") getnetworkinfo
 				
 				div.tab-content
-					div(id="tab-getblockchaininfo", class="tab-pane active", role="tabpanel")
-						pre
-							code.json.bg-light(data-lang="json") #{JSON.stringify(getblockchaininfo, null, 4)}
+					div.tab-pane.active(id="tab-getblockchaininfo", role="tabpanel")
+						div.card.shadow-sm.mb-3
+							div.card-body
+								h4.h6.mb-0 getblockchaininfo
+								hr
 
-					div(id="tab-getnettotals", class="tab-pane", role="tabpanel")
-						pre
-							code.json.bg-light(data-lang="json") #{JSON.stringify(getnettotals, null, 4)}
+								div.highlight
+									pre
+										code.json.bg-light(data-lang="json") #{JSON.stringify(getblockchaininfo, null, 4)}
 
-					div(id="tab-getnetworkinfo", class="tab-pane", role="tabpanel")
-						pre
-							code.json.bg-light(data-lang="json") #{JSON.stringify(getnetworkinfo, null, 4)}
+					div.tab-pane(id="tab-getnettotals", role="tabpanel")
+						div.card.shadow-sm.mb-3
+							div.card-body
+								h4.h6.mb-0 getnettotals
+								hr
+
+								div.highlight
+									pre
+										code.json.bg-light(data-lang="json") #{JSON.stringify(getnettotals, null, 4)}
+
+					div.tab-pane(id="tab-getnetworkinfo", role="tabpanel")
+						div.card.shadow-sm.mb-3
+							div.card-body
+								h4.h6.mb-0 getnetworkinfo
+								hr
+
+								div.highlight
+									pre
+										code.json.bg-light(data-lang="json") #{JSON.stringify(getnetworkinfo, null, 4)}
 							
 										

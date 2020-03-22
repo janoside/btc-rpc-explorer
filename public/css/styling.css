@@ -54,13 +54,10 @@ code, .text-monospace {
 	margin-bottom: 3px;
 }
 
-.col-lg-left {
-	padding-right: 8px;
+.mb-huge {
+	margin-bottom: 200px;
 }
 
-.col-lg-right {
-	padding-left: 8px;
-}
 
 
 .nav-tabs .nav-link.active {

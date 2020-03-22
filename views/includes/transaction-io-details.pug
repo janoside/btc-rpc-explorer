@@ -31,7 +31,12 @@ div.row.text-monospace
 							a(data-toggle="tooltip", title=("Input #" + txVinIndex.toLocaleString()), style="white-space: nowrap;")
 								span.font-weight-bold &gt; 
 								small.d-inline.d-md-none Input 
-								span ##{txVinIndex.toLocaleString()}
+								
+								if (tx.vin.length > 9)
+									small.word-wrap ##{txVinIndex}
+								else
+									span ##{txVinIndex.toLocaleString()}
+									
 								if (tx.vin.length > 0)
 									small.d-inline.d-md-none.font-weight-light.text-muted  / #{(tx.vin.length - 1).toLocaleString()}
 
@@ -143,7 +148,12 @@ div.row.text-monospace
 						a(data-toggle="tooltip", title=("Output #" + voutIndex.toLocaleString()), style="white-space: nowrap;")
 							span.font-weight-bold &lt; 
 							small.d-inline.d-md-none Output 
-							span ##{voutIndex.toLocaleString()}
+							
+							if (tx.vout.length > 999)
+								small.word-wrap ##{voutIndex}
+							else
+								span ##{voutIndex.toLocaleString()}
+							
 							if (tx.vout.length > 0)
 								small.d-inline.d-md-none.font-weight-light.text-muted  / #{(tx.vout.length - 1).toLocaleString()}
 

@@ -7,10 +7,12 @@ block content
 	h1.h3 Search
 	hr
 
-	div(class="mb-5")
-		form(method="post", action="/search", class="form")
+	div.mb-5
+		form.form(method="post", action="/search")
 			input(type="hidden", name="_csrf", value=csrfToken)
-			div(class="input-group input-group-lg")
-				input(type="text", class="form-control form-control-sm", name="query", placeholder="block height/hash, txid, address", value=(query), style="width: 300px;")
-				div(class="input-group-append")
-					button(type="submit", class="btn btn-primary") Search
+
+			div.input-group.input-group-lg
+				input.form-control.form-control-sm(type="text", name="query", placeholder="block height/hash, txid, address", value=(query), style="width: 300px;")
+				
+				div.input-group-append
+					button.btn.btn-primary(type="submit") Search

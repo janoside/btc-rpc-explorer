@@ -170,8 +170,8 @@ div.table-responsive
 									span.ml-1(data-toggle="tooltip", title=`Size: ${bSizeK.toLocaleString()} kB`)
 										i.fas.fa-ellipsis-h.text-muted
 
-									div(class="progress", style="height: 4px;")
-										div(class="progress-bar", role="progressbar", style=("width: " + fullPercent + "%;"), aria-valuenow=parseInt(100 * block.weight / coinConfig.maxBlockWeight), aria-valuemin="0" ,aria-valuemax="100")
+									div.progress(style="height: 4px;")
+										div.progress-bar(role="progressbar", style=("width: " + fullPercent + "%;"), aria-valuenow=parseInt(100 * block.weight / coinConfig.maxBlockWeight), aria-valuemin="0" ,aria-valuemax="100")
 
 						else
 							td.data-cell.text-monospace.text-right
@@ -181,7 +181,7 @@ div.table-responsive
 								span #{bSizeK.toLocaleString()} 
 								small.font-weight-light.text-muted (#{fullPercent}%)
 
-								div(class="progress", style="height: 4px;")
-									div(class="progress-bar", role="progressbar", style=("width: " + fullPercent + "%;"), aria-valuenow=parseInt(100 * block.size / coinConfig.maxBlockSize), aria-valuemin="0" ,aria-valuemax="100")
+								div.progress(style="height: 4px;")
+									div.progress-bar(role="progressbar", style=("width: " + fullPercent + "%;"), aria-valuenow=parseInt(100 * block.size / coinConfig.maxBlockSize), aria-valuemin="0" ,aria-valuemax="100")
 
 					- var lastBlock = block;

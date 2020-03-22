@@ -5,7 +5,7 @@ block headContent
 	
 block content
 	if (getblockchaininfo == null)
-		div(class="alert alert-warning")
+		div.alert.alert-warning
 			p.font-weight-bold Unable to get basic blockchain data
 			ul
 				li If you just started your node, it may still be initializing.
@@ -15,7 +15,7 @@ block content
 		if (config.demoSite && session.hideHomepageBanner != "true")
 			div.alert.alert-primary.alert-dismissible.shadow-sm.mb-3(role="alert")
 				span
-					strong #{coinConfig.siteTitle}
+					span.font-weight-bold #{coinConfig.siteTitle}
 					span  is 
 					a(href="https://github.com/janoside/btc-rpc-explorer", target="_blank") open-source
 					span  and easy to set up. It can communicate with your 
@@ -26,31 +26,32 @@ block content
 
 				if (global.sourcecodeProjectMetadata)
 					div.mt-2
-						a(href="https://github.com/janoside/btc-rpc-explorer", class="btn btn-primary mr-3 mb-1")
-							i(class="fas fa-star mr-2")
-							span(class="mr-2") Star 
-							span(class="badge bg-white text-dark") #{global.sourcecodeProjectMetadata.stargazers_count}
+						a.btn.btn-primary.btn-sm.mr-3.mb-1(href="https://github.com/janoside/btc-rpc-explorer")
+							i.fas.fa-star.mr-2
+							span.mr-2 Star 
+							span.badge.bg-white.text-dark #{global.sourcecodeProjectMetadata.stargazers_count}
 
-						a(href="https://github.com/janoside/btc-rpc-explorer/fork", class="btn btn-primary mr-3 mb-1")
-							i(class="fas fa-code-branch mr-2")
-							span(class="mr-2") Fork 
-							span(class="badge bg-white text-dark") #{global.sourcecodeProjectMetadata.forks_count}
+						a.btn.btn-primary.btn-sm.mr-3.mb-1(href="https://github.com/janoside/btc-rpc-explorer/fork")
+							i.fas.fa-code-branch.mr-2
+							span.mr-2 Fork 
+							span.badge.bg-white.text-dark #{global.sourcecodeProjectMetadata.forks_count}
 						
 						if (!crawlerBot)
-							button.btn.btn-primary(type="button", class="btn btn-primary mb-1", data-toggle="modal", data-target="#exampleModalCenter")
-								i(class="fas fa-heart mr-2")
+							button.btn.btn-primary.btn-sm.mb-1(type="button", data-toggle="modal", data-target="#exampleModalCenter")
+								i.fas.fa-heart.mr-2
 								span Support Project
 
-				div.mt-2
-					a.mr-2(href="https://www.npmjs.com/package/btc-rpc-explorer" rel="nofollow" target="_blank")
-						img(src="https://camo.githubusercontent.com/a2a28dff9062102df7988314d014e68d4612bd83/68747470733a2f2f696d672e736869656c64732e696f2f6e706d2f762f6274632d7270632d6578706c6f7265722e7376673f7374796c653d666c6174" alt="npm version" data-canonical-src="https://img.shields.io/npm/v/btc-rpc-explorer.svg?style=flat" style="max-width:100%;")
+				if (false)
+					div.mt-2
+						a.mr-2(href="https://www.npmjs.com/package/btc-rpc-explorer" rel="nofollow" target="_blank")
+							img(src="https://camo.githubusercontent.com/a2a28dff9062102df7988314d014e68d4612bd83/68747470733a2f2f696d672e736869656c64732e696f2f6e706d2f762f6274632d7270632d6578706c6f7265722e7376673f7374796c653d666c6174" alt="npm version" data-canonical-src="https://img.shields.io/npm/v/btc-rpc-explorer.svg?style=flat" style="max-width:100%;")
 
-					a(href="https://npmcharts.com/compare/btc-rpc-explorer?minimal=true" rel="nofollow" target="_blank")
-						img(src="https://camo.githubusercontent.com/07914c9a0c2f22f7493952dc969c57164bb14f77/687474703a2f2f696d672e736869656c64732e696f2f6e706d2f646d2f6274632d7270632d6578706c6f7265722e7376673f7374796c653d666c6174" alt="NPM downloads" data-canonical-src="http://img.shields.io/npm/dm/btc-rpc-explorer.svg?style=flat" style="max-width:100%;")
+						a(href="https://npmcharts.com/compare/btc-rpc-explorer?minimal=true" rel="nofollow" target="_blank")
+							img(src="https://camo.githubusercontent.com/07914c9a0c2f22f7493952dc969c57164bb14f77/687474703a2f2f696d672e736869656c64732e696f2f6e706d2f646d2f6274632d7270632d6578706c6f7265722e7376673f7374796c653d666c6174" alt="NPM downloads" data-canonical-src="http://img.shields.io/npm/dm/btc-rpc-explorer.svg?style=flat" style="max-width:100%;")
 
 					
 
-				a(href="/changeSetting?name=hideHomepageBanner&value=true", class="close", aria-label="Close", style="text-decoration: none;")
+				a.close(href="/changeSetting?name=hideHomepageBanner&value=true", aria-label="Close", style="text-decoration: none;")
 					span(aria-hidden="true") &times;
 
 		if (getblockchaininfo.initialblockdownload)
@@ -105,11 +106,11 @@ block content
 							include includes/blocks-list.pug
 							
 							if (false)
-								div(class="card mb-4 shadow-sm")
+								div.card.shadow-sm.mb-3
 									div.card-header
 										div.row
 											div.col
-												h2(class="h6 mb-0") Latest Blocks
+												h3.h6.mb-0 Latest Blocks
 													if (getblockchaininfo.initialblockdownload)
 														small  (#{(getblockchaininfo.headers - getblockchaininfo.blocks).toLocaleString()} behind)
 
@@ -143,7 +144,7 @@ block content
 							div.row
 								div.col-lg-6
 									div.table-responsive
-										table.table.text-right.mb-4.mb-lg-0
+										table.table.text-right.mb-3.mb-lg-0
 											thead
 												tr
 													th Period
