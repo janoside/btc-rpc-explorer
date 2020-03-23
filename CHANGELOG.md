@@ -1,43 +1,50 @@
 #### v2.0.0
-##### 2020-02-23
+##### 2020-03-23
 
-* Optional querying of UTXO set summary
-    * Note: this is disabled by default to protect slow nodes. Set 'BTCEXP_SLOW_DEVICE_MODE' to false in your `.env` file to enjoy this feature.
-* More data in homepage "Network Summary":
-    * Fee estimates (estimatesmartfee) for 1, 6, 144, 1008 blocks
-    * Hashrate estimate for 1+7 days
-    * New item for 'Chain Rewrite Days', using 7day hashrate
-    * New data based on optional UTXO set summary (see note above):
-        * UTXO set size
-        * Total coins in circulation
-        * Market cap
-    * 24-hour network volume (sum of outputs)
+* New data points in homepage "Network Summary":
+	* Fee estimates (estimatesmartfee) for 1, 6, 144, 1008 blocks
+	* Hashrate estimate for 1+7 days
+	* New item for 'Chain Rewrite Days', using 7day hashrate
+	* New data based on UTXO-set summary. Note that UTXO-set querying is resource intensive and therefore disabled by default to protect slower nodes. Set `BTCEXP_SLOW_DEVICE_MODE` to `false` in your `.env` file to enjoy associated features:
+		* UTXO-set size
+		* Total coins in circulation
+		* Market cap
+	* 24-hour network volume (sum of tx outputs). This value is calculated at app launch and refreshed every 30min.
 * Tweaks to data in blocks lists:
-    * Simpler timestamp formatting for easy reading
-    * Include "Time-to-Mine" (TTM) for each block (with green/red highlighting for "fast"/"slow" (<5min/>15min) blocks)
-    * Display average fee in sat/vB
-    * Add total fees
-    * Add output volume (if `getblockstats` rpc call is supported, i.e. 0.17.0+)
-    * Show %Full instead of weight/size
-* New data in "Summary" on Block pages (supported for bitcoind v0.17.0+)
-    * Fee percentiles
-    * Min / Max fees
-    * Input / Output counts
-    * Outputs total value
-    * UTXO count change
-    * Min / Max tx sizes
+	* Simpler timestamp formatting for easy reading
+	* Include "Time-to-Mine" (TTM) for each block (with green/red highlighting for "fast"/"slow" (<5min/>15min) blocks)
+	* Display average fee in sat/vB
+	* Add total fees
+	* Add output volume (if `getblockstats` rpc call is supported, i.e. 0.17.0+)
+	* Show %Full instead of weight/size
+* Block Detail page improvements
+	* New data in "Summary" on Block pages (supported for bitcoind v0.17.0+)
+		* Outputs total volume
+		* Input / Output counts
+		* UTXO count change
+		* Min / Max tx sizes
+	* New "Fees Summary" section (bitcoind v0.17.0+)
+		* Fee rate percentiles
+		* Fee rates: min, avg, max
+		* Fee totals: min, avg, max
+	* New "Technical Details" section. Items from "Summary" in previous versions have been moved here. This section is collapsible if desired.
+* Improvements to transaction input/output displays
+	* Change primary input data to be tx outpoint
+	* Zero-indexing for tx inputs/outputs (#173)
+	* Labels for transaction input/output types
+	* Inputs: when available, show "input address" below tx outpoint
 * New tool `/block-stats` for viewing summarized block data from recent blocks
 * New tool `/mining-summary` for viewing summarized mining data from recent blocks
-* New tool `/block-analysis` for analyzing the details of transactions in a block
+* New tool `/block-analysis` for analyzing the details of transactions in a block.
+	* **IMPORTANT**: Use of `/block-analysis` can put heavy memory pressure on this app, depending on the details of the block being analyzed. If your app is crashing, consider setting a higher memory ceiling: `node --max_old_space_size=XXX bin/www` (where `XXX` is measured in MB).
 * Change `/mempool-summary` to load data via ajax (UX improvement to give feedback while loading large data sets)
-* Zero-indexing for tx inputs/outputs (#173)
-* Labels for transaction output types
+* Zero-indexing for tx index-in-block values
 * Configurable UI "sub-header" links
 * Start of RPC API versioning support
-* Tweaked styling
-* Homepage tweaks
-    * Remove "Bitcoin Explorer" H1 (it's redundant)
-    * Hide the "Date" (timestamp) column for recent blocks (the Age+TTM is more valuable)
+* Tweaked styling across site
+* Homepage UI tweaks
+	* Remove "Bitcoin Explorer" H1 (it's redundant)
+	* Hide the "Date" (timestamp) column for recent blocks (the Age+TTM is more valuable)
 * Updated miner configs
 
 #### v1.1.9

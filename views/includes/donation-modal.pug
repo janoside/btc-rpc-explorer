@@ -1,14 +1,14 @@
-#exampleModalCenter.modal.fade(tabindex='-1' role='dialog' aria-labelledby='exampleModalCenterTitle' aria-hidden='true')
-	.modal-dialog.modal-lg.modal-dialog-centered(role='document')
+#exampleModalCenter.modal.fade.mt-5(tabindex='-1' role='dialog' aria-labelledby='exampleModalCenterTitle' aria-hidden='true')
+	.modal-dialog.modal-lg(role='document')
 		.modal-content
 			.modal-header
-				h5#exampleModalCenterTitle.modal-title Support Development
+				h5#exampleModalCenterTitle.modal-title Support Project
 				button.close(type='button' data-dismiss='modal' aria-label='Close')
 					span(aria-hidden='true') &times;
 			.modal-body
-				p I work on this project because I value it myself and want to give back to the BTC community.
+				h6.mb-3 If you get value from this project, please consider supporting my work with a donation.
 
-				p If you get value from this project, please consider supporting my work with a donation.
+				h6.mb-3 Thanks
 
 				if (config.donations.btcpayserver)
 					if (config.donations.btcpayserver.customAmountUrl)

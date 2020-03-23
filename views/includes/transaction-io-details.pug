@@ -32,7 +32,7 @@ div.row.text-monospace
 								span.font-weight-bold &gt; 
 								small.d-inline.d-md-none Input 
 								
-								if (tx.vin.length > 9)
+								if (tx.vin.length > 999)
 									small.word-wrap ##{txVinIndex}
 								else
 									span ##{txVinIndex.toLocaleString()}
@@ -48,7 +48,8 @@ div.row.text-monospace
 										span Newly minted coins
 									else
 										div.word-wrap
-											small.data-tag.bg-dark.mr-2 #{utils.outputTypeAbbreviation(vout.scriptPubKey.type)}
+											small.data-tag.bg-dark.mr-2
+												span(title=`Input Type: ${utils.outputTypeName(vout.scriptPubKey.type)}`, data-toggle="tooltip") #{utils.outputTypeAbbreviation(vout.scriptPubKey.type)}
 											a(href=("/tx/" + txInput.txid + "#output-" + txVin.vout)) #{utils.ellipsize(txInput.txid, 26)}
 												span  ##{txVin.vout}
 

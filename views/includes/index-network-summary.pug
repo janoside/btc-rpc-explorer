@@ -1,6 +1,6 @@
-- var colClass = "col-lg-6 px-3";
+- var colClass = "col-lg-6 px-2";
 if (exchangeRates || networkVolume)
-	- colClass = "col-lg-4 px-3";
+	- colClass = "col-lg-4 px-2";
 
 - var utxoCalculatingDesc = "At startup the app pulls a summary of the UTXO set. Until this summary is retrieved this data can't be displayed. Wait for the summary request to your node to return, then refresh this page.";
 
@@ -50,8 +50,8 @@ div.row.index-summary
 
 				tr
 					th.px-2.px-lg-0.px-xl-2
-						i.fas.fa-unlock-alt.mr-1.summary-icon
-						span Unconfirmed Tx
+						i.fas.fa-unlock.mr-1.summary-icon
+						span Pending Tx
 					td.text-right.text-monospace
 						- var colorClass = "text-success";
 						if (mempoolInfo.size > 7000)

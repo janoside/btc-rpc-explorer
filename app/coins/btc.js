@@ -336,7 +336,7 @@ module.exports = {
 			blockHeight: 170,
 			blockHash: "00000000d1145790a8694403d4063f323d499e655c83426834d4ce2f8dd4a2ee",
 			summary: "First block containing a (non-coinbase) transaction.",
-			alertBodyHtml: "This block comes 9 days after the genesis block and is the first to contain a transfer of bitcoin. Before this block all blocks contained only coinbase transactions which mint new bitcoin.",
+			alertBodyHtml: "This block comes 9 days after the genesis block and is the first to contain a transfer of bitcoin. Before this block all blocks contained only coinbase transactions, which mint new bitcoin.<br/>See transaction #1 (f4184fc…) below for more info.",
 			referenceUrl: "https://bitcointalk.org/index.php?topic=91806.msg1012234#msg1012234"
 		},
 		{

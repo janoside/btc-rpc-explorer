@@ -57,7 +57,7 @@ html(lang="en")
 									a.nav-link.dropdown-toggle(href="javascript:void(0)", role="button", data-toggle="dropdown", aria-haspopup="true", aria-expanded="false") 
 										span  Tools
 									div.dropdown-menu.shadow(aria-label="Tools Items")
-										each itemIndex in config.site.toolsDropdownIndexList
+										each itemIndex in config.site.prioritizedToolIdsList
 											- var item = config.siteTools[itemIndex];
 
 											a.dropdown-item(href=item.url)

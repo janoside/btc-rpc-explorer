@@ -392,7 +392,7 @@ div.tab-content
 						div.card.shadow-sm(class=(" " + ((txIndex < (result.transactions.length - 1) || txCount > limit) ? "mb-3" : "")))
 							div.card-header.text-monospace
 								if (tx && tx.txid)
-									span ##{(txIndex + offset + 1).toLocaleString()}
+									span(title=`Index in Block: #${(txIndex + offset).toLocaleString()}`, data-toggle="tooltip") ##{(txIndex + offset).toLocaleString()}
 									span  &ndash; 
 									a(href=("/tx/" + tx.txid)) #{tx.txid}
 

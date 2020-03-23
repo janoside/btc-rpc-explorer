@@ -166,7 +166,7 @@ module.exports = {
 			]
 		},
 		subHeaderToolsList:[0, 10, 9, 4, 11, 6, 7], // indexes in "siteTools" below that are shown in the site "sub menu" (visible on all pages except homepage)
-		toolsDropdownIndexList: [0, 1, 4, 10, 9, 3, 11, 2, 5, 6, 7, 8],
+		prioritizedToolIdsList: [0, 10, 11, 9, 3, 4, 2, 5, 1, 6, 7, 8],
 	},
 
 	credentials: credentials,
@@ -178,8 +178,8 @@ module.exports = {
 	/* 2 */		{name:"Browse Blocks", url:"/blocks", desc:"Browse all blocks in the blockchain.", fontawesome:"fas fa-cubes"},
 	/* 3 */		{name:"Transaction Stats", url:"/tx-stats", desc:"See graphs of total transaction volume and transaction rates.", fontawesome:"fas fa-chart-bar"},
 
-	/* 4 */		{name:"Mempool Summary", url:"/mempool-summary", desc:"Detailed summary of the current mempool for this node.", fontawesome:"fas fa-clipboard-list"},
-	/* 5 */		{name:"Pending Transactions", url:"/unconfirmed-tx", desc:"Browse unconfirmed/pending transactions.", fontawesome:"fas fa-unlock-alt"},
+	/* 4 */		{name:"Mempool Summary", url:"/mempool-summary", desc:"Detailed summary of the current mempool for this node.", fontawesome:"fas fa-receipt"},
+	/* 5 */		{name:"Browse Pending Tx", url:"/unconfirmed-tx", desc:"Browse unconfirmed/pending transactions.", fontawesome:"fas fa-unlock"},
 
 	/* 6 */		{name:"RPC Browser", url:"/rpc-browser", desc:"Browse the RPC functionality of this node. See docs and execute commands.", fontawesome:"fas fa-book"},
 	/* 7 */		{name:"RPC Terminal", url:"/rpc-terminal", desc:"Directly execute RPCs against this node.", fontawesome:"fas fa-terminal"},

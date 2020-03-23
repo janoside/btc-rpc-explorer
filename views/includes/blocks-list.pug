@@ -19,7 +19,7 @@ div.table-responsive
 
 				if (blockstatsByHeight)
 					th.data-header.text-right
-						span.border-dotted(title="The total output of all transactions in each block (excluding coinbase transactions).", data-toggle="tooltip") Volume
+						span.border-dotted(title="The total output of all transactions in each block.", data-toggle="tooltip") Volume
 
 				th.data-header.text-right
 					span.border-dotted(title="The average fee (sat/vB) for all block transactions.", data-toggle="tooltip") Avg Fee
@@ -115,7 +115,7 @@ div.table-responsive
 						if (blockstatsByHeight)
 							td.data-cell.text-monospace.text-right
 								if (blockstatsByHeight[block.height])
-									- var currencyValue = parseInt(new Decimal(blockstatsByHeight[block.height].total_out).dividedBy(coinConfig.baseCurrencyUnit.multiplier));
+									- var currencyValue = parseInt(new Decimal(blockstatsByHeight[block.height].total_out).plus(blockstatsByHeight[block.height].subsidy).plus(blockstatsByHeight[block.height].totalfee).dividedBy(coinConfig.baseCurrencyUnit.multiplier));
 									- var currencyValueDecimals = 0;
 									include ./value-display.pug
 

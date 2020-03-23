@@ -1442,6 +1442,12 @@ router.get("/about", function(req, res, next) {
 	next();
 });
 
+router.get("/tools", function(req, res, next) {
+	res.render("tools");
+
+	next();
+});
+
 router.get("/changelog", function(req, res, next) {
 	res.locals.changelogHtml = marked(global.changelogMarkdown);
 

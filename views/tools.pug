@@ -1,0 +1,27 @@
+extends layout
+
+block headContent
+	title Tools
+
+block content
+	h1.h3 Tools
+	hr
+
+	div.card.shadow-sm.mb-huge
+		div.card-body
+			div.px-2
+				div.row
+					each itemIndex in config.site.prioritizedToolIdsList
+						div.col-md-6.col-lg-4
+							- var item = config.siteTools[itemIndex];
+							
+							div.clearfix
+								div.float-left.pt-1(style="width: 38px;")
+									i.fa-lg(class=item.fontawesome, style="width: 20px; margin-right: 10px;")
+
+								div.float-left
+									div.lead
+										a(href=item.url) #{item.name}
+
+							div(style="padding-left: 39px;")
+								p #{item.desc}
