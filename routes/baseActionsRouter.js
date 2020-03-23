@@ -483,14 +483,9 @@ router.get("/block-stats", function(req, res, next) {
 });
 
 router.get("/search", function(req, res, next) {
-	if (!req.body.query) {
-		req.session.userMessage = "Enter a block height, block hash, or transaction id.";
-		req.session.userMessageType = "primary";
+	res.render("search");
 
-		res.render("search");
-
-		next();
-	}
+	next();
 });
 
 router.post("/search", function(req, res, next) {
@@ -737,37 +732,49 @@ router.get("/block/:blockHash", function(req, res, next) {
 	});
 });
 
-router.get("/block-analysis/:blockHash", function(req, res, next) {
-	var blockHash = req.params.blockHash;
+router.get("/block-analysis/:blockHashOrHeight", function(req, res, next) {
+	var blockHashOrHeight = req.params.blockHashOrHeight;
 
-	res.locals.blockHash = blockHash;
+	var goWithBlockHash = function(blockHash) {
+		var blockHash = blockHash;
 
-	res.locals.result = {};
+		res.locals.blockHash = blockHash;
 
-	var txResults = [];
+		res.locals.result = {};
 
-	var promises = [];
+		var txResults = [];
 
-	res.locals.result = {};
+		var promises = [];
 
-	coreApi.getBlockByHash(blockHash).then(function(block) {
-		res.locals.result.getblock = block;
+		res.locals.result = {};
 
-		res.render("block-analysis");
+		coreApi.getBlockByHash(blockHash).then(function(block) {
+			res.locals.result.getblock = block;
 
-		next();
+			res.render("block-analysis");
 
-	}).catch(function(err) {
-		res.locals.pageErrors.push(utils.logError("943h84ehedr", err));
+			next();
 
-		res.render("block-analysis");
+		}).catch(function(err) {
+			res.locals.pageErrors.push(utils.logError("943h84ehedr", err));
 
-		next();
-	});
+			res.render("block-analysis");
+
+			next();
+		});
+	};
+
+	if (!isNaN(blockHashOrHeight)) {
+		coreApi.getBlockByHeight(parseInt(blockHashOrHeight)).then(function(blockByHeight) {
+			goWithBlockHash(blockByHeight.hash);
+		});
+	} else {
+		goWithBlockHash(blockHashOrHeight);
+	}
 });
 
 router.get("/block-analysis", function(req, res, next) {
-	res.render("block-analysis");
+	res.render("block-analysis-search");
 
 	next();
 });

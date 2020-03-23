@@ -165,8 +165,8 @@ module.exports = {
 				}
 			]
 		},
-		subHeaderToolsList:[0, 10, 9, 4, 1, 6, 7], // indexes in "siteTools" below that are shown in the site "sub menu" (visible on all pages except homepage)
-		toolsDropdownIndexList: [0, 1, 4, 10, 9, 3, 2, 5, 6, 7, 8],
+		subHeaderToolsList:[0, 10, 9, 4, 11, 6, 7], // indexes in "siteTools" below that are shown in the site "sub menu" (visible on all pages except homepage)
+		toolsDropdownIndexList: [0, 1, 4, 10, 9, 3, 11, 2, 5, 6, 7, 8],
 	},
 
 	credentials: credentials,
@@ -188,6 +188,7 @@ module.exports = {
 
 	/* 9 */		{name:"Mining Summary", url:"/mining-summary", desc:"Summary of recent data about miners.", fontawesome:"fas fa-chart-pie"},
 	/* 10 */	{name:"Block Stats", url:"/block-stats", desc:"Summary data for blocks in configurable range.", fontawesome:"fas fa-layer-group"},
+	/* 11 */	{name:"Block Analysis", url:"/block-analysis", desc:"Summary analysis for all transactions in a block.", fontawesome:"fas fa-angle-double-down"},
 	],
 
 	donations:{

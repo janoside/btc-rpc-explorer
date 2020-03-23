@@ -1,0 +1,30 @@
+extends layout
+
+block headContent
+	title Block Analysis
+
+block content
+	h1.h3 Block Analysis
+	hr
+
+	p Search for a block by height or hash to see a summary analysis of the transactions within that block.
+
+	div.mb-huge
+		form.form.form-inline(method="get", action="/block-analysis")
+			input(type="hidden", name="_csrf", value=csrfToken)
+
+			div.input-group
+				input.form-control(id="input-value", type="text", name="query", placeholder="block height/hash", value=(query), style="width: 400px;")
+				
+				div.input-group-append
+					button.btn.btn-primary(type="submit") Go
+
+block endOfBody
+	script.
+		$(document).ready(function() {
+			$("form").submit(function() {
+				window.location.href = `/block-analysis/${$("#input-value").val()}`;
+
+				return false;
+			});
+		});
