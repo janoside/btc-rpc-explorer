@@ -26,6 +26,8 @@ var rpcQueue = async.queue(function(task, callback) {
 
 var minRpcVersions = {getblockstats:"0.17.0"};
 
+global.rpcStats = {};
+
 
 
 function getBlockchainInfo() {
@@ -321,6 +323,8 @@ function getRpcMethodHelp(methodName) {
 
 
 function getRpcData(cmd) {
+	var startTime = new Date().getTime();
+
 	return new Promise(function(resolve, reject) {
 		debugLog(`RPC: ${cmd}`);
 
@@ -335,10 +339,14 @@ function getRpcData(cmd) {
 
 					callback();
 
+					logStats(cmd, false, new Date().getTime() - startTime, false);
+
 					return;
 				}
 
 				resolve(result);
+
+				logStats(cmd, false, new Date().getTime() - startTime, true);
 
 				callback();
 			});
@@ -349,6 +357,8 @@ function getRpcData(cmd) {
 }
 
 function getRpcDataWithParams(request) {
+	var startTime = new Date().getTime();
+
 	return new Promise(function(resolve, reject) {
 		debugLog(`RPC: ${JSON.stringify(request)}`);
 
@@ -361,10 +371,14 @@ function getRpcDataWithParams(request) {
 
 					callback();
 
+					logStats(request.method, true, new Date().getTime() - startTime, false);
+
 					return;
 				}
 
 				resolve(result[0]);
+
+				logStats(request.method, true, new Date().getTime() - startTime, true);
 
 				callback();
 			});
@@ -378,6 +392,26 @@ function unsupportedPromise(minRpcVersionNeeded) {
 	return new Promise(function(resolve, reject) {
 		resolve({success:false, error:"Unsupported", minRpcVersionNeeded:minRpcVersionNeeded});
 	});
+}
+
+function logStats(cmd, hasParams, dt, success) {
+	if (!global.rpcStats[cmd]) {
+		global.rpcStats[cmd] = {count:0, withParams:0, time:0, successes:0, failures:0};
+	}
+
+	global.rpcStats[cmd].count++;
+	global.rpcStats[cmd].time += dt;
+
+	if (hasParams) {
+		global.rpcStats[cmd].withParams++;
+	}
+
+	if (success) {
+		global.rpcStats[cmd].successes++;
+
+	} else {
+		global.rpcStats[cmd].failures++;
+	}
 }
 
 

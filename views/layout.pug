@@ -87,6 +87,12 @@ html(lang="en")
 
 						ul.navbar-nav
 							li.nav-item.dropdown
+								a.nav-link.dropdown-toggle(href="javascript:void(0)", role="button", data-toggle="dropdown", aria-haspopup="true", aria-expanded="false") 
+									span  Admin Tools
+								div.dropdown-menu.dropdown-menu-right.shadow(aria-label="Admin Tools Items")
+									a.dropdown-item(href="/admin") Admin Dashboard
+
+							li.nav-item.dropdown
 								a.nav-link.dropdown-toggle(href="javascript:void(0)", id="navbarDropdown", role="button", data-toggle="dropdown", aria-haspopup="true", aria-expanded="false") 
 									i.fas.fa-cog.mr-1 
 								div.dropdown-menu.dropdown-menu-right.shadow(aria-labelledby="navbarDropdown")

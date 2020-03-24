@@ -7,17 +7,29 @@ block content
 	h1.h3 Block Analysis
 	hr
 
-	p Search for a block by height or hash to see a summary analysis of the transactions within that block.
+	div.card.shadow-sm.mb-huge
+		div.card-body
+			h6.mb-3 Search for a block by height or hash to see a summary analysis of the transactions within that block.
 
-	div.mb-huge
-		form.form.form-inline(method="get", action="/block-analysis")
-			input(type="hidden", name="_csrf", value=csrfToken)
+			div.mb-3
+				form.form.form-inline(method="get", action="/block-analysis")
+					input(type="hidden", name="_csrf", value=csrfToken)
 
-			div.input-group
-				input.form-control(id="input-value", type="text", name="query", placeholder="block height/hash", value=(query), style="width: 400px;")
-				
-				div.input-group-append
-					button.btn.btn-primary(type="submit") Go
+					div.input-group
+						input.form-control(id="input-value", type="text", name="query", placeholder="block height/hash", value=(query), style="width: 400px;")
+						
+						div.input-group-append
+							button.btn.btn-primary(type="submit") Go
+
+			hr.my-4
+
+			h6 Selection of example blocks:
+
+			- var heights = [0, 170, 100000, 210000, 420000, 481824];
+			ul.text-monospace
+				each height in heights
+					li
+						a(href=`/block-analysis/${height}`) Block ##{height.toLocaleString()}
 
 block endOfBody
 	script.

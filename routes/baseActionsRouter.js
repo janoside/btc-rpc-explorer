@@ -846,7 +846,7 @@ router.get("/tx/:transactionId", function(req, res, next) {
 
 	}).catch(function(err) {
 		res.locals.userMessage = "Failed to load transaction with txid=" + txid + ": " + err;
-		
+
 		res.locals.pageErrors.push(utils.logError("1237y4ewssgt", err));
 
 		res.render("transaction");
@@ -1438,6 +1438,7 @@ router.get("/tools", function(req, res, next) {
 
 router.get("/admin", function(req, res, next) {
 	res.locals.memstats = v8.getHeapStatistics();
+	res.locals.rpcStats = global.rpcStats;
 
 	res.render("admin");
 

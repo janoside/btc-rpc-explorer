@@ -179,7 +179,7 @@ function loadHistoricalDataForChain(chain) {
 
 function verifyRpcConnection() {
 	if (!global.activeBlockchain) {
-		debugLog(`Trying to verify RPC connection...`);
+		debugLog(`Verifying RPC connection...`);
 
 		coreApi.getNetworkInfo().then(function(getnetworkinfo) {
 			coreApi.getBlockchainInfo().then(function(getblockchaininfo) {

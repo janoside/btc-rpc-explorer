@@ -7,5 +7,93 @@ block content
 	h1.h3 Admin
 	hr
 
-	pre
-		code.json #{JSON.stringify(memstats, null, 4)}
+	ul.nav.nav-tabs.mb-3
+		li.nav-item
+			a.nav-link.active(data-toggle="tab", href="#tab-details", role="tab") Details
+		li.nav-item
+			a.nav-link(data-toggle="tab", href="#tab-json", role="tab") JSON
+
+	div.tab-content
+		div.tab-pane.active(id="tab-details", role="tabpanel")
+			div.card.shadow-sm.mb-3
+				div.card-body
+					h3.h6 Memory Stats
+					hr
+
+					div.clearfix
+						div.row
+							div.summary-table-label Heap Size
+							div.summary-table-content.text-monospace
+								- var data = utils.formatLargeNumber(memstats.total_heap_size, 2);
+								span #{data[0]}
+									small  #{data[1].abbreviation}B
+
+						div.row
+							div.summary-table-label Used Heap
+							div.summary-table-content.text-monospace
+								- var data = utils.formatLargeNumber(memstats.used_heap_size, 2);
+								span #{data[0]}
+									small  #{data[1].abbreviation}B
+
+						div.row
+							div.summary-table-label Heap Limit
+							div.summary-table-content.text-monospace
+								- var data = utils.formatLargeNumber(memstats.heap_size_limit, 2);
+								span #{data[0]}
+									small  #{data[1].abbreviation}B
+
+						div.row
+							div.summary-table-label Physical Size
+							div.summary-table-content.text-monospace
+								- var data = utils.formatLargeNumber(memstats.total_physical_size, 2);
+								span #{data[0]}
+									small  #{data[1].abbreviation}B
+
+						div.row
+							div.summary-table-label Available Size
+							div.summary-table-content.text-monospace
+								- var data = utils.formatLargeNumber(memstats.total_available_size, 2);
+								span #{data[0]}
+									small  #{data[1].abbreviation}B
+
+			div.card.shadow-sm.mb-3
+				div.card-body
+					h3.h6 RPC Stats
+					hr
+
+					table.table.table-hover.table-striped
+						thead
+							tr
+								th Method
+								th.text-right Count
+								th.text-right Time
+									small  (s)
+								th.text-right Avg Time
+									small  (ms)
+								th.text-right Successes / Failures
+								th.text-right Success Rate
+
+						tbody
+							each item, itemName in rpcStats
+								tr.text-monospace
+									td #{itemName}
+									td.text-right #{item.count.toLocaleString()}
+									td.text-right #{(item.time / 1000).toLocaleString()}
+									td.text-right #{(item.time / item.count).toLocaleString()}
+									td.text-right
+										span.text-success #{item.successes.toLocaleString()}
+										span.mx-1 /
+										span.text-danger #{item.failures.toLocaleString()}
+
+									td.text-right
+										span #{new Decimal(item.successes).dividedBy(new Decimal(item.successes + item.failures)).times(100).toDP(1)}%
+
+		div.tab-pane(id="tab-json", role="tabpanel")
+			div.card.shadow-sm.mb-3
+				div.card-body
+					h3.h6 Memory Stats
+					hr
+
+					div.highlight
+						pre
+							code.json #{JSON.stringify(memstats, null, 4)}
