@@ -168,6 +168,21 @@ div.tab-content
 								div.text-monospace(class=sumTableValueClass) #{result.getblock.size.toLocaleString()} 
 									small B
 
+							if (result.getblock.miner)
+								div.row
+									div.summary-split-table-label Miner
+									div.summary-split-table-content.text-monospace.mb-0
+										if (result.getblock.miner)
+											if (result.getblock.miner.identifiedBy)
+												small.data-tag.bg-primary(data-toggle="tooltip", title=("Identified by: " + result.getblock.miner.identifiedBy)) #{result.getblock.miner.name}
+
+											else
+												small.data-tag.bg-primary #{result.getblock.miner.name}
+										else
+											span ? 
+											span(data-toggle="tooltip", title="Unable to identify miner")
+												i.fas.fa-info-circle
+
 							div.row
 								div(class=sumTableLabelClass) Confirmations
 								div.text-monospace(class=sumTableValueClass)
@@ -336,22 +351,6 @@ div.tab-content
 									small  hashes
 									
 									span.text-muted  (#{result.getblock.chainwork.replace(/^0+/, '')})
-
-							if (result.getblock.miner)
-								div.row
-									div.summary-split-table-label Miner
-									div.summary-split-table-content.text-monospace.mb-0
-										if (result.getblock.miner)
-											if (result.getblock.miner.identifiedBy)
-												small.data-tag.bg-primary(data-toggle="tooltip", title=("Identified by: " + result.getblock.miner.identifiedBy)) #{result.getblock.miner.name}
-
-											else
-												small.data-tag.bg-primary #{result.getblock.miner.name}
-										else
-											span ? 
-											span(data-toggle="tooltip", title="Unable to identify miner")
-												i.fas.fa-info-circle
-
 									
 
 		div.card.shadow-sm.mb-3
