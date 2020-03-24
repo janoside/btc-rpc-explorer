@@ -17,6 +17,18 @@ block content
 		div.tab-pane.active(id="tab-details", role="tabpanel")
 			div.card.shadow-sm.mb-3
 				div.card-body
+					h3.h6 Basics
+					hr
+
+					div.clearfix
+						div.row
+							div.summary-table-label Uptime
+							div.summary-table-content.text-monospace
+								- var uptime = moment.duration(new Date().getTime() - appStartTime);
+								span #{uptime.format()}
+
+			div.card.shadow-sm.mb-3
+				div.card-body
 					h3.h6 Memory Stats
 					hr
 

@@ -359,6 +359,8 @@ function refreshNetworkVolumes() {
 
 
 app.onStartup = function() {
+	global.appStartTime = new Date().getTime();
+	
 	global.config = config;
 	global.coinConfig = coins[config.coin];
 	global.coinConfigs = coins;
