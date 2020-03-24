@@ -10,6 +10,7 @@
 		* Total coins in circulation
 		* Market cap
 	* 24-hour network volume (sum of tx outputs). This value is calculated at app launch and refreshed every 30min.
+	* Avg block time for current difficulty epoch with estimate of next difficulty adjustment
 * Tweaks to data in blocks lists:
 	* Simpler timestamp formatting for easy reading
 	* Include "Time-to-Mine" (TTM) for each block (with green/red highlighting for "fast"/"slow" (<5min/>15min) blocks)
@@ -37,6 +38,7 @@
 * New tool `/mining-summary` for viewing summarized mining data from recent blocks
 * New tool `/block-analysis` for analyzing the details of transactions in a block.
 	* **IMPORTANT**: Use of `/block-analysis` can put heavy memory pressure on this app, depending on the details of the block being analyzed. If your app is crashing, consider setting a higher memory ceiling: `node --max_old_space_size=XXX bin/www` (where `XXX` is measured in MB).
+* New tool `/difficulty-history` showing a graph of the history of all difficulty adjustments
 * Change `/mempool-summary` to load data via ajax (UX improvement to give feedback while loading large data sets)
 * Zero-indexing for tx index-in-block values
 * Reduced memory usage

@@ -77,6 +77,32 @@ div.row.index-summary
 						span #{smartFeeEstimates[1008]}
 						small  sat/vB
 
+				tr
+					th.px-2.px-lg-0.px-xl-2
+						i.fas.fa-clock.mr-1.summary-icon
+						span.border-dotted(title=`Average block time for blocks in the current difficulty epoch (#${difficultyPeriod}). The difference between the target (10min) and this time indicates how the difficulty will adjust for the next epoch.`, data-toggle="tooltip") Block Time
+						small.ml-1 (e#{difficultyPeriod.toLocaleString()})
+					td.text-right.text-monospace
+						- var firstBlockHeader = difficultyPeriodFirstBlockHeader;
+						- var currentBlock = latestBlocks[0];
+						- var heightDiff = currentBlock.height - firstBlockHeader.height;
+						- var timeDiff = currentBlock.mediantime - firstBlockHeader.mediantime;
+						- var timePerBlock = timeDiff / heightDiff;
+						- var timePerBlockDuration = moment.duration(timePerBlock * 1000);
+
+						if (timePerBlock > 600)
+							- var diffAdjPercent = new Decimal(timeDiff / heightDiff / 600).times(100).minus(100);
+							- var diffAdjText = `Prediction for next difficulty adjustment (in ${blocksUntilDifficultyAdjustment} block${blocksUntilDifficultyAdjustment == 1 ? "" : "s"}): -${diffAdjPercent.toDP(1)}%`;
+							- var diffAdjSign = "-";
+						else
+							- var diffAdjPercent = new Decimal(100).minus(new Decimal(timeDiff / heightDiff / 600).times(100));
+							- var diffAdjText = `Prediction for next difficulty adjustment (in ${blocksUntilDifficultyAdjustment} block${blocksUntilDifficultyAdjustment == 1 ? "" : "s"}): +${diffAdjPercent.toDP(1)}%`;
+							- var diffAdjSign = "+";
+
+						span.border-dotted(title=diffAdjText, data-toggle="tooltip") #{timePerBlockDuration.format()}
+							small.text-muted.ml-1 (#{diffAdjSign}#{diffAdjPercent.toDP(1)}%)
+								
+
 	div(class=colClass)
 		h5.h6 Blockchain
 

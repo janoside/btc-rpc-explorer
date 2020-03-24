@@ -79,6 +79,9 @@ router.get("/", function(req, res, next) {
 	coreApi.getBlockchainInfo().then(function(getblockchaininfo) {
 		res.locals.getblockchaininfo = getblockchaininfo;
 
+		res.locals.difficultyPeriod = parseInt(Math.floor(getblockchaininfo.blocks / coinConfig.difficultyAdjustmentBlockCount));
+		
+
 		var blockHeights = [];
 		if (getblockchaininfo.blocks) {
 			// +1 to page size here so we have the next block to calculate T.T.M.
@@ -94,10 +97,19 @@ router.get("/", function(req, res, next) {
 		// promiseResults[5]
 		promises.push(coreApi.getBlocksStatsByHeight(blockHeights));
 
+		// promiseResults[6]
+		promises.push(new Promise(function(resolve, reject) {
+			coreApi.getBlockHeaderByHeight(coinConfig.difficultyAdjustmentBlockCount * res.locals.difficultyPeriod).then(function(difficultyPeriodFirstBlockHeader) {
+				console.log("abc: " + JSON.stringify(difficultyPeriodFirstBlockHeader));
+
+				resolve(difficultyPeriodFirstBlockHeader);
+			});
+		}));
+
 		if (getblockchaininfo.chain !== 'regtest') {
 			var targetBlocksPerDay = 24 * 60 * 60 / global.coinConfig.targetBlockTimeSeconds;
 
-			// promiseResults[6] (if not regtest)
+			// promiseResults[7] (if not regtest)
 			promises.push(coreApi.getTxCountStats(targetBlocksPerDay / 4, -targetBlocksPerDay, "latest"));
 
 			var chainTxStatsIntervals = [ targetBlocksPerDay, targetBlocksPerDay * 7, targetBlocksPerDay * 30, targetBlocksPerDay * 365 ]
@@ -107,7 +119,7 @@ router.get("/", function(req, res, next) {
 				.slice(0, chainTxStatsIntervals.length)
 				.concat("All time");
 
-			// promiseResults[7-X] (if not regtest)
+			// promiseResults[8-X] (if not regtest)
 			for (var i = 0; i < chainTxStatsIntervals.length; i++) {
 				promises.push(coreApi.getChainTxStats(chainTxStatsIntervals[i]));
 			}
@@ -119,6 +131,7 @@ router.get("/", function(req, res, next) {
 
 		coreApi.getBlocksByHeight(blockHeights).then(function(latestBlocks) {
 			res.locals.latestBlocks = latestBlocks;
+			res.locals.blocksUntilDifficultyAdjustment = ((res.locals.difficultyPeriod + 1) * coinConfig.difficultyAdjustmentBlockCount) - latestBlocks[0].height;
 
 			Promise.all(promises).then(function(promiseResults) {
 				res.locals.mempoolInfo = promiseResults[0];
@@ -156,14 +169,16 @@ router.get("/", function(req, res, next) {
 						res.locals.blockstatsByHeight[blockstats.height] = blockstats;
 					}
 				}
+
+				res.locals.difficultyPeriodFirstBlockHeader = promiseResults[6];
 				
 
 				if (getblockchaininfo.chain !== 'regtest') {
-					res.locals.txStats = promiseResults[6];
+					res.locals.txStats = promiseResults[7];
 
 					var chainTxStats = [];
 					for (var i = 0; i < res.locals.chainTxStatsLabels.length; i++) {
-						chainTxStats.push(promiseResults[i + 7]);
+						chainTxStats.push(promiseResults[i + 8]);
 					}
 
 					res.locals.chainTxStats = chainTxStats;
@@ -1421,6 +1436,23 @@ router.get("/tx-stats", function(req, res, next) {
 				});
 			});
 		});
+	});
+});
+
+router.get("/difficulty-history", function(req, res, next) {
+	coreApi.getBlockchainInfo().then(function(getblockchaininfo) {
+		res.locals.blockCount = getblockchaininfo.blocks;
+
+		res.render("difficulty-history");
+
+		next();
+
+	}).catch(function(err) {
+		res.locals.userMessage = "Error: " + err;
+
+		res.render("difficulty-history");
+
+		next();
 	});
 });
 

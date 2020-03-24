@@ -98,6 +98,24 @@ function splitArrayIntoChunks(array, chunkSize) {
 	return chunks;
 }
 
+function splitArrayIntoChunksByChunkCount(array, chunkCount) {
+	var bigChunkSize = Math.ceil(array.length / chunkCount);
+	var bigChunkCount = chunkCount - (chunkCount * bigChunkSize - array.length);
+
+	var chunks = [];
+
+	var chunkStart = 0;
+	for (var chunk = 0; chunk < chunkCount; chunk++) {
+		var chunkSize = (chunk < bigChunkCount ? bigChunkSize : (bigChunkSize - 1));
+
+		chunks.push(array.slice(chunkStart, chunkStart + chunkSize));
+
+		chunkStart += chunkSize;
+	}
+
+	return chunks;
+}
+
 function getRandomString(length, chars) {
     var mask = '';
 	
@@ -719,6 +737,7 @@ module.exports = {
 	redirectToConnectPageIfNeeded: redirectToConnectPageIfNeeded,
 	hex2ascii: hex2ascii,
 	splitArrayIntoChunks: splitArrayIntoChunks,
+	splitArrayIntoChunksByChunkCount: splitArrayIntoChunksByChunkCount,
 	getRandomString: getRandomString,
 	getCurrencyFormatInfo: getCurrencyFormatInfo,
 	formatCurrencyAmount: formatCurrencyAmount,

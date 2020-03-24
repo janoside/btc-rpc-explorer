@@ -46,56 +46,47 @@ if (false)
 								span #{siteTool.name}
 
 if (true)
-	div.row
-		// split into 4 segments:
-		// xxl: 2 columns (2 col because on xxl the tools card is in the same row as the "Network Summary" card)
-		// md: 3 columns (requires separate layout implementation...see below)
-		// lg, xl: 4 columns
-		// xm: 2 columns
+	div
 		- var priorityList = config.site.prioritizedToolIdsList;
-		- var indexLists = utils.splitArrayIntoChunks(priorityList, 3);
-		- var indexListsMediumWidth = utils.splitArrayIntoChunks(priorityList, 4);
+		- var indexLists2Col = utils.splitArrayIntoChunksByChunkCount(priorityList, 2);
+		- var indexLists3Col = utils.splitArrayIntoChunksByChunkCount(priorityList, 3);
+		- var indexLists4Col = utils.splitArrayIntoChunksByChunkCount(priorityList, 4);
+		- var indexLists5Col = utils.splitArrayIntoChunksByChunkCount(priorityList, 5);
 
-		// special case for medium-width layout
-		div.col.d-none.d-md-block.d-lg-none
+		// xs, sm, xxl
+		div.d-block.d-md-none.d-xxl-block(id="tools-2-col")
 			div.row
-				div.col-md-4
-					ul.list-unstyled.mb-0
-						each toolsItemIndex in indexListsMediumWidth[0]
-							include tools-card-block.pug
+				each indexList in indexLists2Col
+					div.col
+						ul.list-unstyled.mb-0
+							each toolsItemIndex in indexList
+								include tools-card-block.pug
 
-				div.col-md-4
-					ul.list-unstyled.mb-0
-						each toolsItemIndex in indexListsMediumWidth[1]
-							include tools-card-block.pug
-
-				div.col-md-4
-					ul.list-unstyled.mb-0
-						each toolsItemIndex in indexListsMediumWidth[2]
-							include tools-card-block.pug
-
-
-		// the below 2 div.col's are the default layout, used everywhere except medium-width layout
-		div.col.d-sm-block.d-md-none.d-lg-block
+		// md
+		div.d-none.d-md-block.d-lg-none(id="tools-3-col")
 			div.row
-				div.col-md-6.col-xxl-12
-					ul.list-unstyled.mb-0
-						each toolsItemIndex in indexLists[0]
-							include tools-card-block.pug
+				each indexList in indexLists3Col
+					div.col
+						ul.list-unstyled.mb-0
+							each toolsItemIndex in indexList
+								include tools-card-block.pug
 
-				div.col-md-6.col-xxl-12
-					ul.list-unstyled.mb-0
-						each toolsItemIndex in indexLists[1]
-							include tools-card-block.pug
-
-		div.col.d-md-none.d-lg-block
+		// lg
+		div.d-none.d-lg-block.d-xl-none(id="tools-4-col")
 			div.row
-				div.col-md-6.col-xxl-12
-					ul.list-unstyled.mb-0
-						each toolsItemIndex in indexLists[2]
-							include tools-card-block.pug
+				each indexList in indexLists4Col
+					div.col
+						ul.list-unstyled.mb-0
+							each toolsItemIndex in indexList
+								include tools-card-block.pug
 
-				div.col-md-6.col-xxl-12
-					ul.list-unstyled.mb-0
-						each toolsItemIndex in indexLists[3]
-							include tools-card-block.pug
+		// xl
+		div.d-none.d-xl-block.d-xxl-none(id="tools-5-col")
+			div.row
+				each indexList in indexLists5Col
+					div.col
+						ul.list-unstyled.mb-0
+							each toolsItemIndex in indexList
+								include tools-card-block.pug
+
+		

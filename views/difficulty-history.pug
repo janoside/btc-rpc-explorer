@@ -1,0 +1,202 @@
+extends layout
+
+block headContent
+	title Difficulty History
+
+block content
+	h1.h3 Difficulty History
+	hr
+
+	div.card.shadow-sm.mb-3
+		div.card-body
+			h3.h6.mb-0 Explanation
+			hr
+
+			ul.mb-0
+				li Mining difficulty adjusts automatically every 2,016 blocks.
+				li The adjustment aims to maintain an average block-mining time of 10 minutes.
+				li A growth in the difficulty indicates that the average block-mining time during the previous adjustment epoch was less than 10 minutes (due to more miners joining the network and 'searching' / 'mining' for blocks).
+				li A drop in difficulty indicates miners have left the network so finding each block is adjusted to be 'easier' for the smaller number remaining.
+				li The difficulty 'value' is a multiple of the difficulty of finding the easiest block (Block #0) - e.g. blocks in epoch 308 are over 16 trillion times harder to mine than those in epoch 0. 
+
+	div#progress-wrapper.mb-huge
+		div.card.shadow-sm.mb-3
+			div.card-body
+				h4.h6 Loading data: 
+					span(id="progress-text")
+				div.progress(id="progress-bar", style="height: 7px;")
+					div.progress-bar(id="data-progress", role="progressbar", aria-valuenow="0", aria-valuemin="0" ,aria-valuemax="100")
+
+
+	div#main-content(style="display: none;")
+		div.row
+			div.col
+				div.card.shadow-sm.mb-3
+					div.card-body
+						h3.h6.mb-0 Difficulty History
+						hr
+
+						canvas(id="graph-diff-hist")
+	
+
+
+block endOfBody
+	script(src="/js/chart.bundle.min.js", integrity="sha384-qgOtiGNaHh9fVWUnRjyHlV39rfbDcvPPkEzL1RHvsHKbuqUqM6uybNuVnghY2z4/")
+	script(src='/js/decimal.js')
+	script.
+		var blockCount = !{blockCount};
+		
+		var heights = [];
+		var height = 0;
+		while (height <= blockCount) {
+			heights.push([height]);
+			height += !{coinConfig.difficultyAdjustmentBlockCount};
+		}
+
+		$(document).ready(function() {
+			loadData(heights, 1, heights.length);
+		});
+
+		function loadData(heightChunks, chunkSize, count) {
+			var chunkStrs = [];
+			
+			for (var i = 0; i < heightChunks.length; i++) {
+				var heightChunk = heightChunks[i];
+
+				var chunkStr = "";
+
+				for (var j = 0; j < heightChunk.length; j++) {
+					if (j > 0) {
+						chunkStr += ",";
+					}
+
+					chunkStr += heightChunk[j];
+				}
+
+				chunkStrs.push(chunkStr);
+			}
+
+			//alert(JSON.stringify(chunks));
+
+			var results = [];
+
+			var statusCallback = function(chunkIndexDone, chunkCount) {
+				//console.log("Done: " + Math.min(((chunkIndexDone + 1) * chunkSize), count) + " of " + count);
+
+				var wPercent = `${parseInt(100 * (chunkIndexDone + 1) / parseFloat(chunkCount))}%`;
+				
+				$("#data-progress").css("width", wPercent);
+				$("#progress-text").text(`${Math.min(((chunkIndexDone + 1) * chunkSize), count).toLocaleString()} of ${count.toLocaleString()} (${wPercent})`);
+			};
+
+			var finishedCallback = function() {
+				var summary = summarizeData(results);
+
+				createGraph("graph-diff-hist", [summary.graphData], "Difficulty");
+
+				//createGraph("graph-diff-hist-2", summary.epochChunks, "Difficulty 2");
+				
+				$("#main-content").show();
+				$("#progress-wrapper").hide();
+			};
+
+			getData(results, chunkStrs, 0, statusCallback, finishedCallback);
+		}
+
+		function createGraph(graphId, datas, yLabelStr) {
+			var datasets = [];
+
+			for (var i = 0; i < datas.length; i++) {
+				datasets.push({
+					borderColor: '#007bff',
+					borderWidth: 2,
+					backgroundColor: 'rgba(0,0,0,0)',
+					data: datas[i],
+					pointRadius: 1
+				});
+			}
+
+			var ctx = document.getElementById(graphId).getContext('2d');
+			var graph = new Chart(ctx, {
+				type: 'line',
+				data: {
+					datasets: datasets
+				},
+				options: {
+					legend: { display: false },
+					scales: {
+						xAxes: [{
+							type: 'linear',
+							position: 'bottom',
+							scaleLabel: {
+								display: true,
+								labelString: 'Difficulty Epoch'
+							},
+							//ticks: {
+							//	stepSize: 100,
+							//}
+						}],
+						yAxes: [{
+							scaleLabel: {
+								display: true,
+								labelString: yLabelStr
+							}
+						}]
+					}
+				}
+			});
+		}
+
+		function getData(results, chunks, chunkIndex, statusCallback, finishedCallback) {
+			if (chunkIndex > chunks.length - 1) {
+				finishedCallback();
+
+				return;
+			}
+
+			var url = `/api/block-headers-by-height/${chunks[chunkIndex]}`;
+			
+			//console.log(url);
+
+			$.ajax({
+				url: url
+
+			}).done(function(result) {
+				for (var i = 0; i < result.length; i++) {
+					results.push(result[i]);
+				}
+
+				statusCallback(chunkIndex, chunks.length);
+				
+				getData(results, chunks, chunkIndex + 1, statusCallback, finishedCallback);
+			});
+		}
+
+		function summarizeData(raw) {
+			var summary = {};
+			summary.graphData = [];
+
+			for (var i = 0; i < raw.length; i++) {
+				summary.graphData.push({x:i, y:raw[i].difficulty});
+			}
+
+			/*
+			var epochChunkCount = 3;
+			var epochChunkSize = Math.floor(summary.graphData.length / epochChunkCount);
+
+			summary.epochChunks = [];
+			for (var i = 0; i < epochChunkCount; i++) {
+				summary.epochChunks.push([]);
+
+				var scale = summary.graphData[i * epochChunkSize].y;
+				
+				for (var j = 0; j < 100; j++) {
+					var data = summary.graphData[i * epochChunkSize + j];
+
+					summary.epochChunks[i].push({x:j, y:(data.y / scale)});
+				}
+			}*/
+
+			return summary;
+		}
+

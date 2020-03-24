@@ -404,190 +404,6 @@ function getMempoolDetails(start, count) {
 	});
 }
 
-function getMempoolStats() {
-	return new Promise(function(resolve, reject) {
-		tryCacheThenRpcApi(miscCache, "getRawMempool", 5000, rpcApi.getRawMempool).then(function(result) {
-			var maxFee = 0;
-			var maxFeePerByte = 0;
-			var maxAge = 0;
-			var maxSize = 0;
-			var ages = [];
-			var sizes = [];
-			for (var txid in result) {
-				var txMempoolInfo = result[txid];
-				var fee = txMempoolInfo.modifiedfee;
-				var size = txMempoolInfo.vsize ? txMempoolInfo.vsize : txMempoolInfo.size;
-				var feePerByte = txMempoolInfo.modifiedfee / size;
-				var age = Date.now() / 1000 - txMempoolInfo.time;
-
-				if (fee > maxFee) {
-					maxFee = txMempoolInfo.modifiedfee;
-				}
-
-				if (feePerByte > maxFeePerByte) {
-					maxFeePerByte = txMempoolInfo.modifiedfee / size;
-				}
-
-				ages.push({age:age, txid:txid});
-				sizes.push({size:size, txid:txid});
-
-				if (age > maxAge) {
-					maxAge = age;
-				}
-
-				if (size > maxSize) {
-					maxSize = size;
-				}
-			}
-
-			ages.sort(function(a, b) {
-				if (a.age != b.age) {
-					return b.age - a.age;
-
-				} else {
-					return a.txid.localeCompare(b.txid);
-				}
-			});
-
-			sizes.sort(function(a, b) {
-				if (a.size != b.size) {
-					return b.size - a.size;
-
-				} else {
-					return a.txid.localeCompare(b.txid);
-				}
-			});
-
-			maxSize = 2000;
-
-			var satoshiPerByteBucketMaxima = coins[config.coin].feeSatoshiPerByteBucketMaxima;
-			var bucketCount = satoshiPerByteBucketMaxima.length + 1;
-
-			var satoshiPerByteBuckets = [];
-			var satoshiPerByteBucketLabels = [];
-
-			satoshiPerByteBucketLabels[0] = ("[0 - " + satoshiPerByteBucketMaxima[0] + ")");
-			for (var i = 0; i < bucketCount; i++) {
-				satoshiPerByteBuckets[i] = {"count":0, "totalFees":0, "totalBytes":0};
-
-				if (i > 0 && i < bucketCount - 1) {
-					satoshiPerByteBucketLabels[i] = ("[" + satoshiPerByteBucketMaxima[i - 1] + " - " + satoshiPerByteBucketMaxima[i] + ")");
-				}
-			}
-
-			var ageBucketCount = 100;
-			var ageBucketTxCounts = [];
-			var ageBucketLabels = [];
-
-			var sizeBucketCount = 100;
-			var sizeBucketTxCounts = [];
-			var sizeBucketLabels = [];
-
-			for (var i = 0; i < ageBucketCount; i++) {
-				var rangeMin = i * maxAge / ageBucketCount;
-				var rangeMax = (i + 1) * maxAge / ageBucketCount;
-
-				ageBucketTxCounts.push(0);
-
-				if (maxAge > 600) {
-					var rangeMinutesMin = new Decimal(rangeMin / 60).toFixed(1);
-					var rangeMinutesMax = new Decimal(rangeMax / 60).toFixed(1);
-
-					ageBucketLabels.push(rangeMinutesMin + " - " + rangeMinutesMax + " min");
-
-				} else {
-					ageBucketLabels.push(parseInt(rangeMin) + " - " + parseInt(rangeMax) + " sec");
-				}
-			}
-
-			for (var i = 0; i < sizeBucketCount; i++) {
-				sizeBucketTxCounts.push(0);
-
-				if (i == sizeBucketCount - 1) {
-					sizeBucketLabels.push(parseInt(i * maxSize / sizeBucketCount) + "+");
-
-				} else {
-					sizeBucketLabels.push(parseInt(i * maxSize / sizeBucketCount) + " - " + parseInt((i + 1) * maxSize / sizeBucketCount));
-				}
-			}
-
-			satoshiPerByteBucketLabels[bucketCount - 1] = (satoshiPerByteBucketMaxima[satoshiPerByteBucketMaxima.length - 1] + "+");
-
-			var summary = {
-				"count":0,
-				"totalFees":0,
-				"totalBytes":0,
-				"satoshiPerByteBuckets":satoshiPerByteBuckets,
-				"satoshiPerByteBucketLabels":satoshiPerByteBucketLabels,
-				"ageBucketTxCounts":ageBucketTxCounts,
-				"ageBucketLabels":ageBucketLabels,
-				"sizeBucketTxCounts":sizeBucketTxCounts,
-				"sizeBucketLabels":sizeBucketLabels
-			};
-
-			for (var txid in result) {
-				var txMempoolInfo = result[txid];
-				var fee = txMempoolInfo.modifiedfee;
-				var size = txMempoolInfo.vsize ? txMempoolInfo.vsize : txMempoolInfo.size;
-				var feePerByte = txMempoolInfo.modifiedfee / size;
-				var satoshiPerByte = feePerByte * global.coinConfig.baseCurrencyUnit.multiplier;
-				var age = Date.now() / 1000 - txMempoolInfo.time;
-
-				var addedToBucket = false;
-				for (var i = 0; i < satoshiPerByteBucketMaxima.length; i++) {
-					if (satoshiPerByteBucketMaxima[i] > satoshiPerByte) {
-						satoshiPerByteBuckets[i]["count"]++;
-						satoshiPerByteBuckets[i]["totalFees"] += fee;
-						satoshiPerByteBuckets[i]["totalBytes"] += size;
-
-						addedToBucket = true;
-
-						break;
-					}
-				}
-
-				if (!addedToBucket) {
-					satoshiPerByteBuckets[bucketCount - 1]["count"]++;
-					satoshiPerByteBuckets[bucketCount - 1]["totalFees"] += fee;
-					satoshiPerByteBuckets[bucketCount - 1]["totalBytes"] += size;
-				}
-
-				summary["count"]++;
-				summary["totalFees"] += txMempoolInfo.modifiedfee;
-				summary["totalBytes"] += size;
-
-				var ageBucketIndex = Math.min(ageBucketCount - 1, parseInt(age / (maxAge / ageBucketCount)));
-				var sizeBucketIndex = Math.min(sizeBucketCount - 1, parseInt(size / (maxSize / sizeBucketCount)));
-
-				ageBucketTxCounts[ageBucketIndex]++;
-				sizeBucketTxCounts[sizeBucketIndex]++;
-			}
-
-			summary["averageFee"] = summary["totalFees"] / summary["count"];
-			summary["averageFeePerByte"] = summary["totalFees"] / summary["totalBytes"];
-
-			summary["satoshiPerByteBucketMaxima"] = satoshiPerByteBucketMaxima;
-			summary["satoshiPerByteBucketCounts"] = [];
-			summary["satoshiPerByteBucketTotalFees"] = [];
-
-			for (var i = 0; i < bucketCount; i++) {
-				summary["satoshiPerByteBucketCounts"].push(summary["satoshiPerByteBuckets"][i]["count"]);
-				summary["satoshiPerByteBucketTotalFees"].push(summary["satoshiPerByteBuckets"][i]["totalFees"]);
-			}
-
-			/*debugLog(JSON.stringify(ageBuckets));
-			debugLog(JSON.stringify(ageBucketLabels));
-			debugLog(JSON.stringify(sizeBuckets));
-			debugLog(JSON.stringify(sizeBucketLabels));*/
-
-			resolve(summary);
-
-		}).catch(function(err) {
-			reject(err);
-		});
-	});
-}
-
 function getBlockByHeight(blockHeight) {
 	return tryCacheThenRpcApi(blockCache, "getBlockByHeight-" + blockHeight, 3600000, function() {
 		return rpcApi.getBlockByHeight(blockHeight);
@@ -599,6 +415,28 @@ function getBlocksByHeight(blockHeights) {
 		var promises = [];
 		for (var i = 0; i < blockHeights.length; i++) {
 			promises.push(getBlockByHeight(blockHeights[i]));
+		}
+
+		Promise.all(promises).then(function(results) {
+			resolve(results);
+
+		}).catch(function(err) {
+			reject(err);
+		});
+	});
+}
+
+function getBlockHeaderByHeight(blockHeight) {
+	return tryCacheThenRpcApi(blockCache, "getBlockHeaderByHeight-" + blockHeight, 3600000, function() {
+		return rpcApi.getBlockHeaderByHeight(blockHeight);
+	});
+}
+
+function getBlockHeadersByHeight(blockHeights) {
+	return new Promise(function(resolve, reject) {
+		var promises = [];
+		for (var i = 0; i < blockHeights.length; i++) {
+			promises.push(getBlockHeaderByHeight(blockHeights[i]));
 		}
 
 		Promise.all(promises).then(function(results) {
@@ -1085,7 +923,6 @@ module.exports = {
 	getRawTransactionsWithInputs: getRawTransactionsWithInputs,
 	getTxUtxos: getTxUtxos,
 	getMempoolTxDetails: getMempoolTxDetails,
-	getMempoolStats: getMempoolStats,
 	getUptimeSeconds: getUptimeSeconds,
 	getHelp: getHelp,
 	getRpcMethodHelp: getRpcMethodHelp,
@@ -1102,5 +939,7 @@ module.exports = {
 	getBlockStats: getBlockStats,
 	getBlockStatsByHeight: getBlockStatsByHeight,
 	getBlocksStatsByHeight: getBlocksStatsByHeight,
-	buildBlockAnalysisData: buildBlockAnalysisData
+	buildBlockAnalysisData: buildBlockAnalysisData,
+	getBlockHeaderByHeight: getBlockHeaderByHeight,
+	getBlockHeadersByHeight: getBlockHeadersByHeight
 };
