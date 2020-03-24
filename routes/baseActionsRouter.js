@@ -100,8 +100,6 @@ router.get("/", function(req, res, next) {
 		// promiseResults[6]
 		promises.push(new Promise(function(resolve, reject) {
 			coreApi.getBlockHeaderByHeight(coinConfig.difficultyAdjustmentBlockCount * res.locals.difficultyPeriod).then(function(difficultyPeriodFirstBlockHeader) {
-				console.log("abc: " + JSON.stringify(difficultyPeriodFirstBlockHeader));
-
 				resolve(difficultyPeriodFirstBlockHeader);
 			});
 		}));
