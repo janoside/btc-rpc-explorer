@@ -43,8 +43,22 @@ div.row.text-monospace
 							div.clearfix
 								div.tx-io-desc
 									if (txVin.coinbase)
-										small.data-tag.bg-primary.mr-2 coinbase
-										span Newly minted coins
+										small.data-tag.bg-success.mr-2(title="Coinbase transactions are special transactions created by the miner of a block. They distribute the block reward (subsidy) as the miner chooses, along with all of the fees paid by transactions included in the block.", data-toggle="tooltip") coinbase
+										
+										div.pt-1
+											small.font-weight-bold(tistle="ASCII encoded", data-toggle="tooltip") data
+											small (ascii) - 
+											small #{utils.hex2ascii(txVin.coinbase)}
+											br
+											small
+												a(href="javascript:void(0)" onclick="$('#coinbase-data-hex').show(); $(this).hide(); return false;") show raw
+
+										div(id="coinbase-data-hex", style="display: none;")
+											small.font-weight-bold data
+											small (hex) - 
+											small.word-wrap #{txVin.coinbase}
+
+
 									else
 										div.word-wrap
 											small.data-tag.bg-dark.mr-2
@@ -183,28 +197,54 @@ div.row.text-monospace
 									else if (vout.scriptPubKey.hex && vout.scriptPubKey.hex.startsWith('6a24aa21a9ed'))
 										div.mb-tiny
 											small.data-tag.bg-primary OP_RETURN
-											
-										small.text-muted (SegWit committment - 
-											a(href="https://github.com/bitcoin/bips/blob/master/bip-0141.mediawiki#commitment-structure", data-toggle="tooltip", title="View developer docs", target="_blank") about
-											span )
+										
+										div
+											small.text-muted (SegWit committment - 
+												a(href="https://github.com/bitcoin/bips/blob/master/bip-0141.mediawiki#commitment-structure", data-toggle="tooltip", title="View developer docs", target="_blank") about
+												span )
+
+											br
+											small
+												a(href="javascript:void(0)" onclick=`$('#op-return-hex-${tx.txid}-${vout.n}').show(); $(this).hide(); return false;`) show raw
+
+										div(id=`op-return-hex-${tx.txid}-${vout.n}`, style="display: none;")
+											small.font-weight-bold data
+											small (hex) - 
+											small.word-wrap #{vout.scriptPubKey.asm}
 
 									else if (vout.scriptPubKey.asm && vout.scriptPubKey.asm.startsWith('OP_RETURN '))
 										div.mb-tiny
 											small.data-tag.bg-primary OP_RETURN
 										
-										small #{utils.hex2ascii(vout.scriptPubKey.asm.substring("OP_RETURN ".length))}
+										div
+											small.font-weight-bold data
+											small (ascii) - 
+											small #{utils.hex2ascii(vout.scriptPubKey.asm.substring("OP_RETURN ".length))}
+											br
+											small
+												a(href="javascript:void(0)" onclick=`$('#op-return-hex-${tx.txid}-${vout.n}').show(); $(this).hide(); return false;`) show raw
+
+										div(id=`op-return-hex-${tx.txid}-${vout.n}`, style="display: none;")
+											small.font-weight-bold data
+											small (hex) -  
+											small.word-wrap #{vout.scriptPubKey.asm}
+
+
 
 									else
 										div.mb-tiny
 											small.data-tag.bg-dark
 												span(title=`Output Type: ${utils.outputTypeName(vout.scriptPubKey.type)}`, data-toggle="tooltip") #{utils.outputTypeAbbreviation(vout.scriptPubKey.type)}
 
-										span
-											small.font-weight-bold asm: 
-											small #{vout.scriptPubKey.asm}
+										div
+											small.font-weight-bold asm
 											br
-											small.font-weight-bold hex: 
-											small #{vout.scriptPubKey.hex}
+											small.word-wrap #{vout.scriptPubKey.asm}
+										
+										div
+											small.font-weight-bold hex
+											br
+											small.word-wrap #{vout.scriptPubKey.hex}
 
 							div.tx-io-value
 								if (utxos)
