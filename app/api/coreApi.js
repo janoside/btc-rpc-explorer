@@ -779,7 +779,7 @@ function getBlockByHashWithTransactions(blockHash, txLimit, txOffset) {
 
 				// if we're on page 2, we don't really want the coinbase tx in the tx list anymore
 				if (txOffset > 0) {
-					transactions.shift();
+					txsResult.transactions.shift();
 				}
 
 				resolve({ getblock:block, transactions:txsResult.transactions, txInputsByTransaction:txsResult.txInputsByTransaction });
