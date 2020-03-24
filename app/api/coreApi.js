@@ -16,6 +16,10 @@ var rpcApi = require("./rpcApi.js");
 //var rpcApi = require("./mockApi.js");
 
 
+// this value should be incremented whenever data format changes, to avoid
+// pulling old-format data from a persistent cache
+var cacheKeyVersion = "v0";
+
 function onCacheEvent(cacheType, hitOrMiss, cacheKey) {
 	//debugLog(`cache.${cacheType}.${hitOrMiss}: ${cacheKey}`);
 }
@@ -84,7 +88,10 @@ function getGenesisCoinbaseTransactionId() {
 
 
 function tryCacheThenRpcApi(cache, cacheKey, cacheMaxAge, rpcApiFunction, cacheConditionFunction) {
-	//debugLog("tryCache: " + cacheKey + ", " + cacheMaxAge);
+	var versionedCacheKey = `${cacheKeyVersion}-${cacheKey}`;
+
+	//debugLog("tryCache: " + versionedCacheKey + ", " + cacheMaxAge);
+	
 	if (cacheConditionFunction == null) {
 		cacheConditionFunction = function(obj) {
 			return true;
@@ -101,7 +108,7 @@ function tryCacheThenRpcApi(cache, cacheKey, cacheMaxAge, rpcApiFunction, cacheC
 			} else {
 				rpcApiFunction().then(function(rpcResult) {
 					if (rpcResult != null && cacheConditionFunction(rpcResult)) {
-						cache.set(cacheKey, rpcResult, cacheMaxAge);
+						cache.set(versionedCacheKey, rpcResult, cacheMaxAge);
 					}
 
 					resolve(rpcResult);
@@ -112,13 +119,13 @@ function tryCacheThenRpcApi(cache, cacheKey, cacheMaxAge, rpcApiFunction, cacheC
 			}
 		};
 
-		cache.get(cacheKey).then(function(result) {
+		cache.get(versionedCacheKey).then(function(result) {
 			cacheResult = result;
 
 			finallyFunc();
 			
 		}).catch(function(err) {
-			utils.logError("nds9fc2eg621tf3", err, {cacheKey:cacheKey});
+			utils.logError("nds9fc2eg621tf3", err, {cacheKey:versionedCacheKey});
 
 			finallyFunc();
 		});
@@ -387,49 +394,8 @@ function getMempoolDetails(start, count) {
 				txids.push(resultTxids[i]);
 			}
 
-			getRawTransactions(txids).then(function(transactions) {
-				var maxInputsTracked = config.site.txMaxInput;
-				var vinTxids = [];
-				for (var i = 0; i < transactions.length; i++) {
-					var transaction = transactions[i];
-
-					if (transaction && transaction.vin) {
-						for (var j = 0; j < Math.min(maxInputsTracked, transaction.vin.length); j++) {
-							if (transaction.vin[j].txid) {
-								vinTxids.push(transaction.vin[j].txid);
-							}
-						}
-					}
-				}
-
-				var txInputsByTransaction = {};
-				getRawTransactions(vinTxids).then(function(vinTransactions) {
-					var vinTxById = {};
-
-					vinTransactions.forEach(function(tx) {
-						vinTxById[tx.txid] = tx;
-					});
-
-					transactions.forEach(function(tx) {
-						txInputsByTransaction[tx.txid] = {};
-
-						if (tx && tx.vin) {
-							for (var i = 0; i < Math.min(maxInputsTracked, tx.vin.length); i++) {
-								if (vinTxById[tx.vin[i].txid]) {
-									txInputsByTransaction[tx.txid][i] = vinTxById[tx.vin[i].txid];
-								}
-							}
-						}
-					});
-
-					resolve({ txCount:resultTxids.length, transactions:transactions, txInputsByTransaction:txInputsByTransaction });
-
-				}).catch(function(err) {
-					reject(err);
-				});
-
-			}).catch(function(err) {
-				reject(err);
+			getRawTransactionsWithInputs(txids, config.site.txMaxInput).then(function(result) {
+				resolve({ txCount:resultTxids.length, transactions:result.transactions, txInputsByTransaction:result.txInputsByTransaction });
 			});
 
 		}).catch(function(err) {
@@ -696,6 +662,37 @@ function getRawTransaction(txid) {
 	return tryCacheThenRpcApi(txCache, "getRawTransaction-" + txid, 3600000, rpcApiFunction, shouldCacheTransaction);
 }
 
+/*
+	This function pulls raw tx data and then summarizes the outputs. It's used in memory-constrained situations.
+*/
+function getSummarizedTransactionOutput(txid, voutIndex) {
+	var rpcApiFunction = function() {
+		return new Promise(function(resolve, reject) {
+			rpcApi.getRawTransaction(txid).then(function(rawTx) {
+				var vout = rawTx.vout[voutIndex];
+				if (vout.scriptPubKey) {
+					if (vout.scriptPubKey.asm) {
+						delete vout.scriptPubKey.asm;
+					}
+
+					if (vout.scriptPubKey.hex) {
+						delete vout.scriptPubKey.hex;
+					}
+				}
+
+				vout.txid = txid;
+
+				resolve(vout);
+
+			}).catch(function(err) {
+				reject(err);
+			});
+		});
+	};
+
+	return tryCacheThenRpcApi(txCache, `txoSummary-${txid}-${voutIndex}`, 3600000, rpcApiFunction, shouldCacheTransaction);
+}
+
 function getTxUtxos(tx) {
 	return new Promise(function(resolve, reject) {
 		var promises = [];
@@ -813,7 +810,7 @@ function summarizeBlockAnalysisData(blockHeight, tx, inputs) {
 	} else {
 		for (var i = 0; i < tx.vin.length; i++) {
 			var vin = tx.vin[i];
-			var inputVout = inputs[i].vout[vin.vout];
+			var inputVout = inputs[i];
 
 			txSummary.totalInput = txSummary.totalInput.plus(new Decimal(inputVout.value));
 
@@ -866,34 +863,45 @@ function getRawTransactionsWithInputs(txids, maxInputs=-1) {
 				maxInputsTracked = maxInputs;
 			}
 
-			var vinTxids = [];
+			var vinIds = [];
 			for (var i = 0; i < transactions.length; i++) {
 				var transaction = transactions[i];
 
 				if (transaction && transaction.vin) {
 					for (var j = 0; j < Math.min(maxInputsTracked, transaction.vin.length); j++) {
 						if (transaction.vin[j].txid) {
-							vinTxids.push(transaction.vin[j].txid);
+							vinIds.push({txid:transaction.vin[j].txid, voutIndex:transaction.vin[j].vout});
 						}
 					}
 				}
 			}
 
-			var txInputsByTransaction = {};
-			getRawTransactions(vinTxids).then(function(vinTransactions) {
-				var vinTxById = {};
+			var promises = [];
 
-				vinTransactions.forEach(function(tx) {
-					vinTxById[tx.txid] = tx;
-				});
+			for (var i = 0; i < vinIds.length; i++) {
+				var vinId = vinIds[i];
+
+				promises.push(getSummarizedTransactionOutput(vinId.txid, vinId.voutIndex));
+			}
+
+			Promise.all(promises).then(function(promiseResults) {
+				var summarizedTxOutputs = {};
+				for (var i = 0; i < promiseResults.length; i++) {
+					var summarizedTxOutput = promiseResults[i];
+
+					summarizedTxOutputs[`${summarizedTxOutput.txid}:${summarizedTxOutput.n}`] = summarizedTxOutput;
+				}
+
+				var txInputsByTransaction = {};
 
 				transactions.forEach(function(tx) {
 					txInputsByTransaction[tx.txid] = {};
 
 					if (tx && tx.vin) {
 						for (var i = 0; i < Math.min(maxInputsTracked, tx.vin.length); i++) {
-							if (vinTxById[tx.vin[i].txid]) {
-								txInputsByTransaction[tx.txid][i] = vinTxById[tx.vin[i].txid];
+							var summarizedTxOutput = summarizedTxOutputs[`${tx.vin[i].txid}:${tx.vin[i].vout}`];
+							if (summarizedTxOutput) {
+								txInputsByTransaction[tx.txid][i] = summarizedTxOutput;
 							}
 						}
 					}
@@ -918,54 +926,19 @@ function getBlockByHashWithTransactions(blockHash, txLimit, txOffset) {
 				txids.push(block.tx[i]);
 			}
 
-			getRawTransactions(txids).then(function(transactions) {
-				if (transactions.length == txids.length) {
-					block.coinbaseTx = transactions[0];
+			getRawTransactionsWithInputs(txids, config.site.txMaxInput).then(function(txsResult) {
+				if (txsResult.transactions && txsResult.transactions.length > 0) {
+					block.coinbaseTx = txsResult.transactions[0];
 					block.totalFees = utils.getBlockTotalFeesFromCoinbaseTxAndBlockHeight(block.coinbaseTx, block.height);
 					block.miner = utils.getMinerFromCoinbaseTx(block.coinbaseTx);
 				}
 
-				// if we're on page 2, we don't really want it anymore...
+				// if we're on page 2, we don't really want the coinbase tx in the tx list anymore
 				if (txOffset > 0) {
 					transactions.shift();
 				}
 
-				var maxInputsTracked = config.site.txMaxInput;
-				var vinTxids = [];
-				for (var i = 0; i < transactions.length; i++) {
-					var transaction = transactions[i];
-
-					if (transaction && transaction.vin) {
-						for (var j = 0; j < Math.min(maxInputsTracked, transaction.vin.length); j++) {
-							if (transaction.vin[j].txid) {
-								vinTxids.push(transaction.vin[j].txid);
-							}
-						}
-					}
-				}
-
-				var txInputsByTransaction = {};
-				getRawTransactions(vinTxids).then(function(vinTransactions) {
-					var vinTxById = {};
-
-					vinTransactions.forEach(function(tx) {
-						vinTxById[tx.txid] = tx;
-					});
-
-					transactions.forEach(function(tx) {
-						txInputsByTransaction[tx.txid] = {};
-
-						if (tx && tx.vin) {
-							for (var i = 0; i < Math.min(maxInputsTracked, tx.vin.length); i++) {
-								if (vinTxById[tx.vin[i].txid]) {
-									txInputsByTransaction[tx.txid][i] = vinTxById[tx.vin[i].txid];
-								}
-							}
-						}
-
-						resolve({ getblock:block, transactions:transactions, txInputsByTransaction:txInputsByTransaction });
-					});
-				});
+				resolve({ getblock:block, transactions:txsResult.transactions, txInputsByTransaction:txsResult.txInputsByTransaction });
 			});
 		});
 	});

@@ -22,8 +22,7 @@ div.row.text-monospace
 					- var vout = null;
 					if (txInputs && txInputs[txVinIndex])
 						- var txInput = txInputs[txVinIndex];
-						if (txInput.vout && txInput.vout[txVin.vout])
-							- var vout = txInput.vout[txVin.vout];
+						- var vout = txInput;
 
 				if (txVin.coinbase || vout)
 					div.clearfix

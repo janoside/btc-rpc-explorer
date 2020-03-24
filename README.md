@@ -9,13 +9,13 @@ This tool is intended to be a simple, self-hosted explorer for the Bitcoin block
 
 Whatever reasons one might have for running a full node (trustlessness, technical curiosity, supporting the network, etc) it's helpful to appreciate the "fullness" of your node. With this explorer, you can not only explore the blockchain (in the traditional sense of the term "explorer"), but also explore the functional capabilities of your own node.
 
-Live demo available at: [https://btc-explorer.com](https://btc-explorer.com)
+Live demo available at: [https://explorer.btc21.org](https://explorer.btc21.org)
 
 # Features
 
-* Browse blocks
-* View block details
-* View transaction details, with navigation "backward" via spent transaction outputs
+* Network Summary "dashboard"
+* View details of blocks, transactions, and addresses
+* Analysis tools for viewing stats on blocks, transactions, and miner activity
 * View JSON content used to generate most pages
 * Search by transaction ID, block hash/height, and address
 * Optional transaction history for addresses by querying from ElectrumX, blockchain.com, blockchair.com, or blockcypher.com
@@ -71,7 +71,7 @@ See `btc-rpc-explorer --help` for the full list of CLI options.
 
 # Support
 
-* [https://donation.btc21.org](https://donate.btc21.org/apps/2TBP2GuQnYXGBiHQkmf4jNuMh6eN/pos)
+* [https://donate.btc21.org](https://donate.btc21.org/apps/2TBP2GuQnYXGBiHQkmf4jNuMh6eN/pos)
 
 
 [npm-ver-img]: https://img.shields.io/npm/v/btc-rpc-explorer.svg?style=flat

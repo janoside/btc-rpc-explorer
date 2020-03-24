@@ -39,6 +39,8 @@
 	* **IMPORTANT**: Use of `/block-analysis` can put heavy memory pressure on this app, depending on the details of the block being analyzed. If your app is crashing, consider setting a higher memory ceiling: `node --max_old_space_size=XXX bin/www` (where `XXX` is measured in MB).
 * Change `/mempool-summary` to load data via ajax (UX improvement to give feedback while loading large data sets)
 * Zero-indexing for tx index-in-block values
+* Reduced memory usage
+* Versioning for cache keys if using persistent cache (redis)
 * Configurable UI "sub-header" links
 * Start of RPC API versioning support
 * Tweaked styling across site
@@ -46,6 +48,7 @@
 	* Remove "Bitcoin Explorer" H1 (it's redundant)
 	* Hide the "Date" (timestamp) column for recent blocks (the Age+TTM is more valuable)
 * Updated miner configs
+* Lots of minor bug fixes
 
 #### v1.1.9
 ##### 2020-02-23

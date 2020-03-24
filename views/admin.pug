@@ -1,0 +1,11 @@
+extends layout
+
+block headContent
+	title Admin
+
+block content
+	h1.h3 Admin
+	hr
+
+	pre
+		code.json #{JSON.stringify(memstats, null, 4)}

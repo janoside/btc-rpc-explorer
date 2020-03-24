@@ -89,8 +89,7 @@ div.row.index-summary
 						span Total Txs
 					td.text-right.text-monospace
 						if (txStats && txStats.totalTxCount)
-							- var totalTxData = utils.formatLargeNumber(txStats.totalTxCount, 2);
-							span.border-dotted(title=`${txStats.totalTxCount.toLocaleString()}`, data-toggle="tooltip") #{totalTxData[0]} #{totalTxData[1].abbreviation}
+							span #{txStats.totalTxCount.toLocaleString()}
 						else
 							span ???
 
