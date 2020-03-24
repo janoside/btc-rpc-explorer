@@ -123,7 +123,7 @@ div.tab-content
 										else
 											span 0
 
-							if (result.blockstats)
+							if (result.blockstats && result.blockstats.maxtxsize)
 								div.row
 									div(class=sumTableLabelClass) Min, Max Tx Size
 									div.text-monospace(class=sumTableValueClass)

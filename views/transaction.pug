@@ -78,7 +78,7 @@ block content
 								div.row
 									div.summary-table-label Status
 									div.summary-table-content.text-monospace
-										span.text-warning Unconfirmed
+										span.text-danger Unconfirmed
 
 								div.row
 									div.summary-table-label
@@ -160,14 +160,15 @@ block content
 								div.row
 									div.summary-table-label Confirmations
 									div.summary-table-content.text-monospace
-										if (!result.getrawtransaction.confirmations || result.getrawtransaction.confirmations == 0)
-											span.text-warning.font-weight-bold 0 (unconfirmed)
-
-										else if (result.getrawtransaction.confirmations < 6)
-											span.text-warning.font-weight-bold #{result.getrawtransaction.confirmations}
+										if (result.getrawtransaction.confirmations < 6)
+											span.font-weight-bold.text-warning #{result.getrawtransaction.confirmations.toLocaleString()} 
+												a(data-toggle="tooltip", title="Fewer than 6 confirmations is generally considered 'unsettled' for high-value transactions. The applicability of this guidance may vary.")
+													i.fas.fa-unlock-alt
 
 										else
-											span.text-success.font-weight-bold #{result.getrawtransaction.confirmations.toLocaleString()}
+											span.font-weight-bold.text-success #{result.getrawtransaction.confirmations.toLocaleString()} 
+												a(data-toggle="tooltip", title="6 confirmations is generally considered 'settled'. High-value transactions may require more; low-value transactions may require less.")
+													i.fas.fa-lock
 
 
 							if (result.getrawtransaction.vin[0].coinbase)
