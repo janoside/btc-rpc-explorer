@@ -22,26 +22,26 @@ block content
 				h3.h6.mb-0 Summary
 				hr
 
-				table.table.details-table.mb-0
-					tr
-						td.properties-header Transaction Count
-						td.text-monospace(id="tx-count")
+				div.clearfix
+					div.row
+						div.summary-table-label Tx Count
+						div.summary-table-content.text-monospace(id="tx-count")
 
-					tr
-						td.properties-header Memory Usage
-						td.text-monospace(id="mem-usage")
+					div.row
+						div.summary-table-label Memory Usage
+						div.summary-table-content.text-monospace(id="mem-usage")
 
-					tr
-						td.properties-header Total Fees
-						td.text-monospace(id="total-fees")
-						
-					tr
-						td.properties-header Avg Fee
-						td.text-monospace(id="avg-fee")
+					div.row
+						div.summary-table-label Total Fees
+						div.summary-table-content.text-monospace(id="total-fees")
 
-					tr
-						td.properties-header Avg Fee Rate
-						td.text-monospace(id="avg-fee-rate")
+					div.row
+						div.summary-table-label Avg Fee
+						div.summary-table-content.text-monospace(id="avg-fee")
+
+					div.row
+						div.summary-table-label Avg Fee Rate
+						div.summary-table-content.text-monospace(id="avg-fee-rate")
 
 		div.card.shadow-sm.mb-3
 			div.card-body.px-2.px-md-3

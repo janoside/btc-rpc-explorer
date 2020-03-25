@@ -34,34 +34,36 @@ block content
 						h3.h6.mb-0 Summary
 						hr
 
-						table.table.details-table.mb-0
-							tr
-								td.properties-header Host : Port
-								td.text-monospace #{global.rpcClient.host + " : " + global.rpcClient.port}
+						div.clearfix
+							div.row
+								div.summary-table-label Host : Port
+								div.summary-table-content.text-monospace #{global.rpcClient.host + " : " + global.rpcClient.port}
 
-							tr
-								td.properties-header Chain
-								td.text-monospace #{getblockchaininfo.chain}
-							tr
-								td.properties-header Version
-								td.text-monospace #{getnetworkinfo.version}
-									span.text-monospace  (#{getnetworkinfo.subversion})
-							tr
-								td.properties-header Protocol Version
-								td.text-monospace #{getnetworkinfo.protocolversion}
+							div.row
+								div.summary-table-label Chain
+								div.summary-table-content.text-monospace #{getblockchaininfo.chain}
+
+							div.row
+								div.summary-table-label Version
+								div.summary-table-content.text-monospace #{getnetworkinfo.version} (#{getnetworkinfo.subversion})
+
+							div.row
+								div.summary-table-label Protocol Version
+								div.summary-table-content.text-monospace #{getnetworkinfo.protocolversion}
 
 							if (getblockchaininfo.size_on_disk)
 								- var sizeData = utils.formatLargeNumber(getblockchaininfo.size_on_disk, 2);
-								tr
-									td.properties-header Blockchain Size
-									td.text-monospace #{sizeData[0]} #{sizeData[1].abbreviation}B
+
+								div.row
+									div.summary-table-label Blockchain Size
+									div.summary-table-content.text-monospace #{sizeData[0]} #{sizeData[1].abbreviation}B
 										br
 										span.text-muted  (pruned: #{getblockchaininfo.pruned})
 
 							if (getblockchaininfo.softforks)
-								tr
-									td.properties-header Soft Forks
-									td.text-monospace
+								div.row
+									div.summary-table-label Soft Forks
+									div.summary-table-content.text-monospace
 										ul.list-unstyled
 											each item, itemName in getblockchaininfo.softforks
 												li
@@ -75,40 +77,41 @@ block content
 															span status=
 															span.text-success active
 															small.text-muted.ml-2 (height: #{item.height.toLocaleString()})
-							
-							tr
-								td.properties-header Block Count
-								td.text-monospace #{getblockchaininfo.blocks.toLocaleString()}
+
+							div.row
+								div.summary-table-label Block Count
+								div.summary-table-content.text-monospace #{getblockchaininfo.blocks.toLocaleString()}
 									br
 									span.text-muted (headers: #{getblockchaininfo.headers.toLocaleString()})
-							tr
-								td.properties-header Difficulty
-								td.text-monospace
+
+							div.row
+								div.summary-table-label Difficulty
+								div.summary-table-content.text-monospace
 									- var difficultyData = utils.formatLargeNumber(getblockchaininfo.difficulty, 3);
-									
 									span(title=parseFloat(getblockchaininfo.difficulty).toLocaleString(), data-toggle="tooltip")
 										span #{difficultyData[0]}
 										span  x 10
 										sup #{difficultyData[1].exponent}
 
-							tr
-								td.properties-header Status
-								td.text-monospace
+							div.row
+								div.summary-table-label Status
+								div.summary-table-content.text-monospace
 									if (getblockchaininfo.initialblockdownload || getblockchaininfo.headers > getblockchaininfo.blocks)
 										span Initial block download progress #{(100 * getblockchaininfo.verificationprogress).toLocaleString()}%
 									else
-										span Synchronized with network
+										span.text-success Synchronized with network
 
-							tr
-								- var startTimeAgo = moment.duration(uptimeSeconds * 1000);
-								td.properties-header Uptime
-								td.text-monospace #{startTimeAgo.format()}
+							div.row
+								div.summary-table-label Uptime
+								div.summary-table-content.text-monospace
+									- var startTimeAgo = moment.duration(uptimeSeconds * 1000);
+									span #{startTimeAgo.format()}
 
-							tr
-								td.properties-header Warnings
-								td.text-monospace
+							div.row
+								div.summary-table-label Warnings
+								div.summary-table-content.text-monospace
 									if (getblockchaininfo.warnings && getblockchaininfo.warnings.trim().length > 0)
-										span #{getblockchaininfo.warnings}
+										span.text-danger #{getblockchaininfo.warnings}
 									else
 										span None
 
@@ -116,15 +119,15 @@ block content
 					div.card-body.px-2.px-sm-3
 						h3.h6.mb-0 Network Info
 						hr
-							
-						table.table.details-table.mb-0
-							tr
-								td.properties-header Peers
-								td.text-monospace #{getnetworkinfo.connections.toLocaleString()}
 
-							tr
-								td.properties-header Network Traffic
-								td.text-monospace
+						div.clearfix
+							div.row
+								div.summary-table-label Peers
+								div.summary-table-content.text-monospace #{getnetworkinfo.connections.toLocaleString()}
+
+							div.row
+								div.summary-table-label Network Traffic
+								div.summary-table-content.text-monospace
 									- var downData = utils.formatLargeNumber(getnettotals.totalbytesrecv, 2);
 									- var downRateData = utils.formatLargeNumber(getnettotals.totalbytesrecv / uptimeSeconds, 2);
 									- var upData = utils.formatLargeNumber(getnettotals.totalbytessent, 2);
@@ -137,9 +140,9 @@ block content
 									span.text-muted  (avg #{upRateData[0]} #{upRateData[1].abbreviation}B/s)
 
 							if (global.getnetworkinfo.networks)
-								tr
-									td.properties-header Interfaces
-									td.text-monospace
+								div.row
+									div.summary-table-label Interfaces
+									div.summary-table-content.text-monospace
 										each item, index in global.getnetworkinfo.networks
 											div
 												span.font-weight-bold #{item.name}: 
@@ -154,13 +157,13 @@ block content
 												if (item.proxy)
 													span.text-muted.ml-3 (proxy: #{item.proxy})
 
-							td.properties-header Local Addresses
-							td.text-monospace
-								if (global.getnetworkinfo.localaddresses)
-									each item, index in global.getnetworkinfo.localaddresses
-										div #{item.address}:#{item.port}
-											span.text-muted.ml-3 (score: #{item.score.toLocaleString()})
-
+							if (global.getnetworkinfo.localaddresses)
+								div.row
+									div.summary-table-label Local Addresses
+									div.summary-table-content.text-monospace
+										each item, index in global.getnetworkinfo.localaddresses
+											div #{item.address}:#{item.port}
+												span.text-muted.ml-3 (score: #{item.score.toLocaleString()})
 							
 
 			div.tab-pane(id="tab-json", role="tabpanel")

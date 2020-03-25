@@ -24,18 +24,6 @@ code, .text-monospace {
 	font-size: 80%;
 }
 
-.details-table td {
-	border-top: none;
-	padding: 0.4em;
-	padding-right: 0.6em;
-}
-
-.properties-header {
-	width: 160px;
-	text-align: right;
-	font-weight: bold;
-}
-
 .popover {
 	max-width: 1200px;
 }
