@@ -13,7 +13,7 @@
 	* Avg block time for current difficulty epoch with estimate of next difficulty adjustment
 * Tweaks to data in blocks lists:
 	* Simpler timestamp formatting for easy reading
-	* Include "Time-to-Mine" (TTM) for each block (with green/red highlighting for "fast"/"slow" (<5min/>15min) blocks)
+	* Include "Time-to-Mine" (TTM) for each block (with green/red highlighting for "fast"/"slow" (<5min / >15min) blocks)
 	* Display average fee in sat/vB
 	* Add total fees
 	* Add output volume (if `getblockstats` rpc call is supported, i.e. 0.17.0+)

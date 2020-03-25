@@ -29,32 +29,6 @@ block content
 
 			div.card.shadow-sm.mb-3
 				div.card-body
-					h3.h6 Cache Stats
-					hr
-
-					table.table.table-hover
-						thead
-							tr
-								th Cache
-								th.text-right Hit
-								th.text-right Miss
-								th.text-right Hit Rate
-
-						tbody
-							each item, itemName in cacheStats
-								tr.text-monospace
-									td #{itemName}
-									td.text-right #{item.hit.toLocaleString()}
-									td.text-right #{item.miss.toLocaleString()}
-									td.text-right
-										if (item.hit > 0 || item.miss > 0)
-											span #{(100 * item.hit / (item.hit + item.miss)).toLocaleString()}
-												small  %
-										else
-											span -
-
-			div.card.shadow-sm.mb-3
-				div.card-body
 					h3.h6 Memory Stats
 					hr
 
@@ -93,6 +67,33 @@ block content
 								- var data = utils.formatLargeNumber(memstats.total_available_size, 2);
 								span #{data[0]}
 									small  #{data[1].abbreviation}B
+
+			if (JSON.stringify(cacheStats) != "{}")
+				div.card.shadow-sm.mb-3
+					div.card-body
+						h3.h6 Cache Stats
+						hr
+
+						table.table.table-hover
+							thead
+								tr
+									th Cache
+									th.text-right Hit
+									th.text-right Miss
+									th.text-right Hit Rate
+
+							tbody
+								each item, itemName in cacheStats
+									tr.text-monospace
+										td #{itemName}
+										td.text-right #{item.hit.toLocaleString()}
+										td.text-right #{item.miss.toLocaleString()}
+										td.text-right
+											if (item.hit > 0 || item.miss > 0)
+												span #{(100 * item.hit / (item.hit + item.miss)).toLocaleString()}
+													small  %
+											else
+												span -
 
 			div.card.shadow-sm.mb-3
 				div.card-body
@@ -160,7 +161,7 @@ block content
 					hr
 
 					div.highlight
-						pre.mb-0
+						pre
 							code.json #{JSON.stringify(memstats, null, 4)}
 
 			div.card.shadow-sm.mb-3
@@ -169,5 +170,6 @@ block content
 					hr
 
 					div.highlight
-						pre.mb-0
+						pre
 							code.json #{JSON.stringify(errorStats, null, 4)}
+							

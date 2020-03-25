@@ -8,8 +8,19 @@ hr {
 
 .data-tag {
 	color: #111 !important;
-	background-color: #aaa !important;
 	border-color: #cccccc !important;
+}
+
+.data-tag.bg-dark {
+	background-color: #cccccc !important;
+}
+
+.alert {
+	opacity: 0.8 !important;
+}
+
+hr {
+	border-top: 1px solid rgba(255, 255, 255, 0.1) !important;
 }
 
 .hljs-attr {
