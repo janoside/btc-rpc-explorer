@@ -26,7 +26,14 @@ const ONE_HR = 60 * ONE_MIN;
 const ONE_DAY = 24 * ONE_HR;
 const ONE_YR = 265 * ONE_DAY;
 
+
+global.cacheStats.memory = {
+	hit: 0,
+	miss: 0
+};
+
 function onCacheEvent(cacheType, hitOrMiss, cacheKey) {
+	global.cacheStats.memory[hitOrMiss]++;
 	//debugLog(`cache.${cacheType}.${hitOrMiss}: ${cacheKey}`);
 }
 

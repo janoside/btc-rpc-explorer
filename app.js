@@ -13,6 +13,8 @@ configPaths.filter(fs.existsSync).forEach(path => {
 	dotenv.config({ path });
 });
 
+global.cacheStats = {};
+
 // debug module is already loaded by the time we do dotenv.config
 // so refresh the status of DEBUG env var
 var debug = require("debug");

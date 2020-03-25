@@ -11,7 +11,13 @@ if (config.redisUrl) {
 	redisClient = redis.createClient({url:config.redisUrl});
 }
 
+global.cacheStats.redis = {
+	hit: 0,
+	miss: 0
+};
+
 function onCacheEvent(cacheType, hitOrMiss, cacheKey) {
+	global.cacheStats.redis[hitOrMiss]++;
 	//console.log(`cache.${cacheType}.${hitOrMiss}: ${cacheKey}`);
 }
 
