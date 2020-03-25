@@ -626,10 +626,22 @@ function colorHexToHsl(hex) {
 const reflectPromise = p => p.then(v => ({v, status: "resolved" }),
                             e => ({e, status: "rejected" }));
 
+global.errorStats = {};
+
 function logError(errorId, err, optionalUserData = null) {
 	if (!global.errorLog) {
 		global.errorLog = [];
 	}
+
+	if (!global.errorStats[errorId]) {
+		global.errorStats[errorId] = {
+			count: 0,
+			firstSeen: new Date().getTime()
+		};
+	}
+
+	global.errorStats[errorId].count++;
+	global.errorStats[errorId].lastSeen = new Date().getTime();
 
 	global.errorLog.push({errorId:errorId, error:err, userData:optionalUserData, date:new Date()});
 	while (global.errorLog.length > 100) {
