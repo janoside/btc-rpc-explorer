@@ -30,10 +30,11 @@
 		* Fee totals: min, avg, max
 	* New "Technical Details" section. Items from "Summary" in previous versions have been moved here. This section is collapsible if desired.
 * Improvements to transaction input/output displays
-	* Change primary input data to be tx outpoint
+	* Change primary input data to be tx outpoint ("txid #voutIndex")
 	* Zero-indexing for tx inputs/outputs (#173)
 	* Labels for transaction input/output types
 	* Inputs: when available, show "input address" below tx outpoint
+	* Coinbase and OP_RETURN items: show ascii data inline with link to show hex data
 * New tool `/block-stats` for viewing summarized block data from recent blocks
 * New tool `/mining-summary` for viewing summarized mining data from recent blocks
 * New tool `/block-analysis` for analyzing the details of transactions in a block.
