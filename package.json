@@ -1,6 +1,6 @@
 {
   "name": "btc-rpc-explorer",
-  "version": "1.1.9",
+  "version": "2.0.0",
   "description": "Self-hosted Bitcoin blockchain explorer",
   "private": false,
   "bin": "bin/cli.js",
