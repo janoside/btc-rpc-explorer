@@ -8,24 +8,26 @@ div.row.index-summary
 	div(class=colClass)
 		h5.h6 Mining
 
-		- var hashrate1dayData0 = utils.formatLargeNumber(hashrate1d, 0);
-		- var hashrate7dayData0 = utils.formatLargeNumber(hashrate7d, 0);
-		- var hashrate1dayData1 = utils.formatLargeNumber(hashrate1d, 1);
-		- var hashrate7dayData1 = utils.formatLargeNumber(hashrate7d, 1);
 		table.table.table-borderless.table-sm.table-hover.mb-lg-0
 			tbody
-				tr
-					th.px-2.px-lg-0.px-xl-2
-						i.fas.fa-tachometer-alt.mr-1.summary-icon
-						span.border-dotted(title="Estimates for global network hashrate for 1 day / 7 days.", data-toggle="tooltip") Hashrate
-						small.ml-1 (d/w)
-					td.text-right.text-monospace
-						span.d-xxl-none #{hashrate1dayData0[0]}
-						span.d-none.d-xxl-inline #{hashrate1dayData1[0]}
-						small.text-muted  / 
-						span.d-xxl-none #{hashrate7dayData0[0]} 
-						span.d-none.d-xxl-inline #{hashrate7dayData1[0]} 
-						small.border-dotted(title=`${hashrate1dayData0[1].abbreviation}H = ${hashrate1dayData0[1].name}-hash (x10^${hashrate1dayData0[1].exponent})`, data-toggle="tooltip") #{hashrate1dayData0[1].abbreviation}H/s
+
+				if (hashrate1d && hashrate7d)
+					- var hashrate1dayData0 = utils.formatLargeNumber(hashrate1d, 0);
+					- var hashrate7dayData0 = utils.formatLargeNumber(hashrate7d, 0);
+					- var hashrate1dayData1 = utils.formatLargeNumber(hashrate1d, 1);
+					- var hashrate7dayData1 = utils.formatLargeNumber(hashrate7d, 1);
+					tr
+						th.px-2.px-lg-0.px-xl-2
+							i.fas.fa-tachometer-alt.mr-1.summary-icon
+							span.border-dotted(title="Estimates for global network hashrate for 1 day / 7 days.", data-toggle="tooltip") Hashrate
+							small.ml-1 (d/w)
+						td.text-right.text-monospace
+							span.d-xxl-none #{hashrate1dayData0[0]}
+							span.d-none.d-xxl-inline #{hashrate1dayData1[0]}
+							small.text-muted  / 
+							span.d-xxl-none #{hashrate7dayData0[0]} 
+							span.d-none.d-xxl-inline #{hashrate7dayData1[0]} 
+							small.border-dotted(title=`${hashrate1dayData0[1].abbreviation}H = ${hashrate1dayData0[1].name}-hash (x10^${hashrate1dayData0[1].exponent})`, data-toggle="tooltip") #{hashrate1dayData0[1].abbreviation}H/s
 
 				tr
 					th.px-2.px-lg-0.px-xl-2

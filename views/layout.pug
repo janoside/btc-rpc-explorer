@@ -31,9 +31,12 @@ html(lang="en")
 			div.container
 				a.navbar-brand(href="/")
 					span
-						if (coinConfig.logoUrl)
-							img.header-image(src=coinConfig.logoUrl, alt="logo")
-						span #{coinConfig.siteTitle}
+						if (coinConfig.logoUrlsByNetwork && coinConfig.logoUrlsByNetwork[global.activeBlockchain])
+							img.header-image(src=coinConfig.logoUrlsByNetwork[global.activeBlockchain], alt="logo")
+						else
+							img.header-image(src="/img/logo/btc.svg", alt="logo")
+
+						span #{coinConfig.siteTitlesByNetwork[global.activeBlockchain]}
 						
 				button.navbar-toggler.navbar-toggler-right(type="button", data-toggle="collapse", data-target="#navbarNav", aria-label="collapse navigation")
 					span.navbar-toggler-icon
@@ -141,7 +144,7 @@ html(lang="en")
 							span.badge.badge-danger.ml-2 #{pageErrors.length.toLocaleString()}
 
 				if (userMessage)
-					div.alert(class=(userMessageType ? `alert-${userMessageType} border-${userMessageType}` : "alert-warning border-warning"), role="alert")
+					div.alert(class=(userMessageType ? `alert-${userMessageType}` : "alert-warning"), role="alert")
 						span #{userMessage}
 				
 				block content
@@ -197,10 +200,13 @@ html(lang="en")
 										a(href="https://explorer.btc21.org") https://explorer.btc21.org
 									
 									div.mt-2
-										- var demoSiteCoins = ["BTC"];
-										each demoSiteCoin in demoSiteCoins
-											a.mr-2(href=coinConfigs[demoSiteCoin].demoSiteUrl, title=coinConfigs[demoSiteCoin].siteTitle)
-												img(src=("/img/logo/" + demoSiteCoin.toLowerCase() + ".svg"), alt=demoSiteCoin.toLowerCase())
+										- var demoSites = [];
+										- demoSites.push({url:"https://explorer.btc21.org", logoUrl:"/img/logo/btc.svg", title:"Bitcoin Explorer"});
+										- demoSites.push({url:"https://testnet.btc21.org", logoUrl:"/img/logo/tbtc.svg", title:"Testnet Explorer"});
+
+										each demoSite in demoSites
+											a.mr-2(href=demoSite.url, title=demoSite.title)
+												img(src=demoSite.logoUrl, alt=demoSite.title)
 
 										a.mr-2(href="https://lnd-admin.chaintools.io", title="LND Admin")
 											img(src=("/img/logo/lnd-admin.png"), style="width: 32px; height: 32px;", alt="LND Admin")

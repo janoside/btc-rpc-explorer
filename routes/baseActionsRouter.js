@@ -185,6 +185,15 @@ router.get("/", function(req, res, next) {
 				res.render("index");
 
 				next();
+
+			}).catch(function(err) {
+				utils.logError("32978efegdde", err);
+				
+				res.locals.userMessage = "Error loading recent blocks: " + err;
+
+				res.render("index");
+
+				next();
 			});
 		});
 	}).catch(function(err) {

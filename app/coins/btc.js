@@ -52,8 +52,16 @@ var currencyUnits = [
 module.exports = {
 	name:"Bitcoin",
 	ticker:"BTC",
-	logoUrl:"/img/logo/btc.svg",
-	siteTitle:"Bitcoin Explorer",
+	logoUrlsByNetwork:{
+		"main":"/img/logo/btc.svg",
+		"test":"/img/logo/tbtc.svg",
+		"regtest":"/img/logo/tbtc.svg"
+	},
+	siteTitlesByNetwork: {
+		"main":"Bitcoin Explorer",
+		"test":"Testnet Explorer",
+		"regtest":"Regtest Explorer"
+	},
 	siteDescriptionHtml:"<b>BTC Explorer</b> is <a href='https://github.com/janoside/btc-rpc-explorer). If you run your own [Bitcoin Full Node](https://bitcoin.org/en/full-node), **BTC Explorer** can easily run alongside it, communicating via RPC calls. See the project [ReadMe](https://github.com/janoside/btc-rpc-explorer) for a list of features and instructions for running.",
 	nodeTitle:"Bitcoin Full Node",
 	nodeUrl:"https://bitcoin.org/en/full-node",
