@@ -363,6 +363,18 @@ function getRpcData(cmd) {
 					return;
 				}
 
+				if (result.name && result.name == "RpcError") {
+					utils.logError("3084yh4r7ge", result, {cmd:cmd});
+
+					reject(result);
+
+					callback();
+
+					logStats(cmd, false, new Date().getTime() - startTime, false);
+
+					return;
+				}
+
 				resolve(result);
 
 				logStats(cmd, false, new Date().getTime() - startTime, true);
@@ -387,6 +399,18 @@ function getRpcDataWithParams(request) {
 					utils.logError("38eh39hdee", err, {result:result, headers:resHeaders});
 
 					reject(err);
+
+					callback();
+
+					logStats(request.method, true, new Date().getTime() - startTime, false);
+
+					return;
+				}
+
+				if (result.name && result.name == "RpcError") {
+					utils.logError("23983euewf8d", result, {result:result, headers:resHeaders});
+
+					reject(result);
 
 					callback();
 
