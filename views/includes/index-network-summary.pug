@@ -80,7 +80,7 @@ div.row.index-summary
 				tr
 					th.px-2.px-lg-0.px-xl-2
 						i.fas.fa-clock.mr-1.summary-icon
-						span.border-dotted(title=`Average block time for blocks in the current difficulty epoch (#${difficultyPeriod}). The difference between the target (10min) and this time indicates how the difficulty will adjust for the next epoch.`, data-toggle="tooltip") Block Time
+						span.border-dotted(title=`Average block time for blocks in the current difficulty epoch (#${difficultyPeriod}). The difference between the target (${coinConfig.targetBlockTimeMinutes}min) and this time indicates how the difficulty will adjust for the next epoch.`, data-toggle="tooltip") Block Time
 						small.ml-1 (e#{difficultyPeriod.toLocaleString()})
 					td.text-right.text-monospace
 						- var firstBlockHeader = difficultyPeriodFirstBlockHeader;
