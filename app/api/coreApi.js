@@ -20,6 +20,7 @@ var rpcApi = require("./rpcApi.js");
 // pulling old-format data from a persistent cache
 var cacheKeyVersion = "v0";
 
+
 const ONE_SEC = 1000;
 const ONE_MIN = 60 * ONE_SEC;
 const ONE_HR = 60 * ONE_MIN;
@@ -27,20 +28,13 @@ const ONE_DAY = 24 * ONE_HR;
 const ONE_YR = 265 * ONE_DAY;
 
 
-global.cacheStats.memory = {
-	hit: 0,
-	miss: 0
-};
 
-function onCacheEvent(cacheType, hitOrMiss, cacheKey) {
-	global.cacheStats.memory[hitOrMiss]++;
-	//debugLog(`cache.${cacheType}.${hitOrMiss}: ${cacheKey}`);
-}
-
-function createMemoryLruCache(cacheObj) {
+function createMemoryLruCache(cacheObj, onCacheEvent) {
 	return {
 		get:function(key) {
 			return new Promise(function(resolve, reject) {
+				onCacheEvent("memory", "try", key);
+
 				var val = cacheObj.get(key);
 
 				if (val != null) {
@@ -57,35 +51,85 @@ function createMemoryLruCache(cacheObj) {
 	}
 }
 
-var noopCache = {
-	get:function(key) {
-		return new Promise(function(resolve, reject) {
-			resolve(null);
-		});
-	},
-	set:function(key, obj, maxAge) {}
-};
+function tryCache(cacheKey, cacheObjs, index, resolve, reject) {
+	if (index == cacheObjs.length) {
+		resolve(null);
 
-var miscCache = null;
-var blockCache = null;
-var txCache = null;
+		return;
+	}
 
-if (config.noInmemoryRpcCache) {
-	miscCache = noopCache;
-	blockCache = noopCache;
-	txCache = noopCache;
+	cacheObjs[index].get(cacheKey).then(function(result) {
+		if (result != null) {
+			resolve(result);
 
-} else {
-	miscCache = createMemoryLruCache(new LRU(2000));
-	blockCache = createMemoryLruCache(new LRU(2000));
-	txCache = createMemoryLruCache(new LRU(10000));
+		} else {
+			tryCache(cacheKey, cacheObjs, index + 1, resolve, reject);
+		}
+	});
+}
+
+function createTieredCache(cacheObjs) {
+	return {
+		get:function(key) {
+			return new Promise(function(resolve, reject) {
+				tryCache(key, cacheObjs, 0, resolve, reject);
+			});
+		},
+		set:function(key, obj, maxAge) {
+			for (var i = 0; i < cacheObjs.length; i++) {
+				cacheObjs[i].set(key, obj, maxAge);
+			}
+		}
+	}
+}
+
+
+
+
+var miscCaches = [];
+var blockCaches = [];
+var txCaches = [];
+
+if (!config.noInmemoryRpcCache) {
+	global.cacheStats.memory = {
+		try: 0,
+		hit: 0,
+		miss: 0
+	};
+
+	var onMemoryCacheEvent = function(cacheType, eventType, cacheKey) {
+		global.cacheStats.memory[eventType]++;
+		//debugLog(`cache.${cacheType}.${eventType}: ${cacheKey}`);
+	}
+
+	miscCaches.push(createMemoryLruCache(new LRU(2000), onMemoryCacheEvent));
+	blockCaches.push(createMemoryLruCache(new LRU(2000), onMemoryCacheEvent));
+	txCaches.push(createMemoryLruCache(new LRU(10000), onMemoryCacheEvent));
 }
 
 if (redisCache.active) {
-	miscCache = redisCache;
-	blockCache = redisCache;
-	txCache = redisCache;
+	global.cacheStats.redis = {
+		try: 0,
+		hit: 0,
+		miss: 0,
+		error: 0
+	};
+
+	var onRedisCacheEvent = function(cacheType, eventType, cacheKey) {
+		global.cacheStats.redis[eventType]++;
+		//debugLog(`cache.${cacheType}.${eventType}: ${cacheKey}`);
+	}
+
+	var redisCacheObj = redisCache.createCache(cacheKeyVersion, onRedisCacheEvent);
+
+	miscCaches.push(redisCacheObj);
+	blockCaches.push(redisCacheObj);
+	txCaches.push(redisCacheObj);
 }
+
+var miscCache = createTieredCache(miscCaches);
+var blockCache = createTieredCache(blockCaches);
+var txCache = createTieredCache(txCaches);
 
 
 
@@ -101,8 +145,6 @@ function getGenesisCoinbaseTransactionId() {
 
 
 function tryCacheThenRpcApi(cache, cacheKey, cacheMaxAge, rpcApiFunction, cacheConditionFunction) {
-	var versionedCacheKey = `${cacheKeyVersion}-${cacheKey}`;
-
 	//debugLog("tryCache: " + versionedCacheKey + ", " + cacheMaxAge);
 	
 	if (cacheConditionFunction == null) {
@@ -121,7 +163,7 @@ function tryCacheThenRpcApi(cache, cacheKey, cacheMaxAge, rpcApiFunction, cacheC
 			} else {
 				rpcApiFunction().then(function(rpcResult) {
 					if (rpcResult != null && cacheConditionFunction(rpcResult)) {
-						cache.set(versionedCacheKey, rpcResult, cacheMaxAge);
+						cache.set(cacheKey, rpcResult, cacheMaxAge);
 					}
 
 					resolve(rpcResult);
@@ -132,13 +174,13 @@ function tryCacheThenRpcApi(cache, cacheKey, cacheMaxAge, rpcApiFunction, cacheC
 			}
 		};
 
-		cache.get(versionedCacheKey).then(function(result) {
+		cache.get(cacheKey).then(function(result) {
 			cacheResult = result;
 
 			finallyFunc();
 			
 		}).catch(function(err) {
-			utils.logError("nds9fc2eg621tf3", err, {cacheKey:versionedCacheKey});
+			utils.logError("nds9fc2eg621tf3", err, {cacheKey:cacheKey});
 
 			finallyFunc();
 		});

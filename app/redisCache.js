@@ -11,46 +11,43 @@ if (config.redisUrl) {
 	redisClient = redis.createClient({url:config.redisUrl});
 }
 
-global.cacheStats.redis = {
-	hit: 0,
-	miss: 0
-};
+function createCache(keyPrefix, onCacheEvent) {
+	return {
+		get: function(key) {
+			var prefixedKey = `${keyPrefix}-${key}`;
 
-function onCacheEvent(cacheType, hitOrMiss, cacheKey) {
-	global.cacheStats.redis[hitOrMiss]++;
-	//console.log(`cache.${cacheType}.${hitOrMiss}: ${cacheKey}`);
-}
+			return new Promise(function(resolve, reject) {
+				onCacheEvent("redis", "try", key);
 
-var redisCache = {
-	get:function(key) {
-		return new Promise(function(resolve, reject) {
-			redisClient.getAsync(key).then(function(result) {
-				if (result == null) {
-					onCacheEvent("redis", "miss", key);
+				redisClient.getAsync(prefixedKey).then(function(result) {
+					if (result == null) {
+						onCacheEvent("redis", "miss", key);
 
-					resolve(null);
+						resolve(null);
 
-					return;
-				}
+					} else {
+						onCacheEvent("redis", "hit", key);
 
-				onCacheEvent("redis", "hit", key);
+						resolve(JSON.parse(result));
+					}
+				}).catch(function(err) {
+					onCacheEvent("redis", "error", key);
 
-				resolve(JSON.parse(result));
+					utils.logError("328rhwefghsdgsdss", err);
 
-			}).catch(function(err) {
-				utils.logError("328rhwefghsdgsdss", err);
-
-				reject(err);
+					reject(err);
+				});
 			});
-		});
-	},
-	set:function(key, obj, maxAgeMillis) {
-		redisClient.set(key, JSON.stringify(obj), "PX", maxAgeMillis);
-	}
-};
+		},
+		set: function(key, obj, maxAgeMillis) {
+			var prefixedKey = `${keyPrefix}-${key}`;
+
+			redisClient.set(prefixedKey, JSON.stringify(obj), "PX", maxAgeMillis);
+		}
+	};
+}
 
 module.exports = {
 	active: (redisClient != null),
-	get: redisCache.get,
-	set: redisCache.set
+	createCache: createCache
 }
