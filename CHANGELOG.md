@@ -1,5 +1,5 @@
 #### v2.0.0
-##### 2020-03-23
+##### 2020-03-25
 
 * New data points in homepage "Network Summary":
 	* Fee estimates (estimatesmartfee) for 1, 6, 144, 1008 blocks
