@@ -15,7 +15,7 @@ block content
 		if (config.demoSite && session.hideHomepageBanner != "true")
 			div.alert.alert-primary.alert-dismissible.shadow-sm.mb-3(role="alert")
 				span
-					span.font-weight-bold #{coinConfig.siteTitlesByNetwork[global.activeBlockchain]}
+					span.font-weight-bold #{coinConfig.siteTitlesByNetwork[activeBlockchain]}
 					span  is 
 					a(href="https://github.com/janoside/btc-rpc-explorer", target="_blank") open-source
 					span  and easy to set up. It can communicate with your 

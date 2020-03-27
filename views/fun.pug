@@ -21,7 +21,7 @@ block content
 							th.data-header Reference
 					tbody
 						each item, index in coinConfig.historicalData
-							if (item.chain == global.activeBlockchain)
+							if (item.chain == activeBlockchain)
 								tr
 									td.data-cell #{item.date}
 

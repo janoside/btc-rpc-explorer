@@ -140,7 +140,7 @@ div.tab-content
 										else
 											span 0
 
-							- var blockRewardMax = coinConfig.blockRewardFunction(result.getblock.height, global.activeBlockchain);
+							- var blockRewardMax = coinConfig.blockRewardFunction(result.getblock.height, activeBlockchain);
 							- var coinbaseTxTotalOutputValue = new Decimal(0);
 							each vout in result.getblock.coinbaseTx.vout
 								- coinbaseTxTotalOutputValue = coinbaseTxTotalOutputValue.plus(new Decimal(vout.value));

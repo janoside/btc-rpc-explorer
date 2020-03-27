@@ -27,7 +27,7 @@ block content
 
 		- var totalInputValue = new Decimal(0);
 		if (result.getrawtransaction.vin[0].coinbase)
-			- totalInputValue = totalInputValue.plus(new Decimal(coinConfig.blockRewardFunction(result.getblock.height, global.activeBlockchain)));
+			- totalInputValue = totalInputValue.plus(new Decimal(coinConfig.blockRewardFunction(result.getblock.height, activeBlockchain)));
 		each txInput, txInputIndex in result.txInputs
 			if (txInput)
 				- var vout = txInput;
@@ -178,7 +178,7 @@ block content
 										- var currencyValue = new Decimal(totalOutputValue).minus(totalInputValue);
 										include includes/value-display.pug
 
-								- var blockRewardMax = coinConfig.blockRewardFunction(result.getblock.height, global.activeBlockchain);
+								- var blockRewardMax = coinConfig.blockRewardFunction(result.getblock.height, activeBlockchain);
 								if (parseFloat(totalOutputValue) < parseFloat(blockRewardMax))
 									div.row
 										div.summary-table-label

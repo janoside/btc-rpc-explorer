@@ -31,8 +31,8 @@ html(lang="en")
 			div.container
 				a.navbar-brand(href="/")
 					span
-						if (coinConfig.logoUrlsByNetwork && coinConfig.logoUrlsByNetwork[global.activeBlockchain])
-							img.header-image(src=coinConfig.logoUrlsByNetwork[global.activeBlockchain], alt="logo")
+						if (coinConfig.logoUrlsByNetwork && coinConfig.logoUrlsByNetwork[activeBlockchain])
+							img.header-image(src=coinConfig.logoUrlsByNetwork[activeBlockchain], alt="logo")
 						else
 							img.header-image(src="/img/logo/btc.svg", alt="logo")
 
@@ -49,11 +49,11 @@ html(lang="en")
 									a.nav-link(href="/about")
 										span About
 
-							if (global.activeBlockchain != "main")
-								- var chainName = global.activeBlockchain == "test" ? "testnet" : global.activeBlockchain
+							if (activeBlockchain != "main")
+								- var chainName = activeBlockchain == "test" ? "testnet" : activeBlockchain
 
 								li.nav-item
-									a.nav-link.text-warning(title=`Current node's chain: ${global.activeBlockchain}` data-toggle="tooltip") [#{chainName}]
+									a.nav-link.text-warning(title=`Current node's chain: ${activeBlockchain}` data-toggle="tooltip") [#{chainName}]
 
 							if (config.siteTools)
 								li.nav-item.dropdown
