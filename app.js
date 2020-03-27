@@ -486,8 +486,10 @@ app.use(function(req, res, next) {
 		}
 	}
 
+	// make a bunch of globals available to templates
 	res.locals.config = global.config;
 	res.locals.coinConfig = global.coinConfig;
+	res.locals.activeBlockchain = global.activeBlockchain;
 	res.locals.exchangeRates = global.exchangeRates;
 	res.locals.utxoSetSummary = global.utxoSetSummary;
 	res.locals.utxoSetSummaryPending = global.utxoSetSummaryPending;

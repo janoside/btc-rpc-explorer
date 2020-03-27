@@ -176,7 +176,9 @@ div.row.index-summary
 							span Total Supply
 						td.text-right.text-monospace
 							if (utxoSetSummary)
-								span.border-dotted(title=`${new Decimal(utxoSetSummary.total_amount).dividedBy(coinConfig.maxSupply).times(100).toDP(4)}% produced`, data-toggle="tooltip") #{parseFloat(utxoSetSummary.total_amount).toLocaleString()}
+								- var maxSupply = coinConfig.maxSupplyByNetwork[activeBlockchain];
+
+								span.border-dotted(title=`${new Decimal(utxoSetSummary.total_amount).dividedBy(maxSupply).times(100).toDP(4)}% produced`, data-toggle="tooltip") #{parseFloat(utxoSetSummary.total_amount).toLocaleString()}
 							else
 								small.text-muted.border-dotted(title=utxoCalculatingDesc, data-toggle="tooltip") calculating...
 
