@@ -139,11 +139,11 @@ block content
 									span Total Upload: #{upData[0]} #{upData[1].abbreviation}B
 									span.text-muted  (avg #{upRateData[0]} #{upRateData[1].abbreviation}B/s)
 
-							if (global.getnetworkinfo.networks)
+							if (getnetworkinfo.networks)
 								div.row
 									div.summary-table-label Interfaces
 									div.summary-table-content.text-monospace
-										each item, index in global.getnetworkinfo.networks
+										each item, index in getnetworkinfo.networks
 											div
 												span.font-weight-bold #{item.name}: 
 												if (item.reachable)
@@ -157,11 +157,11 @@ block content
 												if (item.proxy)
 													span.text-muted.ml-3 (proxy: #{item.proxy})
 
-							if (global.getnetworkinfo.localaddresses)
+							if (getnetworkinfo.localaddresses)
 								div.row
 									div.summary-table-label Local Addresses
 									div.summary-table-content.text-monospace
-										each item, index in global.getnetworkinfo.localaddresses
+										each item, index in getnetworkinfo.localaddresses
 											div #{item.address}:#{item.port}
 												span.text-muted.ml-3 (score: #{item.score.toLocaleString()})
 							
