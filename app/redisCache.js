@@ -17,21 +17,21 @@ function createCache(keyPrefix, onCacheEvent) {
 			var prefixedKey = `${keyPrefix}-${key}`;
 
 			return new Promise(function(resolve, reject) {
-				onCacheEvent("redis", "try", key);
+				onCacheEvent("redis", "try", prefixedKey);
 
 				redisClient.getAsync(prefixedKey).then(function(result) {
 					if (result == null) {
-						onCacheEvent("redis", "miss", key);
+						onCacheEvent("redis", "miss", prefixedKey);
 
 						resolve(null);
 
 					} else {
-						onCacheEvent("redis", "hit", key);
+						onCacheEvent("redis", "hit", prefixedKey);
 
 						resolve(JSON.parse(result));
 					}
 				}).catch(function(err) {
-					onCacheEvent("redis", "error", key);
+					onCacheEvent("redis", "error", prefixedKey);
 
 					utils.logError("328rhwefghsdgsdss", err);
 

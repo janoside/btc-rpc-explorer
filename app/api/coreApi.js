@@ -10,6 +10,7 @@ var config = require("../config.js");
 var coins = require("../coins.js");
 var redisCache = require("../redisCache.js");
 var Decimal = require("decimal.js");
+var md5 = require("md5");
 
 // choose one of the below: RPC to a node, or mock data while testing
 var rpcApi = require("./rpcApi.js");
@@ -120,7 +121,13 @@ if (redisCache.active) {
 		//debugLog(`cache.${cacheType}.${eventType}: ${cacheKey}`);
 	}
 
-	var redisCacheObj = redisCache.createCache(cacheKeyVersion, onRedisCacheEvent);
+	// md5 of the active RPC credentials serves as part of the key; this enables
+	// multiple instances of btc-rpc-explorer (eg mainnet + testnet) to share
+	// a single redis instance peacefully
+	var rpcHostPort = `${config.credentials.rpc.host}:${config.credentials.rpc.port}`;
+	var rpcCredKeyComponent = md5(JSON.stringify(config.credentials.rpc)).substring(0, 8);
+	
+	var redisCacheObj = redisCache.createCache(`${cacheKeyVersion}-${rpcCredKeyComponent}`, onRedisCacheEvent);
 
 	miscCaches.push(redisCacheObj);
 	blockCaches.push(redisCacheObj);
