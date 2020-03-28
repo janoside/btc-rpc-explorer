@@ -37,6 +37,15 @@ block content
 						hr
 
 						canvas(id="graph-diff-hist")
+
+		div.row
+			div.col
+				div.card.shadow-sm.mb-3
+					div.card-body
+						h3.h6.mb-0 Difficulty Change (clamped to ±100%)
+						hr
+
+						canvas(id="graph-diff-change")
 	
 
 
@@ -93,6 +102,8 @@ block endOfBody
 				var summary = summarizeData(results);
 
 				createGraph("graph-diff-hist", [summary.graphData], "Difficulty");
+
+				createGraph("graph-diff-change", [summary.changeGraphData], "Difficulty Change %");
 
 				//createGraph("graph-diff-hist-2", summary.epochChunks, "Difficulty 2");
 				
@@ -175,9 +186,40 @@ block endOfBody
 		function summarizeData(raw) {
 			var summary = {};
 			summary.graphData = [];
+			summary.changeGraphData = [];
 
 			for (var i = 0; i < raw.length; i++) {
 				summary.graphData.push({x:i, y:raw[i].difficulty});
+
+				if (i == 0) {
+					summary.changeGraphData.push({x:i, y:raw[i].difficulty});
+
+				} else {
+					var d1 = raw[i].difficulty;
+					var d0 = raw[i - 1].difficulty
+
+					var deltaPercent = 100 * (d1 / d0 - 1);
+					/*if (d1 > d0) {
+						// increase
+						deltaPercent = 
+						
+
+					} else {
+						// decrease
+						deltaPercent = -100 * (1 - d1 / d0);
+						
+					}*/
+
+					if (deltaPercent > 100) {
+						deltaPercent = 100;
+					}
+
+					if (deltaPercent < -100) {
+						deltaPercent = -100;
+					}
+
+					summary.changeGraphData.push({x:i, y:deltaPercent});
+				}
 			}
 
 			/*
