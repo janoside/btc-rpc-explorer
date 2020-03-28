@@ -47,6 +47,7 @@ var addressApi = require("./app/api/addressApi.js");
 var electrumAddressApi = require("./app/api/electrumAddressApi.js");
 var coreApi = require("./app/api/coreApi.js");
 var auth = require('./app/auth.js');
+var marked = require("marked");
 
 var package_json = require('./package.json');
 global.appVersion = package_json.version;
@@ -638,6 +639,7 @@ app.use(function(err, req, res, next) {
 app.locals.moment = moment;
 app.locals.Decimal = Decimal;
 app.locals.utils = utils;
+app.locals.marked = marked;
 
 
 

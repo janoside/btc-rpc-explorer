@@ -141,14 +141,20 @@ html(lang="en")
 				if (pageErrors && pageErrors.length > 0)
 					include includes/page-errors-modal.pug
 
-					div.float-right
-						div.alert.alert-danger.py-1.px-3.mb-n2.mt-n1.font-weight-bold(title=`This page encountered ${pageErrors.length.toLocaleString()} error(s). Click for details.` data-toggle="tooltip")
-							a.text-danger(href="javascript:void(0)" data-toggle="modal" data-target="#pageErrorsModal") Errors
-							span.badge.badge-danger.ml-2 #{pageErrors.length.toLocaleString()}
+					div.alert.alert-danger
+						- var errorText = `This page encountered ${pageErrors.length.toLocaleString()} error${pageErrors.length == 1 ? "" : "s"}:`;
+						span.font-weight-bold #{errorText} 
+						a(href="javascript:void(0)", data-toggle="modal", data-target="#pageErrorsModal") Error details
+
+				if (userMessageMarkdown)
+					div.alert(class=(userMessageType ? `alert-${userMessageType}` : "alert-warning"), role="alert")
+						div.user-message-markdown
+							| !{marked(userMessageMarkdown)}
 
 				if (userMessage)
 					div.alert(class=(userMessageType ? `alert-${userMessageType}` : "alert-warning"), role="alert")
 						span #{userMessage}
+							
 				
 				block content
 

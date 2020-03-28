@@ -20,6 +20,14 @@ code, .text-monospace {
 	font-family: "Source Code Pro", monospace !important;
 }
 
+strong {
+	font-weight: 700 !important;
+}
+
+h6, .h6 {
+	margin-bottom: 0 !important;
+}
+
 .text-small {
 	font-size: 80%;
 }
@@ -44,6 +52,10 @@ code, .text-monospace {
 
 .mb-huge {
 	margin-bottom: 200px;
+}
+
+.user-message-markdown p {
+	margin-bottom: 0 !important;
 }
 
 
