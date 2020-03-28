@@ -802,6 +802,8 @@ function getRawTransactionsWithInputs(txids, maxInputs=-1) {
 
 				resolve({ transactions:transactions, txInputsByTransaction:txInputsByTransaction });
 			});
+		}).catch(function(err) {
+			reject(err);
 		});
 	});
 }
@@ -833,6 +835,8 @@ function getBlockByHashWithTransactions(blockHash, txLimit, txOffset) {
 
 				resolve({ getblock:block, transactions:txsResult.transactions, txInputsByTransaction:txsResult.txInputsByTransaction });
 			});
+		}).catch(function(err) {
+			reject(err);
 		});
 	});
 }

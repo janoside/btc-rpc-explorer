@@ -646,6 +646,11 @@ router.get("/block-height/:blockHeight", function(req, res, next) {
 				res.locals.result.txInputsByTransaction = result.txInputsByTransaction;
 
 				resolve();
+
+			}).catch(function(err) {
+				res.locals.pageErrors.push(utils.logError("98493y4758h55", err));
+
+				reject(err);
 			});
 		}));
 
@@ -656,7 +661,7 @@ router.get("/block-height/:blockHeight", function(req, res, next) {
 				resolve();
 
 			}).catch(function(err) {
-				res.locals.userMessage = "Error getting block stats";
+				res.locals.pageErrors.push(utils.logError("983yr435r76d", err));
 
 				reject(err);
 			});
@@ -668,13 +673,15 @@ router.get("/block-height/:blockHeight", function(req, res, next) {
 			next();
 
 		}).catch(function(err) {
-			res.locals.pageErrors.push(utils.logError("3249y2ewgfee", err));
+			res.locals.userMessageMarkdown = `Failed loading block: height=**${blockHeight}**`;
 
 			res.render("block");
 
 			next();
 		});
 	}).catch(function(err) {
+		res.locals.userMessageMarkdown = `Failed loading block: height=**${blockHeight}**`;
+
 		res.locals.pageErrors.push(utils.logError("389wer07eghdd", err));
 
 		res.render("block");
@@ -723,8 +730,8 @@ router.get("/block/:blockHash", function(req, res, next) {
 			resolve();
 
 		}).catch(function(err) {
-			res.locals.userMessage = "Error getting block data";
-
+			res.locals.pageErrors.push(utils.logError("238h38sse", err));
+			
 			reject(err);
 		});
 	}));
@@ -736,8 +743,8 @@ router.get("/block/:blockHash", function(req, res, next) {
 			resolve();
 
 		}).catch(function(err) {
-			res.locals.userMessage = "Error getting block stats";
-
+			res.locals.pageErrors.push(utils.logError("21983ue8hye", err));
+			
 			reject(err);
 		});
 	}));
@@ -748,7 +755,7 @@ router.get("/block/:blockHash", function(req, res, next) {
 		next();
 
 	}).catch(function(err) {
-		res.locals.pageErrors.push(utils.logError("3217wfeghy9sdgs", err));
+		res.locals.userMessageMarkdown = `Failed to load block: **${blockHash}**`;
 
 		res.render("block");
 
@@ -867,7 +874,7 @@ router.get("/tx/:transactionId", function(req, res, next) {
 		});
 
 	}).catch(function(err) {
-		res.locals.userMessage = "Failed to load transaction with txid=" + txid + ": " + err;
+		res.locals.userMessageMarkdown = `Failed to load transaction: txid=**${txid}**`;
 
 		res.locals.pageErrors.push(utils.logError("1237y4ewssgt", err));
 
@@ -1152,7 +1159,7 @@ router.get("/address/:address", function(req, res, next) {
 	}).catch(function(err) {
 		res.locals.pageErrors.push(utils.logError("2108hs0gsdfe", err, {address:address}));
 
-		res.locals.userMessage = "Failed to load address " + address + " (" + err + ")";
+		res.locals.userMessageMarkdown = `Failed to load address: **${address}**`;
 
 		res.render("address");
 

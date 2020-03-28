@@ -1,13 +1,17 @@
 extends layout
 
 block headContent
-	title Block ##{result.getblock.height.toLocaleString()}, #{result.getblock.hash}
+	if (result.getblock)
+		title Block ##{result.getblock.height.toLocaleString()}, #{result.getblock.hash}
+	else
+		title Block: Error
 
 block content
-	h1.h3 Block 
-		small.text-monospace(style="width: 100%;") ##{result.getblock.height.toLocaleString()}
-		br
-		small.text-monospace.word-wrap(style="width: 100%;") #{result.getblock.hash}
-	hr
+	if (result.getblock)
+		h1.h3 Block 
+			small.text-monospace(style="width: 100%;") ##{result.getblock.height.toLocaleString()}
+			br
+			small.text-monospace.word-wrap(style="width: 100%;") #{result.getblock.hash}
+		hr
 
-	include includes/block-content.pug
+		include includes/block-content.pug

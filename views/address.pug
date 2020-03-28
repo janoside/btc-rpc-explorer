@@ -6,7 +6,7 @@ block headContent
 block content
 	if (result && result.validateaddress)
 		if (!result.validateaddress.isvalid)
-			div.alert.alert-danger.border-danger.mb-huge
+			div.alert.alert-danger.mb-huge
 				h1.h6.font-weight-bold Invalid Address
 				span.text-monospace #{address}
 				
