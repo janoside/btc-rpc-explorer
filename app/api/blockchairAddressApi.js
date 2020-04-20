@@ -6,7 +6,7 @@ function getAddressDetails(address, scriptPubkey, sort, limit, offset) {
 	// Note: blockchair api seems to not respect the limit parameter, always using 100
 	return new Promise(function(resolve, reject) {
 		var options = {
-			url: `https://api.blockchair.com/bitcoin/dashboards/address/${address}/?offset=${offset}`,
+			url: `https://api.blockchair.com/bitcoin-cash/dashboards/address/${address}/?offset=${offset}`,
 			headers: {
 				'User-Agent': 'request'
 			}
