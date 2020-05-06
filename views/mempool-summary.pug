@@ -83,8 +83,8 @@ block content
 		
 
 block endOfBody
-	script(src="/js/chart.bundle.min.js", integrity="sha384-qgOtiGNaHh9fVWUnRjyHlV39rfbDcvPPkEzL1RHvsHKbuqUqM6uybNuVnghY2z4/")
-	script(src='/js/decimal.js')
+	script(src="./js/chart.bundle.min.js", integrity="sha384-qgOtiGNaHh9fVWUnRjyHlV39rfbDcvPPkEzL1RHvsHKbuqUqM6uybNuVnghY2z4/")
+	script(src='./js/decimal.js')
 	script.
 		var txidChunks = !{JSON.stringify(mempooltxidChunks)};
 		var satoshiPerByteBucketMaxima = !{JSON.stringify(satoshiPerByteBucketMaxima)};
@@ -141,7 +141,7 @@ block endOfBody
 				$("#avg-fee-rate").text(summary.averageFeePerByte);
 
 				$.ajax({
-					url: `/api/utils/formatLargeNumber/${summary.totalBytes},2`
+					url: `./api/utils/formatLargeNumber/${summary.totalBytes},2`
 
 				}).done(function(result) {
 					$("#mem-usage").html(`<span>${result[0]} <small>${result[1].abbreviation}B</small></span>`);
@@ -273,7 +273,7 @@ block endOfBody
 				return;
 			}
 
-			var url = `/api/mempool-txs/${chunkStrs[chunkIndex]}`;
+			var url = `./api/mempool-txs/${chunkStrs[chunkIndex]}`;
 			
 			//console.log(url);
 

@@ -11,7 +11,7 @@ block content
 		div.col
 			if (!config.demoSite && (!config.credentials.rpc || !config.credentials.rpc.rpc))
 				span(style="float: right;")
-					a.btn.btn-secondary(href="/disconnect") Disconnect from node
+					a.btn.btn-secondary(href="./disconnect") Disconnect from node
 	
 	hr
 
@@ -51,7 +51,7 @@ block endOfBody
 					function(response, textStatus, jqXHR) {
 						var t = new Date().getTime();
 
-						$("#terminal-output").prepend("<div id='output-" + t + "' class='card mb-3 shadow-sm'><div class='card-body'><h5>" + cmd + "</h5><pre><code class='json'>" + response + "</code></pre></div></div>");
+						("#terminal-output").prepend("<div id='output-" + t + "' class='card mb-3 shadow-sm'><div class='card-body'><h5>" + cmd + "</h5><pre><code class='json'>" + response + "</code></pre></div></div>");
 						console.log(response);
 
 						$("#output-" + t + " pre code").each(function(i, block) {

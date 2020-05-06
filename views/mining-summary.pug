@@ -112,7 +112,7 @@ block content
 			code.json #{JSON.stringify(summariesByMiner, null, 4)}
 
 block endOfBody
-	script(src='/js/decimal.js')
+	script(src='./js/decimal.js')
 	script.
 		var currentBlockHeight = !{currentBlockHeight};
 		$(document).ready(function() {
@@ -281,7 +281,7 @@ block endOfBody
 				return;
 			}
 
-			var url = `/api/blocks-by-height/${chunks[chunkIndex]}`;
+			var url = `./api/blocks-by-height/${chunks[chunkIndex]}`;
 			
 			//console.log(url);
 

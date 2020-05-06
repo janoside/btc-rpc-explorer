@@ -63,14 +63,14 @@ div.row.text-monospace
 										div.word-wrap
 											small.data-tag.bg-dark.mr-2
 												span(title=`Input Type: ${utils.outputTypeName(vout.scriptPubKey.type)}`, data-toggle="tooltip") #{utils.outputTypeAbbreviation(vout.scriptPubKey.type)}
-											a(href=("/tx/" + txInput.txid + "#output-" + txVin.vout)) #{utils.ellipsize(txInput.txid, 26)}
+											a(href=("./tx/" + txInput.txid + "#output-" + txVin.vout)) #{utils.ellipsize(txInput.txid, 26)}
 												span  ##{txVin.vout}
 
 										if (vout && vout.scriptPubKey && vout.scriptPubKey.addresses)
 											div.word-wrap
 												small.text-muted
 													span.mr-1 (addr:
-													a(href=("/address/" + vout.scriptPubKey.addresses[0]), class=(txIOHighlightAddress == vout.scriptPubKey.addresses[0] ? "font-weight-bold" : null)) #{vout.scriptPubKey.addresses[0]}
+													a(href=("./address/" + vout.scriptPubKey.addresses[0]), class=(txIOHighlightAddress == vout.scriptPubKey.addresses[0] ? "font-weight-bold" : null)) #{vout.scriptPubKey.addresses[0]}
 
 													if (global.specialAddresses[vout.scriptPubKey.addresses[0]])
 														- var specialAddressInfo = global.specialAddresses[vout.scriptPubKey.addresses[0]];
@@ -85,7 +85,7 @@ div.row.text-monospace
 												small
 													span.border-dotted(title="Transaction output", data-toggle="tooltip") txo
 													span.mr-1 :
-													a(href=("/tx/" + txInput.txid + "#output-" + txVin.vout)) #{utils.ellipsize(txInput.txid, 20)}[#{txVin.vout}]
+													a(href=("./tx/" + txInput.txid + "#output-" + txVin.vout)) #{utils.ellipsize(txInput.txid, 20)}[#{txVin.vout}]
 
 										else
 											
@@ -121,7 +121,7 @@ div.row.text-monospace
 										span s
 								br
 								small.text-muted (see 
-									a(href=("/tx/" + tx.txid)) transaction page
+									a(href=("./tx/" + tx.txid)) transaction page
 									span  for details)
 
 							div.tx-io-value
@@ -182,7 +182,7 @@ div.row.text-monospace
 													span(title=`Output Type: ${utils.outputTypeName(vout.scriptPubKey.type)}`, data-toggle="tooltip") #{utils.outputTypeAbbreviation(vout.scriptPubKey.type)}
 
 										each addr in vout.scriptPubKey.addresses
-											a(id=("output-" + voutIndex), href=("/address/" + addr))
+											a(id=("output-" + voutIndex), href=("./address/" + addr))
 												span.text-monospace.word-wrap(class=(highlightRow ? "font-weight-bold" : "")) #{addr}
 
 											if (global.specialAddresses[addr])

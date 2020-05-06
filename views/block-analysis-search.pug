@@ -12,7 +12,7 @@ block content
 			h6.mb-3 Search for a block by height or hash to see a summary analysis of the transactions within that block.
 
 			div.mb-3
-				form.form.form-inline(method="get", action="/block-analysis")
+				form.form.form-inline(method="get", action="./block-analysis")
 					input(type="hidden", name="_csrf", value=csrfToken)
 
 					div.input-group
@@ -29,13 +29,13 @@ block content
 			ul.text-monospace
 				each height in heights
 					li
-						a(href=`/block-analysis/${height}`) Block ##{height.toLocaleString()}
+						a(href=`./block-analysis/${height}`) Block ##{height.toLocaleString()}
 
 block endOfBody
 	script.
 		$(document).ready(function() {
 			$("form").submit(function() {
-				window.location.href = `/block-analysis/${$("#input-value").val()}`;
+				window.location.href = `./block-analysis/${$("#input-value").val()}`;
 
 				return false;
 			});

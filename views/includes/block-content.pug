@@ -1,6 +1,6 @@
 div.mb-2
 	if (result.getblock.previousblockhash)
-		a.btn.btn-sm.btn-primary.mb-1(href=("/block/" + result.getblock.previousblockhash)) &laquo; Prev Block: 
+		a.btn.btn-sm.btn-primary.mb-1(href=("./block/" + result.getblock.previousblockhash)) &laquo; Prev Block: 
 			span.text-monospace ##{(result.getblock.height - 1).toLocaleString()}
 
 	else if (result.getblock.hash == genesisBlockHash)
@@ -9,7 +9,7 @@ div.mb-2
 	span.mx-2
 
 	if (result.getblock.nextblockhash)
-		a.btn.btn-sm.btn-primary.mb-1(href=("/block/" + result.getblock.nextblockhash)) Next Block: 
+		a.btn.btn-sm.btn-primary.mb-1(href=("./block/" + result.getblock.nextblockhash)) Next Block: 
 			span.text-monospace ##{(result.getblock.height + 1).toLocaleString()}
 			span  &raquo;
 	else
@@ -304,9 +304,9 @@ div.tab-content
 
 					div.float-right
 						if (!session.blockPageShowTechSummary || session.blockPageShowTechSummary == "true")
-							a(href="/changeSetting?name=blockPageShowTechSummary&value=false") hide
+							a(href="./changeSetting?name=blockPageShowTechSummary&value=false") hide
 						else
-							a(href="/changeSetting?name=blockPageShowTechSummary&value=true") show
+							a(href="./changeSetting?name=blockPageShowTechSummary&value=true") show
 
 				div(id="tech-details-wrapper", class=(session.blockPageShowTechSummary == "true" ? "" : "d-none"))
 					hr
@@ -363,7 +363,7 @@ div.tab-content
 							else
 								span Transactions
 
-						a.ml-2.border-dotted(href=`/block-analysis/${result.getblock.hash}`, title="See a summary analysis of all transactions in this block.", data-toggle="tooltip") See Block Analysis &raquo;
+						a.ml-2.border-dotted(href=`./block-analysis/${result.getblock.hash}`, title="See a summary analysis of all transactions in this block.", data-toggle="tooltip") See Block Analysis &raquo;
 
 					if (false || (!config.demoSite && !crawlerBot && txCount > 20))
 						div.col-md-8.text-right
@@ -393,7 +393,7 @@ div.tab-content
 								if (tx && tx.txid)
 									span(title=`Index in Block: #${(txIndex + offset).toLocaleString()}`, data-toggle="tooltip") ##{(txIndex + offset).toLocaleString()}
 									span  &ndash; 
-									a(href=("/tx/" + tx.txid)) #{tx.txid}
+									a(href=("./tx/" + tx.txid)) #{tx.txid}
 
 									if (global.specialTransactions && global.specialTransactions[tx.txid])
 										span  

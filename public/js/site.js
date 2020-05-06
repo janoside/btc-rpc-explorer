@@ -1,6 +1,6 @@
 function updateCurrencyValue(element, val) {
 	$.ajax({
-		url: `/snippet/formatCurrencyAmount/${val}`
+		url: `./snippet/formatCurrencyAmount/${val}`
 
 	}).done(function(result) {
 		element.html(result);
@@ -10,7 +10,7 @@ function updateCurrencyValue(element, val) {
 
 function updateFeeRateValue(element, val, digits) {
 	$.ajax({
-		url: `/api/utils/formatCurrencyAmountInSmallestUnits/${val},${digits}`
+		url: `./api/utils/formatCurrencyAmountInSmallestUnits/${val},${digits}`
 
 	}).done(function(result) {
 		element.html(`<span>${result.val} <small>${result.currencyUnit}/vB</small></span>`);
