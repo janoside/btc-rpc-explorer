@@ -189,7 +189,7 @@ module.exports = {
 	/* 6 */		{name:"RPC Browser", url:"./rpc-browser", desc:"Browse the RPC functionality of this node. See docs and execute commands.", fontawesome:"fas fa-book"},
 	/* 7 */		{name:"RPC Terminal", url:"./rpc-terminal", desc:"Directly execute RPCs against this node.", fontawesome:"fas fa-terminal"},
 
-	/* 8 */		{name:(coins[currentCoin].name + " Fun"), url:"/fun", desc:"See fun/interesting historical blockchain data.", fontawesome:"fas fa-certificate"},
+	/* 8 */		{name:(coins[currentCoin].name + " Fun"), url:"./fun", desc:"See fun/interesting historical blockchain data.", fontawesome:"fas fa-certificate"},
 
 	/* 9 */		{name:"Mining Summary", url:"./mining-summary", desc:"Summary of recent data about miners.", fontawesome:"fas fa-chart-pie"},
 	/* 10 */	{name:"Block Stats", url:"./block-stats", desc:"Summary data for blocks in configurable range.", fontawesome:"fas fa-layer-group"},
