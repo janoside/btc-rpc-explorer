@@ -310,6 +310,33 @@ module.exports = {
 			referenceUrl: "https://twitter.com/conio/status/900722226911219712"
 		},
 		{
+			type: "blockheight",
+			date: "2012-11-28",
+			chain: "main",
+			blockHeight: 210000,
+			blockHash: "000000000000048b95347e83192f69cf0366076336c639f9b7228e9ba171342e",
+			summary: "First block of subsidy era #2 (25 BTC).",
+			referenceUrl: "https://github.com/bitcoin/bitcoin/blob/master/src/validation.cpp#L1240"
+		},
+		{
+			type: "blockheight",
+			date: "2016-07-09",
+			chain: "main",
+			blockHeight: 420000,
+			blockHash: "000000000000000002cce816c0ab2c5c269cb081896b7dcb34b8422d6b74ffa1",
+			summary: "First block of subsidy era #3 (12.5 BTC).",
+			referenceUrl: "https://github.com/bitcoin/bitcoin/blob/master/src/validation.cpp#L1240"
+		},
+		{
+			type: "blockheight",
+			date: "2020-05-11",
+			chain: "main",
+			blockHeight: 630000,
+			blockHash: "000000000000000000024bead8df69990852c202db0e0097c1a12ea637d7e96d",
+			summary: "First block of subsidy era #4 (6.25 BTC).",
+			referenceUrl: "https://github.com/bitcoin/bitcoin/blob/master/src/validation.cpp#L1240"
+		},
+		{
 			type: "tx",
 			date: "2017-08-24",
 			chain: "main",
