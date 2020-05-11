@@ -343,7 +343,7 @@ module.exports = {
 			blockHeight: 629999,
 			blockHash: "0000000000000000000d656be18bb095db1b23bd797266b0ac3ba720b1962b1e",
 			summary: "'Times 09/Apr/2020 With $2.3T Injection, Fed's Plan Far Exceeds 2008 Rescue'",
-			alertBodyHtml: "This final block of subsidy era #3 (12.5 BTC) echoes the spiritual call-to-action of <a href='/block/000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f'>Satoshi's genesis block</a>.",
+			alertBodyHtml: "With the coinbase message 'Times 09/Apr/2020 With $2.3T Injection, Fed's Plan Far Exceeds 2008 Rescue', this final block of subsidy era #3 (12.5 BTC) echoes the spiritual call-to-action of <a href='/block/000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f'>Satoshi's genesis block</a>.",
 		},
 		{
 			type: "tx",
