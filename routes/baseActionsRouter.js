@@ -21,6 +21,7 @@ var config = require("./../app/config.js");
 var coreApi = require("./../app/api/coreApi.js");
 var addressApi = require("./../app/api/addressApi.js");
 var rpcApi = require("./../app/api/rpcApi.js");
+var auth = require('./../app/auth.js');
 
 const v8 = require('v8');
 
@@ -1169,7 +1170,7 @@ router.get("/address/:address", function(req, res, next) {
 	});
 });
 
-router.get("/rpc-terminal", function(req, res, next) {
+router.get("/rpc-terminal", auth(app, process.env.BTCEXP_BASIC_AUTH_PASSWORD), function(req, res, next) {
 	if (!config.demoSite && !req.authenticated) {
 		res.send("RPC Terminal / Browser require authentication. Set an authentication password via the 'BTCEXP_BASIC_AUTH_PASSWORD' environment variable (see .env-sample file for more info).");
 		
@@ -1183,7 +1184,7 @@ router.get("/rpc-terminal", function(req, res, next) {
 	next();
 });
 
-router.post("/rpc-terminal", function(req, res, next) {
+router.post("/rpc-terminal", auth(app, process.env.BTCEXP_BASIC_AUTH_PASSWORD), function(req, res, next) {
 	if (!config.demoSite && !req.authenticated) {
 		res.send("RPC Terminal / Browser require authentication. Set an authentication password via the 'BTCEXP_BASIC_AUTH_PASSWORD' environment variable (see .env-sample file for more info).");
 
@@ -1246,7 +1247,7 @@ router.post("/rpc-terminal", function(req, res, next) {
 	});
 });
 
-router.get("/rpc-browser", function(req, res, next) {
+router.get("/rpc-browser", auth(app, process.env.BTCEXP_BASIC_AUTH_PASSWORD), function(req, res, next) {
 	if (!config.demoSite && !req.authenticated) {
 		res.send("RPC Terminal / Browser require authentication. Set an authentication password via the 'BTCEXP_BASIC_AUTH_PASSWORD' environment variable (see .env-sample file for more info).");
 
