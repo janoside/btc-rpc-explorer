@@ -1,6 +1,8 @@
 var basicAuth = require('basic-auth');
 
-module.exports = pass => (req, res, next) => {
+module.exports = (app, pass) => (req, res, next) => {
+	app.disable('x-powered-by');
+
 	var cred = basicAuth(req);
 
 	if (cred && cred.pass === pass) {

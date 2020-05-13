@@ -73,8 +73,7 @@ app.set('view engine', 'pug');
 
 // basic http authentication
 if (process.env.BTCEXP_BASIC_AUTH_PASSWORD) {
-	app.disable('x-powered-by');
-	app.use(auth(process.env.BTCEXP_BASIC_AUTH_PASSWORD));
+	app.use(auth(app, process.env.BTCEXP_BASIC_AUTH_PASSWORD));
 }
 
 // uncomment after placing your favicon in /public
