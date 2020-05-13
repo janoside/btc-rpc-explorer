@@ -26,6 +26,8 @@ const v8 = require('v8');
 
 const forceCsrf = csurf({ ignoreMethods: [] });
 
+const routerExport = app => {
+
 router.get("/", function(req, res, next) {
 	if (req.session.host == null || req.session.host.trim() == "") {
 		if (req.cookies['rpc-host']) {
@@ -1523,4 +1525,8 @@ router.get("/fun", function(req, res, next) {
 	next();
 });
 
-module.exports = router;
+return router
+
+}
+
+module.exports = routerExport;

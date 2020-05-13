@@ -587,7 +587,7 @@ app.use(csurf(), (req, res, next) => {
 	next();
 });
 
-app.use('/', baseActionsRouter);
+app.use('/', baseActionsRouter(app));
 app.use('/api/', apiActionsRouter);
 app.use('/snippet/', snippetActionsRouter);
 
