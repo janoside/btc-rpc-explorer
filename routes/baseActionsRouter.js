@@ -922,20 +922,28 @@ router.get("/address/:address", function(req, res, next) {
 	
 	res.locals.result = {};
 
+	var parseAddressErrors = [];
+
 	try {
 		res.locals.addressObj = bitcoinjs.address.fromBase58Check(address);
 
 	} catch (err) {
 		if (!err.toString().startsWith("Error: Non-base58 character")) {
-			res.locals.pageErrors.push(utils.logError("u3gr02gwef", err));
+			parseAddressErrors.push(utils.logError("u3gr02gwef", err));
 		}
+	}
 
-		try {
-			res.locals.addressObj = bitcoinjs.address.fromBech32(address);
+	try {
+		res.locals.addressObj = bitcoinjs.address.fromBech32(address);
 
-		} catch (err2) {
-			res.locals.pageErrors.push(utils.logError("u02qg02yqge", err));
-		}
+	} catch (err2) {
+		parseAddressErrors.push(utils.logError("u02qg02yqge", err2));
+	}
+
+	if (res.locals.addressObj == null) {
+		parseAddressErrors.forEach(function(x) {
+			res.locals.pageErrors.push(x);
+		});
 	}
 
 	if (global.miningPoolsConfigs) {
