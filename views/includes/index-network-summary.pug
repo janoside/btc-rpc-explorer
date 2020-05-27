@@ -91,14 +91,17 @@ div.row.index-summary
 						- var timeDiff = currentBlock.mediantime - firstBlockHeader.mediantime;
 						- var timePerBlock = timeDiff / heightDiff;
 						- var timePerBlockDuration = moment.duration(timePerBlock * 1000);
+						- var daysUntilAdjustment = new Decimal(blocksUntilDifficultyAdjustment).times(timePerBlock).dividedBy(60 * 60 * 24);
+						- var duaDP1 = daysUntilAdjustment.toDP(1);
+						- var daysUntilAdjustmentStr = daysUntilAdjustment > 1 ? `~${duaDP1} day${duaDP1 == "1" ? "" : "s"}` : "< 1 day"
 
 						if (timePerBlock > 600)
 							- var diffAdjPercent = new Decimal(timeDiff / heightDiff / 600).times(100).minus(100);
-							- var diffAdjText = `Prediction for next difficulty adjustment (in ${blocksUntilDifficultyAdjustment} block${blocksUntilDifficultyAdjustment == 1 ? "" : "s"}): -${diffAdjPercent.toDP(1)}%`;
+							- var diffAdjText = `Blocks during the currency difficulty epoch have taken this long, on average, to be mined. If this pace continues, then in ${blocksUntilDifficultyAdjustment.toLocaleString()} block${blocksUntilDifficultyAdjustment == 1 ? "" : "s"} (${daysUntilAdjustmentStr}) the difficulty will adjust downward: -${diffAdjPercent.toDP(1)}%`;
 							- var diffAdjSign = "-";
 						else
 							- var diffAdjPercent = new Decimal(100).minus(new Decimal(timeDiff / heightDiff / 600).times(100));
-							- var diffAdjText = `Prediction for next difficulty adjustment (in ${blocksUntilDifficultyAdjustment} block${blocksUntilDifficultyAdjustment == 1 ? "" : "s"}): +${diffAdjPercent.toDP(1)}%`;
+							- var diffAdjText = `Blocks during the currency difficulty epoch have taken this long, on average, to be mined. If this pace continues, then in ${blocksUntilDifficultyAdjustment.toLocaleString()} block${blocksUntilDifficultyAdjustment == 1 ? "" : "s"} (${daysUntilAdjustmentStr}) the difficulty will adjust upward: +${diffAdjPercent.toDP(1)}%`;
 							- var diffAdjSign = "+";
 
 						span.border-dotted(title=diffAdjText, data-toggle="tooltip") #{timePerBlockDuration.format()}
