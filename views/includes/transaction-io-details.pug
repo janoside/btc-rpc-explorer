@@ -63,6 +63,20 @@ div.row.text-monospace
 										div.word-wrap
 											small.data-tag.bg-dark.mr-2
 												span(title=`Input Type: ${utils.outputTypeName(vout.scriptPubKey.type)}`, data-toggle="tooltip") #{utils.outputTypeAbbreviation(vout.scriptPubKey.type)}
+
+											if (vout.coinbaseSpend)
+												small.data-tag.bg-success.mr-2
+													span(title=`This input spends a coinbase output (mining reward).`, data-toggle="tooltip") coinbase-spend
+
+											if (vout.utxoTime)
+												- var deltaT = tx.time - vout.utxoTime
+												- var deltaTYears = deltaT / 60 / 60 / 24 / 365
+
+												if (deltaTYears > 5)
+													span.mr-2(title=`This UTXO was very old! It existed for ${parseInt(deltaTYears)}+ years - from ${moment.utc(new Date(vout.utxoTime * 1000)).format('MMM D, Y')} until ${moment.utc(new Date(tx.time * 1000)).format('MMM D, Y')} - before being spent (destroyed) in this transaction!`, data-toggle="tooltip")
+														i.fas.fa-certificate.text-primary
+												
+											
 											a(href=("/tx/" + txInput.txid + "#output-" + txVin.vout)) #{utils.ellipsize(txInput.txid, 26)}
 												span  ##{txVin.vout}
 
