@@ -63,21 +63,22 @@ div.row.index-summary
 
 						span(class=colorClass) #{mempoolInfo.size.toLocaleString()}
 
-				tr
-					th.px-2.px-lg-0.px-xl-2
-						i.fas.fa-bullseye.mr-1.summary-icon
-						span.border-dotted(title="Current fee estimates (using 'estimatesmartfee') for getting a transaction included in 1 block, 6 blocks (1 hr), 144 blocks (1 day), or 1,008 blocks (1 week).", data-toggle="tooltip") Fee Targets
-						if (false)
-							small.ml-1 (1/h/d/w)
-					td.text-right.text-monospace #{smartFeeEstimates[1]}
-						small.d-md-none  
-						small.text-muted /
-						span #{smartFeeEstimates[6]}
-						small.text-muted /
-						span #{smartFeeEstimates[144]}
-						small.text-muted /
-						span #{smartFeeEstimates[1008]}
-						small  sat/vB
+				if (smartFeeEstimates)
+					tr
+						th.px-2.px-lg-0.px-xl-2
+							i.fas.fa-bullseye.mr-1.summary-icon
+							span.border-dotted(title="Current fee estimates (using 'estimatesmartfee') for getting a transaction included in 1 block, 6 blocks (1 hr), 144 blocks (1 day), or 1,008 blocks (1 week).", data-toggle="tooltip") Fee Targets
+							if (false)
+								small.ml-1 (1/h/d/w)
+						td.text-right.text-monospace #{smartFeeEstimates[1]}
+							small.d-md-none  
+							small.text-muted /
+							span #{smartFeeEstimates[6]}
+							small.text-muted /
+							span #{smartFeeEstimates[144]}
+							small.text-muted /
+							span #{smartFeeEstimates[1008]}
+							small  sat/vB
 
 				tr
 					th.px-2.px-lg-0.px-xl-2
