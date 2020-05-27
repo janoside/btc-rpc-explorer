@@ -305,7 +305,9 @@ function refreshNetworkVolumes() {
 		var blocksPerDay = 144 + 20; // 20 block padding
 
 		for (var i = 0; i < (blocksPerDay * 1); i++) {
-			promises.push(coreApi.getBlockStatsByHeight(result.blocks - i));
+			if (result.blocks - i >= 0) {
+				promises.push(coreApi.getBlockStatsByHeight(result.blocks - i));
+			}
 		}
 
 		var startBlock = result.blocks;
