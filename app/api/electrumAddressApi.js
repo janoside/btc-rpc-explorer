@@ -101,29 +101,33 @@ function getAddressDetails(address, scriptPubkey, sort, limit, offset) {
 		var txidData = null;
 		var balanceData = null;
 
-		promises.push(new Promise(function(resolve, reject) {
+		promises.push(new Promise(function(resolve2, reject2) {
 			getAddressTxids(addrScripthash).then(function(result) {
 				txidData = result.result;
 
-				resolve();
+				resolve2();
 
 			}).catch(function(err) {
+				err.userData = {address:address, sort:sort, limit:limit, offset:offset};
+
 				utils.logError("2397wgs0sgse", err);
 
-				reject(err);
+				reject2(err);
 			});
 		}));
 
-		promises.push(new Promise(function(resolve, reject) {
+		promises.push(new Promise(function(resolve2, reject2) {
 			getAddressBalance(addrScripthash).then(function(result) {
 				balanceData = result.result;
 
-				resolve();
+				resolve2();
 				
 			}).catch(function(err) {
+				err.userData = {address:address, sort:sort, limit:limit, offset:offset};
+
 				utils.logError("21307ws70sg", err);
 
-				reject(err);
+				reject2(err);
 			});
 		}));
 
