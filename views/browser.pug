@@ -22,7 +22,8 @@ block content
 							div.clearfix
 								div.float-left
 									h3.h6.mb-0
-										span.font-weight-bold #{method}
+										a.text-body(href=`./rpc-browser?method=${method}`)
+											span.font-weight-bold #{method}
 										span  Command
 
 								div.float-right
