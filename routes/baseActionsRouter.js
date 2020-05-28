@@ -1298,7 +1298,7 @@ router.get("/rpc-browser", function(req, res, next) {
 
 								} else if (argProperties[j] === "string" || argProperties[j] === "numeric or string" || argProperties[j] === "string or numeric") {
 									if (req.query.args[i]) {
-										argValues.push(req.query.args[i]);
+										argValues.push(req.query.args[i].replace(/[\r]/g, ''));
 									}
 
 									break;
@@ -1334,10 +1334,10 @@ router.get("/rpc-browser", function(req, res, next) {
 							return next(err);
 						}
 
-						debugLog("Executing RPC '" + req.query.method + "' with params: [" + argValues + "]");
+						debugLog("Executing RPC '" + req.query.method + "' with params: " + JSON.stringify(argValues));
 
 						global.rpcClientNoTimeout.command([{method:req.query.method, parameters:argValues}], function(err3, result3, resHeaders3) {
-							debugLog("RPC Response: err=" + err3 + ", result=" + result3 + ", headers=" + resHeaders3);
+							debugLog("RPC Response: err=" + err3 + ", headers=" + resHeaders3 + ", result=" + JSON.stringify(result3));
 
 							if (err3) {
 								res.locals.pageErrors.push(utils.logError("23roewuhfdghe", err3, {method:req.query.method, params:argValues, result:result3, headers:resHeaders3}));
