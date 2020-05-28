@@ -128,26 +128,26 @@ function splitArrayIntoChunksByChunkCount(array, chunkCount) {
 }
 
 function getRandomString(length, chars) {
-    var mask = '';
+	var mask = '';
 	
-    if (chars.indexOf('a') > -1) {
+	if (chars.indexOf('a') > -1) {
 		mask += 'abcdefghijklmnopqrstuvwxyz';
 	}
 	
-    if (chars.indexOf('A') > -1) {
+	if (chars.indexOf('A') > -1) {
 		mask += 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 	}
 	
-    if (chars.indexOf('#') > -1) {
+	if (chars.indexOf('#') > -1) {
 		mask += '0123456789';
 	}
-    
+	
 	if (chars.indexOf('!') > -1) {
 		mask += '~`!@#$%^&*()_+-={}[]:";\'<>?,./|\\';
 	}
 	
-    var result = '';
-    for (var i = length; i > 0; --i) {
+	var result = '';
+	for (var i = length; i > 0; --i) {
 		result += mask[Math.floor(Math.random() * mask.length)];
 	}
 	
@@ -329,8 +329,8 @@ function formatExchangedCurrency(amount, exchangeType) {
 }
 
 function seededRandom(seed) {
-    var x = Math.sin(seed++) * 10000;
-    return x - Math.floor(x);
+	var x = Math.sin(seed++) * 10000;
+	return x - Math.floor(x);
 }
 
 function seededRandomIntBetween(seed, min, max) {
@@ -592,39 +592,39 @@ function formatLargeNumber(n, decimalPlaces) {
 }
 
 function rgbToHsl(r, g, b) {
-    r /= 255, g /= 255, b /= 255;
-    var max = Math.max(r, g, b), min = Math.min(r, g, b);
-    var h, s, l = (max + min) / 2;
+	r /= 255, g /= 255, b /= 255;
+	var max = Math.max(r, g, b), min = Math.min(r, g, b);
+	var h, s, l = (max + min) / 2;
 
-    if(max == min){
-        h = s = 0; // achromatic
-    }else{
-        var d = max - min;
-        s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
-        switch(max){
-            case r: h = (g - b) / d + (g < b ? 6 : 0); break;
-            case g: h = (b - r) / d + 2; break;
-            case b: h = (r - g) / d + 4; break;
-        }
-        h /= 6;
-    }
+	if(max == min){
+		h = s = 0; // achromatic
+	}else{
+		var d = max - min;
+		s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+		switch(max){
+			case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+			case g: h = (b - r) / d + 2; break;
+			case b: h = (r - g) / d + 4; break;
+		}
+		h /= 6;
+	}
 
-    return {h:h, s:s, l:l};
+	return {h:h, s:s, l:l};
 }
 
 function colorHexToRgb(hex) {
-    // Expand shorthand form (e.g. "03F") to full form (e.g. "0033FF")
-    var shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
-    hex = hex.replace(shorthandRegex, function(m, r, g, b) {
-        return r + r + g + g + b + b;
-    });
+	// Expand shorthand form (e.g. "03F") to full form (e.g. "0033FF")
+	var shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
+	hex = hex.replace(shorthandRegex, function(m, r, g, b) {
+		return r + r + g + g + b + b;
+	});
 
-    var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-    return result ? {
-        r: parseInt(result[1], 16),
-        g: parseInt(result[2], 16),
-        b: parseInt(result[3], 16)
-    } : null;
+	var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+	return result ? {
+		r: parseInt(result[1], 16),
+		g: parseInt(result[2], 16),
+		b: parseInt(result[3], 16)
+	} : null;
 }
 
 function colorHexToHsl(hex) {
@@ -635,7 +635,7 @@ function colorHexToHsl(hex) {
 
 // https://stackoverflow.com/a/31424853/673828
 const reflectPromise = p => p.then(v => ({v, status: "resolved" }),
-                            e => ({e, status: "rejected" }));
+							e => ({e, status: "rejected" }));
 
 global.errorStats = {};
 
@@ -753,7 +753,6 @@ function outputTypeName(outputType) {
 		return "???";
 	}
 }
-
 
 module.exports = {
 	reflectPromise: reflectPromise,
