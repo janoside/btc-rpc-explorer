@@ -296,6 +296,12 @@ function refreshUtxoSetSummary() {
 }
 
 function refreshNetworkVolumes() {
+	if (config.slowDeviceMode) {
+		debugLog("Skipping performance-intensive task: fetch last 24 hrs of blockstats to calculate transaction volume. This is skipped due to the flag 'slowDeviceMode' which defaults to 'true' to protect slow nodes. Set this flag to 'false' to enjoy UTXO set summary details.");
+
+		return;
+	}
+
 	var cutoff1d = new Date().getTime() - (60 * 60 * 24 * 1000);
 	var cutoff7d = new Date().getTime() - (60 * 60 * 24 * 7 * 1000);
 
