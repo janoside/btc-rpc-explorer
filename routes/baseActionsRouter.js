@@ -1520,7 +1520,18 @@ router.get("/fun", function(req, res, next) {
 			return -1;
 
 		} else {
-			return a.type.localeCompare(b.type);
+			var x = a.type.localeCompare(b.type);
+
+			if (x == 0) {
+				if (a.type == "blockheight") {
+					return a.blockHeight - b.blockHeight;
+
+				} else {
+					return x;
+				}
+			}
+
+			return x;
 		}
 	});
 
