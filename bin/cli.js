@@ -65,7 +65,7 @@ const args = require('meow')(`
 			electrumxServers: {alias:'E'},
 			nodeEnv: {alias:'e', default:'production'},
 			privacyMode: {type:'boolean'},
-			slowDeviceMode: {type:'boolean', default:true}
+			slowDeviceMode: {type:'boolean'}
 		}
 	}
 ).flags;
