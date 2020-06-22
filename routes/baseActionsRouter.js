@@ -937,7 +937,11 @@ router.get("/address/:address", function(req, res, next) {
 		res.locals.addressObj = bitcoinjs.address.fromBech32(address);
 
 	} catch (err2) {
-		parseAddressErrors.push(utils.logError("u02qg02yqge", err2));
+		if (!err2.toString().startsWith("Error: Mixed-case string " + address)) {
+			parseAddressErrors.push(utils.logError("u02qg02yqge", err2));
+		}
+
+		
 	}
 
 	if (res.locals.addressObj == null) {
