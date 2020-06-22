@@ -1,5 +1,11 @@
 #!/usr/bin/env node
 
+var debug = require("debug");
+var debugLog = debug("btcexp:config");
+
+// to debug arg settings, enable the below line:
+//debug.enable("btcexp:*");
+
 const args = require('meow')(`
 	Usage
 	  $ btc-rpc-explorer [options]
@@ -60,29 +66,27 @@ const args = require('meow')(`
 			bitcoindCookie: {alias:'c'},
 			bitcoindUser: {alias:'u'},
 			bitcoindPass: {alias:'w'},
-			demo: {type:'boolean'},
-			rpcAllowall: {type:'boolean'},
+			demo: {},
+			rpcAllowall: {},
 			electrumxServers: {alias:'E'},
 			nodeEnv: {alias:'e', default:'production'},
-			privacyMode: {type:'boolean'},
-			slowDeviceMode: {type:'boolean'}
+			privacyMode: {},
+			slowDeviceMode: {}
 		}
 	}
 ).flags;
 
 const envify = k => k.replace(/([A-Z])/g, '_$1').toUpperCase();
 
-var defaultTrueWithoutNoPrefixVars = [ "SLOW_DEVICE_MODE" ];
-
 Object.keys(args).filter(k => k.length > 1).forEach(k => {
 	if (args[k] === false) {
-		if (defaultTrueWithoutNoPrefixVars.includes(envify(k))) {
-			process.env[`BTCEXP_${envify(k)}`] = false;
+		debugLog(`Config(arg): BTCEXP_NO_${envify(k)}=true`);
 
-		} else {
-			process.env[`BTCEXP_NO_${envify(k)}`] = true;
-		}
+		process.env[`BTCEXP_NO_${envify(k)}`] = true;
+
 	} else {
+		debugLog(`Config(arg): BTCEXP_${envify(k)}=${args[k]}`);
+
 		process.env[`BTCEXP_${envify(k)}`] = args[k];
 	}
 });
