@@ -1,58 +1,58 @@
 {
-  "name": "btc-rpc-explorer",
-  "version": "2.0.1",
-  "description": "Self-hosted Bitcoin blockchain explorer",
-  "private": false,
-  "bin": "bin/cli.js",
-  "scripts": {
-    "start": "node ./bin/www",
-    "refresh-mining-pool-configs": "node ./bin/refresh-mining-pool-configs.js"
-  },
-  "keywords": [
-    "bitcoin",
-    "litecoin",
-    "blockchain"
-  ],
-  "author": "Dan Janosik <dan@47.io>",
-  "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/janoside/btc-rpc-explorer.git"
-  },
-  "dependencies": {
-    "async": "^3.2.0",
-    "basic-auth": "^2.0.1",
-    "bitcoin-core": "^2.3.0",
-    "bitcoinjs-lib": "^5.1.10",
-    "bluebird": "^3.7.2",
-    "body-parser": "~1.19.0",
-    "cookie-parser": "^1.4.5",
-    "crypto-js": "3.1.9-1",
-    "csurf": "^1.11.0",
-    "debug": "~4.1.1",
-    "decimal.js": "^10.2.0",
-    "dotenv": "^8.2.0",
-    "electrum-client": "github:chaintools/node-electrum-client#43a999036f9c5",
-    "express": "^4.17.1",
-    "express-session": "^1.17.1",
-    "jstransformer-markdown-it": "^2.1.0",
-    "lru-cache": "^5.1.1",
-    "marked": "^0.7.0",
-    "md5": "^2.2.1",
-    "meow": "^5.0.0",
-    "moment": "^2.27.0",
-    "moment-duration-format": "^2.3.2",
-    "morgan": "^1.10.0",
-    "pug": "^2.0.4",
-    "qrcode": "^1.4.4",
-    "redis": "^2.8.0",
-    "request": "^2.88.2",
-    "semver": "^7.3.2",
-    "serve-favicon": "^2.5.0",
-    "simple-git": "^1.132.0"
-  },
-  "devDependencies": {
-    "less": "3.9.0",
-    "npm-run-all": "^4.1.5"
-  }
+	"name": "btc-rpc-explorer",
+	"version": "2.0.1",
+	"description": "Open-source, self-hosted Bitcoin explorer",
+	"private": false,
+	"bin": "bin/cli.js",
+	"scripts": {
+		"start": "node ./bin/www",
+		"refresh-mining-pool-configs": "node ./bin/refresh-mining-pool-configs.js"
+	},
+	"keywords": [
+		"bitcoin",
+		"btc",
+		"blockchain"
+	],
+	"author": "Dan Janosik <dan@47.io>",
+	"license": "MIT",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/janoside/btc-rpc-explorer.git"
+	},
+	"dependencies": {
+		"async": "^3.2.0",
+		"basic-auth": "^2.0.1",
+		"bitcoin-core": "^2.3.0",
+		"bitcoinjs-lib": "^5.1.10",
+		"bluebird": "^3.7.2",
+		"body-parser": "~1.19.0",
+		"cookie-parser": "^1.4.5",
+		"crypto-js": "3.1.9-1",
+		"csurf": "^1.11.0",
+		"debug": "~4.1.1",
+		"decimal.js": "^10.2.0",
+		"dotenv": "^8.2.0",
+		"electrum-client": "github:chaintools/node-electrum-client#43a999036f9c5",
+		"express": "^4.17.1",
+		"express-session": "^1.17.1",
+		"jstransformer-markdown-it": "^2.1.0",
+		"lru-cache": "^5.1.1",
+		"marked": "^0.7.0",
+		"md5": "^2.2.1",
+		"meow": "^5.0.0",
+		"moment": "^2.27.0",
+		"moment-duration-format": "^2.3.2",
+		"morgan": "^1.10.0",
+		"pug": "^2.0.4",
+		"qrcode": "^1.4.4",
+		"redis": "^2.8.0",
+		"request": "^2.88.2",
+		"semver": "^7.3.2",
+		"serve-favicon": "^2.5.0",
+		"simple-git": "^1.132.0"
+	},
+	"devDependencies": {
+		"less": "3.9.0",
+		"npm-run-all": "^4.1.5"
+	}
 }
