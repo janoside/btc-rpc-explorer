@@ -91,6 +91,11 @@ To match the features visible on the demo site at [https://explorer.btc21.org](h
 1. `docker build -t btc-rpc-explorer .`
 2. `docker run -p 3002:3002 -it btc-rpc-explorer`
 
+
+## Reverse proxy with HTTPS
+
+See [instructions here](docs/nginx-reverse-proxy.md) for using nginx+certbot (letsencrypt) for an HTTPS-accessible, reverse-proxied site.
+
 # Support
 
 If you get value from this project, please consider supporting my continued work with a donation. Any and all donations are truly appreciated.
