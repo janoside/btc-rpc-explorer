@@ -66,7 +66,7 @@ See `btc-rpc-explorer --help` for the full list of CLI options.
 1. `docker build -t btc-rpc-explorer .`
 2. `docker run -p 3002:3002 -it btc-rpc-explorer`
 
-# Support
+# Support.
 
 * [3NPGpNyLLmVKCEcuipBs7G4KpQJoJXjDGe](bitcoin:3NPGpNyLLmVKCEcuipBs7G4KpQJoJXjDGe)
 
