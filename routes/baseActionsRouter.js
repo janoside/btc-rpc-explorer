@@ -1498,6 +1498,7 @@ router.get("/admin", function(req, res, next) {
 	res.locals.appStartTime = global.appStartTime;
 	res.locals.memstats = v8.getHeapStatistics();
 	res.locals.rpcStats = global.rpcStats;
+	res.locals.electrumStats = global.electrumStats;
 	res.locals.cacheStats = global.cacheStats;
 	res.locals.errorStats = global.errorStats;
 

@@ -16,6 +16,9 @@ const ElectrumClient = require('rn-electrum-client');
 
 var electrumClients = [];
 
+global.electrumStats = {};
+
+
 function connectToServers() {
 	return new Promise(function(resolve, reject) {
 		var promises = [];
@@ -167,11 +170,15 @@ function getAddressDetails(address, scriptPubkey, sort, limit, offset) {
 
 function getAddressTxids(addrScripthash) {
 	return new Promise(function(resolve, reject) {
+		var startTime = new Date().getTime();
+
 		runOnAllServers(function(electrumClient) {
 			return electrumClient.blockchainScripthash_getHistory(addrScripthash);
 
 		}).then(function(results) {
 			debugLog(`getAddressTxids=${utils.ellipsize(JSON.stringify(results), 200)}`);
+
+			logStats("blockchainScripthash_getHistory", new Date().getTime() - startTime, true);
 
 			if (addrScripthash == coinConfig.genesisCoinbaseOutputAddressScripthash) {
 				for (var i = 0; i < results.length; i++) {
@@ -194,6 +201,8 @@ function getAddressTxids(addrScripthash) {
 				resolve(results[0]);
 			}
 		}).catch(function(err) {
+			logStats("blockchainScripthash_getHistory", new Date().getTime() - startTime, false);
+
 			reject(err);
 		});
 	});
@@ -201,11 +210,15 @@ function getAddressTxids(addrScripthash) {
 
 function getAddressBalance(addrScripthash) {
 	return new Promise(function(resolve, reject) {
+		var startTime = new Date().getTime();
+
 		runOnAllServers(function(electrumClient) {
 			return electrumClient.blockchainScripthash_getBalance(addrScripthash);
 
 		}).then(function(results) {
 			debugLog(`getAddressBalance=${JSON.stringify(results)}`);
+
+			logStats("blockchainScripthash_getBalance", new Date().getTime() - startTime, true);
 
 			if (addrScripthash == coinConfig.genesisCoinbaseOutputAddressScripthash) {
 				for (var i = 0; i < results.length; i++) {
@@ -230,12 +243,31 @@ function getAddressBalance(addrScripthash) {
 				resolve(results[0]);
 			}
 		}).catch(function(err) {
+			logStats("blockchainScripthash_getBalance", new Date().getTime() - startTime, false);
+
 			reject(err);
 		});
 	});
+}
+
+function logStats(cmd, dt, success) {
+	if (!global.electrumStats[cmd]) {
+		global.electrumStats[cmd] = {count:0, time:0, successes:0, failures:0};
+	}
+
+	global.electrumStats[cmd].count++;
+	global.electrumStats[cmd].time += dt;
+
+	if (success) {
+		global.electrumStats[cmd].successes++;
+
+	} else {
+		global.electrumStats[cmd].failures++;
+	}
 }
 
 module.exports = {
 	connectToServers: connectToServers,
 	getAddressDetails: getAddressDetails
 };
+
