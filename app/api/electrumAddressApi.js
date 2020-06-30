@@ -154,6 +154,10 @@ function getAddressDetails(address, scriptPubkey, sort, limit, offset) {
 
 			if (balanceData) {
 				addressDetails.balanceSat = balanceData.confirmed;
+
+				if (balanceData.unconfirmed) {
+					addressDetails.unconfirmedBalanceSat = balanceData.unconfirmed;
+				}
 			}
 
 			var errors = [];
