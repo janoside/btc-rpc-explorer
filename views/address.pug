@@ -300,7 +300,7 @@ block content
 									div.text-danger Error: #{addressApiError.userText}
 
 								else if (addressDetailsErrors && addressDetailsErrors.length > 0)
-									each err in addressDetailsErrors
+									each err, errIndex in addressDetailsErrors
 										if (err.e && err.e && err.e.message == "history too large")
 											span Failed to retrieve transaction history from ElectrumX because this address is involved in too many transactions (more than ElectrumX currently supports retrieving). See 
 											a(href="https://github.com/janoside/btc-rpc-explorer/issues/67") Issue #67
@@ -312,7 +312,7 @@ block content
 											span  for help setting up an address API if desired.
 
 										else
-											span.text-danger Error retrieving transaction history
+											span.text-danger Error retrieving transaction history (##{errIndex + 1})
 											pre
 												code.json #{JSON.stringify(err, null, 4)}
 
