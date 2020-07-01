@@ -432,8 +432,8 @@
             "name" : "tigerpool.net",
             "link" : ""
         },
-        "/SigmaPool.com/": {
-            "name" : "sigmapool.com",
+        "/Sigmapool.com/": {
+            "name" : "Sigmapool.com",
             "link" : "https://sigmapool.com"
         },
         "/www.okpool.top/": {
@@ -1034,9 +1034,13 @@
             "name": "AntPool",
             "link": "https://www.antpool.com/"
         },
+        "12cKiMNhCtBhZRUBCnYXo8A4WQzMUtYjmR": {
+            "name": "Sigmapool.com",
+            "link": "https://sigmapool.com/"
+        },
         "125K2xfiBdae42gSKiCGwi85Frpy1vHmGj": {
-            "name": "UKRPool",
-            "link": "https://www.ukrpool.com"
+            "name": "okkong",
+            "link": "https://hash.okkong.com/"
         },
         "11wC5KcbgrWRBb43cwADdVrxgyF8mndVC": {
             "name": "MiningCity",
