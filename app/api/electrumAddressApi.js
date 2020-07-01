@@ -25,6 +25,7 @@ function connectToServers() {
 
 		for (var i = 0; i < config.electrumXServers.length; i++) {
 			var { host, port, protocol } = config.electrumXServers[i];
+
 			promises.push(connectToServer(host, port, protocol));
 		}
 
@@ -41,20 +42,33 @@ function connectToServers() {
 
 function connectToServer(host, port, protocol) {
 	return new Promise(function(resolve, reject) {
-		debugLog("Connecting to ElectrumX Server: " + host + ":" + port);
-
 		// default protocol is 'tcp' if port is 50001, which is the default unencrypted port for electrumx
 		var defaultProtocol = port === 50001 ? 'tcp' : 'tls';
 
+		var electrumConfig = { client:"btc-rpc-explorer-v2", version:"1.4" };
+
 		var electrumClient = new ElectrumClient(port, host, protocol || defaultProtocol);
-		electrumClient.initElectrum({client:"btc-rpc-explorer-v2", version:"1.4"}).then(function(res) {
-			debugLog("Connected to ElectrumX Server: " + host + ":" + port + ", versions: " + JSON.stringify(res));
+		electrumClient.persistencePolicy = { maxRetry: 1000, callback: null };
+		electrumClient.electrumConfig = electrumConfig;
 
-			electrumClients.push(electrumClient);
+		electrumClient.connect().then(function(result) {
+			electrumClient.server_version(electrumConfig.client, electrumConfig.version).then(function(versionResult) {
+				debugLog(`Connected to ElectrumX @ ${host}:${port} (${JSON.stringify(versionResult)})`);
 
-			resolve();
+				electrumClients.push(electrumClient);
 
+				resolve();
+
+			}).catch(function(err) {
+				debugLog(`Error getting version info from ElectrumX @ ${host}:${port}`);
+
+				utils.logError("4803y34ghdd", err, {host:host, port:port, protocol:protocol});
+
+				reject(err);
+			});
 		}).catch(function(err) {
+			debugLog(`Error connecting to ElectrumX @ ${host}:${port}`);
+
 			utils.logError("137rg023xx7gerfwdd", err, {host:host, port:port, protocol:protocol});
 
 			reject(err);
