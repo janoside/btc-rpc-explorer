@@ -12,7 +12,7 @@ var coinConfig = coins[config.coin];
 global.net = require('net');
 global.tls = require('tls');
 
-const ElectrumClient = require('rn-electrum-client');
+const ElectrumClient = require('electrum-client');
 
 var electrumClients = [];
 
@@ -49,11 +49,7 @@ function connectToServer(host, port, protocol) {
 
 		var electrumConfig = { client:"btc-rpc-explorer-v2", version:"1.4" };
 
-		var electrumClient = new ElectrumClient(port, host, protocol || defaultProtocol);
-		electrumClient.persistencePolicy = { retryPeriod: 5000, maxRetry: 1000, callback: null };
-		electrumClient.electrumConfig = electrumConfig;
-
-		electrumClient.afterConnect = function(client) {
+		var electrumAfterConnect = function(client) {
 			client.server_version(electrumConfig.client, electrumConfig.version).then(function(versionResult) {
 				debugLog(`Connected to ElectrumX @ ${host}:${port} (${JSON.stringify(versionResult)})`);
 
@@ -70,7 +66,7 @@ function connectToServer(host, port, protocol) {
 			});
 		};
 
-		electrumClient.afterClose = function(client) {
+		var electrumAfterClose = function(client) {
 			debugLog(`Lost connection to ElectrumX @ ${host}:${port}`);
 
 			var index = electrumClients.indexOf(client);
@@ -79,6 +75,20 @@ function connectToServer(host, port, protocol) {
 				electrumClients.splice(index, 1);
 			}
 		};
+
+		var electrumOnLog = function(str) {
+			debugLog(str);
+		};
+
+		var electrumCallbacks = {
+			afterConnect: electrumAfterConnect,
+			afterClose: electrumAfterClose,
+			onLog: electrumOnLog
+		};
+
+		var electrumClient = new ElectrumClient(port, host, protocol || defaultProtocol, null, electrumCallbacks);
+		electrumClient.persistencePolicy = { retryPeriod: 10000, maxRetry: 1000, callback: null };
+		electrumClient.electrumConfig = electrumConfig;
 
 		// connect().then() is excluded here because "afterConnect" above handles that flow
 		electrumClient.connect().catch(function(err) {
