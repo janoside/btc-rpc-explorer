@@ -18,6 +18,8 @@ var electrumClients = [];
 
 global.electrumStats = {};
 
+var noConnectionsErrorText = "No ElectrumX connection available. This could mean that the connection was lost or that ElectrumX is processing transactions and therefore not accepting requests. This tool will try to reconnect. If you manage your own ElectrumX server you may want to check your ElectrumX logs.";
+
 
 function connectToServers() {
 	return new Promise(function(resolve, reject) {
@@ -48,14 +50,14 @@ function connectToServer(host, port, protocol) {
 		var electrumConfig = { client:"btc-rpc-explorer-v2", version:"1.4" };
 
 		var electrumClient = new ElectrumClient(port, host, protocol || defaultProtocol);
-		electrumClient.persistencePolicy = { maxRetry: 1000, callback: null };
+		electrumClient.persistencePolicy = { retryPeriod: 5000, maxRetry: 1000, callback: null };
 		electrumClient.electrumConfig = electrumConfig;
 
-		electrumClient.connect().then(function(result) {
-			electrumClient.server_version(electrumConfig.client, electrumConfig.version).then(function(versionResult) {
+		electrumClient.afterConnect = function(client) {
+			client.server_version(electrumConfig.client, electrumConfig.version).then(function(versionResult) {
 				debugLog(`Connected to ElectrumX @ ${host}:${port} (${JSON.stringify(versionResult)})`);
 
-				electrumClients.push(electrumClient);
+				electrumClients.push(client);
 
 				resolve();
 
@@ -66,7 +68,20 @@ function connectToServer(host, port, protocol) {
 
 				reject(err);
 			});
-		}).catch(function(err) {
+		};
+
+		electrumClient.afterClose = function(client) {
+			debugLog(`Lost connection to ElectrumX @ ${host}:${port}`);
+
+			var index = electrumClients.indexOf(client);
+
+			if (index > -1) {
+				electrumClients.splice(index, 1);
+			}
+		};
+
+		// connect().then() is excluded here because "afterConnect" above handles that flow
+		electrumClient.connect().catch(function(err) {
 			debugLog(`Error connecting to ElectrumX @ ${host}:${port}`);
 
 			utils.logError("137rg023xx7gerfwdd", err, {host:host, port:port, protocol:protocol});
@@ -74,7 +89,6 @@ function connectToServer(host, port, protocol) {
 			reject(err);
 		});
 	});
-	
 }
 
 function runOnServer(electrumClient, f) {
@@ -109,6 +123,12 @@ function runOnAllServers(f) {
 
 function getAddressDetails(address, scriptPubkey, sort, limit, offset) {
 	return new Promise(function(resolve, reject) {
+		if (electrumClients.length == 0) {
+			reject({error: "No ElectrumX Connection", userText: noConnectionsErrorText});
+
+			return;
+		}
+
 		var addrScripthash = hexEnc.stringify(sha256(hexEnc.parse(scriptPubkey)));
 		addrScripthash = addrScripthash.match(/.{2}/g).reverse().join("");
 
