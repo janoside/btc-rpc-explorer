@@ -1188,7 +1188,7 @@ router.get("/rpc-terminal", function(req, res, next) {
 		return;
 	}
 
-	res.render("terminal");
+	res.render("rpc-terminal");
 
 	next();
 });
@@ -1326,7 +1326,7 @@ router.get("/rpc-browser", function(req, res, next) {
 					if (config.rpcBlacklist.includes(req.query.method.toLowerCase())) {
 						res.locals.methodResult = "Sorry, that RPC command is blacklisted. If this is your server, you may allow this command by removing it from the 'rpcBlacklist' setting in config.js.";
 
-						res.render("browser");
+						res.render("rpc-browser");
 
 						next();
 
@@ -1359,26 +1359,26 @@ router.get("/rpc-browser", function(req, res, next) {
 								res.locals.methodResult = {"Error":"No response from node."};
 							}
 
-							res.render("browser");
+							res.render("rpc-browser");
 
 							next();
 						});
 					});
 				} else {
-					res.render("browser");
+					res.render("rpc-browser");
 
 					next();
 				}
 			}).catch(function(err) {
 				res.locals.userMessage = "Error loading help content for method " + req.query.method + ": " + err;
 
-				res.render("browser");
+				res.render("rpc-browser");
 
 				next();
 			});
 
 		} else {
-			res.render("browser");
+			res.render("rpc-browser");
 
 			next();
 		}
@@ -1386,10 +1386,44 @@ router.get("/rpc-browser", function(req, res, next) {
 	}).catch(function(err) {
 		res.locals.userMessage = "Error loading help content: " + err;
 
-		res.render("browser");
+		res.render("rpc-browser");
 
 		next();
 	});
+});
+
+router.get("/terminal", function(req, res, next) {
+	res.render("terminal");
+
+	next();
+});
+
+router.post("/terminal", function(req, res, next) {
+	console.log("here");
+
+	var params = req.body.cmd.trim().split(/\s+/);
+	var cmd = params.shift();
+	var paramsStr = req.body.cmd.trim().substring(cmd.length).trim();
+
+	console.log("abc: " + params + ", " + cmd + ", " + paramsStr);
+
+	if (cmd == "parsescript") {
+		const nbs = require('node-bitcoin-script');
+		var parsedScript = nbs.parseRawScript(paramsStr, "hex");
+
+		res.write(JSON.stringify({"parsed":parsedScript}, null, 4), function() {
+			res.end();
+		});
+
+		next();
+
+	} else {
+		res.write(JSON.stringify({"Error":"Unknown command"}, null, 4), function() {
+			res.end();
+		});
+
+		next();
+	}
 });
 
 router.get("/unconfirmed-tx", function(req, res, next) {
