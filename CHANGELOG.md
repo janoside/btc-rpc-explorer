@@ -1,3 +1,13 @@
+#### v2.0.2
+##### Unreleased
+
+* Lots of improvements to connect/disconnect/error management with configured Electrum servers
+* Include pending balance for addresses queried via ElectrumX, when available
+* Include basic stats for ElectrumX queries on `/admin`
+* Bug fixes
+	* Fix for erroneous defaults for boolean env vars in some scenarios (slow device mode)
+* Updated dependences and mining pools
+
 #### v2.0.1
 ##### 2020-05-28
 
