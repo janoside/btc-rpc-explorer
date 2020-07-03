@@ -48,26 +48,18 @@ function connectToServer(host, port, protocol) {
 		var defaultProtocol = port === 50001 ? 'tcp' : 'tls';
 
 		var electrumConfig = { client:"btc-rpc-explorer-v2", version:"1.4" };
+		var electrumPersistencePolicy = { retryPeriod: 10000, maxRetry: 1000, callback: null };
 
-		var electrumAfterConnect = function(client) {
-			client.server_version(electrumConfig.client, electrumConfig.version).then(function(versionResult) {
-				debugLog(`Connected to ElectrumX @ ${host}:${port} (${JSON.stringify(versionResult)})`);
+		var onConnect = function(client, versionInfo) {
+			debugLog(`Connected to ElectrumX @ ${host}:${port} (${JSON.stringify(versionInfo)})`);
 
-				electrumClients.push(client);
+			electrumClients.push(client);
 
-				resolve();
-
-			}).catch(function(err) {
-				debugLog(`Error getting version info from ElectrumX @ ${host}:${port}`);
-
-				utils.logError("4803y34ghdd", err, {host:host, port:port, protocol:protocol});
-
-				reject(err);
-			});
+			resolve();
 		};
 
-		var electrumAfterClose = function(client) {
-			debugLog(`Lost connection to ElectrumX @ ${host}:${port}`);
+		var onClose = function(client) {
+			debugLog(`Disconnected from ElectrumX @ ${host}:${port}`);
 
 			var index = electrumClients.indexOf(client);
 
@@ -76,25 +68,30 @@ function connectToServer(host, port, protocol) {
 			}
 		};
 
-		var electrumOnLog = function(str) {
+		var onError = function(err) {
+			debugLog(`Electrum error: ${JSON.stringify(err)}`);
+
+			utils.logError("937gf47dsyde", err, {host:host, port:port, protocol:protocol});
+		};
+
+		var onLog = function(str) {
 			debugLog(str);
 		};
 
 		var electrumCallbacks = {
-			afterConnect: electrumAfterConnect,
-			afterClose: electrumAfterClose,
-			onLog: electrumOnLog
+			onConnect: onConnect,
+			onClose: onClose,
+			onError: onError,
+			onLog: onLog
 		};
 
 		var electrumClient = new ElectrumClient(port, host, protocol || defaultProtocol, null, electrumCallbacks);
-		electrumClient.persistencePolicy = { retryPeriod: 10000, maxRetry: 1000, callback: null };
-		electrumClient.electrumConfig = electrumConfig;
+		
+		electrumClient.initElectrum(electrumConfig, electrumPersistencePolicy).then(function() {
+			// success handled by onConnect callback
 
-		// connect().then() is excluded here because "afterConnect" above handles that flow
-		electrumClient.connect().catch(function(err) {
+		}).catch(function(err) {
 			debugLog(`Error connecting to ElectrumX @ ${host}:${port}`);
-
-			utils.logError("137rg023xx7gerfwdd", err, {host:host, port:port, protocol:protocol});
 
 			reject(err);
 		});
