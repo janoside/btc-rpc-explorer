@@ -15,3 +15,4 @@
 * Patoshi mining config
 * Historical mining config:
 	* Hal: 78?
+* Script parsing

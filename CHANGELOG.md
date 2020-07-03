@@ -1,5 +1,5 @@
 #### v2.0.2
-##### Unreleased
+##### 2020-07-03
 
 * Lots of improvements to connect/disconnect/error management with configured Electrum servers
 * Include pending balance for addresses queried via ElectrumX, when available
