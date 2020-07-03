@@ -54,7 +54,7 @@ global.appVersion = package_json.version;
 
 var crawlerBotUserAgentStrings = [ "Googlebot", "Bingbot", "Slurp", "DuckDuckBot", "Baiduspider", "YandexBot", "Sogou", "Exabot", "facebot", "ia_archiver" ];
 
-var baseActionsRouter = require('./routes/baseActionsRouter.js');
+var baseActionsRouter = require('./routes/baseRouter.js');
 var apiActionsRouter = require('./routes/apiRouter.js');
 var snippetActionsRouter = require('./routes/snippetRouter.js');
 
