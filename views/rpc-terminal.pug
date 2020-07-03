@@ -1,12 +1,17 @@
 extends layout
 
 block headContent
-	title Terminal
+	title RPC Terminal
 
 block content
 	div.row
 		div.col
-			h1.h3 Terminal
+			h1.h3 RPC Terminal
+
+		div.col
+			if (!config.demoSite && (!config.credentials.rpc || !config.credentials.rpc.rpc))
+				span(style="float: right;")
+					a.btn.btn-secondary(href="/disconnect") Disconnect from node
 	
 	hr
 
@@ -41,7 +46,7 @@ block endOfBody
 				postData._csrf = csrfToken;
 				
 				$.post(
-					"/terminal",
+					"/rpc-terminal",
 					postData,
 					function(response, textStatus, jqXHR) {
 						var t = new Date().getTime();
