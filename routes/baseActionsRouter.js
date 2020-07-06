@@ -44,12 +44,6 @@ router.get("/", function(req, res) {
 	promises.push(coreApi.getMempoolInfo());
 	promises.push(coreApi.getMiningInfo());
 
-	var chainTxStatsIntervals = [ 144, 144 * 7, 144 * 30, 144 * 365 ];
-	res.locals.chainTxStatsLabels = [ "24 hours", "1 week", "1 month", "1 year", "All time" ];
-	for (var i = 0; i < chainTxStatsIntervals.length; i++) {
-		promises.push(coreApi.getChainTxStats(chainTxStatsIntervals[i]));
-	}
-
 	coreApi.getBlockchainInfo().then(function(getblockchaininfo) {
 		res.locals.getblockchaininfo = getblockchaininfo;
 
@@ -59,6 +53,23 @@ router.get("/", function(req, res) {
 				blockHeights.push(getblockchaininfo.blocks - i);
 			}
 		}
+
+		var periods = {
+			"24 hours": 144,
+			"1 week": 144 * 7,
+			"1 month": 144 * 30,
+			"1 year": 144 * 365
+		}
+		res.locals.chainTxStatsLabels = []
+		for(var periodName in periods){
+			var nblocks = periods[periodName];
+			if (nblocks >= getblockchaininfo.blocks) {
+				break
+			}
+			res.locals.chainTxStatsLabels.push(periodName)
+			promises.push(coreApi.getChainTxStats(nblocks));
+		}
+		res.locals.chainTxStatsLabels.push("All time")
 
 		promises.push(coreApi.getChainTxStats(getblockchaininfo.blocks - 1));
 
