@@ -16,7 +16,14 @@ const ElectrumClient = require('electrum-client');
 
 var electrumClients = [];
 
-global.electrumStats = {};
+global.electrumStats = {
+	base: {
+		connect: { count: 0, firstSeenAt: null, lastSeenAt: null },
+		disconnect: { count: 0, firstSeenAt: null, lastSeenAt: null },
+		error: { count: 0, firstSeenAt: null, lastSeenAt: null }
+	},
+	rpc: {}
+};
 
 var noConnectionsErrorText = "No ElectrumX connection available. This could mean that the connection was lost or that ElectrumX is processing transactions and therefore not accepting requests. This tool will try to reconnect. If you manage your own ElectrumX server you may want to check your ElectrumX logs.";
 
@@ -53,6 +60,13 @@ function connectToServer(host, port, protocol) {
 		var onConnect = function(client, versionInfo) {
 			debugLog(`Connected to ElectrumX @ ${host}:${port} (${JSON.stringify(versionInfo)})`);
 
+			global.electrumStats.base.connect.count++;
+			global.electrumStats.base.connect.lastSeenAt = new Date();
+
+			if (global.electrumStats.base.connect.firstSeenAt == null) {
+				global.electrumStats.base.connect.firstSeenAt = new Date();
+			}
+
 			electrumClients.push(client);
 
 			resolve();
@@ -60,6 +74,13 @@ function connectToServer(host, port, protocol) {
 
 		var onClose = function(client) {
 			debugLog(`Disconnected from ElectrumX @ ${host}:${port}`);
+
+			global.electrumStats.base.disconnect.count++;
+			global.electrumStats.base.disconnect.lastSeenAt = new Date();
+
+			if (global.electrumStats.base.disconnect.firstSeenAt == null) {
+				global.electrumStats.base.disconnect.firstSeenAt = new Date();
+			}
 
 			var index = electrumClients.indexOf(client);
 
@@ -70,6 +91,13 @@ function connectToServer(host, port, protocol) {
 
 		var onError = function(err) {
 			debugLog(`Electrum error: ${JSON.stringify(err)}`);
+
+			global.electrumStats.base.error.count++;
+			global.electrumStats.base.error.lastSeenAt = new Date();
+
+			if (global.electrumStats.base.error.firstSeenAt == null) {
+				global.electrumStats.base.error.firstSeenAt = new Date();
+			}
 
 			utils.logError("937gf47dsyde", err, {host:host, port:port, protocol:protocol});
 		};
@@ -296,18 +324,18 @@ function getAddressBalance(addrScripthash) {
 }
 
 function logStats(cmd, dt, success) {
-	if (!global.electrumStats[cmd]) {
-		global.electrumStats[cmd] = {count:0, time:0, successes:0, failures:0};
+	if (!global.electrumStats.rpc[cmd]) {
+		global.electrumStats.rpc[cmd] = {count:0, time:0, successes:0, failures:0};
 	}
 
-	global.electrumStats[cmd].count++;
-	global.electrumStats[cmd].time += dt;
+	global.electrumStats.rpc[cmd].count++;
+	global.electrumStats.rpc[cmd].time += dt;
 
 	if (success) {
-		global.electrumStats[cmd].successes++;
+		global.electrumStats.rpc[cmd].successes++;
 
 	} else {
-		global.electrumStats[cmd].failures++;
+		global.electrumStats.rpc[cmd].failures++;
 	}
 }
 

@@ -140,7 +140,34 @@ block content
 							table.table.table-hover.table-striped
 								thead
 									tr
-										th Method
+										th Action
+										th.text-right Count
+										th.text-right First Seen
+										th.text-right Last Seen
+
+								tbody
+									each item, itemName in electrumStats.base
+										tr.text-monospace
+											td #{itemName}
+											td.text-right #{item.count.toLocaleString()}
+
+											if (item.firstSeenAt)
+												td.text-right #{moment.duration(new Date().getTime() - item.firstSeenAt.getTime()).format()} ago
+											else
+												td.text-right -
+
+											if (item.lastSeenAt)
+												td.text-right #{moment.duration(new Date().getTime() - item.lastSeenAt.getTime()).format()} ago
+											else
+												td.text-right -
+
+						hr
+
+						div.table-responsive
+							table.table.table-hover.table-striped
+								thead
+									tr
+										th RPC
 										th.text-right Count
 										th.text-right Time
 											small  (s)
@@ -150,7 +177,7 @@ block content
 										th.text-right Success Rate
 
 								tbody
-									each item, itemName in electrumStats
+									each item, itemName in electrumStats.rpc
 										tr.text-monospace
 											td #{itemName}
 											td.text-right #{item.count.toLocaleString()}
