@@ -22,7 +22,7 @@
 	"dependencies": {
 		"async": "^3.2.0",
 		"basic-auth": "^2.0.1",
-		"bitcoin-core": "^2.3.0",
+		"bitcoin-core": "^3.0.0",
 		"bitcoinjs-lib": "^5.1.10",
 		"bluebird": "^3.7.2",
 		"body-parser": "~1.19.0",
