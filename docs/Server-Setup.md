@@ -23,7 +23,6 @@
     git clone https://github.com/janoside/btc-rpc-explorer.git
     cd /home/bitcoin/btc-rpc-explorer
     npm install
-    npm run build
     
     # startup via pm2
     pm2 start bin/www --name "btc-rpc-explorer"
