@@ -19,6 +19,7 @@
     mv explorer.btc21.org.conf /etc/nginx/sites-available/
 
     # get source, npm install
+    cd /home/bitcoin
     git clone https://github.com/janoside/btc-rpc-explorer.git
     cd /home/bitcoin/btc-rpc-explorer
     npm install
