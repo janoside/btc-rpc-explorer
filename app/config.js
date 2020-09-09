@@ -134,7 +134,6 @@ module.exports = {
 		"sendfrom",
 		"sendmany",
 		"sendtoaddress",
-		"sendrawtransaction",
 		"setaccount",
 		"setban",
 		"setmocktime",
