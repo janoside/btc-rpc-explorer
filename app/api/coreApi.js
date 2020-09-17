@@ -225,7 +225,7 @@ function getNetTotals() {
 }
 
 function getMempoolInfo() {
-	return tryCacheThenRpcApi(miscCache, "getMempoolInfo", ONE_SEC, rpcApi.getMempoolInfo);
+	return tryCacheThenRpcApi(miscCache, "getMempoolInfo", 5 * ONE_SEC, rpcApi.getMempoolInfo);
 }
 
 function getMempoolTxids() {
