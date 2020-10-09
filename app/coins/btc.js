@@ -301,6 +301,51 @@ module.exports = {
 			referenceUrl: "https://twitter.com/marttimalmi/status/423455561703624704"
 		},
 		{
+			type:"address",
+			date:"2013-09-13",
+			chain: "main",
+			address:"37k7toV1Nv4DfmQbmZ8KuZDQCYK9x5KpzP",
+			summary:"SHA1 collision bounty",
+			alertBodyHtml:"On September 13, 2013 a P2SH address was setup which allowed anyone who found a SHA1 collision to construct a transaction that could spend from this address.",
+			referenceUrl:"https://bitcointalk.org/index.php?topic=293382.0"
+		},
+		{
+			type:"address",
+			date:"2013-09-13",
+			chain: "main",
+			address:"35Snmmy3uhaer2gTboc81ayCip4m9DT4ko",
+			summary:"SHA256 collision bounty",
+			alertBodyHtml:"On September 13, 2013 a P2SH address was setup which allowed anyone who found a SHA256 collision to construct a transaction that could spend from this address.",
+			referenceUrl:"https://bitcointalk.org/index.php?topic=293382.0"
+		},
+		{
+			type:"address",
+			date:"2013-09-13",
+			chain: "main",
+			address:"3KyiQEGqqdb4nqfhUzGKN6KPhXmQsLNpay",
+			summary:"RIPEMD160 collision bounty",
+			alertBodyHtml:"On September 13, 2013 a P2SH address was setup which allowed anyone who found a RIPEMD160 collision to construct a transaction that could spend from this address.",
+			referenceUrl:"https://bitcointalk.org/index.php?topic=293382.0"
+		},
+		{
+			type:"address",
+			date:"2013-09-13",
+			chain: "main",
+			address:"39VXyuoc6SXYKp9TcAhoiN1mb4ns6z3Yu6",
+			summary:"RIPEMD160(SHA256()) collision bounty",
+			alertBodyHtml:"On September 13, 2013 a P2SH address was setup which allowed anyone who found a RIPEMD160(SHA256()) collision to construct a transaction that could spend from this address.",
+			referenceUrl:"https://bitcointalk.org/index.php?topic=293382.0"
+		},
+		{
+			type:"address",
+			date:"2013-09-13",
+			chain: "main",
+			address:"3DUQQvz4t57Jy7jxE86kyFcNpKtURNf1VW",
+			summary:"SHA256(SHA256()) collision bounty",
+			alertBodyHtml:"On September 13, 2013 a P2SH address was setup which allowed anyone who found a SHA256(SHA256()) collision to construct a transaction that could spend from this address.",
+			referenceUrl:"https://bitcointalk.org/index.php?topic=293382.0"
+		},
+		{
 			type: "blockheight",
 			date: "2017-08-24",
 			chain: "main",
