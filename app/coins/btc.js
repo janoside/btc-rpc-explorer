@@ -518,7 +518,7 @@ module.exports = {
 			chain: "main",
 			address: "bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh",
 			summary: "July 2020 Twitter hack BTC address",
-			alertBodyHtml: "On July 15, 2020 a hack involving many prominent Twitter accounts, including Elon Musk's, Bill Gate's, and Cash App's, scammed many people to send BTC to this address.",
+			alertBodyHtml: "On July 15, 2020 a hack involving many prominent Twitter accounts, including Elon Musk's, Bill Gates', and Cash App's, scammed many people to send BTC to this address.",
 			referenceUrl: "https://twitter.com/lawmaster/status/1283694581926723585"
 		},
 
