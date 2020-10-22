@@ -91,7 +91,7 @@ To match the features visible on the demo site at [https://explorer.btc21.org](h
 ## Run via Docker
 
 1. `docker build -t btc-rpc-explorer .`
-2. `docker run -p 3002:3002 -it btc-rpc-explorer`
+2. `docker run -it -p 3002:3002 -e BTCEXP_HOST=0.0.0.0 btc-rpc-explorer`
 
 
 ## Reverse proxy with HTTPS
