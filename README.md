@@ -74,6 +74,6 @@ See `btc-rpc-explorer --help` for the full list of CLI options.
 [npm-ver-img]: https://img.shields.io/npm/v/btc-rpc-explorer.svg?style=flat
 [npm-ver-url]: https://www.npmjs.com/package/btc-rpc-explorer
 [npm-dl-img]: http://img.shields.io/npm/dm/btc-rpc-explorer.svg?style=flat
-[npm-dl-url]: https://npmcharts.com/compare/btc-rpc-explorer?minimal=true 
+[npm-dl-url]: https://npmcharts.com/compare/btc-rpc-explorer?minimal=true
 
 
