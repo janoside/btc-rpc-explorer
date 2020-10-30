@@ -129,7 +129,7 @@ function loadMiningPoolConfigs() {
 
 function getSourcecodeProjectMetadata() {
 	var options = {
-		url: "https://api.github.com/repos/janoside/btc-rpc-explorer",
+		url: "https://api.github.com/repos/groestlcoin/grs-rpc-explorer",
 		headers: {
 			'User-Agent': 'request'
 		}
@@ -149,7 +149,7 @@ function getSourcecodeProjectMetadata() {
 
 function loadChangelog() {
 	var filename = "CHANGELOG.md";
-	
+
 	fs.readFile(path.join(__dirname, filename), 'utf8', function(err, data) {
 		if (err) {
 			utils.logError("2379gsd7sgd334", err);
@@ -248,7 +248,7 @@ function onRpcConnectionVerified(getnetworkinfo, getblockchaininfo) {
 
 		debugErrorLog(`Unable to parse node version string: ${getnetworkinfo.subversion} - RPC versioning will likely be unreliable. Is your node a version of Bitcoin Core?`);
 	}
-	
+
 	debugLog(`RPC Connected: version=${getnetworkinfo.version} subversion=${getnetworkinfo.subversion}, parsedVersion(used for RPC versioning)=${global.btcNodeSemver}, protocolversion=${getnetworkinfo.protocolversion}, chain=${getblockchaininfo.chain}, services=${services}`);
 
 	// load historical/fun items for this chain
@@ -371,7 +371,7 @@ function refreshNetworkVolumes() {
 
 app.onStartup = function() {
 	global.appStartTime = new Date().getTime();
-	
+
 	global.config = config;
 	global.coinConfig = coins[config.coin];
 	global.coinConfigs = coins;
@@ -447,7 +447,7 @@ app.continueStartup = function() {
 			if (config.electrumXServers && config.electrumXServers.length > 0) {
 				electrumAddressApi.connectToServers().then(function() {
 					global.electrumAddressApi = electrumAddressApi;
-					
+
 				}).catch(function(err) {
 					utils.logError("31207ugf4e0fed", err, {electrumXServers:config.electrumXServers});
 				});
@@ -503,7 +503,7 @@ app.use(function(req, res, next) {
 	res.locals.utxoSetSummary = global.utxoSetSummary;
 	res.locals.utxoSetSummaryPending = global.utxoSetSummaryPending;
 	res.locals.networkVolume = global.networkVolume;
-	
+
 	res.locals.host = req.session.host;
 	res.locals.port = req.session.port;
 
@@ -573,10 +573,10 @@ app.use(function(req, res, next) {
 
 	if (req.session.userMessage) {
 		res.locals.userMessage = req.session.userMessage;
-		
+
 		if (req.session.userMessageType) {
 			res.locals.userMessageType = req.session.userMessageType;
-			
+
 		} else {
 			res.locals.userMessageType = "warning";
 		}

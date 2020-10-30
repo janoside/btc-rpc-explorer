@@ -1,0 +1,28 @@
+{
+    "coinbase_tags" : {
+        "Mining-Dutch5": {
+            "name": "MiningDutch",
+            "link": "https://www.mining-dutch.nl/"
+        },
+        "SuprNova.cc": {
+            "name": "SuprNova.cc",
+            "link": "https://grs.suprnova.cc/"
+        },
+        "mph": {
+            "name": "MiningPoolHub",
+            "link": "http://groestlcoin.miningpoolhub.com/"
+        },
+        "www.zpool.ca": {
+            "name": "Zpool.ca",
+            "link": "https://www.zpool.ca"
+        },
+        "zergpool.com": {
+            "name": "zergpool.com",
+            "link": "https://zergpool.com/"
+        },
+        "Cybtcpool": {
+            "name": "Cybtc.info",
+            "link": "https://cybtc.info/"
+        }
+    }
+}

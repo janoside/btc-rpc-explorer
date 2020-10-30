@@ -4,7 +4,7 @@ var utils = require("./../utils.js");
 
 function getAddressDetails(address, scriptPubkey, sort, limit, offset) {
 	return new Promise(function(resolve, reject) {
-		if (address.startsWith("bc1")) {
+		if (address.startsWith("grs1")) {
 			reject({userText:"blockchain.com API does not support bc1 (native Segwit) addresses"});
 
 			return;

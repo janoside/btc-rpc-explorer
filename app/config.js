@@ -8,15 +8,15 @@ var url = require('url');
 var coins = require("./coins.js");
 var credentials = require("./credentials.js");
 
-var currentCoin = process.env.BTCEXP_COIN || "BTC";
+var currentCoin = process.env.BTCEXP_COIN || "GRS";
 
 var rpcCred = credentials.rpc;
 
 if (rpcCred.cookie && !rpcCred.username && !rpcCred.password && fs.existsSync(rpcCred.cookie)) {
 	console.log(`Loading RPC cookie file: ${rpcCred.cookie}`);
-	
+
 	[ rpcCred.username, rpcCred.password ] = fs.readFileSync(rpcCred.cookie).toString().split(':', 2);
-	
+
 	if (!rpcCred.password) {
 		throw new Error(`Cookie file ${rpcCred.cookie} in unexpected format`);
 	}
@@ -32,7 +32,7 @@ var electrumXServerUriStrings = (process.env.BTCEXP_ELECTRUMX_SERVERS || "").spl
 var electrumXServers = [];
 for (var i = 0; i < electrumXServerUriStrings.length; i++) {
 	var uri = url.parse(electrumXServerUriStrings[i]);
-	
+
 	electrumXServers.push({protocol:uri.protocol.substring(0, uri.protocol.length - 1), host:uri.hostname, port:parseInt(uri.port)});
 }
 
@@ -76,7 +76,7 @@ module.exports = {
 	demoSite: (process.env.BTCEXP_DEMO.toLowerCase() == "true"),
 	queryExchangeRates: (process.env.BTCEXP_NO_RATES.toLowerCase() != "true"),
 	noInmemoryRpcCache: (process.env.BTCEXP_NO_INMEMORY_RPC_CACHE.toLowerCase() == "true"),
-	
+
 	rpcConcurrency: (process.env.BTCEXP_RPC_CONCURRENCY || 10),
 
 	rpcBlacklist:
@@ -177,10 +177,9 @@ module.exports = {
 				{
 					title:"Related Sites",
 					links:[
-						{name: "Bitcoin Explorer", url:"https://explorer.btc21.org", imgUrl:"/img/logo/btc.svg"},
-						{name: "Testnet Explorer", url:"https://testnet.btc21.org", imgUrl:"/img/logo/tbtc.svg"},
-						{name: "LND Admin", url:"https://lnd-admin.btc21.org", imgUrl:"/img/logo/lnd-admin.png"},
-						//{name: "Litecoin Explorer", url:"https://ltc.chaintools.io", imgUrl:"/img/logo/ltc.svg"},
+						{name: "Groestlcoin Explorer", url:"https://rpcexplorer.groestlcoin.org", imgUrl:"/img/logo/grs.svg"},
+						{name: "Testnet Explorer", url:"https://rpcexplorer-test.groestlcoin.org", imgUrl:"/img/logo/tgrs.svg"},
+						//{name: "LND Admin", url:"https://lnd-admin.btc21.org", imgUrl:"/img/logo/lnd-admin.png"},
 						//{name: "Lightning Explorer", url:"https://lightning.chaintools.io", imgUrl:"/img/logo/lightning.svg"},
 					]
 				}
@@ -215,11 +214,11 @@ module.exports = {
 
 	donations:{
 		addresses:{
-			coins:["BTC"],
-			sites:{"BTC":"https://explorer.btc21.org"}
+			coins:["GRS"],
+			sites:{"GRS":"https://rpcexplorer.groestlcoin.org"}
 		},
 		btcpayserver:{
-			host:"https://donate.btc21.org"
+			host:"https://www.groestlcoin.org/donations/"
 		}
 	}
 };

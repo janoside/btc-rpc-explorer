@@ -1,7 +1,7 @@
 {
-	"name": "btc-rpc-explorer",
+	"name": "grs-rpc-explorer",
 	"version": "2.0.2",
-	"description": "Open-source, self-hosted Bitcoin explorer",
+	"description": "Open-source, self-hosted Groestlcoin explorer",
 	"private": false,
 	"bin": "bin/cli.js",
 	"scripts": {
@@ -9,21 +9,21 @@
 		"refresh-mining-pool-configs": "node ./bin/refresh-mining-pool-configs.js"
 	},
 	"keywords": [
-		"bitcoin",
-		"btc",
+		"groestlcoin",
+		"grs",
 		"blockchain"
 	],
 	"author": "Dan Janosik <dan@47.io>",
 	"license": "MIT",
 	"repository": {
 		"type": "git",
-		"url": "git+https://github.com/janoside/btc-rpc-explorer.git"
+		"url": "git+https://github.com/groestlcoin/grs-rpc-explorer.git"
 	},
 	"dependencies": {
 		"async": "^3.2.0",
 		"basic-auth": "^2.0.1",
 		"bitcoin-core": "^2.3.0",
-		"bitcoinjs-lib": "^5.1.10",
+		"groestlcoinjs-lib": "^5.1.10",
 		"bluebird": "^3.7.2",
 		"body-parser": "~1.19.0",
 		"cookie-parser": "^1.4.5",

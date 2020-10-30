@@ -8,7 +8,7 @@ var util = require('util');
 var moment = require('moment');
 var bitcoinCore = require("bitcoin-core");
 var qrcode = require('qrcode');
-var bitcoinjs = require('bitcoinjs-lib');
+var bitcoinjs = require('groestlcoinjs-lib');
 var sha256 = require("crypto-js/sha256");
 var hexEnc = require("crypto-js/enc-hex");
 var Decimal = require("decimal.js");
@@ -47,7 +47,7 @@ router.get("/", function(req, res, next) {
 	}
 
 	res.locals.homepage = true;
-	
+
 	// don't need timestamp on homepage "blocks-list", this flag disables
 	res.locals.hideTimestampColumn = true;
 
@@ -80,7 +80,7 @@ router.get("/", function(req, res, next) {
 		res.locals.getblockchaininfo = getblockchaininfo;
 
 		res.locals.difficultyPeriod = parseInt(Math.floor(getblockchaininfo.blocks / coinConfig.difficultyAdjustmentBlockCount));
-		
+
 
 		var blockHeights = [];
 		if (getblockchaininfo.blocks) {
@@ -156,7 +156,7 @@ router.get("/", function(req, res, next) {
 				res.locals.hashrate1d = promiseResults[3];
 				res.locals.hashrate7d = promiseResults[4];
 
-				
+
 				var rawblockstats = promiseResults[5];
 				if (rawblockstats && rawblockstats.length > 0 && rawblockstats[0] != null) {
 					res.locals.blockstatsByHeight = {};
@@ -169,7 +169,7 @@ router.get("/", function(req, res, next) {
 				}
 
 				res.locals.difficultyPeriodFirstBlockHeader = promiseResults[6];
-				
+
 
 				if (getblockchaininfo.chain !== 'regtest') {
 					res.locals.txStats = promiseResults[7];
@@ -188,7 +188,7 @@ router.get("/", function(req, res, next) {
 
 			}).catch(function(err) {
 				utils.logError("32978efegdde", err);
-				
+
 				res.locals.userMessage = "Error loading recent blocks: " + err;
 
 				res.render("index");
@@ -272,7 +272,7 @@ router.get("/mempool-summary", function(req, res, next) {
 			} else {
 				res.locals.mempooltxidChunks = utils.splitArrayIntoChunks(mempooltxids, 25);
 			}
-			
+
 
 			res.render("mempool-summary");
 
@@ -306,7 +306,7 @@ router.get("/peers", function(req, res, next) {
 		if (peerIps.length > 0) {
 			utils.geoLocateIpAddresses(peerIps).then(function(results) {
 				res.locals.peerIpSummary = results;
-				
+
 				res.render("peers");
 
 				next();
@@ -731,7 +731,7 @@ router.get("/block/:blockHash", function(req, res, next) {
 
 		}).catch(function(err) {
 			res.locals.pageErrors.push(utils.logError("238h38sse", err));
-			
+
 			reject(err);
 		});
 	}));
@@ -744,7 +744,7 @@ router.get("/block/:blockHash", function(req, res, next) {
 
 		}).catch(function(err) {
 			res.locals.pageErrors.push(utils.logError("21983ue8hye", err));
-			
+
 			reject(err);
 		});
 	}));
@@ -834,7 +834,7 @@ router.get("/tx/:transactionId", function(req, res, next) {
 		promises.push(new Promise(function(resolve, reject) {
 			coreApi.getTxUtxos(tx).then(function(utxos) {
 				res.locals.utxos = utxos;
-				
+
 				resolve();
 
 			}).catch(function(err) {
@@ -848,7 +848,7 @@ router.get("/tx/:transactionId", function(req, res, next) {
 			promises.push(new Promise(function(resolve, reject) {
 				coreApi.getMempoolTxDetails(txid, true).then(function(mempoolDetails) {
 					res.locals.mempoolDetails = mempoolDetails;
-					
+
 					resolve();
 
 				}).catch(function(err) {
@@ -889,7 +889,7 @@ router.get("/address/:address", function(req, res, next) {
 	var offset = 0;
 	var sort = "desc";
 
-	
+
 	if (req.query.limit) {
 		limit = parseInt(req.query.limit);
 
@@ -919,7 +919,7 @@ router.get("/address/:address", function(req, res, next) {
 	res.locals.paginationBaseUrl = `/address/${address}?sort=${sort}`;
 	res.locals.transactions = [];
 	res.locals.addressApiSupport = addressApi.getCurrentAddressApiFeatureSupport();
-	
+
 	res.locals.result = {};
 
 	var parseAddressErrors = [];
@@ -941,7 +941,7 @@ router.get("/address/:address", function(req, res, next) {
 			parseAddressErrors.push(utils.logError("u02qg02yqge", err2));
 		}
 
-		
+
 	}
 
 	if (res.locals.addressObj == null) {
@@ -999,7 +999,7 @@ router.get("/address/:address", function(req, res, next) {
 							}
 
 							res.locals.txids = txids;
-							
+
 							coreApi.getRawTransactionsWithInputs(txids).then(function(rawTxResult) {
 								res.locals.transactions = rawTxResult.transactions;
 								res.locals.txInputsByTransaction = rawTxResult.txInputsByTransaction;
@@ -1060,7 +1060,7 @@ router.get("/address/:address", function(req, res, next) {
 									for (var i = 0; i < rawTxResult.transactions.length; i++) {
 										var tx = rawTxResult.transactions[i];
 										var txInputs = rawTxResult.txInputsByTransaction[tx.txid];
-										
+
 										if (handledTxids.includes(tx.txid)) {
 											continue;
 										}
@@ -1167,7 +1167,7 @@ router.get("/address/:address", function(req, res, next) {
 
 			next();
 		});
-		
+
 	}).catch(function(err) {
 		res.locals.pageErrors.push(utils.logError("2108hs0gsdfe", err, {address:address}));
 
@@ -1182,7 +1182,7 @@ router.get("/address/:address", function(req, res, next) {
 router.get("/rpc-terminal", function(req, res, next) {
 	if (!config.demoSite && !req.authenticated) {
 		res.send("RPC Terminal / Browser require authentication. Set an authentication password via the 'BTCEXP_BASIC_AUTH_PASSWORD' environment variable (see .env-sample file for more info).");
-		
+
 		next();
 
 		return;
@@ -1311,7 +1311,7 @@ router.get("/rpc-browser", function(req, res, next) {
 									if (req.query.args[i]) {
 										argValues.push(JSON.parse(req.query.args[i]));
 									}
-									
+
 									break;
 
 								} else {
@@ -1575,7 +1575,7 @@ router.get("/fun", function(req, res, next) {
 	});
 
 	res.locals.historicalData = sortedList;
-	
+
 	res.render("fun");
 
 	next();

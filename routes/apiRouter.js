@@ -8,7 +8,7 @@ var util = require('util');
 var moment = require('moment');
 var bitcoinCore = require("bitcoin-core");
 var qrcode = require('qrcode');
-var bitcoinjs = require('bitcoinjs-lib');
+var bitcoinjs = require('groestlcoinjs-lib');
 var sha256 = require("crypto-js/sha256");
 var hexEnc = require("crypto-js/enc-hex");
 var Decimal = require("decimal.js");
@@ -28,7 +28,7 @@ const forceCsrf = csurf({ ignoreMethods: [] });
 
 router.get("/blocks-by-height/:blockHeights", function(req, res, next) {
 	var blockHeightStrs = req.params.blockHeights.split(",");
-	
+
 	var blockHeights = [];
 	for (var i = 0; i < blockHeightStrs.length; i++) {
 		blockHeights.push(parseInt(blockHeightStrs[i]));
@@ -43,7 +43,7 @@ router.get("/blocks-by-height/:blockHeights", function(req, res, next) {
 
 router.get("/block-headers-by-height/:blockHeights", function(req, res, next) {
 	var blockHeightStrs = req.params.blockHeights.split(",");
-	
+
 	var blockHeights = [];
 	for (var i = 0; i < blockHeightStrs.length; i++) {
 		blockHeights.push(parseInt(blockHeightStrs[i]));
@@ -58,7 +58,7 @@ router.get("/block-headers-by-height/:blockHeights", function(req, res, next) {
 
 router.get("/block-stats-by-height/:blockHeights", function(req, res, next) {
 	var blockHeightStrs = req.params.blockHeights.split(",");
-	
+
 	var blockHeights = [];
 	for (var i = 0; i < blockHeightStrs.length; i++) {
 		blockHeights.push(parseInt(blockHeightStrs[i]));

@@ -9,12 +9,12 @@ block content
 			div.alert.alert-danger.mb-huge
 				h1.h6.font-weight-bold Invalid Address
 				span.text-monospace #{address}
-				
+
 		else
 			h1.h3 Address
 				br
 				small.text-monospace #{address}
-			
+
 			hr
 
 			if (payoutAddressForMiner)
@@ -25,13 +25,13 @@ block content
 					h4.alert-heading.h6.font-weight-bold #{coinConfig.name} Fun
 
 					p
-						span This looks like a miner payout address for  
+						span This looks like a miner payout address for
 						span.font-weight-bold #{payoutAddressForMiner.name}
 						if (coinConfig.miningPoolsConfigUrls.length > 1)
-							span  (see the configurations: 
+							span  (see the configurations:
 							each item, index in coinConfig.miningPoolsConfigUrls
 								if (index > 0)
-									span , 
+									span ,
 								a(href=item) config ##{index + 1}
 							span )
 						else
@@ -53,7 +53,7 @@ block content
 							span !{saInfo.alertBodyHtml}
 
 							if (saInfo.referenceUrl && saInfo.referenceUrl.trim().length > 0 && saInfo.alertBodyHtml.indexOf(saInfo.referenceUrl) == -1)
-								span  
+								span
 									a(href=saInfo.referenceUrl) Read more
 
 					else
@@ -61,14 +61,14 @@ block content
 							span #{saInfo.summary}
 
 							if (saInfo.referenceUrl && saInfo.referenceUrl.trim().length > 0)
-								span  
+								span
 									a(href=saInfo.referenceUrl) Read more
 
 
 			if (false)
 				pre
 					code.json.bg-light #{JSON.stringify(addressObj, null, 4)}
-			
+
 			ul.nav.nav-tabs.mb-3
 				li.nav-item
 					a.nav-link.active(data-toggle="tab", href="#tab-details", role="tab") Details
@@ -136,7 +136,7 @@ block content
 												span #{moment.utc(new Date(firstSeenTransaction.time * 1000)).format("Y-MM-DD HH:mm:ss")} utc
 												- var timeAgoTime = firstSeenTransaction.time;
 												include includes/time-ago.pug
-												
+
 												if (false)
 													pre
 														code.json.bg-light #{JSON.stringify(firstSeenTransaction)}
@@ -151,7 +151,7 @@ block content
 													each item in balance.conflictedResults
 														- var currencyValue = item.confirmed / coinConfig.baseCurrencyUnit.multiplier;
 														include includes/value-display.pug
-														
+
 
 										else
 											div.row
@@ -266,11 +266,11 @@ block content
 										div.dropdown-menu.dropdown-menu-right
 											a.dropdown-item(href=("/address/" + address))
 												if (sort == "desc")
-													i.fa.fa-check 
+													i.fa.fa-check
 												span  Newest First
 											a.dropdown-item(href=("/address/" + address + "?sort=asc"))
 												if (sort != "desc")
-													i.fa.fa-check 
+													i.fa.fa-check
 												span  Oldest First
 
 								else if (txids && txids.length > 1 && addressApiSupport.sortDesc && !addressApiSupport.sortAsc)
@@ -285,13 +285,13 @@ block content
 										i.fas.fa-exclamation-triangle.fa-2x(style="margin-top: 10px;")
 									h4.alert-heading.h6.font-weight-bold Trust Warning
 									p
-										span The transaction history for this address was requested from mulitple ElectrumX servers and the results did not match. The results below were obtained only from 
+										span The transaction history for this address was requested from mulitple ElectrumX servers and the results did not match. The results below were obtained only from
 										span.font-weight-bold #{electrumHistory.server}
 
 
 							if (true)
 								if (addressApiError && addressApiError.error && addressApiError.error.code && addressApiError.error.code == -32600)
-									span Failed to retrieve transaction history from ElectrumX. See 
+									span Failed to retrieve transaction history from ElectrumX. See
 									a(href="https://github.com/janoside/btc-rpc-explorer/issues/67") Issue #67
 									span  for more information.
 
@@ -302,13 +302,13 @@ block content
 								else if (addressDetailsErrors && addressDetailsErrors.length > 0)
 									each err, errIndex in addressDetailsErrors
 										if (err.e && err.e && err.e.message == "history too large")
-											span Failed to retrieve transaction history from ElectrumX because this address is involved in too many transactions (more than ElectrumX currently supports retrieving). See 
+											span Failed to retrieve transaction history from ElectrumX because this address is involved in too many transactions (more than ElectrumX currently supports retrieving). See
 											a(href="https://github.com/janoside/btc-rpc-explorer/issues/67") Issue #67
 											span  for more information.
 
 										else if (err == "No address API configured")
 											span No address API is configured. See 
-											a(href="https://github.com/janoside/btc-rpc-explorer/blob/master/.env-sample") the example configuration file
+											a(href="https://github.com/groestlcoin/grs-rpc-explorer/blob/master/.env-sample") the example configuration file
 											span  for help setting up an address API if desired.
 
 										else
@@ -337,7 +337,7 @@ block content
 														a(href=("/tx/" + tx.txid)) #{tx.txid}
 
 														if (global.specialTransactions && global.specialTransactions[tx.txid])
-															span  
+															span
 															a(data-toggle="tooltip", title=(coinConfig.name + " Fun! See transaction for details"))
 																i.fas.fa-certificate.text-primary
 
@@ -349,7 +349,7 @@ block content
 															include includes/value-display.pug
 
 														if (addrLossesByTx[tx.txid])
-															span  / 
+															span  /
 
 													if (addrLossesByTx[tx.txid])
 														- var currencyValue = addrLossesByTx[tx.txid];
@@ -371,7 +371,7 @@ block content
 
 														else
 															span.text-danger Unconfirmed
-													
+
 										div.card-body
 											if (true)
 												- var txInputs = txInputsByTransaction[tx.txid];
@@ -381,9 +381,9 @@ block content
 												include includes/transaction-io-details.pug
 
 							else
-								p Since this explorer is database-free, it doesn't natively support address transaction history. However, you can configure it to communicate with one or more ElectrumX servers to build and display this data. In doing so, you should be aware that you'll be trusting those ElectrumX servers. If you configure multiple servers the results obtained from each will be cross-referenced against the others. Communicating with ElectrumX servers will also impact your privacy since the servers will know what addresses you're interested in. If these tradeoffs are acceptable, you can see a list of public ElectrumX servers here: 
+								p Since this explorer is database-free, it doesn't natively support address transaction history. However, you can configure it to communicate with one or more ElectrumX servers to build and display this data. In doing so, you should be aware that you'll be trusting those ElectrumX servers. If you configure multiple servers the results obtained from each will be cross-referenced against the others. Communicating with ElectrumX servers will also impact your privacy since the servers will know what addresses you're interested in. If these tradeoffs are acceptable, you can see a list of public ElectrumX servers here:
 								a(href="https://uasf.saltylemon.org/electrum") https://uasf.saltylemon.org/electrum
-							
+
 							if (false)
 								pre
 									code.json.bg-light #{JSON.stringify(transactions, null, 4)}
@@ -403,8 +403,8 @@ block content
 
 								include includes/pagination.pug
 
-							
-				
+
+
 
 				div.tab-pane(id="tab-json", role="tabpanel")
 					div.card.shadow-sm.mb-3
@@ -425,5 +425,3 @@ block content
 								div.highlight
 									pre
 										code.json.bg-light #{JSON.stringify(addressDetails, null, 4)}
-
-		

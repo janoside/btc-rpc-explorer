@@ -4,7 +4,7 @@ html(lang="en")
 		meta(charset="utf-8")
 		meta(name="csrf-token", content=csrfToken)
 		meta(name="viewport", content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0, shrink-to-fit=no")
-		
+
 		link(rel="stylesheet", href="/css/fonts.css", integrity="sha384-XOmmu8j3C2MFUXRVGg8VWYNwlhEkSNb0rW/4e7bi3F56S6PejEmBUQDGZofQyjbL")
 		link(rel="stylesheet", href="/css/highlight.min.css", integrity="sha384-zhIsEafzyQWHSoMCQ4BfT8ZlRXQyIFwAHAJn32PNdsb8n6tVysGZSLpEEIvCskw4")
 
@@ -12,11 +12,11 @@ html(lang="en")
 		if (session.uiTheme && session.uiTheme == "dark")
 			link(rel="stylesheet", href="/css/bootstrap-dark.min.css", integrity="sha384-yHrdw+uFPe64ykHEYlYL2lmT0s+veKi1+lmxNqB3jVMOl9iX0h9xDLxcgtFtiV6M")
 			link(rel="stylesheet", href="/css/dark-touchups.css")
-				
+
 		else
 			link(rel="stylesheet", href="/css/bootstrap.min.css", integrity="sha384-QO/VzYasHIIVEtFdqGXHU2wxSK0pjVxX4mrM68IQhYpi0vTCM0ZIuV/KQbPZMfXg")
 
-		
+
 		link(rel='stylesheet', href='/css/styling.css')
 
 		link(rel="icon", type="image/png", href=("/img/logo/" + config.coin.toLowerCase() + ".png"))
@@ -25,7 +25,7 @@ html(lang="en")
 
 		block headContent
 			title Explorer
-		
+
 	body.bg-dark
 		nav.navbar.navbar-expand-lg.navbar-dark.bg-dark
 			div.container
@@ -40,10 +40,10 @@ html(lang="en")
 							span #{coinConfig.siteTitlesByNetwork[activeBlockchain]}
 						else
 							span Bitcoin Explorer
-						
+
 				button.navbar-toggler.navbar-toggler-right(type="button", data-toggle="collapse", data-target="#navbarNav", aria-label="collapse navigation")
 					span.navbar-toggler-icon
-					
+
 				div.collapse.navbar-collapse(id="navbarNav")
 					if (rpcClient)
 						ul.navbar-nav.mr-auto
@@ -60,7 +60,7 @@ html(lang="en")
 
 							if (config.siteTools)
 								li.nav-item.dropdown
-									a.nav-link.dropdown-toggle(href="javascript:void(0)", role="button", data-toggle="dropdown", aria-haspopup="true", aria-expanded="false") 
+									a.nav-link.dropdown-toggle(href="javascript:void(0)", role="button", data-toggle="dropdown", aria-haspopup="true", aria-expanded="false")
 										span  Tools
 									div.dropdown-menu.shadow(aria-label="Tools Items")
 										each itemIndex in config.site.prioritizedToolIdsList
@@ -73,7 +73,7 @@ html(lang="en")
 							if (config.site.header.dropdowns)
 								each dropdown, ddIndex in config.site.header.dropdowns
 									li.nav-item.dropdown
-										a.nav-link.dropdown-toggle(href="javascript:void(0)", role="button", data-toggle="dropdown", aria-haspopup="true", aria-expanded="false") 
+										a.nav-link.dropdown-toggle(href="javascript:void(0)", role="button", data-toggle="dropdown", aria-haspopup="true", aria-expanded="false")
 											span  #{dropdown.title}
 										div.dropdown-menu.shadow(aria-label=(dropdown.title + " Items"))
 											each dropdownLink in dropdown.links
@@ -82,7 +82,7 @@ html(lang="en")
 														img(src=dropdownLink.imgUrl, style="width: 24px; height: 24px; margin-right: 8px;", alt=dropdownLink.name)
 													span  #{dropdownLink.name}
 
-							
+
 						form.form-inline.mr-3(method="post", action="/search")
 							input(type="hidden", name="_csrf", value=csrfToken)
 							div.input-group.input-group-sm
@@ -93,14 +93,14 @@ html(lang="en")
 
 						ul.navbar-nav
 							li.nav-item.dropdown
-								a.nav-link.dropdown-toggle(href="javascript:void(0)", role="button", data-toggle="dropdown", aria-haspopup="true", aria-expanded="false") 
+								a.nav-link.dropdown-toggle(href="javascript:void(0)", role="button", data-toggle="dropdown", aria-haspopup="true", aria-expanded="false")
 									span  Admin Tools
 								div.dropdown-menu.dropdown-menu-right.shadow(aria-label="Admin Tools Items")
 									a.dropdown-item(href="/admin") Admin Dashboard
 
 							li.nav-item.dropdown
-								a.nav-link.dropdown-toggle(href="javascript:void(0)", id="navbarDropdown", role="button", data-toggle="dropdown", aria-haspopup="true", aria-expanded="false") 
-									i.fas.fa-cog.mr-1 
+								a.nav-link.dropdown-toggle(href="javascript:void(0)", id="navbarDropdown", role="button", data-toggle="dropdown", aria-haspopup="true", aria-expanded="false")
+									i.fas.fa-cog.mr-1
 								div.dropdown-menu.dropdown-menu-right.shadow(aria-labelledby="navbarDropdown")
 									if (coinConfig.currencyUnits)
 										span.dropdown-header Currency Units
@@ -121,7 +121,7 @@ html(lang="en")
 										if (session.uiTheme == "dark")
 											i.fas.fa-check
 										span  Dark
-		
+
 		if (host && port && !homepage && config.site.header.showToolsSubheader)
 			div.container.mb-2.pt-2.d-lg-block.d-none.border-top(id="sub-menu", style="")
 				ul.nav
@@ -131,7 +131,7 @@ html(lang="en")
 							a.nav-link.text-white.px-2.text-decoration-underline.mr-3(href=item.url)
 								i.mr-1(class=item.fontawesome)
 								span #{item.name}
-		
+
 		- var bodyBgColor = "#f8f9fa;";
 		if (session.uiTheme && session.uiTheme == "dark")
 			- bodyBgColor = "#0c0c0c;";
@@ -143,7 +143,7 @@ html(lang="en")
 
 					div.alert.alert-danger
 						- var errorText = `This page encountered ${pageErrors.length.toLocaleString()} error${pageErrors.length == 1 ? "" : "s"}:`;
-						span.font-weight-bold #{errorText} 
+						span.font-weight-bold #{errorText}
 						a(href="javascript:void(0)", data-toggle="modal", data-target="#pageErrorsModal") Error details
 
 				if (userMessageMarkdown)
@@ -154,8 +154,8 @@ html(lang="en")
 				if (userMessage)
 					div.alert(class=(userMessageType ? `alert-${userMessageType}` : "alert-warning"), role="alert")
 						span #{userMessage}
-							
-				
+
+
 				div(style="min-height: 500px;")
 					block content
 
@@ -171,30 +171,30 @@ html(lang="en")
 						dl
 							dt Source
 							dd
-								a(href="https://github.com/janoside/btc-rpc-explorer") github.com/janoside/btc-rpc-explorer
-								
+								a(href="https://github.com/groestlcoin/grs-rpc-explorer") github.com/groestlcoin/grs-rpc-explorer
+
 								if (global.sourcecodeProjectMetadata)
 									div.mt-2
-										a.btn.btn-primary.btn-sm.mr-3.mb-1.text-decoration-none(href="https://github.com/janoside/btc-rpc-explorer")
+										a.btn.btn-primary.btn-sm.mr-3.mb-1.text-decoration-none(href="https://github.com/groestlcoin/grs-rpc-explorer")
 											i.fas.fa-star.mr-2
-											span.mr-2 Star 
+											span.mr-2 Star
 											span.badge.bg-white.text-dark #{global.sourcecodeProjectMetadata.stargazers_count}
 
-										a.btn.btn-primary.btn-sm.mr-3.mb-1.text-decoration-none(href="https://github.com/janoside/btc-rpc-explorer/fork")
+										a.btn.btn-primary.btn-sm.mr-3.mb-1.text-decoration-none(href="https://github.com/groestlcoin/grs-rpc-explorer/fork")
 											i.fas.fa-code-branch.mr-2
-											span.mr-2 Fork 
+											span.mr-2 Fork
 											span.badge.bg-white.text-dark #{global.sourcecodeProjectMetadata.forks_count}
 
 
-							
+
 							dt App Details
 							dd
 								span version: #{global.appVersion}
 								if (sourcecodeVersion)
 									br
-									span commit: 
-										a(href=("https://github.com/janoside/btc-rpc-explorer/commit/" + sourcecodeVersion)) #{sourcecodeVersion}
-								
+									span commit:
+										a(href=("https://github.com/groestlcoin/grs-rpc-explorer/commit/" + sourcecodeVersion)) #{sourcecodeVersion}
+
 								br
 								span released: #{sourcecodeDate}
 								span(style="font-size: 0.9em;")  (
@@ -208,7 +208,7 @@ html(lang="en")
 										a(href=coinConfig.demoSiteUrl) #{coinConfig.demoSiteUrl}
 									else
 										a(href="https://explorer.btc21.org") https://explorer.btc21.org
-									
+
 									div.mt-2
 										- var demoSites = [];
 										- demoSites.push({url:"https://explorer.btc21.org", logoUrl:"/img/logo/btc.svg", title:"Bitcoin Explorer"});
@@ -227,7 +227,7 @@ html(lang="en")
 								button.btn.btn-primary(type="button", data-toggle="modal", data-target="#exampleModalCenter")
 									i.fas.fa-heart.mr-2
 									span Support Project
-		
+
 		script(src="/js/jquery.min.js", integrity="sha384-vk5WoKIaW/vJyUAd9n/wmopsmNhiy+L2Z+SBxGYnUkunIxVxAv/UtMOhba/xskxh")
 		script(src="/js/popper.min.js", integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo")
 		script(src="/js/bootstrap.min.js", integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6")
@@ -236,7 +236,7 @@ html(lang="en")
 		script(src="/js/highlight.min.js", integrity="sha384-xLrpH5gNLD6HMLgeDH1/p4FXigQ8T9mgNm+EKtCSXL0OJ5i1bnSi57dnwFuUMM9/")
 
 		script(src="/js/site.js", integrity="sha384-4/UxV25z5d3QFVgqmQ1Aez9CEzXwGz5MbBctDnsoCg6twESX4Jn0wgkazFXUJFqR")
-		
+
 		script.
 			$(document).ready(function() {
 				$('[data-toggle="tooltip"]').tooltip();
@@ -259,5 +259,5 @@ html(lang="en")
 
 				gtag('config', '#{config.credentials.googleAnalyticsTrackingId}');
 
-		
+
 		block endOfBody

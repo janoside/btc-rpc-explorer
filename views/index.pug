@@ -2,7 +2,7 @@ extends layout
 
 block headContent
 	title Home
-	
+
 block content
 	if (getblockchaininfo == null)
 		div.alert.alert-warning
@@ -16,26 +16,26 @@ block content
 			div.alert.alert-primary.alert-dismissible.shadow-sm.mb-3(role="alert")
 				span
 					span.font-weight-bold #{coinConfig.siteTitlesByNetwork[activeBlockchain]}
-					span  is 
-					a(href="https://github.com/janoside/btc-rpc-explorer", target="_blank") open-source
-					span  and easy to set up. It can communicate with your 
+					span  is
+					a(href="https://github.com/groestlcoin/grs-rpc-explorer", target="_blank") open-source
+					span  and easy to set up. It can communicate with your
 					a(href=coinConfig.nodeUrl, target="_blank") #{coinConfig.name} Full Node
-					span  via RPC. See the 
-					a(href="https://github.com/janoside/btc-rpc-explorer", target="_blank") project description
+					span  via RPC. See the
+					a(href="https://github.com/groestlcoin/grs-rpc-explorer", target="_blank") project description
 					span  for a list of features and instructions for running.
 
 				if (global.sourcecodeProjectMetadata)
 					div.mt-2
-						a.btn.btn-primary.btn-sm.mr-3.mb-1(href="https://github.com/janoside/btc-rpc-explorer")
+						a.btn.btn-primary.btn-sm.mr-3.mb-1(href="https://github.com/groestlcoin/grs-rpc-explorer")
 							i.fas.fa-star.mr-2
-							span.mr-2 Star 
+							span.mr-2 Star
 							span.badge.bg-white.text-dark #{global.sourcecodeProjectMetadata.stargazers_count}
 
-						a.btn.btn-primary.btn-sm.mr-3.mb-1(href="https://github.com/janoside/btc-rpc-explorer/fork")
+						a.btn.btn-primary.btn-sm.mr-3.mb-1(href="https://github.com/groestlcoin/grs-rpc-explorer/fork")
 							i.fas.fa-code-branch.mr-2
-							span.mr-2 Fork 
+							span.mr-2 Fork
 							span.badge.bg-white.text-dark #{global.sourcecodeProjectMetadata.forks_count}
-						
+
 						if (!crawlerBot)
 							button.btn.btn-primary.btn-sm.mb-1(type="button", data-toggle="modal", data-target="#exampleModalCenter")
 								i.fas.fa-heart.mr-2
@@ -49,7 +49,7 @@ block content
 						a(href="https://npmcharts.com/compare/btc-rpc-explorer?minimal=true" rel="nofollow" target="_blank")
 							img(src="https://camo.githubusercontent.com/07914c9a0c2f22f7493952dc969c57164bb14f77/687474703a2f2f696d672e736869656c64732e696f2f6e706d2f646d2f6274632d7270632d6578706c6f7265722e7376673f7374796c653d666c6174" alt="NPM downloads" data-canonical-src="http://img.shields.io/npm/dm/btc-rpc-explorer.svg?style=flat" style="max-width:100%;")
 
-					
+
 
 				a.close(href="/changeSetting?name=hideHomepageBanner&value=true", aria-label="Close", style="text-decoration: none;")
 					span(aria-hidden="true") &times;
@@ -60,7 +60,7 @@ block content
 
 				div.mb-1 Your node is currently downloading and verifying blockchain data. Until the process is finished, some features of this tool will be unusable and/or unreliable.
 
-				span.font-weight-bold Progress: 
+				span.font-weight-bold Progress:
 				span.text-monospace #{new Decimal(getblockchaininfo.verificationprogress).times(100).toDP(3)}%
 
 
@@ -83,14 +83,14 @@ block content
 						div.row
 							div.col
 								h3.h6.mb-0 Tools
-								
+
 							div.col.text-right
 								a(href="/tools") More info &raquo;
 						hr
 
 						include includes/tools-card.pug
-		
-		
+
+
 		if (latestBlocks)
 			div.row.mb-3
 				div.col
@@ -99,7 +99,7 @@ block content
 							div.row
 								div.col
 									h3.h6.mb-0 Latest Blocks
-									
+
 								div.col.text-right
 									a(href="/blocks") See more &raquo;
 
@@ -109,7 +109,7 @@ block content
 							- var blockOffset = 0;
 
 							include includes/blocks-list.pug
-							
+
 							if (false)
 								div.card.shadow-sm.mb-3
 									div.card-header
@@ -140,7 +140,7 @@ block content
 							div.row
 								div.col
 									h3.h6.mb-0 Transaction Stats
-									
+
 								div.col.text-right
 									a(href="/tx-stats") See more &raquo;
 
@@ -165,12 +165,10 @@ block content
 
 								div.col-lg-6
 									h4.h6.text-center Tx Rate, 24hr
-									
+
 									script var txRateDataDay = [];
 									each item, index in txStats.txCountStats.txRates
 										script txRateDataDay.push({x:#{item.x}, y:#{item.y}});
 
 									- var graphData = {id:"graphRateDay", dataVar:"txRateDataDay", labels:txStats.txCountStats.txLabels, title:"Tx Rate, 24hr", xaxisTitle:"Block", xaxisStep:5, yaxisTitle:"Tx Per Sec"};
 									include ./includes/line-graph.pug
-						
-											
