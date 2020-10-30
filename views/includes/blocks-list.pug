@@ -22,9 +22,9 @@ div.table-responsive
 						span.border-dotted(title="The total output of all transactions in each block.", data-toggle="tooltip") Volume
 
 				th.data-header.text-right
-					span.border-dotted(title="The average fee (sat/vB) for all block transactions.", data-toggle="tooltip") Avg Fee
+					span.border-dotted(title="The average fee (gro/vB) for all block transactions.", data-toggle="tooltip") Avg Fee
 				th.data-header.text-right Σ Fees
-				
+
 				//th.data-header.text-right Size (kB)
 
 				if (blocks && blocks.length > 0 && blocks[0].weight)
@@ -51,13 +51,13 @@ div.table-responsive
 									i.fas.fa-certificate.text-primary.mr-1
 
 							a(href=("/block-height/" + block.height)) #{block.height.toLocaleString()}
-						
+
 
 						- var timeAgoTime = moment.utc(new Date()).diff(moment.utc(new Date(parseInt(block.time) * 1000)));
 						- var timeAgo = moment.duration(timeAgoTime);
 
 						- var timeDiff = null;
-						
+
 						if (sort == "asc")
 							if (blockIndex > 0)
 								- var timeDiff = moment.duration(moment.utc(new Date(parseInt(block.time) * 1000)).diff(moment.utc(new Date(parseInt(blocks[blockIndex - 1].time) * 1000))));
@@ -69,7 +69,7 @@ div.table-responsive
 							td.data-cell.text-monospace.text-right
 								- var timestampHuman = block.time;
 								include timestamp-human.pug
-							
+
 
 						td.data-cell.text-monospace.text-right
 							if (sort != "asc" && blockIndex == 0 && offset == 0 && timeAgoTime > (15 * 60 * 1000))
@@ -90,7 +90,7 @@ div.table-responsive
 
 								span.font-weight-light(class=colorClass)
 									span #{timeDiff.format()}
-									
+
 									if (false)
 										if (timeDiff.asMinutes() < 1)
 											span #{parseInt(timeDiff.asSeconds())}s
@@ -102,14 +102,14 @@ div.table-responsive
 									small.border-dotted.text-muted(title="Not applicable: genesis block has no previous block to compare to.", data-toggle="tooltip") N/A (genesis)
 								else
 									span.font-weight-light.text-muted -
-						
+
 						td.data-cell.text-monospace.text-right
 							if (block.miner && block.miner.name)
 								small.rounded.bg-primary.text-white.px-2.py-1(data-toggle="tooltip", title=("Identified by: " + block.miner.identifiedBy)) #{utils.ellipsize(block.miner.name, 10)}
 							else
 								span ?
 
-						
+
 						td.data-cell.text-monospace.text-right #{block.tx.length.toLocaleString()}
 
 						if (blockstatsByHeight)
@@ -125,7 +125,7 @@ div.table-responsive
 						td.data-cell.text-monospace.text-right
 							- var currencyValue = new Decimal(block.totalFees).dividedBy(block.strippedsize).times(coinConfig.baseCurrencyUnit.multiplier).toDecimalPlaces(1);
 							span #{currencyValue}
-							
+
 							// idea: show typical tx fee, maybe also optimized fee if not segwit
 							if (false)
 								- var feeEstimateVal = currencyValue.times(166).dividedBy(coinConfig.baseCurrencyUnit.multiplier);
@@ -136,8 +136,8 @@ div.table-responsive
 							- var currencyValueDecimals = 3;
 							include ./value-display.pug
 
-							
-						
+
+
 						if (false)
 							td.data-cell.text-monospace.text-right
 								- var bSizeK = parseInt(block.size / 1000);
@@ -149,7 +149,7 @@ div.table-responsive
 									- var full = new Decimal(block.weight).dividedBy(coinConfig.maxBlockWeight).times(100);
 									- var full2 = full.toDP(2);
 
-									span #{full2} 
+									span #{full2}
 									if (full > 90)
 										img(src="/img/block-fullness-3.png", style="width: 18px; height: 18px;")
 									else if (full > 50)
@@ -163,7 +163,7 @@ div.table-responsive
 									- var bWeightK = parseInt(block.weight / 1000);
 									- var fullPercent = new Decimal(100 * block.weight / coinConfig.maxBlockWeight).toDecimalPlaces(1);
 
-									span #{bWeightK.toLocaleString()} 
+									span #{bWeightK.toLocaleString()}
 									small.font-weight-light.text-muted (#{fullPercent}%)
 
 									- var bSizeK = parseInt(block.size / 1000);
@@ -178,7 +178,7 @@ div.table-responsive
 								- var bSizeK = parseInt(block.size / 1000);
 								- var fullPercent = new Decimal(100 * block.size / coinConfig.maxBlockSize).toDecimalPlaces(1);
 
-								span #{bSizeK.toLocaleString()} 
+								span #{bSizeK.toLocaleString()}
 								small.font-weight-light.text-muted (#{fullPercent}%)
 
 								div.progress(style="height: 4px;")

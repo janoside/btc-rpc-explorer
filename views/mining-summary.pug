@@ -18,13 +18,13 @@ block content
 						h3.h6 Latest N Blocks
 						div.btn-group
 							a.btn.btn-primary.block-count-btn(href="javascript:void(0)", data-blockCount="144") 144
-								small.ml-2 (~1d)
+								small.ml-2 (~1h)
 							a.btn.btn-outline-primary.block-count-btn(href="javascript:void(0)", data-blockCount="432") 432
-								small.ml-2 (~3d)
+								small.ml-2 (~4h)
 							a.btn.btn-outline-primary.block-count-btn(href="javascript:void(0)", data-blockCount="1008") 1,008
-								small.ml-2 (~7d)
+								small.ml-2 (~1d)
 							a.btn.btn-outline-primary.block-count-btn(href="javascript:void(0)", data-blockCount="4320") 4,320
-								small.ml-2 (~30d)
+								small.ml-2 (~4d)
 
 				div.float-left.mr-4
 					div(id="block-selections-buttons")
@@ -34,10 +34,6 @@ block content
 							button.btn.btn-outline-primary.dropdown-toggle(type="button", id="preconfigured-dropdown", data-toggle="dropdown", aria-haspopup="true", aria-expanded="false") Selections
 							div.dropdown-menu(aria-labelledby="preconfigured-dropdown")
 								a.dropdown-item(href="javascript:void(0)", data-blocks="0-199") First 200 Blocks
-								a.dropdown-item(href="javascript:void(0)", data-blocks="209900-210100") First Halving ±100
-								a.dropdown-item(href="javascript:void(0)", data-blocks="419900-420100") Second Halving ±100
-								a.dropdown-item(href="javascript:void(0)", data-blocks="629900-630100") Third Halving ±100
-								a.dropdown-item(href="javascript:void(0)", data-blocks="481724-481924") SegWit Activation ±100
 
 				div.float-left
 					div(id="time-range-buttons")
@@ -53,11 +49,11 @@ block content
 	div#progress-wrapper.mb-huge
 		div.card.shadow-sm.mb-3
 			div.card-body
-				h4.h6 Loading blocks: 
+				h4.h6 Loading blocks:
 					span(id="block-progress-text")
 				div.progress.mt-2(id="progress-bar", style="height: 7px;")
 					div.progress-bar(id="data-progress", role="progressbar", aria-valuenow="0", aria-valuemin="0" ,aria-valuemax="100")
-	
+
 
 	div.card.shadow-sm.mb-3(id="summary-table", style="display: none;")
 		div.card-body
@@ -70,7 +66,7 @@ block content
 							th.data-header.text-right Transactions
 							th.data-header.text-right Block Rewards
 							th.data-header.text-right Fees Collected
-							
+
 					tbody(id="summary-table-body")
 						tr(id="miner-summary-prototype", style="display: none;")
 							td.data-cell.text-monospace.miner-name
@@ -122,9 +118,9 @@ block endOfBody
 				$("#time-range-buttons .block-count-btn").removeClass("btn-primary").addClass("btn-outline-primary");
 				$(this).addClass("btn-primary").removeClass("btn-outline-primary");
 				$("#preconfigured-dropdown").removeClass("btn-primary").addClass("btn-outline-primary");
-				
+
 				var blockCount = parseInt($(this).attr("data-blockCount"));
-				
+
 				$(".miner-summary-row").remove();
 
 				$("#data-progress").css("width", "0%");
@@ -140,7 +136,7 @@ block endOfBody
 				// highlight current selection
 				$("#time-range-buttons .block-count-btn").removeClass("btn-primary").addClass("btn-outline-primary");
 				$("#preconfigured-dropdown").removeClass("btn-outline-primary").addClass("btn-primary");
-				
+
 				var blocks = $(this).attr("data-blocks");
 				var bStartEnd = blocks.split("-");
 				var bStart = parseInt(bStartEnd[0]);
@@ -161,7 +157,7 @@ block endOfBody
 				// highlight current selection
 				$("#time-range-buttons .block-count-btn").removeClass("btn-primary").addClass("btn-outline-primary");
 				$("#preconfigured-dropdown").removeClass("btn-primary").addClass("btn-outline-primary");
-				
+
 				var bStart = parseInt($("#custom-range-start").val());
 				var bEnd = parseInt($("#custom-range-end").val());
 
@@ -206,7 +202,7 @@ block endOfBody
 				console.log("Done: " + Math.min(((chunkIndexDone + 1) * chunkSize), count) + " of " + count);
 
 				var wPercent = `${parseInt(100 * (chunkIndexDone + 1) / parseFloat(chunkCount))}%`;
-				
+
 				$("#data-progress").css("width", wPercent);
 				$("#block-progress-text").text(`${Math.min(((chunkIndexDone + 1) * chunkSize), count).toLocaleString()} of ${count.toLocaleString()} (${wPercent})`);
 			};
@@ -227,12 +223,12 @@ block endOfBody
 					var row = $("#miner-summary-prototype").clone();
 					row.attr("id", null);
 					row.addClass("miner-summary-row");
-					
+
 					row.find(".miner-name").text(minerName);
-					
+
 					row.find(".miner-block-count").text(minerSummary.blockCount.toLocaleString());
 					row.find(".miner-block-percent").text(`(${new Decimal(minerSummary.blockCount).dividedBy(summary.overallSummary.blockCount).times(100).toDecimalPlaces(1)}%)`);
-					
+
 					row.find(".miner-tx-count").text(minerSummary.transactionCount.toLocaleString());
 					row.find(".miner-tx-percent").text(`(${new Decimal(minerSummary.transactionCount).dividedBy(summary.overallSummary.transactionCount).times(100).toDecimalPlaces(1)}%)`);
 
@@ -248,7 +244,7 @@ block endOfBody
 
 					updateCurrencyValue(row.find(".miner-subsidy"), minerSummary.totalSubsidiesCollected);
 					updateCurrencyValue(row.find(".miner-fees"), minerSummary.totalFeesCollected);
-					
+
 
 					row.show();
 
@@ -283,7 +279,7 @@ block endOfBody
 			}
 
 			var url = `/api/blocks-by-height/${chunks[chunkIndex]}`;
-			
+
 			//console.log(url);
 
 			$.ajax({
@@ -295,7 +291,7 @@ block endOfBody
 				}
 
 				statusCallback(chunkIndex, chunks.length);
-				
+
 				getBlockData(results, chunks, chunkIndex + 1, statusCallback, finishedCallback);
 			});
 		}
@@ -303,7 +299,7 @@ block endOfBody
 		function summarizeBlockData(blocks) {
 			var summariesByMiner = {};
 			var minerNamesSortedByBlockCount = [];
-			
+
 			var overallSummary = {};
 			overallSummary.blockCount = 0;
 			overallSummary.transactionCount = 0;

@@ -9,9 +9,9 @@ block content
 
 	if (rpcApiUnsupportedError)
 		div.alert.alert-danger(style="margin-bottom: 200px;")
-			span Your node version doesn't support the 
+			span Your node version doesn't support the
 				span.text-monospace #{rpcApiUnsupportedError.rpc}
-				span  RPC. To use this tool you need to upgrade to 
+				span  RPC. To use this tool you need to upgrade to
 				span.text-monospace v#{rpcApiUnsupportedError.version}
 				span  or later.
 
@@ -28,13 +28,13 @@ block content
 							h3.h6 Latest N Blocks
 							div.btn-group
 								a.btn.btn-primary.block-count-btn(href="javascript:void(0)", data-blockCount="144") 144
-									small.ml-2 (~1d)
+									small.ml-2 (~2h)
 								a.btn.btn-outline-primary.block-count-btn(href="javascript:void(0)", data-blockCount="432") 432
-									small.ml-2 (~3d)
+									small.ml-2 (~4h)
 								a.btn.btn-outline-primary.block-count-btn(href="javascript:void(0)", data-blockCount="1008") 1,008
-									small.ml-2 (~7d)
+									small.ml-2 (~1d)
 								a.btn.btn-outline-primary.block-count-btn(href="javascript:void(0)", data-blockCount="4320") 4,320
-									small.ml-2 (~30d)
+									small.ml-2 (~4d)
 
 					div.float-left.mr-4
 						div(id="block-selections-buttons")
@@ -44,10 +44,6 @@ block content
 								button.btn.btn-outline-primary.dropdown-toggle(type="button", id="preconfigured-dropdown", data-toggle="dropdown", aria-haspopup="true", aria-expanded="false") Selections
 								div.dropdown-menu(aria-labelledby="preconfigured-dropdown")
 									a.dropdown-item(href="javascript:void(0)", data-blocks="0-199") First 200 Blocks
-									a.dropdown-item(href="javascript:void(0)", data-blocks="209900-210100") First Halving ±100
-									a.dropdown-item(href="javascript:void(0)", data-blocks="419900-420100") Second Halving ±100
-									a.dropdown-item(href="javascript:void(0)", data-blocks="629900-630100") Third Halving ±100
-									a.dropdown-item(href="javascript:void(0)", data-blocks="481724-481924") SegWit Activation ±100
 
 					div.float-left
 						div(id="time-range-buttons")
@@ -63,14 +59,14 @@ block content
 		div#progress-wrapper.mb-huge
 			div.card.shadow-sm.mb-3
 				div.card-body
-					h4.h6 Loading blocks: 
+					h4.h6 Loading blocks:
 						span(id="block-progress-text")
 					div.progress.mt-2(id="progress-bar", style="height: 7px;")
 						div.progress-bar(id="data-progress", role="progressbar", aria-valuenow="0", aria-valuemin="0" ,aria-valuemax="100")
-	
+
 
 	- var graphIds = ["fee-rates", "max-fee-rates", "total-fee", "min-fees", "max-fees", "inputs-outputs", "tx-sizes", "max-tx-sizes", "volumes", "weights-sizes", "sw-txs", "subsidy", "mediantime", "txs", "utxo_increase"];
-	
+
 	- var graphTitles = ["Fee Rates (avg, median, min)", "Maximum Fee Rate", "Total Fees", "Minimum Tx Fee", "Maximum Tx Fee", "Input / Output Count", "Tx Sizes (avg, median, min)", "Maximum Tx Size", "Output Volume", "Block Weight and Size", "SegWit Tx Count", "Subsidy", "Timestamp", "Tx Count", "UTXO Δ"];
 
 	div(id="main-content", style="display: none;")
@@ -111,7 +107,7 @@ block endOfBody
 				$("#time-range-buttons .block-count-btn").removeClass("btn-primary").addClass("btn-outline-primary");
 				$(this).addClass("btn-primary").removeClass("btn-outline-primary");
 				$("#preconfigured-dropdown").removeClass("btn-primary").addClass("btn-outline-primary");
-				
+
 				var blockCount = parseInt($(this).attr("data-blockCount"));
 
 				$("#data-progress").css("width", "0%");
@@ -127,7 +123,7 @@ block endOfBody
 				// highlight current selection
 				$("#time-range-buttons .block-count-btn").removeClass("btn-primary").addClass("btn-outline-primary");
 				$("#preconfigured-dropdown").removeClass("btn-outline-primary").addClass("btn-primary");
-				
+
 				var blocks = $(this).attr("data-blocks");
 				var bStartEnd = blocks.split("-");
 				var bStart = parseInt(bStartEnd[0]);
@@ -146,7 +142,7 @@ block endOfBody
 				// highlight current selection
 				$("#time-range-buttons .block-count-btn").removeClass("btn-primary").addClass("btn-outline-primary");
 				$("#preconfigured-dropdown").removeClass("btn-primary").addClass("btn-outline-primary");
-				
+
 				var bStart = parseInt($("#custom-range-start").val());
 				var bEnd = parseInt($("#custom-range-end").val());
 
@@ -213,7 +209,7 @@ block endOfBody
 				//console.log("Done: " + Math.min(((chunkIndexDone + 1) * chunkSize), count) + " of " + count);
 
 				var wPercent = `${parseInt(100 * (chunkIndexDone + 1) / parseFloat(chunkCount))}%`;
-				
+
 				$("#data-progress").css("width", wPercent);
 				$("#block-progress-text").text(`${Math.min(((chunkIndexDone + 1) * chunkSize), count).toLocaleString()} of ${count.toLocaleString()} (${wPercent})`);
 			};
@@ -229,7 +225,7 @@ block endOfBody
 				var blue = "#007bff";
 
 				createGraph("fee-rates", ["avg-fee-rate", "median-fee-rate", "min-fee-rate"], [summary.avgfeerate, summary.medianfeerate, summary.minfeerate], [blue, red, green]);
-				
+
 				createGraph("max-fee-rates", ["max-fee-rate"], [summary.maxfeerate], [blue]);
 
 				createGraph("total-fee", ["total-fee"], [summary.totalfee], [blue]);
@@ -257,7 +253,7 @@ block endOfBody
 
 				createGraph("utxo_increase", ["utxo_increase"], [summary.utxo_increase], [blue]);
 
-				
+
 
 
 				$("#main-content").show();
@@ -275,7 +271,7 @@ block endOfBody
 			}
 
 			var url = `/api/block-stats-by-height/${chunks[chunkIndex]}`;
-			
+
 			//console.log(url);
 
 			$.ajax({
@@ -287,7 +283,7 @@ block endOfBody
 				}
 
 				statusCallback(chunkIndex, chunks.length);
-				
+
 				getBlockData(results, chunks, chunkIndex + 1, statusCallback, finishedCallback);
 			});
 		}
@@ -314,7 +310,7 @@ block endOfBody
 			summary.mintxsize = [];
 
 			summary.maxtxsize = [];
-			
+
 			summary.totaloutput = [];
 
 			summary.weight = [];
@@ -334,28 +330,28 @@ block endOfBody
 				summary.avgfeerate.push({x:results[i].height, y:results[i].avgfeerate});
 				summary.medianfeerate.push({x:results[i].height, y:results[i].feerate_percentiles[2]});
 				summary.minfeerate.push({x:results[i].height, y:results[i].minfeerate});
-				
+
 				summary.maxfeerate.push({x:results[i].height, y:results[i].maxfeerate});
 
 				summary.totalfee.push({x:results[i].height, y:new Decimal(results[i].totalfee).dividedBy(100000000)});
-				
+
 				summary.minfee.push({x:results[i].height, y:results[i].minfee});
 				summary.maxfee.push({x:results[i].height, y:results[i].maxfee});
-				
+
 				summary.inputs.push({x:results[i].height, y:results[i].ins});
 				summary.outputs.push({x:results[i].height, y:results[i].outs});
-				
+
 				summary.avgtxsize.push({x:results[i].height, y:results[i].avgtxsize});
 				summary.mediantxsize.push({x:results[i].height, y:results[i].mediantxsize});
 				summary.mintxsize.push({x:results[i].height, y:results[i].mintxsize});
 
 				summary.maxtxsize.push({x:results[i].height, y:results[i].maxtxsize});
-				
+
 				summary.totaloutput.push({x:results[i].height, y:new Decimal(results[i].total_out).dividedBy(100000000)});
-				
+
 				summary.weight.push({x:results[i].height, y:results[i].total_weight});
 				summary.size.push({x:results[i].height, y:results[i].total_size});
-				
+
 				summary.swtxs.push({x:results[i].height, y:results[i].swtxs});
 
 				summary.subsidy.push({x:results[i].height, y:results[i].subsidy});
@@ -437,4 +433,3 @@ block endOfBody
 			$(document).ready(function() {
 				getData(currentBlockHeight, 144, 15);
 			});
-		

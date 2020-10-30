@@ -39,7 +39,7 @@ html(lang="en")
 						if (coinConfig.siteTitlesByNetwork && coinConfig.siteTitlesByNetwork[activeBlockchain])
 							span #{coinConfig.siteTitlesByNetwork[activeBlockchain]}
 						else
-							span Bitcoin Explorer
+							span Groestlcoin Explorer
 
 				button.navbar-toggler.navbar-toggler-right(type="button", data-toggle="collapse", data-target="#navbarNav", aria-label="collapse navigation")
 					span.navbar-toggler-icon
@@ -207,18 +207,18 @@ html(lang="en")
 									if (coinConfig.demoSiteUrl)
 										a(href=coinConfig.demoSiteUrl) #{coinConfig.demoSiteUrl}
 									else
-										a(href="https://explorer.btc21.org") https://explorer.btc21.org
+										a(href="https://rpcexplorer.groestlcoin.org") https://rpcexplorer.groestlcoin.org
 
 									div.mt-2
 										- var demoSites = [];
-										- demoSites.push({url:"https://explorer.btc21.org", logoUrl:"/img/logo/btc.svg", title:"Bitcoin Explorer"});
-										- demoSites.push({url:"https://testnet.btc21.org", logoUrl:"/img/logo/tbtc.svg", title:"Testnet Explorer"});
+										- demoSites.push({url:"https://rpcexplorer.groestlcoin.org", logoUrl:"/img/logo/grs.svg", title:"Groestlcoin Explorer"});
+										- demoSites.push({url:"https://rpcexplorer-test.groestlcoin.org", logoUrl:"/img/logo/tgrs.svg", title:"Testnet Explorer"});
 
 										each demoSite in demoSites
 											a.mr-2(href=demoSite.url, title=demoSite.title)
 												img(src=demoSite.logoUrl, alt=demoSite.title)
 
-										a.mr-2(href="https://lnd-admin.btc21.org", title="LND Admin")
+										a.mr-2(href="https://lnd-admin.groestlcoin.org", title="LND Admin")
 											img(src=("/img/logo/lnd-admin.png"), style="width: 32px; height: 32px;", alt="LND Admin")
 
 					div.col-md-7.text-md-right

@@ -17,12 +17,12 @@ block content
 				li The adjustment aims to maintain an average block-mining time of #{coinConfig.targetBlockTimeMinutes} minutes.
 				li A growth in the difficulty indicates that the average block-mining time during the previous adjustment epoch was less than #{coinConfig.targetBlockTimeMinutes} minutes (due to more miners joining the network and searching for blocks).
 				li A drop in difficulty indicates miners have left the network so finding each block is adjusted to be easier for the smaller number remaining.
-				li The numeric Difficulty is a multiple of the difficulty of finding the easiest block (Block #0) - e.g. blocks in BTC mainnet epoch 308 are over 16 trillion times harder to mine than those in epoch 0. 
+				li The numeric Difficulty is a multiple of the difficulty of finding the easiest block (Block #0) - e.g. blocks in GRS mainnet epoch 308 are over 16 trillion times harder to mine than those in epoch 0.
 
 	div#progress-wrapper.mb-huge
 		div.card.shadow-sm.mb-3
 			div.card-body
-				h4.h6 Loading data: 
+				h4.h6 Loading data:
 					span(id="progress-text")
 				div.progress.mt-2(id="progress-bar", style="height: 7px;")
 					div.progress-bar(id="data-progress", role="progressbar", aria-valuenow="0", aria-valuemin="0" ,aria-valuemax="100")
@@ -46,7 +46,7 @@ block content
 						hr
 
 						canvas(id="graph-diff-change")
-	
+
 
 
 block endOfBody
@@ -54,7 +54,7 @@ block endOfBody
 	script(src='/js/decimal.js')
 	script.
 		var blockCount = !{blockCount};
-		
+
 		var heights = [];
 		var height = 0;
 		while (height <= blockCount) {
@@ -68,7 +68,7 @@ block endOfBody
 
 		function loadData(heightChunks, chunkSize, count) {
 			var chunkStrs = [];
-			
+
 			for (var i = 0; i < heightChunks.length; i++) {
 				var heightChunk = heightChunks[i];
 
@@ -93,7 +93,7 @@ block endOfBody
 				//console.log("Done: " + Math.min(((chunkIndexDone + 1) * chunkSize), count) + " of " + count);
 
 				var wPercent = `${parseInt(100 * (chunkIndexDone + 1) / parseFloat(chunkCount))}%`;
-				
+
 				$("#data-progress").css("width", wPercent);
 				$("#progress-text").text(`${Math.min(((chunkIndexDone + 1) * chunkSize), count).toLocaleString()} of ${count.toLocaleString()} (${wPercent})`);
 			};
@@ -106,7 +106,7 @@ block endOfBody
 				createGraph("graph-diff-change", [summary.changeGraphData], "Difficulty Change %");
 
 				//createGraph("graph-diff-hist-2", summary.epochChunks, "Difficulty 2");
-				
+
 				$("#main-content").show();
 				$("#progress-wrapper").hide();
 			};
@@ -166,7 +166,7 @@ block endOfBody
 			}
 
 			var url = `/api/block-headers-by-height/${chunks[chunkIndex]}`;
-			
+
 			//console.log(url);
 
 			$.ajax({
@@ -178,7 +178,7 @@ block endOfBody
 				}
 
 				statusCallback(chunkIndex, chunks.length);
-				
+
 				getData(results, chunks, chunkIndex + 1, statusCallback, finishedCallback);
 			});
 		}
@@ -201,13 +201,13 @@ block endOfBody
 					var deltaPercent = 100 * (d1 / d0 - 1);
 					/*if (d1 > d0) {
 						// increase
-						deltaPercent = 
-						
+						deltaPercent =
+
 
 					} else {
 						// decrease
 						deltaPercent = -100 * (1 - d1 / d0);
-						
+
 					}*/
 
 					if (deltaPercent > 100) {
@@ -231,7 +231,7 @@ block endOfBody
 				summary.epochChunks.push([]);
 
 				var scale = summary.graphData[i * epochChunkSize].y;
-				
+
 				for (var j = 0; j < 100; j++) {
 					var data = summary.graphData[i * epochChunkSize + j];
 
@@ -241,4 +241,3 @@ block endOfBody
 
 			return summary;
 		}
-

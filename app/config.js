@@ -179,7 +179,7 @@ module.exports = {
 					links:[
 						{name: "Groestlcoin Explorer", url:"https://rpcexplorer.groestlcoin.org", imgUrl:"/img/logo/grs.svg"},
 						{name: "Testnet Explorer", url:"https://rpcexplorer-test.groestlcoin.org", imgUrl:"/img/logo/tgrs.svg"},
-						//{name: "LND Admin", url:"https://lnd-admin.btc21.org", imgUrl:"/img/logo/lnd-admin.png"},
+						//{name: "LND Admin", url:"https://lnd-admin.groestlcoin.org", imgUrl:"/img/logo/lnd-admin.png"},
 						//{name: "Lightning Explorer", url:"https://lightning.chaintools.io", imgUrl:"/img/logo/lightning.svg"},
 					]
 				}

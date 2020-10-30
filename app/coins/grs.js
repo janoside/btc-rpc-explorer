@@ -72,14 +72,14 @@ module.exports = {
 	],
 	maxBlockWeight: 4000000,
 	maxBlockSize: 1000000,
-	difficultyAdjustmentBlockCount: 2016,
+	difficultyAdjustmentBlockCount: 1,
 	maxSupplyByNetwork: {
 		"main": new Decimal(105000000),
 		"test": new Decimal(105000000),
 		"regtest": new Decimal(105000000)
 	},
-	targetBlockTimeSeconds: 600,
-	targetBlockTimeMinutes: 10,
+	targetBlockTimeSeconds: 60,
+	targetBlockTimeMinutes: 1,
 	currencyUnits:currencyUnits,
 	currencyUnitsByName:{"GRS":currencyUnits[0], "mGRS":currencyUnits[1], "groestls":currencyUnits[2], "gro":currencyUnits[3]},
 	baseCurrencyUnit:currencyUnits[3],
