@@ -22,7 +22,8 @@ block content
 							div.clearfix
 								div.float-left
 									h3.h6.mb-0
-										span.font-weight-bold #{method}
+										a.text-body(href=`./rpc-browser?method=${method}`)
+											span.font-weight-bold #{method}
 										span  Command
 
 								div.float-right
@@ -43,7 +44,8 @@ block content
 								div.tab-pane.active(id="tab-execute", role="tabpanel")
 									if (methodResult)
 										div.mt-4
-											h3.h6.mt-3.mb-0 Result
+											div.mb-2
+												h3.h6.mt-3 Result
 
 											pre.border.mb-3
 												code.json.bg-light(data-lang="json") #{JSON.stringify(methodResult, null, 4)}
@@ -54,7 +56,8 @@ block content
 										input(type="hidden", name="_csrf", value=csrfToken)
 										input(type="hidden", name="method", value=method)
 
-										div.h6.mb-3 Arguments
+										div.mb-3
+											h6 Arguments
 
 										if (false)
 											pre
@@ -88,7 +91,12 @@ block content
 																if (valX.substring(valX.length - 1, valX.length) == "\"")
 																	- valX = valX.substring(0, valX.length - 1);
 
-													input.form-control(id=("arg_" + argX.name), type="text", name=("args[" + index + "]"), placeholder=argX.name, value=(valX ? valX : ""))
+													if (method == "verifymessage" && argX.name == "message")
+														- var newline = String.fromCharCode(13, 10);
+														textarea.form-control(id=("arg_" + argX.name), name=("args[" + index + "]"), placeholder=argX.name, rows="8") #{(valX ? valX.split('\\n').join(newline) : "")}
+														
+													else
+														input.form-control(id=("arg_" + argX.name), type="text", name=("args[" + index + "]"), placeholder=argX.name, value=(valX ? valX : ""))
 
 											if (!methodhelp.args || methodhelp.args.length == 0)
 												span.text-muted None

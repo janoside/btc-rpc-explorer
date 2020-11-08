@@ -19,7 +19,7 @@ var rpcApi = require("./rpcApi.js");
 
 // this value should be incremented whenever data format changes, to avoid
 // pulling old-format data from a persistent cache
-var cacheKeyVersion = "v0";
+var cacheKeyVersion = "v1";
 
 
 const ONE_SEC = 1000;
@@ -225,7 +225,7 @@ function getNetTotals() {
 }
 
 function getMempoolInfo() {
-	return tryCacheThenRpcApi(miscCache, "getMempoolInfo", ONE_SEC, rpcApi.getMempoolInfo);
+	return tryCacheThenRpcApi(miscCache, "getMempoolInfo", 5 * ONE_SEC, rpcApi.getMempoolInfo);
 }
 
 function getMempoolTxids() {
@@ -581,6 +581,11 @@ function getSummarizedTransactionOutput(txid, voutIndex) {
 				}
 
 				vout.txid = txid;
+				vout.utxoTime = rawTx.time;
+
+				if (rawTx.vin.length == 1 && rawTx.vin[0].coinbase) {
+					vout.coinbaseSpend = true;
+				}
 
 				resolve(vout);
 

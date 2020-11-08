@@ -1,3 +1,27 @@
+#### v2.0.2
+##### 2020-07-03
+
+* Lots of improvements to connect/disconnect/error management with configured Electrum servers
+* Include pending balance for addresses queried via ElectrumX, when available
+* Include basic stats for ElectrumX queries on `/admin`
+* Bug fixes
+	* Fix for erroneous defaults for boolean env vars in some scenarios (slow device mode)
+* Updated dependences and mining pools
+
+#### v2.0.1
+##### 2020-05-28
+
+* Highlight coinbase spends in transaction I/O details
+* Highlight very old UTXOs (5+ years) in transaction I/O details
+* Transaction page: show "days destroyed"
+* Bug fixes
+	* Fix for "verifymessage" in RPC browser accepting multi-line messages
+	* Fix to make "--slow-device-mode=false" work
+	* Don't show errors on address page for bech32 due to trying to parse as base58
+	* Fix "failure to render homepage when fee estimates are unavailable"
+* Minor additions to "fun" data
+* Updated dependences
+
 #### v2.0.0
 ##### 2020-03-25
 

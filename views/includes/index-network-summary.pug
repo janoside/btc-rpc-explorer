@@ -63,21 +63,22 @@ div.row.index-summary
 
 						span(class=colorClass) #{mempoolInfo.size.toLocaleString()}
 
-				tr
-					th.px-2.px-lg-0.px-xl-2
-						i.fas.fa-bullseye.mr-1.summary-icon
-						span.border-dotted(title="Current fee estimates (using 'estimatesmartfee') for getting a transaction included in 1 block, 6 blocks (1 hr), 144 blocks (1 day), or 1,008 blocks (1 week).", data-toggle="tooltip") Fee Targets
-						if (false)
-							small.ml-1 (1/h/d/w)
-					td.text-right.text-monospace #{smartFeeEstimates[1]}
-						small.d-md-none  
-						small.text-muted /
-						span #{smartFeeEstimates[6]}
-						small.text-muted /
-						span #{smartFeeEstimates[144]}
-						small.text-muted /
-						span #{smartFeeEstimates[1008]}
-						small  sat/vB
+				if (smartFeeEstimates)
+					tr
+						th.px-2.px-lg-0.px-xl-2
+							i.fas.fa-bullseye.mr-1.summary-icon
+							span.border-dotted(title="Current fee estimates (using 'estimatesmartfee') for getting a transaction included in 1 block, 6 blocks (1 hr), 144 blocks (1 day), or 1,008 blocks (1 week).", data-toggle="tooltip") Fee Targets
+							if (false)
+								small.ml-1 (1/h/d/w)
+						td.text-right.text-monospace #{smartFeeEstimates[1]}
+							small.d-md-none  
+							small.text-muted /
+							span #{smartFeeEstimates[6]}
+							small.text-muted /
+							span #{smartFeeEstimates[144]}
+							small.text-muted /
+							span #{smartFeeEstimates[1008]}
+							small  sat/vB
 
 				tr
 					th.px-2.px-lg-0.px-xl-2
@@ -91,14 +92,17 @@ div.row.index-summary
 						- var timeDiff = currentBlock.mediantime - firstBlockHeader.mediantime;
 						- var timePerBlock = timeDiff / heightDiff;
 						- var timePerBlockDuration = moment.duration(timePerBlock * 1000);
+						- var daysUntilAdjustment = new Decimal(blocksUntilDifficultyAdjustment).times(timePerBlock).dividedBy(60 * 60 * 24);
+						- var duaDP1 = daysUntilAdjustment.toDP(1);
+						- var daysUntilAdjustmentStr = daysUntilAdjustment > 1 ? `~${duaDP1} day${duaDP1 == "1" ? "" : "s"}` : "< 1 day"
 
 						if (timePerBlock > 600)
 							- var diffAdjPercent = new Decimal(timeDiff / heightDiff / 600).times(100).minus(100);
-							- var diffAdjText = `Prediction for next difficulty adjustment (in ${blocksUntilDifficultyAdjustment} block${blocksUntilDifficultyAdjustment == 1 ? "" : "s"}): -${diffAdjPercent.toDP(1)}%`;
+							- var diffAdjText = `Blocks during the current difficulty epoch have taken this long, on average, to be mined. If this pace continues, then in ${blocksUntilDifficultyAdjustment.toLocaleString()} block${blocksUntilDifficultyAdjustment == 1 ? "" : "s"} (${daysUntilAdjustmentStr}) the difficulty will adjust downward: -${diffAdjPercent.toDP(1)}%`;
 							- var diffAdjSign = "-";
 						else
 							- var diffAdjPercent = new Decimal(100).minus(new Decimal(timeDiff / heightDiff / 600).times(100));
-							- var diffAdjText = `Prediction for next difficulty adjustment (in ${blocksUntilDifficultyAdjustment} block${blocksUntilDifficultyAdjustment == 1 ? "" : "s"}): +${diffAdjPercent.toDP(1)}%`;
+							- var diffAdjText = `Blocks during the current difficulty epoch have taken this long, on average, to be mined. If this pace continues, then in ${blocksUntilDifficultyAdjustment.toLocaleString()} block${blocksUntilDifficultyAdjustment == 1 ? "" : "s"} (${daysUntilAdjustmentStr}) the difficulty will adjust upward: +${diffAdjPercent.toDP(1)}%`;
 							- var diffAdjSign = "+";
 
 						span.border-dotted(title=diffAdjText, data-toggle="tooltip") #{timePerBlockDuration.format()}

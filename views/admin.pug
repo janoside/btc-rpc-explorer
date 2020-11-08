@@ -130,6 +130,68 @@ block content
 											span #{new Decimal(item.successes).dividedBy(new Decimal(item.successes + item.failures)).times(100).toDP(1)}
 												small  %
 
+			if (electrumStats)
+				div.card.shadow-sm.mb-3
+					div.card-body
+						h3.h6 Electrum Stats
+						hr
+
+						div.table-responsive
+							table.table.table-hover.table-striped
+								thead
+									tr
+										th Action
+										th.text-right Count
+										th.text-right First Seen
+										th.text-right Last Seen
+
+								tbody
+									each item, itemName in electrumStats.base
+										tr.text-monospace
+											td #{itemName}
+											td.text-right #{item.count.toLocaleString()}
+
+											if (item.firstSeenAt)
+												td.text-right #{moment.duration(new Date().getTime() - item.firstSeenAt.getTime()).format()} ago
+											else
+												td.text-right -
+
+											if (item.lastSeenAt)
+												td.text-right #{moment.duration(new Date().getTime() - item.lastSeenAt.getTime()).format()} ago
+											else
+												td.text-right -
+
+						hr
+
+						div.table-responsive
+							table.table.table-hover.table-striped
+								thead
+									tr
+										th RPC
+										th.text-right Count
+										th.text-right Time
+											small  (s)
+										th.text-right Avg Time
+											small  (ms)
+										th.text-right Successes / Failures
+										th.text-right Success Rate
+
+								tbody
+									each item, itemName in electrumStats.rpc
+										tr.text-monospace
+											td #{itemName}
+											td.text-right #{item.count.toLocaleString()}
+											td.text-right #{(item.time / 1000).toLocaleString()}
+											td.text-right #{(item.time / item.count).toLocaleString()}
+											td.text-right
+												span.text-success #{item.successes.toLocaleString()}
+												span.mx-1 /
+												span.text-danger #{item.failures.toLocaleString()}
+
+											td.text-right
+												span #{new Decimal(item.successes).dividedBy(new Decimal(item.successes + item.failures)).times(100).toDP(1)}
+													small  %
+
 			div.card.shadow-sm.mb-3
 				div.card-body
 					h3.h6 Error Stats

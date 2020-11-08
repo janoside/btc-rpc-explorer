@@ -1,3 +1,6 @@
+var debug = require("debug");
+var debugLog = debug("btcexp:config");
+
 var fs = require('fs');
 var crypto = require('crypto');
 var url = require('url');
@@ -33,15 +36,33 @@ for (var i = 0; i < electrumXServerUriStrings.length; i++) {
 	electrumXServers.push({protocol:uri.protocol.substring(0, uri.protocol.length - 1), host:uri.hostname, port:parseInt(uri.port)});
 }
 
-["BTCEXP_DEMO", "BTCEXP_PRIVACY_MODE", "BTCEXP_NO_INMEMORY_RPC_CACHE"].forEach(function(item) {
+// default=false env vars
+[
+	"BTCEXP_DEMO",
+	"BTCEXP_PRIVACY_MODE",
+	"BTCEXP_NO_INMEMORY_RPC_CACHE",
+	"BTCEXP_RPC_ALLOWALL"
+
+].forEach(function(item) {
 	if (process.env[item] === undefined) {
 		process.env[item] = "false";
+
+		debugLog(`Config(default): ${item}=false`)
 	}
 });
 
-["BTCEXP_NO_RATES", "BTCEXP_UI_SHOW_TOOLS_SUBHEADER", "BTCEXP_SLOW_DEVICE_MODE"].forEach(function(item) {
+
+// default=true env vars
+[
+	"BTCEXP_NO_RATES",
+	"BTCEXP_UI_SHOW_TOOLS_SUBHEADER",
+	"BTCEXP_SLOW_DEVICE_MODE"
+
+].forEach(function(item) {
 	if (process.env[item] === undefined) {
 		process.env[item] = "true";
+
+		debugLog(`Config(default): ${item}=true`)
 	}
 });
 
@@ -59,7 +80,7 @@ module.exports = {
 	rpcConcurrency: (process.env.BTCEXP_RPC_CONCURRENCY || 10),
 
 	rpcBlacklist:
-	  process.env.BTCEXP_RPC_ALLOWALL  ? []
+	  process.env.BTCEXP_RPC_ALLOWALL.toLowerCase() == "true"  ? []
 	: process.env.BTCEXP_RPC_BLACKLIST ? process.env.BTCEXP_RPC_BLACKLIST.split(',').filter(Boolean)
 	: [
 		"addnode",
@@ -113,7 +134,6 @@ module.exports = {
 		"sendfrom",
 		"sendmany",
 		"sendtoaddress",
-		"sendrawtransaction",
 		"setaccount",
 		"setban",
 		"setmocktime",
@@ -159,7 +179,7 @@ module.exports = {
 					links:[
 						{name: "Bitcoin Explorer", url:"https://explorer.btc21.org", imgUrl:"/img/logo/btc.svg"},
 						{name: "Testnet Explorer", url:"https://testnet.btc21.org", imgUrl:"/img/logo/tbtc.svg"},
-						{name: "LND Admin", url:"https://lnd-admin.chaintools.io", imgUrl:"/img/logo/lnd-admin.png"},
+						{name: "LND Admin", url:"https://lnd-admin.btc21.org", imgUrl:"/img/logo/lnd-admin.png"},
 						//{name: "Litecoin Explorer", url:"https://ltc.chaintools.io", imgUrl:"/img/logo/ltc.svg"},
 						//{name: "Lightning Explorer", url:"https://lightning.chaintools.io", imgUrl:"/img/logo/lightning.svg"},
 					]
@@ -199,10 +219,12 @@ module.exports = {
 			sites:{"BTC":"https://explorer.btc21.org"}
 		},
 		btcpayserver:{
-			host:"https://donate.btc21.org",
-			storeId:"26k74KRh7RYmJcMDqvmdKTb2h3991FMTZSM4GJHnX6st",
-			notifyEmail:"chaintools.io@gmail.com",
-			customAmountUrl: "https://donate.btc21.org/apps/2TBP2GuQnYXGBiHQkmf4jNuMh6eN/pos"
+			host:"https://donate.btc21.org"
 		}
 	}
 };
+
+debugLog(`Config(final): privacyMode=${module.exports.privacyMode}`);
+debugLog(`Config(final): slowDeviceMode=${module.exports.slowDeviceMode}`);
+debugLog(`Config(final): demo=${module.exports.demoSite}`);
+debugLog(`Config(final): rpcAllowAll=${module.exports.rpcBlacklist.length == 0}`);

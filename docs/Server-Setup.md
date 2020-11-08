@@ -1,24 +1,31 @@
-### Setup of https://explorer.btc21.org on Ubuntu 16.04
+### Setup of https://explorer.btc21.org on Ubuntu 20.04
 
+    # update and install packages
     apt update
     apt upgrade
-    apt install git python-software-properties software-properties-common nginx gcc g++ make
-    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.35.2/install.sh | bash
-    nvm install 10.14.1 ## LTS release of NodeJS as of 2018-11-29, via https://nodejs.org/en/
-    npm install pm2 --global
-    add-apt-repository ppa:certbot/certbot
-    apt update
-    apt upgrade
-    apt install python-certbot-nginx
+    apt install git nginx gcc g++ make npm certbot python3-certbot-nginx
+    npm install -g npm
+    npm install -g pm2
     
-Copy content from [./explorer.btc21.org.conf](./explorer.btc21.org.conf) into `/etc/nginx/sites-available/explorer.btc21.org.conf`
-
-    certbot --nginx -d explorer.btc21.org
+    # add user for btc-related stuff
+    adduser bitcoin # leave everything blank if you want
+    
+    # prep work for ssl certs
     cd /etc/ssl/certs
     openssl dhparam -out dhparam.pem 4096
+    
+    # get nginx config
+    wget https://raw.githubusercontent.com/janoside/btc-rpc-explorer/master/docs/explorer.btc21.org.conf
+    mv explorer.btc21.org.conf /etc/nginx/sites-available/
+
+    # get source, npm install
     cd /home/bitcoin
     git clone https://github.com/janoside/btc-rpc-explorer.git
     cd /home/bitcoin/btc-rpc-explorer
     npm install
-    npm run build
+    
+    # startup via pm2
     pm2 start bin/www --name "btc-rpc-explorer"
+    
+    # get letsencrypt cert
+    certbot --nginx -d explorer.btc21.org

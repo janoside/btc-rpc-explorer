@@ -231,6 +231,25 @@ block content
 												span #{utils.addThousandsSeparators(new DecimalRounded(totalInputValue).minus(totalOutputValue).dividedBy(result.getrawtransaction.size).times(100000000))} 
 													small sat/B
 
+							- var daysDestroyed = new Decimal(0);
+							each xInput, xInputIndex in result.getrawtransaction.vin
+								- var vout = null;
+								if (result.txInputs && result.txInputs[xInputIndex])
+									- var vout = result.txInputs[xInputIndex];
+									
+									if (vout.utxoTime)
+										- var dt = result.getrawtransaction.time - vout.utxoTime;
+										- var dtDays = dt / 60 / 60 / 24;
+										- daysDestroyed = daysDestroyed.plus(new Decimal(vout.value).times(dtDays));
+
+							if (parseInt(daysDestroyed) > 0)
+								div.row
+									div.summary-table-label
+										span.border-dotted(title=`The sum of all input values multiplied by the number of days that input's UTXO existed before being spent. Large values can sometimes be interesting, indicating the spending of long-dormant coins. A 1 ${coinConfig.ticker} UTXO spent after 7 days dormant results in 7 days destroyed, as does a 7 ${coinConfig.ticker} UTXO spent after 1 day dormant.`, data-toggle="tooltip") Days Destroyed
+									div.summary-table-content.text-monospace
+										span #{utils.addThousandsSeparators(daysDestroyed.toDP(daysDestroyed > 1 ? 0 : 1))}
+											small.ml-1.border-dotted(title=`${coinConfig.name} Days`, data-toggle="tooltip") #{coinConfig.ticker.toLowerCase().substring(0, 1)}d
+
 
 				if (result.getrawtransaction.vin[0].coinbase)
 					div.card.shadow-sm.mb-3
