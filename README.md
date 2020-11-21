@@ -87,6 +87,19 @@ To match the features visible on the demo site at [https://explorer.btc21.org](h
     BTCEXP_SLOW_DEVICE_MODE=false	# enables resource-intensive tasks (UTXO set query, 24hr volume querying) that are inappropriate for "slow" devices
 
 
+#### Wallet addresses history
+
+Showing the history of your wallet addresses is supported via [bwt](https://github.com/sheske/bwt).
+To enable this feature, install bwt with `npm install -g bwt-daemon` then start btc-rpc-explorer
+with `--address-api bwt` and one or more `--descriptors`s or `--xpub`s.
+
+The wallet addresses will be derived and imported into Bitcoin Core. You can specify which wallet to use with `--bwt-bitcoind-wallet <name>`.
+
+Scanning the full blockchain history for transactions involving your addresses may take up to 20-30 minutes.
+To speed this up, you may specify a date to start rescanning from with `--bwt-rescan-since <yyyy-mm-dd>`, or
+use `now` to watch for new transactions only.
+
+For example: `--address-api bwt --bwt-rescan-since 2020-01-01 --descriptor 'wpkh(xpub69..oP/0/*)' --xpub xpub66..zQ`
 
 ## Run via Docker
 

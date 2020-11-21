@@ -45,6 +45,7 @@ var request = require("request");
 var qrcode = require("qrcode");
 var addressApi = require("./app/api/addressApi.js");
 var electrumAddressApi = require("./app/api/electrumAddressApi.js");
+var bwtAddressApi = require("./app/api/bwtAddressApi.js");
 var coreApi = require("./app/api/coreApi.js");
 var auth = require('./app/auth.js');
 var marked = require("marked");
@@ -271,6 +272,11 @@ function onRpcConnectionVerified(getnetworkinfo, getblockchaininfo) {
 	// 1d / 7d volume
 	refreshNetworkVolumes();
 	setInterval(refreshNetworkVolumes, 30 * 60 * 1000);
+
+  if (config.addressApi == "bwt") {
+    bwtAddressApi.setup(config, global.activeBlockchain)
+      .catch(function(err) { utils.logError("bwt error", err) });
+  }
 }
 
 function refreshUtxoSetSummary() {
