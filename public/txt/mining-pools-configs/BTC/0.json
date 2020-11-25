@@ -8,6 +8,10 @@
             "name": "58COIN&1THash",
             "link": "https://www.1thash.top"
         },
+        "/BTC.COM/" : {
+            "name" : "BTC.com",
+            "link" : "https://pool.btc.com"
+        },
         "BITFARMS": {
             "name": "Bitfarms",
             "link": "https://www.bitarms.io/"
@@ -324,6 +328,10 @@
             "name": "Bixin",
             "link": "https://haopool.com/"
         },
+        "/ViaBTC/TATMAS Pool/" : {
+            "name" : "TATMAS Pool",
+            "link" : "https://tmsminer.com/"
+        },
         "viabtc.com deploy" : {
             "name": "ViaBTC",
             "link": "https://viabtc.com"
@@ -483,6 +491,10 @@
         "/lubian.com/" : {
             "name" : "Lubian.com",
             "link" : "http://www.lubian.com/"
+        },
+        "/hash.okkong.com/" : {
+            "name" : "OKKONG",
+            "link" : "https://hash.okkong.com"
         }
     },
     "payout_addresses" : {
@@ -886,6 +898,10 @@
             "name" : "SpiderPool",
             "link" : "https://www.spiderpool.com/"
         },
+        "125m2H43pwKpSZjLhMQHneuTwTJN5qRyYu": {
+            "name" : "SpiderPool",
+            "link" : "https://www.spiderpool.com/"
+        },
         "1Sjj2cPC3rTWcSTEYDeu2f3BavLosog4T": {
             "name": "AntPool",
             "link": "https://www.antpool.com/"
@@ -1039,7 +1055,11 @@
             "link": "https://sigmapool.com/"
         },
         "125K2xfiBdae42gSKiCGwi85Frpy1vHmGj": {
-            "name": "okkong",
+            "name": "OKKONG",
+            "link": "https://hash.okkong.com/"
+        },
+        "16JHXJ7M2MubWNX9grnqbjUqJ5PHwcCWw2": {
+            "name": "OKKONG",
             "link": "https://hash.okkong.com/"
         },
         "11wC5KcbgrWRBb43cwADdVrxgyF8mndVC": {
