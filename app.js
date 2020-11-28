@@ -89,7 +89,7 @@ app.use(session({
 	saveUninitialized: false
 }));
 
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(config.baseUrl, express.static(path.join(__dirname, 'public')));
 
 process.on("unhandledRejection", (reason, p) => {
 	debugLog("Unhandled Rejection at: Promise", p, "reason:", reason, "stack:", (reason != null ? reason.stack : "null"));
@@ -602,9 +602,9 @@ app.use(csurf(), (req, res, next) => {
 	next();
 });
 
-app.use('/', baseActionsRouter);
-app.use('/api/', apiActionsRouter);
-app.use('/snippet/', snippetActionsRouter);
+app.use(config.baseUrl, baseActionsRouter);
+app.use(config.baseUrl + 'api/', apiActionsRouter);
+app.use(config.baseUrl + 'snippet/', snippetActionsRouter);
 
 app.use(function(req, res, next) {
 	var time = Date.now() - req.startTime;

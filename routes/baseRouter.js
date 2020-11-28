@@ -406,7 +406,7 @@ router.get("/blocks", function(req, res, next) {
 	res.locals.limit = limit;
 	res.locals.offset = offset;
 	res.locals.sort = sort;
-	res.locals.paginationBaseUrl = "/blocks";
+	res.locals.paginationBaseUrl = "./blocks";
 
 	coreApi.getBlockchainInfo().then(function(getblockchaininfo) {
 		res.locals.blockCount = getblockchaininfo.blocks;
@@ -516,7 +516,7 @@ router.post("/search", function(req, res, next) {
 	if (!req.body.query) {
 		req.session.userMessage = "Enter a block height, block hash, or transaction id.";
 
-		res.redirect("/");
+		res.redirect("./");
 
 		return;
 	}
@@ -529,21 +529,21 @@ router.post("/search", function(req, res, next) {
 	if (query.length == 64) {
 		coreApi.getRawTransaction(query).then(function(tx) {
 			if (tx) {
-				res.redirect("/tx/" + query);
+				res.redirect("./tx/" + query);
 
 				return;
 			}
 
 			coreApi.getBlockByHash(query).then(function(blockByHash) {
 				if (blockByHash) {
-					res.redirect("/block/" + query);
+					res.redirect("./block/" + query);
 
 					return;
 				}
 
 				coreApi.getAddress(rawCaseQuery).then(function(validateaddress) {
 					if (validateaddress && validateaddress.isvalid) {
-						res.redirect("/address/" + rawCaseQuery);
+						res.redirect("./address/" + rawCaseQuery);
 
 						return;
 					}
@@ -551,56 +551,56 @@ router.post("/search", function(req, res, next) {
 
 				req.session.userMessage = "No results found for query: " + query;
 
-				res.redirect("/");
+				res.redirect("./");
 
 			}).catch(function(err) {
 				req.session.userMessage = "No results found for query: " + query;
 
-				res.redirect("/");
+				res.redirect("./");
 			});
 
 		}).catch(function(err) {
 			coreApi.getBlockByHash(query).then(function(blockByHash) {
 				if (blockByHash) {
-					res.redirect("/block/" + query);
+					res.redirect("./block/" + query);
 
 					return;
 				}
 
 				req.session.userMessage = "No results found for query: " + query;
 
-				res.redirect("/");
+				res.redirect("./");
 
 			}).catch(function(err) {
 				req.session.userMessage = "No results found for query: " + query;
 
-				res.redirect("/");
+				res.redirect("./");
 			});
 		});
 
 	} else if (!isNaN(query)) {
 		coreApi.getBlockByHeight(parseInt(query)).then(function(blockByHeight) {
 			if (blockByHeight) {
-				res.redirect("/block-height/" + query);
+				res.redirect("./block-height/" + query);
 
 				return;
 			}
 
 			req.session.userMessage = "No results found for query: " + query;
 
-			res.redirect("/");
+			res.redirect("./");
 		});
 	} else {
 		coreApi.getAddress(rawCaseQuery).then(function(validateaddress) {
 			if (validateaddress && validateaddress.isvalid) {
-				res.redirect("/address/" + rawCaseQuery);
+				res.redirect("./address/" + rawCaseQuery);
 
 				return;
 			}
 
 			req.session.userMessage = "No results found for query: " + rawCaseQuery;
 
-			res.redirect("/");
+			res.redirect("./");
 		});
 	}
 });
@@ -632,7 +632,7 @@ router.get("/block-height/:blockHeight", function(req, res, next) {
 
 	res.locals.limit = limit;
 	res.locals.offset = offset;
-	res.locals.paginationBaseUrl = "/block-height/" + blockHeight;
+	res.locals.paginationBaseUrl = "./block-height/" + blockHeight;
 
 	coreApi.getBlockByHeight(blockHeight).then(function(result) {
 		res.locals.result.getblockbyheight = result;
@@ -717,7 +717,7 @@ router.get("/block/:blockHash", function(req, res, next) {
 
 	res.locals.limit = limit;
 	res.locals.offset = offset;
-	res.locals.paginationBaseUrl = "/block/" + blockHash;
+	res.locals.paginationBaseUrl = "./block/" + blockHash;
 
 	var promises = [];
 
@@ -1446,7 +1446,7 @@ router.get("/unconfirmed-tx", function(req, res, next) {
 	res.locals.limit = limit;
 	res.locals.offset = offset;
 	res.locals.sort = sort;
-	res.locals.paginationBaseUrl = "/unconfirmed-tx";
+	res.locals.paginationBaseUrl = "./unconfirmed-tx";
 
 	coreApi.getMempoolDetails(offset, limit).then(function(mempoolDetails) {
 		res.locals.mempoolDetails = mempoolDetails;
