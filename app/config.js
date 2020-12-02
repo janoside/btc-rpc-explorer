@@ -6,6 +6,9 @@ var crypto = require('crypto');
 var url = require('url');
 
 var baseUrl = process.env.BTCEXP_BASEURL || "/";
+if(!baseUrl.endsWith('/')) {
+	baseUrl += '/';
+}
 
 var coins = require("./coins.js");
 var credentials = require("./credentials.js");
