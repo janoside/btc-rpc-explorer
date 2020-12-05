@@ -723,6 +723,7 @@ function outputTypeAbbreviation(outputType) {
 		"scripthash": "p2sh",
 		"witness_v0_keyhash": "v0_p2wpkh",
 		"witness_v0_scripthash": "v0_p2wsh",
+		"witness_v1_taproot": "v1_p2tr",
 		"nonstandard": "nonstandard",
 		"nulldata": "nulldata"
 	};
@@ -742,6 +743,7 @@ function outputTypeName(outputType) {
 		"scripthash": "Pay to Script Hash",
 		"witness_v0_keyhash": "Witness, v0 Key Hash",
 		"witness_v0_scripthash": "Witness, v0 Script Hash",
+		"witness_v1_taproot": "Witness, v1 Taproot",
 		"nonstandard": "Non-Standard",
 		"nulldata": "Null Data"
 	};
