@@ -916,7 +916,7 @@ router.get("/address/:address", function(req, res, next) {
 	res.locals.limit = limit;
 	res.locals.offset = offset;
 	res.locals.sort = sort;
-	res.locals.paginationBaseUrl = `/address/${address}?sort=${sort}`;
+	res.locals.paginationBaseUrl = `./address/${address}?sort=${sort}`;
 	res.locals.transactions = [];
 	res.locals.addressApiSupport = addressApi.getCurrentAddressApiFeatureSupport();
 	

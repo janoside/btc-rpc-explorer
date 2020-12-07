@@ -16,7 +16,7 @@ block content
 	hr
 
 	:markdown-it
-		Use this interactive terminal to send RPC commands to your node. Results will be shown inline. To browse all available RPC commands you can use the [RPC Browser](/rpc-browser).
+		Use this interactive terminal to send RPC commands to your node. Results will be shown inline. To browse all available RPC commands you can use the [RPC Browser](./rpc-browser).
 
 	div.card.shadow-sm.mb-3
 		div.card-body
@@ -46,7 +46,7 @@ block endOfBody
 				postData._csrf = csrfToken;
 				
 				$.post(
-					"/rpc-terminal",
+					"./rpc-terminal",
 					postData,
 					function(response, textStatus, jqXHR) {
 						var t = new Date().getTime();
