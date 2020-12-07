@@ -5,9 +5,12 @@ var fs = require('fs');
 var crypto = require('crypto');
 var url = require('url');
 
-var baseUrl = process.env.BTCEXP_BASEURL || "/";
-if(!baseUrl.endsWith('/')) {
-	baseUrl += '/';
+var baseUrl = (process.env.BTCEXP_BASEURL || "/").trim();
+if (!baseUrl.startsWith("/")) {
+	baseUrl = "/" + baseUrl;
+}
+if (!baseUrl.endsWith("/")) {
+	baseUrl += "/";
 }
 
 var coins = require("./coins.js");
@@ -72,9 +75,12 @@ for (var i = 0; i < electrumXServerUriStrings.length; i++) {
 });
 
 module.exports = {
+	host: process.env.BTCEXP_HOST || "127.0.0.1",
+	port: process.env.PORT || process.env.BTCEXP_PORT || 3002,
+
 	baseUrl: baseUrl,
 
-        coin: currentCoin,
+	coin: currentCoin,
 
 	cookieSecret: cookieSecret,
 
