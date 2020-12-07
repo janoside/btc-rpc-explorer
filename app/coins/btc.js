@@ -394,7 +394,7 @@ module.exports = {
 			type: "tx",
 			date: "2017-08-24",
 			chain: "main",
-			txid: "8f907925d2ebe48765103e6845C06f1f2bb77c6adc1cc002865865eb5cfd5c1c",
+			txid: "8f907925d2ebe48765103e6845c06f1f2bb77c6adc1cc002865865eb5cfd5c1c",
 			summary: "First SegWit transaction.",
 			referenceUrl: "https://twitter.com/KHS9NE/status/900553902923362304"
 		},
