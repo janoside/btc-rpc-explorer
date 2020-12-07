@@ -182,7 +182,7 @@ block content
 								if (parseFloat(totalOutputValue) < parseFloat(blockRewardMax))
 									div.row
 										div.summary-table-label
-											span.border-dotted(data-toggle="tooltip" title="The miner of this transaction's block failed to collect this value. As a result, it is permanently lost.") Fees Destroyed
+											span.border-dotted(data-toggle="tooltip" title="The miner of this transaction's block failed to collect this value. As a result, it is permanently lost.") Value Destroyed
 										div.summary-table-content.text-monospace.text-danger
 											- var currencyValue = new Decimal(blockRewardMax).minus(totalOutputValue);
 											include includes/value-display.pug

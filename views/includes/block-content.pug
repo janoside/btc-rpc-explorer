@@ -148,7 +148,7 @@ div.tab-content
 							if (parseFloat(coinbaseTxTotalOutputValue) < blockRewardMax)
 								div.row
 									div(class=sumTableLabelClass)
-										span.border-dotted(data-toggle="tooltip" title="The miner of this block failed to collect this value. As a result, it is permanently lost.") Fees Destroyed
+										span.border-dotted(data-toggle="tooltip" title="The miner of this block failed to collect this value. As a result, it is permanently lost.") Value Destroyed
 									div.text-monospace.text-danger(class=sumTableValueClass)
 										- var currencyValue = new Decimal(blockRewardMax).minus(coinbaseTxTotalOutputValue);
 										include ./value-display.pug
