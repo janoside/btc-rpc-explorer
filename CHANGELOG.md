@@ -1,3 +1,15 @@
+#### v2.1.0
+##### Pending...
+
+* Support for running on a configurable BASEURL, e.g. "/explorer/" (Thanks [@ketominer](https://github.com/ketominer), [@Kixunil](https://github.com/Kixunil), [@shesek](https://github.com/shesek))
+* Support for listening on 0.0.0.0 (Thanks [@lukechilds](https://github.com/lukechilds))
+* Sanitizing of environment variables (Thanks [@lukechilds](https://github.com/lukechilds))
+* Fix for low severity lodash dependency vulnerability (Thanks [@abhiShandy](https://github.com/abhiShandy))
+* Electrum connect/disconnect stats on `/admin`
+* Add P2SH bounty address `/fun` items (Thanks [@cd2357](https://github.com/cd2357))
+* Misc cleanup (Thanks [@AaronDewes](https://github.com/AaronDewes))
+* Add "Thanks" notes to changelog
+
 #### v2.0.2
 ##### 2020-07-03
 
@@ -7,6 +19,7 @@
 * Bug fixes
 	* Fix for erroneous defaults for boolean env vars in some scenarios (slow device mode)
 * Updated dependences and mining pools
+* Misc cleanup (Thanks [@JosephGoulden](https://github.com/JosephGoulden))
 
 #### v2.0.1
 ##### 2020-05-28
