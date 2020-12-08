@@ -99,9 +99,9 @@ block content
 
 
 block endOfBody
-	script(src="/js/chart.bundle.min.js", integrity="sha384-qgOtiGNaHh9fVWUnRjyHlV39rfbDcvPPkEzL1RHvsHKbuqUqM6uybNuVnghY2z4/")
+	script(src="./js/chart.bundle.min.js", integrity="sha384-qgOtiGNaHh9fVWUnRjyHlV39rfbDcvPPkEzL1RHvsHKbuqUqM6uybNuVnghY2z4/")
 
-	script(src='/js/decimal.js')
+	script(src='./js/decimal.js')
 
 	script.
 		var currentBlockHeight = !{currentBlockHeight};
@@ -274,7 +274,7 @@ block endOfBody
 				return;
 			}
 
-			var url = `/api/block-stats-by-height/${chunks[chunkIndex]}`;
+			var url = `./api/block-stats-by-height/${chunks[chunkIndex]}`;
 			
 			//console.log(url);
 

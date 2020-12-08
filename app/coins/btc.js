@@ -53,10 +53,10 @@ module.exports = {
 	name:"Bitcoin",
 	ticker:"BTC",
 	logoUrlsByNetwork:{
-		"main":"/img/logo/btc.svg",
-		"test":"/img/logo/tbtc.svg",
-		"regtest":"/img/logo/tbtc.svg",
-		"signet":"/img/logo/tbtc.svg"
+		"main":"./img/logo/btc.svg",
+		"test":"./img/logo/tbtc.svg",
+		"regtest":"./img/logo/tbtc.svg",
+		"signet":"./img/logo/tbtc.svg"
 	},
 	siteTitlesByNetwork: {
 		"main":"Bitcoin Explorer",
@@ -323,7 +323,7 @@ module.exports = {
 			chain: "main",
 			txid: "4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b",
 			summary: "The coinbase transaction of the Genesis Block.",
-			alertBodyHtml: "This transaction doesn't really exist! This is the coinbase transaction of the <a href='/block/000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f'>Bitcoin Genesis Block</a>. For more background about this special-case transaction, you can read <a href='https://github.com/bitcoin/bitcoin/issues/3303'>this brief discussion</a> among some of the <a href='https://bitcoin.org'>Bitcoin</a> developers.",
+			alertBodyHtml: "This transaction doesn't really exist! This is the coinbase transaction of the <a href='./block/000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f'>Bitcoin Genesis Block</a>. For more background about this special-case transaction, you can read <a href='https://github.com/bitcoin/bitcoin/issues/3303'>this brief discussion</a> among some of the <a href='https://bitcoin.org'>Bitcoin</a> developers.",
 			referenceUrl: "https://github.com/bitcoin/bitcoin/issues/3303"
 		},
 		{
@@ -423,13 +423,13 @@ module.exports = {
 			blockHeight: 629999,
 			blockHash: "0000000000000000000d656be18bb095db1b23bd797266b0ac3ba720b1962b1e",
 			summary: "'Times 09/Apr/2020 With $2.3T Injection, Fed's Plan Far Exceeds 2008 Rescue'",
-			alertBodyHtml: "With the coinbase message 'Times 09/Apr/2020 With $2.3T Injection, Fed's Plan Far Exceeds 2008 Rescue', this final block of subsidy era #3 (12.5 BTC) echoes the spiritual call-to-action of <a href='/block/000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f'>Satoshi's genesis block</a>.",
+			alertBodyHtml: "With the coinbase message 'Times 09/Apr/2020 With $2.3T Injection, Fed's Plan Far Exceeds 2008 Rescue', this final block of subsidy era #3 (12.5 BTC) echoes the spiritual call-to-action of <a href='./block/000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f'>Satoshi's genesis block</a>.",
 		},
 		{
 			type: "tx",
 			date: "2017-08-24",
 			chain: "main",
-			txid: "8f907925d2ebe48765103e6845C06f1f2bb77c6adc1cc002865865eb5cfd5c1c",
+			txid: "8f907925d2ebe48765103e6845c06f1f2bb77c6adc1cc002865865eb5cfd5c1c",
 			summary: "First SegWit transaction.",
 			referenceUrl: "https://twitter.com/KHS9NE/status/900553902923362304"
 		},
@@ -520,7 +520,7 @@ module.exports = {
 			txid: "e3bf3d07d4b0375638d5f1db5255fe07ba2c4cb067cd81b84ee974b6585fb468",
 			summary: "Duplicated coinbase transaction #1",
 			referenceUrl: "https://bitcoin.stackexchange.com/questions/38994/will-there-be-21-million-bitcoins-eventually/38998#38998",
-			alertBodyHtml: "This is one of 2 'duplicate coinbase' transactions. An early bitcoin bug (fixed by <a href='https://github.com/bitcoin/bips/blob/master/bip-0030.mediawiki'>BIP30</a>) allowed identical coinbase transactions - a newer duplicate would overwrite older copies. This transaction was the coinbase transaction for <a href='/block-height/91722'>Block #91,722</a> and, ~16 hours later, <a href='/block-height/91880'>Block #91,880</a>. The 50 BTC claimed as the coinbase for block 91,722 were also overwritten and lost."
+			alertBodyHtml: "This is one of 2 'duplicate coinbase' transactions. An early bitcoin bug (fixed by <a href='https://github.com/bitcoin/bips/blob/master/bip-0030.mediawiki'>BIP30</a>) allowed identical coinbase transactions - a newer duplicate would overwrite older copies. This transaction was the coinbase transaction for <a href='./block-height/91722'>Block #91,722</a> and, ~16 hours later, <a href='./block-height/91880'>Block #91,880</a>. The 50 BTC claimed as the coinbase for block 91,722 were also overwritten and lost."
 		},
 		{
 			type: "tx",
@@ -529,7 +529,7 @@ module.exports = {
 			txid: "d5d27987d2a3dfc724e359870c6644b40e497bdc0589a033220fe15429d88599",
 			summary: "Duplicated coinbase transaction #2",
 			referenceUrl: "https://bitcoin.stackexchange.com/questions/38994/will-there-be-21-million-bitcoins-eventually/38998#38998",
-			alertBodyHtml: "This is one of 2 'duplicate coinbase' transactions. An early bitcoin bug (fixed by <a href='https://github.com/bitcoin/bips/blob/master/bip-0030.mediawiki'>BIP30</a>) allowed identical coinbase transactions - a newer duplicate would overwrite older copies. This transaction was the coinbase transaction for <a href='/block-height/91812'>Block #91,812</a> and, ~3 hours later, <a href='/block-height/91842'>Block #91,842</a>. The 50 BTC claimed as the coinbase for block 91,812 were also overwritten and lost."
+			alertBodyHtml: "This is one of 2 'duplicate coinbase' transactions. An early bitcoin bug (fixed by <a href='https://github.com/bitcoin/bips/blob/master/bip-0030.mediawiki'>BIP30</a>) allowed identical coinbase transactions - a newer duplicate would overwrite older copies. This transaction was the coinbase transaction for <a href='./block-height/91812'>Block #91,812</a> and, ~3 hours later, <a href='./block-height/91842'>Block #91,842</a>. The 50 BTC claimed as the coinbase for block 91,812 were also overwritten and lost."
 		},
 		{
 			type: "tx",
@@ -576,7 +576,7 @@ module.exports = {
 			chain: "test",
 			txid: "4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b",
 			summary: "The coinbase transaction of the Genesis Block.",
-			alertBodyHtml: "This transaction doesn't really exist! This is the coinbase transaction of the <a href='/block/000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f'>Bitcoin Genesis Block</a>. For more background about this special-case transaction, you can read <a href='https://github.com/bitcoin/bitcoin/issues/3303'>this brief discussion</a> among some of the <a href='https://bitcoin.org'>Bitcoin</a> developers.",
+			alertBodyHtml: "This transaction doesn't really exist! This is the coinbase transaction of the <a href='./block/000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f'>Bitcoin Genesis Block</a>. For more background about this special-case transaction, you can read <a href='https://github.com/bitcoin/bitcoin/issues/3303'>this brief discussion</a> among some of the <a href='https://bitcoin.org'>Bitcoin</a> developers.",
 			referenceUrl: "https://github.com/bitcoin/bitcoin/issues/3303"
 		},
 
@@ -598,7 +598,7 @@ module.exports = {
 			chain: "regtest",
 			txid: "4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b",
 			summary: "The coinbase transaction of the Genesis Block.",
-			alertBodyHtml: "This transaction doesn't really exist! This is the coinbase transaction of the <a href='/block/000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f'>Bitcoin Genesis Block</a>. For more background about this special-case transaction, you can read <a href='https://github.com/bitcoin/bitcoin/issues/3303'>this brief discussion</a> among some of the <a href='https://bitcoin.org'>Bitcoin</a> developers.",
+			alertBodyHtml: "This transaction doesn't really exist! This is the coinbase transaction of the <a href='./block/000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f'>Bitcoin Genesis Block</a>. For more background about this special-case transaction, you can read <a href='https://github.com/bitcoin/bitcoin/issues/3303'>this brief discussion</a> among some of the <a href='https://bitcoin.org'>Bitcoin</a> developers.",
 			referenceUrl: "https://github.com/bitcoin/bitcoin/issues/3303"
 		},
 	],

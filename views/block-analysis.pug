@@ -12,7 +12,7 @@ block content
 
 	div.mb-2
 		if (result.getblock)
-			a.btn.btn-sm.btn-primary.mb-1(href=("/block/" + result.getblock.hash)) &laquo; Block Details: 
+			a.btn.btn-sm.btn-primary.mb-1(href=("./block/" + result.getblock.hash)) &laquo; Block Details: 
 				span.text-monospace ##{result.getblock.height.toLocaleString()}
 
 	div.row
@@ -232,8 +232,8 @@ block content
 block endOfBody
 	- var txidChunkSize = 10;
 
-	script(src="/js/chart.bundle.min.js", integrity="sha384-qgOtiGNaHh9fVWUnRjyHlV39rfbDcvPPkEzL1RHvsHKbuqUqM6uybNuVnghY2z4/")
-	script(src='/js/decimal.js')
+	script(src="./js/chart.bundle.min.js", integrity="sha384-qgOtiGNaHh9fVWUnRjyHlV39rfbDcvPPkEzL1RHvsHKbuqUqM6uybNuVnghY2z4/")
+	script(src='./js/decimal.js')
 	script.
 		var txidChunkSize = !{txidChunkSize};
 		var txidChunks = !{JSON.stringify(utils.splitArrayIntoChunks(result.getblock.tx, txidChunkSize))};
@@ -315,7 +315,7 @@ block endOfBody
 
 				row.removeClass("row-prototype");
 
-				row.find(".data-tx-link").html(`<a href='/tx/${item.txid}'>${item.txid.substring(0, 14)}<span class='d-inline d-xl-none'>${item.txid.substring(14, 32)}</span><span class='d-none d-xxl-inline'>${item.txid.substring(14, 30)}</span>…</a>`);
+				row.find(".data-tx-link").html(`<a href='./tx/${item.txid}'>${item.txid.substring(0, 14)}<span class='d-inline d-xl-none'>${item.txid.substring(14, 32)}</span><span class='d-none d-xxl-inline'>${item.txid.substring(14, 30)}</span>…</a>`);
 				row.find(".data-tx-value").text(item.value);
 				
 				updateCurrencyValue(row.find(".data-tx-value"), item.value);
@@ -336,7 +336,7 @@ block endOfBody
 
 				row.removeClass("row-prototype");
 
-				row.find(".data-tx-link").html(`<a href='/tx/${item.txid}'>${item.txid.substring(0, 14)}<span class='d-inline d-xl-none'>${item.txid.substring(14, 32)}</span><span class='d-none d-xxl-inline'>${item.txid.substring(14, 30)}</span>…</a>`);
+				row.find(".data-tx-link").html(`<a href='./tx/${item.txid}'>${item.txid.substring(0, 14)}<span class='d-inline d-xl-none'>${item.txid.substring(14, 32)}</span><span class='d-none d-xxl-inline'>${item.txid.substring(14, 30)}</span>…</a>`);
 				row.find(".data-tx-value").text(item.value);
 				
 				updateCurrencyValue(row.find(".data-tx-value"), item.value);
@@ -357,7 +357,7 @@ block endOfBody
 
 				row.removeClass("row-prototype");
 
-				row.find(".data-tx-link").html(`<a href='/tx/${item.txid}'>${item.txid.substring(0, 14)}<span class='d-inline d-xl-none'>${item.txid.substring(14, 32)}</span><span class='d-none d-xxl-inline'>${item.txid.substring(14, 30)}</span>…</a>`);
+				row.find(".data-tx-link").html(`<a href='./tx/${item.txid}'>${item.txid.substring(0, 14)}<span class='d-inline d-xl-none'>${item.txid.substring(14, 32)}</span><span class='d-none d-xxl-inline'>${item.txid.substring(14, 30)}</span>…</a>`);
 				row.find(".data-tx-value").html(`<span>${parseInt(item.value).toLocaleString()} <small>${vByteSizes ? "v" : ""}B</small></span>`);
 
 				row.show();
@@ -507,7 +507,7 @@ block endOfBody
 				return;
 			}
 
-			var url = `/api/block-tx-summaries/${blockHeight}/${chunks[chunkIndex]}`;
+			var url = `./api/block-tx-summaries/${blockHeight}/${chunks[chunkIndex]}`;
 			
 			//console.log(url);
 

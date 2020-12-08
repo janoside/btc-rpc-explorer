@@ -89,7 +89,7 @@ app.use(session({
 	saveUninitialized: false
 }));
 
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(config.baseUrl, express.static(path.join(__dirname, 'public')));
 
 process.on("unhandledRejection", (reason, p) => {
 	debugLog("Unhandled Rejection at: Promise", p, "reason:", reason, "stack:", (reason != null ? reason.stack : "null"));
@@ -387,20 +387,20 @@ app.onStartup = function() {
 			if (err) {
 				utils.logError("3fehge9ee", err, {desc:"Error accessing git repo"});
 
-				debugLog(`Starting ${global.coinConfig.ticker} RPC Explorer, v${global.appVersion} (code: unknown commit)`);
+				debugLog(`Starting ${global.coinConfig.ticker} RPC Explorer, v${global.appVersion} (code: unknown commit) at ${config.host}:${config.port}${config.baseUrl}`);
 
 			} else {
 				global.sourcecodeVersion = log.all[0].hash.substring(0, 10);
 				global.sourcecodeDate = log.all[0].date.substring(0, "0000-00-00".length);
 
-				debugLog(`Starting ${global.coinConfig.ticker} RPC Explorer, v${global.appVersion} (commit: '${global.sourcecodeVersion}', date: ${global.sourcecodeDate})`);
+				debugLog(`Starting ${global.coinConfig.ticker} RPC Explorer, v${global.appVersion} (commit: '${global.sourcecodeVersion}', date: ${global.sourcecodeDate}) at ${config.host}:${config.port}${config.baseUrl}`);
 			}
 
 			app.continueStartup();
 		});
 
 	} else {
-		debugLog(`Starting ${global.coinConfig.ticker} RPC Explorer, v${global.appVersion}`);
+		debugLog(`Starting ${global.coinConfig.ticker} RPC Explorer, v${global.appVersion} at ${config.host}:${config.port}${config.baseUrl}`);
 
 		app.continueStartup();
 	}
@@ -602,9 +602,9 @@ app.use(csurf(), (req, res, next) => {
 	next();
 });
 
-app.use('/', baseActionsRouter);
-app.use('/api/', apiActionsRouter);
-app.use('/snippet/', snippetActionsRouter);
+app.use(config.baseUrl, baseActionsRouter);
+app.use(config.baseUrl + 'api/', apiActionsRouter);
+app.use(config.baseUrl + 'snippet/', snippetActionsRouter);
 
 app.use(function(req, res, next) {
 	var time = Date.now() - req.startTime;
