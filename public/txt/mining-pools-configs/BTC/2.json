@@ -1,0 +1,15 @@
+{
+	"payout_addresses" : {
+		"1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa": {
+			"name" : "Satoshi",
+			"link" : "https://bitcoin.org"
+		}
+	},
+	"block_hashes" : {
+		"000000008d9dc510f23c2657fc4f67bea30078cc05a90eb89e84cc475c080805": {
+			"name" : "Satoshi",
+			"link" : "https://bitcoin.org",
+			"note" : "It's known that Satoshi sent BTC to Hal in #170 and this block's coinbase is the output spent there."
+		}
+	}
+}

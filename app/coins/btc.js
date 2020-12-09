@@ -52,32 +52,53 @@ var currencyUnits = [
 module.exports = {
 	name:"Bitcoin",
 	ticker:"BTC",
-	logoUrl:"/img/logo/btc.svg",
-	siteTitle:"Bitcoin Explorer",
+	logoUrlsByNetwork:{
+		"main":"./img/logo/btc.svg",
+		"test":"./img/logo/tbtc.svg",
+		"regtest":"./img/logo/tbtc.svg",
+		"signet":"./img/logo/tbtc.svg"
+	},
+	siteTitlesByNetwork: {
+		"main":"Bitcoin Explorer",
+		"test":"Testnet Explorer",
+		"regtest":"Regtest Explorer",
+		"signet":"Signet Explorer",
+	},
 	siteDescriptionHtml:"<b>BTC Explorer</b> is <a href='https://github.com/janoside/btc-rpc-explorer). If you run your own [Bitcoin Full Node](https://bitcoin.org/en/full-node), **BTC Explorer** can easily run alongside it, communicating via RPC calls. See the project [ReadMe](https://github.com/janoside/btc-rpc-explorer) for a list of features and instructions for running.",
 	nodeTitle:"Bitcoin Full Node",
 	nodeUrl:"https://bitcoin.org/en/full-node",
-	demoSiteUrl: "https://btc.chaintools.io",
+	demoSiteUrl: "https://explorer.btc21.org",
 	miningPoolsConfigUrls:[
 		"https://raw.githubusercontent.com/btccom/Blockchain-Known-Pools/master/pools.json",
 		"https://raw.githubusercontent.com/blockchain/Blockchain-Known-Pools/master/pools.json"
 	],
 	maxBlockWeight: 4000000,
+	maxBlockSize: 1000000,
+	difficultyAdjustmentBlockCount: 2016,
+	maxSupplyByNetwork: {
+		"main": new Decimal(20999817.31308491), // ref: https://bitcoin.stackexchange.com/a/38998
+		"test": new Decimal(21000000),
+		"regtest": new Decimal(21000000),
+		"signet": new Decimal(21000000)
+	},
 	targetBlockTimeSeconds: 600,
+	targetBlockTimeMinutes: 10,
 	currencyUnits:currencyUnits,
 	currencyUnitsByName:{"BTC":currencyUnits[0], "mBTC":currencyUnits[1], "bits":currencyUnits[2], "sat":currencyUnits[3]},
 	baseCurrencyUnit:currencyUnits[3],
 	defaultCurrencyUnit:currencyUnits[0],
 	feeSatoshiPerByteBucketMaxima: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 20, 25, 50, 75, 100, 150],
 	genesisBlockHashesByNetwork:{
-		"main":    "000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f",
-		"test":    "000000000933ea01ad0ee984209779baaec3ced90fa3f408719526f8d77f4943",
-		"regtest": "0f9188f13cb7b2c71f2a335e3a4fc328bf5beb436012afca590b1a11466e2206"
+		"main":	"000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f",
+		"test":	"000000000933ea01ad0ee984209779baaec3ced90fa3f408719526f8d77f4943",
+		"regtest": "0f9188f13cb7b2c71f2a335e3a4fc328bf5beb436012afca590b1a11466e2206",
+		"signet":  "00000008819873e925422c1ff0f99f7cc9bbb232af63a077a480a3633bee1ef6", 
 	},
 	genesisCoinbaseTransactionIdsByNetwork: {
-		"main":    "4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b",
-		"test":    "4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b",
-		"regtest": "4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b"
+		"main":	"4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b",
+		"test":	"4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b",
+		"regtest": "4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b",
+		"signet":  "4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b"
 	},
 	genesisCoinbaseTransactionsByNetwork:{
 		"main": {
@@ -176,6 +197,186 @@ module.exports = {
 			"blockhash": "0f9188f13cb7b2c71f2a335e3a4fc328bf5beb436012afca590b1a11466e2206",
 			"time": 1296688602,
 			"blocktime": 1296688602
+		},
+		"signet": {
+			"hex": "01000000010000000000000000000000000000000000000000000000000000000000000000ffffffff4d04ffff001d0104455468652054696d65732030332f4a616e2f32303039204368616e63656c6c6f72206f6e206272696e6b206f66207365636f6e64206261696c6f757420666f722062616e6b73ffffffff0100f2052a01000000434104678afdb0fe5548271967f1a67130b7105cd6a828e03909a67962e0ea1f61deb649f6bc3f4cef38c4f35504e51ec112de5c384df7ba0b8d578a4c702b6bf11d5fac00000000",
+			"txid": "4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b",
+			"hash": "4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b",
+			"version": 1,
+			"size": 204,
+			"vsize": 204,
+			"weight": 816,
+			"locktime": 0,
+			"vin": [
+				{
+					"coinbase": "04ffff001d0104455468652054696d65732030332f4a616e2f32303039204368616e63656c6c6f72206f6e206272696e6b206f66207365636f6e64206261696c6f757420666f722062616e6b73",
+					"sequence": 4294967295
+				}
+			],
+			"vout": [
+				{
+					"value": 50.00000000,
+					"n": 0,
+					"scriptPubKey": {
+						"asm": "04678afdb0fe5548271967f1a67130b7105cd6a828e03909a67962e0ea1f61deb649f6bc3f4cef38c4f35504e51ec112de5c384df7ba0b8d578a4c702b6bf11d5f OP_CHECKSIG",
+						"hex": "4104678afdb0fe5548271967f1a67130b7105cd6a828e03909a67962e0ea1f61deb649f6bc3f4cef38c4f35504e51ec112de5c384df7ba0b8d578a4c702b6bf11d5fac",
+						"type": "pubkey"
+					}
+				}
+			],
+			"blockhash": "00000008819873e925422c1ff0f99f7cc9bbb232af63a077a480a3633bee1ef6",
+			"time": 1598918400,
+			"blocktime": 1598918400
+		}
+	},
+	genesisBlockStatsByNetwork:{
+		"main": {
+			"avgfee": 0,
+			"avgfeerate": 0,
+			"avgtxsize": 0,
+			"blockhash": "000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f",
+			"feerate_percentiles": [
+				0,
+				0,
+				0,
+				0,
+				0
+			],
+			"height": 0,
+			"ins": 0,
+			"maxfee": 0,
+			"maxfeerate": 0,
+			"maxtxsize": 0,
+			"medianfee": 0,
+			"mediantime": 1231006505,
+			"mediantxsize": 0,
+			"minfee": 0,
+			"minfeerate": 0,
+			"mintxsize": 0,
+			"outs": 1,
+			"subsidy": 5000000000,
+			"swtotal_size": 0,
+			"swtotal_weight": 0,
+			"swtxs": 0,
+			"time": 1231006505,
+			"total_out": 0,
+			"total_size": 0,
+			"total_weight": 0,
+			"totalfee": 0,
+			"txs": 1,
+			"utxo_increase": 1,
+			"utxo_size_inc": 117
+		},
+		"test": {
+			"avgfee": 0,
+			"avgfeerate": 0,
+			"avgtxsize": 0,
+			"blockhash": "000000000933ea01ad0ee984209779baaec3ced90fa3f408719526f8d77f4943",
+			"feerate_percentiles": [
+				0,
+				0,
+				0,
+				0,
+				0
+			],
+			"height": 0,
+			"ins": 0,
+			"maxfee": 0,
+			"maxfeerate": 0,
+			"maxtxsize": 0,
+			"medianfee": 0,
+			"mediantime": 1296688602,
+			"mediantxsize": 0,
+			"minfee": 0,
+			"minfeerate": 0,
+			"mintxsize": 0,
+			"outs": 1,
+			"subsidy": 5000000000,
+			"swtotal_size": 0,
+			"swtotal_weight": 0,
+			"swtxs": 0,
+			"time": 1296688602,
+			"total_out": 0,
+			"total_size": 0,
+			"total_weight": 0,
+			"totalfee": 0,
+			"txs": 1,
+			"utxo_increase": 1,
+			"utxo_size_inc": 117
+		},
+		"regtest": {
+			"avgfee": 0,
+			"avgfeerate": 0,
+			"avgtxsize": 0,
+			"blockhash": "0f9188f13cb7b2c71f2a335e3a4fc328bf5beb436012afca590b1a11466e2206",
+			"feerate_percentiles": [
+				0,
+				0,
+				0,
+				0,
+				0
+			],
+			"height": 0,
+			"ins": 0,
+			"maxfee": 0,
+			"maxfeerate": 0,
+			"maxtxsize": 0,
+			"medianfee": 0,
+			"mediantime": 1296688602,
+			"mediantxsize": 0,
+			"minfee": 0,
+			"minfeerate": 0,
+			"mintxsize": 0,
+			"outs": 1,
+			"subsidy": 5000000000,
+			"swtotal_size": 0,
+			"swtotal_weight": 0,
+			"swtxs": 0,
+			"time": 1296688602,
+			"total_out": 0,
+			"total_size": 0,
+			"total_weight": 0,
+			"totalfee": 0,
+			"txs": 1,
+			"utxo_increase": 1,
+			"utxo_size_inc": 117
+		},
+		"signet": {
+			"avgfee": 0,
+			"avgfeerate": 0,
+			"avgtxsize": 0,
+			"blockhash": "00000008819873e925422c1ff0f99f7cc9bbb232af63a077a480a3633bee1ef6",
+			"feerate_percentiles": [
+				0,
+				0,
+				0,
+				0,
+				0
+			],
+			"height": 0,
+			"ins": 0,
+			"maxfee": 0,
+			"maxfeerate": 0,
+			"maxtxsize": 0,
+			"medianfee": 0,
+			"mediantime": 1598918400,
+			"mediantxsize": 0,
+			"minfee": 0,
+			"minfeerate": 0,
+			"mintxsize": 0,
+			"outs": 1,
+			"subsidy": 5000000000,
+			"swtotal_size": 0,
+			"swtotal_weight": 0,
+			"swtxs": 0,
+			"time": 1598918400,
+			"total_out": 0,
+			"total_size": 0,
+			"total_weight": 0,
+			"totalfee": 0,
+			"txs": 1,
+			"utxo_increase": 1,
+			"utxo_size_inc": 117
 		}
 	},
 	genesisCoinbaseOutputAddressScripthash:"8b01df4e368ea28f8dc0423bcf7a4923e3a12d307c875e47a0cfbf90b5c39161",
@@ -196,7 +397,7 @@ module.exports = {
 			chain: "main",
 			txid: "4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b",
 			summary: "The coinbase transaction of the Genesis Block.",
-			alertBodyHtml: "This transaction doesn't really exist! This is the coinbase transaction of the <a href='/block/000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f'>Bitcoin Genesis Block</a>. For more background about this special-case transaction, you can read <a href='https://github.com/bitcoin/bitcoin/issues/3303'>this brief discussion</a> among some of the <a href='https://bitcoin.org'>Bitcoin</a> developers.",
+			alertBodyHtml: "This transaction doesn't really exist! This is the coinbase transaction of the <a href='./block/000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f'>Bitcoin Genesis Block</a>. For more background about this special-case transaction, you can read <a href='https://github.com/bitcoin/bitcoin/issues/3303'>this brief discussion</a> among some of the <a href='https://bitcoin.org'>Bitcoin</a> developers.",
 			referenceUrl: "https://github.com/bitcoin/bitcoin/issues/3303"
 		},
 		{
@@ -209,6 +410,51 @@ module.exports = {
 			referenceUrl: "https://twitter.com/marttimalmi/status/423455561703624704"
 		},
 		{
+			type:"address",
+			date:"2013-09-13",
+			chain: "main",
+			address:"37k7toV1Nv4DfmQbmZ8KuZDQCYK9x5KpzP",
+			summary:"SHA1 collision bounty",
+			alertBodyHtml:"On September 13, 2013 a P2SH address was setup which allowed anyone who found a SHA1 collision to construct a transaction that could spend from this address.",
+			referenceUrl:"https://bitcointalk.org/index.php?topic=293382.0"
+		},
+		{
+			type:"address",
+			date:"2013-09-13",
+			chain: "main",
+			address:"35Snmmy3uhaer2gTboc81ayCip4m9DT4ko",
+			summary:"SHA256 collision bounty",
+			alertBodyHtml:"On September 13, 2013 a P2SH address was setup which allowed anyone who found a SHA256 collision to construct a transaction that could spend from this address.",
+			referenceUrl:"https://bitcointalk.org/index.php?topic=293382.0"
+		},
+		{
+			type:"address",
+			date:"2013-09-13",
+			chain: "main",
+			address:"3KyiQEGqqdb4nqfhUzGKN6KPhXmQsLNpay",
+			summary:"RIPEMD160 collision bounty",
+			alertBodyHtml:"On September 13, 2013 a P2SH address was setup which allowed anyone who found a RIPEMD160 collision to construct a transaction that could spend from this address.",
+			referenceUrl:"https://bitcointalk.org/index.php?topic=293382.0"
+		},
+		{
+			type:"address",
+			date:"2013-09-13",
+			chain: "main",
+			address:"39VXyuoc6SXYKp9TcAhoiN1mb4ns6z3Yu6",
+			summary:"RIPEMD160(SHA256()) collision bounty",
+			alertBodyHtml:"On September 13, 2013 a P2SH address was setup which allowed anyone who found a RIPEMD160(SHA256()) collision to construct a transaction that could spend from this address.",
+			referenceUrl:"https://bitcointalk.org/index.php?topic=293382.0"
+		},
+		{
+			type:"address",
+			date:"2013-09-13",
+			chain: "main",
+			address:"3DUQQvz4t57Jy7jxE86kyFcNpKtURNf1VW",
+			summary:"SHA256(SHA256()) collision bounty",
+			alertBodyHtml:"On September 13, 2013 a P2SH address was setup which allowed anyone who found a SHA256(SHA256()) collision to construct a transaction that could spend from this address.",
+			referenceUrl:"https://bitcointalk.org/index.php?topic=293382.0"
+		},
+		{
 			type: "blockheight",
 			date: "2017-08-24",
 			chain: "main",
@@ -218,10 +464,46 @@ module.exports = {
 			referenceUrl: "https://twitter.com/conio/status/900722226911219712"
 		},
 		{
+			type: "blockheight",
+			date: "2012-11-28",
+			chain: "main",
+			blockHeight: 210000,
+			blockHash: "000000000000048b95347e83192f69cf0366076336c639f9b7228e9ba171342e",
+			summary: "First block of subsidy era #2 (25 BTC).",
+			referenceUrl: "https://github.com/bitcoin/bitcoin/blob/master/src/validation.cpp#L1240"
+		},
+		{
+			type: "blockheight",
+			date: "2016-07-09",
+			chain: "main",
+			blockHeight: 420000,
+			blockHash: "000000000000000002cce816c0ab2c5c269cb081896b7dcb34b8422d6b74ffa1",
+			summary: "First block of subsidy era #3 (12.5 BTC).",
+			referenceUrl: "https://github.com/bitcoin/bitcoin/blob/master/src/validation.cpp#L1240"
+		},
+		{
+			type: "blockheight",
+			date: "2020-05-11",
+			chain: "main",
+			blockHeight: 630000,
+			blockHash: "000000000000000000024bead8df69990852c202db0e0097c1a12ea637d7e96d",
+			summary: "First block of subsidy era #4 (6.25 BTC).",
+			referenceUrl: "https://github.com/bitcoin/bitcoin/blob/master/src/validation.cpp#L1240"
+		},
+		{
+			type: "blockheight",
+			date: "2020-05-11",
+			chain: "main",
+			blockHeight: 629999,
+			blockHash: "0000000000000000000d656be18bb095db1b23bd797266b0ac3ba720b1962b1e",
+			summary: "'Times 09/Apr/2020 With $2.3T Injection, Fed's Plan Far Exceeds 2008 Rescue'",
+			alertBodyHtml: "With the coinbase message 'Times 09/Apr/2020 With $2.3T Injection, Fed's Plan Far Exceeds 2008 Rescue', this final block of subsidy era #3 (12.5 BTC) echoes the spiritual call-to-action of <a href='./block/000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f'>Satoshi's genesis block</a>.",
+		},
+		{
 			type: "tx",
 			date: "2017-08-24",
 			chain: "main",
-			txid: "8f907925d2ebe48765103e6845C06f1f2bb77c6adc1cc002865865eb5cfd5c1c",
+			txid: "8f907925d2ebe48765103e6845c06f1f2bb77c6adc1cc002865865eb5cfd5c1c",
 			summary: "First SegWit transaction.",
 			referenceUrl: "https://twitter.com/KHS9NE/status/900553902923362304"
 		},
@@ -239,7 +521,7 @@ module.exports = {
 			chain: "main",
 			txid: "a1075db55d416d3ca199f55b6084e2115b9345e16c5cf302fc80e9d5fbf5d48d",
 			summary: "The 'Bitcoin Pizza' transaction.",
-			alertBodyHtml: "This is the famous 'Bitcoin Pizza' transaction.",
+			alertBodyHtml: "This is the famous 'Bitcoin Pizza' transaction, one of the earliest 'real-world' transactions, in which 10,000 BTC was paid for 2 large pizzas worth ~41 USD (at an effective exchange rate of ~$0.04/BTC).",
 			referenceUrl: "https://bitcointalk.org/index.php?topic=137.0"
 		},
 		{
@@ -258,8 +540,16 @@ module.exports = {
 			blockHeight: 170,
 			blockHash: "00000000d1145790a8694403d4063f323d499e655c83426834d4ce2f8dd4a2ee",
 			summary: "First block containing a (non-coinbase) transaction.",
-			alertBodyHtml: "This block comes 9 days after the genesis block and is the first to contain a transfer of bitcoin. Before this block all blocks contained only coinbase transactions which mint new bitcoin.",
+			alertBodyHtml: "This block comes 9 days after the genesis block and is the first to contain a transfer of bitcoin. Before this block all blocks contained only coinbase transactions, which mint new bitcoin.<br/>See transaction #1 (f4184fc…) below for more info.",
 			referenceUrl: "https://bitcointalk.org/index.php?topic=91806.msg1012234#msg1012234"
+		},
+		{
+			type: "tx",
+			date: "2009-01-12",
+			chain: "main",
+			txid: "f4184fc596403b9d638783cf57adfe4c75c605f6356fbc91338530e9831e9e16",
+			summary: "The first transfer of bitcoin.",
+			alertBodyHtml: "This transaction represents the first ever transfer of bitcoin from one person to another. It also has the added distinction of being (one of?) the only known transfers of bitcoin from Satoshi Nakamoto, in this case sending bitcoin to Hal Finney as a test."
 		},
 		{
 			type: "blockheight",
@@ -304,7 +594,7 @@ module.exports = {
 			txid: "e3bf3d07d4b0375638d5f1db5255fe07ba2c4cb067cd81b84ee974b6585fb468",
 			summary: "Duplicated coinbase transaction #1",
 			referenceUrl: "https://bitcoin.stackexchange.com/questions/38994/will-there-be-21-million-bitcoins-eventually/38998#38998",
-			alertBodyHtml: "This is one of 2 'duplicate coinbase' transactions. An early bitcoin bug (fixed by <a href='https://github.com/bitcoin/bips/blob/master/bip-0030.mediawiki'>BIP30</a>) allowed identical coinbase transactions - a newer duplicate would overwrite older copies. This transaction was the coinbase transaction for <a href='/block-height/91722'>Block #91,722</a> and, ~16 hours later, <a href='/block-height/91880'>Block #91,880</a>. The 50 BTC claimed as the coinbase for block 91,722 were also overwritten and lost."
+			alertBodyHtml: "This is one of 2 'duplicate coinbase' transactions. An early bitcoin bug (fixed by <a href='https://github.com/bitcoin/bips/blob/master/bip-0030.mediawiki'>BIP30</a>) allowed identical coinbase transactions - a newer duplicate would overwrite older copies. This transaction was the coinbase transaction for <a href='./block-height/91722'>Block #91,722</a> and, ~16 hours later, <a href='./block-height/91880'>Block #91,880</a>. The 50 BTC claimed as the coinbase for block 91,722 were also overwritten and lost."
 		},
 		{
 			type: "tx",
@@ -313,8 +603,34 @@ module.exports = {
 			txid: "d5d27987d2a3dfc724e359870c6644b40e497bdc0589a033220fe15429d88599",
 			summary: "Duplicated coinbase transaction #2",
 			referenceUrl: "https://bitcoin.stackexchange.com/questions/38994/will-there-be-21-million-bitcoins-eventually/38998#38998",
-			alertBodyHtml: "This is one of 2 'duplicate coinbase' transactions. An early bitcoin bug (fixed by <a href='https://github.com/bitcoin/bips/blob/master/bip-0030.mediawiki'>BIP30</a>) allowed identical coinbase transactions - a newer duplicate would overwrite older copies. This transaction was the coinbase transaction for <a href='/block-height/91812'>Block #91,812</a> and, ~3 hours later, <a href='/block-height/91842'>Block #91,842</a>. The 50 BTC claimed as the coinbase for block 91,812 were also overwritten and lost."
+			alertBodyHtml: "This is one of 2 'duplicate coinbase' transactions. An early bitcoin bug (fixed by <a href='https://github.com/bitcoin/bips/blob/master/bip-0030.mediawiki'>BIP30</a>) allowed identical coinbase transactions - a newer duplicate would overwrite older copies. This transaction was the coinbase transaction for <a href='./block-height/91812'>Block #91,812</a> and, ~3 hours later, <a href='./block-height/91842'>Block #91,842</a>. The 50 BTC claimed as the coinbase for block 91,812 were also overwritten and lost."
 		},
+		{
+			type: "tx",
+			date: "2020-03-11",
+			chain: "main",
+			txid: "eeea72f5c9fe07178013eac84c3705443321d5453befd7591f52d22ac39b3963",
+			summary: "500+ million USD transferred for < 1 USD fee (2020 prices)."
+		},
+		{
+			type: "tx",
+			date: "2020-05-20",
+			chain: "main",
+			txid: "cb1440c787d8a46977886405a34da89939e1b04907f567bf182ef27ce53a8d71",
+			summary: "Very old coins (mined ~1 month after genesis) move unexpectedly, causing uproar",
+			alertBodyHtml: "On May 5, 2020, 50 BTC mined on Feb 9, 2009 (~1 month after Satoshi mined the Genesis block), moved unexpectedly after being dormant for 11+ years. Some observers wondered if they were coins from Satoshi's stash (they likely <a href='https://twitter.com/zackvoell/status/1263120133054255104'>were not</a>) and got excited.",
+			referenceUrl: "https://twitter.com/WhalePanda/status/1263120678380867586"
+		},
+		{
+			type: "address",
+			date: "2020-07-15",
+			chain: "main",
+			address: "bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh",
+			summary: "July 2020 Twitter hack BTC address",
+			alertBodyHtml: "On July 15, 2020 a hack involving many prominent Twitter accounts, including Elon Musk's, Bill Gates', and Cash App's, scammed many people to send BTC to this address.",
+			referenceUrl: "https://twitter.com/lawmaster/status/1283694581926723585"
+		},
+
 
 
 		// testnet
@@ -334,7 +650,7 @@ module.exports = {
 			chain: "test",
 			txid: "4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b",
 			summary: "The coinbase transaction of the Genesis Block.",
-			alertBodyHtml: "This transaction doesn't really exist! This is the coinbase transaction of the <a href='/block/000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f'>Bitcoin Genesis Block</a>. For more background about this special-case transaction, you can read <a href='https://github.com/bitcoin/bitcoin/issues/3303'>this brief discussion</a> among some of the <a href='https://bitcoin.org'>Bitcoin</a> developers.",
+			alertBodyHtml: "This transaction doesn't really exist! This is the coinbase transaction of the <a href='./block/000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f'>Bitcoin Genesis Block</a>. For more background about this special-case transaction, you can read <a href='https://github.com/bitcoin/bitcoin/issues/3303'>this brief discussion</a> among some of the <a href='https://bitcoin.org'>Bitcoin</a> developers.",
 			referenceUrl: "https://github.com/bitcoin/bitcoin/issues/3303"
 		},
 
@@ -356,7 +672,7 @@ module.exports = {
 			chain: "regtest",
 			txid: "4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b",
 			summary: "The coinbase transaction of the Genesis Block.",
-			alertBodyHtml: "This transaction doesn't really exist! This is the coinbase transaction of the <a href='/block/000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f'>Bitcoin Genesis Block</a>. For more background about this special-case transaction, you can read <a href='https://github.com/bitcoin/bitcoin/issues/3303'>this brief discussion</a> among some of the <a href='https://bitcoin.org'>Bitcoin</a> developers.",
+			alertBodyHtml: "This transaction doesn't really exist! This is the coinbase transaction of the <a href='./block/000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f'>Bitcoin Genesis Block</a>. For more background about this special-case transaction, you can read <a href='https://github.com/bitcoin/bitcoin/issues/3303'>this brief discussion</a> among some of the <a href='https://bitcoin.org'>Bitcoin</a> developers.",
 			referenceUrl: "https://github.com/bitcoin/bitcoin/issues/3303"
 		},
 	],

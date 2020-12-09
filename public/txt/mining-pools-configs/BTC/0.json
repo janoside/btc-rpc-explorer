@@ -5,8 +5,12 @@
             "link": "https://mining.luxor.tech"
         },
         "/1THash&58COIN/": {
-            "name": "1THash&58COIN",
+            "name": "58COIN&1THash",
             "link": "https://www.1thash.top"
+        },
+        "/BTC.COM/" : {
+            "name" : "BTC.com",
+            "link" : "https://pool.btc.com"
         },
         "BITFARMS": {
             "name": "Bitfarms",
@@ -300,6 +304,10 @@
             "name": "HotPool",
             "link": "https://hotpool.co/"
         },
+        "/www.okex.com/" : {
+            "name": "OKExPool",
+            "link": "https://www.okex.com/"
+        },
         "/BCMonster/" : {
             "name": "BCMonster",
             "link": "http://www.bcmonster.com/"
@@ -319,6 +327,10 @@
         "/Bixin/" : {
             "name": "Bixin",
             "link": "https://haopool.com/"
+        },
+        "/ViaBTC/TATMAS Pool/" : {
+            "name" : "TATMAS Pool",
+            "link" : "https://tmsminer.com/"
         },
         "viabtc.com deploy" : {
             "name": "ViaBTC",
@@ -428,8 +440,8 @@
             "name" : "tigerpool.net",
             "link" : ""
         },
-        "/SigmaPool.com/": {
-            "name" : "sigmapool.com",
+        "/Sigmapool.com/": {
+            "name" : "Sigmapool.com",
             "link" : "https://sigmapool.com"
         },
         "/www.okpool.top/": {
@@ -450,11 +462,39 @@
         },
         "/bytepool.com/": {
             "name" : "BytePool",
-            "link" : "https://bytepool.com/"
+            "link" : "https://www.bytepool.com/"
         },
-        "/SpiderPool.com/": {
+        "/SpiderPool/": {
             "name" : "SpiderPool",
             "link" : "https://www.spiderpool.com/"
+        },
+        "/NovaBlock/": {
+            "name" : "NovaBlock",
+            "link" : "https://novablock.com"
+        },
+        "MiningCity": {
+            "name" : "MiningCity",
+            "link" : "https://www.miningcity.com/"
+        },
+        "/Binance/": {
+            "name" : "Binance Pool",
+            "link" : "https://pool.binancezh.com/"
+        },
+        "/Minerium.com/" : {
+            "name" : "Minerium",
+            "link" : "https://www.minerium.com/"
+        },
+        "/Buffett/": {
+            "name" : "Lubian.com",
+            "link" : ""
+        },
+        "/lubian.com/" : {
+            "name" : "Lubian.com",
+            "link" : "http://www.lubian.com/"
+        },
+        "/hash.okkong.com/" : {
+            "name" : "OKKONG",
+            "link" : "https://hash.okkong.com"
         }
     },
     "payout_addresses" : {
@@ -852,9 +892,13 @@
         },
         "39m5Wvn9ZqyhYmCYpsyHuGMt5YYw4Vmh1Z" : {
             "name": "BytePool",
-            "link": "https://bytepool.com/"
+            "link": "https://www.bytepool.com/"
         },
         "38u1srayb1oybVB43UWKBJsrwJbdHGtPx2": {
+            "name" : "SpiderPool",
+            "link" : "https://www.spiderpool.com/"
+        },
+        "125m2H43pwKpSZjLhMQHneuTwTJN5qRyYu": {
             "name" : "SpiderPool",
             "link" : "https://www.spiderpool.com/"
         },
@@ -1006,9 +1050,37 @@
             "name": "AntPool",
             "link": "https://www.antpool.com/"
         },
+        "12cKiMNhCtBhZRUBCnYXo8A4WQzMUtYjmR": {
+            "name": "Sigmapool.com",
+            "link": "https://sigmapool.com/"
+        },
         "125K2xfiBdae42gSKiCGwi85Frpy1vHmGj": {
-            "name": "UKRPool",
-            "link": "https://www.ukrpool.com"
+            "name": "OKKONG",
+            "link": "https://hash.okkong.com/"
+        },
+        "16JHXJ7M2MubWNX9grnqbjUqJ5PHwcCWw2": {
+            "name": "OKKONG",
+            "link": "https://hash.okkong.com/"
+        },
+        "11wC5KcbgrWRBb43cwADdVrxgyF8mndVC": {
+            "name": "MiningCity",
+            "link": "https://www.miningcity.com/"
+        },
+        "1DSh7vX6ed2cgTeKPwufV5i4hSi4pp373h": {
+            "name" : "Binance Pool",
+            "link" : "https://pool.binancezh.com/"
+        },
+        "16moWjUJVRnDQKqhoCdcszfJg9wzBdoTHw": {
+            "name" : "Binance Pool",
+            "link" : "https://pool.binancezh.com/"
+        },
+        "bc1qx9t2l3pyny2spqpqlye8svce70nppwtaxwdrp4": {
+            "name" : "Binance Pool",
+            "link" : "https://pool.binancezh.com/"
+        },
+        "34Jpa4Eu3ApoPVUKNTN2WeuXVVq1jzxgPi": {
+            "name" : "Lubian.com",
+            "link" : "http://www.lubian.com/"
         }
     }
 }

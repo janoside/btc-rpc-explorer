@@ -3,7 +3,7 @@ extends layout
 block headContent
 	title Peers
 
-	link(rel="stylesheet", href="/css/dataTables.bootstrap4.min.css", integrity="sha384-EkHEUZ6lErauT712zSr0DZ2uuCmi3DoQj6ecNdHQXpMpFNGAQ48WjfXCE5n20W+R")
+	link(rel="stylesheet", href="./css/dataTables.bootstrap4.min.css", integrity="sha384-EkHEUZ6lErauT712zSr0DZ2uuCmi3DoQj6ecNdHQXpMpFNGAQ48WjfXCE5n20W+R")
 
 	link(rel="stylesheet", href="https://unpkg.com/leaflet@1.3.3/dist/leaflet.css", integrity="sha512-Rksm5RenBEKSKFjgI3a41vrjkw4EVPlJ3+OiI65vTjIdo9brlAacEuKOiQ5OFh7cOI1bkDwLqdLw3Zg0cRJAAQ==", crossorigin="")
 
@@ -24,79 +24,82 @@ block content
 			span Peers
 	hr
 
-	ul(class='nav nav-tabs mb-3')
-		li(class="nav-item")
-			a(data-toggle="tab", href="#tab-summary", class="nav-link active", role="tab") Summary
-		li(class="nav-item")
-			a(data-toggle="tab", href="#tab-json", class="nav-link", role="tab") JSON
+	ul.nav.nav-tabs.mb-3
+		li.nav-item
+			a.nav-link.active(data-toggle="tab", href="#tab-summary", role="tab") Summary
+		li.nav-item
+			a.nav-link(data-toggle="tab", href="#tab-json", role="tab") JSON
 
-	div(class="tab-content")
-		div(id="tab-summary", class="tab-pane active", role="tabpanel")
+	div.tab-content
+		div.tab-pane.active(id="tab-summary", role="tabpanel")
 			
-
 			if (peerIpSummary && peerIpSummary.ips)
-				div(id="map", class="mb-4")
+				div.mb-3(id="map")
 
-			div(class="card mb-4 shadow-sm")
-				div(class="card-header")
-					h2(class="h6 mb-0") Summary
-				div(class="card-body")
-					div(class="row")
-						div(class="col-md-6")
-							span(class="font-weight-bold") Top Versions
+			div.row
+				div.col-md-6
+					div.card.shadow-sm.mb-3
+						div.card-body
+							h3.h6.mb-0 Top Versions
 							hr
-							table(class="table table-striped table-responsive-sm")
+
+							table.table.table-striped.table-responsive-sm
 								thead
 									tr
 										th
-										th(class="data-header") Version
-										th(class="data-header") Count
+										th.data-header Version
+										th.data-header Count
 								tbody
 									each item, index in peerSummary.versionSummary
 										tr(class=(index >= 5 ? "versions-hidden-rows" : false))
-											td(class="data-cell font-weight-bold") #{index + 1}
+											td.data-cell.font-weight-bold #{index + 1}
 
-											td(class="data-cell monospace") #{item[0]}
-											td(class="data-cell monospace") #{item[1].toLocaleString()}
+											td.data-cell.text-monospace #{item[0]}
+											td.data-cell.text-monospace #{item[1].toLocaleString()}
 
-						div(class="col-md-6")
-							span(class="font-weight-bold") Top Service Flags
+				div.col-md-6
+					div.card.shadow-sm.mb-3
+						div.card-body
+							h3.h6.mb-0 Top Service Flags
 							hr
-							table(class="table table-striped table-responsive-sm")
+
+							table.table.table-striped.table-responsive-sm
 								thead
 									tr
 										th
-										th(class="data-header") Services
-										th(class="data-header") Count
+										th.data-header Services
+										th.data-header Count
 								tbody
 									each item, index in peerSummary.servicesSummary
 										tr(class=(index >= 5 ? "services-hidden-rows" : false))
-											td(class="data-cell font-weight-bold") #{index + 1}
+											td.data-cell.font-weight-bold #{index + 1}
 
-											td(class="data-cell monospace") #{item[0]}
-											td(class="data-cell monospace") #{item[1].toLocaleString()}
+											td.data-cell.text-monospace #{item[0]}
+											td.data-cell.text-monospace #{item[1].toLocaleString()}
+							
 
-			div(class="card mb-4 shadow-sm")
-				div(class="card-header")
-					h2(class="h6 mb-0") #{peerSummary.getpeerinfo.length} 
+			div.card.shadow-sm.mb-3
+				div.card-body
+					h3.h6.mb-0 #{peerSummary.getpeerinfo.length} 
 						if (peerSummary.getpeerinfo.length == 1)
 							span Peer
 						else
 							span Peers
 
-				div(class="card-body")
-					table(class="table table-striped table-responsive-sm data-table mt-4")
+					hr
+
+					table.table.table-striped.table-responsive-sm.data-table.mt-4
 						thead
 							tr
 								th
-								th(class="data-header") Version
-								th(class="data-header") Address
-								th(class="data-header") Services
+								th.data-header Version
+								th.data-header Address
+								th.data-header Services
 
 								if (peerIpSummary && peerIpSummary.ips)
-									th(class="data-header") Location
+									th.data-header Location
 
-								th(class="data-header") Last Send / Receive
+								th.data-header Last Send / Receive
 
 						tbody
 							each item, index in peerSummary.getpeerinfo
@@ -104,14 +107,14 @@ block content
 								- var lastRecvAgo = moment.duration(moment.utc(new Date()).diff(moment.utc(new Date(parseInt(item.lastrecv) * 1000)))).format().replace("milliseconds", "ms");
 
 								tr
-									th(class="data-cell") #{index + 1}
+									th.data-cell #{index + 1}
 
-									td(class="data-cell monospace") #{item.subver}
-									td(class="data-cell monospace") #{item.addr}
-									td(class="data-cell monospace") #{item.services}
+									td.data-cell.text-monospace #{item.subver}
+									td.data-cell.text-monospace #{item.addr}
+									td.data-cell.text-monospace #{item.services}
 
 									if (peerIpSummary.ips)
-										td(class="data-cell monospace")
+										td.data-cell.text-monospace
 											- var ipAddr = item.addr.substring(0, item.addr.lastIndexOf(":"));
 											if (peerIpSummary.ips && peerIpSummary.ips.includes(ipAddr))
 												- var ipDetails = peerIpSummary.detailsByIp[ipAddr];
@@ -127,34 +130,42 @@ block content
 
 											- var ipAddr = null;
 
-									td(class="data-cell monospace") #{lastSendAgo} / #{lastRecvAgo}
+									td.data-cell.text-monospace #{lastSendAgo} / #{lastRecvAgo}
 			
 
 
-		div(id="tab-json", class="tab-pane", role="tabpanel")
+		div.tab-pane(id="tab-json", role="tabpanel")
 			each item, index in peerSummary.getpeerinfo
-				div(class="border-bottom p-1")
+				div.border-bottom.p-1
 					a(href="javascript:void(0)" onclick=("javascript:var peer = document.getElementById('peerinfo_" + index + "'); peer.style.display = peer.style.display === 'none' ? '' : 'none';"))
-						i(class="fas fa-plus-circle") 
+						i.fas.fa-plus-circle 
 
-					span(class="monospace")  #{item.addr}
+					span.text-monospace  #{item.addr}
 
-				div(style="display: none;", id=("peerinfo_" + index), class="p-3")
-					h6 Peer Details
-					pre
-						code(class="json bg-light") #{JSON.stringify(item, null, 4)}
+				div.p-3(style="display: none;", id=("peerinfo_" + index))
+					div.card.shadow-sm.mb-3
+						div.card-body
+							h6.mb-0 Peer Details
+							hr
+					
+							div.highlight
+								pre
+									code.json.bg-light #{JSON.stringify(item, null, 4)}
 
 					if (peerIpSummary && peerIpSummary.detailsByIp && peerIpSummary.detailsByIp[item.addr.substring(0, item.addr.lastIndexOf(":"))])
-						hr
+						div.card.shadow-sm.mb-3
+							div.card-body
+								h6.mb-0 IP Geo-Location Info
+								hr
 
-						h6 IP Geo-Location Info
-						pre
-							code(class="json bg-light") #{JSON.stringify(peerIpSummary.detailsByIp[item.addr.substring(0, item.addr.lastIndexOf(":"))], null, 4)}
+								div.highlight
+									pre
+										code.json.bg-light #{JSON.stringify(peerIpSummary.detailsByIp[item.addr.substring(0, item.addr.lastIndexOf(":"))], null, 4)}
 
 	
 block endOfBody
-	script(src="/js/jquery.dataTables.min.js", integrity="sha384-rgWRqC0OFPisxlUvl332tiM/qmaNxnlY46eksSZD84t+s2vZlqGeHrncwIRX7CGp")
-	script(src="/js/dataTables.bootstrap4.min.js", integrity="sha384-uiSTMvD1kcI19sAHJDVf68medP9HA2E2PzGis9Efmfsdb8p9+mvbQNgFhzii1MEX")
+	script(src="./js/jquery.dataTables.min.js", integrity="sha384-rgWRqC0OFPisxlUvl332tiM/qmaNxnlY46eksSZD84t+s2vZlqGeHrncwIRX7CGp")
+	script(src="./js/dataTables.bootstrap4.min.js", integrity="sha384-uiSTMvD1kcI19sAHJDVf68medP9HA2E2PzGis9Efmfsdb8p9+mvbQNgFhzii1MEX")
 
 	script.
 		$(document).ready(function() {

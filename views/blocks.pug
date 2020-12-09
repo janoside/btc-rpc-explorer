@@ -4,35 +4,36 @@ block headContent
 	title Blocks
 
 block content
-	h1(class="h2") Blocks
+	h1.h3 Blocks
 	hr
 
 	if (blocks)
 		nav(aria-label="Page navigation")
-			ul(class="pagination justify-content-center")
+			ul.pagination.justify-content-center
 				
-				li(class="page-item", class=(sort == "desc" ? "active" : false))
-					a(class="page-link", href=(sort == "desc" ? "javascript:void(0)" : "/blocks?limit=" + limit + "&offset=0" + "&sort=desc"))
+				li.page-item(class=(sort == "desc" ? "active" : false))
+					a.page-link(href=(sort == "desc" ? "javascript:void(0)" : "./blocks?limit=" + limit + "&offset=0" + "&sort=desc"))
 						span(aria-hidden="true") Newest blocks first
 
-				li(class="page-item", class=(sort == "asc" ? "active" : false))
-					a(class="page-link", href=(sort == "asc" ? "javascript:void(0)" : "/blocks?limit=" + limit + "&offset=0" + "&sort=asc"))
+				li.page-item(class=(sort == "asc" ? "active" : false))
+					a.page-link(href=(sort == "asc" ? "javascript:void(0)" : "./blocks?limit=" + limit + "&offset=0" + "&sort=asc"))
 						span(aria-hidden="true") Oldest blocks first
 
-		include includes/blocks-list.pug
+		div.card.shadow-sm.mb-3
+			div.card-body
+				include includes/blocks-list.pug
 
-		if (blockCount > limit)
-			- var pageNumber = offset / limit + 1;
-			- var pageCount = Math.floor(blockCount / limit);
-			- if (pageCount * limit < blockCount) {
-				- pageCount++;
-			- }
-			- var paginationUrlFunction = function(x) {
-				- return paginationBaseUrl + "?limit=" + limit + "&offset=" + ((x - 1) * limit + "&sort=" + sort);
-			- }
-			
-			hr
-
-			include includes/pagination.pug
+				if (blockCount > limit)
+					- var pageNumber = offset / limit + 1;
+					- var pageCount = Math.floor(blockCount / limit);
+					- if (pageCount * limit < blockCount) {
+						- pageCount++;
+					- }
+					- var paginationUrlFunction = function(x) {
+						- return paginationBaseUrl + "?limit=" + limit + "&offset=" + ((x - 1) * limit + "&sort=" + sort);
+					- }
+					
+					div.pt-5
+						include includes/pagination.pug
 	else
 		p No blocks found

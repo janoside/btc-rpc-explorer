@@ -375,6 +375,106 @@
         "Hummerpool" : {
             "name" : "Hummerpool",
             "link" : ""
+        },
+        "by emcd" : {
+            "name" : "EMCD.IO",
+            "link" : "https://emcd.io"
+        },
+        "/1THash&58COIN/": {
+            "name": "1THash&58COIN",
+            "link": "https://www.1thash.top"
+        },
+        "BITFARMS": {
+            "name": "Bitfarms",
+            "link": "https://www.bitarms.io/"
+        },
+        "/Huobi/": {
+            "name": "Huobi.pool",
+            "link": "https://www.poolhb.com/"
+        },
+        "/HuoBi/": {
+            "name": "Huobi.pool",
+            "link": "https://www.poolhb.com/"
+        },
+        "/E2M & BTC.TOP/": {
+            "name": "WAYI.CN",
+            "link": "http://www.easy2mine.com/"
+        },
+        "/canoepool/": {
+            "name": "CanoePool",
+            "link": "https://www.canoepool.com/"
+        },
+        "🐟": {
+            "name": "F2Pool",
+            "link": "https://www.f2pool.com/"
+        },
+        "Mined By AntPool": {
+            "name": "AntPool",
+            "link": "https://www.antpool.com/"
+        },
+        "BWPool": {
+            "name": "BWPool",
+            "link": "https://bwpool.net/"
+        },
+        "/www.okex.com/": {
+            "name": "OKExPool",
+            "link": "https://www.okex.com/"
+        },
+        "/DCEX/": {
+            "name": "DCEX",
+            "link": "http://dcexploration.cn"
+        },
+        "/BTPOOL/": {
+            "name": "BTPOOL",
+            "link": ""
+        },
+        "/Rawpool.com/": {
+            "name": "Rawpool.com",
+            "link": "https://www.rawpool.com/"
+        },
+        "/Helix/": {
+            "name": "Helix",
+            "link": ""
+        },
+        "/Bitcoin-Ukraine.com.ua/": {
+            "name": "Bitcoin-Ukraine",
+            "link": "https://bitcoin-ukraine.com.ua/"
+        },
+        "/poolin.com": {
+            "name": "Poolin",
+            "link": "https://www.poolin.com/"
+        },
+        "/SecretSuperstar/": {
+            "name": "SecretSuperstar",
+            "link": ""
+        },
+        "/tigerpool.net": {
+            "name": "tigerpool.net",
+            "link": ""
+        },
+        "/SigmaPool.com/": {
+            "name": "sigmapool.com",
+            "link": "https://sigmapool.com"
+        },
+        "/www.okpool.top/": {
+            "name": "okpool.top",
+            "link": "https://www.okpool.top"
+        },
+        "HummerPool": {
+            "name": "Hummerpool",
+            "link": "https://www.hummerpool.com"
+        },
+        "/bytepool.com/": {
+            "name": "BytePool",
+            "link": "https://www.bytepool.com/"
+        },
+        "/NovaBlock/": {
+            "name": "NovaBlock",
+            "link": "https://novablock.com"
+        },
+        "MiningCity":{
+            "name":"MiningCity",
+            "link":"https://www.miningcity.com/"
         }
     },
     "payout_addresses" : {
@@ -761,6 +861,10 @@
         "3KJrsjfg1dD6CrsTeHdHVH3KqMpvL2XWQn" : {
             "name": "Poolin",
             "link": "https://www.poolin.com/"
+        },
+        "11wC5KcbgrWRBb43cwADdVrxgyF8mndVC":{
+            "name":"MiningCity",
+            "link":"https://www.miningcity.com/"
         }
     }
 }

@@ -74,8 +74,6 @@ function getAddressDetails(address, scriptPubkey, sort, limit, offset) {
 				resolve(null);
 			}
 		}).catch(function(err) {
-			utils.logError("239x7rhsd0gs", err);
-
 			reject(err);
 		});
 	});
