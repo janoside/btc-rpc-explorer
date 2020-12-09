@@ -6,6 +6,7 @@
 * Support for listening on 0.0.0.0 (Thanks [@lukechilds](https://github.com/lukechilds))
 * Sanitizing of environment variables (Thanks [@lukechilds](https://github.com/lukechilds))
 * Fix for low severity lodash dependency vulnerability (Thanks [@abhiShandy](https://github.com/abhiShandy))
+* Fix for zero block reward (eventually on mainnet, now on regtest) (Thanks [@MyNameIsOka](https://github.com/MyNameIsOka))
 * Fix for cryptic error when running regtest with no blocks
 * Fix for pagination errors on `/blocks` (not displaying genesis block on the last page; error on last page when sort=asc)
 * Electrum connect/disconnect stats on `/admin`
