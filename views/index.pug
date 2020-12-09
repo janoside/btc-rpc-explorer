@@ -54,7 +54,7 @@ block content
 				a.close(href="./changeSetting?name=hideHomepageBanner&value=true", aria-label="Close", style="text-decoration: none;")
 					span(aria-hidden="true") &times;
 
-		if (getblockchaininfo.initialblockdownload)
+		if (getblockchaininfo.initialblockdownload && !["regtest", "signet"].includes(global.activeBlockchain))
 			div.alert.alert-warning.shadow-sm.border.mb-3
 				div.font-weight-bold.mb-1 Initial Block Download (IBD) - In Progress...
 

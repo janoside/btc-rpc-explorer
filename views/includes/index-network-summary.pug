@@ -29,14 +29,15 @@ div.row.index-summary
 							span.d-none.d-xxl-inline #{hashrate7dayData1[0]} 
 							small.border-dotted(title=`${hashrate1dayData0[1].abbreviation}H = ${hashrate1dayData0[1].name}-hash (x10^${hashrate1dayData0[1].exponent})`, data-toggle="tooltip") #{hashrate1dayData0[1].abbreviation}H/s
 
-				tr
-					th.px-2.px-lg-0.px-xl-2
-						i.fas.fa-edit.mr-1.summary-icon
-						span.border-dotted(title="Estimate of the number of days the current global hashrate would require to produce all the hashes needed to re-write the entire blockchain.", data-toggle="tooltip") Chain Rewrite Days
-					td.text-right.text-monospace
-						- var globalHashCount = parseInt("0x" + getblockchaininfo.chainwork);
-						- var rewriteDays = globalHashCount / hashrate7d / 60 / 60 / 24;
-						span #{new Decimal(rewriteDays).toDecimalPlaces(1)}
+				if (!["regtest", "signet"].includes(global.activeBlockchain))
+					tr
+						th.px-2.px-lg-0.px-xl-2
+							i.fas.fa-edit.mr-1.summary-icon
+							span.border-dotted(title="Estimate of the number of days the current global hashrate would require to produce all the hashes needed to re-write the entire blockchain.", data-toggle="tooltip") Chain Rewrite Days
+						td.text-right.text-monospace
+							- var globalHashCount = parseInt("0x" + getblockchaininfo.chainwork);
+							- var rewriteDays = globalHashCount / hashrate7d / 60 / 60 / 24;
+							span #{new Decimal(rewriteDays).toDecimalPlaces(1)}
 
 				tr
 					th.px-2.px-lg-0.px-xl-2
@@ -106,7 +107,8 @@ div.row.index-summary
 							- var diffAdjSign = "+";
 
 						span.border-dotted(title=diffAdjText, data-toggle="tooltip") #{timePerBlockDuration.format()}
-							small.text-muted.ml-1 (#{diffAdjSign}#{diffAdjPercent.toDP(1)}%)
+							if (!isNaN(diffAdjPercent))
+								small.text-muted.ml-1 (#{diffAdjSign}#{diffAdjPercent.toDP(1)}%)
 								
 
 	div(class=colClass)
