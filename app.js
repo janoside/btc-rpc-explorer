@@ -47,6 +47,7 @@ var addressApi = require("./app/api/addressApi.js");
 var electrumAddressApi = require("./app/api/electrumAddressApi.js");
 var coreApi = require("./app/api/coreApi.js");
 var auth = require('./app/auth.js');
+var sso = require('./app/sso.js');
 var marked = require("marked");
 
 var package_json = require('./package.json');
@@ -70,11 +71,16 @@ app.engine('pug', (path, options, fn) => {
 });
 
 app.set('view engine', 'pug');
+app.use(cookieParser());
 
 // basic http authentication
 if (process.env.BTCEXP_BASIC_AUTH_PASSWORD) {
 	app.disable('x-powered-by');
 	app.use(auth(process.env.BTCEXP_BASIC_AUTH_PASSWORD));
+// sso authentication
+} else if (process.env.BTCEXP_SSO_TOKEN_FILE) {
+	app.disable('x-powered-by');
+	app.use(sso(process.env.BTCEXP_SSO_TOKEN_FILE, process.env.BTCEXP_SSO_LOGIN_REDIRECT_URL));
 }
 
 // uncomment after placing your favicon in /public
@@ -82,7 +88,6 @@ if (process.env.BTCEXP_BASIC_AUTH_PASSWORD) {
 //app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
-app.use(cookieParser());
 app.use(session({
 	secret: config.cookieSecret,
 	resave: false,
