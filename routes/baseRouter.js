@@ -427,6 +427,10 @@ router.get("/blocks", function(req, res, next) {
 			}
 		}
 
+		blockHeights = blockHeights.filter((h) => {
+			return h >= 0 && h <= getblockchaininfo.blocks;
+		});
+
 		var promises = [];
 
 		promises.push(coreApi.getBlocksByHeight(blockHeights));
