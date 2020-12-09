@@ -478,9 +478,10 @@ function getBlockTotalFeesFromCoinbaseTxAndBlockHeight(coinbaseTx, blockHeight) 
 
 	if (blockReward < 1e-8 || blockReward == null) {
 		return totalOutput;
+		
 	} else {
 		return totalOutput.minus(new Decimal(blockReward));
-}
+	}
 }
 
 function refreshExchangeRates() {
