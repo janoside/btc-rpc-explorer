@@ -2,6 +2,7 @@
 ##### Pending...
 
 * Support for running on a configurable BASEURL, e.g. "/explorer/" (Thanks [@ketominer](https://github.com/ketominer), [@Kixunil](https://github.com/Kixunil), [@shesek](https://github.com/shesek))
+* Support for signet and taproot (Thanks [@guggero](https://github.com/guggero))
 * Support for listening on 0.0.0.0 (Thanks [@lukechilds](https://github.com/lukechilds))
 * Sanitizing of environment variables (Thanks [@lukechilds](https://github.com/lukechilds))
 * Fix for low severity lodash dependency vulnerability (Thanks [@abhiShandy](https://github.com/abhiShandy))
