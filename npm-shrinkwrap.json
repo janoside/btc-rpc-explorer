@@ -827,7 +827,7 @@
 			"integrity": "sha1-WQxhFWsK4vTwJVcyoViyZrxWsh0="
 		},
 		"electrum-client": {
-			"version": "github:janoside/electrum-client#6fefbd88f11d36244d5b3fe33381a89617646328",
+			"version": "github:janoside/electrum-client#d98e929028d2b05c88a41fe37652737912bead79",
 			"from": "github:janoside/electrum-client"
 		},
 		"elliptic": {
