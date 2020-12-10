@@ -86,7 +86,16 @@ To match the features visible on the demo site at [https://explorer.btc21.org](h
     BTCEXP_NO_RATES=false		# enables querying of exchange rate data
     BTCEXP_SLOW_DEVICE_MODE=false	# enables resource-intensive tasks (UTXO set query, 24hr volume querying) that are inappropriate for "slow" devices
 
+#### SSO authentication
 
+You can configure SSO authentication similar to what ThunderHub and RTL provide.
+To enable it, make sure `BTCEXP_BASIC_AUTH_PASSWORD` is **not** set and set `BTCEXP_SSO_TOKEN_FILE` to point to a file write-accessible by btc-rpc-explorer.
+Then to access btc-rpc-explorer, your SSO provider needs to read the token from this file and set it in URL parameter `token`.
+For security reasons the token changes with each login, so the SSO provider needs to read it each time!
+
+After successfull access with the token a cookie is used for authentication, so you don't have to worry about it anymore.
+To improve user experience you can set `BTCEXP_SSO_LOGIN_REDIRECT_URL` to the URL of your SSO provider.
+This causes the users to be redirected to login page if not logged in.
 
 ## Run via Docker
 
