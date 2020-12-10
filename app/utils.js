@@ -762,13 +762,15 @@ function outputTypeName(outputType) {
 }
 
 function asHash(value) {
-	return value.replace(/[^a-f0-9]/gi, '')
+	return value.replace(/[^a-f0-9]/gi, "");
 }
+
 function asHashOrHeight(value) {
-	return +value || asHash(value)
+	return +value || asHash(value);
 }
+
 function asAddress(value) {
-	return value.replace(/[^a-z0-9]/gi, '')
+	return value.replace(/[^a-z0-9]/gi, "");
 }
 
 module.exports = {
