@@ -71,7 +71,7 @@ router.get("/block-stats-by-height/:blockHeights", function(req, res, next) {
 });
 
 router.get("/mempool-txs/:txids", function(req, res, next) {
-	var txids = req.params.txids.split(",");
+	var txids = req.params.txids.split(",").map(utils.asHash);
 
 	var promises = [];
 
@@ -92,7 +92,7 @@ router.get("/mempool-txs/:txids", function(req, res, next) {
 });
 
 router.get("/raw-tx-with-inputs/:txid", function(req, res, next) {
-	var txid = req.params.txid;
+	var txid = utils.asHash(req.params.txid);
 
 	var promises = [];
 
@@ -112,7 +112,7 @@ router.get("/raw-tx-with-inputs/:txid", function(req, res, next) {
 
 router.get("/block-tx-summaries/:blockHeight/:txids", function(req, res, next) {
 	var blockHeight = parseInt(req.params.blockHeight);
-	var txids = req.params.txids.split(",");
+	var txids = req.params.txids.split(",").map(utils.asHash);
 
 	var promises = [];
 

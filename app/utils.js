@@ -761,6 +761,16 @@ function outputTypeName(outputType) {
 	}
 }
 
+function asHash(value) {
+	return value.replace(/[^a-f0-9]/gi, '')
+}
+function asHashOrHeight(value) {
+	return +value || asHash(value)
+}
+function asAddress(value) {
+	return value.replace(/[^a-z0-9]/gi, '')
+}
+
 module.exports = {
 	reflectPromise: reflectPromise,
 	redirectToConnectPageIfNeeded: redirectToConnectPageIfNeeded,
@@ -794,5 +804,8 @@ module.exports = {
 	ellipsize: ellipsize,
 	shortenTimeDiff: shortenTimeDiff,
 	outputTypeAbbreviation: outputTypeAbbreviation,
-	outputTypeName: outputTypeName
+	outputTypeName: outputTypeName,
+	asHash: asHash,
+	asHashOrHeight: asHashOrHeight,
+	asAddress: asAddress,
 };
