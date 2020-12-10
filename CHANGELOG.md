@@ -1,5 +1,5 @@
 #### v2.1.0
-##### Pending...
+##### Release pending...
 
 * Support for running on a configurable BASEURL, e.g. "/explorer/" (Thanks [@ketominer](https://github.com/ketominer), [@Kixunil](https://github.com/Kixunil), [@shesek](https://github.com/shesek))
 * Support for signet and taproot (Thanks [@guggero](https://github.com/guggero))
