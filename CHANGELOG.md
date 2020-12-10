@@ -5,6 +5,7 @@
 * Support for signet and taproot (Thanks [@guggero](https://github.com/guggero))
 * Support for listening on 0.0.0.0 (Thanks [@lukechilds](https://github.com/lukechilds))
 * Sanitizing of environment variables (Thanks [@lukechilds](https://github.com/lukechilds))
+* Fix for XSS vulnerabilities (Thanks [@shesek](https://github.com/shesek))
 * Fix for low severity lodash dependency vulnerability (Thanks [@abhiShandy](https://github.com/abhiShandy))
 * Fix for zero block reward (eventually on mainnet, now on regtest) (Thanks [@MyNameIsOka](https://github.com/MyNameIsOka))
 * Fix for cryptic error when running regtest with no blocks
