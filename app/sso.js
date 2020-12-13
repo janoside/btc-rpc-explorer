@@ -14,12 +14,13 @@ function updateToken(tokenFile) {
 	var tmpFileName = tokenFile + ".tmp";
 	fs.writeFileSync(tmpFileName, newToken);
 	fs.renameSync(tmpFileName, tokenFile);
+	
 	return newToken;
 }
 
 module.exports = (tokenFile, loginRedirect) => {
-	var token = updateToken(tokenFile)
-	var cookies = new Set()
+	var token = updateToken(tokenFile);
+	var cookies = new Set();
 
 	return (req, res, next) => {
 		if (req.cookies && cookies.has(req.cookies.btcexp_auth)) {
@@ -31,13 +32,15 @@ module.exports = (tokenFile, loginRedirect) => {
 			req.authenticated = true;
 			token = updateToken(tokenFile);
 			cookie = generateToken();
-			cookies.add(cookie)
-			res.cookie("btcexp_auth", cookie)
+			cookies.add(cookie);
+			res.cookie("btcexp_auth", cookie);
+
 			return next();
 		}
 
 		if (loginRedirect) {
-			res.redirect(loginRedirect)
+			res.redirect(loginRedirect);
+
 		} else {
 			res.sendStatus(401);
 		}
