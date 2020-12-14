@@ -476,7 +476,12 @@ function getBlockTotalFeesFromCoinbaseTxAndBlockHeight(coinbaseTx, blockHeight) 
 		}
 	}
 
-	return totalOutput.minus(new Decimal(blockReward));
+	if (blockReward < 1e-8 || blockReward == null) {
+		return totalOutput;
+		
+	} else {
+		return totalOutput.minus(new Decimal(blockReward));
+	}
 }
 
 function refreshExchangeRates() {
@@ -723,6 +728,7 @@ function outputTypeAbbreviation(outputType) {
 		"scripthash": "p2sh",
 		"witness_v0_keyhash": "v0_p2wpkh",
 		"witness_v0_scripthash": "v0_p2wsh",
+		"witness_v1_taproot": "v1_p2tr",
 		"nonstandard": "nonstandard",
 		"nulldata": "nulldata"
 	};
@@ -742,6 +748,7 @@ function outputTypeName(outputType) {
 		"scripthash": "Pay to Script Hash",
 		"witness_v0_keyhash": "Witness, v0 Key Hash",
 		"witness_v0_scripthash": "Witness, v0 Script Hash",
+		"witness_v1_taproot": "Witness, v1 Taproot",
 		"nonstandard": "Non-Standard",
 		"nulldata": "Null Data"
 	};
@@ -752,6 +759,18 @@ function outputTypeName(outputType) {
 	} else {
 		return "???";
 	}
+}
+
+function asHash(value) {
+	return value.replace(/[^a-f0-9]/gi, "");
+}
+
+function asHashOrHeight(value) {
+	return +value || asHash(value);
+}
+
+function asAddress(value) {
+	return value.replace(/[^a-z0-9]/gi, "");
 }
 
 module.exports = {
@@ -787,5 +806,8 @@ module.exports = {
 	ellipsize: ellipsize,
 	shortenTimeDiff: shortenTimeDiff,
 	outputTypeAbbreviation: outputTypeAbbreviation,
-	outputTypeName: outputTypeName
+	outputTypeName: outputTypeName,
+	asHash: asHash,
+	asHashOrHeight: asHashOrHeight,
+	asAddress: asAddress,
 };

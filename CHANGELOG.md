@@ -1,10 +1,15 @@
 #### v2.1.0
-##### Pending...
+##### Release pending...
 
 * Support for running on a configurable BASEURL, e.g. "/explorer/" (Thanks [@ketominer](https://github.com/ketominer), [@Kixunil](https://github.com/Kixunil), [@shesek](https://github.com/shesek))
+* Support for signet and taproot (Thanks [@guggero](https://github.com/guggero))
 * Support for listening on 0.0.0.0 (Thanks [@lukechilds](https://github.com/lukechilds))
 * Sanitizing of environment variables (Thanks [@lukechilds](https://github.com/lukechilds))
+* Fix for XSS vulnerabilities (Thanks [@shesek](https://github.com/shesek))
 * Fix for low severity lodash dependency vulnerability (Thanks [@abhiShandy](https://github.com/abhiShandy))
+* Fix for zero block reward (eventually on mainnet, now on regtest) (Thanks [@MyNameIsOka](https://github.com/MyNameIsOka))
+* Fix for cryptic error when running regtest with no blocks
+* Fix for pagination errors on `/blocks` (not displaying genesis block on the last page; error on last page when sort=asc)
 * Electrum connect/disconnect stats on `/admin`
 * Add P2SH bounty address `/fun` items (Thanks [@cd2357](https://github.com/cd2357))
 * Misc cleanup (Thanks [@AaronDewes](https://github.com/AaronDewes))

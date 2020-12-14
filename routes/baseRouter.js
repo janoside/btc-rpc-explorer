@@ -12,8 +12,8 @@ var bitcoinjs = require('bitcoinjs-lib');
 var sha256 = require("crypto-js/sha256");
 var hexEnc = require("crypto-js/enc-hex");
 var Decimal = require("decimal.js");
-var marked = require("marked");
 var semver = require("semver");
+var markdown = require("markdown-it")();
 
 var utils = require('./../app/utils.js');
 var coins = require("./../app/coins.js");
@@ -427,6 +427,10 @@ router.get("/blocks", function(req, res, next) {
 			}
 		}
 
+		blockHeights = blockHeights.filter((h) => {
+			return h >= 0 && h <= getblockchaininfo.blocks;
+		});
+
 		var promises = [];
 
 		promises.push(coreApi.getBlocksByHeight(blockHeights));
@@ -691,7 +695,7 @@ router.get("/block-height/:blockHeight", function(req, res, next) {
 });
 
 router.get("/block/:blockHash", function(req, res, next) {
-	var blockHash = req.params.blockHash;
+	var blockHash = utils.asHash(req.params.blockHash);
 
 	res.locals.blockHash = blockHash;
 
@@ -764,7 +768,7 @@ router.get("/block/:blockHash", function(req, res, next) {
 });
 
 router.get("/block-analysis/:blockHashOrHeight", function(req, res, next) {
-	var blockHashOrHeight = req.params.blockHashOrHeight;
+	var blockHashOrHeight = utils.asHashOrHeight(req.params.blockHashOrHeight);
 
 	var goWithBlockHash = function(blockHash) {
 		var blockHash = blockHash;
@@ -811,7 +815,7 @@ router.get("/block-analysis", function(req, res, next) {
 });
 
 router.get("/tx/:transactionId", function(req, res, next) {
-	var txid = req.params.transactionId;
+	var txid = utils.asHash(req.params.transactionId);
 
 	var output = -1;
 	if (req.query.output) {
@@ -910,7 +914,7 @@ router.get("/address/:address", function(req, res, next) {
 	}
 
 
-	var address = req.params.address;
+	var address = utils.asAddress(req.params.address);
 
 	res.locals.address = address;
 	res.locals.limit = limit;
@@ -1542,7 +1546,7 @@ router.get("/admin", function(req, res, next) {
 });
 
 router.get("/changelog", function(req, res, next) {
-	res.locals.changelogHtml = marked(global.changelogMarkdown);
+	res.locals.changelogHtml = markdown.render(global.changelogMarkdown);
 
 	res.render("changelog");
 
