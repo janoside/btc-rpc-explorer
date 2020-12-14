@@ -1,6 +1,8 @@
 const crypto = require('crypto');
 const fs = require('fs');
 
+const authCookieName = "btcexp_auth";
+
 function generateToken() {
 	// Normally we would use 16 => 128 bits of entropy which is sufficiennt
 	// But since we're going to base64 it and there would be padding (==),
@@ -23,8 +25,9 @@ module.exports = (tokenFile, loginRedirect) => {
 	var cookies = new Set();
 
 	return (req, res, next) => {
-		if (req.cookies && cookies.has(req.cookies.btcexp_auth)) {
+		if (req.cookies && cookies.has(req.cookies[authCookieName])) {
 			req.authenticated = true;
+
 			return next();
 		}
 
@@ -33,7 +36,7 @@ module.exports = (tokenFile, loginRedirect) => {
 			token = updateToken(tokenFile);
 			cookie = generateToken();
 			cookies.add(cookie);
-			res.cookie("btcexp_auth", cookie);
+			res.cookie(authCookieName, cookie);
 
 			return next();
 		}
