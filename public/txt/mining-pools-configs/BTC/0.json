@@ -511,6 +511,18 @@
 		"one_more_mcd" : {
 			"name" : "EMCD.IO",
 			"link" : "https://pool.emcd.io"
+		},
+		"BTCPool" : {
+			"name" : "BTCPool",
+			"link" : ""
+		},
+		"Mining-Dutch" : {
+			"name" : "Mining-Dutch",
+			"link" : ""
+		},
+		"/TMSPOOL/" : {
+			"name" : "TMSPool",
+			"link" : ""
 		}
 	},
 	"payout_addresses" : {
@@ -745,6 +757,10 @@
 		"197miJmttpCt2ubVs6DDtGBYFDroxHmvVB" : {
 			"name" : "Patels",
 			"link" : "http://patelsminingpool.com/"
+		},
+		"18cBEMRxXHqzWWCxZNtU91F5sbUNKhL5PX" : {
+			"name" : "ViaBTC",
+			"link" : "http://viabtc.com/"
 		},
 		"3NA8hsjfdgVkmmVS9moHmkZsVCoLxUkvvv" : {
 			"name" : "BTC.com",
@@ -1070,6 +1086,10 @@
 			"name": "Sigmapool.com",
 			"link": "https://sigmapool.com/"
 		},
+		"125K2xfiBdae42gSKiCGwi85Frpy1vHmGj": {
+			"name": "OKKONG",
+			"link": "https://hash.okkong.com/"
+		},
 		"16JHXJ7M2MubWNX9grnqbjUqJ5PHwcCWw2": {
 			"name": "OKKONG",
 			"link": "https://hash.okkong.com/"
@@ -1100,6 +1120,14 @@
 		},
 		"32p7WS5Yr8phj2AKdf8QGpDZvQutf3zR3D" : {
 			"name" : "Unknown 32p7-zR3D",
+			"link" : ""
+		},
+		"1Ca1KNQQo8akbrwTjjXuk8aikvC2pwodU2" : {
+			"name" : "BTCPool",
+			"link" : ""
+		},
+		"13BdM31yx97nc44CMtiX2Ge7ebpex45SiR" : {
+			"name" : "MiningDutch",
 			"link" : ""
 		}
 	},
