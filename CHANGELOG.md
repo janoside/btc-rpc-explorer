@@ -1,5 +1,5 @@
 #### v2.1.0
-##### 2020-12-14
+##### 2020-12-15
 
 * Support for running on a configurable BASEURL, e.g. "/explorer/" (Thanks [@ketominer](https://github.com/ketominer), [@Kixunil](https://github.com/Kixunil), [@shesek](https://github.com/shesek))
 * Support for SSO (Thanks [@Kixunil](https://github.com/Kixunil))
