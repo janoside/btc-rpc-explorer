@@ -5,6 +5,7 @@
 * Support for SSO (Thanks [@Kixunil](https://github.com/Kixunil))
 * Support for signet and taproot (Thanks [@guggero](https://github.com/guggero))
 * Support for listening on 0.0.0.0 (Thanks [@lukechilds](https://github.com/lukechilds))
+* Support for viewing list of block heights for each miner on `/mining-summary`
 * Sanitizing of environment variables (Thanks [@lukechilds](https://github.com/lukechilds))
 * Fix for XSS vulnerabilities (Thanks [@shesek](https://github.com/shesek))
 * Fix for low severity lodash dependency vulnerability (Thanks [@abhiShandy](https://github.com/abhiShandy))

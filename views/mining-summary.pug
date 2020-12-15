@@ -197,13 +197,13 @@ block endOfBody
 				chunks.push(chunk);
 			}
 
-			console.log(JSON.stringify(chunks));
+			//console.log(JSON.stringify(chunks));
 			//alert(JSON.stringify(chunks));
 
 			var results = [];
 
 			var statusCallback = function(chunkIndexDone, chunkCount) {
-				console.log("Done: " + Math.min(((chunkIndexDone + 1) * chunkSize), count) + " of " + count);
+				//console.log("Done: " + Math.min(((chunkIndexDone + 1) * chunkSize), count) + " of " + count);
 
 				var wPercent = `${parseInt(100 * (chunkIndexDone + 1) / parseFloat(chunkCount))}%`;
 				
@@ -227,10 +227,16 @@ block endOfBody
 					var row = $("#miner-summary-prototype").clone();
 					row.attr("id", null);
 					row.addClass("miner-summary-row");
+
+					var blockHeightsHtml = "";
+					for (var j = 0; j < minerSummary.blockHeights.length; j++) {
+						blockHeightsHtml += `<li><a href='./block-height/${minerSummary.blockHeights[j]}'>${minerSummary.blockHeights[j]}</a></li>`;
+					}
+					blockHeightsHtml = `<ol>${blockHeightsHtml}</ol>`
 					
 					row.find(".miner-name").text(minerName);
-					
-					row.find(".miner-block-count").text(minerSummary.blockCount.toLocaleString());
+
+					row.find(".miner-block-count").html(`<a href='javascript:void(0);' onclick="javascipt:$('#miner-block-heights-${i}').toggle();" title="Click to show ${minerSummary.blockCount.toLocaleString()} block height(s)" data-toggle="tooltip">${minerSummary.blockCount.toLocaleString()}</a><br/><small id='miner-block-heights-${i}' style='display: none;'>${blockHeightsHtml}</small>`);
 					row.find(".miner-block-percent").text(`(${new Decimal(minerSummary.blockCount).dividedBy(summary.overallSummary.blockCount).times(100).toDecimalPlaces(1)}%)`);
 					
 					row.find(".miner-tx-count").text(minerSummary.transactionCount.toLocaleString());
@@ -331,6 +337,8 @@ block endOfBody
 					summariesByMiner[miner.name].totalFeesCollected = new Decimal(0);
 					summariesByMiner[miner.name].blockSizeTotal = 0;
 
+					summariesByMiner[miner.name].blockHeights = [];
+
 
 					if (blocks[0].weight) {
 						summariesByMiner[miner.name].blockWeightTotal = 0;
@@ -342,6 +350,8 @@ block endOfBody
 				summariesByMiner[miner.name].totalSubsidiesCollected = summariesByMiner[miner.name].totalSubsidiesCollected.add(new Decimal(block.subsidy));
 				summariesByMiner[miner.name].totalFeesCollected = summariesByMiner[miner.name].totalFeesCollected.add(new Decimal(block.totalFees));
 				summariesByMiner[miner.name].blockSizeTotal += block.size;
+
+				summariesByMiner[miner.name].blockHeights.push(block.height);
 
 				if (blocks[0].weight) {
 					summariesByMiner[miner.name].blockWeightTotal += block.weight;
