@@ -1,7 +1,8 @@
 #### v2.1.0
-##### Release pending...
+##### 2020-12-14
 
 * Support for running on a configurable BASEURL, e.g. "/explorer/" (Thanks [@ketominer](https://github.com/ketominer), [@Kixunil](https://github.com/Kixunil), [@shesek](https://github.com/shesek))
+* Support for SSO (Thanks [@Kixunil](https://github.com/Kixunil))
 * Support for signet and taproot (Thanks [@guggero](https://github.com/guggero))
 * Support for listening on 0.0.0.0 (Thanks [@lukechilds](https://github.com/lukechilds))
 * Sanitizing of environment variables (Thanks [@lukechilds](https://github.com/lukechilds))
