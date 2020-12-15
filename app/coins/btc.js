@@ -69,7 +69,7 @@ module.exports = {
 	nodeUrl:"https://bitcoin.org/en/full-node",
 	demoSiteUrl: "https://explorer.btc21.org",
 	miningPoolsConfigUrls:[
-		"https://raw.githubusercontent.com/btc21/Bitcoin-Mining-Pools/master/pools.json",
+		"https://raw.githubusercontent.com/btc21/Bitcoin-Known-Miners/master/miners.json",
 		"https://raw.githubusercontent.com/btccom/Blockchain-Known-Pools/master/pools.json",
 		"https://raw.githubusercontent.com/blockchain/Blockchain-Known-Pools/master/pools.json"
 	],
