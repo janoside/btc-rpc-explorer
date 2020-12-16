@@ -214,13 +214,13 @@ html(lang="en")
 										- var demoSites = [];
 										- demoSites.push({url:"https://explorer.btc21.org", logoUrl:"./img/logo/btc.svg", title:"Bitcoin Explorer"});
 										- demoSites.push({url:"https://testnet.btc21.org", logoUrl:"./img/logo/tbtc.svg", title:"Testnet Explorer"});
-										- demoSites.push({url:"https://signet.btc21.org", logoUrl:"./img/logo/tbtc.svg", title:"Signet Explorer"});
+										- demoSites.push({url:"https://signet.btc21.org", logoUrl:"./img/logo/signet.svg", title:"Signet Explorer"});
 
 										each demoSite in demoSites
-											a.mr-2(href=demoSite.url, title=demoSite.title)
+											a.mr-2(href=demoSite.url, title=demoSite.title, data-toggle="tooltip")
 												img(src=demoSite.logoUrl, alt=demoSite.title)
 
-										a.mr-2(href="https://lnd-admin.btc21.org", title="LND Admin")
+										a.mr-2(href="https://lnd-admin.btc21.org", title="LND Admin", data-toggle="tooltip")
 											img(src=("./img/logo/lnd-admin.png"), style="width: 32px; height: 32px;", alt="LND Admin")
 
 					div.col-md-7.text-md-right

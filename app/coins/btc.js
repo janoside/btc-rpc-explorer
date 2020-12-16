@@ -56,7 +56,7 @@ module.exports = {
 		"main":"./img/logo/btc.svg",
 		"test":"./img/logo/tbtc.svg",
 		"regtest":"./img/logo/tbtc.svg",
-		"signet":"./img/logo/tbtc.svg"
+		"signet":"./img/logo/signet.svg"
 	},
 	siteTitlesByNetwork: {
 		"main":"Bitcoin Explorer",
