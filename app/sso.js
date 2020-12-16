@@ -6,7 +6,7 @@ function generateToken() {
 	// But since we're going to base64 it and there would be padding (==),
 	// It's a wasted space, why not use padding for some additional entropy? :)
 	// The replacing is to make it URL-safe
-	return crypto.randomBytes(18).toString("base64").replace('+', '-').replace('/', '_')
+	return crypto.randomBytes(18).toString("base64").replace(/\+/g, '-').replace(/\//g, '_')
 }
 
 function updateToken(tokenFile) {
