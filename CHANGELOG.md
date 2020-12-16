@@ -1,3 +1,7 @@
+##### Unreleased
+
+* Fix for SSO token generation URL encoding (Thanks [@shesek](https://github.com/shesek) and [@Kixunil](https://github.com/Kixunil))
+
 #### v2.1.0
 ##### 2020-12-15
 
