@@ -5,11 +5,17 @@ block headContent
 	
 block content
 	if (getblockchaininfo == null)
-		div.alert.alert-warning
-			p.font-weight-bold Unable to get basic blockchain data
+		div.alert.alert-danger
+			h5.mb-3 Unable to get basic blockchain data
 			ul
-				li If you just started your node, it may still be initializing.
-				li If your node is already initialized, check your RPC connection info.
+				li
+					p
+						strong If you just started your node, it may still be initializing.
+						div At startup, bitcoind verifies its block index before making itself available to serve data. The amount of time the verification process takes depends largely on the speed of the machine bitcoind is running on. If you're running bitcoind on low powered, inexpensive hardware, don't be surprised if this process takes a long time.
+				li
+					p
+						strong If you believe your bitcoind node is already initialized...
+						div Check your RPC connection info and/or check this application's error log for possible hints about the cause of this issue.
 	else
 
 		if (config.demoSite && session.hideHomepageBanner != "true")
