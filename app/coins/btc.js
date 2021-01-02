@@ -699,6 +699,22 @@ module.exports = {
 			return null;
 		}
 	},
+	goldExchangeRateData:{
+		jsonUrl:"https://forex-data-feed.swissquote.com/public-quotes/bboquotes/instrument/XAU/USD",
+		responseBodySelectorFunction:function(responseBody) {
+			//console.log("Exchange Rate Response: " + JSON.stringify(responseBody));
+
+			if (responseBody[0].topo && responseBody[0].topo.platform == "MT5") {
+				var prices = responseBody[0].spreadProfilePrices[0];
+				
+				return {
+					usd: prices.ask
+				};
+			}
+			
+			return null;
+		}
+	},
 	blockRewardFunction:function(blockHeight, chain) {
 		var eras = [ new Decimal8(50) ];
 		for (var i = 1; i < 34; i++) {

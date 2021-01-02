@@ -267,6 +267,18 @@ function formatValueInActiveCurrency(amount) {
 	}
 }
 
+
+function formatValueInGold(amount) {
+	var currencyFormat = global.currencyFormatType.toLowerCase() || "usd";
+
+	if (global.exchangeRates[currencyFormat] && global.goldExchangeRates[currencyFormat]) {
+		return formatExchangedCurrency(amount, "au");
+
+	} else {
+		return formatExchangedCurrency(amount, "usd");
+	}
+}
+
 function satoshisPerUnitOfActiveCurrency() {
 	if (global.currencyFormatType != null && global.exchangeRates != null) {
 		var exchangeType = global.currencyFormatType.toLowerCase();
@@ -323,6 +335,14 @@ function formatExchangedCurrency(amount, exchangeType) {
 			return "$" + addThousandsSeparators(exchangedAmt);
 		}
 		
+	} else if (exchangeType == "au") {
+		if (global.exchangeRates != null && global.goldExchangeRates != null) {
+			var dec = new Decimal(amount);
+			dec = dec.times(global.exchangeRates.usd).dividedBy(global.goldExchangeRates.usd);
+			var exchangedAmt = parseFloat(Math.round(dec * 100) / 100).toFixed(2);
+
+			return addThousandsSeparators(exchangedAmt) + "oz";
+		}
 	}
 
 	return "";
@@ -506,6 +526,27 @@ function refreshExchangeRates() {
 				}
 			} else {
 				logError("39r7h2390fgewfgds", {error:error, response:response, body:body});
+			}
+		});
+	}
+
+	if (coins[config.coin].goldExchangeRateData) {
+		request(coins[config.coin].goldExchangeRateData.jsonUrl, function(error, response, body) {
+			if (error == null && response && response.statusCode && response.statusCode == 200) {
+				var responseBody = JSON.parse(body);
+
+				var exchangeRates = coins[config.coin].goldExchangeRateData.responseBodySelectorFunction(responseBody);
+				if (exchangeRates != null) {
+					global.goldExchangeRates = exchangeRates;
+					global.goldExchangeRatesUpdateTime = new Date();
+
+					debugLog("Using gold exchange rates: " + JSON.stringify(global.goldExchangeRates) + " starting at " + global.goldExchangeRatesUpdateTime);
+
+				} else {
+					debugLog("Unable to get gold exchange rate data");
+				}
+			} else {
+				logError("34082yt78yewewe", {error:error, response:response, body:body});
 			}
 		});
 	}
@@ -785,6 +826,7 @@ module.exports = {
 	formatCurrencyAmountWithForcedDecimalPlaces: formatCurrencyAmountWithForcedDecimalPlaces,
 	formatExchangedCurrency: formatExchangedCurrency,
 	formatValueInActiveCurrency: formatValueInActiveCurrency,
+	formatValueInGold: formatValueInGold,
 	satoshisPerUnitOfActiveCurrency: satoshisPerUnitOfActiveCurrency,
 	addThousandsSeparators: addThousandsSeparators,
 	formatCurrencyAmountInSmallestUnits: formatCurrencyAmountInSmallestUnits,

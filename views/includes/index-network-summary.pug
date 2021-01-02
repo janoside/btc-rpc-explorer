@@ -212,6 +212,14 @@ div.row.index-summary
 								span #{satsRateData.amt}
 									small  #{satsRateData.unit}
 
+					if (exchangeRates && goldExchangeRates)
+						tr
+							th.px-2.px-lg-0.px-xl-2
+								i.fas.fa-mountain.mr-1.summary-icon
+								span.border-dotted(data-toggle="tooltip", title=("Exchange-rate data from: " + coinConfig.goldExchangeRateData.jsonUrl)) AU Exchange Rate
+							td.text-right.text-monospace
+								span #{utils.formatValueInGold(1.0)}
+
 					if (exchangeRates)
 						if (utxoSetSummary || utxoSetSummaryPending)
 							tr
