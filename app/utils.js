@@ -572,41 +572,50 @@ function geoLocateIpAddresses(ipAddresses, provider) {
 					if (result.value == null) {
 						var apiUrl = "http://api.ipstack.com/" + result.key + "?access_key=" + config.credentials.ipStackComApiAccessKey;
 						
-						debugLog("Requesting IP-geo: " + apiUrl);
-
 						request(apiUrl, function(error, response, body) {
 							if (error) {
-								reject2(error);
+								debugLog("Failed IP-geo-lookup: " + result.key);
+
+								logError("39724gdge33a", error, {ip: result.key});
+
+								// we failed to get what we wanted, but there's no meaningful recourse,
+								// so we log the failure and continue without objection
+								resolve2();
 
 							} else {
-								resolve2({needToProcess:true, response:response});
+								if (response != null && response.statusCode == 200) {
+									var resBody = JSON.parse(response.body);
+									var ip = resBody.ip;
+
+									ipDetails.detailsByIp[ip] = resBody;
+
+									if (resBody.latitude && resBody.longitude) {
+										debugLog(`Successful IP-geo-lookup: ${ip} -> (${resBody.latitude}, ${resBody.longitude})`);
+
+									} else {
+										debugLog(`Unknown location for IP-geo-lookup: ${ip}`);
+									}									
+
+									ipCache.set(ip, resBody, 1000 * 60 * 60 * 24 * 365);
+
+								} else {
+									debugLog("Unsuccessful IP-geo-lookup: " + result.key);
+								}
+
+								resolve2();
 							}
 						});
 
 					} else {
 						ipDetails.detailsByIp[result.key] = result.value;
 
-						resolve2({needToProcess:false});
+						resolve2();
 					}
 				});
 			}));
 		}
 
 		Promise.all(promises).then(function(results) {
-			for (var i = 0; i < results.length; i++) {
-				if (results[i].needToProcess) {
-					var res = results[i].response;
-					if (res != null && res["statusCode"] == 200) {
-						var resBody = JSON.parse(res["body"]);
-						var ip = resBody["ip"];
-
-						ipDetails.detailsByIp[ip] = resBody;
-
-						ipCache.set(ip, resBody, 1000 * 60 * 60 * 24 * 365);
-					}
-				}
-			}
-
 			resolve(ipDetails);
 
 		}).catch(function(err) {
