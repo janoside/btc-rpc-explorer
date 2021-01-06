@@ -631,6 +631,15 @@ module.exports = {
 			alertBodyHtml: "On July 15, 2020 a hack involving many prominent Twitter accounts, including Elon Musk's, Bill Gates', and Cash App's, scammed many people to send BTC to this address.",
 			referenceUrl: "https://twitter.com/lawmaster/status/1283694581926723585"
 		},
+		{
+			type: "tx",
+			date: "2011-11-16",
+			chain: "main",
+			txid: "29a3efd3ef04f9153d47a990bd7b048a4b2d213daaa5fb8ed670fb85f13bdbcf",
+			summary: "The current largest output transaction.",
+			alertBodyHtml: "This transaction from November 2011 spends 11 UTXOs worth 50,000 BTC to create a single 550,000 BTC UTXO. This is currently the largest output transaction.",
+			referenceUrl: "https://blockchair.com/bitcoin/transactions?s=output_total(desc)#"
+		},
 
 
 
