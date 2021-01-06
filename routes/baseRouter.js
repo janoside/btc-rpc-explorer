@@ -1540,6 +1540,17 @@ router.get("/admin", function(req, res, next) {
 	res.locals.cacheStats = global.cacheStats;
 	res.locals.errorStats = global.errorStats;
 
+	res.locals.appConfig = {
+		privacyMode: config.privacyMode,
+		slowDeviceMode: config.slowDeviceMode,
+		demoSite: config.demoSite,
+		rpcConcurrency: config.rpcConcurrency,
+		addressApi: config.addressApi,
+		ipStackComApiAccessKey: !!config.credentials.ipStackComApiAccessKey,
+		redisCache: !!config.redisUrl,
+		noInmemoryRpcCache: config.noInmemoryRpcCache
+	};
+
 	res.render("admin");
 
 	next();
