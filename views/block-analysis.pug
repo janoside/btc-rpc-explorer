@@ -80,7 +80,7 @@ block content
 
 	div#main-content(style="display: none;")
 		div.row
-			div.col-xl-4
+			div.col-xl-6
 				div.card.shadow-sm.mb-3
 					div.card-body
 						h3.h6.mb-0 Top Value Transactions
@@ -98,7 +98,25 @@ block content
 										td.data-tx-link
 										td.text-right.data-tx-value
 
-			div.col-xl-4
+			div.col-xl-6
+				div.card.shadow-sm.mb-3
+					div.card-body
+						h3.h6.mb-0 Top Size Transactions
+						hr
+
+						div.table-responsive
+							table.table.table-striped.mb-0
+								thead
+									tr
+										th.data-header Transaction
+										th.data-header.text-right Size
+
+								tbody(id="tbody-top-size-tx")
+									tr.text-monospace.row-prototype(style="display: none;")
+										td.data-tx-link
+										td.text-right.data-tx-value
+
+			div.col-xl-6
 				div.card.shadow-sm.mb-3
 					div.card-body
 						h3.h6.mb-0 Top Fee Transactions
@@ -116,10 +134,10 @@ block content
 										td.data-tx-link
 										td.text-right.data-tx-value
 
-			div.col-xl-4
+			div.col-xl-6
 				div.card.shadow-sm.mb-3
 					div.card-body
-						h3.h6.mb-0 Top Size Transactions
+						h3.h6.mb-0 Top Fee Rate Transactions
 						hr
 
 						div.table-responsive
@@ -127,9 +145,9 @@ block content
 								thead
 									tr
 										th.data-header Transaction
-										th.data-header.text-right Size
+										th.data-header.text-right Fee Rate
 
-								tbody(id="tbody-top-size-tx")
+								tbody(id="tbody-top-fee-rate-tx")
 									tr.text-monospace.row-prototype(style="display: none;")
 										td.data-tx-link
 										td.text-right.data-tx-value
@@ -198,6 +216,22 @@ block content
 			div.col-lg-6
 				div.card.shadow-sm.mb-3
 					div.card-body
+						h3.h6.mb-0 Transaction Fee Rate
+						hr
+
+						canvas(id="graph-tx-fee-rate")
+
+			div.col-lg-6
+				div.card.shadow-sm.mb-3
+					div.card-body
+						h3.h6.mb-0 Transaction Fee Rate Distribution
+						hr
+
+						canvas(id="chart-tx-fee-rate-distribution")
+
+			div.col-lg-6
+				div.card.shadow-sm.mb-3
+					div.card-body
 						h3.h6.mb-0 Transaction Size
 						hr
 
@@ -226,8 +260,8 @@ block content
 						hr
 
 						canvas(id="graph-tx-outputs")
-	
 
+			
 
 block endOfBody
 	- var txidChunkSize = 10;
@@ -282,18 +316,21 @@ block endOfBody
 
 				fillTopValueTxTable(summary);
 				fillTopFeeTxTable(summary);
+				fillTopFeeRateTxTable(summary);
 				fillTopSizeTxTable(summary);
 
 				fillInputOutputTypesTable(summary);
 
 				createGraph("graph-tx-value", summary.txValueGraphData, "Value");
 				createGraph("graph-tx-fee", summary.txFeeGraphData, "Fee");
+				createGraph("graph-tx-fee-rate", summary.txFeeRateGraphData, "Fee");
 				createGraph("graph-tx-inputs", summary.txInputCountGraphData, "Input Count");
 				createGraph("graph-tx-outputs", summary.txOutputCountGraphData, "Output Count");
 				createGraph("graph-tx-size", summary.txSizeGraphData, "Size");
 
 				createChart("chart-tx-value-distribution", summary.valueDistribution, summary.valueDistributionLabels);
 				createChart("chart-tx-fee-distribution", summary.feeDistribution, summary.feeDistributionLabels);
+				createChart("chart-tx-fee-rate-distribution", summary.feeRateDistribution, summary.feeRateDistributionLabels);
 				createChart("chart-tx-size-distribution", summary.sizeDistribution, summary.sizeDistributionLabels);
 
 				//$(".abc").text(JSON.stringify(summary));
@@ -315,7 +352,7 @@ block endOfBody
 
 				row.removeClass("row-prototype");
 
-				row.find(".data-tx-link").html(`<a href='./tx/${item.txid}'>${item.txid.substring(0, 14)}<span class='d-inline d-xl-none'>${item.txid.substring(14, 32)}</span><span class='d-none d-xxl-inline'>${item.txid.substring(14, 30)}</span>…</a>`);
+				row.find(".data-tx-link").html(`<a href='./tx/${item.txid}'>${item.txid.substring(0, 32)}…</a>`);
 				row.find(".data-tx-value").text(item.value);
 				
 				updateCurrencyValue(row.find(".data-tx-value"), item.value);
@@ -336,7 +373,7 @@ block endOfBody
 
 				row.removeClass("row-prototype");
 
-				row.find(".data-tx-link").html(`<a href='./tx/${item.txid}'>${item.txid.substring(0, 14)}<span class='d-inline d-xl-none'>${item.txid.substring(14, 32)}</span><span class='d-none d-xxl-inline'>${item.txid.substring(14, 30)}</span>…</a>`);
+				row.find(".data-tx-link").html(`<a href='./tx/${item.txid}'>${item.txid.substring(0, 32)}…</a>`);
 				row.find(".data-tx-value").text(item.value);
 				
 				updateCurrencyValue(row.find(".data-tx-value"), item.value);
@@ -344,6 +381,25 @@ block endOfBody
 				row.show();
 
 				$("#tbody-top-fee-tx").append(row);
+			}
+		}
+
+		function fillTopFeeRateTxTable(data) {
+			var count = Math.min(10, data.topFeeRateTxs.length);
+			
+			for (var i = 0; i < count; i++) {
+				var item = data.topFeeRateTxs[i];
+
+				var row = $("#tbody-top-fee-rate-tx .row-prototype").clone();
+
+				row.removeClass("row-prototype");
+
+				row.find(".data-tx-link").html(`<a href='./tx/${item.txid}'>${item.txid.substring(0, 32)}…</a>`);
+				row.find(".data-tx-value").html(`<span>${parseInt(item.value).toLocaleString()} <small>sat/${vByteSizes ? "v" : ""}B</small></span>`);
+				
+				row.show();
+
+				$("#tbody-top-fee-rate-tx").append(row);
 			}
 		}
 
@@ -357,7 +413,7 @@ block endOfBody
 
 				row.removeClass("row-prototype");
 
-				row.find(".data-tx-link").html(`<a href='./tx/${item.txid}'>${item.txid.substring(0, 14)}<span class='d-inline d-xl-none'>${item.txid.substring(14, 32)}</span><span class='d-none d-xxl-inline'>${item.txid.substring(14, 30)}</span>…</a>`);
+				row.find(".data-tx-link").html(`<a href='./tx/${item.txid}'>${item.txid.substring(0, 32)}…</a>`);
 				row.find(".data-tx-value").html(`<span>${parseInt(item.value).toLocaleString()} <small>${vByteSizes ? "v" : ""}B</small></span>`);
 
 				row.show();
@@ -537,6 +593,9 @@ block endOfBody
 			analysis.txFees = [];
 			analysis.txFeeGraphData = [];
 
+			analysis.txFeeRates = [];
+			analysis.txFeeRateGraphData = [];
+
 			analysis.txSizes = [];
 			analysis.txSizeGraphData = [];
 			analysis.txInputCountGraphData = [];
@@ -568,6 +627,10 @@ block endOfBody
 				analysis.txFees.push({txid:txSummary.txid, value:new Decimal(txSummary.totalFee)});
 				analysis.txFeeGraphData.push({x:i, y:new Decimal(txSummary.totalFee).toNumber()});
 
+				var feeRate = new Decimal(txSummary.totalFee).times(satsMultiplier).dividedBy(txSummary.vsize ? txSummary.vsize : txSummary.size);
+				analysis.txFeeRates.push({txid:txSummary.txid, value:feeRate});
+				analysis.txFeeRateGraphData.push({x:i, y:parseInt(feeRate.toNumber())});
+
 				analysis.txSizes.push({txid:txSummary.txid, value:new Decimal(txSummary.vsize ? txSummary.vsize : txSummary.size)});
 				analysis.txSizeGraphData.push({x:i, y:(txSummary.vsize ? txSummary.vsize : txSummary.size)});
 
@@ -597,28 +660,38 @@ block endOfBody
 				return b.value.cmp(a.value);
 			});
 
+			analysis.txFeeRates.sort(function(a, b) {
+				return b.value.cmp(a.value);
+			});
+
 			analysis.txSizes.sort(function(a, b) {
 				return b.value.cmp(a.value);
 			});
 
 			analysis.topValueTxs = analysis.txValues.slice(0, Math.min(100, analysis.txValues.length));
 			analysis.topFeeTxs = analysis.txFees.slice(0, Math.min(100, analysis.txFees.length));
+			analysis.topFeeRateTxs = analysis.txFeeRates.slice(0, Math.min(100, analysis.txFeeRates.length));
 			analysis.topSizeTxs = analysis.txSizes.slice(0, Math.min(100, analysis.txSizes.length));
 
 			var topValue = new Decimal(analysis.txValues[parseInt(analysis.txValues.length * 0.1)].value).times(satsMultiplier);
 			var topFee = new Decimal(analysis.txFees[parseInt(analysis.txFees.length * 0.1)].value).times(satsMultiplier);
+			var topFeeRate = new Decimal(analysis.txFeeRates[parseInt(analysis.txFees.length * 0.1)].value);
 			var topSize = new Decimal(analysis.txSizes[parseInt(analysis.txSizes.length * 0.1)].value);
 
 			var topValueSats = parseInt(topValue);
 			var topFeeSats = parseInt(topFee);
+			var topFeeRateInt = parseInt(topFeeRate);
 
-			var distributionBucketCount = 25;
+			var distributionBucketCount = 75;
 			
 			analysis.valueDistribution = [];
 			analysis.valueDistributionLabels = [];
 
 			analysis.feeDistribution = [];
 			analysis.feeDistributionLabels = [];
+
+			analysis.feeRateDistribution = [];
+			analysis.feeRateDistributionLabels = [];
 
 			analysis.sizeDistribution = [];
 			analysis.sizeDistributionLabels = [];
@@ -630,12 +703,16 @@ block endOfBody
 				analysis.feeDistribution.push(0);
 				analysis.feeDistributionLabels.push(`[${new Decimal(i * topFeeSats / distributionBucketCount).toDP(0)} - ${new Decimal((i + 1) * topFeeSats / distributionBucketCount).toDP(0)})`);
 
+				analysis.feeRateDistribution.push(0);
+				analysis.feeRateDistributionLabels.push(`[${new Decimal(i * topFeeRate / distributionBucketCount).toDP(0)} - ${new Decimal((i + 1) * topFeeRate / distributionBucketCount).toDP(0)})`);
+
 				analysis.sizeDistribution.push(0);
 				analysis.sizeDistributionLabels.push(`[${new Decimal(i * topSize / distributionBucketCount).toDP(0)} - ${new Decimal((i + 1) * topSize / distributionBucketCount).toDP(0)})`);
 			}
 
 			analysis.valueDistributionLabels[distributionBucketCount - 1] = `${new Decimal(topValueSats).dividedBy(satsMultiplier).toDP(3)}+`;
 			analysis.feeDistributionLabels[distributionBucketCount - 1] = `${topFeeSats}+`;
+			analysis.feeRateDistributionLabels[distributionBucketCount - 1] = `${topFeeRateInt}+`;
 			analysis.sizeDistributionLabels[distributionBucketCount - 1] = `${topSize}+`;
 
 			for (var i = 0; i < txResults.length; i++) {
@@ -643,6 +720,7 @@ block endOfBody
 
 				var valueSats = new Decimal(txSummary.totalOutput).times(satsMultiplier);
 				var feeSats = new Decimal(txSummary.totalFee).times(satsMultiplier);
+				var feeRate = new Decimal(txSummary.totalFee).times(satsMultiplier).dividedBy(txSummary.vsize ? txSummary.vsize : txSummary.size);
 				var size = new Decimal(txSummary.vsize ? txSummary.vsize : txSummary.size);
 
 				var valueBucket = parseInt(distributionBucketCount * valueSats / topValueSats);
@@ -655,6 +733,11 @@ block endOfBody
 					feeBucket = distributionBucketCount - 1;
 				}
 
+				var feeRateBucket = parseInt(distributionBucketCount * feeRate / topFeeRateInt);
+				if (feeRateBucket >= distributionBucketCount) {
+					feeRateBucket = distributionBucketCount - 1;
+				}
+
 				var sizeBucket = parseInt(distributionBucketCount * size / topSize);
 				if (sizeBucket >= distributionBucketCount) {
 					sizeBucket = distributionBucketCount - 1;
@@ -662,6 +745,7 @@ block endOfBody
 
 				analysis.valueDistribution[valueBucket]++;
 				analysis.feeDistribution[feeBucket]++;
+				analysis.feeRateDistribution[feeRateBucket]++;
 				analysis.sizeDistribution[sizeBucket]++;
 			}
 

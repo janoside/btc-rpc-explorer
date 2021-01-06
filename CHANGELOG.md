@@ -1,5 +1,6 @@
 ##### Unreleased
 
+* New fee rate data on `/block-analysis` pages
 * Fix for SSO token generation URL encoding (Thanks [@shesek](https://github.com/shesek) and [@Kixunil](https://github.com/Kixunil))
 * Fix for `/peers` map
 * Fix for README `git clone` instructions (Thanks [@jonasschnelli](https://github.com/jonasschnelli))
