@@ -49,9 +49,10 @@ btc-rpc-explorer
 
 #### Run from source:
 
-1. `git clone git@github.com:janoside/btc-rpc-explorer.git`
-2. `npm install`
-3. `npm start`
+1. `git clone https://github.com/janoside/btc-rpc-explorer`
+2. `cd btc-rpc-explorer`
+3. `npm install`
+4. `npm start`
 
 
 Using either method (`npm install` or run from source), after startup open [http://127.0.0.1:3002/](http://127.0.0.1:3002/)
