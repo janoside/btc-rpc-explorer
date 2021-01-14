@@ -2,8 +2,8 @@ var debug = require("debug");
 var electrumAddressApi = require("./electrumAddressApi.js");
 
 async function setup(config, activeBlockchain) {
-  try { var BwtDaemon = require('bwt-daemon'); }
-  catch (_) { throw new Error('The bwt backend requires installing the "bwt-daemon" package'); }
+  try { var { BwtDaemon } = require('libbwt'); }
+  catch (_) { throw new Error('The bwt backend requires installing the "libbwt" package'); }
 
   var network = { main: 'bitcoin', test: 'testnet' }[activeBlockchain] || activeBlockchain;
   var rpcCred = config.credentials.rpc;
@@ -19,7 +19,7 @@ async function setup(config, activeBlockchain) {
     ...getEnvOptions(),
     ...getAuthOptions(rpcCred),
     ...getDescsXpubsOptions(),
-  });
+  }).start();
 
   var [ host, port ] = bwt.electrum_addr.split(':');
   config.electrumXServers = [{ host, port, protocol: 'tcp' }];

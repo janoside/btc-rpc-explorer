@@ -90,7 +90,7 @@ To match the features visible on the demo site at [https://explorer.btc21.org](h
 #### Wallet addresses history
 
 Showing the history of your wallet addresses is supported via [bwt](https://github.com/sheske/bwt).
-To enable this feature, install bwt with `npm install -g bwt-daemon` then start btc-rpc-explorer
+To enable this feature, install bwt with `npm install -g libbwt` then start btc-rpc-explorer
 with `--address-api bwt` and one or more `--descriptors`s or `--xpub`s.
 
 The wallet addresses will be derived and imported into Bitcoin Core. You can specify which wallet to use with `--bwt-bitcoind-wallet <name>`.
