@@ -48,7 +48,8 @@ var electrumAddressApi = require("./app/api/electrumAddressApi.js");
 var bwtAddressApi = require("./app/api/bwtAddressApi.js");
 var coreApi = require("./app/api/coreApi.js");
 var auth = require('./app/auth.js');
-var marked = require("marked");
+var sso = require('./app/sso.js');
+var markdown = require("markdown-it")();
 
 var package_json = require('./package.json');
 global.appVersion = package_json.version;
@@ -71,11 +72,16 @@ app.engine('pug', (path, options, fn) => {
 });
 
 app.set('view engine', 'pug');
+app.use(cookieParser());
 
 // basic http authentication
 if (process.env.BTCEXP_BASIC_AUTH_PASSWORD) {
 	app.disable('x-powered-by');
 	app.use(auth(process.env.BTCEXP_BASIC_AUTH_PASSWORD));
+// sso authentication
+} else if (process.env.BTCEXP_SSO_TOKEN_FILE) {
+	app.disable('x-powered-by');
+	app.use(sso(process.env.BTCEXP_SSO_TOKEN_FILE, process.env.BTCEXP_SSO_LOGIN_REDIRECT_URL));
 }
 
 // uncomment after placing your favicon in /public
@@ -83,14 +89,13 @@ if (process.env.BTCEXP_BASIC_AUTH_PASSWORD) {
 //app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
-app.use(cookieParser());
 app.use(session({
 	secret: config.cookieSecret,
 	resave: false,
 	saveUninitialized: false
 }));
 
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(config.baseUrl, express.static(path.join(__dirname, 'public')));
 
 process.on("unhandledRejection", (reason, p) => {
 	debugLog("Unhandled Rejection at: Promise", p, "reason:", reason, "stack:", (reason != null ? reason.stack : "null"));
@@ -393,20 +398,20 @@ app.onStartup = function() {
 			if (err) {
 				utils.logError("3fehge9ee", err, {desc:"Error accessing git repo"});
 
-				debugLog(`Starting ${global.coinConfig.ticker} RPC Explorer, v${global.appVersion} (code: unknown commit)`);
+				debugLog(`Starting ${global.coinConfig.ticker} RPC Explorer, v${global.appVersion} (code: unknown commit) at ${config.host}:${config.port}${config.baseUrl}`);
 
 			} else {
 				global.sourcecodeVersion = log.all[0].hash.substring(0, 10);
 				global.sourcecodeDate = log.all[0].date.substring(0, "0000-00-00".length);
 
-				debugLog(`Starting ${global.coinConfig.ticker} RPC Explorer, v${global.appVersion} (commit: '${global.sourcecodeVersion}', date: ${global.sourcecodeDate})`);
+				debugLog(`Starting ${global.coinConfig.ticker} RPC Explorer, v${global.appVersion} (commit: '${global.sourcecodeVersion}', date: ${global.sourcecodeDate}) at ${config.host}:${config.port}${config.baseUrl}`);
 			}
 
 			app.continueStartup();
 		});
 
 	} else {
-		debugLog(`Starting ${global.coinConfig.ticker} RPC Explorer, v${global.appVersion}`);
+		debugLog(`Starting ${global.coinConfig.ticker} RPC Explorer, v${global.appVersion} at ${config.host}:${config.port}${config.baseUrl}`);
 
 		app.continueStartup();
 	}
@@ -608,9 +613,9 @@ app.use(csurf(), (req, res, next) => {
 	next();
 });
 
-app.use('/', baseActionsRouter);
-app.use('/api/', apiActionsRouter);
-app.use('/snippet/', snippetActionsRouter);
+app.use(config.baseUrl, baseActionsRouter);
+app.use(config.baseUrl + 'api/', apiActionsRouter);
+app.use(config.baseUrl + 'snippet/', snippetActionsRouter);
 
 app.use(function(req, res, next) {
 	var time = Date.now() - req.startTime;
@@ -653,7 +658,7 @@ app.use(function(err, req, res, next) {
 app.locals.moment = moment;
 app.locals.Decimal = Decimal;
 app.locals.utils = utils;
-app.locals.marked = marked;
+app.locals.markdown = src => markdown.render(src);
 
 
 

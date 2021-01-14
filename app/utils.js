@@ -267,6 +267,18 @@ function formatValueInActiveCurrency(amount) {
 	}
 }
 
+
+function formatValueInGold(amount) {
+	var currencyFormat = global.currencyFormatType.toLowerCase() || "usd";
+
+	if (global.exchangeRates[currencyFormat] && global.goldExchangeRates[currencyFormat]) {
+		return formatExchangedCurrency(amount, "au");
+
+	} else {
+		return formatExchangedCurrency(amount, "usd");
+	}
+}
+
 function satoshisPerUnitOfActiveCurrency() {
 	if (global.currencyFormatType != null && global.exchangeRates != null) {
 		var exchangeType = global.currencyFormatType.toLowerCase();
@@ -323,6 +335,14 @@ function formatExchangedCurrency(amount, exchangeType) {
 			return "$" + addThousandsSeparators(exchangedAmt);
 		}
 		
+	} else if (exchangeType == "au") {
+		if (global.exchangeRates != null && global.goldExchangeRates != null) {
+			var dec = new Decimal(amount);
+			dec = dec.times(global.exchangeRates.usd).dividedBy(global.goldExchangeRates.usd);
+			var exchangedAmt = parseFloat(Math.round(dec * 100) / 100).toFixed(2);
+
+			return addThousandsSeparators(exchangedAmt) + "oz";
+		}
 	}
 
 	return "";
@@ -476,7 +496,12 @@ function getBlockTotalFeesFromCoinbaseTxAndBlockHeight(coinbaseTx, blockHeight) 
 		}
 	}
 
-	return totalOutput.minus(new Decimal(blockReward));
+	if (blockReward < 1e-8 || blockReward == null) {
+		return totalOutput;
+		
+	} else {
+		return totalOutput.minus(new Decimal(blockReward));
+	}
 }
 
 function refreshExchangeRates() {
@@ -504,6 +529,27 @@ function refreshExchangeRates() {
 			}
 		});
 	}
+
+	if (coins[config.coin].goldExchangeRateData) {
+		request(coins[config.coin].goldExchangeRateData.jsonUrl, function(error, response, body) {
+			if (error == null && response && response.statusCode && response.statusCode == 200) {
+				var responseBody = JSON.parse(body);
+
+				var exchangeRates = coins[config.coin].goldExchangeRateData.responseBodySelectorFunction(responseBody);
+				if (exchangeRates != null) {
+					global.goldExchangeRates = exchangeRates;
+					global.goldExchangeRatesUpdateTime = new Date();
+
+					debugLog("Using gold exchange rates: " + JSON.stringify(global.goldExchangeRates) + " starting at " + global.goldExchangeRatesUpdateTime);
+
+				} else {
+					debugLog("Unable to get gold exchange rate data");
+				}
+			} else {
+				logError("34082yt78yewewe", {error:error, response:response, body:body});
+			}
+		});
+	}
 }
 
 // Uses ipstack.com API
@@ -526,41 +572,50 @@ function geoLocateIpAddresses(ipAddresses, provider) {
 					if (result.value == null) {
 						var apiUrl = "http://api.ipstack.com/" + result.key + "?access_key=" + config.credentials.ipStackComApiAccessKey;
 						
-						debugLog("Requesting IP-geo: " + apiUrl);
-
 						request(apiUrl, function(error, response, body) {
 							if (error) {
-								reject2(error);
+								debugLog("Failed IP-geo-lookup: " + result.key);
+
+								logError("39724gdge33a", error, {ip: result.key});
+
+								// we failed to get what we wanted, but there's no meaningful recourse,
+								// so we log the failure and continue without objection
+								resolve2();
 
 							} else {
-								resolve2({needToProcess:true, response:response});
+								if (response != null && response.statusCode == 200) {
+									var resBody = JSON.parse(response.body);
+									var ip = resBody.ip;
+
+									ipDetails.detailsByIp[ip] = resBody;
+
+									if (resBody.latitude && resBody.longitude) {
+										debugLog(`Successful IP-geo-lookup: ${ip} -> (${resBody.latitude}, ${resBody.longitude})`);
+
+									} else {
+										debugLog(`Unknown location for IP-geo-lookup: ${ip}`);
+									}									
+
+									ipCache.set(ip, resBody, 1000 * 60 * 60 * 24 * 365);
+
+								} else {
+									debugLog("Unsuccessful IP-geo-lookup: " + result.key);
+								}
+
+								resolve2();
 							}
 						});
 
 					} else {
 						ipDetails.detailsByIp[result.key] = result.value;
 
-						resolve2({needToProcess:false});
+						resolve2();
 					}
 				});
 			}));
 		}
 
 		Promise.all(promises).then(function(results) {
-			for (var i = 0; i < results.length; i++) {
-				if (results[i].needToProcess) {
-					var res = results[i].response;
-					if (res != null && res["statusCode"] == 200) {
-						var resBody = JSON.parse(res["body"]);
-						var ip = resBody["ip"];
-
-						ipDetails.detailsByIp[ip] = resBody;
-
-						ipCache.set(ip, resBody, 1000 * 60 * 60 * 24 * 365);
-					}
-				}
-			}
-
 			resolve(ipDetails);
 
 		}).catch(function(err) {
@@ -723,6 +778,7 @@ function outputTypeAbbreviation(outputType) {
 		"scripthash": "p2sh",
 		"witness_v0_keyhash": "v0_p2wpkh",
 		"witness_v0_scripthash": "v0_p2wsh",
+		"witness_v1_taproot": "v1_p2tr",
 		"nonstandard": "nonstandard",
 		"nulldata": "nulldata"
 	};
@@ -742,6 +798,7 @@ function outputTypeName(outputType) {
 		"scripthash": "Pay to Script Hash",
 		"witness_v0_keyhash": "Witness, v0 Key Hash",
 		"witness_v0_scripthash": "Witness, v0 Script Hash",
+		"witness_v1_taproot": "Witness, v1 Taproot",
 		"nonstandard": "Non-Standard",
 		"nulldata": "Null Data"
 	};
@@ -752,6 +809,18 @@ function outputTypeName(outputType) {
 	} else {
 		return "???";
 	}
+}
+
+function asHash(value) {
+	return value.replace(/[^a-f0-9]/gi, "");
+}
+
+function asHashOrHeight(value) {
+	return +value || asHash(value);
+}
+
+function asAddress(value) {
+	return value.replace(/[^a-z0-9]/gi, "");
 }
 
 module.exports = {
@@ -766,6 +835,7 @@ module.exports = {
 	formatCurrencyAmountWithForcedDecimalPlaces: formatCurrencyAmountWithForcedDecimalPlaces,
 	formatExchangedCurrency: formatExchangedCurrency,
 	formatValueInActiveCurrency: formatValueInActiveCurrency,
+	formatValueInGold: formatValueInGold,
 	satoshisPerUnitOfActiveCurrency: satoshisPerUnitOfActiveCurrency,
 	addThousandsSeparators: addThousandsSeparators,
 	formatCurrencyAmountInSmallestUnits: formatCurrencyAmountInSmallestUnits,
@@ -787,5 +857,8 @@ module.exports = {
 	ellipsize: ellipsize,
 	shortenTimeDiff: shortenTimeDiff,
 	outputTypeAbbreviation: outputTypeAbbreviation,
-	outputTypeName: outputTypeName
+	outputTypeName: outputTypeName,
+	asHash: asHash,
+	asHashOrHeight: asHashOrHeight,
+	asAddress: asAddress,
 };

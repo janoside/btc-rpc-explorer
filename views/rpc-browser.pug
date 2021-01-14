@@ -132,5 +132,5 @@ block content
 							ol(style="padding-left: 30px;")
 								each methodX, methodIndex in section.methods
 									li
-										a.text-monospace(href=("/rpc-browser?method=" + methodX.name), style=(methodX.name == method ? "font-weight: bold; font-style: italic;" : false)) #{methodX.name}
+										a.text-monospace(href=("./rpc-browser?method=" + methodX.name), style=(methodX.name == method ? "font-weight: bold; font-style: italic;" : false)) #{methodX.name}
 

@@ -29,14 +29,15 @@ div.row.index-summary
 							span.d-none.d-xxl-inline #{hashrate7dayData1[0]} 
 							small.border-dotted(title=`${hashrate1dayData0[1].abbreviation}H = ${hashrate1dayData0[1].name}-hash (x10^${hashrate1dayData0[1].exponent})`, data-toggle="tooltip") #{hashrate1dayData0[1].abbreviation}H/s
 
-				tr
-					th.px-2.px-lg-0.px-xl-2
-						i.fas.fa-edit.mr-1.summary-icon
-						span.border-dotted(title="Estimate of the number of days the current global hashrate would require to produce all the hashes needed to re-write the entire blockchain.", data-toggle="tooltip") Chain Rewrite Days
-					td.text-right.text-monospace
-						- var globalHashCount = parseInt("0x" + getblockchaininfo.chainwork);
-						- var rewriteDays = globalHashCount / hashrate7d / 60 / 60 / 24;
-						span #{new Decimal(rewriteDays).toDecimalPlaces(1)}
+				if (!["regtest", "signet"].includes(global.activeBlockchain))
+					tr
+						th.px-2.px-lg-0.px-xl-2
+							i.fas.fa-edit.mr-1.summary-icon
+							span.border-dotted(title="Estimate of the number of days the current global hashrate would require to produce all the hashes needed to re-write the entire blockchain.", data-toggle="tooltip") Chain Rewrite Days
+						td.text-right.text-monospace
+							- var globalHashCount = parseInt("0x" + getblockchaininfo.chainwork);
+							- var rewriteDays = globalHashCount / hashrate7d / 60 / 60 / 24;
+							span #{new Decimal(rewriteDays).toDecimalPlaces(1)}
 
 				tr
 					th.px-2.px-lg-0.px-xl-2
@@ -55,13 +56,17 @@ div.row.index-summary
 						i.fas.fa-unlock.mr-1.summary-icon
 						span Pending Tx
 					td.text-right.text-monospace
-						- var colorClass = "text-success";
-						if (mempoolInfo.size > 7000)
-							- colorClass = "text-warning";
-						if (mempoolInfo.size > 11000)
-							- colorClass = "text-danger";
+						if (mempoolInfo)
+							- var colorClass = "text-success";
+							if (mempoolInfo.size > 7000)
+								- colorClass = "text-warning";
+							if (mempoolInfo.size > 11000)
+								- colorClass = "text-danger";
 
-						span(class=colorClass) #{mempoolInfo.size.toLocaleString()}
+							span(class=colorClass) #{mempoolInfo.size.toLocaleString()}
+
+						else
+							span.text-danger.border-dotted(title="There was an error getting this data. Check your application logs for possible explanation.", data-toggle="tooltip") Error
 
 				if (smartFeeEstimates)
 					tr
@@ -70,15 +75,20 @@ div.row.index-summary
 							span.border-dotted(title="Current fee estimates (using 'estimatesmartfee') for getting a transaction included in 1 block, 6 blocks (1 hr), 144 blocks (1 day), or 1,008 blocks (1 week).", data-toggle="tooltip") Fee Targets
 							if (false)
 								small.ml-1 (1/h/d/w)
-						td.text-right.text-monospace #{smartFeeEstimates[1]}
-							small.d-md-none  
-							small.text-muted /
-							span #{smartFeeEstimates[6]}
-							small.text-muted /
-							span #{smartFeeEstimates[144]}
-							small.text-muted /
-							span #{smartFeeEstimates[1008]}
-							small  sat/vB
+						td.text-right.text-monospace
+							if (smartFeeEstimates)
+								span #{smartFeeEstimates[1]}
+								small.d-md-none  
+								small.text-muted /
+								span #{smartFeeEstimates[6]}
+								small.text-muted /
+								span #{smartFeeEstimates[144]}
+								small.text-muted /
+								span #{smartFeeEstimates[1008]}
+								small  sat/vB
+
+							else
+								span.text-danger.border-dotted(title="There was an error getting this data. Check your application logs for possible explanation.", data-toggle="tooltip") Error
 
 				tr
 					th.px-2.px-lg-0.px-xl-2
@@ -106,7 +116,8 @@ div.row.index-summary
 							- var diffAdjSign = "+";
 
 						span.border-dotted(title=diffAdjText, data-toggle="tooltip") #{timePerBlockDuration.format()}
-							small.text-muted.ml-1 (#{diffAdjSign}#{diffAdjPercent.toDP(1)}%)
+							if (!isNaN(diffAdjPercent))
+								small.text-muted.ml-1 (#{diffAdjSign}#{diffAdjPercent.toDP(1)}%)
 								
 
 	div(class=colClass)
@@ -209,6 +220,14 @@ div.row.index-summary
 								- var satsRateData = utils.satoshisPerUnitOfActiveCurrency();
 								span #{satsRateData.amt}
 									small  #{satsRateData.unit}
+
+					if (exchangeRates && goldExchangeRates)
+						tr
+							th.px-2.px-lg-0.px-xl-2
+								i.fas.fa-mountain.mr-1.summary-icon
+								span.border-dotted(data-toggle="tooltip", title=("Exchange-rate data from: " + coinConfig.goldExchangeRateData.jsonUrl)) AU Exchange Rate
+							td.text-right.text-monospace
+								span #{utils.formatValueInGold(1.0)}
 
 					if (exchangeRates)
 						if (utxoSetSummary || utxoSetSummaryPending)

@@ -5,11 +5,17 @@ block headContent
 	
 block content
 	if (getblockchaininfo == null)
-		div.alert.alert-warning
-			p.font-weight-bold Unable to get basic blockchain data
+		div.alert.alert-danger
+			h5.mb-3 Unable to get basic blockchain data
 			ul
-				li If you just started your node, it may still be initializing.
-				li If your node is already initialized, check your RPC connection info.
+				li
+					p
+						strong If you just started your node, it may still be initializing.
+						div At startup, bitcoind verifies its block index before making itself available to serve data. The amount of time the verification process takes depends largely on the speed of the machine bitcoind is running on. If you're running bitcoind on low powered, inexpensive hardware, don't be surprised if this process takes a long time.
+				li
+					p
+						strong If you believe your bitcoind node is already initialized...
+						div Check your RPC connection info and/or check this application's error log for possible hints about the cause of this issue.
 	else
 
 		if (config.demoSite && session.hideHomepageBanner != "true")
@@ -51,10 +57,10 @@ block content
 
 					
 
-				a.close(href="/changeSetting?name=hideHomepageBanner&value=true", aria-label="Close", style="text-decoration: none;")
+				a.close(href="./changeSetting?name=hideHomepageBanner&value=true", aria-label="Close", style="text-decoration: none;")
 					span(aria-hidden="true") &times;
 
-		if (getblockchaininfo.initialblockdownload)
+		if (getblockchaininfo.initialblockdownload && !["regtest", "signet"].includes(global.activeBlockchain))
 			div.alert.alert-warning.shadow-sm.border.mb-3
 				div.font-weight-bold.mb-1 Initial Block Download (IBD) - In Progress...
 
@@ -85,7 +91,7 @@ block content
 								h3.h6.mb-0 Tools
 								
 							div.col.text-right
-								a(href="/tools") More info &raquo;
+								a(href="./tools") More info &raquo;
 						hr
 
 						include includes/tools-card.pug
@@ -101,7 +107,7 @@ block content
 									h3.h6.mb-0 Latest Blocks
 									
 								div.col.text-right
-									a(href="/blocks") See more &raquo;
+									a(href="./blocks") See more &raquo;
 
 							hr
 
@@ -121,7 +127,7 @@ block content
 
 											div.col
 												span(style="float: right;")
-													a(href="/blocks")
+													a(href="./blocks")
 														span  Browse Blocks &raquo;
 
 									div.card-body
@@ -142,7 +148,7 @@ block content
 									h3.h6.mb-0 Transaction Stats
 									
 								div.col.text-right
-									a(href="/tx-stats") See more &raquo;
+									a(href="./tx-stats") See more &raquo;
 
 							hr
 

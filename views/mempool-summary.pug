@@ -43,48 +43,49 @@ block content
 						div.summary-table-label Avg Fee Rate
 						div.summary-table-content.text-monospace(id="avg-fee-rate")
 
-		div.card.shadow-sm.mb-3
-			div.card-body.px-2.px-md-3
-				h3.h6.mb-0 Transactions by fee rate
-				hr
+		div#detail-charts-and-data
+			div.card.shadow-sm.mb-3
+				div.card-body.px-2.px-md-3
+					h3.h6.mb-0 Transactions by fee rate
+					hr
 
-				canvas.mb-3(id="mempoolBarChart", height="100")
+					canvas.mb-3(id="mempoolBarChart", height="100")
 
-				div.table-responsive
-					table.table.table-striped.mb-3
-						thead
-							tr
-								th Fee Rate
-								th.text-right Tx Count
-								th.text-right Total Fees
-								th.text-right Avg Fee
-								th.text-right Avg Fee Rate
-						tbody(id="fee-rate-table-body")
-							tr(id="fee-rate-table-row-prototype", style="display: none;")
-								td.text-monospace.data-label
-								td.text-monospace.text-right.data-count
-								td.text-monospace.text-right.data-total-fees
-								td.text-monospace.text-right.data-avg-fee
-								td.text-monospace.text-right.data-fee-rate
+					div.table-responsive
+						table.table.table-striped.mb-3
+							thead
+								tr
+									th Fee Rate
+									th.text-right Tx Count
+									th.text-right Total Fees
+									th.text-right Avg Fee
+									th.text-right Avg Fee Rate
+							tbody(id="fee-rate-table-body")
+								tr(id="fee-rate-table-row-prototype", style="display: none;")
+									td.text-monospace.data-label
+									td.text-monospace.text-right.data-count
+									td.text-monospace.text-right.data-total-fees
+									td.text-monospace.text-right.data-avg-fee
+									td.text-monospace.text-right.data-fee-rate
 
-		div.card.shadow-sm.mb-3
-			div.card-body.px-2.px-md-3
-				h3.h6.mb-0 Transactions by size
-				hr
+			div.card.shadow-sm.mb-3
+				div.card-body.px-2.px-md-3
+					h3.h6.mb-0 Transactions by size
+					hr
 
-				canvas.mb-3(id="txSizesBarChart", height="100")
+					canvas.mb-3(id="txSizesBarChart", height="100")
 
-		div.card.shadow-sm.mb-3
-			div.card-body.px-2.px-md-3
-				h3.h6.mb-0 Transactions by age
-				hr
+			div.card.shadow-sm.mb-3
+				div.card-body.px-2.px-md-3
+					h3.h6.mb-0 Transactions by age
+					hr
 
-				canvas.mb-3(id="txAgesBarChart", height="100")
+					canvas.mb-3(id="txAgesBarChart", height="100")
 		
 
 block endOfBody
-	script(src="/js/chart.bundle.min.js", integrity="sha384-qgOtiGNaHh9fVWUnRjyHlV39rfbDcvPPkEzL1RHvsHKbuqUqM6uybNuVnghY2z4/")
-	script(src='/js/decimal.js')
+	script(src="./js/chart.bundle.min.js", integrity="sha384-qgOtiGNaHh9fVWUnRjyHlV39rfbDcvPPkEzL1RHvsHKbuqUqM6uybNuVnghY2z4/")
+	script(src='./js/decimal.js')
 	script.
 		var txidChunks = !{JSON.stringify(mempooltxidChunks)};
 		var satoshiPerByteBucketMaxima = !{JSON.stringify(satoshiPerByteBucketMaxima)};
@@ -137,11 +138,24 @@ block endOfBody
 				$("#tx-count").text(summary.count.toLocaleString());
 				$("#mem-usage").text(summary.totalBytes.toLocaleString());
 				$("#total-fees").text(summary.totalFees);
+				
+				if (summary.count == 0) {
+					$("#avg-fee").text("-");
+					$("#avg-fee-rate").text("-");
+
+					$("#detail-charts-and-data").hide();
+
+					$("#main-content").show();
+					$("#progress-wrapper").hide();
+
+					return;
+				}
+				
 				$("#avg-fee").text(summary.averageFee);
 				$("#avg-fee-rate").text(summary.averageFeePerByte);
 
 				$.ajax({
-					url: `/api/utils/formatLargeNumber/${summary.totalBytes},2`
+					url: `./api/utils/formatLargeNumber/${summary.totalBytes},2`
 
 				}).done(function(result) {
 					$("#mem-usage").html(`<span>${result[0]} <small>${result[1].abbreviation}B</small></span>`);
@@ -273,7 +287,7 @@ block endOfBody
 				return;
 			}
 
-			var url = `/api/mempool-txs/${chunkStrs[chunkIndex]}`;
+			var url = `./api/mempool-txs/${chunkStrs[chunkIndex]}`;
 			
 			//console.log(url);
 

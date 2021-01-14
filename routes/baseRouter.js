@@ -12,8 +12,8 @@ var bitcoinjs = require('bitcoinjs-lib');
 var sha256 = require("crypto-js/sha256");
 var hexEnc = require("crypto-js/enc-hex");
 var Decimal = require("decimal.js");
-var marked = require("marked");
 var semver = require("semver");
+var markdown = require("markdown-it")();
 
 var utils = require('./../app/utils.js');
 var coins = require("./../app/coins.js");
@@ -406,7 +406,7 @@ router.get("/blocks", function(req, res, next) {
 	res.locals.limit = limit;
 	res.locals.offset = offset;
 	res.locals.sort = sort;
-	res.locals.paginationBaseUrl = "/blocks";
+	res.locals.paginationBaseUrl = "./blocks";
 
 	coreApi.getBlockchainInfo().then(function(getblockchaininfo) {
 		res.locals.blockCount = getblockchaininfo.blocks;
@@ -426,6 +426,10 @@ router.get("/blocks", function(req, res, next) {
 				}
 			}
 		}
+
+		blockHeights = blockHeights.filter((h) => {
+			return h >= 0 && h <= getblockchaininfo.blocks;
+		});
 
 		var promises = [];
 
@@ -516,7 +520,7 @@ router.post("/search", function(req, res, next) {
 	if (!req.body.query) {
 		req.session.userMessage = "Enter a block height, block hash, or transaction id.";
 
-		res.redirect("/");
+		res.redirect("./");
 
 		return;
 	}
@@ -529,21 +533,21 @@ router.post("/search", function(req, res, next) {
 	if (query.length == 64) {
 		coreApi.getRawTransaction(query).then(function(tx) {
 			if (tx) {
-				res.redirect("/tx/" + query);
+				res.redirect("./tx/" + query);
 
 				return;
 			}
 
 			coreApi.getBlockByHash(query).then(function(blockByHash) {
 				if (blockByHash) {
-					res.redirect("/block/" + query);
+					res.redirect("./block/" + query);
 
 					return;
 				}
 
 				coreApi.getAddress(rawCaseQuery).then(function(validateaddress) {
 					if (validateaddress && validateaddress.isvalid) {
-						res.redirect("/address/" + rawCaseQuery);
+						res.redirect("./address/" + rawCaseQuery);
 
 						return;
 					}
@@ -551,56 +555,56 @@ router.post("/search", function(req, res, next) {
 
 				req.session.userMessage = "No results found for query: " + query;
 
-				res.redirect("/");
+				res.redirect("./");
 
 			}).catch(function(err) {
 				req.session.userMessage = "No results found for query: " + query;
 
-				res.redirect("/");
+				res.redirect("./");
 			});
 
 		}).catch(function(err) {
 			coreApi.getBlockByHash(query).then(function(blockByHash) {
 				if (blockByHash) {
-					res.redirect("/block/" + query);
+					res.redirect("./block/" + query);
 
 					return;
 				}
 
 				req.session.userMessage = "No results found for query: " + query;
 
-				res.redirect("/");
+				res.redirect("./");
 
 			}).catch(function(err) {
 				req.session.userMessage = "No results found for query: " + query;
 
-				res.redirect("/");
+				res.redirect("./");
 			});
 		});
 
 	} else if (!isNaN(query)) {
 		coreApi.getBlockByHeight(parseInt(query)).then(function(blockByHeight) {
 			if (blockByHeight) {
-				res.redirect("/block-height/" + query);
+				res.redirect("./block-height/" + query);
 
 				return;
 			}
 
 			req.session.userMessage = "No results found for query: " + query;
 
-			res.redirect("/");
+			res.redirect("./");
 		});
 	} else {
 		coreApi.getAddress(rawCaseQuery).then(function(validateaddress) {
 			if (validateaddress && validateaddress.isvalid) {
-				res.redirect("/address/" + rawCaseQuery);
+				res.redirect("./address/" + rawCaseQuery);
 
 				return;
 			}
 
 			req.session.userMessage = "No results found for query: " + rawCaseQuery;
 
-			res.redirect("/");
+			res.redirect("./");
 		});
 	}
 });
@@ -632,7 +636,7 @@ router.get("/block-height/:blockHeight", function(req, res, next) {
 
 	res.locals.limit = limit;
 	res.locals.offset = offset;
-	res.locals.paginationBaseUrl = "/block-height/" + blockHeight;
+	res.locals.paginationBaseUrl = "./block-height/" + blockHeight;
 
 	coreApi.getBlockByHeight(blockHeight).then(function(result) {
 		res.locals.result.getblockbyheight = result;
@@ -691,7 +695,7 @@ router.get("/block-height/:blockHeight", function(req, res, next) {
 });
 
 router.get("/block/:blockHash", function(req, res, next) {
-	var blockHash = req.params.blockHash;
+	var blockHash = utils.asHash(req.params.blockHash);
 
 	res.locals.blockHash = blockHash;
 
@@ -717,7 +721,7 @@ router.get("/block/:blockHash", function(req, res, next) {
 
 	res.locals.limit = limit;
 	res.locals.offset = offset;
-	res.locals.paginationBaseUrl = "/block/" + blockHash;
+	res.locals.paginationBaseUrl = "./block/" + blockHash;
 
 	var promises = [];
 
@@ -764,7 +768,7 @@ router.get("/block/:blockHash", function(req, res, next) {
 });
 
 router.get("/block-analysis/:blockHashOrHeight", function(req, res, next) {
-	var blockHashOrHeight = req.params.blockHashOrHeight;
+	var blockHashOrHeight = utils.asHashOrHeight(req.params.blockHashOrHeight);
 
 	var goWithBlockHash = function(blockHash) {
 		var blockHash = blockHash;
@@ -811,7 +815,7 @@ router.get("/block-analysis", function(req, res, next) {
 });
 
 router.get("/tx/:transactionId", function(req, res, next) {
-	var txid = req.params.transactionId;
+	var txid = utils.asHash(req.params.transactionId);
 
 	var output = -1;
 	if (req.query.output) {
@@ -910,13 +914,13 @@ router.get("/address/:address", function(req, res, next) {
 	}
 
 
-	var address = req.params.address;
+	var address = utils.asAddress(req.params.address);
 
 	res.locals.address = address;
 	res.locals.limit = limit;
 	res.locals.offset = offset;
 	res.locals.sort = sort;
-	res.locals.paginationBaseUrl = `/address/${address}?sort=${sort}`;
+	res.locals.paginationBaseUrl = `./address/${address}?sort=${sort}`;
 	res.locals.transactions = [];
 	res.locals.addressApiSupport = addressApi.getCurrentAddressApiFeatureSupport();
 	
@@ -1446,7 +1450,7 @@ router.get("/unconfirmed-tx", function(req, res, next) {
 	res.locals.limit = limit;
 	res.locals.offset = offset;
 	res.locals.sort = sort;
-	res.locals.paginationBaseUrl = "/unconfirmed-tx";
+	res.locals.paginationBaseUrl = "./unconfirmed-tx";
 
 	coreApi.getMempoolDetails(offset, limit).then(function(mempoolDetails) {
 		res.locals.mempoolDetails = mempoolDetails;
@@ -1536,13 +1540,24 @@ router.get("/admin", function(req, res, next) {
 	res.locals.cacheStats = global.cacheStats;
 	res.locals.errorStats = global.errorStats;
 
+	res.locals.appConfig = {
+		privacyMode: config.privacyMode,
+		slowDeviceMode: config.slowDeviceMode,
+		demoSite: config.demoSite,
+		rpcConcurrency: config.rpcConcurrency,
+		addressApi: config.addressApi,
+		ipStackComApiAccessKey: !!config.credentials.ipStackComApiAccessKey,
+		redisCache: !!config.redisUrl,
+		noInmemoryRpcCache: config.noInmemoryRpcCache
+	};
+
 	res.render("admin");
 
 	next();
 });
 
 router.get("/changelog", function(req, res, next) {
-	res.locals.changelogHtml = marked(global.changelogMarkdown);
+	res.locals.changelogHtml = markdown.render(global.changelogMarkdown);
 
 	res.render("changelog");
 

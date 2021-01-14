@@ -2,24 +2,25 @@ doctype html
 html(lang="en")
 	head
 		meta(charset="utf-8")
+		base(href=config.baseUrl)
 		meta(name="csrf-token", content=csrfToken)
 		meta(name="viewport", content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0, shrink-to-fit=no")
 		
-		link(rel="stylesheet", href="/css/fonts.css", integrity="sha384-XOmmu8j3C2MFUXRVGg8VWYNwlhEkSNb0rW/4e7bi3F56S6PejEmBUQDGZofQyjbL")
-		link(rel="stylesheet", href="/css/highlight.min.css", integrity="sha384-zhIsEafzyQWHSoMCQ4BfT8ZlRXQyIFwAHAJn32PNdsb8n6tVysGZSLpEEIvCskw4")
+		link(rel="stylesheet", href="./css/fonts.css", integrity="sha384-P92dMmtW9S5qrhDNNDr3kcdk00LJDKUy4Do4zFAO0+Br2b7iGHBWSVRgnnBsEpJS")
+		link(rel="stylesheet", href="./css/highlight.min.css", integrity="sha384-zhIsEafzyQWHSoMCQ4BfT8ZlRXQyIFwAHAJn32PNdsb8n6tVysGZSLpEEIvCskw4")
 
 
 		if (session.uiTheme && session.uiTheme == "dark")
-			link(rel="stylesheet", href="/css/bootstrap-dark.min.css", integrity="sha384-yHrdw+uFPe64ykHEYlYL2lmT0s+veKi1+lmxNqB3jVMOl9iX0h9xDLxcgtFtiV6M")
-			link(rel="stylesheet", href="/css/dark-touchups.css")
+			link(rel="stylesheet", href="./css/bootstrap-dark.min.css", integrity="sha384-yHrdw+uFPe64ykHEYlYL2lmT0s+veKi1+lmxNqB3jVMOl9iX0h9xDLxcgtFtiV6M")
+			link(rel="stylesheet", href="./css/dark-touchups.css")
 				
 		else
-			link(rel="stylesheet", href="/css/bootstrap.min.css", integrity="sha384-QO/VzYasHIIVEtFdqGXHU2wxSK0pjVxX4mrM68IQhYpi0vTCM0ZIuV/KQbPZMfXg")
+			link(rel="stylesheet", href="./css/bootstrap.min.css", integrity="sha384-QO/VzYasHIIVEtFdqGXHU2wxSK0pjVxX4mrM68IQhYpi0vTCM0ZIuV/KQbPZMfXg")
 
 		
-		link(rel='stylesheet', href='/css/styling.css')
+		link(rel='stylesheet', href='./css/styling.css')
 
-		link(rel="icon", type="image/png", href=("/img/logo/" + config.coin.toLowerCase() + ".png"))
+		link(rel="icon", type="image/png", href=("./img/logo/" + config.coin.toLowerCase() + ".png"))
 
 		include includes/debug-overrides.pug
 
@@ -29,12 +30,12 @@ html(lang="en")
 	body.bg-dark
 		nav.navbar.navbar-expand-lg.navbar-dark.bg-dark
 			div.container
-				a.navbar-brand(href="/")
+				a.navbar-brand(href="./")
 					span
 						if (coinConfig.logoUrlsByNetwork && coinConfig.logoUrlsByNetwork[activeBlockchain])
 							img.header-image(src=coinConfig.logoUrlsByNetwork[activeBlockchain], alt="logo")
 						else
-							img.header-image(src="/img/logo/btc.svg", alt="logo")
+							img.header-image(src="./img/logo/btc.svg", alt="logo")
 
 						if (coinConfig.siteTitlesByNetwork && coinConfig.siteTitlesByNetwork[activeBlockchain])
 							span #{coinConfig.siteTitlesByNetwork[activeBlockchain]}
@@ -49,7 +50,7 @@ html(lang="en")
 						ul.navbar-nav.mr-auto
 							if (false)
 								li.nav-item
-									a.nav-link(href="/about")
+									a.nav-link(href="./about")
 										span About
 
 							if (activeBlockchain != "main")
@@ -83,7 +84,7 @@ html(lang="en")
 													span  #{dropdownLink.name}
 
 							
-						form.form-inline.mr-3(method="post", action="/search")
+						form.form-inline.mr-3(method="post", action="./search")
 							input(type="hidden", name="_csrf", value=csrfToken)
 							div.input-group.input-group-sm
 								input.form-control.form-control-sm(type="text", name="query", placeholder="block height/hash, txid, address", value=(query))
@@ -96,7 +97,7 @@ html(lang="en")
 								a.nav-link.dropdown-toggle(href="javascript:void(0)", role="button", data-toggle="dropdown", aria-haspopup="true", aria-expanded="false") 
 									span  Admin Tools
 								div.dropdown-menu.dropdown-menu-right.shadow(aria-label="Admin Tools Items")
-									a.dropdown-item(href="/admin") Admin Dashboard
+									a.dropdown-item(href="./admin") Admin Dashboard
 
 							li.nav-item.dropdown
 								a.nav-link.dropdown-toggle(href="javascript:void(0)", id="navbarDropdown", role="button", data-toggle="dropdown", aria-haspopup="true", aria-expanded="false") 
@@ -106,18 +107,18 @@ html(lang="en")
 										span.dropdown-header Currency Units
 										each item in coinConfig.currencyUnits
 											if (item.type == "native" || (config.queryExchangeRates && !config.privacyMode))
-												a.dropdown-item(href=("/changeSetting?name=currencyFormatType&value=" + item.values[0]))
+												a.dropdown-item(href=("./changeSetting?name=currencyFormatType&value=" + item.values[0]))
 													each valueName in item.values
 														if (currencyFormatType == valueName)
 															i.fas.fa-check
 													span  #{item.name}
 
 									span.dropdown-header Theme
-									a.dropdown-item(href="/changeSetting?name=uiTheme&value=light")
+									a.dropdown-item(href="./changeSetting?name=uiTheme&value=light")
 										if (session.uiTheme == "light" || session.uiTheme == "")
 											i.fas.fa-check
 										span  Light
-									a.dropdown-item(href="/changeSetting?name=uiTheme&value=dark")
+									a.dropdown-item(href="./changeSetting?name=uiTheme&value=dark")
 										if (session.uiTheme == "dark")
 											i.fas.fa-check
 										span  Dark
@@ -149,7 +150,7 @@ html(lang="en")
 				if (userMessageMarkdown)
 					div.alert(class=(userMessageType ? `alert-${userMessageType}` : "alert-warning"), role="alert")
 						div.user-message-markdown
-							| !{marked(userMessageMarkdown)}
+							| !{markdown(userMessageMarkdown)}
 
 				if (userMessage)
 					div.alert(class=(userMessageType ? `alert-${userMessageType}` : "alert-warning"), role="alert")
@@ -198,7 +199,7 @@ html(lang="en")
 								br
 								span released: #{sourcecodeDate}
 								span(style="font-size: 0.9em;")  (
-									a(href="/changelog") changelog
+									a(href="./changelog") changelog
 									span )
 
 							if (config.demoSite)
@@ -211,15 +212,16 @@ html(lang="en")
 									
 									div.mt-2
 										- var demoSites = [];
-										- demoSites.push({url:"https://explorer.btc21.org", logoUrl:"/img/logo/btc.svg", title:"Bitcoin Explorer"});
-										- demoSites.push({url:"https://testnet.btc21.org", logoUrl:"/img/logo/tbtc.svg", title:"Testnet Explorer"});
+										- demoSites.push({url:"https://explorer.btc21.org", logoUrl:"./img/logo/btc.svg", title:"Bitcoin Explorer"});
+										- demoSites.push({url:"https://testnet.btc21.org", logoUrl:"./img/logo/tbtc.svg", title:"Testnet Explorer"});
+										- demoSites.push({url:"https://signet.btc21.org", logoUrl:"./img/logo/signet.svg", title:"Signet Explorer"});
 
 										each demoSite in demoSites
-											a.mr-2(href=demoSite.url, title=demoSite.title)
+											a.mr-2(href=demoSite.url, title=demoSite.title, data-toggle="tooltip")
 												img(src=demoSite.logoUrl, alt=demoSite.title)
 
-										a.mr-2(href="https://lnd-admin.btc21.org", title="LND Admin")
-											img(src=("/img/logo/lnd-admin.png"), style="width: 32px; height: 32px;", alt="LND Admin")
+										a.mr-2(href="https://lnd-admin.btc21.org", title="LND Admin", data-toggle="tooltip")
+											img(src=("./img/logo/lnd-admin.png"), style="width: 32px; height: 32px;", alt="LND Admin")
 
 					div.col-md-7.text-md-right
 						dl
@@ -228,14 +230,14 @@ html(lang="en")
 									i.fas.fa-heart.mr-2
 									span Support Project
 		
-		script(src="/js/jquery.min.js", integrity="sha384-vk5WoKIaW/vJyUAd9n/wmopsmNhiy+L2Z+SBxGYnUkunIxVxAv/UtMOhba/xskxh")
-		script(src="/js/popper.min.js", integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo")
-		script(src="/js/bootstrap.min.js", integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6")
-		script(defer, src="/js/fontawesome.min.js", integrity="sha384-eVEQC9zshBn0rFj4+TU78eNA19HMNigMviK/PU/FFjLXqa/GKPgX58rvt5Z8PLs7")
+		script(src="./js/jquery.min.js", integrity="sha384-vk5WoKIaW/vJyUAd9n/wmopsmNhiy+L2Z+SBxGYnUkunIxVxAv/UtMOhba/xskxh")
+		script(src="./js/popper.min.js", integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo")
+		script(src="./js/bootstrap.min.js", integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6")
+		script(defer, src="./js/fontawesome.min.js", integrity="sha384-eVEQC9zshBn0rFj4+TU78eNA19HMNigMviK/PU/FFjLXqa/GKPgX58rvt5Z8PLs7")
 
-		script(src="/js/highlight.min.js", integrity="sha384-xLrpH5gNLD6HMLgeDH1/p4FXigQ8T9mgNm+EKtCSXL0OJ5i1bnSi57dnwFuUMM9/")
+		script(src="./js/highlight.min.js", integrity="sha384-xLrpH5gNLD6HMLgeDH1/p4FXigQ8T9mgNm+EKtCSXL0OJ5i1bnSi57dnwFuUMM9/")
 
-		script(src="/js/site.js", integrity="sha384-4/UxV25z5d3QFVgqmQ1Aez9CEzXwGz5MbBctDnsoCg6twESX4Jn0wgkazFXUJFqR")
+		script(src="./js/site.js", integrity="sha384-weZIj2Lafb8Qt+U1gwVB/HgL70q/yMT9Vo4NHBqqx67KMqGlMon2iv1WmZFiTKjw")
 		
 		script.
 			$(document).ready(function() {
@@ -246,7 +248,7 @@ html(lang="en")
 			hljs.initHighlightingOnLoad();
 
 		if (config.credentials.sentryUrl && config.credentials.sentryUrl.length > 0)
-			script(src="/js/sentry.min.js", integrity="sha384-da/Bo2Ah6Uw3mlhl6VINMblg2SyGbSnULKrukse3P5D9PTJi4np9HoKvR19D7zOL", crossorigin="anonymous")
+			script(src="./js/sentry.min.js", integrity="sha384-da/Bo2Ah6Uw3mlhl6VINMblg2SyGbSnULKrukse3P5D9PTJi4np9HoKvR19D7zOL", crossorigin="anonymous")
 			script.
 				Sentry.init({ dsn: '#{config.credentials.sentryUrl}' });
 

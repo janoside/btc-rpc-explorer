@@ -104,7 +104,7 @@ block content
 								div.row
 									div.summary-table-label Block
 									div.summary-table-content.text-monospace
-										a(href=("/block/" + result.getrawtransaction.blockhash)) ##{result.getblock.height.toLocaleString()}
+										a(href=("./block/" + result.getrawtransaction.blockhash)) ##{result.getblock.height.toLocaleString()}
 
 							if (isTxConfirmed)
 								div.row
@@ -146,7 +146,7 @@ block content
 									div.summary-table-content.text-monospace
 										if (result.getrawtransaction.locktime < 500000000)
 											span Spendable in block 
-											a(href=("/block-height/" + result.getrawtransaction.locktime)) ##{result.getrawtransaction.locktime.toLocaleString()}
+											a(href=("./block-height/" + result.getrawtransaction.locktime)) ##{result.getrawtransaction.locktime.toLocaleString()}
 											span  or later 
 											a(href="https://bitcoin.org/en/developer-guide#locktime-and-sequence-number", data-toggle="tooltip", title="More info about locktime", target="_blank") 
 												i.fas.fa-info-circle
@@ -182,7 +182,7 @@ block content
 								if (parseFloat(totalOutputValue) < parseFloat(blockRewardMax))
 									div.row
 										div.summary-table-label
-											span.border-dotted(data-toggle="tooltip" title="The miner of this transaction's block failed to collect this value. As a result, it is permanently lost.") Fees Destroyed
+											span.border-dotted(data-toggle="tooltip" title="The miner of this transaction's block failed to collect this value. As a result, it is permanently lost.") Value Destroyed
 										div.summary-table-content.text-monospace.text-danger
 											- var currencyValue = new Decimal(blockRewardMax).minus(totalOutputValue);
 											include includes/value-display.pug
@@ -308,7 +308,7 @@ block content
 								ol.mb-0
 									each ancestorTxid, ancestorIndex in mempoolDetails.ancestors
 										li
-											a.text-monospace(href=("/tx/" + ancestorTxid)) #{ancestorTxid}
+											a.text-monospace(href=("./tx/" + ancestorTxid)) #{ancestorTxid}
 
 					if (mempoolDetails.descendants.length > 0)
 						div.card.shadow-sm.mb-3
@@ -324,7 +324,7 @@ block content
 								ol.mb-0
 									each descendantTxid, descendantIndex in mempoolDetails.descendants
 										li
-											a.text-monospace(href=("/tx/" + descendantTxid)) #{descendantTxid}
+											a.text-monospace(href=("./tx/" + descendantTxid)) #{descendantTxid}
 
 			div.tab-pane(id="tab-scripts", role="tabpanel")
 				div.card.shadow-sm.mb-3

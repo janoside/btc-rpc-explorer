@@ -1,3 +1,29 @@
+##### Unreleased
+
+* New fee rate data on `/block-analysis` pages
+* Fix for SSO token generation URL encoding (Thanks [@shesek](https://github.com/shesek) and [@Kixunil](https://github.com/Kixunil))
+* Fix for `/peers` map
+* Fix for README `git clone` instructions (Thanks [@jonasschnelli](https://github.com/jonasschnelli))
+
+#### v2.1.0
+##### 2020-12-15
+
+* Support for running on a configurable BASEURL, e.g. "/explorer/" (Thanks [@ketominer](https://github.com/ketominer), [@Kixunil](https://github.com/Kixunil), [@shesek](https://github.com/shesek))
+* Support for SSO (Thanks [@Kixunil](https://github.com/Kixunil))
+* Support for signet and taproot (Thanks [@guggero](https://github.com/guggero))
+* Support for listening on 0.0.0.0 (Thanks [@lukechilds](https://github.com/lukechilds))
+* Support for viewing list of block heights for each miner on `/mining-summary`
+* Sanitizing of environment variables (Thanks [@lukechilds](https://github.com/lukechilds))
+* Fix for XSS vulnerabilities (Thanks [@shesek](https://github.com/shesek))
+* Fix for low severity lodash dependency vulnerability (Thanks [@abhiShandy](https://github.com/abhiShandy))
+* Fix for zero block reward (eventually on mainnet, now on regtest) (Thanks [@MyNameIsOka](https://github.com/MyNameIsOka))
+* Fix for cryptic error when running regtest with no blocks
+* Fix for pagination errors on `/blocks` (not displaying genesis block on the last page; error on last page when sort=asc)
+* Electrum connect/disconnect stats on `/admin`
+* Add P2SH bounty address `/fun` items (Thanks [@cd2357](https://github.com/cd2357))
+* Misc cleanup (Thanks [@AaronDewes](https://github.com/AaronDewes))
+* Add "Thanks" notes to changelog
+
 #### v2.0.2
 ##### 2020-07-03
 
@@ -7,6 +33,7 @@
 * Bug fixes
 	* Fix for erroneous defaults for boolean env vars in some scenarios (slow device mode)
 * Updated dependences and mining pools
+* Misc cleanup (Thanks [@JosephGoulden](https://github.com/JosephGoulden))
 
 #### v2.0.1
 ##### 2020-05-28

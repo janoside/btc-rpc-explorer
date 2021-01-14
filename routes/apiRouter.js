@@ -12,7 +12,6 @@ var bitcoinjs = require('bitcoinjs-lib');
 var sha256 = require("crypto-js/sha256");
 var hexEnc = require("crypto-js/enc-hex");
 var Decimal = require("decimal.js");
-var marked = require("marked");
 
 var utils = require('./../app/utils.js');
 var coins = require("./../app/coins.js");
@@ -72,7 +71,7 @@ router.get("/block-stats-by-height/:blockHeights", function(req, res, next) {
 });
 
 router.get("/mempool-txs/:txids", function(req, res, next) {
-	var txids = req.params.txids.split(",");
+	var txids = req.params.txids.split(",").map(utils.asHash);
 
 	var promises = [];
 
@@ -93,7 +92,7 @@ router.get("/mempool-txs/:txids", function(req, res, next) {
 });
 
 router.get("/raw-tx-with-inputs/:txid", function(req, res, next) {
-	var txid = req.params.txid;
+	var txid = utils.asHash(req.params.txid);
 
 	var promises = [];
 
@@ -113,7 +112,7 @@ router.get("/raw-tx-with-inputs/:txid", function(req, res, next) {
 
 router.get("/block-tx-summaries/:blockHeight/:txids", function(req, res, next) {
 	var blockHeight = parseInt(req.params.blockHeight);
-	var txids = req.params.txids.split(",");
+	var txids = req.params.txids.split(",").map(utils.asHash);
 
 	var promises = [];
 
