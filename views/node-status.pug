@@ -123,7 +123,12 @@ block content
 						div.clearfix
 							div.row
 								div.summary-table-label Peers
-								div.summary-table-content.text-monospace #{getnetworkinfo.connections.toLocaleString()}
+								div.summary-table-content.text-monospace
+									span #{getnetworkinfo.connections.toLocaleString()}
+
+									if (getnetworkinfo.connections_in)
+										br
+										span.text-muted (#{getnetworkinfo.connections_in.toLocaleString()} in; #{getnetworkinfo.connections_out.toLocaleString()} out)
 
 							div.row
 								div.summary-table-label Network Traffic

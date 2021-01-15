@@ -76,6 +76,50 @@ block content
 
 											td.data-cell.text-monospace #{item[0]}
 											td.data-cell.text-monospace #{item[1].toLocaleString()}
+
+
+			div.row
+				if (peerSummary.networkTypeSummary)
+					div.col-md-6
+						div.card.shadow-sm.mb-3
+							div.card-body
+								h3.h6.mb-0 Network Types
+								hr
+
+								table.table.table-striped.table-responsive-sm
+									thead
+										tr
+											th
+											th.data-header Network Type
+											th.data-header Count
+									tbody
+										each item, index in peerSummary.networkTypeSummary
+											tr
+												td.data-cell.font-weight-bold #{index + 1}
+
+												td.data-cell.text-monospace #{item[0]}
+												td.data-cell.text-monospace #{item[1].toLocaleString()}
+
+				if (peerSummary.connectionTypeSummary)
+					div.col-md-6
+						div.card.shadow-sm.mb-3
+							div.card-body
+								h3.h6.mb-0 Connection Types
+								hr
+
+								table.table.table-striped.table-responsive-sm
+									thead
+										tr
+											th
+											th.data-header Connection Type
+											th.data-header Count
+									tbody
+										each item, index in peerSummary.connectionTypeSummary
+											tr
+												td.data-cell.font-weight-bold #{index + 1}
+
+												td.data-cell.text-monospace #{item[0]}
+												td.data-cell.text-monospace #{item[1].toLocaleString()}
 							
 
 			div.card.shadow-sm.mb-3

@@ -436,6 +436,78 @@ function getPeerSummary() {
 
 
 
+			if (getpeerinfo.length > 0 && getpeerinfo[0].connection_type) {
+				var connectionTypeSummaryMap = {};
+				for (var i = 0; i < getpeerinfo.length; i++) {
+					var x = getpeerinfo[i];
+
+					if (connectionTypeSummaryMap[x.connection_type] == null) {
+						connectionTypeSummaryMap[x.connection_type] = 0;
+					}
+
+					connectionTypeSummaryMap[x.connection_type]++;
+				}
+
+				var connectionTypeSummary = [];
+				for (var prop in connectionTypeSummaryMap) {
+					if (connectionTypeSummaryMap.hasOwnProperty(prop)) {
+						connectionTypeSummary.push([prop, connectionTypeSummaryMap[prop]]);
+					}
+				}
+
+				connectionTypeSummary.sort(function(a, b) {
+					if (b[1] > a[1]) {
+						return 1;
+
+					} else if (b[1] < a[1]) {
+						return -1;
+
+					} else {
+						return a[0].localeCompare(b[0]);
+					}
+				});
+
+				result.connectionTypeSummary = connectionTypeSummary;
+			}
+
+
+			if (getpeerinfo.length > 0 && getpeerinfo[0].network) {
+				var networkTypeSummaryMap = {};
+				for (var i = 0; i < getpeerinfo.length; i++) {
+					var x = getpeerinfo[i];
+
+					if (networkTypeSummaryMap[x.network] == null) {
+						networkTypeSummaryMap[x.network] = 0;
+					}
+
+					networkTypeSummaryMap[x.network]++;
+				}
+
+				var networkTypeSummary = [];
+				for (var prop in networkTypeSummaryMap) {
+					if (networkTypeSummaryMap.hasOwnProperty(prop)) {
+						networkTypeSummary.push([prop, networkTypeSummaryMap[prop]]);
+					}
+				}
+
+				networkTypeSummary.sort(function(a, b) {
+					if (b[1] > a[1]) {
+						return 1;
+
+					} else if (b[1] < a[1]) {
+						return -1;
+
+					} else {
+						return a[0].localeCompare(b[0]);
+					}
+				});
+
+				result.networkTypeSummary = networkTypeSummary;
+			}
+			
+
+
+
 			result.versionSummary = versionSummary;
 			result.servicesSummary = servicesSummary;
 
