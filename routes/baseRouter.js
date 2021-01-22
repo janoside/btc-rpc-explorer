@@ -1596,4 +1596,54 @@ router.get("/fun", function(req, res, next) {
 	next();
 });
 
+router.get("/bitcoin-whitepaper", function(req, res, next) {
+	res.render("bitcoin-whitepaper");
+
+	next();
+});
+
+router.get("/bitcoin.pdf", function(req, res, next) {
+	// ref: https://bitcoin.stackexchange.com/questions/35959/how-is-the-whitepaper-decoded-from-the-blockchain-tx-with-1000x-m-of-n-multisi
+	const whitepaperTxid = "54e48e5f5c656b26c3bca14a8c95aa583d07ebe84dde3b7dd4a78f4e4186e713";
+
+	coreApi.getRawTransaction(whitepaperTxid).then(function(tx) {
+		var pdfData = "";
+		var start;
+
+		// all outputs, except last 3, are 1-of-3 multisigs
+		for (var i = 0; i < tx.vout.length - 3; i++) {
+			var parts = tx.vout[i].scriptPubKey.asm.split(" ");
+
+			pdfData += parts[1];
+			pdfData += parts[2];
+			pdfData += parts[3];
+		}
+
+		// the last bit of pdf data is in 3rd-from-last output, a 1-of-1 multisig (last 2 outputs are unused for pdf data)
+		var parts = tx.vout[tx.vout.length - 3].scriptPubKey.asm.split(" ");
+
+		// last bit is zeroes and is excluded
+		pdfData += parts[1].substring(0, 50);
+
+		// strip size and checksum from start
+		pdfData = pdfData.substring(16);
+
+		const hexArray = utils.arrayFromHexString(pdfData);
+
+		res.contentType("application/pdf");
+		res.send(Buffer.alloc(hexArray.length, hexArray, "hex"));
+		
+		next();
+
+	}).catch(function(err) {
+		res.locals.userMessageMarkdown = `Failed to load transaction: txid=**${whitepaperTxid}**`;
+
+		res.locals.pageErrors.push(utils.logError("432907twhgeyedg", err));
+
+		res.render("transaction");
+
+		next();
+	});
+});
+
 module.exports = router;

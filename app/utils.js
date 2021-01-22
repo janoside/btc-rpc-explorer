@@ -823,6 +823,9 @@ function asAddress(value) {
 	return value.replace(/[^a-z0-9]/gi, "");
 }
 
+const arrayFromHexString = hexString =>
+	new Uint8Array(hexString.match(/.{1,2}/g).map(byte => parseInt(byte, 16)));
+
 module.exports = {
 	reflectPromise: reflectPromise,
 	redirectToConnectPageIfNeeded: redirectToConnectPageIfNeeded,
@@ -861,4 +864,5 @@ module.exports = {
 	asHash: asHash,
 	asHashOrHeight: asHashOrHeight,
 	asAddress: asAddress,
+	arrayFromHexString: arrayFromHexString
 };

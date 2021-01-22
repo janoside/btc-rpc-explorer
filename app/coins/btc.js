@@ -640,6 +640,15 @@ module.exports = {
 			alertBodyHtml: "This transaction from November 2011 spends 11 UTXOs worth 50,000 BTC to create a single 550,000 BTC UTXO. This is currently the largest output transaction.",
 			referenceUrl: "https://blockchair.com/bitcoin/transactions?s=output_total(desc)#"
 		},
+		{
+			type: "tx",
+			date: "2013-04-06",
+			chain: "main",
+			txid: "54e48e5f5c656b26c3bca14a8c95aa583d07ebe84dde3b7dd4a78f4e4186e713",
+			summary: "The Bitcoin whitepaper embedded in the Bitcoin blockchain.",
+			alertBodyHtml: "This transaction encodes the Bitcoin whitepaper PDF in 945 of its 947 outputs. You can view the PDF, decoded from data served by your own node here: <a href='./bitcoin-whitepaper'>bitcoin whitepaper</a>. Or read more about the technical details - ",
+			referenceUrl: "https://bitcoin.stackexchange.com/questions/35959/how-is-the-whitepaper-decoded-from-the-blockchain-tx-with-1000x-m-of-n-multisi"
+		},
 
 
 
