@@ -4,6 +4,7 @@
 * New "Fun" item for the tx containing the whitepaper and new tool to extract the whitepaper and display it
 * New fee rate data on `/block-analysis` pages
 * New minor misc peer data available in Bitcoin Core RPC v0.21+
+* New gold exchange rate on homepage
 * Fix for SSO token generation URL encoding (Thanks [@shesek](https://github.com/shesek) and [@Kixunil](https://github.com/Kixunil))
 * Fix for `/peers` map
 * Fix for README `git clone` instructions (Thanks [@jonasschnelli](https://github.com/jonasschnelli))
