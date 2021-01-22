@@ -1,4 +1,4 @@
-##### v2.1.1
+##### v2.2.0
 ###### 2021-01-22
 
 * New "Fun" item for the tx containing the whitepaper and new tool to extract the whitepaper and display it
