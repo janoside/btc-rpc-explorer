@@ -474,6 +474,15 @@ module.exports = {
 			referenceUrl: "https://github.com/bitcoin/bitcoin/blob/master/src/validation.cpp#L1240"
 		},
 		{
+			type: "tx",
+			date: "2015-07-07",
+			chain: "main",
+			txid: "bb41a757f405890fb0f5856228e23b715702d714d59bf2b1feb70d8b2b4e3e08",
+			summary: "The Megatransaction",
+			alertBodyHtml: "This transaction filled the entire 1MB block, mostly sweeping weak brainwallets. At the time, it needed 25 seconds to validate.",
+			referenceUrl: "https://rusty.ozlabs.org/?p=522"
+		},
+		{
 			type: "blockheight",
 			date: "2016-07-09",
 			chain: "main",
