@@ -387,6 +387,9 @@ app.onStartup = function() {
 
 	loadChangelog();
 
+	global.nodeVersion = process.version;
+	debugLog(`Environment - Node: ${process.version}, Platform: ${process.platform}, Versions: ${JSON.stringify(process.versions)}`);
+
 	if (global.sourcecodeVersion == null && fs.existsSync('.git')) {
 		simpleGit(".").log(["-n 1"], function(err, log) {
 			if (err) {
