@@ -1,3 +1,8 @@
+##### Unreleased
+
+* New: include running `node` version on `/admin` and in startup log
+
+
 ##### v2.2.0
 ###### 2021-01-22
 
@@ -8,6 +13,7 @@
 * Fix for SSO token generation URL encoding (Thanks [@shesek](https://github.com/shesek) and [@Kixunil](https://github.com/Kixunil))
 * Fix for `/peers` map
 * Fix for README `git clone` instructions (Thanks [@jonasschnelli](https://github.com/jonasschnelli))
+
 
 #### v2.1.0
 ##### 2020-12-15
@@ -28,6 +34,7 @@
 * Misc cleanup (Thanks [@AaronDewes](https://github.com/AaronDewes))
 * Add "Thanks" notes to changelog
 
+
 #### v2.0.2
 ##### 2020-07-03
 
@@ -38,6 +45,7 @@
 	* Fix for erroneous defaults for boolean env vars in some scenarios (slow device mode)
 * Updated dependences and mining pools
 * Misc cleanup (Thanks [@JosephGoulden](https://github.com/JosephGoulden))
+
 
 #### v2.0.1
 ##### 2020-05-28
@@ -52,6 +60,7 @@
 	* Fix "failure to render homepage when fee estimates are unavailable"
 * Minor additions to "fun" data
 * Updated dependences
+
 
 #### v2.0.0
 ##### 2020-03-25
@@ -108,6 +117,7 @@
 * Updated miner configs
 * Lots of minor bug fixes
 
+
 #### v1.1.9
 ##### 2020-02-23
 
@@ -117,11 +127,13 @@
 * Disable stacktrace log output by default (#170)
 * Updated miner configs
 
+
 #### v1.1.8
 ##### 2020-01-09
 
 * Fix for missing changelog file when installed via npm
 * Updated miner configs
+
 
 #### v1.1.5
 ##### 2019-12-22
@@ -130,10 +142,12 @@
 * Homepage header: show exchange rate in selected currency (rather than hardcoded USD)
 * Homepage header: show sat/USD or sat/EUR
 
+
 #### v1.1.4
 ###### 2019-12-04
 
 * First-class support for testnet/regtest
+
 
 #### v1.1.3
 ###### 2019-12-02
@@ -143,10 +157,12 @@
 * Version number in footer
 * `/changelog` linked in footer
 
+
 #### v1.1.2 
 ###### 2019-10-17
 
 * Add back map on `/peers` that was lost with recent bug
+
 
 #### v1.1.1
 ###### 2019-10-01
@@ -154,6 +170,7 @@
 * Add new default blacklist items for some 'hidden' RPCs
 * Print app version info to log on startup
 * Remove LTC site from footer
+
 
 #### v1.1.0
 ###### 2019-09-30
@@ -166,6 +183,7 @@
 * Fix for persisting arg values in UI on `/rpc-browser`
 * Misc minor fixes and ux tweaks
 
+
 #### v1.0.3
 ###### 2019-04-27
 
@@ -175,10 +193,12 @@
 * Identify destroyed fees
 * Misc minor fixes and ux tweaks
 
+
 #### v1.0.2
 ###### 2019-03-13
 
 * Fix for background color on light theme
+
 
 #### v1.0.1
 ###### 2019-03-13
@@ -187,6 +207,7 @@
 * Tx rate graph on homepage
 * Improved caching
 * Misc minor fixes and ux tweaks
+
 
 #### v1.0.0
 ###### 2019-02-23
