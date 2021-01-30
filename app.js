@@ -61,6 +61,23 @@ var snippetActionsRouter = require('./routes/snippetRouter.js');
 
 var app = express();
 
+app.use(require("express-status-monitor")({
+	spans: [
+		{
+			interval: 1,            // Every second
+			retention: 60           // Keep 60 datapoints in memory
+		},
+		{
+			interval: 30,            // Every 30 seconds
+			retention: 60
+		},
+		{
+			interval: 60,           // Every 60 seconds
+			retention: 24 * 60
+		}
+	]
+}));
+
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 
