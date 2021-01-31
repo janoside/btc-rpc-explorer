@@ -306,6 +306,7 @@ router.get("/peers", function(req, res, next) {
 		if (peerIps.length > 0) {
 			utils.geoLocateIpAddresses(peerIps).then(function(results) {
 				res.locals.peerIpSummary = results;
+				res.locals.mapBoxComApiAccessKey = config.credentials.mapBoxComApiAccessKey;
 				
 				res.render("peers");
 
@@ -1547,6 +1548,7 @@ router.get("/admin", function(req, res, next) {
 		rpcConcurrency: config.rpcConcurrency,
 		addressApi: config.addressApi,
 		ipStackComApiAccessKey: !!config.credentials.ipStackComApiAccessKey,
+		mapBoxComApiAccessKey: !!config.credentials.mapBoxComApiAccessKey,
 		redisCache: !!config.redisUrl,
 		noInmemoryRpcCache: config.noInmemoryRpcCache
 	};
