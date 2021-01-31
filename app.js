@@ -49,7 +49,7 @@ var coreApi = require("./app/api/coreApi.js");
 var auth = require('./app/auth.js');
 var sso = require('./app/sso.js');
 var markdown = require("markdown-it")();
-const heapdump = require("heapdump");
+const v8 = require("v8");
 
 var package_json = require('./package.json');
 global.appVersion = package_json.version;
@@ -416,9 +416,12 @@ app.onStartup = function() {
 		var callback = function() {
 			debugLog("Waited 5 sec after startup, now dumping 'startup' heap...");
 
-			heapdump.writeSnapshot(`heapDumpAtStartup-${Date.now()}.heapsnapshot`, (err, filename) => {
-				debugLog("Heap dump at startup written to", filename);
-			});
+			const filename = `./heapDumpAtStartup-${Date.now()}.heapsnapshot`;
+			const heapdumpStream = v8.getHeapSnapshot();
+			const fileStream = fs.createWriteStream(filename);
+			heapdumpStream.pipe(fileStream);
+			
+			debugLog("Heap dump at startup written to", filename);
 		};
 
 		setTimeout(callback, 5000);

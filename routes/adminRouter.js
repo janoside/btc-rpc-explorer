@@ -1,7 +1,7 @@
 var debug = require("debug");
 var debugLog = debug("btcexp:router");
 
-const heapdump = require("heapdump");
+const fs = require('fs');
 const v8 = require('v8');
 
 var express = require('express');
@@ -58,11 +58,14 @@ router.get('/heapdump', (req, res) => {
 	debugLog(`Heap dump requested by IP ${ip}...`);
 
 	if (ip == "127.0.0.1") {
-		heapdump.writeSnapshot(`heapDump-${Date.now()}.heapsnapshot`, (err, filename) => {
-			debugLog("Heap dump written to", filename);
+		const filename = `./heapDump-${Date.now()}.heapsnapshot`;
+		const heapdumpStream = v8.getHeapSnapshot();
+		const fileStream = fs.createWriteStream(filename);
+		heapdumpStream.pipe(fileStream);
+		
+		debugLog("Heap dump at startup written to", filename);
 
-			res.status(200).send({msg: "successfully took a heap dump"})
-		});
+		res.status(200).send({msg: "successfully took a heap dump"});
 	}
 });
 
