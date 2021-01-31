@@ -6,7 +6,7 @@ const bluebird = require("bluebird");
 const config = require("./config.js");
 const utils = require("./utils.js");
 
-const redisClient = null;
+let redisClient = null;
 if (config.redisUrl) {
 	bluebird.promisifyAll(redis.RedisClient.prototype);
 
