@@ -49,6 +49,7 @@ var coreApi = require("./app/api/coreApi.js");
 var auth = require('./app/auth.js');
 var sso = require('./app/sso.js');
 var markdown = require("markdown-it")();
+const heapdump = require("heapdump");
 
 var package_json = require('./package.json');
 global.appVersion = package_json.version;
@@ -58,10 +59,12 @@ var crawlerBotUserAgentStrings = [ "Googlebot", "Bingbot", "Slurp", "DuckDuckBot
 var baseActionsRouter = require('./routes/baseRouter.js');
 var apiActionsRouter = require('./routes/apiRouter.js');
 var snippetActionsRouter = require('./routes/snippetRouter.js');
+var adminActionsRouter = require('./routes/adminRouter.js');
 
 var app = express();
 
 app.use(require("express-status-monitor")({
+	path: config.baseUrl + 'admin/status',
 	spans: [
 		{
 			interval: 1,            // Every second
@@ -407,6 +410,21 @@ app.onStartup = function() {
 	global.nodeVersion = process.version;
 	debugLog(`Environment - Node: ${process.version}, Platform: ${process.platform}, Versions: ${JSON.stringify(process.versions)}`);
 
+
+	// dump "startup" heap after 5sec
+	(function () {
+		var callback = function() {
+			debugLog("Waited 5 sec after startup, now dumping 'startup' heap...");
+
+			heapdump.writeSnapshot(`heapDumpAtStartup-${Date.now()}.heapsnapshot`, (err, filename) => {
+				debugLog("Heap dump at startup written to", filename);
+			});
+		};
+
+		setTimeout(callback, 5000);
+	})();
+	
+
 	if (global.sourcecodeVersion == null && fs.existsSync('.git')) {
 		simpleGit(".").log(["-n 1"], function(err, log) {
 			if (err) {
@@ -630,6 +648,7 @@ app.use(csurf(), (req, res, next) => {
 app.use(config.baseUrl, baseActionsRouter);
 app.use(config.baseUrl + 'api/', apiActionsRouter);
 app.use(config.baseUrl + 'snippet/', snippetActionsRouter);
+app.use(config.baseUrl + 'admin/', adminActionsRouter);
 
 app.use(function(req, res, next) {
 	var time = Date.now() - req.startTime;

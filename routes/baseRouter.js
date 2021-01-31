@@ -22,8 +22,6 @@ var coreApi = require("./../app/api/coreApi.js");
 var addressApi = require("./../app/api/addressApi.js");
 var rpcApi = require("./../app/api/rpcApi.js");
 
-const v8 = require('v8');
-
 const forceCsrf = csurf({ ignoreMethods: [] });
 
 router.get("/", function(req, res, next) {
@@ -1528,30 +1526,6 @@ router.get("/about", function(req, res, next) {
 
 router.get("/tools", function(req, res, next) {
 	res.render("tools");
-
-	next();
-});
-
-router.get("/admin", function(req, res, next) {
-	res.locals.appStartTime = global.appStartTime;
-	res.locals.memstats = v8.getHeapStatistics();
-	res.locals.rpcStats = global.rpcStats;
-	res.locals.electrumStats = global.electrumStats;
-	res.locals.cacheStats = global.cacheStats;
-	res.locals.errorStats = global.errorStats;
-
-	res.locals.appConfig = {
-		privacyMode: config.privacyMode,
-		slowDeviceMode: config.slowDeviceMode,
-		demoSite: config.demoSite,
-		rpcConcurrency: config.rpcConcurrency,
-		addressApi: config.addressApi,
-		ipStackComApiAccessKey: !!config.credentials.ipStackComApiAccessKey,
-		redisCache: !!config.redisUrl,
-		noInmemoryRpcCache: config.noInmemoryRpcCache
-	};
-
-	res.render("admin");
 
 	next();
 });
