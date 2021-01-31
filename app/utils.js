@@ -31,7 +31,7 @@ const exponentScales = [
 
 const ipMemoryCache = {};
 
-const ipRedisCache = null;
+let ipRedisCache = null;
 if (redisCache.active) {
 	const onRedisCacheEvent = function(cacheType, eventType, cacheKey) {
 		global.cacheStats.redis[eventType]++;
