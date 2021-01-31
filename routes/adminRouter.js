@@ -37,6 +37,21 @@ router.get("/dashboard", function(req, res, next) {
 	res.locals.cacheStats = global.cacheStats;
 	res.locals.errorStats = global.errorStats;
 
+	res.locals.cacheSizes = {
+		misc: {
+			length: global.miscLruCache.length,
+			itemCount: global.miscLruCache.itemCount
+		},
+		block: {
+			length: global.blockLruCache.length,
+			itemCount: global.blockLruCache.itemCount
+		},
+		tx: {
+			length: global.txLruCache.length,
+			itemCount: global.blockLruCache.itemCount
+		}
+	};
+
 	res.locals.appConfig = {
 		privacyMode: config.privacyMode,
 		slowDeviceMode: config.slowDeviceMode,

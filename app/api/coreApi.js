@@ -89,9 +89,13 @@ function createTieredCache(cacheObjs) {
 
 
 
-var miscCaches = [];
-var blockCaches = [];
-var txCaches = [];
+const miscCaches = [];
+const blockCaches = [];
+const txCaches = [];
+
+global.miscLruCache = new LRU(2000);
+global.blockLruCache = new LRU(2000);
+global.txLruCache = new LRU(10000);
 
 if (!config.noInmemoryRpcCache) {
 	global.cacheStats.memory = {
@@ -105,9 +109,9 @@ if (!config.noInmemoryRpcCache) {
 		//debugLog(`cache.${cacheType}.${eventType}: ${cacheKey}`);
 	}
 
-	miscCaches.push(createMemoryLruCache(new LRU(2000), onMemoryCacheEvent));
-	blockCaches.push(createMemoryLruCache(new LRU(2000), onMemoryCacheEvent));
-	txCaches.push(createMemoryLruCache(new LRU(10000), onMemoryCacheEvent));
+	miscCaches.push(createMemoryLruCache(global.miscLruCache, onMemoryCacheEvent));
+	blockCaches.push(createMemoryLruCache(global.blockLruCache, onMemoryCacheEvent));
+	txCaches.push(createMemoryLruCache(global.txLruCache, onMemoryCacheEvent));
 }
 
 if (redisCache.active) {
@@ -136,9 +140,9 @@ if (redisCache.active) {
 	txCaches.push(redisCacheObj);
 }
 
-var miscCache = createTieredCache(miscCaches);
-var blockCache = createTieredCache(blockCaches);
-var txCache = createTieredCache(txCaches);
+const miscCache = createTieredCache(miscCaches);
+const blockCache = createTieredCache(blockCaches);
+const txCache = createTieredCache(txCaches);
 
 
 
@@ -248,13 +252,13 @@ function getUptimeSeconds() {
 }
 
 function getChainTxStats(blockCount) {
-	return tryCacheThenRpcApi(miscCache, "getChainTxStats-" + blockCount, 20 * ONE_MIN, function() {
+	return tryCacheThenRpcApi(miscCache, "getChainTxStats-" + blockCount, FIFTEEN_MIN, function() {
 		return rpcApi.getChainTxStats(blockCount);
 	});
 }
 
 function getNetworkHashrate(blockCount) {
-	return tryCacheThenRpcApi(miscCache, "getNetworkHashrate-" + blockCount, 20 * ONE_MIN, function() {
+	return tryCacheThenRpcApi(miscCache, "getNetworkHashrate-" + blockCount, FIFTEEN_MIN, function() {
 		return rpcApi.getNetworkHashrate(blockCount);
 	});
 }
