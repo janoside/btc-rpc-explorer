@@ -1,17 +1,18 @@
-var debug = require('debug');
+"use strict";
 
-var debugLog = debug("btcexp:rpc");
+const debug = require('debug');
+const debugLog = debug("btcexp:rpc");
 
-var async = require("async");
-var semver = require("semver");
+const async = require("async");
+const semver = require("semver");
 
-var utils = require("../utils.js");
-var config = require("../config.js");
-var coins = require("../coins.js");
+const utils = require("../utils.js");
+const config = require("../config.js");
+const coins = require("../coins.js");
 
-var activeQueueTasks = 0;
+let activeQueueTasks = 0;
 
-var rpcQueue = async.queue(function(task, callback) {
+const rpcQueue = async.queue(function(task, callback) {
 	activeQueueTasks++;
 	//debugLog("activeQueueTasks: " + activeQueueTasks);
 
@@ -24,7 +25,7 @@ var rpcQueue = async.queue(function(task, callback) {
 
 }, config.rpcConcurrency);
 
-var minRpcVersions = {getblockstats:"0.17.0"};
+const minRpcVersions = {getblockstats:"0.17.0"};
 
 global.rpcStats = {};
 
@@ -347,7 +348,7 @@ function getRpcData(cmd) {
 	return new Promise(function(resolve, reject) {
 		debugLog(`RPC: ${cmd}`);
 
-		rpcCall = function(callback) {
+		let rpcCall = function(callback) {
 			var client = (cmd == "gettxoutsetinfo" ? global.rpcClientNoTimeout : global.rpcClient);
 
 			client.command(cmd, function(err, result, resHeaders) {
@@ -402,7 +403,7 @@ function getRpcDataWithParams(request) {
 	return new Promise(function(resolve, reject) {
 		debugLog(`RPC: ${JSON.stringify(request)}`);
 
-		rpcCall = function(callback) {
+		let rpcCall = function(callback) {
 			global.rpcClient.command([request], function(err, result, resHeaders) {
 				try {
 					if (err != null) {

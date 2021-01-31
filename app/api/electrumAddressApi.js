@@ -1,20 +1,22 @@
-var debug = require("debug");
-var debugLog = debug("btcexp:electrumx");
+"use strict";
 
-var config = require("./../config.js");
-var coins = require("../coins.js");
-var utils = require("../utils.js");
-var sha256 = require("crypto-js/sha256");
-var hexEnc = require("crypto-js/enc-hex");
+const debug = require("debug");
+const debugLog = debug("btcexp:electrumx");
+
+const config = require("./../config.js");
+const coins = require("../coins.js");
+const utils = require("../utils.js");
+const sha256 = require("crypto-js/sha256");
+const hexEnc = require("crypto-js/enc-hex");
  
-var coinConfig = coins[config.coin];
+const coinConfig = coins[config.coin];
 
 global.net = require('net');
 global.tls = require('tls');
 
 const ElectrumClient = require('electrum-client');
 
-var electrumClients = [];
+const electrumClients = [];
 
 global.electrumStats = {
 	base: {
@@ -25,7 +27,7 @@ global.electrumStats = {
 	rpc: {}
 };
 
-var noConnectionsErrorText = "No ElectrumX connection available. This could mean that the connection was lost or that ElectrumX is processing transactions and therefore not accepting requests. This tool will try to reconnect. If you manage your own ElectrumX server you may want to check your ElectrumX logs.";
+const noConnectionsErrorText = "No ElectrumX connection available. This could mean that the connection was lost or that ElectrumX is processing transactions and therefore not accepting requests. This tool will try to reconnect. If you manage your own ElectrumX server you may want to check your ElectrumX logs.";
 
 
 function connectToServers() {

@@ -1,13 +1,15 @@
-var config = require("./../config.js");
-var coins = require("../coins.js");
-var utils = require("../utils.js");
+"use strict";
 
-var coinConfig = coins[config.coin];
+const config = require("./../config.js");
+const coins = require("../coins.js");
+const utils = require("../utils.js");
 
-var electrumAddressApi = require("./electrumAddressApi.js");
-var blockchainAddressApi = require("./blockchainAddressApi.js");
-var blockchairAddressApi = require("./blockchairAddressApi.js");
-var blockcypherAddressApi = require("./blockcypherAddressApi.js");
+const coinConfig = coins[config.coin];
+
+const electrumAddressApi = require("./electrumAddressApi.js");
+const blockchainAddressApi = require("./blockchainAddressApi.js");
+const blockchairAddressApi = require("./blockchairAddressApi.js");
+const blockcypherAddressApi = require("./blockcypherAddressApi.js");
 
 function getSupportedAddressApis() {
 	return ["blockchain.com", "blockchair.com", "blockcypher.com", "electrumx"];

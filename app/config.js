@@ -1,11 +1,13 @@
-var debug = require("debug");
-var debugLog = debug("btcexp:config");
+"use strict";
 
-var fs = require('fs');
-var crypto = require('crypto');
-var url = require('url');
+const debug = require("debug");
+const debugLog = debug("btcexp:config");
 
-var baseUrl = (process.env.BTCEXP_BASEURL || "/").trim();
+const fs = require('fs');
+const crypto = require('crypto');
+const url = require('url');
+
+let baseUrl = (process.env.BTCEXP_BASEURL || "/").trim();
 if (!baseUrl.startsWith("/")) {
 	baseUrl = "/" + baseUrl;
 }
@@ -13,12 +15,12 @@ if (!baseUrl.endsWith("/")) {
 	baseUrl += "/";
 }
 
-var coins = require("./coins.js");
-var credentials = require("./credentials.js");
+const coins = require("./coins.js");
+const credentials = require("./credentials.js");
 
-var currentCoin = process.env.BTCEXP_COIN || "BTC";
+const currentCoin = process.env.BTCEXP_COIN || "BTC";
 
-var rpcCred = credentials.rpc;
+const rpcCred = credentials.rpc;
 
 if (rpcCred.cookie && !rpcCred.username && !rpcCred.password && fs.existsSync(rpcCred.cookie)) {
 	console.log(`Loading RPC cookie file: ${rpcCred.cookie}`);
@@ -30,16 +32,16 @@ if (rpcCred.cookie && !rpcCred.username && !rpcCred.password && fs.existsSync(rp
 	}
 }
 
-var cookieSecret = process.env.BTCEXP_COOKIE_SECRET
+const cookieSecret = process.env.BTCEXP_COOKIE_SECRET
  || (rpcCred.password && crypto.createHmac('sha256', JSON.stringify(rpcCred))
                                .update('btc-rpc-explorer-cookie-secret').digest('hex'))
  || "0x000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f";
 
 
-var electrumXServerUriStrings = (process.env.BTCEXP_ELECTRUMX_SERVERS || "").split(',').filter(Boolean);
-var electrumXServers = [];
-for (var i = 0; i < electrumXServerUriStrings.length; i++) {
-	var uri = url.parse(electrumXServerUriStrings[i]);
+const electrumXServerUriStrings = (process.env.BTCEXP_ELECTRUMX_SERVERS || "").split(',').filter(Boolean);
+const electrumXServers = [];
+for (let i = 0; i < electrumXServerUriStrings.length; i++) {
+	const uri = url.parse(electrumXServerUriStrings[i]);
 	
 	electrumXServers.push({protocol:uri.protocol.substring(0, uri.protocol.length - 1), host:uri.hostname, port:parseInt(uri.port)});
 }

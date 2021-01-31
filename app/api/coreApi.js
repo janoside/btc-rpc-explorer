@@ -1,32 +1,34 @@
-var debug = require("debug");
+"use strict";
 
-var debugLog = debug("btcexp:core");
+const debug = require("debug");
+const debugLog = debug("btcexp:core");
 
-var LRU = require("lru-cache");
-var fs = require('fs');
+const LRU = require("lru-cache");
+const fs = require('fs');
 
-var utils = require("../utils.js");
-var config = require("../config.js");
-var coins = require("../coins.js");
-var redisCache = require("../redisCache.js");
-var Decimal = require("decimal.js");
-var md5 = require("md5");
+const utils = require("../utils.js");
+const config = require("../config.js");
+const coins = require("../coins.js");
+const redisCache = require("../redisCache.js");
+const Decimal = require("decimal.js");
+const md5 = require("md5");
 
 // choose one of the below: RPC to a node, or mock data while testing
-var rpcApi = require("./rpcApi.js");
+const rpcApi = require("./rpcApi.js");
 //var rpcApi = require("./mockApi.js");
 
 
 // this value should be incremented whenever data format changes, to avoid
 // pulling old-format data from a persistent cache
-var cacheKeyVersion = "v1";
+const cacheKeyVersion = "v1";
 
 
 const ONE_SEC = 1000;
 const ONE_MIN = 60 * ONE_SEC;
 const ONE_HR = 60 * ONE_MIN;
+const FIFTEEN_MIN = 15 * ONE_MIN;
 const ONE_DAY = 24 * ONE_HR;
-const ONE_YR = 265 * ONE_DAY;
+const ONE_YR = 365 * ONE_DAY;
 
 
 

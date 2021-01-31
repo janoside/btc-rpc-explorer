@@ -1,20 +1,21 @@
-var debug = require("debug");
+"use strict";
 
-var debugLog = debug("btcexp:utils");
-var debugErrorLog = debug("btcexp:error");
-var debugErrorVerboseLog = debug("btcexp:errorVerbose");
+const debug = require("debug");
+const debugLog = debug("btcexp:utils");
+const debugErrorLog = debug("btcexp:error");
+const debugErrorVerboseLog = debug("btcexp:errorVerbose");
 
-var Decimal = require("decimal.js");
-var request = require("request");
-var qrcode = require("qrcode");
+const Decimal = require("decimal.js");
+const request = require("request");
+const qrcode = require("qrcode");
 
-var config = require("./config.js");
-var coins = require("./coins.js");
-var coinConfig = coins[config.coin];
-var redisCache = require("./redisCache.js");
+const config = require("./config.js");
+const coins = require("./coins.js");
+const coinConfig = coins[config.coin];
+const redisCache = require("./redisCache.js");
 
 
-var exponentScales = [
+const exponentScales = [
 	{val:1000000000000000000000000000000000, name:"?", abbreviation:"V", exponent:"33"},
 	{val:1000000000000000000000000000000, name:"?", abbreviation:"W", exponent:"30"},
 	{val:1000000000000000000000000000, name:"?", abbreviation:"X", exponent:"27"},
@@ -28,11 +29,11 @@ var exponentScales = [
 	{val:1000, name:"kilo", abbreviation:"K", exponent:"3", textDesc:"thou"}
 ];
 
-var ipMemoryCache = {};
+const ipMemoryCache = {};
 
-var ipRedisCache = null;
+const ipRedisCache = null;
 if (redisCache.active) {
-	var onRedisCacheEvent = function(cacheType, eventType, cacheKey) {
+	const onRedisCacheEvent = function(cacheType, eventType, cacheKey) {
 		global.cacheStats.redis[eventType]++;
 		//debugLog(`cache.${cacheType}.${eventType}: ${cacheKey}`);
 	}
@@ -40,7 +41,7 @@ if (redisCache.active) {
 	ipRedisCache = redisCache.createCache("v0", onRedisCacheEvent);
 }
 
-var ipCache = {
+const ipCache = {
 	get:function(key) {
 		return new Promise(function(resolve, reject) {
 			if (ipMemoryCache[key] != null) {

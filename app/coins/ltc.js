@@ -1,7 +1,7 @@
-var Decimal = require("decimal.js");
-Decimal8 = Decimal.clone({ precision:8, rounding:8 });
+const Decimal = require("decimal.js");
+const Decimal8 = Decimal.clone({ precision:8, rounding:8 });
 
-var currencyUnits = [
+const currencyUnits = [
 	{
 		type:"native",
 		name:"LTC",

@@ -1,10 +1,12 @@
-var redis = require("redis");
-var bluebird = require("bluebird");
+"use strict";
 
-var config = require("./config.js");
-var utils = require("./utils.js");
+const redis = require("redis");
+const bluebird = require("bluebird");
 
-var redisClient = null;
+const config = require("./config.js");
+const utils = require("./utils.js");
+
+const redisClient = null;
 if (config.redisUrl) {
 	bluebird.promisifyAll(redis.RedisClient.prototype);
 
@@ -14,7 +16,7 @@ if (config.redisUrl) {
 function createCache(keyPrefix, onCacheEvent) {
 	return {
 		get: function(key) {
-			var prefixedKey = `${keyPrefix}-${key}`;
+			const prefixedKey = `${keyPrefix}-${key}`;
 
 			return new Promise(function(resolve, reject) {
 				onCacheEvent("redis", "try", prefixedKey);
@@ -40,7 +42,7 @@ function createCache(keyPrefix, onCacheEvent) {
 			});
 		},
 		set: function(key, obj, maxAgeMillis) {
-			var prefixedKey = `${keyPrefix}-${key}`;
+			const prefixedKey = `${keyPrefix}-${key}`;
 
 			redisClient.set(prefixedKey, JSON.stringify(obj), "PX", maxAgeMillis);
 		}

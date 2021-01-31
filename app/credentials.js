@@ -1,9 +1,11 @@
-var os = require('os');
-var path = require('path');
-var url = require('url');
+"use strict";
 
-var btcUri = process.env.BTCEXP_BITCOIND_URI ? url.parse(process.env.BTCEXP_BITCOIND_URI, true) : { query: { } };
-var btcAuth = btcUri.auth ? btcUri.auth.split(':') : [];
+const os = require('os');
+const path = require('path');
+const url = require('url');
+
+const btcUri = process.env.BTCEXP_BITCOIND_URI ? url.parse(process.env.BTCEXP_BITCOIND_URI, true) : { query: { } };
+const btcAuth = btcUri.auth ? btcUri.auth.split(':') : [];
 
 module.exports = {
 	rpc: {
