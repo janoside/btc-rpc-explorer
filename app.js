@@ -13,12 +13,15 @@ configPaths.filter(fs.existsSync).forEach(path => {
 	dotenv.config({ path });
 });
 
+global.cacheStats = {};
+
 // debug module is already loaded by the time we do dotenv.config
 // so refresh the status of DEBUG env var
 var debug = require("debug");
-debug.enable(process.env.DEBUG);
+debug.enable(process.env.DEBUG || "btcexp:app,btcexp:error");
 
 var debugLog = debug("btcexp:app");
+var debugErrorLog = debug("btcexp:error");
 var debugPerfLog = debug("btcexp:actionPerformace");
 
 var express = require('express');
@@ -42,13 +45,19 @@ var request = require("request");
 var qrcode = require("qrcode");
 var addressApi = require("./app/api/addressApi.js");
 var electrumAddressApi = require("./app/api/electrumAddressApi.js");
-var Influx = require("influx");
 var coreApi = require("./app/api/coreApi.js");
 var auth = require('./app/auth.js');
+var sso = require('./app/sso.js');
+var markdown = require("markdown-it")();
+
+var package_json = require('./package.json');
+global.appVersion = package_json.version;
 
 var crawlerBotUserAgentStrings = [ "Googlebot", "Bingbot", "Slurp", "DuckDuckBot", "Baiduspider", "YandexBot", "Sogou", "Exabot", "facebot", "ia_archiver" ];
 
-var baseActionsRouter = require('./routes/baseActionsRouter');
+var baseActionsRouter = require('./routes/baseRouter.js');
+var apiActionsRouter = require('./routes/apiRouter.js');
+var snippetActionsRouter = require('./routes/snippetRouter.js');
 
 var app = express();
 
@@ -62,11 +71,16 @@ app.engine('pug', (path, options, fn) => {
 });
 
 app.set('view engine', 'pug');
+app.use(cookieParser());
 
 // basic http authentication
 if (process.env.BTCEXP_BASIC_AUTH_PASSWORD) {
 	app.disable('x-powered-by');
 	app.use(auth(process.env.BTCEXP_BASIC_AUTH_PASSWORD));
+// sso authentication
+} else if (process.env.BTCEXP_SSO_TOKEN_FILE) {
+	app.disable('x-powered-by');
+	app.use(sso(process.env.BTCEXP_SSO_TOKEN_FILE, process.env.BTCEXP_SSO_LOGIN_REDIRECT_URL));
 }
 
 // uncomment after placing your favicon in /public
@@ -74,169 +88,21 @@ if (process.env.BTCEXP_BASIC_AUTH_PASSWORD) {
 //app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
-app.use(cookieParser());
 app.use(session({
 	secret: config.cookieSecret,
 	resave: false,
 	saveUninitialized: false
 }));
 
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(config.baseUrl, express.static(path.join(__dirname, 'public')));
 
 process.on("unhandledRejection", (reason, p) => {
 	debugLog("Unhandled Rejection at: Promise", p, "reason:", reason, "stack:", (reason != null ? reason.stack : "null"));
-
-	if (global.influxdb) {
-		var points = [];
-		points.push({
-			measurement:`express.unhandled_rejection`,
-			tags:{app:("btc-rpc-explorer." + global.config.coin)},
-			fields:{count:1}
-		});
-
-		global.influxdb.writePoints(points).catch(err => {
-			debugLog(`Error saving data to InfluxDB: ${err.stack}`);
-		});
-	}
 });
 
-
-function logNetworkStats() {
-	if (global.influxdb) {
-		var promises = [];
-
-		promises.push(coreApi.getMempoolInfo());
-		promises.push(coreApi.getMiningInfo());
-
-		promises.push(coreApi.getBlockchainInfo());
-
-		Promise.all(promises).then(function(promiseResults) {
-			var mempoolInfo = promiseResults[0];
-			var miningInfo = promiseResults[1];
-			var blockchainInfo = promiseResults[2];
-
-			//debugLog("mempoolInfo: " + JSON.stringify(mempoolInfo));
-			//debugLog("miningInfo: " + JSON.stringify(miningInfo));
-			//debugLog("blockchainInfo: " + JSON.stringify(blockchainInfo));
-
-			var points = [];
-
-			var mempoolMapping = {size:"tx_count", bytes:"tx_vsize_total", usage:"total_memory_usage"};
-			for (var key in mempoolInfo) {
-				try {
-					if (mempoolMapping[key]) {
-						points.push({measurement:`${global.coinConfig.name.toLowerCase()}.mempool.${mempoolMapping[key]}`, fields:{value:mempoolInfo[key]}});
-					}
-				} catch (err) {
-					utils.logError("3ourhewe", err, {key:key, desc:"Error mapping mempool info"});
-				}
-			}
-
-			var miningMapping = {
-				difficulty:{
-					name:"mining_difficulty",
-					transform:function(rawval) {return parseFloat(rawval);}
-				},
-				networkhashps:{
-					name:"networkhashps",
-					transform:function(rawval) {return parseFloat(rawval);}
-				}
-			};
-
-			for (var key in miningInfo) {
-				try {
-					if (miningMapping[key]) {
-						points.push({measurement:`${global.coinConfig.name.toLowerCase()}.mining.${miningMapping[key].name}`, fields:{value:miningMapping[key].transform(miningInfo[key])}});
-					}
-				} catch (err) {
-					utils.logError("weoufbebfde4", err, {key:key, desc:"Error mapping mining info"});
-				}
-			}
-
-			var blockchainMapping = {size_on_disk:"size_on_disk"};
-			for (var key in blockchainInfo) {
-				try {
-					if (blockchainMapping[key]) {
-						points.push({measurement:`${global.coinConfig.name.toLowerCase()}.blockchain.${blockchainMapping[key]}`, fields:{value:blockchainInfo[key]}});
-					}
-				} catch (err) {
-					utils.logError("3heuuh4wwds", err, {key:key, desc:"Error mapping blockchain info"});
-				}
-			}
-
-			//debugLog("Points to send to InfluxDB: " + JSON.stringify(points, null, 4));
-
-			global.influxdb.writePoints(points).catch(err => {
-				utils.logError("w083rhewhee", err, {desc:"Error saving data to InfluxDB"});
-			});
-		}).catch(err => {
-			utils.logError("u2h3rfsd", err);
-		});
-	}
-}
-
-function logBlockStats() {
-	if (global.influxdb) {
-		if (global.blockStatsStatus == null) {
-			global.blockStatsStatus = {currentBlock:-1};
-		}
-
-		coreApi.getBlockchainInfo().then(function(getblockchaininfo) {
-			var blockHeights = [];
-			if (getblockchaininfo.blocks) {
-				for (var i = 0; i < 5; i++) {
-					blockHeights.push(getblockchaininfo.blocks - i);
-				}
-			}
-
-			coreApi.getBlocksByHeight(blockHeights).then(function(blocks) {
-				var points = [];
-
-				for (var i = 0; i < blocks.length; i++) {
-					var block = blocks[i];
-
-					var totalfees = new Decimal(parseFloat(block.totalFees));
-					var blockreward = new Decimal(parseFloat(global.coinConfig.blockRewardFunction(block.height)));
-					var timestamp = new Date(block.time * 1000);
-
-					var blockInfo = {
-						strippedsize:block.strippedsize,
-						size:block.size,
-						weight:block.weight,
-						version:block.version,
-						nonce:block.nonce,
-						txcount:block.nTx,
-						totalfees:totalfees.toNumber(),
-						avgfee:(block.totalFees / block.nTx),
-						avgfeeperweight:(block.totalFees / block.weight),
-						avgfeepersize:(block.totalFees / block.size),
-						avgtxsize:(block.size / block.nTx),
-						avgtxweight:(block.weight / block.nTx),
-						blockreward:blockreward.toNumber(),
-						timemediantimediff:(block.time - block.mediantime),
-						witnessdatasize:(block.size - block.strippedsize),
-						feeratio:totalfees.dividedBy(totalfees.plus(blockreward)).toNumber()
-					};
-
-					for (var key in blockInfo) {
-						points.push({measurement:`${global.coinConfig.name.toLowerCase()}.blocks.${key}`, fields:{value:blockInfo[key]}, timestamp:timestamp});
-					}
-
-					//debugLog("block: " + block.height + ": " + JSON.stringify(blockInfo, null, 4));
-					//debugLog("points: " + JSON.stringify(points, null, 4));
-				}
-
-				global.influxdb.writePoints(points).catch(err => {
-					utils.logError("3ru032hfudge", err, {desc:"Error saving data to InfluxDB"});
-				});
-			});
-		}).catch(function(err) {
-			utils.logError("23uhsdsgde", err);
-		});
-	}
-}
-
 function loadMiningPoolConfigs() {
+	debugLog("Loading mining pools config");
+
 	global.miningPoolsConfigs = [];
 
 	var miningPoolsConfigDir = path.join(__dirname, "public", "txt", "mining-pools-configs", global.coinConfig.ticker);
@@ -255,15 +121,15 @@ function loadMiningPoolConfigs() {
 
 			global.miningPoolsConfigs.push(JSON.parse(contents));
 		});
-	});
 
-	for (var i = 0; i < global.miningPoolsConfigs.length; i++) {
-		for (var x in global.miningPoolsConfigs[i].payout_addresses) {
-			if (global.miningPoolsConfigs[i].payout_addresses.hasOwnProperty(x)) {
-				global.specialAddresses[x] = {type:"minerPayout", minerInfo:global.miningPoolsConfigs[i].payout_addresses[x]};
+		for (var i = 0; i < global.miningPoolsConfigs.length; i++) {
+			for (var x in global.miningPoolsConfigs[i].payout_addresses) {
+				if (global.miningPoolsConfigs[i].payout_addresses.hasOwnProperty(x)) {
+					global.specialAddresses[x] = {type:"minerPayout", minerInfo:global.miningPoolsConfigs[i].payout_addresses[x]};
+				}
 			}
 		}
-	}
+	});
 }
 
 function getSourcecodeProjectMetadata() {
@@ -286,16 +152,268 @@ function getSourcecodeProjectMetadata() {
 	});
 }
 
+function loadChangelog() {
+	var filename = "CHANGELOG.md";
+	
+	fs.readFile(path.join(__dirname, filename), 'utf8', function(err, data) {
+		if (err) {
+			utils.logError("2379gsd7sgd334", err);
 
-app.runOnStartup = function() {
+		} else {
+			global.changelogMarkdown = data;
+		}
+	});
+}
+
+function loadHistoricalDataForChain(chain) {
+	debugLog(`Loading historical data for chain=${chain}`);
+
+	if (global.coinConfig.historicalData) {
+		global.coinConfig.historicalData.forEach(function(item) {
+			if (item.chain == chain) {
+				if (item.type == "blockheight") {
+					global.specialBlocks[item.blockHash] = item;
+
+				} else if (item.type == "tx") {
+					global.specialTransactions[item.txid] = item;
+
+				} else if (item.type == "address") {
+					global.specialAddresses[item.address] = {type:"fun", addressInfo:item};
+				}
+			}
+		});
+	}
+}
+
+function verifyRpcConnection() {
+	if (!global.activeBlockchain) {
+		debugLog(`Verifying RPC connection...`);
+
+		coreApi.getNetworkInfo().then(function(getnetworkinfo) {
+			coreApi.getBlockchainInfo().then(function(getblockchaininfo) {
+				global.activeBlockchain = getblockchaininfo.chain;
+
+				// we've verified rpc connection, no need to keep trying
+				clearInterval(global.verifyRpcConnectionIntervalId);
+
+				onRpcConnectionVerified(getnetworkinfo, getblockchaininfo);
+
+			}).catch(function(err) {
+				utils.logError("329u0wsdgewg6ed", err);
+			});
+		}).catch(function(err) {
+			utils.logError("32ugegdfsde", err);
+		});
+	}
+}
+
+function onRpcConnectionVerified(getnetworkinfo, getblockchaininfo) {
+	// localservicenames introduced in 0.19
+	var services = getnetworkinfo.localservicesnames ? ("[" + getnetworkinfo.localservicesnames.join(", ") + "]") : getnetworkinfo.localservices;
+
+	global.getnetworkinfo = getnetworkinfo;
+
+	var bitcoinCoreVersionRegex = /^.*\/Satoshi\:(.*)\/.*$/;
+
+	var match = bitcoinCoreVersionRegex.exec(getnetworkinfo.subversion);
+	if (match) {
+		global.btcNodeVersion = match[1];
+
+		var semver4PartRegex = /^([0-9]+)\.([0-9]+)\.([0-9]+)\.([0-9]+)$/;
+
+		var semver4PartMatch = semver4PartRegex.exec(global.btcNodeVersion);
+		if (semver4PartMatch) {
+			var p0 = semver4PartMatch[1];
+			var p1 = semver4PartMatch[2];
+			var p2 = semver4PartMatch[3];
+			var p3 = semver4PartMatch[4];
+
+			// drop last segment, which usually indicates a bug fix release which is (hopefully) irrelevant for RPC API versioning concerns
+			global.btcNodeSemver = `${p0}.${p1}.${p2}`;
+
+		} else {
+			var semver3PartRegex = /^([0-9]+)\.([0-9]+)\.([0-9]+)$/;
+
+			var semver3PartMatch = semver3PartRegex.exec(global.btcNodeVersion);
+			if (semver3PartMatch) {
+				var p0 = semver3PartMatch[1];
+				var p1 = semver3PartMatch[2];
+				var p2 = semver3PartMatch[3];
+
+				global.btcNodeSemver = `${p0}.${p1}.${p2}`;
+
+			} else {
+				// short-circuit: force all RPC calls to pass their version checks - this will likely lead to errors / instability / unexpected results
+				global.btcNodeSemver = "1000.1000.0"
+			}
+		}
+	} else {
+		// short-circuit: force all RPC calls to pass their version checks - this will likely lead to errors / instability / unexpected results
+		global.btcNodeSemver = "1000.1000.0"
+
+		debugErrorLog(`Unable to parse node version string: ${getnetworkinfo.subversion} - RPC versioning will likely be unreliable. Is your node a version of Bitcoin Core?`);
+	}
+	
+	debugLog(`RPC Connected: version=${getnetworkinfo.version} subversion=${getnetworkinfo.subversion}, parsedVersion(used for RPC versioning)=${global.btcNodeSemver}, protocolversion=${getnetworkinfo.protocolversion}, chain=${getblockchaininfo.chain}, services=${services}`);
+
+	// load historical/fun items for this chain
+	loadHistoricalDataForChain(global.activeBlockchain);
+
+	if (global.activeBlockchain == "main") {
+		if (global.exchangeRates == null) {
+			utils.refreshExchangeRates();
+		}
+
+		// refresh exchange rate periodically
+		setInterval(utils.refreshExchangeRates, 1800000);
+	}
+
+	// UTXO pull
+	refreshUtxoSetSummary();
+	setInterval(refreshUtxoSetSummary, 30 * 60 * 1000);
+
+
+	// 1d / 7d volume
+	refreshNetworkVolumes();
+	setInterval(refreshNetworkVolumes, 30 * 60 * 1000);
+}
+
+function refreshUtxoSetSummary() {
+	if (config.slowDeviceMode) {
+		global.utxoSetSummary = null;
+		global.utxoSetSummaryPending = false;
+
+		debugLog("Skipping performance-intensive task: fetch UTXO set summary. This is skipped due to the flag 'slowDeviceMode' which defaults to 'true' to protect slow nodes. Set this flag to 'false' to enjoy UTXO set summary details.");
+
+		return;
+	}
+
+	// flag that we're working on calculating UTXO details (to differentiate cases where we don't have the details and we're not going to try computing them)
+	global.utxoSetSummaryPending = true;
+
+	coreApi.getUtxoSetSummary().then(function(result) {
+		global.utxoSetSummary = result;
+
+		result.lastUpdated = Date.now();
+
+		debugLog("Refreshed utxo summary: " + JSON.stringify(result));
+	});
+}
+
+function refreshNetworkVolumes() {
+	if (config.slowDeviceMode) {
+		debugLog("Skipping performance-intensive task: fetch last 24 hrs of blockstats to calculate transaction volume. This is skipped due to the flag 'slowDeviceMode' which defaults to 'true' to protect slow nodes. Set this flag to 'false' to enjoy UTXO set summary details.");
+
+		return;
+	}
+
+	var cutoff1d = new Date().getTime() - (60 * 60 * 24 * 1000);
+	var cutoff7d = new Date().getTime() - (60 * 60 * 24 * 7 * 1000);
+
+	coreApi.getBlockchainInfo().then(function(result) {
+		var promises = [];
+
+		var blocksPerDay = 144 + 20; // 20 block padding
+
+		for (var i = 0; i < (blocksPerDay * 1); i++) {
+			if (result.blocks - i >= 0) {
+				promises.push(coreApi.getBlockStatsByHeight(result.blocks - i));
+			}
+		}
+
+		var startBlock = result.blocks;
+
+		var endBlock1d = result.blocks;
+		var endBlock7d = result.blocks;
+
+		var endBlockTime1d = 0;
+		var endBlockTime7d = 0;
+
+		Promise.all(promises).then(function(results) {
+			var volume1d = new Decimal(0);
+			var volume7d = new Decimal(0);
+
+			var blocks1d = 0;
+			var blocks7d = 0;
+
+			if (results && results.length > 0 && results[0] != null) {
+				for (var i = 0; i < results.length; i++) {
+					if (results[i].time * 1000 > cutoff1d) {
+						volume1d = volume1d.plus(new Decimal(results[i].total_out));
+						volume1d = volume1d.plus(new Decimal(results[i].subsidy));
+						volume1d = volume1d.plus(new Decimal(results[i].totalfee));
+						blocks1d++;
+
+						endBlock1d = results[i].height;
+						endBlockTime1d = results[i].time;
+					}
+
+					if (results[i].time * 1000 > cutoff7d) {
+						volume7d = volume7d.plus(new Decimal(results[i].total_out));
+						volume7d = volume7d.plus(new Decimal(results[i].subsidy));
+						volume7d = volume7d.plus(new Decimal(results[i].totalfee));
+						blocks7d++;
+
+						endBlock7d = results[i].height;
+						endBlockTime7d = results[i].time;
+					}
+				}
+
+				volume1d = volume1d.dividedBy(coinConfig.baseCurrencyUnit.multiplier);
+				volume7d = volume7d.dividedBy(coinConfig.baseCurrencyUnit.multiplier);
+
+				global.networkVolume = {d1:{amt:volume1d, blocks:blocks1d, startBlock:startBlock, endBlock:endBlock1d, startTime:results[0].time, endTime:endBlockTime1d}};
+
+				debugLog(`Network volume: ${JSON.stringify(global.networkVolume)}`);
+
+			} else {
+				debugLog("Unable to load network volume, likely due to bitcoind version older than 0.17.0 (the first version to support getblockstats).");
+			}
+		});
+	});
+}
+
+
+app.onStartup = function() {
+	global.appStartTime = new Date().getTime();
+	
 	global.config = config;
 	global.coinConfig = coins[config.coin];
 	global.coinConfigs = coins;
 
-	debugLog(`Running RPC Explorer for ${global.coinConfig.name}`);
+	global.specialTransactions = {};
+	global.specialBlocks = {};
+	global.specialAddresses = {};
 
+	loadChangelog();
+
+	if (global.sourcecodeVersion == null && fs.existsSync('.git')) {
+		simpleGit(".").log(["-n 1"], function(err, log) {
+			if (err) {
+				utils.logError("3fehge9ee", err, {desc:"Error accessing git repo"});
+
+				debugLog(`Starting ${global.coinConfig.ticker} RPC Explorer, v${global.appVersion} (code: unknown commit) at ${config.host}:${config.port}${config.baseUrl}`);
+
+			} else {
+				global.sourcecodeVersion = log.all[0].hash.substring(0, 10);
+				global.sourcecodeDate = log.all[0].date.substring(0, "0000-00-00".length);
+
+				debugLog(`Starting ${global.coinConfig.ticker} RPC Explorer, v${global.appVersion} (commit: '${global.sourcecodeVersion}', date: ${global.sourcecodeDate}) at ${config.host}:${config.port}${config.baseUrl}`);
+			}
+
+			app.continueStartup();
+		});
+
+	} else {
+		debugLog(`Starting ${global.coinConfig.ticker} RPC Explorer, v${global.appVersion} at ${config.host}:${config.port}${config.baseUrl}`);
+
+		app.continueStartup();
+	}
+}
+
+app.continueStartup = function() {
 	var rpcCred = config.credentials.rpc;
-	debugLog(`Connecting via RPC to node at ${rpcCred.host}:${rpcCred.port}`);
+	debugLog(`Connecting to RPC node at ${rpcCred.host}:${rpcCred.port}`);
 
 	var rpcClientProperties = {
 		host: rpcCred.host,
@@ -305,63 +423,24 @@ app.runOnStartup = function() {
 		timeout: rpcCred.timeout
 	};
 
-	global.client = new bitcoinCore(rpcClientProperties);
+	global.rpcClient = new bitcoinCore(rpcClientProperties);
 
-	if (config.credentials.influxdb.active) {
-		global.influxdb = new Influx.InfluxDB(config.credentials.influxdb);
+	var rpcClientNoTimeoutProperties = {
+		host: rpcCred.host,
+		port: rpcCred.port,
+		username: rpcCred.username,
+		password: rpcCred.password,
+		timeout: 0
+	};
 
-		debugLog(`Connected to InfluxDB: ${config.credentials.influxdb.host}:${config.credentials.influxdb.port}/${config.credentials.influxdb.database}`);
-	}
+	global.rpcClientNoTimeout = new bitcoinCore(rpcClientNoTimeoutProperties);
 
-	coreApi.getNetworkInfo().then(function(getnetworkinfo) {
-		debugLog(`Connected via RPC to node. Basic info: version=${getnetworkinfo.version}, subversion=${getnetworkinfo.subversion}, protocolversion=${getnetworkinfo.protocolversion}, services=${getnetworkinfo.localservices}`);
 
-		if (global.influxdb != null) {
-			logNetworkStats();
-			setInterval(logNetworkStats, 1 * 60000);
+	// keep trying to verify rpc connection until we succeed
+	// note: see verifyRpcConnection() for associated clearInterval() after success
+	verifyRpcConnection();
+	global.verifyRpcConnectionIntervalId = setInterval(verifyRpcConnection, 30000);
 
-			logBlockStats();
-			setInterval(logBlockStats, 5 * 60000);
-		}
-	}).catch(function(err) {
-		utils.logError("32ugegdfsde", err);
-	});
-
-	if (config.donations.addresses) {
-		var getDonationAddressQrCode = function(coinId) {
-			qrcode.toDataURL(config.donations.addresses[coinId].address, function(err, url) {
-				global.donationAddressQrCodeUrls[coinId] = url;
-			});
-		};
-
-		global.donationAddressQrCodeUrls = {};
-
-		config.donations.addresses.coins.forEach(function(item) {
-			getDonationAddressQrCode(item);
-		});
-	}
-
-	global.specialTransactions = {};
-	global.specialBlocks = {};
-	global.specialAddresses = {};
-
-	if (config.donations.addresses && config.donations.addresses[coinConfig.ticker]) {
-		global.specialAddresses[config.donations.addresses[coinConfig.ticker].address] = {type:"donation"};
-	}
-
-	if (global.coinConfig.historicalData) {
-		global.coinConfig.historicalData.forEach(function(item) {
-			if (item.type == "blockheight") {
-				global.specialBlocks[item.blockHash] = item;
-
-			} else if (item.type == "tx") {
-				global.specialTransactions[item.txid] = item;
-
-			} else if (item.type == "address") {
-				global.specialAddresses[item.address] = {type:"fun", addressInfo:item};
-			}
-		});
-	}
 
 	if (config.addressApi) {
 		var supportedAddressApis = addressApi.getSupportedAddressApis();
@@ -386,33 +465,12 @@ app.runOnStartup = function() {
 
 	loadMiningPoolConfigs();
 
-	if (global.sourcecodeVersion == null && fs.existsSync('.git')) {
-		simpleGit(".").log(["-n 1"], function(err, log) {
-			if (err) {
-				utils.logError("3fehge9ee", err, {desc:"Error accessing git repo"});
-
-				return;
-			}
-			
-			global.sourcecodeVersion = log.all[0].hash.substring(0, 10);
-			global.sourcecodeDate = log.all[0].date.substring(0, "0000-00-00".length);
-		});
-	}
 
 	if (config.demoSite) {
 		getSourcecodeProjectMetadata();
 		setInterval(getSourcecodeProjectMetadata, 3600000);
 	}
 
-	if (global.exchangeRates == null) {
-		utils.refreshExchangeRates();
-	}
-
-	// refresh exchange rate periodically
-	setInterval(utils.refreshExchangeRates, 1800000);
-
-	utils.logAppStats();
-	setInterval(utils.logAppStats, 5000);
 
 	utils.logMemoryUsage();
 	setInterval(utils.logMemoryUsage, 5000);
@@ -442,8 +500,14 @@ app.use(function(req, res, next) {
 		}
 	}
 
+	// make a bunch of globals available to templates
 	res.locals.config = global.config;
 	res.locals.coinConfig = global.coinConfig;
+	res.locals.activeBlockchain = global.activeBlockchain;
+	res.locals.exchangeRates = global.exchangeRates;
+	res.locals.utxoSetSummary = global.utxoSetSummary;
+	res.locals.utxoSetSummaryPending = global.utxoSetSummaryPending;
+	res.locals.networkVolume = global.networkVolume;
 	
 	res.locals.host = req.session.host;
 	res.locals.port = req.session.port;
@@ -478,6 +542,18 @@ app.use(function(req, res, next) {
 		}
 	}
 
+	// blockPage.showTechSummary
+	if (!req.session.blockPageShowTechSummary) {
+		var cookieValue = req.cookies['user-setting-blockPageShowTechSummary'];
+
+		if (cookieValue) {
+			req.session.blockPageShowTechSummary = cookieValue;
+
+		} else {
+			req.session.blockPageShowTechSummary = "true";
+		}
+	}
+
 	// homepage banner
 	if (!req.session.hideHomepageBanner) {
 		var cookieValue = req.cookies['user-setting-hideHomepageBanner'];
@@ -491,6 +567,7 @@ app.use(function(req, res, next) {
 	}
 
 	res.locals.currencyFormatType = req.session.currencyFormatType;
+	global.currencyFormatType = req.session.currencyFormatType;
 
 
 	if (!["/", "/connect"].includes(req.originalUrl)) {
@@ -530,26 +607,15 @@ app.use(csurf(), (req, res, next) => {
 	next();
 });
 
-app.use('/', baseActionsRouter);
+app.use(config.baseUrl, baseActionsRouter);
+app.use(config.baseUrl + 'api/', apiActionsRouter);
+app.use(config.baseUrl + 'snippet/', snippetActionsRouter);
 
 app.use(function(req, res, next) {
 	var time = Date.now() - req.startTime;
 	var memdiff = process.memoryUsage().heapUsed - req.startMem;
 
 	debugPerfLog("Finished action '%s' in %d ms", req.path, time);
-
-	if (global.influxdb) {
-		var points = [];
-		points.push({
-			measurement:`express.request`,
-			tags:{app:("btc-rpc-explorer." + global.config.coin), host:req.hostname, path:req.path, userAgent:req.headers['user-agent']},
-			fields:{count:1, duration:time, memdiff:memdiff}
-		});
-
-		global.influxdb.writePoints(points).catch(err => {
-			utils.logError("3rew08uhfeghd", err, {desc:"Error saving data to InfluxDB"});
-		});
-	}
 });
 
 /// catch 404 and forwarding to error handler
@@ -586,6 +652,7 @@ app.use(function(err, req, res, next) {
 app.locals.moment = moment;
 app.locals.Decimal = Decimal;
 app.locals.utils = utils;
+app.locals.markdown = src => markdown.render(src);
 
 
 

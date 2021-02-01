@@ -6,26 +6,27 @@ block headContent
 block content
 	if (result && result.validateaddress)
 		if (!result.validateaddress.isvalid)
-			h1(class="h3 text-danger") Invalid Address
-				br
-				small(class="monospace") #{address}
+			div.alert.alert-danger.mb-huge
+				h1.h6.font-weight-bold Invalid Address
+				span.text-monospace #{address}
+				
 		else
-			h1(class="h3") Address
+			h1.h3 Address
 				br
-				small(class="monospace") #{address}
+				small.text-monospace #{address}
 			
 			hr
 
 			if (payoutAddressForMiner)
-				div(class="alert alert-primary shadow-sm", style="padding-bottom: 0;")
-					div(class="float-left", style="width: 50px; height: 50px; font-size: 18px;")
-						i(class="fas fa-certificate fa-2x", style="margin-top: 10px;")
+				div.alert.alert-primary.shadow-sm.pb-0
+					div.float-left(style="width: 50px; height: 50px; font-size: 18px;")
+						i.fas.fa-certificate.fa-2x(style="margin-top: 10px;")
 
-					h4(class="alert-heading h6 font-weight-bold") #{coinConfig.name} Fun
+					h4.alert-heading.h6.font-weight-bold #{coinConfig.name} Fun
 
 					p
 						span This looks like a miner payout address for  
-						span(class="font-weight-bold") #{payoutAddressForMiner.name}
+						span.font-weight-bold #{payoutAddressForMiner.name}
 						if (coinConfig.miningPoolsConfigUrls.length > 1)
 							span  (see the configurations: 
 							each item, index in coinConfig.miningPoolsConfigUrls
@@ -37,22 +38,13 @@ block content
 							span  (see the configuration
 							a(href=coinConfig.miningPoolsConfigUrls[0]) here
 							span )
-			else if (global.specialAddresses[address] && global.specialAddresses[address].type == "donation")
-				div(class="alert alert-primary shadow-sm", style="padding-bottom: 0;")
-					div(class="float-left", style="width: 50px; height: 50px; font-size: 18px;")
-						i(class="fas fa-certificate fa-2x", style="margin-top: 10px;")
-
-					h4(class="alert-heading h6 font-weight-bold") #{coinConfig.name} Fun
-
-					p
-						span This is the #{coinConfig.ticker} donation address to support development of this tool. All support is appreciated!
 
 			else if (global.specialAddresses[address] && global.specialAddresses[address].type == "fun")
-				div(class="alert alert-primary shadow-sm", style="padding-bottom: 0;")
-					div(class="float-left", style="width: 50px; height: 50px; font-size: 18px;")
-						i(class="fas fa-certificate fa-2x", style="margin-top: 10px;")
+				div.alert.alert-primary.shadow-sm.pb-0
+					div.float-left(style="width: 50px; height: 50px; font-size: 18px;")
+						i.fas.fa-certificate.fa-2x(style="margin-top: 10px;")
 
-					h4(class="alert-heading h6 font-weight-bold") #{coinConfig.name} Fun
+					h4.alert-heading.h6.font-weight-bold #{coinConfig.name} Fun
 
 					// special address info
 					- var saInfo = global.specialAddresses[address].addressInfo;
@@ -75,68 +67,69 @@ block content
 
 			if (false)
 				pre
-					code(class="json bg-light") #{JSON.stringify(addressObj, null, 4)}
+					code.json.bg-light #{JSON.stringify(addressObj, null, 4)}
 			
-			ul(class='nav nav-tabs mb-3')
-				li(class="nav-item")
-					a(data-toggle="tab", href="#tab-details", class="nav-link active", role="tab") Details
-				li(class="nav-item")
-					a(data-toggle="tab", href="#tab-json", class="nav-link", role="tab") JSON
+			ul.nav.nav-tabs.mb-3
+				li.nav-item
+					a.nav-link.active(data-toggle="tab", href="#tab-details", role="tab") Details
+				li.nav-item
+					a.nav-link(data-toggle="tab", href="#tab-json", role="tab") JSON
 
 
-			div(class="tab-content")
-				div(id="tab-details", class="tab-pane active", role="tabpanel")
+			div.tab-content
+				div.tab-pane.active(id="tab-details", role="tabpanel")
 
 					if (false && config.electrumXServers && config.electrumXServers.length > 0)
 						if (session.hideElectrumTrustWarnings != "true")
-							div(class="alert alert-primary alert-dismissible clearfix shadow-sm", role="alert")
+							div.alert.alert-primary.alert-dismissible.clearfix.shadow-sm(role="alert")
 								span  this explorer is database-free, it doesn't natively support address balances and transaction histories. In order to provide this functionality, address balances and transaction history can be requested from a configurable set of ElectrumX servers. If multiple ElectrumX servers are configured, the results are cross-referenced and conflicts noted. For the transaction history displayed below, only the transaction identifiers from ElectrumX are used; the transaction details are requested via RPC from this app's primary node, as usual.
 
-								a(href="/changeSetting?name=hideElectrumTrustWarnings&value=true", class="close", aria-label="Close", style="text-decoration: none;")
+								a.close(href="./changeSetting?name=hideElectrumTrustWarnings&value=true", aria-label="Close", style="text-decoration: none;")
 									span(aria-hidden="true") &times;
 
-					div(class="card mb-3 shadow-sm")
-						div(class="card-header")
-							span(class="h6") Summary
+					div.card.shadow-sm.mb-3
+						div.card-body
+							h3.h6.mb-0 Summary
 								if (config.addressApi)
-										small.text-muted.border-dotted.ml-2(title=`Some details for this address were queried from ${config.addressApi}` data-toggle="tooltip") Trust Note
-						div(class="card-body")
-							div(class="row")
-								div(class="col-md-6")
+									small.text-muted.border-dotted.ml-2(title=`Some details for this address were queried from ${config.addressApi}` data-toggle="tooltip") Trust Note
+							hr
+
+							div.row
+								div.col-md-6
 
 									if (addressObj.hash)
-										div(class="row")
-											div(class="summary-split-table-label") Hash 160
-											div(class="summary-split-table-content monospace") #{addressObj.hash.toString("hex")}
+										div.row
+											div.summary-split-table-label Hash 160
+											div.summary-split-table-content.text-monospace #{addressObj.hash.toString("hex")}
 
 									if (result.validateaddress.scriptPubKey)
-										div(class="row")
-											div(class="summary-split-table-label") Script Public Key
-											div(class="summary-split-table-content monospace") #{result.validateaddress.scriptPubKey}
+										div.row
+											div.summary-split-table-label Script Public Key
+											div.summary-split-table-content.text-monospace #{result.validateaddress.scriptPubKey}
 
 									if (addressObj.hasOwnProperty("version"))
-										div(class="row")
-											div(class="summary-split-table-label") Version
-											div(class="summary-split-table-content monospace") #{addressObj.version}
+										div.row
+											div.summary-split-table-label Version
+											div.summary-split-table-content.text-monospace #{addressObj.version}
 
 									if (result.validateaddress.hasOwnProperty("witness_version"))
-										div(class="row")
-											div(class="summary-split-table-label") Witness Version
-											div(class="summary-split-table-content monospace") #{result.validateaddress.witness_version}
+										div.row
+											div.summary-split-table-label Witness Version
+											div.summary-split-table-content.text-monospace #{result.validateaddress.witness_version}
 
 									if (result.validateaddress.witness_program)
-										div(class="row")
-											div(class="summary-split-table-label") Witness Program
-											div(class="summary-split-table-content monospace") #{result.validateaddress.witness_program}
+										div.row
+											div.summary-split-table-label Witness Program
+											div.summary-split-table-content.text-monospace #{result.validateaddress.witness_program}
 
 									if (firstSeenTransaction && firstSeenTransaction.confirmations > 0)
-										div(class="row")
-											div(class="summary-split-table-label") First Seen
-											div(class="summary-split-table-content monospace")
+										div.row
+											div.summary-split-table-label First Seen
+											div.summary-split-table-content.text-monospace
 												if (getblockchaininfo)
 													span Block ##{(getblockchaininfo.blocks - firstSeenTransaction.confirmations).toLocaleString()}
 												else
-													a(href=("/block/" + firstSeenTransaction.blockhash)) #{firstSeenTransaction.blockhash}
+													a(href=("./block/" + firstSeenTransaction.blockhash)) #{firstSeenTransaction.blockhash}
 
 												br
 
@@ -146,14 +139,14 @@ block content
 												
 												if (false)
 													pre
-														code(class="json bg-light") #{JSON.stringify(firstSeenTransaction)}
+														code.json.bg-light #{JSON.stringify(firstSeenTransaction)}
 
 									if (balance)
 										if (balance.conflictedResults)
-											div(class="row")
-												div(class="summary-split-table-label") Balance
-												div(class="summary-split-table-content monospace")
-													span(class="text-warning") Conflicted ElectrumX Results
+											div.row
+												div.summary-split-table-label Balance
+												div.summary-split-table-content.text-monospace
+													span.text-warning Conflicted ElectrumX Results
 
 													each item in balance.conflictedResults
 														- var currencyValue = item.confirmed / coinConfig.baseCurrencyUnit.multiplier;
@@ -161,62 +154,69 @@ block content
 														
 
 										else
-											div(class="row")
-												div(class="summary-split-table-label") Balance
-												div(class="summary-split-table-content monospace")
+											div.row
+												div.summary-split-table-label Balance
+												div.summary-split-table-content.text-monospace
 													- var currencyValue = balance.result.confirmed / coinConfig.baseCurrencyUnit.multiplier;
 													include includes/value-display.pug
 
 											if (balance.unconfirmed)
-												div(class="row")
-													div(class="summary-split-table-label") Unconfirmed
-													div(class="summary-split-table-content monospace")
+												div.row
+													div.summary-split-table-label Unconfirmed
+													div.summary-split-table-content.text-monospace
 														- var currencyValue = balance.unconfirmed / coinConfig.baseCurrencyUnit.multiplier;
 														include includes/value-display.pug
 
 									if (addressDetails && addressDetails.balanceSat)
-										div(class="row")
-											div(class="summary-split-table-label") Balance
-											div(class="summary-split-table-content monospace")
+										div.row
+											div.summary-split-table-label Balance
+											div.summary-split-table-content.text-monospace
 												- var currencyValue = new Decimal(addressDetails.balanceSat).dividedBy(coinConfig.baseCurrencyUnit.multiplier);
 												include includes/value-display.pug
 
-									if (addressDetails && addressDetails.txCount)
-										div(class="row")
-											div(class="summary-split-table-label") Transactions
-											div(class="summary-split-table-content monospace") #{addressDetails.txCount.toLocaleString()}
+									if (addressDetails && addressDetails.unconfirmedBalanceSat)
+										div.row
+											div.summary-split-table-label Pending Balance
+											div.summary-split-table-content.text-monospace
+												- var currencyValue = new Decimal(addressDetails.unconfirmedBalanceSat).dividedBy(coinConfig.baseCurrencyUnit.multiplier);
+												include includes/value-display.pug
 
-									div(class="row")
-										div(class="summary-split-table-label") QR Code
-										div(class="summary-split-table-content monospace")
+									if (addressDetails && addressDetails.txCount)
+										div.row
+											div.summary-split-table-label Transactions
+											div.summary-split-table-content.text-monospace #{addressDetails.txCount.toLocaleString()}
+
+									div.row
+										div.summary-split-table-label QR Code
+										div.summary-split-table-content.text-monospace
 											img(src=addressQrCodeUrl, alt=address, style="border: solid 1px #ccc;")
 
-								div(class="col-md-6")
+								div.col-md-6
 									if (electrumScripthash)
-										div(class="row")
-											div(class="summary-split-table-label") Scripthash
-											div(class="summary-split-table-content monospace") #{electrumScripthash}
+										div.row
+											div.summary-split-table-label Scripthash
+											div.summary-split-table-content.text-monospace #{electrumScripthash}
 
 									- var x = result.validateaddress;
 									- var flagNames = ["Is Valid?", "Is Script?", "Is Witness?", "Is Mine?", "Is Watch-Only?"];
 									- var flags = [x.isvalid, x.isscript, x.iswitness, x.ismine, x.iswatchonly];
 
 									each flagName, index in flagNames
-										div(class="row")
-											div(class="summary-split-table-label") #{flagName}
-											div(class="summary-split-table-content monospace")
+										div.row
+											div.summary-split-table-label #{flagName}
+											div.summary-split-table-content.text-monospace
 												if (flags[index])
-													i(class="fas fa-check text-success")
+													i.fas.fa-check.text-success
 												else
-													i(class="fas fa-times text-warning")
+													i.fas.fa-times.text-warning
 
 					if (false)
-						div(class="card mb-3 shadow-sm")
-							div(class="card-header")
-								span(class="h6") Flags
-							div(class="card-body")
-								div(class="table-responsive")
-									table(class="table text-center")
+						div.card.shadow-sm.mb-3
+							div.card-header
+								span.h6 Flags
+							div.card-body
+								div.table-responsive
+									table.table.text-center
 										thead
 											tr
 												th Is Valid?
@@ -232,60 +232,61 @@ block content
 												each flag in flags
 													td
 														if (flag)
-															i(class="fas fa-check text-success")
+															i.fas.fa-check.text-success
 														else
-															i(class="fas fa-times text-warning")
+															i.fas.fa-times.text-warning
 
-					div(class="card mb-3 shadow-sm")
-						div(class="card-header clearfix")
-							div(class="float-left")
-								span(class="h6")
-									if (addressDetails && addressDetails.txCount)
-										if (addressDetails.txCount == 1)
-											span 1 Transaction
+					div.card.shadow-sm.mb-3
+						div.card-body
+							div.clearfix
+								div.float-left
+									h3.h6.mb-0
+										if (addressDetails && addressDetails.txCount)
+											if (addressDetails.txCount == 1)
+												span 1 Transaction
+											else
+												span #{addressDetails.txCount.toLocaleString()} Transactions
 										else
-											span #{addressDetails.txCount.toLocaleString()} Transactions
-									else
-										span Transactions
+											span Transactions
 
-									if (config.addressApi)
-										if (config.addressApi == "electrumx")
-											small.text-muted.border-dotted.ml-2(title=`The list of transaction IDs for this address was queried from ElectrumX (using the configured server(s))` data-toggle="tooltip") Trust Note
-										else
-											small.text-muted.border-dotted.ml-2(title=`The list of transaction IDs for this address was queried from ${config.addressApi}` data-toggle="tooltip") Trust Note
-										
+										if (config.addressApi)
+											if (config.addressApi == "electrumx")
+												small.text-muted.border-dotted.ml-2(title=`The list of transaction IDs for this address was queried from ElectrumX (using the configured server(s))` data-toggle="tooltip") Trust Note
+											else
+												small.text-muted.border-dotted.ml-2(title=`The list of transaction IDs for this address was queried from ${config.addressApi}` data-toggle="tooltip") Trust Note
 
-							if (!crawlerBot && txids && txids.length > 1 && addressApiSupport.sortDesc && addressApiSupport.sortAsc)
-								div(class="float-right")
-									a(href="#", class="pull-right dropdown-toggle", data-toggle="dropdown", aria-haspopup="true", aria-expanded="false")
-										if (sort == "desc")
-											span Newest First
-										else
-											span Oldest First
-
-									div(class="dropdown-menu dropdown-menu-right")
-										a(href=("/address/" + address), class="dropdown-item")
+								if (!crawlerBot && txids && txids.length > 1 && addressApiSupport.sortDesc && addressApiSupport.sortAsc)
+									div.float-right
+										a.pull-right.dropdown-toggle(href="#", data-toggle="dropdown", aria-haspopup="true", aria-expanded="false")
 											if (sort == "desc")
-												i(class="fa fa-check") 
-											span  Newest First
-										a(href=("/address/" + address + "?sort=asc"), class="dropdown-item")
-											if (sort != "desc")
-												i(class="fa fa-check") 
-											span  Oldest First
+												span Newest First
+											else
+												span Oldest First
 
-							else if (txids && txids.length > 1 && addressApiSupport.sortDesc && !addressApiSupport.sortAsc)
-								div.float-right
-									span.text-muted Newest First
+										div.dropdown-menu.dropdown-menu-right
+											a.dropdown-item(href=("./address/" + address))
+												if (sort == "desc")
+													i.fa.fa-check 
+												span  Newest First
+											a.dropdown-item(href=("./address/" + address + "?sort=asc"))
+												if (sort != "desc")
+													i.fa.fa-check 
+												span  Oldest First
 
-						div(class="card-body")
+								else if (txids && txids.length > 1 && addressApiSupport.sortDesc && !addressApiSupport.sortAsc)
+									div.float-right
+										span.text-muted Newest First
+
+							hr
+
 							if (conflictedTxidResults)
-								div(class="alert alert-warning", style="padding-bottom: 0;")
-									div(class="float-left", style="width: 55px; height: 50px; font-size: 18px;")
-										i(class="fas fa-exclamation-triangle fa-2x", style="margin-top: 10px;")
-									h4(class="alert-heading h6 font-weight-bold") Trust Warning
+								div.alert.alert-warning.pb-0
+									div.float-left(style="width: 55px; height: 50px; font-size: 18px;")
+										i.fas.fa-exclamation-triangle.fa-2x(style="margin-top: 10px;")
+									h4.alert-heading.h6.font-weight-bold Trust Warning
 									p
 										span The transaction history for this address was requested from mulitple ElectrumX servers and the results did not match. The results below were obtained only from 
-										span(class="font-weight-bold") #{electrumHistory.server}
+										span.font-weight-bold #{electrumHistory.server}
 
 
 							if (true)
@@ -299,9 +300,9 @@ block content
 									div.text-danger Error: #{addressApiError.userText}
 
 								else if (addressDetailsErrors && addressDetailsErrors.length > 0)
-									each err in addressDetailsErrors
-										if (err.e && err.e.error && err.e.error.message == "history too large")
-											span Failed to retrieve transaction history from ElectrumX. See 
+									each err, errIndex in addressDetailsErrors
+										if (err.e && err.e && err.e.message == "history too large")
+											span Failed to retrieve transaction history from ElectrumX because this address is involved in too many transactions (more than ElectrumX currently supports retrieving). See 
 											a(href="https://github.com/janoside/btc-rpc-explorer/issues/67") Issue #67
 											span  for more information.
 
@@ -310,45 +311,41 @@ block content
 											a(href="https://github.com/janoside/btc-rpc-explorer/blob/master/.env-sample") the example configuration file
 											span  for help setting up an address API if desired.
 
+										else
+											span.text-danger Error retrieving transaction history (##{errIndex + 1})
+											pre
+												code.json #{JSON.stringify(err, null, 4)}
+
 								else if (transactions.length == 0)
 									span No transactions found
 
 								each tx, txIndex in transactions
 									//pre
-									//	code(class="json bg-light") #{JSON.stringify(tx, null, 4)}
-									div(class=("xcard bg-light rounded shadow-sm " + ((txIndex < (transactions.length - 1) || txids.length > limit) ? "mb-4" : "")))
-										div(class="card-header monospace clearfix")
-											div(class="float-left", style="margin-right: 0px;")
+									//	code.json.bg-light #{JSON.stringify(tx, null, 4)}
+									div.card.shadow-sm(class=((txIndex < (transactions.length - 1) || txids.length > limit) ? "mb-3" : ""))
+										div.card-header.text-monospace.clearfix
+											div.float-left.mr-0
 												if (sort == "desc")
 													span ##{(addressDetails.txCount - offset - txIndex).toLocaleString()}
 												else
 													span ##{(offset + txIndex + 1).toLocaleString()}
 												span  &ndash;
 
-											div(class="row")
-												div(class="col-md-6")
+											div.row
+												div.col-md-8
 													if (tx && tx.txid)
-														a(href=("/tx/" + tx.txid)) #{tx.txid}
+														a(href=("./tx/" + tx.txid)) #{tx.txid}
 
 														if (global.specialTransactions && global.specialTransactions[tx.txid])
 															span  
 															a(data-toggle="tooltip", title=(coinConfig.name + " Fun! See transaction for details"))
-																i(class="fas fa-certificate text-primary")
+																i.fas.fa-certificate.text-primary
 
-												div(class="col-md-6")
-													div(class="text-md-right")
-														if (tx.time)
-															span #{moment.utc(new Date(tx["time"] * 1000)).format("Y-MM-DD HH:mm:ss")} utc
-															- var timeAgoTime = tx.time;
-															include includes/time-ago.pug
+													br
 
-														else
-															span(class="text-danger") Unconfirmed
-
-												div(class="col")
 													if (addrGainsByTx[tx.txid])
 														- var currencyValue = addrGainsByTx[tx.txid];
-														span(class="text-success") +
+														span.text-success +
 															include includes/value-display.pug
 
 														if (addrLossesByTx[tx.txid])
@@ -356,10 +353,26 @@ block content
 
 													if (addrLossesByTx[tx.txid])
 														- var currencyValue = addrLossesByTx[tx.txid];
-														span(class="text-danger") -
+														span.text-danger -
 															include includes/value-display.pug
+
+												div.col-md-4
+													div.text-md-right
+														if (tx.time)
+															- var timestampHuman = tx.time;
+															include includes/timestamp-human.pug
+
+															br
+
+															- var timeAgoTime = tx.time;
+															small.text-muted (
+																include includes/time-ago-text.pug
+																span  ago)
+
+														else
+															span.text-danger Unconfirmed
 													
-										div(class="card-body")
+										div.card-body
 											if (true)
 												- var txInputs = txInputsByTransaction[tx.txid];
 												- var blockHeight = blockHeightsByTxid[tx.txid];
@@ -373,7 +386,7 @@ block content
 							
 							if (false)
 								pre
-									code(class="json bg-light") #{JSON.stringify(transactions, null, 4)}
+									code.json.bg-light #{JSON.stringify(transactions, null, 4)}
 
 							if (!crawlerBot && addressDetails && addressDetails.txCount > limit)
 								- var txCount = addressDetails.txCount;
@@ -393,15 +406,24 @@ block content
 							
 				
 
-				div(id="tab-json", class="tab-pane", role="tabpanel")
-					div(class="highlight")
-						h4 validateaddress
-						pre
-							code(class="json bg-light", data-lang="json") #{JSON.stringify(result.validateaddress, null, 4)}
+				div.tab-pane(id="tab-json", role="tabpanel")
+					div.card.shadow-sm.mb-3
+						div.card-body
+							h4.h6.mb-0 validateaddress
+							hr
 
-						if (addressDetails)
-							h4 addressDetails
-							pre
-								code.json.bg-light #{JSON.stringify(addressDetails, null, 4)}
+							div.highlight
+								pre
+									code.json.bg-light(data-lang="json") #{JSON.stringify(result.validateaddress, null, 4)}
+
+					if (addressDetails)
+						div.card.shadow-sm.mb-3
+							div.card-body
+								h4.h6.mb-0 addressDetails
+								hr
+
+								div.highlight
+									pre
+										code.json.bg-light #{JSON.stringify(addressDetails, null, 4)}
 
 		

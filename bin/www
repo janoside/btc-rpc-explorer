@@ -3,8 +3,9 @@ var debug = require('debug')('www');
 var app = require('../app');
 
 const v8 = require('v8');
-v8.setFlagsFromString("--max_old_space_size=" + (process.env.BTCEXP_OLD_SPACE_MAX_SIZE || 1024));
-debug(`Set max_old_space_size to ${(process.env.BTCEXP_OLD_SPACE_MAX_SIZE || 1024)} MB`);
+const maxOldSpaceSize = parseInt(process.env.BTCEXP_OLD_SPACE_MAX_SIZE, 10) || 1024;
+v8.setFlagsFromString(`--max_old_space_size=${maxOldSpaceSize}`);
+debug(`Set max_old_space_size to ${maxOldSpaceSize} MB`);
 
 app.set('port', process.env.PORT || process.env.BTCEXP_PORT || 3002);
 app.set('host', process.env.BTCEXP_HOST || '127.0.0.1');
@@ -12,7 +13,7 @@ app.set('host', process.env.BTCEXP_HOST || '127.0.0.1');
 var server = app.listen(app.get('port'), app.get('host'), function() {
 	debug('Express server listening on ' + server.address().address + ':' + server.address().port);
 
-	if (app.runOnStartup) {
-		app.runOnStartup();
+	if (app.onStartup) {
+		app.onStartup();
 	}
 });

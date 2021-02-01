@@ -8,27 +8,38 @@ div.modal.fade(id="pageErrorsModal" role="dialog" aria-hidden="true")
 					span(aria-hidden="true") &times;
 
 			div.modal-body
-				each item, itemIndex in pageErrors
-					div.card.shadow-sm(class=(itemIndex < (pageErrors.length - 1) ? "mb-3" : false))
-						div.card-header
-							h6.mb-0 Error ##{(itemIndex + 1).toLocaleString()}
-						div.card-body
-							h6 Error Details
-							pre
-								code.json.bg-light #{JSON.stringify(item.error, null, 4)}
+				if (false)
+					pre
+						code.json #{JSON.stringify(pageErrors, null, 4)}
 
-							if (item.error.stack)
+				if (true)
+					each item, itemIndex in pageErrors
+						div.card.shadow-sm(class=(itemIndex < (pageErrors.length - 1) ? "mb-3" : false))
+							div.card-body
+								h6 Error ##{(itemIndex + 1).toLocaleString()}
 								hr
-								h6 Stacktrace
-								pre
-									code.json.bg-light #{item.error.stack}
+								//pre
+								//	code.json.bg-light #{JSON.stringify(item.error, null, 4)}
 
-							if (item.userData)
-								hr
-
-								h4.h6 User Data
 								pre
-									code.json.bg-light #{JSON.stringify(error.userData, null, 4)}
+									code.json.bg-light #{JSON.stringify(item, null, 4)}
+
+								if (item.error.userData)
+									div.mb-3
+										h4.h6 Error Data
+
+										div.highlight
+											pre
+												code.json.bg-light #{JSON.stringify(item.error.userData, null, 4)}
+
+								if (item.error.stack)
+									h6 Stacktrace
+									- var stackFirstNLines = item.error.stack.split("\n").slice(0, 7).join("\n");
+									div.highlight
+										pre
+											code.json.bg-light #{stackFirstNLines}
+
+								
 
 			div.modal-footer
 				button.btn.btn-secondary(type="button" data-dismiss="modal") Close

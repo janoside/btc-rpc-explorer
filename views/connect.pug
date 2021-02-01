@@ -1,28 +1,28 @@
 extends layout
 
 block content
-	h1(class="h2") RPC Connect
+	h1.h3 RPC Connect
 	hr
 
-	form(method="post", action="/connect")
+	form(method="post", action="./connect")
 		input(type="hidden", name="_csrf", value=csrfToken)
 
-		div(class="form-group")
+		div.form-group
 			label(for="input-host") Host / IP
-			input(id="input-host", type="text", name="host", class="form-control", placeholder="Host / IP", value=host)
+			input.form-control(id="input-host", type="text", name="host", placeholder="Host / IP", value=host)
 
-		div(class="form-group")
+		div.form-group
 			label(for="input-port") Port
-			input(id="input-port", type="text", name="port", class="form-control", placeholder="Port", value=port)
+			input.form-control(id="input-port", type="text", name="port", placeholder="Port", value=port)
 
-		div(class="form-group")
+		div.form-group
 			label(for="input-username") Username
-			input(id="input-username", type="text", name="username", class="form-control", placeholder="Username", value=username)
+			input.form-control(id="input-username", type="text", name="username", placeholder="Username", value=username)
 
-		div(class="form-group")
+		div.form-group
 			label(for="input-password") Password
-			input(id="input-password", type="password", name="password", class="form-control", placeholder="Password")
+			input.form-control(id="input-password", type="password", name="password", placeholder="Password")
 
-		div(class="form-group")
-			input(type="submit", class="btn btn-primary btn-block" value="Connect")
+		div.form-group
+			input.btn.btn-primary.btn-block(type="submit" value="Connect")
 				

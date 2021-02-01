@@ -4,49 +4,52 @@ block headContent
 	title #{coinConfig.name} Fun
 
 block content
-	h1(class="h3") #{coinConfig.name} Fun
+	h1.h3 #{coinConfig.name} Fun
 	hr
 
-	p Below is a list of fun/interesting things in the #{coinConfig.name} blockchain. Some are historical firsts, others are just fun or cool.
-	
-	div(class="table-responsive")
-		table(class="table table-striped mt-4")
-			thead
-				tr
-					th(class="data-header") Date
-					th(class="data-header") Description
-					th(class="data-header") Link
-					th(class="data-header") Reference
-			tbody
-				each item, index in coinConfig.historicalData
-					tr
-						td(class="data-cell") #{item.date}
+	div.card.shadow-sm.mb-3
+		div.card-body
+			p Below is a list of fun/interesting things in the #{coinConfig.name} blockchain. Some are historical firsts, others are just fun or cool.
+			
+			div.table-responsive
+				table.table.table-striped
+					thead
+						tr
+							th.data-header Date
+							th.data-header Description
+							th.data-header Link
+							th.data-header Reference
+					tbody
+						each item, index in coinConfig.historicalData
+							if (item.chain == activeBlockchain)
+								tr
+									td.data-cell #{item.date}
 
-						td(class="data-cell") #{item.summary}
-						
-						td(class="data-cell monospace")
-							if (item.type == "tx")
-								a(href=("/tx/" + item.txid), title=item.txid, data-toggle="tooltip") Tx #{item.txid.substring(0, 23)}...
-							else if (item.type == "block")
-								a(href=("/block/" + item.blockHash), title="Block #{item.blockHash}", data-toggle="tooltip") Block #{item.blockHash.substring(0, 20)}...
-							else if (item.type == "blockheight")
-								a(href=("/block/" + item.blockHash)) Block ##{item.blockHeight}
-							else if (item.type == "address")
-								a(href=("/address/" + item.address), title=item.address, data-toggle="tooltip") Address #{item.address.substring(0, 18)}...
-							else if (item.type == "link")
-								a(href=item.url) #{item.url.substring(0, 20)}...
+									td.data-cell #{item.summary}
+									
+									td.data-cell.text-monospace
+										if (item.type == "tx")
+											a(href=("./tx/" + item.txid), title=item.txid, data-toggle="tooltip") Tx #{item.txid.substring(0, 23)}...
+										else if (item.type == "block")
+											a(href=("./block/" + item.blockHash), title="Block #{item.blockHash}", data-toggle="tooltip") Block #{item.blockHash.substring(0, 20)}...
+										else if (item.type == "blockheight")
+											a(href=("./block/" + item.blockHash)) Block ##{item.blockHeight}
+										else if (item.type == "address")
+											a(href=("./address/" + item.address), title=item.address, data-toggle="tooltip") Address #{item.address.substring(0, 18)}...
+										else if (item.type == "link")
+											a(href=item.url) #{item.url.substring(0, 20)}...
 
-						td(class="data-cell")
-							if (item.referenceUrl && item.referenceUrl.trim().length > 0)
-								- var matches = item.referenceUrl.match(/^https?\:\/\/([^\/:?#]+)(?:[\/:?#]|$)/i);
+									td.data-cell
+										if (item.referenceUrl && item.referenceUrl.trim().length > 0)
+											- var matches = item.referenceUrl.match(/^https?\:\/\/([^\/:?#]+)(?:[\/:?#]|$)/i);
 
-								- var domain = null;
-								- var domain = matches && matches[1];
+											- var domain = null;
+											- var domain = matches && matches[1];
 
-								if (domain)
-									a(href=item.referenceUrl, rel="nofollow") #{domain} 
-										i(class="fas fa-external-link-alt")
-								else
-									a(href=item.referenceUrl, rel="nofollow") Reference
-							else
-								span -
+											if (domain)
+												a(href=item.referenceUrl, rel="nofollow") #{domain} 
+													i.fas.fa-external-link-alt
+											else
+												a(href=item.referenceUrl, rel="nofollow") Reference
+										else
+											span -

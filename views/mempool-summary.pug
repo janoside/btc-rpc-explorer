@@ -2,162 +2,183 @@ extends layout
 
 block headContent
 	title Mempool Summary
-	
+
 block content
-	h1(class="h3") Mempool Summary
+	h1.h3 Mempool Summary
 	hr
 
-	if (false)
-		pre
-			code(class="json bg-light") #{JSON.stringify(mempoolstats, null, 4)}
+	div#progress-wrapper.mb-huge
+		div.card.shadow-sm.mb-3
+			div.card-body
+				h4.h6 Loading mempool transactions: 
+					span(id="progress-text")
+				div.progress.mt-2(id="progress-bar", style="height: 7px;")
+					div.progress-bar(id="data-progress", role="progressbar", aria-valuenow="0", aria-valuemin="0" ,aria-valuemax="100")
+	
 
-	if (true)
-		div(class="card mb-3 shadow-sm")
-			div(class="card-header")
-				span(class="h6") Summary
-			div(class="card-body")
-				table(class="table details-table mb-0")
-					tr
-						td(class="properties-header") Transaction Count
-						td #{getmempoolinfo.size.toLocaleString()}
+	div(id="main-content", style="display: none;")
+		div.card.shadow-sm.mb-3
+			div.card-body.px-2.px-md-3
+				h3.h6.mb-0 Summary
+				hr
 
-					tr
-						- var mem1Data = utils.formatLargeNumber(getmempoolinfo.usage, 2);
-						- var mem2Data = utils.formatLargeNumber(getmempoolinfo.bytes, 2);
+				div.clearfix
+					div.row
+						div.summary-table-label Tx Count
+						div.summary-table-content.text-monospace(id="tx-count")
 
-						td(class="properties-header") Memory Usage
-						td(class="monospace")
-							span #{mem1Data[0]} #{mem1Data[1].abbreviation}B
-							span(class="text-muted")  (virtual size: #{mem2Data[0]} #{mem2Data[1].abbreviation}B)
+					div.row
+						div.summary-table-label Memory Usage
+						div.summary-table-content.text-monospace(id="mem-usage")
 
-					tr
-						td(class="properties-header") Total Fees
-						td(class="monospace")
-							- var currencyValue = mempoolstats["totalFees"];
-							include includes/value-display.pug
-							
-					if (getmempoolinfo.size > 0)
-						tr
-							td(class="properties-header") Average Fee
-							td(class="monospace")
-								- var currencyValue = mempoolstats["averageFee"];
-								include ./includes/value-display.pug
+					div.row
+						div.summary-table-label Total Fees
+						div.summary-table-content.text-monospace(id="total-fees")
 
-						tr
-							td(class="properties-header") Average Fee per Byte
-							td(class="monospace") #{utils.formatCurrencyAmountInSmallestUnits(mempoolstats["averageFeePerByte"], 2)}/B
+					div.row
+						div.summary-table-label Avg Fee
+						div.summary-table-content.text-monospace(id="avg-fee")
 
-		if (getmempoolinfo.size > 0)
-			h2(class="h5") Transactions by fee rate
-			hr
+					div.row
+						div.summary-table-label Avg Fee Rate
+						div.summary-table-content.text-monospace(id="avg-fee-rate")
 
-			if (false)
-				#{JSON.stringify(mempoolstats)}
+		div#detail-charts-and-data
+			div.card.shadow-sm.mb-3
+				div.card-body.px-2.px-md-3
+					h3.h6.mb-0 Transactions by fee rate
+					hr
 
-			if (true)
-				- var feeBucketLabels = [("[0 - " + mempoolstats["satoshiPerByteBucketMaxima"][0] + ")")];
-				each item, index in mempoolstats["satoshiPerByteBuckets"]
-					if (index > 0 && index < mempoolstats["satoshiPerByteBuckets"].length - 1)
-						- feeBucketLabels.push(("[" + mempoolstats["satoshiPerByteBucketMaxima"][index - 1] + " - " + mempoolstats["satoshiPerByteBucketMaxima"][index] + ")"));
+					canvas.mb-3(id="mempoolBarChart", height="100")
+
+					div.table-responsive
+						table.table.table-striped.mb-3
+							thead
+								tr
+									th Fee Rate
+									th.text-right Tx Count
+									th.text-right Total Fees
+									th.text-right Avg Fee
+									th.text-right Avg Fee Rate
+							tbody(id="fee-rate-table-body")
+								tr(id="fee-rate-table-row-prototype", style="display: none;")
+									td.text-monospace.data-label
+									td.text-monospace.text-right.data-count
+									td.text-monospace.text-right.data-total-fees
+									td.text-monospace.text-right.data-avg-fee
+									td.text-monospace.text-right.data-fee-rate
+
+			div.card.shadow-sm.mb-3
+				div.card-body.px-2.px-md-3
+					h3.h6.mb-0 Transactions by size
+					hr
+
+					canvas.mb-3(id="txSizesBarChart", height="100")
+
+			div.card.shadow-sm.mb-3
+				div.card-body.px-2.px-md-3
+					h3.h6.mb-0 Transactions by age
+					hr
+
+					canvas.mb-3(id="txAgesBarChart", height="100")
+		
+
+block endOfBody
+	script(src="./js/chart.bundle.min.js", integrity="sha384-qgOtiGNaHh9fVWUnRjyHlV39rfbDcvPPkEzL1RHvsHKbuqUqM6uybNuVnghY2z4/")
+	script(src='./js/decimal.js')
+	script.
+		var txidChunks = !{JSON.stringify(mempooltxidChunks)};
+		var satoshiPerByteBucketMaxima = !{JSON.stringify(satoshiPerByteBucketMaxima)};
+
+		$(document).ready(function() {
+			loadMempool(txidChunks, 25, txidChunks.length * 25);
+		});
+
+		function loadMempool(txidChunks, chunkSize, count) {
+			var chunkStrs = [];
+			
+			for (var i = 0; i < txidChunks.length; i++) {
+				var txidChunk = txidChunks[i];
+
+				var chunkStr = "";
+
+				for (var j = 0; j < txidChunk.length; j++) {
+					if (j > 0) {
+						chunkStr += ",";
+					}
+
+					chunkStr += txidChunk[j];
+				}
+
+				chunkStrs.push(chunkStr);
+			}
+
+			//alert(JSON.stringify(chunks));
+
+			var results = [];
+
+			var statusCallback = function(chunkIndexDone, chunkCount) {
+				//console.log("Done: " + Math.min(((chunkIndexDone + 1) * chunkSize), count) + " of " + count);
+
+				var wPercent = `${parseInt(100 * (chunkIndexDone + 1) / parseFloat(chunkCount))}%`;
 				
-				- feeBucketLabels.push((mempoolstats.satoshiPerByteBucketMaxima[mempoolstats.satoshiPerByteBucketMaxima.length - 1] + "+"));
+				$("#data-progress").css("width", wPercent);
+				$("#progress-text").text(`${Math.min(((chunkIndexDone + 1) * chunkSize), count).toLocaleString()} of ${count.toLocaleString()} (${wPercent})`);
+			};
+
+			var finishedCallback = function() {
+				var summary = summarizeData(results);
+
+				var feeRateGraphData = buildFeeRateGraphData(summary);
+				var txSizeGraphData = buildTxSizeGraphData(summary);
+				var txAgeGraphData = buildTxAgeGraphData(summary);
+
+				//console.log(JSON.stringify(summary));
+
+				$("#tx-count").text(summary.count.toLocaleString());
+				$("#mem-usage").text(summary.totalBytes.toLocaleString());
+				$("#total-fees").text(summary.totalFees);
 				
-				- var feeBucketTxCounts = mempoolstats["satoshiPerByteBucketCounts"];
-				- var totalfeeBuckets = mempoolstats["satoshiPerByteBucketTotalFees"];
+				if (summary.count == 0) {
+					$("#avg-fee").text("-");
+					$("#avg-fee-rate").text("-");
+
+					$("#detail-charts-and-data").hide();
+
+					$("#main-content").show();
+					$("#progress-wrapper").hide();
+
+					return;
+				}
 				
-				canvas(id="mempoolBarChart", height="100", class="mb-4")
+				$("#avg-fee").text(summary.averageFee);
+				$("#avg-fee-rate").text(summary.averageFeePerByte);
 
-				script(src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.bundle.min.js")
+				$.ajax({
+					url: `./api/utils/formatLargeNumber/${summary.totalBytes},2`
 
-				script var feeBucketLabels = [];
-				script var bgColors = [];
-				each feeBucketLabel, index in feeBucketLabels
-					- var percentTx = Math.round(100 * feeBucketTxCounts[index] / getmempoolinfo.size).toLocaleString();
-					script feeBucketLabels.push(["#{feeBucketLabel}","#{feeBucketTxCounts[index]} tx (#{percentTx}%)"]);
-					script bgColors.push("hsl(#{(333 * index / feeBucketLabels.length)}, 100%, 50%)");
+				}).done(function(result) {
+					$("#mem-usage").html(`<span>${result[0]} <small>${result[1].abbreviation}B</small></span>`);
+				});
 
-				script var feeBucketTxCounts = [#{feeBucketTxCounts}];
+				updateCurrencyValue($("#total-fees"), summary.totalFees);
+				updateCurrencyValue($("#avg-fee"), summary.averageFee);
 
-				script.
-					var ctx = document.getElementById("mempoolBarChart").getContext('2d');
-					var mempoolBarChart = new Chart(ctx, {
-						type: 'bar',
-						data: {
-							labels: feeBucketLabels,
-							datasets: [{
-								data: feeBucketTxCounts,
-								backgroundColor: bgColors
-							}]
-						},
-						options: {
-							legend: {
-								display: false
-							},
-							scales: {
-								yAxes: [{
-									ticks: {
-										beginAtZero:true
-									}
-								}]
-							}
-						}
-					});
-
-			div(class="table-responsive")
-				table(class="table table-striped mb-4")
-					thead
-						tr
-							th Fee Rate
-							th(class="text-right") Tx Count
-							th(class="text-right") Total Fees
-							th(class="text-right") Average Fee
-							th(class="text-right") Average Fee Rate
-					tbody
-						each item, index in mempoolstats["satoshiPerByteBuckets"]
-							tr
-								td #{mempoolstats["satoshiPerByteBucketLabels"][index]}
-								td(class="text-right monospace") #{item["count"].toLocaleString()}
-								td(class="text-right monospace")
-									- var currencyValue = item["totalFees"];
-									include ./includes/value-display.pug
-
-								if (item["totalBytes"] > 0)
-									- var avgFee = item["totalFees"] / item["count"];
-									- var avgFeeRate = item["totalFees"] / item["totalBytes"];
-
-									td(class="text-right monospace")
-										- var currencyValue = avgFee;
-										include ./includes/value-display.pug
-													
-									td(class="text-right monospace") #{utils.formatCurrencyAmountInSmallestUnits(avgFeeRate, 2)}/B
-								else
-									td(class="text-right monospace") -
-									td(class="text-right monospace") -
+				updateFeeRateValue($("#avg-fee-rate"), summary.averageFeePerByte, 2);
 
 
-			h2(class="h5") Transactions by size
-			hr
+				//$("#summary-json").text(JSON.stringify(summary, null, 4));
 
-			canvas(id="txSizesBarChart", height="100", class="mb-4")
 
-			script var sizeBucketLabels = [];
-			script var bgColors = [];
-			each sizeBucketLabel, index in mempoolstats["sizeBucketLabels"]
-				- var percentTx = Math.round(100 * mempoolstats["sizeBucketTxCounts"][index] / getmempoolinfo.size).toLocaleString();
-				script sizeBucketLabels.push(["#{sizeBucketLabel} bytes","#{mempoolstats["sizeBucketTxCounts"][index]} tx (#{percentTx}%)"]);
-				script bgColors.push("hsl(#{(333 * index / mempoolstats["sizeBucketLabels"].length)}, 100%, 50%)");
-
-			script var sizeBucketTxCounts = [#{mempoolstats["sizeBucketTxCounts"]}];
-
-			script.
-				var ctx = document.getElementById("txSizesBarChart").getContext('2d');
-				var txSizesBarChart = new Chart(ctx, {
+				// fee rate chart
+				var ctx1 = document.getElementById("mempoolBarChart").getContext('2d');
+				var mempoolBarChart = new Chart(ctx1, {
 					type: 'bar',
 					data: {
-						labels: sizeBucketLabels,
+						labels: feeRateGraphData.feeBucketLabels,
 						datasets: [{
-							data: sizeBucketTxCounts,
-							backgroundColor: bgColors
+							data: feeRateGraphData.feeBucketTxCounts,
+							backgroundColor: feeRateGraphData.bgColors
 						}]
 					},
 					options: {
@@ -174,29 +195,15 @@ block content
 					}
 				});
 
-			h2(class="h5") Transactions by age
-			hr
-
-			canvas(id="txAgesBarChart", height="100", class="mb-4")
-
-			script var ageBucketLabels = [];
-			script var bgColors = [];
-			each ageBucketLabel, index in mempoolstats["ageBucketLabels"]
-				- var percentTx = Math.round(100 * mempoolstats["ageBucketTxCounts"][index] / getmempoolinfo.size).toLocaleString();
-				script ageBucketLabels.push(["#{ageBucketLabel} sec","#{mempoolstats["ageBucketTxCounts"][index]} tx (#{percentTx}%)"]);
-				script bgColors.push("hsl(#{(333 * index / mempoolstats["ageBucketLabels"].length)}, 100%, 50%)");
-
-			script var ageBucketTxCounts = [#{mempoolstats["ageBucketTxCounts"]}];
-
-			script.
-				var ctx = document.getElementById("txAgesBarChart").getContext('2d');
-				var txAgesBarChart = new Chart(ctx, {
+				// tx size chart
+				var ctx2 = document.getElementById("txSizesBarChart").getContext('2d');
+				var txSizesBarChart = new Chart(ctx2, {
 					type: 'bar',
 					data: {
-						labels: ageBucketLabels,
+						labels: txSizeGraphData.sizeBucketLabels,
 						datasets: [{
-							data: ageBucketTxCounts,
-							backgroundColor: bgColors
+							data: txSizeGraphData.sizeBucketTxCounts,
+							backgroundColor: txSizeGraphData.bgColors
 						}]
 					},
 					options: {
@@ -212,4 +219,329 @@ block content
 						}
 					}
 				});
-						
+
+				// tx age chart
+				var ctx3 = document.getElementById("txAgesBarChart").getContext('2d');
+				var txSizesBarChart = new Chart(ctx3, {
+					type: 'bar',
+					data: {
+						labels: txAgeGraphData.ageBucketLabels,
+						datasets: [{
+							data: txAgeGraphData.ageBucketTxCounts,
+							backgroundColor: txAgeGraphData.bgColors
+						}]
+					},
+					options: {
+						legend: {
+							display: false
+						},
+						scales: {
+							yAxes: [{
+								ticks: {
+									beginAtZero:true
+								}
+							}]
+						}
+					}
+				});
+
+
+				// fee rate table
+				for (var i = 0; i < summary.satoshiPerByteBuckets.length; i++) {
+					var item = summary.satoshiPerByteBuckets[i];
+
+					var row = $("#fee-rate-table-row-prototype").clone();
+					row.attr("id", null);
+					row.addClass("fee-rate-table-row");
+
+					row.find(".data-label").text(summary.satoshiPerByteBucketLabels[i]);
+					row.find(".data-count").text(item.count.toLocaleString());
+					row.find(".data-total-fees").text(item.count > 0 ? item.totalFees : "-");
+					row.find(".data-avg-fee").text(item.count > 0 ? item.totalFees / item.count : "-");
+					row.find(".data-fee-rate").text("-");
+
+					if (item.count > 0) {
+						updateCurrencyValue(row.find(".data-total-fees"), item.totalFees);
+						updateCurrencyValue(row.find(".data-avg-fee"), item.totalFees / item.count);
+
+						updateFeeRateValue(row.find(".data-fee-rate"), item.totalFees / item.totalBytes, 2);
+					}
+
+					row.show();
+
+					$("#fee-rate-table-body").append(row);
+				}
+				
+
+				$("#main-content").show();
+				$("#progress-wrapper").hide();
+			};
+
+			getTxData(results, chunkStrs, 0, statusCallback, finishedCallback);
+		}
+
+		function getTxData(results, chunkStrs, chunkIndex, statusCallback, finishedCallback) {
+			if (chunkIndex > chunkStrs.length - 1) {
+				finishedCallback();
+
+				return;
+			}
+
+			var url = `./api/mempool-txs/${chunkStrs[chunkIndex]}`;
+			
+			//console.log(url);
+
+			$.ajax({
+				url: url
+
+			}).done(function(result) {
+				for (var i = 0; i < result.length; i++) {
+					results.push(result[i]);
+				}
+
+				statusCallback(chunkIndex, chunkStrs.length);
+				
+				getTxData(results, chunkStrs, chunkIndex + 1, statusCallback, finishedCallback);
+			});
+		}
+
+		function buildFeeRateGraphData(summary) {
+			var feeBucketLabels = [("[0 - " + summary["satoshiPerByteBucketMaxima"][0] + ")")];
+			
+			for (var i = 0; i < summary["satoshiPerByteBuckets"].length; i++) {
+				var item = summary["satoshiPerByteBuckets"][i];
+				if (i > 0 && i < summary["satoshiPerByteBuckets"].length - 1) {
+					feeBucketLabels.push(("[" + summary["satoshiPerByteBucketMaxima"][i - 1] + " - " + summary["satoshiPerByteBucketMaxima"][i] + ")"));
+				}
+			}
+
+			feeBucketLabels.push((summary.satoshiPerByteBucketMaxima[summary.satoshiPerByteBucketMaxima.length - 1] + "+"));
+				
+			var feeBucketTxCounts = summary["satoshiPerByteBucketCounts"];
+			var totalfeeBuckets = summary["satoshiPerByteBucketTotalFees"];
+
+			var graphData = {feeBucketLabels:[], bgColors:[], feeBucketTxCounts:feeBucketTxCounts};
+
+			for (var i = 0; i < feeBucketLabels.length; i++) {
+				var feeBucketLabel = feeBucketLabels[i];
+				var percentTx = Math.round(100 * feeBucketTxCounts[i] / summary.count).toLocaleString();
+				
+				graphData.feeBucketLabels.push([feeBucketLabel, `${feeBucketTxCounts[i]} tx (${percentTx}%)`]);
+				graphData.bgColors.push(`hsl(${(333 * i / feeBucketLabels.length)}, 100%, 50%)`);
+			}
+
+			return graphData;
+		}
+
+		function buildTxSizeGraphData(summary) {
+			var sizeBucketLabels = [];
+			var bgColors = [];
+
+			for (var i = 0; i < summary.sizeBucketLabels.length; i++) {
+				var sizeBucketLabel = summary.sizeBucketLabels[i];
+				var percentTx = Math.round(100 * summary.sizeBucketTxCounts[i] / summary.count).toLocaleString();
+
+				sizeBucketLabels.push([`${sizeBucketLabel} bytes`, `${summary.sizeBucketTxCounts[i]} tx (${percentTx}%)`]);
+				bgColors.push(`hsl(${(333 * i / summary.sizeBucketLabels.length)}, 100%, 50%)`);
+			}
+
+			return {
+				sizeBucketLabels: sizeBucketLabels,
+				bgColors: bgColors,
+				sizeBucketTxCounts: summary.sizeBucketTxCounts
+			};
+		}
+
+		function buildTxAgeGraphData(summary) {
+			var ageBucketLabels = [];
+			var bgColors = [];
+
+			for (var i = 0; i < summary.ageBucketLabels.length; i++) {
+				var ageBucketLabel = summary.ageBucketLabels[i];
+				var percentTx = Math.round(100 * summary.ageBucketTxCounts[i] / summary.count).toLocaleString();
+
+				ageBucketLabels.push([`${ageBucketLabel}`, `${summary.ageBucketTxCounts[i]} tx (${percentTx}%)`]);
+				bgColors.push(`hsl(${(333 * i / summary.ageBucketLabels.length)}, 100%, 50%)`);
+			}
+
+			return {
+				ageBucketLabels: ageBucketLabels,
+				bgColors: bgColors,
+				ageBucketTxCounts: summary.ageBucketTxCounts
+			};
+		}
+
+		function summarizeData(rawdata) {
+			var summary = [];
+
+			var maxFee = 0;
+			var maxFeePerByte = 0;
+			var maxAge = 0;
+			var maxSize = 0;
+			var ages = [];
+			var sizes = [];
+
+			for (var i = 0; i < rawdata.length; i++) {
+				var txMempoolInfo = rawdata[i].entry;
+
+				var fee = txMempoolInfo.modifiedfee;
+				var size = txMempoolInfo.vsize ? txMempoolInfo.vsize : txMempoolInfo.size;
+				var feePerByte = txMempoolInfo.modifiedfee / size;
+				var age = Date.now() / 1000 - txMempoolInfo.time;
+
+				if (fee > maxFee) {
+					maxFee = txMempoolInfo.modifiedfee;
+				}
+
+				if (feePerByte > maxFeePerByte) {
+					maxFeePerByte = txMempoolInfo.modifiedfee / size;
+				}
+
+				ages.push({age:age, txid:"abc"});
+				sizes.push({size:size, txid:"abc"});
+
+				if (age > maxAge) {
+					maxAge = age;
+				}
+
+				if (size > maxSize) {
+					maxSize = size;
+				}
+			}
+
+			ages.sort(function(a, b) {
+				if (a.age != b.age) {
+					return b.age - a.age;
+
+				} else {
+					return a.txid.localeCompare(b.txid);
+				}
+			});
+
+			sizes.sort(function(a, b) {
+				if (a.size != b.size) {
+					return b.size - a.size;
+
+				} else {
+					return a.txid.localeCompare(b.txid);
+				}
+			});
+
+			maxSize = 2000;
+
+			var bucketCount = satoshiPerByteBucketMaxima.length + 1;
+
+			var satoshiPerByteBuckets = [];
+			var satoshiPerByteBucketLabels = [];
+
+			satoshiPerByteBucketLabels[0] = ("[0 - " + satoshiPerByteBucketMaxima[0] + ")");
+			for (var i = 0; i < bucketCount; i++) {
+				satoshiPerByteBuckets[i] = {"count":0, "totalFees":0, "totalBytes":0};
+
+				if (i > 0 && i < bucketCount - 1) {
+					satoshiPerByteBucketLabels[i] = ("[" + satoshiPerByteBucketMaxima[i - 1] + " - " + satoshiPerByteBucketMaxima[i] + ")");
+				}
+			}
+
+			var ageBucketCount = 150;
+			var ageBucketTxCounts = [];
+			var ageBucketLabels = [];
+
+			var sizeBucketCount = 150;
+			var sizeBucketTxCounts = [];
+			var sizeBucketLabels = [];
+
+			for (var i = 0; i < ageBucketCount; i++) {
+				var rangeMin = i * maxAge / ageBucketCount;
+				var rangeMax = (i + 1) * maxAge / ageBucketCount;
+
+				ageBucketTxCounts.push(0);
+
+				if (maxAge > 600) {
+					var rangeMinutesMin = new Decimal(rangeMin / 60).toFixed(1);
+					var rangeMinutesMax = new Decimal(rangeMax / 60).toFixed(1);
+
+					ageBucketLabels.push(rangeMinutesMin + " - " + rangeMinutesMax + " min");
+
+				} else {
+					ageBucketLabels.push(parseInt(rangeMin) + " - " + parseInt(rangeMax) + " sec");
+				}
+			}
+
+			for (var i = 0; i < sizeBucketCount; i++) {
+				sizeBucketTxCounts.push(0);
+
+				if (i == sizeBucketCount - 1) {
+					sizeBucketLabels.push(parseInt(i * maxSize / sizeBucketCount) + "+");
+
+				} else {
+					sizeBucketLabels.push(parseInt(i * maxSize / sizeBucketCount) + " - " + parseInt((i + 1) * maxSize / sizeBucketCount));
+				}
+			}
+
+			satoshiPerByteBucketLabels[bucketCount - 1] = (satoshiPerByteBucketMaxima[satoshiPerByteBucketMaxima.length - 1] + "+");
+
+			var summary = {
+				"count":0,
+				"totalFees":0,
+				"totalBytes":0,
+				"satoshiPerByteBuckets":satoshiPerByteBuckets,
+				"satoshiPerByteBucketLabels":satoshiPerByteBucketLabels,
+				"ageBucketTxCounts":ageBucketTxCounts,
+				"ageBucketLabels":ageBucketLabels,
+				"sizeBucketTxCounts":sizeBucketTxCounts,
+				"sizeBucketLabels":sizeBucketLabels
+			};
+
+			for (var x = 0; x < rawdata.length; x++) {
+				var txMempoolInfo = rawdata[x].entry;
+				var fee = txMempoolInfo.modifiedfee;
+				var size = txMempoolInfo.vsize ? txMempoolInfo.vsize : txMempoolInfo.size;
+				var feePerByte = txMempoolInfo.modifiedfee / size;
+				var satoshiPerByte = feePerByte * 100000000; // TODO: magic number - replace with coinConfig.baseCurrencyUnit.multiplier
+				var age = Date.now() / 1000 - txMempoolInfo.time;
+
+				var addedToBucket = false;
+				for (var i = 0; i < satoshiPerByteBucketMaxima.length; i++) {
+					if (satoshiPerByteBucketMaxima[i] > satoshiPerByte) {
+						satoshiPerByteBuckets[i]["count"]++;
+						satoshiPerByteBuckets[i]["totalFees"] += fee;
+						satoshiPerByteBuckets[i]["totalBytes"] += size;
+
+						addedToBucket = true;
+
+						break;
+					}
+				}
+
+				if (!addedToBucket) {
+					satoshiPerByteBuckets[bucketCount - 1]["count"]++;
+					satoshiPerByteBuckets[bucketCount - 1]["totalFees"] += fee;
+					satoshiPerByteBuckets[bucketCount - 1]["totalBytes"] += size;
+				}
+
+				summary["count"]++;
+				summary["totalFees"] += txMempoolInfo.modifiedfee;
+				summary["totalBytes"] += size;
+
+				var ageBucketIndex = Math.min(ageBucketCount - 1, parseInt(age / (maxAge / ageBucketCount)));
+				var sizeBucketIndex = Math.min(sizeBucketCount - 1, parseInt(size / (maxSize / sizeBucketCount)));
+
+				ageBucketTxCounts[ageBucketIndex]++;
+				sizeBucketTxCounts[sizeBucketIndex]++;
+			}
+
+			summary["averageFee"] = summary["totalFees"] / summary["count"];
+			summary["averageFeePerByte"] = summary["totalFees"] / summary["totalBytes"];
+
+			summary["satoshiPerByteBucketMaxima"] = satoshiPerByteBucketMaxima;
+			summary["satoshiPerByteBucketCounts"] = [];
+			summary["satoshiPerByteBucketTotalFees"] = [];
+
+			for (var i = 0; i < bucketCount; i++) {
+				summary["satoshiPerByteBucketCounts"].push(summary["satoshiPerByteBuckets"][i]["count"]);
+				summary["satoshiPerByteBucketTotalFees"].push(summary["satoshiPerByteBuckets"][i]["totalFees"]);
+			}
+
+			return summary;
+		}
