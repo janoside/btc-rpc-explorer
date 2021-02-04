@@ -435,7 +435,7 @@ router.get("/blocks", function(req, res, next) {
 
 		promises.push(coreApi.getBlocksByHeight(blockHeights));
 
-		promises.push(coreApi.getBlocksStatsByHeight(blockHeights));
+		promises.push(coreApi.getBlocksStatsByHeight(blockHeights).catch(_ => ({})));
 
 		Promise.all(promises).then(function(promiseResults) {
 			res.locals.blocks = promiseResults[0];
@@ -665,9 +665,10 @@ router.get("/block-height/:blockHeight", function(req, res, next) {
 				resolve();
 
 			}).catch(function(err) {
-				res.locals.pageErrors.push(utils.logError("983yr435r76d", err));
-
-				reject(err);
+				// unavailable, likely due to pruning
+				debugLog('Failed loading block stats', err)
+				res.locals.result.blockstats = null;
+				resolve();
 			});
 		}));
 
@@ -747,9 +748,9 @@ router.get("/block/:blockHash", function(req, res, next) {
 			resolve();
 
 		}).catch(function(err) {
-			res.locals.pageErrors.push(utils.logError("21983ue8hye", err));
-			
-			reject(err);
+			// unavailable, likely due to pruning
+			debugLog('Failed loading block stats', err)
+			resolve();
 		});
 	}));
 

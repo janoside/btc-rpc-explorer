@@ -192,30 +192,30 @@ function getBlockHeaderByHeight(blockHeight) {
 function getBlockByHash(blockHash) {
 	debugLog("getBlockByHash: %s", blockHash);
 
-	return new Promise(function(resolve, reject) {
-		getRpcDataWithParams({method:"getblock", parameters:[blockHash]}).then(function(block) {
-			getRawTransaction(block.tx[0]).then(function(tx) {
+	return getRpcDataWithParams({method:"getblock", parameters:[blockHash]})
+		.then(function(block) {
+			return getRawTransaction(block.tx[0], blockHash).then(function(tx) {
 				block.coinbaseTx = tx;
 				block.totalFees = utils.getBlockTotalFeesFromCoinbaseTxAndBlockHeight(tx, block.height);
-				block.subsidy = coinConfig.blockRewardFunction(block.height, global.activeBlockchain);
 				block.miner = utils.getMinerFromCoinbaseTx(tx);
-
-				resolve(block);
-
-			}).catch(function(err) {
-				reject(err);
-			});
+				return block;
+			})
 		}).catch(function(err) {
-			reject(err);
-		});
-	});
+				// the block is pruned, use `getblockheader` instead
+				debugLog('getblock failed, falling back to getblockheader', blockHash, err);
+				return getRpcDataWithParams({method:"getblockheader", parameters:[blockHash]})
+					.then(function(block) { block.tx = []; return block });
+		}).then(function(block) {
+				block.subsidy = coinConfig.blockRewardFunction(block.height, global.activeBlockchain);
+				return block;
+		})
 }
 
 function getAddress(address) {
 	return getRpcDataWithParams({method:"validateaddress", parameters:[address]});
 }
 
-function getRawTransaction(txid) {
+function getRawTransaction(txid, blockhash) {
 	debugLog("getRawTransaction: %s", txid);
 
 	return new Promise(function(resolve, reject) {
@@ -238,7 +238,8 @@ function getRawTransaction(txid) {
 			});
 
 		} else {
-			getRpcDataWithParams({method:"getrawtransaction", parameters:[txid, 1]}).then(function(result) {
+			var extra_params = blockhash ? [ blockhash ] : [];
+			getRpcDataWithParams({method:"getrawtransaction", parameters:[txid, 1, ...extra_params]}).then(function(result) {
 				if (result == null || result.code && result.code < 0) {
 					reject(result);
 
@@ -329,6 +330,10 @@ function getMempoolTxDetails(txid, includeAncDec=true) {
 			reject(err);
 		});
 	});
+}
+
+function getTxOut(txid, vout) {
+	return getRpcDataWithParams({method:"gettxout", parameters:[txid, vout]});
 }
 
 function getHelp() {
@@ -502,6 +507,7 @@ module.exports = {
 	getBlockStatsByHeight: getBlockStatsByHeight,
 	getBlockHeaderByHash: getBlockHeaderByHash,
 	getBlockHeaderByHeight: getBlockHeaderByHeight,
+	getTxOut: getTxOut,
 
 	minRpcVersions: minRpcVersions
 };

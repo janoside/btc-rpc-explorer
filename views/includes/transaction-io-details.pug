@@ -15,7 +15,7 @@ script.
 
 div.row.text-monospace
 	div.col-lg-6
-		if (txInputs)
+		if (true)
 			- var extraInputCount = 0;
 			each txVin, txVinIndex in tx.vin
 				if (!txVin.coinbase)
@@ -23,8 +23,11 @@ div.row.text-monospace
 					if (txInputs && txInputs[txVinIndex])
 						- var txInput = txInputs[txVinIndex];
 						- var vout = txInput;
+					else
+						- var txInput = {txid:txVin.txid, vout:txVin.vout};
+						- var vout = {};
 
-				if (txVin.coinbase || vout)
+				if true
 					div.clearfix
 						div.tx-io-label
 							a(data-toggle="tooltip", title=("Input #" + txVinIndex.toLocaleString()), style="white-space: nowrap;")
@@ -55,14 +58,15 @@ div.row.text-monospace
 
 										div(id="coinbase-data-hex", style="display: none;")
 											small.font-weight-bold data
-											small (hex) - 
+											small (hex) -
 											small.word-wrap #{txVin.coinbase}
 
 
 									else
 										div.word-wrap
-											small.data-tag.bg-dark.mr-2
-												span(title=`Input Type: ${utils.outputTypeName(vout.scriptPubKey.type)}`, data-toggle="tooltip") #{utils.outputTypeAbbreviation(vout.scriptPubKey.type)}
+											if (vout.scriptPubKey)
+												small.data-tag.bg-dark.mr-2
+													span(title=`Input Type: ${utils.outputTypeName(vout.scriptPubKey.type)}`, data-toggle="tooltip") #{utils.outputTypeAbbreviation(vout.scriptPubKey.type)}
 
 											if (vout.coinbaseSpend)
 												small.data-tag.bg-success.mr-2
@@ -143,12 +147,13 @@ div.row.text-monospace
 								include ./value-display.pug
 				hr
 
-			div.row.mb-5.mb-lg-0
-				div.col
-					div.font-weight-bold.text-left.text-md-right
-						span.d-block.d-md-none Total Input: 
-						- var currencyValue = totalIOValues.input;
-						include ./value-display.pug
+			if (totalIOValues.input)
+				div.row.mb-5.mb-lg-0
+					div.col
+						div.font-weight-bold.text-left.text-md-right
+							span.d-block.d-md-none Total Input:
+							- var currencyValue = totalIOValues.input;
+							include ./value-display.pug
 					
 			
 			

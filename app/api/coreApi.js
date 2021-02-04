@@ -626,9 +626,9 @@ function getBlocksByHash(blockHashes) {
 	});
 }
 
-function getRawTransaction(txid) {
+function getRawTransaction(txid, blockhash) {
 	var rpcApiFunction = function() {
-		return rpcApi.getRawTransaction(txid);
+		return rpcApi.getRawTransaction(txid, blockhash);
 	};
 
 	return tryCacheThenRpcApi(txCache, "getRawTransaction-" + txid, ONE_HR, rpcApiFunction, shouldCacheTransaction);
@@ -720,11 +720,11 @@ function getAddress(address) {
 	});
 }
 
-function getRawTransactions(txids) {
+function getRawTransactions(txids, blockhash) {
 	return new Promise(function(resolve, reject) {
 		var promises = [];
 		for (var i = 0; i < txids.length; i++) {
-			promises.push(getRawTransaction(txids[i]));
+			promises.push(getRawTransaction(txids[i], blockhash));
 		}
 
 		Promise.all(promises).then(function(results) {
@@ -828,9 +828,9 @@ function summarizeBlockAnalysisData(blockHeight, tx, inputs) {
 	return txSummary;
 }
 
-function getRawTransactionsWithInputs(txids, maxInputs=-1) {
+function getRawTransactionsWithInputs(txids, maxInputs=-1, blockhash) {
 	return new Promise(function(resolve, reject) {
-		getRawTransactions(txids).then(function(transactions) {
+		getRawTransactions(txids, blockhash).then(function(transactions) {
 			var maxInputsTracked = config.site.txMaxInput;
 			
 			if (maxInputs <= 0) {
@@ -885,10 +885,12 @@ function getRawTransactionsWithInputs(txids, maxInputs=-1) {
 				});
 
 				resolve({ transactions:transactions, txInputsByTransaction:txInputsByTransaction });
+			}).catch(function (err) {
+				debugLog("fetching prevouts failed:", err);
+				// likely due to pruning or no txindex, report the error but continue with an empty inputs map
+				resolve({ transactions:transactions, txInputsByTransaction: {} });
 			});
-		}).catch(function(err) {
-			reject(err);
-		});
+		}).catch(reject);
 	});
 }
 
@@ -905,7 +907,7 @@ function getBlockByHashWithTransactions(blockHash, txLimit, txOffset) {
 				txids.push(block.tx[i]);
 			}
 
-			getRawTransactionsWithInputs(txids, config.site.txMaxInput).then(function(txsResult) {
+			getRawTransactionsWithInputs(txids, config.site.txMaxInput, blockHash).then(function(txsResult) {
 				if (txsResult.transactions && txsResult.transactions.length > 0) {
 					block.coinbaseTx = txsResult.transactions[0];
 					block.totalFees = utils.getBlockTotalFeesFromCoinbaseTxAndBlockHeight(block.coinbaseTx, block.height);
@@ -918,11 +920,16 @@ function getBlockByHashWithTransactions(blockHash, txLimit, txOffset) {
 				}
 
 				resolve({ getblock:block, transactions:txsResult.transactions, txInputsByTransaction:txsResult.txInputsByTransaction });
+			}).catch(function(err) {
+				// likely due to pruning or no txindex, report the error but continue with an empty transaction list
+				resolve({ getblock:block, transactions:[], txInputsByTransaction:{} });
 			});
-		}).catch(function(err) {
-			reject(err);
-		});
+		}).catch(reject);
 	});
+}
+
+function getTxOut(txid, vout) {
+	return rpcApi.getTxOut(txid, vout)
 }
 
 function getHelp() {
@@ -1084,5 +1091,6 @@ module.exports = {
 	getBlocksStatsByHeight: getBlocksStatsByHeight,
 	buildBlockAnalysisData: buildBlockAnalysisData,
 	getBlockHeaderByHeight: getBlockHeaderByHeight,
-	getBlockHeadersByHeight: getBlockHeadersByHeight
+	getBlockHeadersByHeight: getBlockHeadersByHeight,
+	getTxOut: getTxOut
 };

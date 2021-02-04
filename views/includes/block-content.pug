@@ -22,7 +22,7 @@ ul.nav.nav-tabs.mb-3
 	li.nav-item
 		a.nav-link(data-toggle="tab", href="#tab-json", role="tab") JSON
 
-- var txCount = result.getblock.tx.length;
+- var txCount = result.getblock.nTx
 
 div.tab-content
 	div.tab-pane.active(id="tab-details", role="tabpanel")
@@ -140,18 +140,19 @@ div.tab-content
 										else
 											span 0
 
-							- var blockRewardMax = coinConfig.blockRewardFunction(result.getblock.height, activeBlockchain);
-							- var coinbaseTxTotalOutputValue = new Decimal(0);
-							each vout in result.getblock.coinbaseTx.vout
-								- coinbaseTxTotalOutputValue = coinbaseTxTotalOutputValue.plus(new Decimal(vout.value));
+							if result.getblock.coinbaseTx
+								- var blockRewardMax = coinConfig.blockRewardFunction(result.getblock.height, activeBlockchain);
+								- var coinbaseTxTotalOutputValue = new Decimal(0);
+								each vout in result.getblock.coinbaseTx.vout
+									- coinbaseTxTotalOutputValue = coinbaseTxTotalOutputValue.plus(new Decimal(vout.value));
 
-							if (parseFloat(coinbaseTxTotalOutputValue) < blockRewardMax)
-								div.row
-									div(class=sumTableLabelClass)
-										span.border-dotted(data-toggle="tooltip" title="The miner of this block failed to collect this value. As a result, it is permanently lost.") Value Destroyed
-									div.text-monospace.text-danger(class=sumTableValueClass)
-										- var currencyValue = new Decimal(blockRewardMax).minus(coinbaseTxTotalOutputValue);
-										include ./value-display.pug
+								if (parseFloat(coinbaseTxTotalOutputValue) < blockRewardMax)
+									div.row
+										div(class=sumTableLabelClass)
+											span.border-dotted(data-toggle="tooltip" title="The miner of this block failed to collect this value. As a result, it is permanently lost.") Value Destroyed
+										div.text-monospace.text-danger(class=sumTableValueClass)
+											- var currencyValue = new Decimal(blockRewardMax).minus(coinbaseTxTotalOutputValue);
+											include ./value-display.pug
 
 							if (result.getblock.weight)
 								div.row
@@ -163,10 +164,12 @@ div.tab-content
 										span.text-muted  (#{new Decimal(100 * result.getblock.weight / coinConfig.maxBlockWeight).toDecimalPlaces(2)}% full)
 										
 
-							div.row
-								div(class=sumTableLabelClass) Size
-								div.text-monospace(class=sumTableValueClass) #{result.getblock.size.toLocaleString()} 
-									small B
+
+							if (result.getblock.size)
+								div.row
+									div(class=sumTableLabelClass) Size
+									div.text-monospace(class=sumTableValueClass) #{result.getblock.size.toLocaleString()}
+										small B
 
 							if (result.getblock.miner)
 								div.row
@@ -348,8 +351,11 @@ div.tab-content
 									span.text-muted  (#{result.getblock.chainwork.replace(/^0+/, '')})
 									
 
-		div.card.shadow-sm.mb-3
-			div.card-body.px-2.px-md-3
+		if (!result.getblock.tx.length)
+			div.card.shadow-sm.mb-3: div.card-body.px-2.px-md-3
+				h2.h6.mb-0.d-inline-block #{txCount.toLocaleString()} Transaction#{txCount>1?'s':''} (unavailable due to pruning)
+		else
+			div.card.shadow-sm.mb-3: div.card-body.px-2.px-md-3
 				div.row
 					div.col-md-4
 						h2.h6.mb-0.d-inline-block #{txCount.toLocaleString()} 

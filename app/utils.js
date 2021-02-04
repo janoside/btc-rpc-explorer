@@ -451,26 +451,30 @@ function getTxTotalInputOutputValues(tx, txInputs, blockHeight) {
 	var totalOutputValue = new Decimal(0);
 
 	try {
-		for (var i = 0; i < tx.vin.length; i++) {
-			if (tx.vin[i].coinbase) {
-				totalInputValue = totalInputValue.plus(new Decimal(coinConfig.blockRewardFunction(blockHeight, global.activeBlockchain)));
+		if (txInputs) {
+			for (var i = 0; i < tx.vin.length; i++) {
+				if (tx.vin[i].coinbase) {
+					totalInputValue = totalInputValue.plus(new Decimal(coinConfig.blockRewardFunction(blockHeight, global.activeBlockchain)));
 
-			} else {
-				var txInput = txInputs[i];
+				} else {
+					var txInput = txInputs[i];
 
-				if (txInput) {
-					try {
-						var vout = txInput;
-						if (vout.value) {
-							totalInputValue = totalInputValue.plus(new Decimal(vout.value));
+					if (txInput) {
+						try {
+							var vout = txInput;
+							if (vout.value) {
+								totalInputValue = totalInputValue.plus(new Decimal(vout.value));
+							}
+						} catch (err) {
+							logError("2397gs0gsse", err, {txid:tx.txid, vinIndex:i});
 						}
-					} catch (err) {
-						logError("2397gs0gsse", err, {txid:tx.txid, vinIndex:i});
 					}
 				}
 			}
+		} else {
+			totalInputValue = null
 		}
-		
+
 		for (var i = 0; i < tx.vout.length; i++) {
 			totalOutputValue = totalOutputValue.plus(new Decimal(tx.vout[i].value));
 		}

@@ -47,7 +47,7 @@ block content
 
 									span.text-muted  (#{new Decimal(100 * result.getblock.weight / coinConfig.maxBlockWeight).toDecimalPlaces(2)}% full)
 									
-						else
+						else if (result.getblock.size)
 							div.row
 								div.summary-table-label Size
 								div.summary-table-content.text-monospace #{result.getblock.size.toLocaleString()}
@@ -55,7 +55,7 @@ block content
 
 						div.row
 							div.summary-table-label Transactions
-							div.summary-table-content.text-monospace #{result.getblock.tx.length.toLocaleString()}
+							div.summary-table-content.text-monospace #{result.getblock.nTx.toLocaleString()}
 
 						div.row
 							div.summary-table-label Confirmations
