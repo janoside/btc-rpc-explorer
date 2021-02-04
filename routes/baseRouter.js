@@ -828,11 +828,16 @@ router.get("/tx/:transactionId", function(req, res, next) {
 
 	res.locals.result = {};
 
-	coreApi.getRawTransactionsWithInputs([txid]).then(function(rawTxResult) {
+	var txPromise = req.query.height
+		? coreApi.getBlockHashByHeight(parseInt(req.query.height))
+				.then(blockhash => coreApi.getRawTransactionsWithInputs([txid], -1, blockhash))
+		: coreApi.getRawTransactionsWithInputs([txid], -1);
+
+	txPromise.then(function(rawTxResult) {
 		var tx = rawTxResult.transactions[0];
 
 		res.locals.result.getrawtransaction = tx;
-		res.locals.result.txInputs = rawTxResult.txInputsByTransaction[txid];
+		res.locals.result.txInputs = rawTxResult.txInputsByTransaction[txid] || {};
 
 		var promises = [];
 

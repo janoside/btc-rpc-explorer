@@ -548,6 +548,12 @@ function getBlockByHeight(blockHeight) {
 	});
 }
 
+function getBlockHashByHeight(blockHeight) {
+	return tryCacheThenRpcApi(blockCache, "getBlockHashByHeight-" + blockHeight, ONE_HR, function() {
+		return rpcApi.getBlockHashByHeight(blockHeight);
+	});
+}
+
 function getBlocksByHeight(blockHeights) {
 	return new Promise(function(resolve, reject) {
 		var promises = [];
@@ -1069,6 +1075,7 @@ module.exports = {
 	getMiningInfo: getMiningInfo,
 	getIndexInfo: getIndexInfo,
 	getBlockByHeight: getBlockByHeight,
+	getBlockHashByHeight: getBlockHashByHeight,
 	getBlocksByHeight: getBlocksByHeight,
 	getBlockByHash: getBlockByHash,
 	getBlocksByHash: getBlocksByHash,
