@@ -96,6 +96,10 @@ app.use(session({
 
 app.use(config.baseUrl, express.static(path.join(__dirname, 'public')));
 
+if (config.baseUrl != '/') {
+	app.get('/', (req, res) => res.redirect(config.baseUrl));
+}
+
 process.on("unhandledRejection", (reason, p) => {
 	debugLog("Unhandled Rejection at: Promise", p, "reason:", reason, "stack:", (reason != null ? reason.stack : "null"));
 });
