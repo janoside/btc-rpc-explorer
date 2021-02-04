@@ -1607,37 +1607,24 @@ router.get("/bitcoin.pdf", function(req, res, next) {
 	// ref: https://bitcoin.stackexchange.com/questions/35959/how-is-the-whitepaper-decoded-from-the-blockchain-tx-with-1000x-m-of-n-multisi
 	const whitepaperTxid = "54e48e5f5c656b26c3bca14a8c95aa583d07ebe84dde3b7dd4a78f4e4186e713";
 
-	coreApi.getRawTransaction(whitepaperTxid).then(function(tx) {
-		var pdfData = "";
-		var start;
+	// get all outputs except the last 2 using `gettxout`
+	Promise.all([...Array(946).keys()].map(vout => coreApi.getTxOut(whitepaperTxid, vout)))
+	.then(function (vouts) {
+		// concatenate all multisig pubkeys
+		var pdfData = vouts.map((out, n) => {
+			var parts = out.scriptPubKey.asm.split(" ")
+			// the last output is a 1-of-1
+			return n == 945 ? parts[1] : parts.slice(1,4).join('')
+		}).join('')
 
-		// all outputs, except last 3, are 1-of-3 multisigs
-		for (var i = 0; i < tx.vout.length - 3; i++) {
-			var parts = tx.vout[i].scriptPubKey.asm.split(" ");
-
-			pdfData += parts[1];
-			pdfData += parts[2];
-			pdfData += parts[3];
-		}
-
-		// the last bit of pdf data is in 3rd-from-last output, a 1-of-1 multisig (last 2 outputs are unused for pdf data)
-		var parts = tx.vout[tx.vout.length - 3].scriptPubKey.asm.split(" ");
-
-		// last bit is zeroes and is excluded
-		pdfData += parts[1].substring(0, 50);
-
-		// strip size and checksum from start
-		pdfData = pdfData.substring(16);
+		// strip size and checksum from start and null bytes at the end
+		pdfData = pdfData.slice(16).slice(0, -16);
 
 		const hexArray = utils.arrayFromHexString(pdfData);
-
 		res.contentType("application/pdf");
 		res.send(Buffer.alloc(hexArray.length, hexArray, "hex"));
-		
-		next();
-
 	}).catch(function(err) {
-		res.locals.userMessageMarkdown = `Failed to load transaction: txid=**${whitepaperTxid}**`;
+		res.locals.userMessageMarkdown = `Failed to load transaction outputs: txid=**${whitepaperTxid}**`;
 
 		res.locals.pageErrors.push(utils.logError("432907twhgeyedg", err));
 
