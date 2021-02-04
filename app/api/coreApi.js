@@ -228,6 +228,10 @@ function getMempoolInfo() {
 	return tryCacheThenRpcApi(miscCache, "getMempoolInfo", 5 * ONE_SEC, rpcApi.getMempoolInfo);
 }
 
+function getIndexInfo() {
+	return tryCacheThenRpcApi(miscCache, "getIndexInfo", 10 * ONE_SEC, rpcApi.getIndexInfo);
+}
+
 function getMempoolTxids() {
 	// no caching, that would be dumb
 	return rpcApi.getMempoolTxids();
@@ -1063,6 +1067,7 @@ module.exports = {
 	getMempoolInfo: getMempoolInfo,
 	getMempoolTxids: getMempoolTxids,
 	getMiningInfo: getMiningInfo,
+	getIndexInfo: getIndexInfo,
 	getBlockByHeight: getBlockByHeight,
 	getBlocksByHeight: getBlocksByHeight,
 	getBlockByHash: getBlockByHash,

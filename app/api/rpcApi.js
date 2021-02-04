@@ -50,6 +50,10 @@ function getMiningInfo() {
 	return getRpcData("getmininginfo");
 }
 
+function getIndexInfo() {
+	return getRpcData("getindexinfo");
+}
+
 function getUptimeSeconds() {
 	return getRpcData("uptime");
 }
@@ -217,6 +221,10 @@ function getAddress(address) {
 
 function getRawTransaction(txid, blockhash) {
 	debugLog("getRawTransaction: %s", txid);
+
+	if (global.getindexinfo && !global.getindexinfo.txindex && !blockhash) {
+		return Promise.reject(new Error('Cannot fetch tx without blockhash, txindex is off'))
+	}
 
 	return new Promise(function(resolve, reject) {
 		if (coins[config.coin].genesisCoinbaseTransactionIdsByNetwork[global.activeBlockchain] && txid == coins[config.coin].genesisCoinbaseTransactionIdsByNetwork[global.activeBlockchain]) {
@@ -488,6 +496,7 @@ module.exports = {
 	getMempoolInfo: getMempoolInfo,
 	getMempoolTxids: getMempoolTxids,
 	getMiningInfo: getMiningInfo,
+	getIndexInfo: getIndexInfo,
 	getBlockByHeight: getBlockByHeight,
 	getBlockByHash: getBlockByHash,
 	getRawTransaction: getRawTransaction,

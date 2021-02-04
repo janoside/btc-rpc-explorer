@@ -193,29 +193,29 @@ function verifyRpcConnection() {
 	if (!global.activeBlockchain) {
 		debugLog(`Verifying RPC connection...`);
 
-		coreApi.getNetworkInfo().then(function(getnetworkinfo) {
-			coreApi.getBlockchainInfo().then(function(getblockchaininfo) {
-				global.activeBlockchain = getblockchaininfo.chain;
+		Promise.all([
+			coreApi.getNetworkInfo(),
+			coreApi.getBlockchainInfo(),
+			coreApi.getIndexInfo(),
+		]).then(([ getnetworkinfo, getblockchaininfo, getindexinfo ]) => {
+			global.activeBlockchain = getblockchaininfo.chain;
 
-				// we've verified rpc connection, no need to keep trying
-				clearInterval(global.verifyRpcConnectionIntervalId);
+			// we've verified rpc connection, no need to keep trying
+			clearInterval(global.verifyRpcConnectionIntervalId);
 
-				onRpcConnectionVerified(getnetworkinfo, getblockchaininfo);
-
-			}).catch(function(err) {
-				utils.logError("329u0wsdgewg6ed", err);
-			});
+			onRpcConnectionVerified(getnetworkinfo, getblockchaininfo, getindexinfo);
 		}).catch(function(err) {
 			utils.logError("32ugegdfsde", err);
 		});
 	}
 }
 
-function onRpcConnectionVerified(getnetworkinfo, getblockchaininfo) {
+function onRpcConnectionVerified(getnetworkinfo, getblockchaininfo, getindexinfo) {
 	// localservicenames introduced in 0.19
 	var services = getnetworkinfo.localservicesnames ? ("[" + getnetworkinfo.localservicesnames.join(", ") + "]") : getnetworkinfo.localservices;
 
 	global.getnetworkinfo = getnetworkinfo;
+	global.getindexinfo = getindexinfo;
 
 	var bitcoinCoreVersionRegex = /^.*\/Satoshi\:(.*)\/.*$/;
 
