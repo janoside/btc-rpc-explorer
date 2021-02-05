@@ -12,6 +12,7 @@ const coins = require("../coins.js");
 const redisCache = require("../redisCache.js");
 const Decimal = require("decimal.js");
 const md5 = require("md5");
+const statTracker = require("../statTracker.js");
 
 // choose one of the below: RPC to a node, or mock data while testing
 const rpcApi = require("./rpcApi.js");
@@ -96,6 +97,38 @@ const txCaches = [];
 global.miscLruCache = new LRU(2000);
 global.blockLruCache = new LRU(2000);
 global.txLruCache = new LRU(10000);
+
+global.lruCaches = [ global.miscLruCache, global.blockLruCache, global.txLruCache ];
+
+(function () {
+	let pruneCaches = function() {
+		let totalLengthBefore = 0;
+		global.lruCaches.forEach(x => (totalLengthBefore += x.length));
+
+		global.miscLruCache.prune();
+		global.blockLruCache.prune();
+		global.txLruCache.prune();
+
+		let totalLengthAfter = 0;
+		global.lruCaches.forEach(x => (totalLengthAfter += x.length));
+
+		statTracker.trackEvent("caches.pruned-items", (totalLengthBefore - totalLengthAfter));
+		
+		statTracker.trackValue("caches.misc.length", global.miscLruCache.length);
+		statTracker.trackValue("caches.misc.itemCount", global.miscLruCache.itemCount);
+
+		statTracker.trackValue("caches.block.length", global.blockLruCache.length);
+		statTracker.trackValue("caches.block.itemCount", global.blockLruCache.itemCount);
+
+		statTracker.trackValue("caches.tx.length", global.txLruCache.length);
+		statTracker.trackValue("caches.tx.itemCount", global.txLruCache.itemCount);
+
+
+		debugLog(`Pruned caches: ${totalLengthBefore.toLocaleString()} -> ${totalLengthAfter.toLocaleString()}`);
+	};
+
+	setInterval(pruneCaches, 60000);
+})();
 
 if (!config.noInmemoryRpcCache) {
 	global.cacheStats.memory = {

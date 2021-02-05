@@ -13,6 +13,7 @@ const config = require("./config.js");
 const coins = require("./coins.js");
 const coinConfig = coins[config.coin];
 const redisCache = require("./redisCache.js");
+const statTracker = require("./statTracker.js");
 
 
 const exponentScales = [
@@ -706,6 +707,8 @@ function logError(errorId, err, optionalUserData = null) {
 			firstSeen: new Date().getTime()
 		};
 	}
+
+	statTracker.trackEvent(`errors.${errorId}`);
 
 	global.errorStats[errorId].count++;
 	global.errorStats[errorId].lastSeen = new Date().getTime();

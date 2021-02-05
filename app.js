@@ -49,6 +49,7 @@ const auth = require('./app/auth.js');
 const sso = require('./app/sso.js');
 const markdown = require("markdown-it")();
 const v8 = require("v8");
+const axios = require("axios");
 
 const package_json = require('./package.json');
 global.appVersion = package_json.version;
@@ -62,22 +63,44 @@ const adminActionsRouter = require('./routes/adminRouter.js');
 
 const app = express();
 
-app.use(require("express-status-monitor")({
-	path: config.baseUrl + 'admin/status',
-	spans: [
-		{
-			interval: 1,            // Every second
-			retention: 60           // Keep 60 datapoints in memory
-		},
-		{
-			interval: 30,            // Every 30 seconds
-			retention: 60
-		},
-		{
-			interval: 60,           // Every 60 seconds
-			retention: 24 * 60
-		}
-	]
+
+const statTracker = require("./app/statTracker.js");
+
+const statsProcessFunction = (name, stats) => {
+	if (process.env.STATS_API_URL) {
+		const data = Object.assign({}, stats);
+		data.name = name;
+
+		axios.post(process.env.STATS_API_URL, data)
+		.then(res => { /*console.log(res.data);*/ })
+		.catch(error => {
+			utils.logError("38974wrg9w7dsgfe", error);
+		});
+	}
+};
+
+const processStatsInterval = setInterval(() => {
+	statTracker.processAndReset(
+		statsProcessFunction,
+		statsProcessFunction,
+		statsProcessFunction);
+
+}, process.env.STATS_PROCESS_INTERVAL || (5 * 60 * 1000));
+	
+// Don't keep Node.js process up
+processStatsInterval.unref();
+
+
+
+const systemMonitor = require("./app/systemMonitor.js");
+
+const normalizeActions = require("./app/normalizeActions.js");
+app.use(require("./app/actionPerformanceMonitor.js")(statTracker, {
+	ignoredEndsWithActions: "\.js|\.css|\.svg|\.png|\.woff2",
+	ignoredStartsWithActions: `${config.baseUrl}snippet`,
+	normalizeAction: (action) => {
+		return normalizeActions(config.baseUrl, "action.", action);
+	},
 }));
 
 // view engine setup
