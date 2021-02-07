@@ -9,6 +9,7 @@ const semver = require("semver");
 const utils = require("../utils.js");
 const config = require("../config.js");
 const coins = require("../coins.js");
+const statTracker = require("../statTracker.js");
 
 let activeQueueTasks = 0;
 
@@ -464,15 +465,19 @@ function logStats(cmd, hasParams, dt, success) {
 	global.rpcStats[cmd].count++;
 	global.rpcStats[cmd].time += dt;
 
+	statTracker.trackPerformance(`rpc.${cmd}`, dt);
+
 	if (hasParams) {
 		global.rpcStats[cmd].withParams++;
 	}
 
 	if (success) {
 		global.rpcStats[cmd].successes++;
+		statTracker.trackEvent(`rpc.${cmd}.success`);
 
 	} else {
 		global.rpcStats[cmd].failures++;
+		statTracker.trackEvent(`rpc.${cmd}.failure`);
 	}
 }
 

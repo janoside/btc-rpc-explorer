@@ -709,6 +709,7 @@ function logError(errorId, err, optionalUserData = null) {
 	}
 
 	statTracker.trackEvent(`errors.${errorId}`);
+	statTracker.trackEvent(`errors.*`);
 
 	global.errorStats[errorId].count++;
 	global.errorStats[errorId].lastSeen = new Date().getTime();

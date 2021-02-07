@@ -10,6 +10,7 @@ const sha256 = require("crypto-js/sha256");
 const hexEnc = require("crypto-js/enc-hex");
  
 const coinConfig = coins[config.coin];
+const statTracker = require("../statTracker.js");
 
 global.net = require('net');
 global.tls = require('tls');
@@ -69,6 +70,8 @@ function connectToServer(host, port, protocol) {
 				global.electrumStats.base.connect.firstSeenAt = new Date();
 			}
 
+			statTracker.trackEvent("electrumx.connected");
+
 			electrumClients.push(client);
 
 			resolve();
@@ -83,6 +86,8 @@ function connectToServer(host, port, protocol) {
 			if (global.electrumStats.base.disconnect.firstSeenAt == null) {
 				global.electrumStats.base.disconnect.firstSeenAt = new Date();
 			}
+
+			statTracker.trackEvent("electrumx.disconnected");
 
 			var index = electrumClients.indexOf(client);
 
@@ -100,6 +105,8 @@ function connectToServer(host, port, protocol) {
 			if (global.electrumStats.base.error.firstSeenAt == null) {
 				global.electrumStats.base.error.firstSeenAt = new Date();
 			}
+
+			statTracker.trackEvent("electrumx.connection-error");
 
 			utils.logError("937gf47dsyde", err, {host:host, port:port, protocol:protocol});
 		};
@@ -333,11 +340,15 @@ function logStats(cmd, dt, success) {
 	global.electrumStats.rpc[cmd].count++;
 	global.electrumStats.rpc[cmd].time += dt;
 
+	statTracker.trackPerformance(`electrumx.${cmd}`, dt);
+
 	if (success) {
 		global.electrumStats.rpc[cmd].successes++;
+		statTracker.trackEvent(`electrumx.${cmd}.success`);
 
 	} else {
 		global.electrumStats.rpc[cmd].failures++;
+		statTracker.trackEvent(`electrumx.${cmd}.failure`);
 	}
 }
 

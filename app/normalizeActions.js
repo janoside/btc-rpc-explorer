@@ -15,7 +15,7 @@ const buildNormalizingRegexes = (baseUrl) => {
 		{ regex: new RegExp(`^${baseUrl}api/block-tx-summaries\/.*`, "i"), action: "api.block-tx-summaries" },
 		{ regex: new RegExp(`^${baseUrl}api/utils\/.*`, "i"), action: "api.utils-func" },
 
-		
+		{ regex: new RegExp(`^${baseUrl}admin/dashboard\/.*`, "i"), action: "admin.dashboard" },		
 	];
 }
 
