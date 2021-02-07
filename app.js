@@ -54,7 +54,6 @@ const axios = require("axios");
 const package_json = require('./package.json');
 global.appVersion = package_json.version;
 
-const crawlerBotUserAgentStrings = [ "Googlebot", "Bingbot", "Slurp", "DuckDuckBot", "Baiduspider", "YandexBot", "Sogou", "Exabot", "facebot", "ia_archiver" ];
 
 const baseActionsRouter = require('./routes/baseRouter.js');
 const apiActionsRouter = require('./routes/apiRouter.js');
@@ -99,7 +98,7 @@ app.use(require("./app/actionPerformanceMonitor.js")(statTracker, {
 	ignoredEndsWithActions: "\.js|\.css|\.svg|\.png|\.woff2",
 	ignoredStartsWithActions: `${config.baseUrl}snippet`,
 	normalizeAction: (action) => {
-		return normalizeActions(config.baseUrl, "action.", action);
+		return normalizeActions(config.baseUrl, action);
 	},
 }));
 
@@ -559,10 +558,9 @@ app.use(function(req, res, next) {
 	}
 
 	var userAgent = req.headers['user-agent'];
-	for (var i = 0; i < crawlerBotUserAgentStrings.length; i++) {
-		if (userAgent.indexOf(crawlerBotUserAgentStrings[i]) != -1) {
-			res.locals.crawlerBot = true;
-		}
+	var crawler = utils.getCrawlerFromUserAgentString(userAgent);
+	if (crawler) {
+		res.locals.crawlerBot = true;
 	}
 
 	// make a bunch of globals available to templates

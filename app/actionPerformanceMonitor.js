@@ -29,10 +29,17 @@ const onHeadersListener = (config, req, statusCode, startTime, statTracker) => {
 			allActions = config.normalizeAction(allActions);
 		}
 
-		statTracker.trackPerformance(action, responseTime);
-		statTracker.trackPerformance(allActions, responseTime);
+		statTracker.trackPerformance(`action.${action}`, responseTime);
+		statTracker.trackPerformance("action.*", responseTime);
 
-		statTracker.trackEvent(`${action}.${category}00`);
+		statTracker.trackEvent(`action-status.${action}.${category}00`);
+		statTracker.trackEvent(`action-status.*.${category}00`);
+
+		var userAgent = req.headers['user-agent'];
+		var crawler = utils.getCrawlerFromUserAgentString(userAgent);
+		if (crawler) {
+			statTracker.trackEvent(`site-crawl.${crawler}`);
+		}
 
 	} catch (err) {
 		debugLog(err);

@@ -341,14 +341,17 @@ function logStats(cmd, dt, success) {
 	global.electrumStats.rpc[cmd].time += dt;
 
 	statTracker.trackPerformance(`electrumx.${cmd}`, dt);
+	statTracker.trackPerformance(`electrumx.*`, dt);
 
 	if (success) {
 		global.electrumStats.rpc[cmd].successes++;
-		statTracker.trackEvent(`electrumx.${cmd}.success`);
+		statTracker.trackEvent(`electrumx-result.${cmd}.success`);
+		statTracker.trackEvent(`electrumx-result.*.success`);
 
 	} else {
 		global.electrumStats.rpc[cmd].failures++;
-		statTracker.trackEvent(`electrumx.${cmd}.failure`);
+		statTracker.trackEvent(`electrumx-result.${cmd}.failure`);
+		statTracker.trackEvent(`electrumx-result.*.failure`);
 	}
 }
 

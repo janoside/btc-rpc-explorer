@@ -30,6 +30,21 @@ const exponentScales = [
 	{val:1000, name:"kilo", abbreviation:"K", exponent:"3", textDesc:"thou"}
 ];
 
+const crawlerBotUserAgentStrings = {
+	"google": new RegExp("adsbot-google|Googlebot|mediapartners-google", "i"),
+	"microsoft": new RegExp("Bingbot|bingpreview|msnbot", "i"),
+	"yahoo": new RegExp("Slurp", "i"),
+	"duckduckgo": new RegExp("DuckDuckBot", "i"),
+	"baidu": new RegExp("Baidu", "i"),
+	"yandex": new RegExp("YandexBot", "i"),
+	"teoma": new RegExp("teoma", "i"),
+	"sogou": new RegExp("Sogou", "i"),
+	"exabot": new RegExp("Exabot", "i"),
+	"facebook": new RegExp("facebot", "i"),
+	"alexa": new RegExp("ia_archiver", "i"),
+	"aol": new RegExp("aolbuild", "i"),
+};
+
 const ipMemoryCache = {};
 
 let ipRedisCache = null;
@@ -831,6 +846,16 @@ function asAddress(value) {
 const arrayFromHexString = hexString =>
 	new Uint8Array(hexString.match(/.{1,2}/g).map(byte => parseInt(byte, 16)));
 
+const getCrawlerFromUserAgentString = userAgentString => {
+	for (const [name, regex] of Object.entries(crawlerBotUserAgentStrings)) {
+		if (regex.test(userAgentString)) {
+			return name;
+		}
+	}
+
+	return null;
+};
+
 module.exports = {
 	reflectPromise: reflectPromise,
 	redirectToConnectPageIfNeeded: redirectToConnectPageIfNeeded,
@@ -869,5 +894,6 @@ module.exports = {
 	asHash: asHash,
 	asHashOrHeight: asHashOrHeight,
 	asAddress: asAddress,
-	arrayFromHexString: arrayFromHexString
+	arrayFromHexString: arrayFromHexString,
+	getCrawlerFromUserAgentString: getCrawlerFromUserAgentString
 };

@@ -19,21 +19,17 @@ const buildNormalizingRegexes = (baseUrl) => {
 	];
 }
 
-module.exports = (baseUrl, prefix, action) => {
+module.exports = (baseUrl, action) => {
 	const normalizingRegexes = buildNormalizingRegexes(baseUrl);
 
 	for (let i = 0; i < normalizingRegexes.length; i++) {
 		if (normalizingRegexes[i].regex.test(action)) {
-			return prefix + normalizingRegexes[i].action;
+			return normalizingRegexes[i].action;
 		}
 	}
 
 	if (action.startsWith(baseUrl)) {
-		return prefix + action.substring(baseUrl.length);
-	}
-
-	if (action == "*") {
-		return prefix + action;
+		return action.substring(baseUrl.length);
 	}
 
 	return action;

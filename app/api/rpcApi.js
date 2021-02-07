@@ -466,6 +466,7 @@ function logStats(cmd, hasParams, dt, success) {
 	global.rpcStats[cmd].time += dt;
 
 	statTracker.trackPerformance(`rpc.${cmd}`, dt);
+	statTracker.trackPerformance(`rpc.*`, dt);
 
 	if (hasParams) {
 		global.rpcStats[cmd].withParams++;
@@ -473,11 +474,13 @@ function logStats(cmd, hasParams, dt, success) {
 
 	if (success) {
 		global.rpcStats[cmd].successes++;
-		statTracker.trackEvent(`rpc.${cmd}.success`);
+		statTracker.trackEvent(`rpc-result.${cmd}.success`);
+		statTracker.trackEvent(`rpc-result.*.success`);
 
 	} else {
 		global.rpcStats[cmd].failures++;
-		statTracker.trackEvent(`rpc.${cmd}.failure`);
+		statTracker.trackEvent(`rpc-result.${cmd}.failure`);
+		statTracker.trackEvent(`rpc-result.*.failure`);
 	}
 }
 
