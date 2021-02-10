@@ -1,3 +1,9 @@
+##### Unreleased
+
+* Fix for 404 pages hanging (Thanks [@shesek](https://github.com/shesek))
+* Add convenience redirect for baseUrl (Thanks [@shesek](https://github.com/shesek))
+* Make url in logs clickable (Thanks [@shesek](https://github.com/shesek))
+
 ##### v2.2.0
 ###### 2021-01-22
 
