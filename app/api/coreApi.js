@@ -94,9 +94,9 @@ const miscCaches = [];
 const blockCaches = [];
 const txCaches = [];
 
-global.miscLruCache = new LRU(2000);
-global.blockLruCache = new LRU(2000);
-global.txLruCache = new LRU(10000);
+global.miscLruCache = new LRU(1000);
+global.blockLruCache = new LRU(1000);
+global.txLruCache = new LRU(1000);
 
 global.lruCaches = [ global.miscLruCache, global.blockLruCache, global.txLruCache ];
 
@@ -244,11 +244,11 @@ function shouldCacheTransaction(tx) {
 		return false;
 	}
 
-	if (tx.vin != null && tx.vin.length > 9) {
+	if (tx.vin != null && tx.vin.length > 5) {
 		return false;
 	}
 
-	if (tx.vout != null && tx.vout.length > 15) {
+	if (tx.vout != null && tx.vout.length > 5) {
 		return false;
 	}
 
