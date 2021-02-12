@@ -112,6 +112,11 @@ app.engine('pug', (path, options, fn) => {
 });
 
 app.set('view engine', 'pug');
+
+// enable view cache regardless of env (development/production)
+// ref: https://pugjs.org/api/express.html
+app.enable('view cache');
+
 app.use(cookieParser());
 
 // basic http authentication
