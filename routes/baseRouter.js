@@ -16,6 +16,7 @@ const hexEnc = require("crypto-js/enc-hex");
 const Decimal = require("decimal.js");
 const semver = require("semver");
 const markdown = require("markdown-it")();
+const asyncHandler = require("express-async-handler");
 
 const utils = require('./../app/utils.js');
 const coins = require("./../app/coins.js");
@@ -26,61 +27,95 @@ const rpcApi = require("./../app/api/rpcApi.js");
 
 const forceCsrf = csurf({ ignoreMethods: [] });
 
-router.get("/", function(req, res, next) {
-	if (req.session.host == null || req.session.host.trim() == "") {
-		if (req.cookies['rpc-host']) {
-			res.locals.host = req.cookies['rpc-host'];
+router.get("/", asyncHandler(async (req, res, next) => {
+	try {
+		if (req.session.host == null || req.session.host.trim() == "") {
+			if (req.cookies['rpc-host']) {
+				res.locals.host = req.cookies['rpc-host'];
+			}
+
+			if (req.cookies['rpc-port']) {
+				res.locals.port = req.cookies['rpc-port'];
+			}
+
+			if (req.cookies['rpc-username']) {
+				res.locals.username = req.cookies['rpc-username'];
+			}
+
+			res.render("connect");
+			res.end();
+
+			return;
 		}
 
-		if (req.cookies['rpc-port']) {
-			res.locals.port = req.cookies['rpc-port'];
-		}
-
-		if (req.cookies['rpc-username']) {
-			res.locals.username = req.cookies['rpc-username'];
-		}
-
-		res.render("connect");
-		res.end();
-
-		return;
-	}
-
-	res.locals.homepage = true;
-	
-	// don't need timestamp on homepage "blocks-list", this flag disables
-	res.locals.hideTimestampColumn = true;
+		res.locals.homepage = true;
+		
+		// don't need timestamp on homepage "blocks-list", this flag disables
+		res.locals.hideTimestampColumn = true;
 
 
-	// variables used by blocks-list.pug
-	res.locals.offset = 0;
-	res.locals.sort = "desc";
+		// variables used by blocks-list.pug
+		res.locals.offset = 0;
+		res.locals.sort = "desc";
 
-	var feeConfTargets = [1, 6, 144, 1008];
-	res.locals.feeConfTargets = feeConfTargets;
-
-
-	var promises = [];
-
-	// promiseResults[0]
-	promises.push(coreApi.getMempoolInfo());
-
-	// promiseResults[1]
-	promises.push(coreApi.getMiningInfo());
-
-	// promiseResults[2]
-	promises.push(coreApi.getSmartFeeEstimates("CONSERVATIVE", feeConfTargets));
-
-	// promiseResults[3] and [4]
-	promises.push(coreApi.getNetworkHashrate(144));
-	promises.push(coreApi.getNetworkHashrate(1008));
+		var feeConfTargets = [1, 6, 144, 1008];
+		res.locals.feeConfTargets = feeConfTargets;
 
 
-	coreApi.getBlockchainInfo().then(function(getblockchaininfo) {
+		var promises = [];
+
+		// promiseResults[0]
+		promises.push(new Promise(async (resolve, reject) => {
+			res.locals.mempoolInfo = await utils.timePromise("promises.index.getMempoolInfo", coreApi.getMempoolInfo());
+			
+			resolve();
+		}));
+
+		promises.push(new Promise(async (resolve, reject) => {
+			res.locals.miningInfo = await utils.timePromise("promises.index.getMiningInfo", coreApi.getMiningInfo());
+
+			resolve();
+		}));
+
+		promises.push(new Promise(async (resolve, reject) => {
+			const rawSmartFeeEstimates = await utils.timePromise("promises.index.getSmartFeeEstimates", coreApi.getSmartFeeEstimates("CONSERVATIVE", feeConfTargets));
+
+			var smartFeeEstimates = {};
+
+			for (var i = 0; i < feeConfTargets.length; i++) {
+				var rawSmartFeeEstimate = rawSmartFeeEstimates[i];
+
+				if (rawSmartFeeEstimate.errors) {
+					smartFeeEstimates[feeConfTargets[i]] = "?";
+
+				} else {
+					smartFeeEstimates[feeConfTargets[i]] = parseInt(new Decimal(rawSmartFeeEstimate.feerate).times(coinConfig.baseCurrencyUnit.multiplier).dividedBy(1000));
+				}
+			}
+
+			res.locals.smartFeeEstimates = smartFeeEstimates;
+
+			resolve();
+		}));
+
+		promises.push(new Promise(async (resolve, reject) => {
+			res.locals.hashrate1d = await utils.timePromise("promises.index.getNetworkHashrate-144", coreApi.getNetworkHashrate(144));
+
+			resolve();
+		}));
+
+		promises.push(new Promise(async (resolve, reject) => {
+			res.locals.hashrate7d = await utils.timePromise("promises.index.getNetworkHashrate-1008", coreApi.getNetworkHashrate(1008));
+
+			resolve();
+		}));
+
+
+		const getblockchaininfo = await utils.timePromise("promises.index.getBlockchainInfo", coreApi.getBlockchainInfo());
 		res.locals.getblockchaininfo = getblockchaininfo;
 
 		res.locals.difficultyPeriod = parseInt(Math.floor(getblockchaininfo.blocks / coinConfig.difficultyAdjustmentBlockCount));
-		
+			
 
 		var blockHeights = [];
 		if (getblockchaininfo.blocks) {
@@ -94,163 +129,131 @@ router.get("/", function(req, res, next) {
 			blockHeights.push(0);
 		}
 
-		// promiseResults[5]
-		promises.push(coreApi.getBlocksStatsByHeight(blockHeights));
+		promises.push(new Promise(async (resolve, reject) => {
+			const rawblockstats = await utils.timePromise("promises.index.getBlocksStatsByHeight", coreApi.getBlocksStatsByHeight(blockHeights));
 
-		// promiseResults[6]
-		promises.push(new Promise(function(resolve, reject) {
-			coreApi.getBlockHeaderByHeight(coinConfig.difficultyAdjustmentBlockCount * res.locals.difficultyPeriod).then(function(difficultyPeriodFirstBlockHeader) {
-				resolve(difficultyPeriodFirstBlockHeader);
-			});
+			if (rawblockstats && rawblockstats.length > 0 && rawblockstats[0] != null) {
+				res.locals.blockstatsByHeight = {};
+
+				for (var i = 0; i < rawblockstats.length; i++) {
+					var blockstats = rawblockstats[i];
+
+					res.locals.blockstatsByHeight[blockstats.height] = blockstats;
+				}
+			}
+
+			resolve();
+		}));
+
+		promises.push(new Promise(async (resolve, reject) => {
+			let h = coinConfig.difficultyAdjustmentBlockCount * res.locals.difficultyPeriod;
+			res.locals.difficultyPeriodFirstBlockHeader = await utils.timePromise("promises.index.getBlockHeaderByHeight", coreApi.getBlockHeaderByHeight(h));
+			
+			resolve();
+		}));
+
+		promises.push(new Promise(async (resolve, reject) => {
+			const latestBlocks = await utils.timePromise(`promises.index.getBlocksByHeight`, coreApi.getBlocksByHeight(blockHeights));
+
+			res.locals.latestBlocks = latestBlocks;
+			res.locals.blocksUntilDifficultyAdjustment = ((res.locals.difficultyPeriod + 1) * coinConfig.difficultyAdjustmentBlockCount) - latestBlocks[0].height;
+			
+			resolve();
 		}));
 
 		if (getblockchaininfo.chain !== 'regtest') {
 			var targetBlocksPerDay = 24 * 60 * 60 / global.coinConfig.targetBlockTimeSeconds;
 
-			// promiseResults[7] (if not regtest)
-			promises.push(coreApi.getTxCountStats(targetBlocksPerDay / 4, -targetBlocksPerDay, "latest"));
+			promises.push(new Promise(async (resolve, reject) => {
+				res.locals.txStats = await utils.timePromise("promises.index.getTxCountStats", coreApi.getTxCountStats(targetBlocksPerDay / 4, -targetBlocksPerDay, "latest"));
+				
+				resolve();
+			}));
 
-			var chainTxStatsIntervals = [ targetBlocksPerDay, targetBlocksPerDay * 7, targetBlocksPerDay * 30, targetBlocksPerDay * 365 ]
-				.filter(numBlocks => numBlocks <= getblockchaininfo.blocks);
-
-			res.locals.chainTxStatsLabels = [ "24 hours", "1 week", "1 month", "1 year" ]
-				.slice(0, chainTxStatsIntervals.length)
-				.concat("All time");
+			var chainTxStatsIntervals = [ [targetBlocksPerDay, "24 hours"], [targetBlocksPerDay * 7, "1 week"], [targetBlocksPerDay * 30, "1 month"], [targetBlocksPerDay * 365, "1 year"] ]
+				.filter(dat => dat[0] <= getblockchaininfo.blocks);
 
 			// promiseResults[8-X] (if not regtest)
+			res.locals.chainTxStats = {};
 			for (var i = 0; i < chainTxStatsIntervals.length; i++) {
-				promises.push(coreApi.getChainTxStats(chainTxStatsIntervals[i]));
+				promises.push(new Promise(async (resolve, reject) => {
+					res.locals.chainTxStats[chainTxStatsIntervals[i][0]] = await utils.timePromise(`promises.index.getChainTxStats-${chainTxStatsIntervals[i][0]}`, coreApi.getChainTxStats(chainTxStatsIntervals[i][0]));
+					
+					resolve();
+				}));
 			}
+
+			chainTxStatsIntervals.push([-1, "All time"]);
+			res.locals.chainTxStatsIntervals = chainTxStatsIntervals;
+
+			promises.push(new Promise(async (resolve, reject) => {
+				res.locals.chainTxStats[-1] = await utils.timePromise(`promises.index.getChainTxStats-allTime`, coreApi.getChainTxStats(getblockchaininfo.blocks - 1));
+				
+				resolve();
+			}));
 		}
 
-		if (getblockchaininfo.chain !== 'regtest') {
-			promises.push(coreApi.getChainTxStats(getblockchaininfo.blocks - 1));
-		}
-
-		coreApi.getBlocksByHeight(blockHeights).then(function(latestBlocks) {
-			res.locals.latestBlocks = latestBlocks;
-			res.locals.blocksUntilDifficultyAdjustment = ((res.locals.difficultyPeriod + 1) * coinConfig.difficultyAdjustmentBlockCount) - latestBlocks[0].height;
-
-			Promise.all(promises).then(function(promiseResults) {
-				res.locals.mempoolInfo = promiseResults[0];
-				res.locals.miningInfo = promiseResults[1];
-
-				var rawSmartFeeEstimates = promiseResults[2];
-
-				var smartFeeEstimates = {};
-
-				for (var i = 0; i < feeConfTargets.length; i++) {
-					var rawSmartFeeEstimate = rawSmartFeeEstimates[i];
-
-					if (rawSmartFeeEstimate.errors) {
-						smartFeeEstimates[feeConfTargets[i]] = "?";
-
-					} else {
-						smartFeeEstimates[feeConfTargets[i]] = parseInt(new Decimal(rawSmartFeeEstimate.feerate).times(coinConfig.baseCurrencyUnit.multiplier).dividedBy(1000));
-					}
-				}
-
-				res.locals.smartFeeEstimates = smartFeeEstimates;
-
-
-				res.locals.hashrate1d = promiseResults[3];
-				res.locals.hashrate7d = promiseResults[4];
-
-				
-				var rawblockstats = promiseResults[5];
-				if (rawblockstats && rawblockstats.length > 0 && rawblockstats[0] != null) {
-					res.locals.blockstatsByHeight = {};
-
-					for (var i = 0; i < rawblockstats.length; i++) {
-						var blockstats = rawblockstats[i];
-
-						res.locals.blockstatsByHeight[blockstats.height] = blockstats;
-					}
-				}
-
-				res.locals.difficultyPeriodFirstBlockHeader = promiseResults[6];
-				
-
-				if (getblockchaininfo.chain !== 'regtest') {
-					res.locals.txStats = promiseResults[7];
-
-					var chainTxStats = [];
-					for (var i = 0; i < res.locals.chainTxStatsLabels.length; i++) {
-						chainTxStats.push(promiseResults[i + 8]);
-					}
-
-					res.locals.chainTxStats = chainTxStats;
-				}
-
-				res.render("index");
-
-				next();
-
-			}).catch(function(err) {
-				utils.logError("32978efegdde", err);
-				
-				res.locals.userMessage = "Error loading recent blocks: " + err;
-
-				res.render("index");
-
-				next();
-			});
-		});
-	}).catch(function(err) {
-		res.locals.userMessage = "Error loading recent blocks: " + err;
+		await Promise.all(promises);
 
 		res.render("index");
 
 		next();
-	});
-});
 
-router.get("/node-status", function(req, res, next) {
-	coreApi.getBlockchainInfo().then(function(getblockchaininfo) {
-		res.locals.getblockchaininfo = getblockchaininfo;
+	} catch (err) {
+		utils.logError("238023hw87gddd", err);
+					
+		res.locals.userMessage = "Error building page: " + err;
 
-		coreApi.getNetworkInfo().then(function(getnetworkinfo) {
-			res.locals.getnetworkinfo = getnetworkinfo;
+		res.render("index");
 
-			coreApi.getUptimeSeconds().then(function(uptimeSeconds) {
-				res.locals.uptimeSeconds = uptimeSeconds;
+		next();
+	}
+}));
 
-				coreApi.getNetTotals().then(function(getnettotals) {
-					res.locals.getnettotals = getnettotals;
+router.get("/node-status", asyncHandler(async (req, res, next) => {
+	try {
+		const promises = [];
 
-					res.render("node-status");
+		promises.push(new Promise(async (resolve, reject) => {
+			res.locals.getblockchaininfo = await utils.timePromise("promises.node-status.getBlockchainInfo", coreApi.getBlockchainInfo());
 
-					next();
+			resolve();
+		}));
 
-				}).catch(function(err) {
-					res.locals.userMessage = "Error getting node status: (id=0), err=" + err;
+		promises.push(new Promise(async (resolve, reject) => {
+			res.locals.getnetworkinfo = await utils.timePromise("promises.node-status.getNetworkInfo", coreApi.getNetworkInfo());
 
-					res.render("node-status");
+			resolve();
+		}));
 
-					next();
-				});
-			}).catch(function(err) {
-				res.locals.userMessage = "Error getting node status: (id=1), err=" + err;
+		promises.push(new Promise(async (resolve, reject) => {
+			res.locals.uptimeSeconds = await utils.timePromise("promises.node-status.getUptimeSeconds", coreApi.getUptimeSeconds());
 
-				res.render("node-status");
+			resolve();
+		}));
 
-				next();
-			});
-		}).catch(function(err) {
-			res.locals.userMessage = "Error getting node status: (id=2), err=" + err;
+		promises.push(new Promise(async (resolve, reject) => {
+			res.locals.getnettotals = await utils.timePromise("promises.node-status.getNetTotals", coreApi.getNetTotals());
 
-			res.render("node-status");
+			resolve();
+		}));
 
-			next();
-		});
-	}).catch(function(err) {
-		res.locals.userMessage = "Error getting node status: (id=3), err=" + err;
+		await Promise.all(promises);
 
 		res.render("node-status");
 
 		next();
-	});
-});
+
+	} catch (err) {
+		utils.logError("32978efegdde", err);
+					
+		res.locals.userMessage = "Error building page: " + err;
+
+		res.render("node-status");
+
+		next();
+	}
+}));
 
 router.get("/mempool-summary", function(req, res, next) {
 	res.locals.satoshiPerByteBucketMaxima = coinConfig.feeSatoshiPerByteBucketMaxima;

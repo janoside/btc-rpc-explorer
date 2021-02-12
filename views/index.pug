@@ -162,11 +162,11 @@ block content
 													th Transactions
 													th Transactions Per Sec
 											tbody
-												each item, index in chainTxStats
+												each item, index in chainTxStatsIntervals
 													tr.text-monospace
-														td #{chainTxStatsLabels[index]}
-														td #{item.window_tx_count.toLocaleString()}
-														td #{new Decimal(item.txrate).toDecimalPlaces(4)}
+														td #{item[1]}
+														td #{chainTxStats[item[0]].window_tx_count.toLocaleString()}
+														td #{new Decimal(chainTxStats[item[0]].txrate).toDecimalPlaces(4)}
 
 
 								div.col-lg-6

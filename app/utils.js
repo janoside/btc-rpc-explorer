@@ -856,6 +856,28 @@ const getCrawlerFromUserAgentString = userAgentString => {
 	return null;
 };
 
+const timePromise = async (name, promise) => {
+	const startTime = startTimeNanos();
+
+	const response = await promise;
+
+	const responseTimeMillis = dtMillis(startTime);
+
+	statTracker.trackPerformance(name, responseTimeMillis);
+
+	return response;
+};
+
+const startTimeNanos = () => {
+	return process.hrtime.bigint();
+};
+
+const dtMillis = (startTimeNanos) => {
+	const dtNanos = process.hrtime.bigint() - startTimeNanos;
+
+	return parseInt(dtNanos) * 1e-6;
+};
+
 module.exports = {
 	reflectPromise: reflectPromise,
 	redirectToConnectPageIfNeeded: redirectToConnectPageIfNeeded,
@@ -895,5 +917,8 @@ module.exports = {
 	asHashOrHeight: asHashOrHeight,
 	asAddress: asAddress,
 	arrayFromHexString: arrayFromHexString,
-	getCrawlerFromUserAgentString: getCrawlerFromUserAgentString
+	getCrawlerFromUserAgentString: getCrawlerFromUserAgentString,
+	timePromise: timePromise,
+	startTimeNanos: startTimeNanos,
+	dtMillis: dtMillis
 };
