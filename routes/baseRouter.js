@@ -255,13 +255,21 @@ router.get("/node-status", asyncHandler(async (req, res, next) => {
 	}
 }));
 
-router.get("/mempool-summary", function(req, res, next) {
-	res.locals.satoshiPerByteBucketMaxima = coinConfig.feeSatoshiPerByteBucketMaxima;
+router.get("/mempool-summary", asyncHandler(async (req, res, next) => {
+	try {
+		res.locals.satoshiPerByteBucketMaxima = coinConfig.feeSatoshiPerByteBucketMaxima;
 
-	coreApi.getMempoolInfo().then(function(mempoolinfo) {
-		res.locals.mempoolinfo = mempoolinfo;
+		const promises = [];
 
-		coreApi.getMempoolTxids().then(function(mempooltxids) {
+		promises.push(new Promise(async (resolve, reject) => {
+			res.locals.mempoolinfo = await utils.timePromise("promises.mempool-summary.getMempoolInfo", coreApi.getMempoolInfo());
+
+			resolve();
+		}));
+
+		promises.push(new Promise(async (resolve, reject) => {
+			const mempooltxids = await utils.timePromise("promises.mempool-summary.getMempoolTxids", coreApi.getMempoolTxids());
+
 			var debugMaxCount = 0;
 
 			if (debugMaxCount > 0) {
@@ -275,21 +283,26 @@ router.get("/mempool-summary", function(req, res, next) {
 			} else {
 				res.locals.mempooltxidChunks = utils.splitArrayIntoChunks(mempooltxids, 25);
 			}
-			
 
-			res.render("mempool-summary");
+			resolve();
+		}));
 
-			next();
-		});
-
-	}).catch(function(err) {
-		res.locals.userMessage = "Error: " + err;
+		await Promise.all(promises);
 
 		res.render("mempool-summary");
 
 		next();
-	});
-});
+
+	} catch (err) {
+		utils.logError("390824yw7e332", err);
+					
+		res.locals.userMessage = "Error building page: " + err;
+
+		res.render("mempool-summary");
+
+		next();
+	}
+}));
 
 router.get("/peers", function(req, res, next) {
 	coreApi.getPeerSummary().then(function(peerSummary) {
@@ -612,81 +625,66 @@ router.post("/search", function(req, res, next) {
 	}
 });
 
-router.get("/block-height/:blockHeight", function(req, res, next) {
-	var blockHeight = parseInt(req.params.blockHeight);
+router.get("/block-height/:blockHeight", asyncHandler(async (req, res, next) => {
+	try {
+		var blockHeight = parseInt(req.params.blockHeight);
 
-	res.locals.blockHeight = blockHeight;
+		res.locals.blockHeight = blockHeight;
 
-	res.locals.result = {};
+		res.locals.result = {};
 
-	var limit = config.site.blockTxPageSize;
-	var offset = 0;
+		var limit = config.site.blockTxPageSize;
+		var offset = 0;
 
-	if (req.query.limit) {
-		limit = parseInt(req.query.limit);
+		if (req.query.limit) {
+			limit = parseInt(req.query.limit);
 
-		// for demo sites, limit page sizes
-		if (config.demoSite && limit > config.site.blockTxPageSize) {
-			limit = config.site.blockTxPageSize;
+			// for demo sites, limit page sizes
+			if (config.demoSite && limit > config.site.blockTxPageSize) {
+				limit = config.site.blockTxPageSize;
 
-			res.locals.userMessage = "Transaction page size limited to " + config.site.blockTxPageSize + ". If this is your site, you can change or disable this limit in the site config.";
+				res.locals.userMessage = "Transaction page size limited to " + config.site.blockTxPageSize + ". If this is your site, you can change or disable this limit in the site config.";
+			}
 		}
-	}
 
-	if (req.query.offset) {
-		offset = parseInt(req.query.offset);
-	}
+		if (req.query.offset) {
+			offset = parseInt(req.query.offset);
+		}
 
-	res.locals.limit = limit;
-	res.locals.offset = offset;
-	res.locals.paginationBaseUrl = "./block-height/" + blockHeight;
+		res.locals.limit = limit;
+		res.locals.offset = offset;
+		res.locals.paginationBaseUrl = "./block-height/" + blockHeight;
 
-	coreApi.getBlockByHeight(blockHeight).then(function(result) {
+		const result = await utils.timePromise("promises.block-height.getBlockByHeight", coreApi.getBlockByHeight(blockHeight));
 		res.locals.result.getblockbyheight = result;
 
 		var promises = [];
 
-		promises.push(new Promise(function(resolve, reject) {
-			coreApi.getBlockByHashWithTransactions(result.hash, limit, offset).then(function(result) {
-				res.locals.result.getblock = result.getblock;
-				res.locals.result.transactions = result.transactions;
-				res.locals.result.txInputsByTransaction = result.txInputsByTransaction;
+		promises.push(new Promise(async (resolve, reject) => {
+			const blockWithTransactions = await utils.timePromise("promises.block-height.getBlockByHashWithTransactions", coreApi.getBlockByHashWithTransactions(result.hash, limit, offset));
 
-				resolve();
+			res.locals.result.getblock = blockWithTransactions.getblock;
+			res.locals.result.transactions = blockWithTransactions.transactions;
+			res.locals.result.txInputsByTransaction = blockWithTransactions.txInputsByTransaction;
 
-			}).catch(function(err) {
-				res.locals.pageErrors.push(utils.logError("98493y4758h55", err));
-
-				reject(err);
-			});
+			resolve();
 		}));
 
-		promises.push(new Promise(function(resolve, reject) {
-			coreApi.getBlockStats(result.hash).then(function(result) {
-				res.locals.result.blockstats = result;
+		promises.push(new Promise(async (resolve, reject) => {
+			const blockStats = await utils.timePromise("promises.block-height.getBlockStats", coreApi.getBlockStats(result.hash));
+			
+			res.locals.result.blockstats = blockStats;
 
-				resolve();
-
-			}).catch(function(err) {
-				res.locals.pageErrors.push(utils.logError("983yr435r76d", err));
-
-				reject(err);
-			});
+			resolve();
 		}));
 
-		Promise.all(promises).then(function() {
-			res.render("block");
+		await Promise.all(promises);
 
-			next();
+		res.render("block");
 
-		}).catch(function(err) {
-			res.locals.userMessageMarkdown = `Failed loading block: height=**${blockHeight}**`;
+		next();
 
-			res.render("block");
-
-			next();
-		});
-	}).catch(function(err) {
+	} catch (err) {
 		res.locals.userMessageMarkdown = `Failed loading block: height=**${blockHeight}**`;
 
 		res.locals.pageErrors.push(utils.logError("389wer07eghdd", err));
@@ -694,81 +692,75 @@ router.get("/block-height/:blockHeight", function(req, res, next) {
 		res.render("block");
 
 		next();
-	});
-});
+	}
+}));
 
-router.get("/block/:blockHash", function(req, res, next) {
-	var blockHash = utils.asHash(req.params.blockHash);
+router.get("/block/:blockHash", asyncHandler(async (req, res, next) => {
+	try {
+		var blockHash = utils.asHash(req.params.blockHash);
 
-	res.locals.blockHash = blockHash;
+		res.locals.blockHash = blockHash;
 
-	res.locals.result = {};
+		res.locals.result = {};
 
-	var limit = config.site.blockTxPageSize;
-	var offset = 0;
+		var limit = config.site.blockTxPageSize;
+		var offset = 0;
 
-	if (req.query.limit) {
-		limit = parseInt(req.query.limit);
+		if (req.query.limit) {
+			limit = parseInt(req.query.limit);
 
-		// for demo sites, limit page sizes
-		if (config.demoSite && limit > config.site.blockTxPageSize) {
-			limit = config.site.blockTxPageSize;
+			// for demo sites, limit page sizes
+			if (config.demoSite && limit > config.site.blockTxPageSize) {
+				limit = config.site.blockTxPageSize;
 
-			res.locals.userMessage = "Transaction page size limited to " + config.site.blockTxPageSize + ". If this is your site, you can change or disable this limit in the site config.";
+				res.locals.userMessage = "Transaction page size limited to " + config.site.blockTxPageSize + ". If this is your site, you can change or disable this limit in the site config.";
+			}
 		}
-	}
 
-	if (req.query.offset) {
-		offset = parseInt(req.query.offset);
-	}
+		if (req.query.offset) {
+			offset = parseInt(req.query.offset);
+		}
 
-	res.locals.limit = limit;
-	res.locals.offset = offset;
-	res.locals.paginationBaseUrl = "./block/" + blockHash;
+		res.locals.limit = limit;
+		res.locals.offset = offset;
+		res.locals.paginationBaseUrl = "./block/" + blockHash;
 
-	var promises = [];
+		var promises = [];
 
-	promises.push(new Promise(function(resolve, reject) {
-		coreApi.getBlockByHashWithTransactions(blockHash, limit, offset).then(function(result) {
-			res.locals.result.getblock = result.getblock;
-			res.locals.result.transactions = result.transactions;
-			res.locals.result.txInputsByTransaction = result.txInputsByTransaction;
+		promises.push(new Promise(async (resolve, reject) => {
+			const blockWithTransactions = await utils.timePromise("promises.block-hash.getBlockByHashWithTransactions", coreApi.getBlockByHashWithTransactions(blockHash, limit, offset));
+			
+			res.locals.result.getblock = blockWithTransactions.getblock;
+			res.locals.result.transactions = blockWithTransactions.transactions;
+			res.locals.result.txInputsByTransaction = blockWithTransactions.txInputsByTransaction;
 
 			resolve();
+		}));
 
-		}).catch(function(err) {
-			res.locals.pageErrors.push(utils.logError("238h38sse", err));
+		promises.push(new Promise(async (resolve, reject) => {
+			const blockStats = await utils.timePromise("promises.block-hash.getBlockStats", coreApi.getBlockStats(blockHash));
 			
-			reject(err);
-		});
-	}));
-
-	promises.push(new Promise(function(resolve, reject) {
-		coreApi.getBlockStats(blockHash).then(function(result) {
-			res.locals.result.blockstats = result;
+			res.locals.result.blockstats = blockStats;
 
 			resolve();
+		}));
 
-		}).catch(function(err) {
-			res.locals.pageErrors.push(utils.logError("21983ue8hye", err));
-			
-			reject(err);
-		});
-	}));
-
-	Promise.all(promises).then(function() {
+		await Promise.all(promises);
+		
 		res.render("block");
 
 		next();
 
-	}).catch(function(err) {
+	} catch (err) {
 		res.locals.userMessageMarkdown = `Failed to load block: **${blockHash}**`;
 
+		res.locals.pageErrors.push(utils.logError("32824yhr2973t3d", err));
+
 		res.render("block");
 
 		next();
-	});
-});
+	}
+}));
 
 router.get("/block-analysis/:blockHashOrHeight", function(req, res, next) {
 	var blockHashOrHeight = utils.asHashOrHeight(req.params.blockHashOrHeight);
@@ -817,20 +809,22 @@ router.get("/block-analysis", function(req, res, next) {
 	next();
 });
 
-router.get("/tx/:transactionId", function(req, res, next) {
-	var txid = utils.asHash(req.params.transactionId);
+router.get("/tx/:transactionId", asyncHandler(async (req, res, next) => {
+	try {
+		var txid = utils.asHash(req.params.transactionId);
 
-	var output = -1;
-	if (req.query.output) {
-		output = parseInt(req.query.output);
-	}
+		var output = -1;
+		if (req.query.output) {
+			output = parseInt(req.query.output);
+		}
 
-	res.locals.txid = txid;
-	res.locals.output = output;
+		res.locals.txid = txid;
+		res.locals.output = output;
 
-	res.locals.result = {};
+		res.locals.result = {};
 
-	coreApi.getRawTransactionsWithInputs([txid]).then(function(rawTxResult) {
+		const rawTxResult = await utils.timePromise("promises.tx.getRawTransactionsWithInputs", coreApi.getRawTransactionsWithInputs([txid]));
+
 		var tx = rawTxResult.transactions[0];
 
 		res.locals.result.getrawtransaction = tx;
@@ -838,35 +832,25 @@ router.get("/tx/:transactionId", function(req, res, next) {
 
 		var promises = [];
 
-		promises.push(new Promise(function(resolve, reject) {
-			coreApi.getTxUtxos(tx).then(function(utxos) {
-				res.locals.utxos = utxos;
+		promises.push(new Promise(async (resolve, reject) => {
+			const utxos = await utils.timePromise("promises.tx.getTxUtxos", coreApi.getTxUtxos(tx));
+			
+			res.locals.utxos = utxos;
 				
-				resolve();
-
-			}).catch(function(err) {
-				res.locals.pageErrors.push(utils.logError("3208yhdsghssr", err));
-
-				reject(err);
-			});
+			resolve();
 		}));
 
 		if (tx.confirmations == null) {
-			promises.push(new Promise(function(resolve, reject) {
-				coreApi.getMempoolTxDetails(txid, true).then(function(mempoolDetails) {
-					res.locals.mempoolDetails = mempoolDetails;
+			promises.push(new Promise(async (resolve, reject) => {
+				const mempoolDetails = await utils.timePromise("promises.tx.getMempoolTxDetails", coreApi.getMempoolTxDetails(txid, true));
+
+				res.locals.mempoolDetails = mempoolDetails;
 					
-					resolve();
-
-				}).catch(function(err) {
-					res.locals.pageErrors.push(utils.logError("0q83hreuwgd", err));
-
-					reject(err);
-				});
+				resolve();
 			}));
 		}
 
-		promises.push(new Promise(function(resolve, reject) {
+		promises.push(new Promise(async (resolve, reject) => {
 			global.rpcClient.command('getblock', tx.blockhash, function(err3, result3, resHeaders3) {
 				res.locals.result.getblock = result3;
 
@@ -874,13 +858,13 @@ router.get("/tx/:transactionId", function(req, res, next) {
 			});
 		}));
 
-		Promise.all(promises).then(function() {
-			res.render("transaction");
+		await Promise.all(promises);
+		
+		res.render("transaction");
 
-			next();
-		});
+		next();
 
-	}).catch(function(err) {
+	} catch (err) {
 		res.locals.userMessageMarkdown = `Failed to load transaction: txid=**${txid}**`;
 
 		res.locals.pageErrors.push(utils.logError("1237y4ewssgt", err));
@@ -888,8 +872,8 @@ router.get("/tx/:transactionId", function(req, res, next) {
 		res.render("transaction");
 
 		next();
-	});
-});
+	}
+}));
 
 router.get("/address/:address", function(req, res, next) {
 	var limit = config.site.addressTxPageSize;
