@@ -32,6 +32,11 @@ block content
 							div.summary-table-content.text-monospace
 								span #{global.nodeVersion}
 
+						div.row
+							div.summary-table-label Node Env
+							div.summary-table-content.text-monospace
+								span #{process.env.NODE_ENV || "development"}
+
 			div.card.shadow-sm.mb-3
 				div.card-body
 					h3.h6 App Config

@@ -434,7 +434,7 @@ app.onStartup = function() {
 	loadChangelog();
 
 	global.nodeVersion = process.version;
-	debugLog(`Environment - Node: ${process.version}, Platform: ${process.platform}, Versions: ${JSON.stringify(process.versions)}`);
+	debugLog(`Environment(${app.get("env")}) - Node: ${process.version}, Platform: ${process.platform}, Versions: ${JSON.stringify(process.versions)}`);
 
 
 	// dump "startup" heap after 5sec
