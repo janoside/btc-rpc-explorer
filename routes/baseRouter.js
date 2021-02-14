@@ -26,6 +26,8 @@ const v8 = require('v8');
 
 const forceCsrf = csurf({ ignoreMethods: [] });
 
+var noTxIndexMsg = "\n\nYour node does not have `txindex` enabled. Without it, you can only lookup wallet, mempool and recently confirmed transactions by their `txid`. Searching for non-wallet transactions that were confirmed more than "+config.noTxIndexSearchDepth+" blocks ago is only possible if you provide the confirmed block height in addition to the txid, using `<txid>@<height>` in the search box.";
+
 router.get("/", function(req, res, next) {
 	if (req.session.host == null || req.session.host.trim() == "") {
 		if (req.cookies['rpc-host']) {
@@ -543,7 +545,8 @@ router.post("/search", function(req, res, next) {
 				res.redirect("./block/" + query);
 			}).catch(function(err) {
 				req.session.userMessage = "No results found for query: " + query;
-
+				if (global.getindexinfo && !global.getindexinfo.txindex)
+					req.session.userMessage += noTxIndexMsg;
 				res.redirect("./");
 			});
 		});
@@ -853,6 +856,9 @@ router.get("/tx/:transactionId", function(req, res, next) {
 
 	}).catch(function(err) {
 		res.locals.userMessageMarkdown = `Failed to load transaction: txid=**${txid}**`;
+
+		if (global.getindexinfo && !global.getindexinfo.txindex)
+			res.locals.userMessageMarkdown += noTxIndexMsg;
 
 		res.locals.pageErrors.push(utils.logError("1237y4ewssgt", err));
 
