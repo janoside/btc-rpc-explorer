@@ -530,51 +530,17 @@ router.post("/search", function(req, res, next) {
 
 	req.session.query = req.body.query;
 
+	// Support txid@height lookups
+	if (/^[a-f0-9]{64}@\d+$/.test(query)) {
+		return res.redirect("./tx/" + query);
+	}
+
 	if (query.length == 64) {
 		coreApi.getRawTransaction(query).then(function(tx) {
-			if (tx) {
-				res.redirect("./tx/" + query);
-
-				return;
-			}
-
-			coreApi.getBlockByHash(query).then(function(blockByHash) {
-				if (blockByHash) {
-					res.redirect("./block/" + query);
-
-					return;
-				}
-
-				coreApi.getAddress(rawCaseQuery).then(function(validateaddress) {
-					if (validateaddress && validateaddress.isvalid) {
-						res.redirect("./address/" + rawCaseQuery);
-
-						return;
-					}
-				});
-
-				req.session.userMessage = "No results found for query: " + query;
-
-				res.redirect("./");
-
-			}).catch(function(err) {
-				req.session.userMessage = "No results found for query: " + query;
-
-				res.redirect("./");
-			});
-
+			res.redirect("./tx/" + query);
 		}).catch(function(err) {
 			coreApi.getBlockByHash(query).then(function(blockByHash) {
-				if (blockByHash) {
-					res.redirect("./block/" + query);
-
-					return;
-				}
-
-				req.session.userMessage = "No results found for query: " + query;
-
-				res.redirect("./");
-
+				res.redirect("./block/" + query);
 			}).catch(function(err) {
 				req.session.userMessage = "No results found for query: " + query;
 
@@ -584,12 +550,8 @@ router.post("/search", function(req, res, next) {
 
 	} else if (!isNaN(query)) {
 		coreApi.getBlockByHeight(parseInt(query)).then(function(blockByHeight) {
-			if (blockByHeight) {
-				res.redirect("./block-height/" + query);
-
-				return;
-			}
-
+			res.redirect("./block-height/" + query);
+		}).catch(function(err) {
 			req.session.userMessage = "No results found for query: " + query;
 
 			res.redirect("./");
@@ -814,6 +776,12 @@ router.get("/block-analysis", function(req, res, next) {
 
 	next();
 });
+
+router.get("/tx/:transactionId@:height", function(req, res, next) {
+	req.query.height = req.params.height;
+	req.url = "/tx/" + req.params.transactionId;
+	next();
+})
 
 router.get("/tx/:transactionId", function(req, res, next) {
 	var txid = utils.asHash(req.params.transactionId);

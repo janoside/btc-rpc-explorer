@@ -386,7 +386,7 @@ div.tab-content
 				- var fontawesomeOutputName = "sign-out-alt";
 
 				div
-					- query_height = global.getindexinfo && !global.getindexinfo.txindex ? `?height=${result.getblock.height}` : ''
+					- tx_height_param = global.getindexinfo && !global.getindexinfo.txindex ? `@${result.getblock.height}` : ''
 					each tx, txIndex in result.transactions
 						//pre
 						//	code.json.bg-light #{JSON.stringify(tx, null, 4)}
@@ -394,8 +394,8 @@ div.tab-content
 							div.card-header.text-monospace
 								if (tx && tx.txid)
 									span(title=`Index in Block: #${(txIndex + offset).toLocaleString()}`, data-toggle="tooltip") ##{(txIndex + offset).toLocaleString()}
-									span  &ndash; 
-									a(href=("./tx/" + tx.txid + query_height)) #{tx.txid}
+									span  &ndash;
+									a(href=("./tx/" + tx.txid + tx_height_param)) #{tx.txid}
 
 									if (global.specialTransactions && global.specialTransactions[tx.txid])
 										span  
