@@ -226,10 +226,6 @@ function getAddress(address) {
 function getRawTransaction(txid, blockhash) {
 	debugLog("getRawTransaction: %s", txid);
 
-	if (global.getindexinfo && !global.getindexinfo.txindex && !blockhash) {
-		return Promise.reject(new Error('Cannot fetch tx without blockhash, txindex is off'))
-	}
-
 	return new Promise(function(resolve, reject) {
 		if (coins[config.coin].genesisCoinbaseTransactionIdsByNetwork[global.activeBlockchain] && txid == coins[config.coin].genesisCoinbaseTransactionIdsByNetwork[global.activeBlockchain]) {
 			// copy the "confirmations" field from genesis block to the genesis-coinbase tx

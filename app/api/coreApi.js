@@ -839,6 +839,12 @@ function summarizeBlockAnalysisData(blockHeight, tx, inputs) {
 }
 
 function getRawTransactionsWithInputs(txids, maxInputs=-1, blockhash) {
+	// Get just the transactions without their prevouts when txindex is disabled
+	if (global.getindexinfo && !global.getindexinfo.txindex) {
+		return getRawTransactions(txids, blockhash)
+			.then(transactions => ({ transactions, txInputsByTransaction: {} }))
+	}
+
 	return new Promise(function(resolve, reject) {
 		getRawTransactions(txids, blockhash).then(function(transactions) {
 			var maxInputsTracked = config.site.txMaxInput;
@@ -895,11 +901,7 @@ function getRawTransactionsWithInputs(txids, maxInputs=-1, blockhash) {
 				});
 
 				resolve({ transactions:transactions, txInputsByTransaction:txInputsByTransaction });
-			}).catch(function (err) {
-				debugLog("fetching prevouts failed:", err);
-				// likely due to pruning or no txindex, report the error but continue with an empty inputs map
-				resolve({ transactions:transactions, txInputsByTransaction: {} });
-			});
+			}).catch(reject);
 		}).catch(reject);
 	});
 }
