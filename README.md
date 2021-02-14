@@ -98,6 +98,20 @@ After successfull access with the token a cookie is used for authentication, so 
 To improve user experience you can set `BTCEXP_SSO_LOGIN_REDIRECT_URL` to the URL of your SSO provider.
 This causes the users to be redirected to login page if not logged in.
 
+#### Wallet addresses history
+
+Showing the history of your wallet addresses is supported via [bwt](https://github.com/sheske/bwt).
+To enable this feature, install bwt with `npm install -g libbwt` then start btc-rpc-explorer
+with `--address-api bwt` and one or more `--descriptors`s or `--xpub`s.
+
+The wallet addresses will be derived and imported into Bitcoin Core. You can specify which wallet to use with `--bwt-bitcoind-wallet <name>`.
+
+Scanning the full blockchain history for transactions involving your addresses may take up to 20-30 minutes.
+To speed this up, you may specify a date to start rescanning from with `--bwt-rescan-since <yyyy-mm-dd>`, or
+use `now` to watch for new transactions only.
+
+For example: `--address-api bwt --bwt-rescan-since 2020-01-01 --descriptor 'wpkh(xpub69..oP/0/*)' --xpub xpub66..zQ`
+
 ## Run via Docker
 
 1. `docker build -t btc-rpc-explorer .`

@@ -10,7 +10,7 @@ var blockchairAddressApi = require("./blockchairAddressApi.js");
 var blockcypherAddressApi = require("./blockcypherAddressApi.js");
 
 function getSupportedAddressApis() {
-	return ["blockchain.com", "blockchair.com", "blockcypher.com", "electrumx"];
+	return ["blockchain.com", "blockchair.com", "blockcypher.com", "electrumx", "bwt"];
 }
 
 function getCurrentAddressApiFeatureSupport() {
@@ -35,7 +35,7 @@ function getCurrentAddressApiFeatureSupport() {
 			sortAsc: false
 		};
 
-	} else if (config.addressApi == "electrumx") {
+	} else if (config.addressApi == "electrumx" || config.addressApi == "bwt") {
 		return {
 			pageNumbers: true,
 			sortDesc: true,
@@ -57,7 +57,7 @@ function getAddressDetails(address, scriptPubkey, sort, limit, offset) {
 		} else if (config.addressApi == "blockcypher.com") {
 			promises.push(blockcypherAddressApi.getAddressDetails(address, scriptPubkey, sort, limit, offset));
 
-		} else if (config.addressApi == "electrumx") {
+		} else if (config.addressApi == "electrumx" || config.addressApi == "bwt") {
 			promises.push(electrumAddressApi.getAddressDetails(address, scriptPubkey, sort, limit, offset));
 
 		} else {
