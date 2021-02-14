@@ -92,6 +92,8 @@ module.exports = {
 	
 	rpcConcurrency: (process.env.BTCEXP_RPC_CONCURRENCY || 10),
 
+	noTxIndexSearchDepth: (+process.env.BTCEXP_NOTXINDEX_SEARCH_DEPTH || 3),
+
 	rpcBlacklist:
 	  process.env.BTCEXP_RPC_ALLOWALL.toLowerCase() == "true"  ? []
 	: process.env.BTCEXP_RPC_BLACKLIST ? process.env.BTCEXP_RPC_BLACKLIST.split(',').filter(Boolean)

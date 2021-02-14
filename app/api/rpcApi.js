@@ -224,7 +224,7 @@ function getAddress(address) {
 }
 
 function getRawTransaction(txid, blockhash) {
-	debugLog("getRawTransaction: %s", txid);
+	debugLog("getRawTransaction: %s %s", txid, blockhash);
 
 	return new Promise(function(resolve, reject) {
 		if (coins[config.coin].genesisCoinbaseTransactionIdsByNetwork[global.activeBlockchain] && txid == coins[config.coin].genesisCoinbaseTransactionIdsByNetwork[global.activeBlockchain]) {
@@ -257,10 +257,46 @@ function getRawTransaction(txid, blockhash) {
 				resolve(result);
 
 			}).catch(function(err) {
-				reject(err);
+				if (global.getindexinfo && !global.getindexinfo.txindex && !blockhash) {
+					noTxIndexTransactionLookup(txid).then(resolve, reject);
+				} else {
+					reject(err);
+				}
 			});
 		}
 	});
+}
+
+async function noTxIndexTransactionLookup(txid) {
+	// Try looking up in wallet transactions
+	for (var wallet of await listWallets()) {
+		try { return await getWalletTransaction(wallet, txid); }
+		catch (_) {}
+	}
+
+	// Try looking up in recent blocks
+	var tip_height = await getRpcDataWithParams({method:"getblockcount", parameters:[]});
+	for (var height=tip_height; height>Math.max(tip_height - config.noTxIndexSearchDepth, 0); height--) {
+		var blockhash = await getRpcDataWithParams({method:"getblockhash", parameters:[height]});
+		try { return await getRawTransaction(txid, blockhash); }
+		catch (_) {}
+	}
+
+	throw new Error(`The requested tx ${txid} cannot be found in wallet transactions, mempool transactions and recently confirmed transactions`)
+}
+
+function listWallets() {
+	return getRpcDataWithParams({method:"listwallets", parameters:[]})
+}
+
+async function getWalletTransaction(wallet, txid) {
+	global.rpcClient.wallet = wallet;
+	try {
+		return await getRpcDataWithParams({method:"gettransaction", parameters:[ txid, true, true ]})
+			.then(wtx => ({ ...wtx, ...wtx.decoded, decoded: null }))
+	} finally {
+		global.rpcClient.wallet = null;
+	}
 }
 
 function getUtxo(txid, outputIndex) {
