@@ -198,6 +198,12 @@ block content
 											else
 												small.data-tag.bg-primary #{minerInfo.name}
 
+							else if (global.getindexinfo && !global.getindexinfo.txindex)
+								div.row
+									div.summary-table-label Fee Paid
+									div.summary-table-content.text-monospace
+										| Unknown
+										span.ml-2(title="Determining the fee requires txindex to be enabled", data-toggle="tooltip"): i.fas.fa-ellipsis-h
 							else
 
 								- var feePaid = new Decimal(totalInputValue).minus(totalOutputValue);
