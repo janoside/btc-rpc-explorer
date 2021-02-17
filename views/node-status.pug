@@ -57,8 +57,16 @@ block content
 								div.row
 									div.summary-table-label Blockchain Size
 									div.summary-table-content.text-monospace #{sizeData[0]} #{sizeData[1].abbreviation}B
+
+							if (getblockchaininfo.pruned)
+								div.row
+									div.summary-table-label Prune Status
+									div.summary-table-content.text-monospace
+										span.text-warning Pruning active
 										br
-										span.text-muted  (pruned: #{getblockchaininfo.pruned})
+										span.border-dotted(title="This is the latest block height for which your node has all block data; below this block height details have been deleted via pruning.", data-toggle="tooltip") Prune height
+
+										span : #{getblockchaininfo.pruneheight.toLocaleString()}
 
 							if (getblockchaininfo.softforks)
 								div.row
