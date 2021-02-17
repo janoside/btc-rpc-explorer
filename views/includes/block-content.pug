@@ -353,7 +353,12 @@ div.tab-content
 
 		if (!result.getblock.tx.length)
 			div.card.shadow-sm.mb-3: div.card-body.px-2.px-md-3
-				h2.h6.mb-0.d-inline-block #{txCount.toLocaleString()} Transaction#{txCount>1?'s':''} (unavailable due to pruning)
+				h2.h6.mb-0.d-inline-block #{txCount.toLocaleString()} Transaction#{txCount>1?'s':''}
+				.text-muted.pt-2
+					span.mr-2(title="This data is unavailable due to blockchain pruning", data-toggle="tooltip")
+						i.fas.fa-backspace.text-danger
+					
+					| Details unavailable due to blockchain pruning
 		else
 			div.card.shadow-sm.mb-3: div.card-body.px-2.px-md-3
 				div.row
