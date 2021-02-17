@@ -154,6 +154,15 @@ div.tab-content
 											- var currencyValue = new Decimal(blockRewardMax).minus(coinbaseTxTotalOutputValue);
 											include ./value-display.pug
 
+							else if (result.getblock.subsidy != null)
+								div.row
+									div(class=sumTableLabelClass)
+										span.border-dotted(title="Value of the block subsidy", data-toggle="tooltip")
+											span Subsidy
+									div.text-monospace(class=sumTableValueClass)
+										- var currencyValue = new Decimal(result.getblock.subsidy);
+										include ./value-display.pug
+
 							if (result.getblock.weight)
 								div.row
 									div(class=sumTableLabelClass) Weight
