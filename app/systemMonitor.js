@@ -41,6 +41,6 @@ const systemMonitorInterval = setInterval(() => {
 		statTracker.trackValue("eventloop.sum", loopStats.sum);
 		statTracker.trackValue("eventloop.num", loopStats.num);
 	});
-}, process.env.SYSTEM_MONITOR_INTERVAL);
+}, process.env.SYSTEM_MONITOR_INTERVAL || 60 * 60 * 1000);
 
 systemMonitorInterval.unref();
