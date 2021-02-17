@@ -282,7 +282,7 @@ async function noTxIndexTransactionLookup(txid) {
 		catch (_) {}
 	}
 
-	throw new Error(`The requested tx ${txid} cannot be found in wallet transactions, mempool transactions and recently confirmed transactions`)
+	throw new Error(`The requested tx ${txid} cannot be found in wallet transactions, mempool transactions, or recently confirmed transactions`)
 }
 
 function listWallets() {
