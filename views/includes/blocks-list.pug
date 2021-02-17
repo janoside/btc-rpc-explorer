@@ -36,7 +36,20 @@ div.table-responsive
 						small  (kB)
 		tbody
 
+			- var prevBlock = null;
 			each block, blockIndex in blocks
+
+				if (block.totalFees == null && prevBlock != null && prevBlock.totalFees != null)
+					tr
+						td.text-center(colspan="100%")
+							h6.my-3 
+								i.fas.fa-backspace.text-danger.mr-2
+								| Blocks older than this point have been 
+								i pruned
+								|  - only data essential to blockchain verification has been retained; the rest has been deleted.
+
+				- prevBlock = block;
+
 				if (block && ((sort == "desc" && (blockIndex < blocks.length - 1 || block.height == 0)) || (sort == "asc" && (block.height == 0 || blockIndex > 0))))
 					tr
 						td
