@@ -32,7 +32,8 @@ See [CHANGELOG.md](/CHANGELOG.md).
 
 ## Prerequisites
 
-1. Install and run a full, archiving node - [instructions](https://bitcoin.org/en/full-node). Ensure that your bitcoin node has full transaction indexing enabled (`txindex=1`) and the RPC server enabled (`server=1`).
+1. Install and run a full, archiving node - [instructions](https://bitcoin.org/en/full-node). Ensure that your bitcoin node has its RPC server enabled (`server=1`). 
+	* Note: this tool is designed to work best with full transaction indexing enabled (`txindex=1`) and pruning **disabled**. Running different configurations of Bitcoin Core *should* work, but some data will be incomplete or missing and other configurations receive less testing so may be less stable.
 2. Synchronize your node with the Bitcoin network (you *can* use this tool while your node is still sychronizing, but some pages may fail).
 3. Install a "recent" version of Node.js (8+ recommended).
 
