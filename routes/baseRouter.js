@@ -784,11 +784,12 @@ router.get("/block-analysis", function(req, res, next) {
 	next();
 });
 
-router.get("/tx/:transactionId@:height", function(req, res, next) {
-	req.query.height = req.params.height;
+router.get("/tx/:transactionId@:blockHeight", function(req, res, next) {
+	req.query.blockHeight = req.params.blockHeight;
 	req.url = "/tx/" + req.params.transactionId;
+
 	next();
-})
+});
 
 router.get("/tx/:transactionId", function(req, res, next) {
 	var txid = utils.asHash(req.params.transactionId);
@@ -801,10 +802,14 @@ router.get("/tx/:transactionId", function(req, res, next) {
 	res.locals.txid = txid;
 	res.locals.output = output;
 
+	if (req.query.blockHeight) {
+		res.locals.blockHeight = req.query.blockHeight;
+	}
+
 	res.locals.result = {};
 
-	var txPromise = req.query.height
-		? coreApi.getBlockHashByHeight(parseInt(req.query.height))
+	var txPromise = req.query.blockHeight
+		? coreApi.getBlockHashByHeight(parseInt(req.query.blockHeight))
 				.then(blockhash => coreApi.getRawTransactionsWithInputs([txid], -1, blockhash))
 		: coreApi.getRawTransactionsWithInputs([txid], -1);
 

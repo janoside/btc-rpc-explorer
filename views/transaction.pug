@@ -9,7 +9,7 @@ block headContent
 		
 
 block content
-	if (!global.txindex && (!result || !result.getrawtransaction))
+	if (!result || !result.getrawtransaction)
 		h1.h3.word-wrap Transaction 
 			br
 			small.text-monospace #{txid}
@@ -17,7 +17,13 @@ block content
 
 		div.alert.alert-warning.pb-0(role="alert")
 			h6.mb-2 Transaction Details Unavailable
-			| !{markdown(noTxIndexMsg)}
+
+			if (blockHeight && global.prunedBlockchain)
+				- var msgMarkdown = "Blockchain `pruning` is enabled on your node and the block that contains this transaction has been pruned. This means that all non-essential data has been deleted, including the details of this transaction.";
+				| !{markdown(msgMarkdown)}
+				
+			else if (!global.txindex)
+				| !{markdown(noTxIndexMsg)}
 
 	if (result && result.getrawtransaction)
 		h1.h3.word-wrap Transaction 
