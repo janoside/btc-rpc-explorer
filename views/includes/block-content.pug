@@ -408,7 +408,7 @@ div.tab-content
 							div.card-header.text-monospace
 								if (tx && tx.txid)
 									span(title=`Index in Block: #${(txIndex + offset).toLocaleString()}`, data-toggle="tooltip") ##{(txIndex + offset).toLocaleString()}
-									span  &ndash;
+									span  &ndash; 
 									a(href=("./tx/" + tx.txid + tx_height_param)) #{tx.txid}
 
 									if (global.specialTransactions && global.specialTransactions[tx.txid])
