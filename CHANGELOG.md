@@ -1,5 +1,6 @@
 ##### Unreleased
 
+* Support for pruned nodes and nodes with disabled `txindex`! (HUGE Thanks to [@shesek](https://github.com/shesek))
 * Fix for 404 pages hanging (Thanks [@shesek](https://github.com/shesek))
 * Add convenience redirect for baseUrl (Thanks [@shesek](https://github.com/shesek))
 * Make url in logs clickable (Thanks [@shesek](https://github.com/shesek))
