@@ -68,6 +68,26 @@ block content
 
 										span : #{getblockchaininfo.pruneheight.toLocaleString()}
 
+							div.row
+								div.summary-table-label Indexes
+								div.summary-table-content.text-monospace
+									ul.list-unstyled
+										li
+											span.font-weight-bold txindex
+											| : 
+											if (getindexinfo.txindex)
+												span.text-success available
+											else
+												span.text-danger unavailable
+
+										li
+											span.font-weight-bold blockfilterindex
+											| : 
+											if (getindexinfo["basic block filter index"])
+												span.text-success available
+											else
+												span.text-danger unavailable
+
 							if (getblockchaininfo.softforks)
 								div.row
 									div.summary-table-label Soft Forks
@@ -186,6 +206,8 @@ block content
 						a.nav-link(data-toggle="tab", href="#tab-getnettotals", role="tab") getnettotals
 					li.nav-item
 						a.nav-link(data-toggle="tab", href="#tab-getnetworkinfo", role="tab") getnetworkinfo
+					li.nav-item
+						a.nav-link(data-toggle="tab", href="#tab-getindexinfo", role="tab") getindexinfo
 				
 				div.tab-content
 					div.tab-pane.active(id="tab-getblockchaininfo", role="tabpanel")
@@ -217,5 +239,15 @@ block content
 								div.highlight
 									pre
 										code.json.bg-light(data-lang="json") #{JSON.stringify(getnetworkinfo, null, 4)}
+
+					div.tab-pane(id="tab-getindexinfo", role="tabpanel")
+						div.card.shadow-sm.mb-3
+							div.card-body
+								h4.h6.mb-0 getindexinfo
+								hr
+
+								div.highlight
+									pre
+										code.json.bg-light(data-lang="json") #{JSON.stringify(global.getindexinfo, null, 4)}
 							
 										
