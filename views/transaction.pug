@@ -198,15 +198,14 @@ block content
 											else
 												small.data-tag.bg-primary #{minerInfo.name}
 
-							else if (global.getindexinfo && !global.getindexinfo.txindex)
+							else if (!mempoolDetails && global.getindexinfo && !global.getindexinfo.txindex)
 								div.row
 									div.summary-table-label Fee Paid
 									div.summary-table-content.text-monospace
 										| Unknown
-										span.ml-2(title="Determining the fee requires txindex to be enabled", data-toggle="tooltip"): i.fas.fa-ellipsis-h
+										span.ml-2(title="Determining the fee of confirmed transactions requires txindex to be enabled", data-toggle="tooltip"): i.fas.fa-ellipsis-h
 							else
-
-								- var feePaid = new Decimal(totalInputValue).minus(totalOutputValue);
+								- var feePaid = mempoolDetails ? new Decimal(mempoolDetails.entry.fees.base) : new Decimal(totalInputValue).minus(totalOutputValue);
 
 								div.row
 									div.summary-table-label Fee Paid
@@ -214,7 +213,7 @@ block content
 										- var currencyValue = feePaid;
 										include includes/value-display.pug
 
-										if (feePaid > 0)
+										if (feePaid > 0 && totalInputValue > 0)
 											- var item1 = utils.formatCurrencyAmount(totalInputValue, currencyFormatType);
 											- var item2 = utils.formatCurrencyAmount(totalOutputValue, currencyFormatType);
 											span.ml-2(title=(item1.simpleVal + " - " + item2.simpleVal), data-toggle="tooltip")
@@ -225,16 +224,16 @@ block content
 										div.summary-table-label Fee Rate
 										div.summary-table-content.text-monospace
 											if (result.getrawtransaction.vsize != result.getrawtransaction.size)
-												span #{utils.addThousandsSeparators(new DecimalRounded(totalInputValue).minus(totalOutputValue).dividedBy(result.getrawtransaction.vsize).times(100000000))} 
+												span #{utils.addThousandsSeparators(new DecimalRounded(feePaid).dividedBy(result.getrawtransaction.vsize).times(100000000))} 
 												small sat/vB
 												br
 
-												span.text-muted (#{utils.addThousandsSeparators(new DecimalRounded(totalInputValue).minus(totalOutputValue).dividedBy(result.getrawtransaction.size).times(100000000))} 
+												span.text-muted (#{utils.addThousandsSeparators(new DecimalRounded(feePaid).dividedBy(result.getrawtransaction.size).times(100000000))} 
 													small sat/B
 													span )
 
 											else
-												span #{utils.addThousandsSeparators(new DecimalRounded(totalInputValue).minus(totalOutputValue).dividedBy(result.getrawtransaction.size).times(100000000))} 
+												span #{utils.addThousandsSeparators(new DecimalRounded(feePaid).dividedBy(result.getrawtransaction.size).times(100000000))} 
 													small sat/B
 
 							- var daysDestroyed = new Decimal(0);
