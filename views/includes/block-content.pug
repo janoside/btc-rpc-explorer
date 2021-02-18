@@ -378,7 +378,8 @@ div.tab-content
 							else
 								span Transactions
 
-						a.ml-2.border-dotted(href=`./block-analysis/${result.getblock.hash}`, title="See a summary analysis of all transactions in this block.", data-toggle="tooltip") See Block Analysis &raquo;
+						if (global.txindex)
+							a.ml-2.border-dotted(href=`./block-analysis/${result.getblock.hash}`, title="See a summary analysis of all transactions in this block.", data-toggle="tooltip") See Block Analysis &raquo;
 
 					if (false || (!config.demoSite && !crawlerBot && txCount > 20))
 						div.col-md-8.text-right
