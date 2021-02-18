@@ -19,7 +19,7 @@ block content
 			h6.mb-2 Transaction Details Unavailable
 
 			if (blockHeight && global.prunedBlockchain)
-				- var msgMarkdown = "Blockchain `pruning` is enabled on your node and the block that contains this transaction has been pruned. This means that all non-essential data has been deleted, including the details of this transaction.";
+				- var msgMarkdown = "Blockchain `pruning` is enabled on your node. This setting tells your node that after validating transactions it may discard data that is non-essential for future validation needs.\n\nThe block that contains this transaction has been pruned, meaning that all non-essential data has been deleted, including the details of this transaction.";
 				| !{markdown(msgMarkdown)}
 				
 			else if (!global.txindex)
