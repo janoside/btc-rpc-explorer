@@ -202,8 +202,9 @@ block content
 								div.row
 									div.summary-table-label Fee Paid
 									div.summary-table-content.text-monospace
-										| Unknown
-										span.ml-2(title="Determining the fee of confirmed transactions requires txindex to be enabled", data-toggle="tooltip"): i.fas.fa-ellipsis-h
+										span.border-dotted(title="Determining the fee of confirmed transactions requires txindex to be enabled", data-toggle="tooltip")
+											i.fas.fa-backspace.text-danger.mr-2
+											| ?
 							else
 								- var feePaid = mempoolDetails ? new Decimal(mempoolDetails.entry.fees.base) : new Decimal(totalInputValue).minus(totalOutputValue);
 

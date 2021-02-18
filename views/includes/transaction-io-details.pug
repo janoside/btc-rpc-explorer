@@ -27,7 +27,7 @@ div.row.text-monospace
 						- var txInput = {txid:txVin.txid, vout:txVin.vout};
 						- var vout = {};
 
-				if true
+				if (true)
 					div.clearfix
 						div.tx-io-label
 							a(data-toggle="tooltip", title=("Input #" + txVinIndex.toLocaleString()), style="white-space: nowrap;")
@@ -58,7 +58,7 @@ div.row.text-monospace
 
 										div(id="coinbase-data-hex", style="display: none;")
 											small.font-weight-bold data
-											small (hex) -
+											small (hex) - 
 											small.word-wrap #{txVin.coinbase}
 
 
@@ -118,6 +118,10 @@ div.row.text-monospace
 											- var currencyValue = vout.value;
 											include ./value-display.pug
 
+										else
+											span(title="This data is unavailable. Your node must have its transaction index (txindex) setting enabled to view it.", data-toggle="tooltip")
+												i.fas.fa-backspace.text-danger
+
 					hr
 
 				else
@@ -147,14 +151,14 @@ div.row.text-monospace
 								include ./value-display.pug
 				hr
 
-			if (totalIOValues.input)
+			if (totalIOValues.input && totalIOValues.input > 0)
 				div.row.mb-5.mb-lg-0
 					div.col
 						div.font-weight-bold.text-left.text-md-right
-							span.d-block.d-md-none Total Input:
-							- var currencyValue = totalIOValues.input;
-							include ./value-display.pug
-					
+							if (totalIOValues.input > 0)
+								span.d-block.d-md-none Total Input:
+								- var currencyValue = totalIOValues.input;
+								include ./value-display.pug
 			
 			
 
