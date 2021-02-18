@@ -198,7 +198,7 @@ block content
 											else
 												small.data-tag.bg-primary #{minerInfo.name}
 
-							else if (!mempoolDetails && global.getindexinfo && !global.getindexinfo.txindex)
+							else if (!mempoolDetails && !global.txindex)
 								div.row
 									div.summary-table-label Fee Paid
 									div.summary-table-content.text-monospace

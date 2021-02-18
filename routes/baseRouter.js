@@ -543,10 +543,14 @@ router.post("/search", function(req, res, next) {
 		}).catch(function(err) {
 			coreApi.getBlockByHash(query).then(function(blockByHash) {
 				res.redirect("./block/" + query);
+
 			}).catch(function(err) {
 				req.session.userMessage = "No results found for query: " + query;
-				if (global.getindexinfo && !global.getindexinfo.txindex)
+
+				if (!global.txindex) {
 					req.session.userMessage += noTxIndexMsg;
+				}
+				
 				res.redirect("./");
 			});
 		});
@@ -857,8 +861,9 @@ router.get("/tx/:transactionId", function(req, res, next) {
 	}).catch(function(err) {
 		res.locals.userMessageMarkdown = `Failed to load transaction: txid=**${txid}**`;
 
-		if (global.getindexinfo && !global.getindexinfo.txindex)
+		if (!global.txindex) {
 			res.locals.userMessageMarkdown += noTxIndexMsg;
+		}
 
 		res.locals.pageErrors.push(utils.logError("1237y4ewssgt", err));
 

@@ -257,8 +257,9 @@ function getRawTransaction(txid, blockhash) {
 				resolve(result);
 
 			}).catch(function(err) {
-				if (global.getindexinfo && !global.getindexinfo.txindex && !blockhash) {
+				if (!global.txindex && !blockhash) {
 					noTxIndexTransactionLookup(txid).then(resolve, reject);
+					
 				} else {
 					reject(err);
 				}

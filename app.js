@@ -217,6 +217,10 @@ function onRpcConnectionVerified(getnetworkinfo, getblockchaininfo, getindexinfo
 	global.getnetworkinfo = getnetworkinfo;
 	global.getindexinfo = getindexinfo;
 
+	if (getindexinfo.txindex) {
+		global.txindex = true;
+	}
+
 	var bitcoinCoreVersionRegex = /^.*\/Satoshi\:(.*)\/.*$/;
 
 	var match = bitcoinCoreVersionRegex.exec(getnetworkinfo.subversion);
@@ -438,6 +442,9 @@ app.continueStartup = function() {
 	};
 
 	global.rpcClientNoTimeout = new bitcoinCore(rpcClientNoTimeoutProperties);
+
+	// default value - after we connect via RPC, if txindex is enabled we update this
+	global.txindex = false;
 
 
 	// keep trying to verify rpc connection until we succeed
