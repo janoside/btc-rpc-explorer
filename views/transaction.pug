@@ -9,6 +9,16 @@ block headContent
 		
 
 block content
+	if (!global.txindex && (!result || !result.getrawtransaction))
+		h1.h3.word-wrap Transaction 
+			br
+			small.text-monospace #{txid}
+		hr
+
+		div.alert.alert-warning.pb-0(role="alert")
+			h6.mb-2 Transaction Details Unavailable
+			| !{markdown(noTxIndexMsg)}
+
 	if (result && result.getrawtransaction)
 		h1.h3.word-wrap Transaction 
 			br

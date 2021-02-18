@@ -859,13 +859,11 @@ router.get("/tx/:transactionId", function(req, res, next) {
 		});
 
 	}).catch(function(err) {
-		res.locals.userMessageMarkdown = `Failed to load transaction: txid=**${txid}**`;
-
 		if (!global.txindex) {
-			res.locals.userMessageMarkdown += noTxIndexMsg;
+			res.locals.noTxIndexMsg = noTxIndexMsg;
 		}
 
-		res.locals.pageErrors.push(utils.logError("1237y4ewssgt", err));
+		utils.logError("1237y4ewssgt", err);
 
 		res.render("transaction");
 
