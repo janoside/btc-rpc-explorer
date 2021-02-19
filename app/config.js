@@ -49,7 +49,8 @@ for (var i = 0; i < electrumXServerUriStrings.length; i++) {
 	"BTCEXP_DEMO",
 	"BTCEXP_PRIVACY_MODE",
 	"BTCEXP_NO_INMEMORY_RPC_CACHE",
-	"BTCEXP_RPC_ALLOWALL"
+	"BTCEXP_RPC_ALLOWALL",
+	"BTCEXP_ELECTRUM_TXINDEX",
 
 ].forEach(function(item) {
 	if (process.env[item] === undefined) {
@@ -170,6 +171,7 @@ module.exports = {
 	],
 
 	addressApi:process.env.BTCEXP_ADDRESS_API,
+	electrumTxIndex:process.env.BTCEXP_ELECTRUM_TXINDEX != "false",
 	electrumXServers:electrumXServers,
 
 	redisUrl:process.env.BTCEXP_REDIS_URL,
