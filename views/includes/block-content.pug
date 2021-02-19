@@ -116,7 +116,7 @@ div.tab-content
 										- var sizeDeltaData = utils.formatLargeNumber(Math.abs(result.blockstats.utxo_size_inc), 1);
 										- var plusMinus = (result.blockstats.utxo_increase > 0) ? "+" : "";
 										if (result.blockstats.utxo_increase)
-											span #{plusMinus}#{result.blockstats.utxo_increase.toLocaleString()} 
+											span #{plusMinus}#{result.blockstats.utxo_increase.toLocaleString()}
 												span.text-muted (#{sizePlusMinus}#{sizeDeltaData[0]} 
 													small #{sizeDeltaData[1].abbreviation}B
 													span )
@@ -378,7 +378,7 @@ div.tab-content
 							else
 								span Transactions
 
-						if (global.txindex)
+						if (global.txindexAvailable)
 							a.ml-2.border-dotted(href=`./block-analysis/${result.getblock.hash}`, title="See a summary analysis of all transactions in this block.", data-toggle="tooltip") See Block Analysis &raquo;
 
 					if (false || (!config.demoSite && !crawlerBot && txCount > 20))
@@ -401,7 +401,7 @@ div.tab-content
 				- var fontawesomeOutputName = "sign-out-alt";
 
 				div
-					- tx_height_param = !global.txindex ? `@${result.getblock.height}` : ''
+					- tx_height_param = !global.txindexAvailable ? `@${result.getblock.height}` : ''
 					each tx, txIndex in result.transactions
 						//pre
 						//	code.json.bg-light #{JSON.stringify(tx, null, 4)}

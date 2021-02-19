@@ -15,7 +15,7 @@ block content
 			a.btn.btn-sm.btn-primary.mb-1(href=("./block/" + result.getblock.hash)) &laquo; Block Details: 
 				span.text-monospace ##{result.getblock.height.toLocaleString()}
 
-	if (!global.txindex)
+	if (!global.txindexAvailable)
 		div.alert.alert-warning.pb-0(role="alert")
 			h6.mb-2 Block Analysis Unavailable
 			- var msgMarkdown = "Your node does not have `txindex` enabled. Without it, running a block analysis is unsupported due to the inability to reliably retrieve transaction details.";
@@ -278,7 +278,7 @@ block endOfBody
 	script(src='./js/decimal.js')
 	script.
 		var txidChunkSize = !{txidChunkSize};
-		var txindexAvailable = !{global.txindex};
+		var txindexAvailable = !{global.txindexAvailable};
 		var txidChunks = !{JSON.stringify(utils.splitArrayIntoChunks(result.getblock.tx, txidChunkSize))};
 		var blockHeight = !{result.getblock.height};
 		var satsMultiplier = !{coinConfig.baseCurrencyUnit.multiplier};
