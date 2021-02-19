@@ -316,6 +316,12 @@ block content
 											pre
 												code.json #{JSON.stringify(err, null, 4)}
 
+								else if (!global.txindexAvailable && transactions.length == 0)
+									ol.text-monospace(start=(offset + 1))
+										each txid in txids
+											li
+												a(href=`./tx/${txid}`) #{txid}
+
 								else if (transactions.length == 0)
 									span No transactions found
 
