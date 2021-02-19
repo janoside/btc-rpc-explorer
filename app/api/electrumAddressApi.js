@@ -323,6 +323,25 @@ function getAddressBalance(addrScripthash) {
 	});
 }
 
+// Lookup the confirming block hash of a given txid. This only works with Electrs.
+// https://github.com/romanz/electrs/commit/a0a3d4f9392e21f9e92fdc274c88fed6d0634794
+function lookupTxBlockHash(txid) {
+	if (electrumClients.length == 0) {
+		return Promise.reject({ error: "No ElectrumX Connection", userText: noConnectionsErrorText });
+	}
+
+	return runOnAllServers(function(electrumClient) {
+		return electrumClient.request('blockchain.transaction.get_confirmed_blockhash', [txid]);
+	}).then(function(results) {
+		var blockhash = results[0].result;
+		if (results.slice(1).every(({ result }) => result == blockhash)) {
+			return blockhash;
+		} else {
+			return Promise.reject({conflictedResults:results});
+		}
+	});
+}
+
 function logStats(cmd, dt, success) {
 	if (!global.electrumStats.rpc[cmd]) {
 		global.electrumStats.rpc[cmd] = {count:0, time:0, successes:0, failures:0};
@@ -341,6 +360,7 @@ function logStats(cmd, dt, success) {
 
 module.exports = {
 	connectToServers: connectToServers,
-	getAddressDetails: getAddressDetails
+	getAddressDetails: getAddressDetails,
+	lookupTxBlockHash: lookupTxBlockHash,
 };
 
