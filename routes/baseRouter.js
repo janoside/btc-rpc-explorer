@@ -547,7 +547,7 @@ router.post("/search", function(req, res, next) {
 			}).catch(function(err) {
 				req.session.userMessage = "No results found for query: " + query;
 
-				if (!global.txindex) {
+				if (!global.txindexAvailable) {
 					req.session.userMessage += noTxIndexMsg;
 				}
 				
@@ -864,7 +864,7 @@ router.get("/tx/:transactionId", function(req, res, next) {
 		});
 
 	}).catch(function(err) {
-		if (!global.txindex) {
+		if (!global.txindexAvailable) {
 			res.locals.noTxIndexMsg = noTxIndexMsg;
 		}
 

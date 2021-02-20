@@ -218,7 +218,7 @@ function onRpcConnectionVerified(getnetworkinfo, getblockchaininfo, getindexinfo
 	global.getindexinfo = getindexinfo;
 
 	if (getindexinfo.txindex) {
-		global.txindex = true;
+		global.txindexAvailable = true;
 	}
 
 	if (getblockchaininfo.pruned) {
@@ -448,7 +448,7 @@ app.continueStartup = function() {
 	global.rpcClientNoTimeout = new bitcoinCore(rpcClientNoTimeoutProperties);
 
 	// default values - after we connect via RPC, we update this
-	global.txindex = false;
+	global.txindexAvailable = false;
 	global.prunedBlockchain = false;
 
 

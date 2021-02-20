@@ -840,7 +840,7 @@ function summarizeBlockAnalysisData(blockHeight, tx, inputs) {
 
 function getRawTransactionsWithInputs(txids, maxInputs=-1, blockhash) {
 	// Get just the transactions without their prevouts when txindex is disabled
-	if (!global.txindex) {
+	if (!global.txindexAvailable) {
 		return getRawTransactions(txids, blockhash)
 			.then(transactions => ({ transactions, txInputsByTransaction: {} }))
 	}
