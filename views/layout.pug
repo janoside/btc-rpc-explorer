@@ -154,7 +154,7 @@ html(lang="en")
 
 				if (userMessage)
 					div.alert(class=(userMessageType ? `alert-${userMessageType}` : "alert-warning"), role="alert")
-						| !{markdown(userMessage)}
+						span #{userMessage}
 							
 				
 				div(style="min-height: 500px;")
