@@ -15,10 +15,10 @@ block content
 			a.btn.btn-sm.btn-primary.mb-1(href=("./block/" + result.getblock.hash)) &laquo; Block Details: 
 				span.text-monospace ##{result.getblock.height.toLocaleString()}
 
-	if (!global.txindexAvailable)
+	if (block && (!block.tx || block.tx.length == 0) && global.prunedBlockchain)
 		div.alert.alert-warning.pb-0(role="alert")
 			h6.mb-2 Block Analysis Unavailable
-			- var msgMarkdown = "Your node does not have `txindex` enabled. Without it, running a block analysis is unsupported due to the inability to reliably retrieve transaction details.";
+			- var msgMarkdown = "Blockchain `pruning` is enabled on your node. This setting tells your node that after validating transactions it may discard data that is non-essential for future validation needs.\n\nThis block has been pruned, meaning that all non-essential data has been deleted, including the data needed for a block analysis.";
 			| !{markdown(msgMarkdown)}
 
 	else
@@ -278,14 +278,14 @@ block endOfBody
 	script(src='./js/decimal.js')
 	script.
 		var txidChunkSize = !{txidChunkSize};
-		var txindexAvailable = !{global.txindexAvailable};
+		var prunedBlock = !{(block && (!block.tx || block.tx.length == 0) && global.prunedBlockchain)};
 		var txidChunks = !{JSON.stringify(utils.splitArrayIntoChunks(result.getblock.tx, txidChunkSize))};
 		var blockHeight = !{result.getblock.height};
 		var satsMultiplier = !{coinConfig.baseCurrencyUnit.multiplier};
 		var vByteSizes = false;
 
 		$(document).ready(function() {
-			if (txindexAvailable) {
+			if (!prunedBlock) {
 				loadTransactions(txidChunks, txidChunkSize, txidChunks.length * txidChunkSize);
 			}
 		});

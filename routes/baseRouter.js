@@ -754,6 +754,7 @@ router.get("/block-analysis/:blockHashOrHeight", function(req, res, next) {
 		res.locals.result = {};
 
 		coreApi.getBlockByHash(blockHash).then(function(block) {
+			res.locals.block = block;
 			res.locals.result.getblock = block;
 
 			res.render("block-analysis");
