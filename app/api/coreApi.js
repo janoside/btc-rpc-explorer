@@ -897,6 +897,7 @@ function getBlockByHashWithTransactions(blockHash, txLimit, txOffset) {
 		getBlockByHash(blockHash).then(function(block) {
 			var txids = [];
 			
+			// to get miner info, always include the coinbase tx in the list
 			if (txOffset > 0) {
 				txids.push(block.tx[0]);
 			}
@@ -912,7 +913,7 @@ function getBlockByHashWithTransactions(blockHash, txLimit, txOffset) {
 					block.miner = utils.getMinerFromCoinbaseTx(block.coinbaseTx);
 				}
 
-				// if we're on page 2, we don't really want the coinbase tx in the tx list anymore
+				// if we're on page 2+, drop the coinbase tx that was added in order to get miner info
 				if (txOffset > 0) {
 					txsResult.transactions.shift();
 				}
