@@ -142,6 +142,10 @@ app.use(session({
 
 app.use(config.baseUrl, express.static(path.join(__dirname, 'public')));
 
+if (config.baseUrl != '/') {
+	app.get('/', (req, res) => res.redirect(config.baseUrl));
+}
+
 process.on("unhandledRejection", (reason, p) => {
 	debugLog("Unhandled Rejection at: Promise", p, "reason:", reason, "stack:", (reason != null ? reason.stack : "null"));
 });
@@ -461,20 +465,20 @@ app.onStartup = function() {
 			if (err) {
 				utils.logError("3fehge9ee", err, {desc:"Error accessing git repo"});
 
-				debugLog(`Starting ${global.coinConfig.ticker} RPC Explorer, v${global.appVersion} (code: unknown commit) at ${config.host}:${config.port}${config.baseUrl}`);
+				debugLog(`Starting ${global.coinConfig.ticker} RPC Explorer, v${global.appVersion} (code: unknown commit) at http://${config.host}:${config.port}${config.baseUrl}`);
 
 			} else {
 				global.sourcecodeVersion = log.all[0].hash.substring(0, 10);
 				global.sourcecodeDate = log.all[0].date.substring(0, "0000-00-00".length);
 
-				debugLog(`Starting ${global.coinConfig.ticker} RPC Explorer, v${global.appVersion} (commit: '${global.sourcecodeVersion}', date: ${global.sourcecodeDate}) at ${config.host}:${config.port}${config.baseUrl}`);
+				debugLog(`Starting ${global.coinConfig.ticker} RPC Explorer, v${global.appVersion} (commit: '${global.sourcecodeVersion}', date: ${global.sourcecodeDate}) at http://${config.host}:${config.port}${config.baseUrl}`);
 			}
 
 			app.continueStartup();
 		});
 
 	} else {
-		debugLog(`Starting ${global.coinConfig.ticker} RPC Explorer, v${global.appVersion} at ${config.host}:${config.port}${config.baseUrl}`);
+		debugLog(`Starting ${global.coinConfig.ticker} RPC Explorer, v${global.appVersion} at http://${config.host}:${config.port}${config.baseUrl}`);
 
 		app.continueStartup();
 	}
@@ -685,6 +689,7 @@ app.use(function(req, res, next) {
 	var memdiff = process.memoryUsage().heapUsed - req.startMem;
 
 	debugPerfLog("Finished action '%s' in %d ms", req.path, time);
+	next();
 });
 
 /// catch 404 and forwarding to error handler
