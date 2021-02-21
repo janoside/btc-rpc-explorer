@@ -813,8 +813,11 @@ router.get("/tx/:transactionId", function(req, res, next) {
 	res.locals.result = {};
 
 	var txPromise = req.query.blockHeight
-		? coreApi.getBlockHashByHeight(parseInt(req.query.blockHeight))
-				.then(blockhash => coreApi.getRawTransactionsWithInputs([txid], -1, blockhash))
+		? coreApi.getBlockByHeight(parseInt(req.query.blockHeight))
+				.then(block => {
+					res.locals.block = block;
+					return coreApi.getRawTransactionsWithInputs([txid], -1, block.hash)
+				})
 		: coreApi.getRawTransactionsWithInputs([txid], -1);
 
 	txPromise.then(function(rawTxResult) {

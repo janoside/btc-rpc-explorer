@@ -15,6 +15,32 @@ block content
 			small.text-monospace #{txid}
 		hr
 
+		if (block)
+			div.card.shadow-sm.mb-3
+				div.card-body.px-2.px-md-3
+					h2.h6.mb-0 Summary
+					hr
+
+					div.clearfix
+						div.row
+							div.summary-table-label Block
+							div.summary-table-content.text-monospace
+								a(href=("./block/" + block.hash)) ##{block.height.toLocaleString()}
+
+						div.row
+							div.summary-table-label Date
+							div.summary-table-content.text-monospace
+								if (block.time)
+									td.text-monospace
+										- var timestampHuman = block.time;
+										include includes/timestamp-human.pug
+										small.ml-1 utc
+
+										- var timeAgoTime = block.time;
+										span.text-muted.ml-2 (
+											include includes/time-ago-text.pug
+											span  ago)
+
 		div.alert.alert-warning.pb-0(role="alert")
 			h6.mb-2 Transaction Details Unavailable
 
