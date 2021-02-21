@@ -410,6 +410,9 @@ router.get("/blocks", function(req, res, next) {
 	res.locals.sort = sort;
 	res.locals.paginationBaseUrl = "./blocks";
 
+	// if pruning is active, global.pruneHeight is used when displaying this page
+	// global.pruneHeight is updated whenever we send a getblockchaininfo RPC to the node
+
 	coreApi.getBlockchainInfo().then(function(getblockchaininfo) {
 		res.locals.blockCount = getblockchaininfo.blocks;
 		res.locals.blockOffset = offset;

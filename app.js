@@ -223,6 +223,7 @@ function onRpcConnectionVerified(getnetworkinfo, getblockchaininfo, getindexinfo
 
 	if (getblockchaininfo.pruned) {
 		global.prunedBlockchain = true;
+		global.pruneHeight = getblockchaininfo.pruneheight;
 	}
 
 	var bitcoinCoreVersionRegex = /^.*\/Satoshi\:(.*)\/.*$/;
@@ -450,6 +451,7 @@ app.continueStartup = function() {
 	// default values - after we connect via RPC, we update this
 	global.txindexAvailable = false;
 	global.prunedBlockchain = false;
+	global.pruneHeight = -1;
 
 
 	// keep trying to verify rpc connection until we succeed

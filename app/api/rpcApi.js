@@ -31,7 +31,18 @@ global.rpcStats = {};
 
 
 function getBlockchainInfo() {
-	return getRpcData("getblockchaininfo");
+	return new Promise((resolve, reject) => {
+		getRpcData("getblockchaininfo").then((getblockchaininfo) => {
+			// keep global.pruneHeight updated
+			if (getblockchaininfo.pruned) {
+				global.pruneHeight = getblockchaininfo.pruneheight;
+			}
+
+			resolve(getblockchaininfo);
+			
+		}).catch(reject);
+	});
+	
 }
 
 function getNetworkInfo() {
