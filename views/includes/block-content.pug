@@ -158,20 +158,20 @@ div.tab-content
 									div(class=sumTableLabelClass) Weight
 									div.text-monospace(class=sumTableValueClass)
 										span #{result.getblock.weight.toLocaleString()} 
-											small wu 
+											small wu
 
 										span.text-muted  (#{new Decimal(100 * result.getblock.weight / coinConfig.maxBlockWeight).toDecimalPlaces(2)}% full)
 										
-
-							div.row
-								div(class=sumTableLabelClass) Size
-								div.text-monospace(class=sumTableValueClass) #{result.getblock.size.toLocaleString()} 
-									small B
+							if (result.getblock.size)
+								div.row
+									div(class=sumTableLabelClass) Size
+									div.text-monospace(class=sumTableValueClass) #{result.getblock.size.toLocaleString()}
+										small  B
 
 							if (result.getblock.miner)
 								div.row
-									div.summary-split-table-label Miner
-									div.summary-split-table-content.text-monospace.mb-0
+									div(class=sumTableLabelClass) Miner
+									div.text-monospace(class=sumTableValueClass)
 										if (result.getblock.miner.identifiedBy)
 											small.data-tag.bg-primary(data-toggle="tooltip", title=("Identified by: " + result.getblock.miner.identifiedBy)) #{result.getblock.miner.name}
 
@@ -381,8 +381,6 @@ div.tab-content
 
 				div
 					each tx, txIndex in result.transactions
-						//pre
-						//	code.json.bg-light #{JSON.stringify(tx, null, 4)}
 						div.card.shadow-sm(class=(" " + ((txIndex < (result.transactions.length - 1) || txCount > limit) ? "mb-3" : "")))
 							div.card-header.text-monospace
 								if (tx && tx.txid)
@@ -396,17 +394,13 @@ div.tab-content
 											i.fas.fa-certificate.text-primary
 										
 							div.card-body.px-2.px-md-3
-								//pre
-								//	code.json.bg-light #{JSON.stringify(result.txInputsByTransaction[tx.txid], null, 4)}
 								if (true)
 									- var txInputs = result.txInputsByTransaction[tx.txid];
 									- var blockHeight = result.getblock.height;
 
 									include ./transaction-io-details.pug
 									
-						//pre
-						//	code.json.bg-light #{JSON.stringify(tx, null, 4)}
-
+						
 					if (!crawlerBot && txCount > limit)
 						- var pageNumber = offset / limit + 1;
 						- var pageCount = Math.floor(txCount / limit);
