@@ -320,7 +320,9 @@ block content
 									ol.text-monospace(start=(offset + 1))
 										each txid in txids
 											li
-												a(href=`./tx/${txid}`) #{txid}
+												- var blockHeight = addressDetails.blockHeightsByTxid[txid];
+												- var blockHeightParam = blockHeight > 0 ? `@${blockHeight}` : "";
+												a(href=`./tx/${txid}${blockHeightParam}`) #{txid}
 
 								else if (transactions.length == 0)
 									span No transactions found
