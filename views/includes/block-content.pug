@@ -360,7 +360,7 @@ div.tab-content
 									span.text-muted  (#{result.getblock.chainwork.replace(/^0+/, '')})
 									
 
-		if (!result.getblock.tx.length)
+		if (!result.getblock.tx || result.getblock.tx.length == 0)
 			div.card.shadow-sm.mb-3: div.card-body.px-2.px-md-3
 				h2.h6.mb-0.d-inline-block #{txCount.toLocaleString()} Transaction#{txCount>1?'s':''}
 				.text-muted.pt-2
