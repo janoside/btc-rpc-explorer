@@ -22,7 +22,7 @@ ul.nav.nav-tabs.mb-3
 	li.nav-item
 		a.nav-link(data-toggle="tab", href="#tab-json", role="tab") JSON
 
-- var txCount = result.getblock.nTx
+- var txCount = result.getblock.nTx;
 
 div.tab-content
 	div.tab-pane.active(id="tab-details", role="tabpanel")
@@ -140,7 +140,7 @@ div.tab-content
 										else
 											span 0
 
-							if result.getblock.coinbaseTx
+							if (result.getblock.coinbaseTx)
 								- var blockRewardMax = coinConfig.blockRewardFunction(result.getblock.height, activeBlockchain);
 								- var coinbaseTxTotalOutputValue = new Decimal(0);
 								each vout in result.getblock.coinbaseTx.vout
