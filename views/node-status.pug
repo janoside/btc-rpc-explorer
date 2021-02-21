@@ -60,13 +60,23 @@ block content
 
 							if (getblockchaininfo.pruned)
 								div.row
-									div.summary-table-label Prune Status
+									div.summary-table-label
+										span.border-dotted(title="Whether your node prunes the blockchain. With pruning active, your node will delete some data that is non-essential for future verification needs, in order to reduce disk usage.", data-toggle="tooltip") Pruning?
 									div.summary-table-content.text-monospace
-										span.text-warning Pruning active
+										span.font-weight-bold Yes
 										br
-										span.border-dotted(title="This is the latest block height for which your node has all block data; below this block height details have been deleted via pruning.", data-toggle="tooltip") Prune height
+										span.border-dotted(title="This is the latest block for which your node has all block data; blocks older than this one have had some or all non-essential details deleted via pruning.", data-toggle="tooltip") Prune height
 
 										span : #{getblockchaininfo.pruneheight.toLocaleString()}
+
+										br
+
+										span.border-dotted(title="This is the approximate amount of non-essential blockchain data that your node will store.", data-toggle="tooltip") Prune target size
+
+										span : 
+											- var pruneTargetSize = utils.formatLargeNumber(getblockchaininfo.prune_target_size, 2);
+									
+											span #{pruneTargetSize[0]} #{pruneTargetSize[1].abbreviation}B
 
 							div.row
 								div.summary-table-label Indexes
@@ -78,7 +88,7 @@ block content
 											if (getindexinfo.txindex)
 												span.text-success available
 											else
-												span.text-danger unavailable
+												span.text-danger.border-dotted(title="Your node's lack of a 'transaction index' means this explorer will be unable to show all blockchain data. See the project README for more details.", data-toggle="tooltip") unavailable
 
 										li
 											span.font-weight-bold blockfilterindex
