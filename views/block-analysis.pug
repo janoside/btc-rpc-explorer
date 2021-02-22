@@ -12,7 +12,7 @@ block content
 
 	div.mb-2
 		if (result.getblock)
-			a.btn.btn-sm.btn-primary.mb-1(href=("./block/" + result.getblock.hash)) &laquo; Block Details: 
+			a.btn.btn-sm.btn-primary.mb-1(href=`./block/${result.getblock.hash}`) &laquo; Block Details: 
 				span.text-monospace ##{result.getblock.height.toLocaleString()}
 
 	if (block && (!block.tx || block.tx.length == 0) && global.prunedBlockchain)

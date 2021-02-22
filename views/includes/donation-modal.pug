@@ -60,7 +60,7 @@
 										span #{config.donations.addresses[coin].address}
 									else
 										span #{coin}: 
-										a.text-wrap(href=(config.donations.addresses.sites[coin] + "/address/" + config.donations.addresses[coin].address)) #{config.donations.addresses[coin].address}
+										a.text-wrap(href=`${config.donations.addresses.sites[coin]}/address/${config.donations.addresses[coin].address}`) #{config.donations.addresses[coin].address}
 
 						each coin, index in config.donations.addresses.coins
 							div.text-center.mb-3.word-wrap.text-monospace(style="display: inline-block; max-width: 150px;", class=(index > 0 ? "ml-md-3" : false))

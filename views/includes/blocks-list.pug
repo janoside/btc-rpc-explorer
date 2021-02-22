@@ -58,10 +58,10 @@ div.table-responsive
 
 						td.data-cell.text-monospace.text-right
 							if (global.specialBlocks && global.specialBlocks[block.hash])
-								a(data-toggle="tooltip", title=(coinConfig.name + " Fun! See block for details"))
+								a(data-toggle="tooltip", title=`${coinConfig.name} Fun! See block for details`)
 									i.fas.fa-certificate.text-primary.mr-1
 
-							a(href=("./block-height/" + block.height)) #{block.height.toLocaleString()}
+							a(href=`./block-height/${block.height}`) #{block.height.toLocaleString()}
 						
 
 						- var timeAgoTime = moment.utc(new Date()).diff(moment.utc(new Date(parseInt(block.time) * 1000)));
@@ -116,7 +116,7 @@ div.table-responsive
 						
 						td.data-cell.text-monospace.text-right
 							if (block.miner && block.miner.name)
-								small.rounded.bg-primary.text-white.px-2.py-1(data-toggle="tooltip", title=("Identified by: " + block.miner.identifiedBy)) #{utils.ellipsize(block.miner.name, 10)}
+								small.rounded.bg-primary.text-white.px-2.py-1(data-toggle="tooltip", title=`Identified by: ${block.miner.identifiedBy}`) #{utils.ellipsize(block.miner.name, 10)}
 							else
 								span ?
 
@@ -195,7 +195,7 @@ div.table-responsive
 											i.fas.fa-ellipsis-h.text-muted
 
 										div.progress(style="height: 4px;")
-											div.progress-bar(role="progressbar", style=("width: " + fullPercent + "%;"), aria-valuenow=parseInt(100 * block.weight / coinConfig.maxBlockWeight), aria-valuemin="0" ,aria-valuemax="100")
+											div.progress-bar(role="progressbar", style=`width: ${fullPercent}%;`, aria-valuenow=parseInt(100 * block.weight / coinConfig.maxBlockWeight), aria-valuemin="0" ,aria-valuemax="100")
 								else
 									span(title="This data is unavailable due to blockchain pruning", data-toggle="tooltip")
 										i.fas.fa-backspace.text-danger
@@ -209,7 +209,7 @@ div.table-responsive
 								small.font-weight-light.text-muted (#{fullPercent}%)
 
 								div.progress(style="height: 4px;")
-									div.progress-bar(role="progressbar", style=("width: " + fullPercent + "%;"), aria-valuenow=parseInt(100 * block.size / coinConfig.maxBlockSize), aria-valuemin="0" ,aria-valuemax="100")
+									div.progress-bar(role="progressbar", style=`width: ${fullPercent}%;`, aria-valuenow=parseInt(100 * block.size / coinConfig.maxBlockSize), aria-valuemin="0" ,aria-valuemax="100")
 
 						else
 							td.data-cell.text-monospace.text-right

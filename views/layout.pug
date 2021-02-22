@@ -20,7 +20,7 @@ html(lang="en")
 		
 		link(rel='stylesheet', href='./css/styling.css')
 
-		link(rel="icon", type="image/png", href=("./img/logo/" + config.coin.toLowerCase() + ".png"))
+		link(rel="icon", type="image/png", href=`./img/logo/${config.coin.toLowerCase()}.png`)
 
 		include includes/debug-overrides.pug
 
@@ -108,7 +108,7 @@ html(lang="en")
 										span.dropdown-header Currency Units
 										each item in coinConfig.currencyUnits
 											if (item.type == "native" || (config.queryExchangeRates && !config.privacyMode))
-												a.dropdown-item(href=("./changeSetting?name=currencyFormatType&value=" + item.values[0]))
+												a.dropdown-item(href=`./changeSetting?name=currencyFormatType&value=${item.values[0]}`)
 													each valueName in item.values
 														if (currencyFormatType == valueName)
 															i.fas.fa-check
@@ -195,7 +195,7 @@ html(lang="en")
 								if (sourcecodeVersion)
 									br
 									span commit: 
-										a(href=("https://github.com/janoside/btc-rpc-explorer/commit/" + sourcecodeVersion)) #{sourcecodeVersion}
+										a(href=`https://github.com/janoside/btc-rpc-explorer/commit/${sourcecodeVersion}`) #{sourcecodeVersion}
 								
 								br
 								span released: #{sourcecodeDate}

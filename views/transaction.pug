@@ -25,7 +25,7 @@ block content
 						div.row
 							div.summary-table-label Block
 							div.summary-table-content.text-monospace
-								a(href=("./block/" + block.hash)) ##{block.height.toLocaleString()}
+								a(href=`./block/${block.hash}`) ##{block.height.toLocaleString()}
 
 						div.row
 							div.summary-table-label Date
@@ -146,7 +146,7 @@ block content
 								div.row
 									div.summary-table-label Block
 									div.summary-table-content.text-monospace
-										a(href=("./block/" + result.getrawtransaction.blockhash)) ##{result.getblock.height.toLocaleString()}
+										a(href=`./block/${result.getrawtransaction.blockhash}`) ##{result.getblock.height.toLocaleString()}
 
 							if (isTxConfirmed)
 								div.row
@@ -188,7 +188,7 @@ block content
 									div.summary-table-content.text-monospace
 										if (result.getrawtransaction.locktime < 500000000)
 											span Spendable in block 
-											a(href=("./block-height/" + result.getrawtransaction.locktime)) ##{result.getrawtransaction.locktime.toLocaleString()}
+											a(href=`./block-height/${result.getrawtransaction.locktime}`) ##{result.getrawtransaction.locktime.toLocaleString()}
 											span  or later 
 											a(href="https://bitcoin.org/en/developer-guide#locktime-and-sequence-number", data-toggle="tooltip", title="More info about locktime", target="_blank") 
 												i.fas.fa-info-circle
@@ -235,7 +235,7 @@ block content
 										div.summary-table-label Miner
 										div.summary-table-content.text-monospace
 											if (minerInfo.identifiedBy)
-												small.data-tag.bg-primary(data-toggle="tooltip", title=("Identified by: " + minerInfo.identifiedBy)) #{minerInfo.name}
+												small.data-tag.bg-primary(data-toggle="tooltip", title=`Identified by: ${minerInfo.identifiedBy}`) #{minerInfo.name}
 
 											else
 												small.data-tag.bg-primary #{minerInfo.name}
@@ -259,7 +259,7 @@ block content
 										if (feePaid > 0 && totalInputValue > 0)
 											- var item1 = utils.formatCurrencyAmount(totalInputValue, currencyFormatType);
 											- var item2 = utils.formatCurrencyAmount(totalOutputValue, currencyFormatType);
-											span.ml-2(title=(item1.simpleVal + " - " + item2.simpleVal), data-toggle="tooltip")
+											span.ml-2(title=`${item1.simpleVal} - ${item2.simpleVal}`, data-toggle="tooltip")
 												i.fas.fa-ellipsis-h
 
 								if (feePaid > 0)
@@ -356,7 +356,7 @@ block content
 								ol.mb-0
 									each ancestorTxid, ancestorIndex in mempoolDetails.ancestors
 										li
-											a.text-monospace(href=("./tx/" + ancestorTxid)) #{ancestorTxid}
+											a.text-monospace(href=`./tx/${ancestorTxid}`) #{ancestorTxid}
 
 					if (mempoolDetails.descendants.length > 0)
 						div.card.shadow-sm.mb-3
@@ -372,7 +372,7 @@ block content
 								ol.mb-0
 									each descendantTxid, descendantIndex in mempoolDetails.descendants
 										li
-											a.text-monospace(href=("./tx/" + descendantTxid)) #{descendantTxid}
+											a.text-monospace(href=`./tx/${descendantTxid}`) #{descendantTxid}
 
 			div.tab-pane(id="tab-scripts", role="tabpanel")
 				div.card.shadow-sm.mb-3
@@ -389,7 +389,7 @@ block content
 								each vin, vinIndex in result.getrawtransaction.vin
 									tr
 										th.text-monospace
-											a(data-toggle="tooltip", title=("Input #" + vinIndex), style="white-space: nowrap;")
+											a(data-toggle="tooltip", title=`Input #${vinIndex}`, style="white-space: nowrap;")
 												span > 
 												span.font-weight-normal ##{vinIndex.toLocaleString()}
 
@@ -419,7 +419,7 @@ block content
 								each vout, voutIndex in result.getrawtransaction.vout
 									tr
 										th.text-monospace
-											a(data-toggle="tooltip", title=("Output #" + (voutIndex + 1)), style="white-space: nowrap;")
+											a(data-toggle="tooltip", title=`Output #${(voutIndex + 1)}`, style="white-space: nowrap;")
 												span < 
 												span.font-weight-normal ##{voutIndex.toLocaleString()}
 

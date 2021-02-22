@@ -207,7 +207,7 @@ div.row.index-summary
 						tr
 							th.px-2.px-lg-0.px-xl-2
 								i.fas.fa-money-bill-wave-alt.mr-1.summary-icon
-								span.border-dotted(data-toggle="tooltip", title=("Exchange-rate data from: " + coinConfig.exchangeRateData.jsonUrl)) Exchange Rate
+								span.border-dotted(data-toggle="tooltip", title=`Exchange-rate data from: ${coinConfig.exchangeRateData.jsonUrl}`) Exchange Rate
 							td.text-right.text-monospace
 								span #{utils.formatValueInActiveCurrency(1.0)}
 
@@ -225,7 +225,7 @@ div.row.index-summary
 						tr
 							th.px-2.px-lg-0.px-xl-2
 								i.fas.fa-mountain.mr-1.summary-icon
-								span.border-dotted(data-toggle="tooltip", title=("Exchange-rate data from: " + coinConfig.goldExchangeRateData.jsonUrl)) AU Exchange Rate
+								span.border-dotted(data-toggle="tooltip", title=`Exchange-rate data from: ${coinConfig.goldExchangeRateData.jsonUrl}`) AU Exchange Rate
 							td.text-right.text-monospace
 								span #{utils.formatValueInGold(1.0)}
 

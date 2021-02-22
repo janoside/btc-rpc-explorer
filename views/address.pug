@@ -129,7 +129,7 @@ block content
 												if (getblockchaininfo)
 													span Block ##{(getblockchaininfo.blocks - firstSeenTransaction.confirmations).toLocaleString()}
 												else
-													a(href=("./block/" + firstSeenTransaction.blockhash)) #{firstSeenTransaction.blockhash}
+													a(href=`./block/${firstSeenTransaction.blockhash}`) #{firstSeenTransaction.blockhash}
 
 												br
 
@@ -264,11 +264,11 @@ block content
 												span Oldest First
 
 										div.dropdown-menu.dropdown-menu-right
-											a.dropdown-item(href=("./address/" + address))
+											a.dropdown-item(href=`./address/${address}`)
 												if (sort == "desc")
 													i.fa.fa-check 
 												span  Newest First
-											a.dropdown-item(href=("./address/" + address + "?sort=asc"))
+											a.dropdown-item(href=`./address/${address}?sort=asc`)
 												if (sort != "desc")
 													i.fa.fa-check 
 												span  Oldest First
@@ -345,11 +345,11 @@ block content
 											div.row
 												div.col-md-8
 													if (tx && tx.txid)
-														a(href=("./tx/" + tx.txid)) #{tx.txid}
+														a(href=`./tx/${tx.txid}`) #{tx.txid}
 
 														if (global.specialTransactions && global.specialTransactions[tx.txid])
 															span  
-															a(data-toggle="tooltip", title=(coinConfig.name + " Fun! See transaction for details"))
+															a(data-toggle="tooltip", title=`${coinConfig.name} Fun! See transaction for details`)
 																i.fas.fa-certificate.text-primary
 
 													br
