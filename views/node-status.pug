@@ -57,8 +57,46 @@ block content
 								div.row
 									div.summary-table-label Blockchain Size
 									div.summary-table-content.text-monospace #{sizeData[0]} #{sizeData[1].abbreviation}B
+
+							if (getblockchaininfo.pruned)
+								div.row
+									div.summary-table-label
+										span.border-dotted(title="Whether your node prunes the blockchain. With pruning active, your node will delete some data that is non-essential for future verification needs, in order to reduce disk usage.", data-toggle="tooltip") Pruning?
+									div.summary-table-content.text-monospace
+										span.font-weight-bold Yes
 										br
-										span.text-muted  (pruned: #{getblockchaininfo.pruned})
+										span.border-dotted(title="This is the latest block for which your node has all block data; blocks older than this one have had some or all non-essential details deleted via pruning.", data-toggle="tooltip") Prune height
+
+										span : #{getblockchaininfo.pruneheight.toLocaleString()}
+
+										br
+
+										span.border-dotted(title="This is the approximate amount of non-essential blockchain data that your node will store.", data-toggle="tooltip") Prune target size
+
+										span : 
+											- var pruneTargetSize = utils.formatLargeNumber(getblockchaininfo.prune_target_size, 2);
+									
+											span #{pruneTargetSize[0]} #{pruneTargetSize[1].abbreviation}B
+
+							div.row
+								div.summary-table-label Indexes
+								div.summary-table-content.text-monospace
+									ul.list-unstyled
+										li
+											span.font-weight-bold txindex
+											| : 
+											if (getindexinfo.txindex)
+												span.text-success available
+											else
+												span.text-danger.border-dotted(title="Your node's lack of a 'transaction index' means this explorer will be unable to show all blockchain data. See the project README for more details.", data-toggle="tooltip") unavailable
+
+										li
+											span.font-weight-bold blockfilterindex
+											| : 
+											if (getindexinfo["basic block filter index"])
+												span.text-success available
+											else
+												span.text-danger unavailable
 
 							if (getblockchaininfo.softforks)
 								div.row
@@ -178,6 +216,8 @@ block content
 						a.nav-link(data-toggle="tab", href="#tab-getnettotals", role="tab") getnettotals
 					li.nav-item
 						a.nav-link(data-toggle="tab", href="#tab-getnetworkinfo", role="tab") getnetworkinfo
+					li.nav-item
+						a.nav-link(data-toggle="tab", href="#tab-getindexinfo", role="tab") getindexinfo
 				
 				div.tab-content
 					div.tab-pane.active(id="tab-getblockchaininfo", role="tabpanel")
@@ -209,5 +249,15 @@ block content
 								div.highlight
 									pre
 										code.json.bg-light(data-lang="json") #{JSON.stringify(getnetworkinfo, null, 4)}
+
+					div.tab-pane(id="tab-getindexinfo", role="tabpanel")
+						div.card.shadow-sm.mb-3
+							div.card-body
+								h4.h6.mb-0 getindexinfo
+								hr
+
+								div.highlight
+									pre
+										code.json.bg-light(data-lang="json") #{JSON.stringify(global.getindexinfo, null, 4)}
 							
 										

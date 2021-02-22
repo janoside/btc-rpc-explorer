@@ -9,6 +9,48 @@ block headContent
 		
 
 block content
+	if (!result || !result.getrawtransaction)
+		h1.h3.word-wrap Transaction 
+			br
+			small.text-monospace #{txid}
+		hr
+
+		if (block)
+			div.card.shadow-sm.mb-3
+				div.card-body.px-2.px-md-3
+					h2.h6.mb-0 Summary
+					hr
+
+					div.clearfix
+						div.row
+							div.summary-table-label Block
+							div.summary-table-content.text-monospace
+								a(href=("./block/" + block.hash)) ##{block.height.toLocaleString()}
+
+						div.row
+							div.summary-table-label Date
+							div.summary-table-content.text-monospace
+								if (block.time)
+									td.text-monospace
+										- var timestampHuman = block.time;
+										include includes/timestamp-human.pug
+										small.ml-1 utc
+
+										- var timeAgoTime = block.time;
+										span.text-muted.ml-2 (
+											include includes/time-ago-text.pug
+											span  ago)
+
+		div.alert.alert-warning.pb-0(role="alert")
+			h6.mb-2 Transaction Details Unavailable
+
+			if (blockHeight && global.prunedBlockchain && blockHeight < global.pruneHeight)
+				- var msgMarkdown = "Blockchain `pruning` is enabled on your node. This setting tells your node that after validating transactions it may discard data that is non-essential for future validation needs.\n\nThe block that contains this transaction has been pruned, meaning that non-essential data has been deleted, including the details of this transaction.";
+				| !{markdown(msgMarkdown)}
+				
+			else if (!global.txindexAvailable)
+				| !{markdown(noTxIndexMsg)}
+
 	if (result && result.getrawtransaction)
 		h1.h3.word-wrap Transaction 
 			br
@@ -198,9 +240,15 @@ block content
 											else
 												small.data-tag.bg-primary #{minerInfo.name}
 
+							else if (!mempoolDetails && !global.txindexAvailable)
+								div.row
+									div.summary-table-label Fee Paid
+									div.summary-table-content.text-monospace
+										span.border-dotted(title="Determining the fee of confirmed transactions requires txindex to be enabled", data-toggle="tooltip")
+											i.fas.fa-backspace.text-danger.mr-2
+											| ?
 							else
-
-								- var feePaid = new Decimal(totalInputValue).minus(totalOutputValue);
+								- var feePaid = mempoolDetails ? new Decimal(mempoolDetails.entry.fees.base) : new Decimal(totalInputValue).minus(totalOutputValue);
 
 								div.row
 									div.summary-table-label Fee Paid
@@ -208,7 +256,7 @@ block content
 										- var currencyValue = feePaid;
 										include includes/value-display.pug
 
-										if (feePaid > 0)
+										if (feePaid > 0 && totalInputValue > 0)
 											- var item1 = utils.formatCurrencyAmount(totalInputValue, currencyFormatType);
 											- var item2 = utils.formatCurrencyAmount(totalOutputValue, currencyFormatType);
 											span.ml-2(title=(item1.simpleVal + " - " + item2.simpleVal), data-toggle="tooltip")
@@ -219,16 +267,16 @@ block content
 										div.summary-table-label Fee Rate
 										div.summary-table-content.text-monospace
 											if (result.getrawtransaction.vsize != result.getrawtransaction.size)
-												span #{utils.addThousandsSeparators(new DecimalRounded(totalInputValue).minus(totalOutputValue).dividedBy(result.getrawtransaction.vsize).times(100000000))} 
+												span #{utils.addThousandsSeparators(new DecimalRounded(feePaid).dividedBy(result.getrawtransaction.vsize).times(100000000))} 
 												small sat/vB
 												br
 
-												span.text-muted (#{utils.addThousandsSeparators(new DecimalRounded(totalInputValue).minus(totalOutputValue).dividedBy(result.getrawtransaction.size).times(100000000))} 
+												span.text-muted (#{utils.addThousandsSeparators(new DecimalRounded(feePaid).dividedBy(result.getrawtransaction.size).times(100000000))} 
 													small sat/B
 													span )
 
 											else
-												span #{utils.addThousandsSeparators(new DecimalRounded(totalInputValue).minus(totalOutputValue).dividedBy(result.getrawtransaction.size).times(100000000))} 
+												span #{utils.addThousandsSeparators(new DecimalRounded(feePaid).dividedBy(result.getrawtransaction.size).times(100000000))} 
 													small sat/B
 
 							- var daysDestroyed = new Decimal(0);

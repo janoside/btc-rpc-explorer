@@ -37,9 +37,7 @@ router.get("/blocks-by-height/:blockHeights", function(req, res, next) {
 
 	coreApi.getBlocksByHeight(blockHeights).then(function(result) {
 		res.json(result);
-
-		next();
-	});
+	}).catch(next);
 });
 
 router.get("/block-headers-by-height/:blockHeights", function(req, res, next) {

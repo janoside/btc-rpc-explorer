@@ -399,6 +399,7 @@ module.exports = {
 			date: "2009-01-03",
 			chain: "main",
 			txid: "4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b",
+			blockHeight: 0,
 			summary: "The coinbase transaction of the Genesis Block.",
 			alertBodyHtml: "This transaction doesn't really exist! This is the coinbase transaction of the <a href='./block/000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f'>Bitcoin Genesis Block</a>. For more background about this special-case transaction, you can read <a href='https://github.com/bitcoin/bitcoin/issues/3303'>this brief discussion</a> among some of the <a href='https://bitcoin.org'>Bitcoin</a> developers.",
 			referenceUrl: "https://github.com/bitcoin/bitcoin/issues/3303"
@@ -408,6 +409,7 @@ module.exports = {
 			date: "2009-10-12",
 			chain: "main",
 			txid: "7dff938918f07619abd38e4510890396b1cef4fbeca154fb7aafba8843295ea2",
+			blockHeight: 24835,
 			summary: "First bitcoin traded for fiat currency.",
 			alertBodyHtml: "In this first-known BTC-to-fiat transaction, 5,050 BTC were exchanged for 5.02 USD, at an effective exchange rate of ~0.001 USD/BTC.",
 			referenceUrl: "https://twitter.com/marttimalmi/status/423455561703624704"
@@ -480,6 +482,7 @@ module.exports = {
 			date: "2015-07-07",
 			chain: "main",
 			txid: "bb41a757f405890fb0f5856228e23b715702d714d59bf2b1feb70d8b2b4e3e08",
+			blockHeight: 364292,
 			summary: "The Megatransaction",
 			alertBodyHtml: "This transaction filled the entire 1MB block, mostly sweeping weak brainwallets. At the time, it needed 25 seconds to validate.",
 			referenceUrl: "https://rusty.ozlabs.org/?p=522"
@@ -516,6 +519,7 @@ module.exports = {
 			date: "2017-08-24",
 			chain: "main",
 			txid: "8f907925d2ebe48765103e6845c06f1f2bb77c6adc1cc002865865eb5cfd5c1c",
+			blockHeight: 481824,
 			summary: "First SegWit transaction.",
 			referenceUrl: "https://twitter.com/KHS9NE/status/900553902923362304"
 		},
@@ -524,6 +528,7 @@ module.exports = {
 			date: "2014-06-16",
 			chain: "main",
 			txid: "143a3d7e7599557f9d63e7f224f34d33e9251b2c23c38f95631b3a54de53f024",
+			blockHeight: 306204,
 			summary: "Star Wars: A New Hope",
 			referenceUrl: ""
 		},
@@ -532,6 +537,7 @@ module.exports = {
 			date: "2010-05-22",
 			chain: "main",
 			txid: "a1075db55d416d3ca199f55b6084e2115b9345e16c5cf302fc80e9d5fbf5d48d",
+			blockHeight: 57043,
 			summary: "The 'Bitcoin Pizza' transaction.",
 			alertBodyHtml: "This is the famous 'Bitcoin Pizza' transaction, one of the earliest 'real-world' transactions, in which 10,000 BTC was paid for 2 large pizzas worth ~41 USD (at an effective exchange rate of ~$0.04/BTC).",
 			referenceUrl: "https://bitcointalk.org/index.php?topic=137.0"
@@ -541,6 +547,7 @@ module.exports = {
 			date: "2011-05-18",
 			chain: "main",
 			txid: "5d80a29be1609db91658b401f85921a86ab4755969729b65257651bb9fd2c10d",
+			blockHeight: 124724,
 			summary: "Destroyed bitcoin.",
 			referenceUrl: "https://bitcointalk.org/index.php?topic=7253.msg184414#msg184414",
 			referenceUrl2: "https://www.reddit.com/r/Bitcoin/comments/7mhoks/til_in_2011_a_user_running_a_modified_mining/"
@@ -560,6 +567,7 @@ module.exports = {
 			date: "2009-01-12",
 			chain: "main",
 			txid: "f4184fc596403b9d638783cf57adfe4c75c605f6356fbc91338530e9831e9e16",
+			blockHeight: 170,
 			summary: "The first transfer of bitcoin.",
 			alertBodyHtml: "This transaction represents the first ever transfer of bitcoin from one person to another. It also has the added distinction of being (one of?) the only known transfers of bitcoin from Satoshi Nakamoto, in this case sending bitcoin to Hal Finney as a test."
 		},
@@ -586,6 +594,7 @@ module.exports = {
 			date: "2017-12-30",
 			chain: "main",
 			txid: "9bf8853b3a823bbfa1e54017ae11a9e1f4d08a854dcce9f24e08114f2c921182",
+			blockHeight: 501726,
 			summary: "Block reward lost",
 			alertBodyHtml: "This coinbase transaction completely fails to collect the block's mining reward. 12.5 BTC were lost.",
 			referenceUrl: "https://bitcoin.stackexchange.com/a/67012/3397"
@@ -604,6 +613,7 @@ module.exports = {
 			date: "2010-11-14",
 			chain: "main",
 			txid: "e3bf3d07d4b0375638d5f1db5255fe07ba2c4cb067cd81b84ee974b6585fb468",
+			blockHeight: 91880,
 			summary: "Duplicated coinbase transaction #1",
 			referenceUrl: "https://bitcoin.stackexchange.com/questions/38994/will-there-be-21-million-bitcoins-eventually/38998#38998",
 			alertBodyHtml: "This is one of 2 'duplicate coinbase' transactions. An early bitcoin bug (fixed by <a href='https://github.com/bitcoin/bips/blob/master/bip-0030.mediawiki'>BIP30</a>) allowed identical coinbase transactions - a newer duplicate would overwrite older copies. This transaction was the coinbase transaction for <a href='./block-height/91722'>Block #91,722</a> and, ~16 hours later, <a href='./block-height/91880'>Block #91,880</a>. The 50 BTC claimed as the coinbase for block 91,722 were also overwritten and lost."
@@ -613,6 +623,7 @@ module.exports = {
 			date: "2010-11-14",
 			chain: "main",
 			txid: "d5d27987d2a3dfc724e359870c6644b40e497bdc0589a033220fe15429d88599",
+			blockHeight: 91842,
 			summary: "Duplicated coinbase transaction #2",
 			referenceUrl: "https://bitcoin.stackexchange.com/questions/38994/will-there-be-21-million-bitcoins-eventually/38998#38998",
 			alertBodyHtml: "This is one of 2 'duplicate coinbase' transactions. An early bitcoin bug (fixed by <a href='https://github.com/bitcoin/bips/blob/master/bip-0030.mediawiki'>BIP30</a>) allowed identical coinbase transactions - a newer duplicate would overwrite older copies. This transaction was the coinbase transaction for <a href='./block-height/91812'>Block #91,812</a> and, ~3 hours later, <a href='./block-height/91842'>Block #91,842</a>. The 50 BTC claimed as the coinbase for block 91,812 were also overwritten and lost."
@@ -622,6 +633,7 @@ module.exports = {
 			date: "2020-03-11",
 			chain: "main",
 			txid: "eeea72f5c9fe07178013eac84c3705443321d5453befd7591f52d22ac39b3963",
+			blockHeight: 621259,
 			summary: "500+ million USD transferred for < 1 USD fee (2020 prices)."
 		},
 		{
@@ -629,6 +641,7 @@ module.exports = {
 			date: "2020-05-20",
 			chain: "main",
 			txid: "cb1440c787d8a46977886405a34da89939e1b04907f567bf182ef27ce53a8d71",
+			blockHeight: 631058,
 			summary: "Very old coins (mined ~1 month after genesis) move unexpectedly, causing uproar",
 			alertBodyHtml: "On May 5, 2020, 50 BTC mined on Feb 9, 2009 (~1 month after Satoshi mined the Genesis block), moved unexpectedly after being dormant for 11+ years. Some observers wondered if they were coins from Satoshi's stash (they likely <a href='https://twitter.com/zackvoell/status/1263120133054255104'>were not</a>) and got excited.",
 			referenceUrl: "https://twitter.com/WhalePanda/status/1263120678380867586"
@@ -647,6 +660,7 @@ module.exports = {
 			date: "2011-11-16",
 			chain: "main",
 			txid: "29a3efd3ef04f9153d47a990bd7b048a4b2d213daaa5fb8ed670fb85f13bdbcf",
+			blockHeight: 153509,
 			summary: "The current largest output transaction.",
 			alertBodyHtml: "This transaction from November 2011 spends 11 UTXOs worth 50,000 BTC to create a single 550,000 BTC UTXO. This is currently the largest output transaction.",
 			referenceUrl: "https://blockchair.com/bitcoin/transactions?s=output_total(desc)#"
@@ -656,6 +670,7 @@ module.exports = {
 			date: "2013-04-06",
 			chain: "main",
 			txid: "54e48e5f5c656b26c3bca14a8c95aa583d07ebe84dde3b7dd4a78f4e4186e713",
+			blockHeight: 230009,
 			summary: "The Bitcoin whitepaper embedded in the Bitcoin blockchain.",
 			alertBodyHtml: "This transaction encodes the Bitcoin whitepaper PDF in 945 of its 947 outputs. You can view the PDF, decoded from data served by your own node here: <a href='./bitcoin-whitepaper'>bitcoin whitepaper</a>. Or read more about the technical details - ",
 			referenceUrl: "https://bitcoin.stackexchange.com/questions/35959/how-is-the-whitepaper-decoded-from-the-blockchain-tx-with-1000x-m-of-n-multisi"
@@ -679,6 +694,7 @@ module.exports = {
 			date: "2011-02-02",
 			chain: "test",
 			txid: "4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b",
+			blockHeight: 0,
 			summary: "The coinbase transaction of the Genesis Block.",
 			alertBodyHtml: "This transaction doesn't really exist! This is the coinbase transaction of the <a href='./block/000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f'>Bitcoin Genesis Block</a>. For more background about this special-case transaction, you can read <a href='https://github.com/bitcoin/bitcoin/issues/3303'>this brief discussion</a> among some of the <a href='https://bitcoin.org'>Bitcoin</a> developers.",
 			referenceUrl: "https://github.com/bitcoin/bitcoin/issues/3303"
@@ -701,6 +717,7 @@ module.exports = {
 			date: "2011-02-02",
 			chain: "regtest",
 			txid: "4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b",
+			blockHeight: 0,
 			summary: "The coinbase transaction of the Genesis Block.",
 			alertBodyHtml: "This transaction doesn't really exist! This is the coinbase transaction of the <a href='./block/000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f'>Bitcoin Genesis Block</a>. For more background about this special-case transaction, you can read <a href='https://github.com/bitcoin/bitcoin/issues/3303'>this brief discussion</a> among some of the <a href='https://bitcoin.org'>Bitcoin</a> developers.",
 			referenceUrl: "https://github.com/bitcoin/bitcoin/issues/3303"

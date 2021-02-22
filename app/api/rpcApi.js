@@ -33,7 +33,18 @@ global.rpcStats = {};
 
 
 function getBlockchainInfo() {
-	return getRpcData("getblockchaininfo");
+	return new Promise((resolve, reject) => {
+		getRpcData("getblockchaininfo").then((getblockchaininfo) => {
+			// keep global.pruneHeight updated
+			if (getblockchaininfo.pruned) {
+				global.pruneHeight = getblockchaininfo.pruneheight;
+			}
+
+			resolve(getblockchaininfo);
+			
+		}).catch(reject);
+	});
+	
 }
 
 function getNetworkInfo() {
@@ -50,6 +61,10 @@ function getMempoolInfo() {
 
 function getMiningInfo() {
 	return getRpcData("getmininginfo");
+}
+
+function getIndexInfo() {
+	return getRpcData("getindexinfo");
 }
 
 function getUptimeSeconds() {
@@ -191,34 +206,38 @@ function getBlockHeaderByHeight(blockHeight) {
 	});
 }
 
+function getBlockHashByHeight(blockHeight) {
+	return getRpcDataWithParams({method:"getblockhash", parameters:[blockHeight]});
+}
+
 function getBlockByHash(blockHash) {
 	debugLog("getBlockByHash: %s", blockHash);
 
-	return new Promise(function(resolve, reject) {
-		getRpcDataWithParams({method:"getblock", parameters:[blockHash]}).then(function(block) {
-			getRawTransaction(block.tx[0]).then(function(tx) {
+	return getRpcDataWithParams({method:"getblock", parameters:[blockHash]})
+		.then(function(block) {
+			return getRawTransaction(block.tx[0], blockHash).then(function(tx) {
 				block.coinbaseTx = tx;
 				block.totalFees = utils.getBlockTotalFeesFromCoinbaseTxAndBlockHeight(tx, block.height);
-				block.subsidy = coinConfig.blockRewardFunction(block.height, global.activeBlockchain);
 				block.miner = utils.getMinerFromCoinbaseTx(tx);
-
-				resolve(block);
-
-			}).catch(function(err) {
-				reject(err);
-			});
+				return block;
+			})
 		}).catch(function(err) {
-			reject(err);
-		});
-	});
+				// the block is pruned, use `getblockheader` instead
+				debugLog('getblock failed, falling back to getblockheader', blockHash, err);
+				return getRpcDataWithParams({method:"getblockheader", parameters:[blockHash]})
+					.then(function(block) { block.tx = []; return block });
+		}).then(function(block) {
+				block.subsidy = coinConfig.blockRewardFunction(block.height, global.activeBlockchain);
+				return block;
+		})
 }
 
 function getAddress(address) {
 	return getRpcDataWithParams({method:"validateaddress", parameters:[address]});
 }
 
-function getRawTransaction(txid) {
-	debugLog("getRawTransaction: %s", txid);
+function getRawTransaction(txid, blockhash) {
+	debugLog("getRawTransaction: %s %s", txid, blockhash);
 
 	return new Promise(function(resolve, reject) {
 		if (coins[config.coin].genesisCoinbaseTransactionIdsByNetwork[global.activeBlockchain] && txid == coins[config.coin].genesisCoinbaseTransactionIdsByNetwork[global.activeBlockchain]) {
@@ -240,7 +259,8 @@ function getRawTransaction(txid) {
 			});
 
 		} else {
-			getRpcDataWithParams({method:"getrawtransaction", parameters:[txid, 1]}).then(function(result) {
+			var extra_params = blockhash ? [ blockhash ] : [];
+			getRpcDataWithParams({method:"getrawtransaction", parameters:[txid, 1, ...extra_params]}).then(function(result) {
 				if (result == null || result.code && result.code < 0) {
 					reject(result);
 
@@ -250,10 +270,58 @@ function getRawTransaction(txid) {
 				resolve(result);
 
 			}).catch(function(err) {
-				reject(err);
+				if (!global.txindexAvailable && !blockhash) {
+					noTxIndexTransactionLookup(txid).then(resolve, reject);
+					
+				} else {
+					reject(err);
+				}
 			});
 		}
 	});
+}
+
+async function noTxIndexTransactionLookup(txid) {
+	// Try looking up with an external Electrum server, using 'get_confirmed_blockhash'.
+	// This is only available in Electrs and requires enabling BTCEXP_ELECTRUM_TXINDEX.
+	if (config.addressApi == "electrumx" && config.electrumTxIndex) {
+		try {
+			var blockhash = await electrumAddressApi.lookupTxBlockHash(txid);
+			return await getRawTransaction(txid, blockhash);
+		} catch (err) {
+			debugLog(`Electrs blockhash lookup failed for ${txid}:`, err);
+		}
+	}
+
+	// Try looking up in wallet transactions
+	for (var wallet of await listWallets()) {
+		try { return await getWalletTransaction(wallet, txid); }
+		catch (_) {}
+	}
+
+	// Try looking up in recent blocks
+	var tip_height = await getRpcDataWithParams({method:"getblockcount", parameters:[]});
+	for (var height=tip_height; height>Math.max(tip_height - config.noTxIndexSearchDepth, 0); height--) {
+		var blockhash = await getRpcDataWithParams({method:"getblockhash", parameters:[height]});
+		try { return await getRawTransaction(txid, blockhash); }
+		catch (_) {}
+	}
+
+	throw new Error(`The requested tx ${txid} cannot be found in wallet transactions, mempool transactions, or recently confirmed transactions`)
+}
+
+function listWallets() {
+	return getRpcDataWithParams({method:"listwallets", parameters:[]})
+}
+
+async function getWalletTransaction(wallet, txid) {
+	global.rpcClient.wallet = wallet;
+	try {
+		return await getRpcDataWithParams({method:"gettransaction", parameters:[ txid, true, true ]})
+			.then(wtx => ({ ...wtx, ...wtx.decoded, decoded: null }))
+	} finally {
+		global.rpcClient.wallet = null;
+	}
 }
 
 function getUtxo(txid, outputIndex) {
@@ -331,6 +399,10 @@ function getMempoolTxDetails(txid, includeAncDec=true) {
 			reject(err);
 		});
 	});
+}
+
+function getTxOut(txid, vout) {
+	return getRpcDataWithParams({method:"gettxout", parameters:[txid, vout]});
 }
 
 function getHelp() {
@@ -492,6 +564,7 @@ module.exports = {
 	getMempoolInfo: getMempoolInfo,
 	getMempoolTxids: getMempoolTxids,
 	getMiningInfo: getMiningInfo,
+	getIndexInfo: getIndexInfo,
 	getBlockByHeight: getBlockByHeight,
 	getBlockByHash: getBlockByHash,
 	getRawTransaction: getRawTransaction,
@@ -511,6 +584,8 @@ module.exports = {
 	getBlockStatsByHeight: getBlockStatsByHeight,
 	getBlockHeaderByHash: getBlockHeaderByHash,
 	getBlockHeaderByHeight: getBlockHeaderByHeight,
+	getBlockHashByHeight: getBlockHashByHeight,
+	getTxOut: getTxOut,
 
 	minRpcVersions: minRpcVersions
 };

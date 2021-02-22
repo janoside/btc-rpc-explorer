@@ -15,7 +15,7 @@ script.
 
 div.row.text-monospace
 	div.col-lg-6
-		if (txInputs)
+		if (true)
 			- var extraInputCount = 0;
 			each txVin, txVinIndex in tx.vin
 				if (!txVin.coinbase)
@@ -23,13 +23,16 @@ div.row.text-monospace
 					if (txInputs && txInputs[txVinIndex])
 						- var txInput = txInputs[txVinIndex];
 						- var vout = txInput;
+					else
+						- var txInput = {txid:txVin.txid, vout:txVin.vout};
+						- var vout = {};
 
-				if (txVin.coinbase || vout)
+				if (true)
 					div.clearfix
 						div.tx-io-label
 							a(data-toggle="tooltip", title=("Input #" + txVinIndex.toLocaleString()), style="white-space: nowrap;")
-								span.font-weight-bold &gt; 
-								small.d-inline.d-md-none Input 
+								span.font-weight-bold &gt;&nbsp;
+								small.d-inline.d-md-none Input&nbsp;
 								
 								if (tx.vin.length > 999)
 									small.word-wrap ##{txVinIndex}
@@ -47,7 +50,7 @@ div.row.text-monospace
 										
 										div.pt-1
 											small.font-weight-bold(tistle="ASCII encoded", data-toggle="tooltip") data
-											small (ascii) - 
+											small (ascii) -&nbsp;
 											small #{utils.hex2ascii(txVin.coinbase)}
 											br
 											small
@@ -55,14 +58,15 @@ div.row.text-monospace
 
 										div(id="coinbase-data-hex", style="display: none;")
 											small.font-weight-bold data
-											small (hex) - 
+											small (hex) -&nbsp;
 											small.word-wrap #{txVin.coinbase}
 
 
 									else
 										div.word-wrap
-											small.data-tag.bg-dark.mr-2
-												span(title=`Input Type: ${utils.outputTypeName(vout.scriptPubKey.type)}`, data-toggle="tooltip") #{utils.outputTypeAbbreviation(vout.scriptPubKey.type)}
+											if (vout.scriptPubKey)
+												small.data-tag.bg-dark.mr-2
+													span(title=`Input Type: ${utils.outputTypeName(vout.scriptPubKey.type)}`, data-toggle="tooltip") #{utils.outputTypeAbbreviation(vout.scriptPubKey.type)}
 
 											if (vout.coinbaseSpend)
 												small.data-tag.bg-success.mr-2
@@ -114,6 +118,10 @@ div.row.text-monospace
 											- var currencyValue = vout.value;
 											include ./value-display.pug
 
+										else
+											span(title="This data is unavailable. Your node must have its transaction index (txindex) setting enabled to view it.", data-toggle="tooltip")
+												i.fas.fa-backspace.text-danger
+
 					hr
 
 				else
@@ -123,8 +131,8 @@ div.row.text-monospace
 				div.clearfix
 					div.tx-io-label
 						a(data-toggle="tooltip", title=("Input #" + (tx.vin.length - extraInputCount + 1).toLocaleString() + " - " + tx.vin.length.toLocaleString()), style="white-space: nowrap;")
-							span.font-weight-bold &gt; 
-							span.d-inline.d-md-none Input 
+							span.font-weight-bold &gt;&nbsp;
+							span.d-inline.d-md-none Input&nbsp;
 							span #…
 
 					div.tx-io-content
@@ -134,7 +142,7 @@ div.row.text-monospace
 									if (extraInputCount > 1)
 										span s
 								br
-								small.text-muted (see 
+								small.text-muted (see&nbsp;
 									a(href=("./tx/" + tx.txid)) transaction page
 									span  for details)
 
@@ -143,13 +151,14 @@ div.row.text-monospace
 								include ./value-display.pug
 				hr
 
-			div.row.mb-5.mb-lg-0
-				div.col
-					div.font-weight-bold.text-left.text-md-right
-						span.d-block.d-md-none Total Input: 
-						- var currencyValue = totalIOValues.input;
-						include ./value-display.pug
-					
+			if (totalIOValues.input && totalIOValues.input > 0)
+				div.row.mb-5.mb-lg-0
+					div.col
+						div.font-weight-bold.text-left.text-md-right
+							if (totalIOValues.input > 0)
+								span.d-block.d-md-none Total Input:
+								- var currencyValue = totalIOValues.input;
+								include ./value-display.pug
 			
 			
 
@@ -174,8 +183,8 @@ div.row.text-monospace
 				div.clearfix
 					div.tx-io-label
 						a(data-toggle="tooltip", title=("Output #" + voutIndex.toLocaleString()), style="white-space: nowrap;")
-							span.font-weight-bold &lt; 
-							small.d-inline.d-md-none Output 
+							span.font-weight-bold &lt;&nbsp;
+							small.d-inline.d-md-none Output&nbsp;
 							
 							if (tx.vout.length > 999)
 								small.word-wrap ##{voutIndex}
@@ -213,7 +222,7 @@ div.row.text-monospace
 											small.data-tag.bg-primary OP_RETURN
 										
 										div
-											small.text-muted (SegWit committment - 
+											small.text-muted (SegWit committment -&nbsp;
 												a(href="https://github.com/bitcoin/bips/blob/master/bip-0141.mediawiki#commitment-structure", data-toggle="tooltip", title="View developer docs", target="_blank") about
 												span )
 
@@ -223,7 +232,7 @@ div.row.text-monospace
 
 										div(id=`op-return-hex-${tx.txid}-${vout.n}`, style="display: none;")
 											small.font-weight-bold data
-											small (hex) - 
+											small (hex) -&nbsp;
 											small.word-wrap #{vout.scriptPubKey.asm}
 
 									else if (vout.scriptPubKey.asm && vout.scriptPubKey.asm.startsWith('OP_RETURN '))
@@ -232,7 +241,7 @@ div.row.text-monospace
 										
 										div
 											small.font-weight-bold data
-											small (ascii) - 
+											small (ascii) -&nbsp;
 											small #{utils.hex2ascii(vout.scriptPubKey.asm.substring("OP_RETURN ".length))}
 											br
 											small
@@ -240,7 +249,7 @@ div.row.text-monospace
 
 										div(id=`op-return-hex-${tx.txid}-${vout.n}`, style="display: none;")
 											small.font-weight-bold data
-											small (hex) -  
+											small (hex) -&nbsp;
 											small.word-wrap #{vout.scriptPubKey.asm}
 
 
@@ -280,7 +289,7 @@ div.row.text-monospace
 		div.row.mb-0.mb-lg-0
 			div.col
 				div.font-weight-bold.text-left.text-md-right
-					span.d-block.d-md-none Total Output: 
+					span.d-block.d-md-none Total Output:
 					- var currencyValue = totalIOValues.output;
 					include ./value-display.pug
 
