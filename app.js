@@ -60,7 +60,7 @@ const apiActionsRouter = require('./routes/apiRouter.js');
 const snippetActionsRouter = require('./routes/snippetRouter.js');
 const adminActionsRouter = require('./routes/adminRouter.js');
 
-const app = express();
+const expressApp = express();
 
 
 const statTracker = require("./app/statTracker.js");
@@ -94,7 +94,7 @@ processStatsInterval.unref();
 const systemMonitor = require("./app/systemMonitor.js");
 
 const normalizeActions = require("./app/normalizeActions.js");
-app.use(require("./app/actionPerformanceMonitor.js")(statTracker, {
+expressApp.use(require("./app/actionPerformanceMonitor.js")(statTracker, {
 	ignoredEndsWithActions: "\.js|\.css|\.svg|\.png|\.woff2",
 	ignoredStartsWithActions: `${config.baseUrl}snippet`,
 	normalizeAction: (action) => {
@@ -103,47 +103,47 @@ app.use(require("./app/actionPerformanceMonitor.js")(statTracker, {
 }));
 
 // view engine setup
-app.set('views', path.join(__dirname, 'views'));
+expressApp.set('views', path.join(__dirname, 'views'));
 
 // ref: https://blog.stigok.com/post/disable-pug-debug-output-with-expressjs-web-app
-app.engine('pug', (path, options, fn) => {
+expressApp.engine('pug', (path, options, fn) => {
 	options.debug = false;
 	return pug.__express.call(null, path, options, fn);
 });
 
-app.set('view engine', 'pug');
+expressApp.set('view engine', 'pug');
 
 // enable view cache regardless of env (development/production)
 // ref: https://pugjs.org/api/express.html
-app.enable('view cache');
+expressApp.enable('view cache');
 
-app.use(cookieParser());
+expressApp.use(cookieParser());
 
 // basic http authentication
 if (process.env.BTCEXP_BASIC_AUTH_PASSWORD) {
-	app.disable('x-powered-by');
-	app.use(auth(process.env.BTCEXP_BASIC_AUTH_PASSWORD));
+	expressApp.disable('x-powered-by');
+	expressApp.use(auth(process.env.BTCEXP_BASIC_AUTH_PASSWORD));
 // sso authentication
 } else if (process.env.BTCEXP_SSO_TOKEN_FILE) {
-	app.disable('x-powered-by');
-	app.use(sso(process.env.BTCEXP_SSO_TOKEN_FILE, process.env.BTCEXP_SSO_LOGIN_REDIRECT_URL));
+	expressApp.disable('x-powered-by');
+	expressApp.use(sso(process.env.BTCEXP_SSO_TOKEN_FILE, process.env.BTCEXP_SSO_LOGIN_REDIRECT_URL));
 }
 
 // uncomment after placing your favicon in /public
-//app.use(favicon(__dirname + '/public/favicon.ico'));
-//app.use(logger('dev'));
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(session({
+//expressApp.use(favicon(__dirname + '/public/favicon.ico'));
+//expressApp.use(logger('dev'));
+expressApp.use(bodyParser.json());
+expressApp.use(bodyParser.urlencoded({ extended: false }));
+expressApp.use(session({
 	secret: config.cookieSecret,
 	resave: false,
 	saveUninitialized: false
 }));
 
-app.use(config.baseUrl, express.static(path.join(__dirname, 'public')));
+expressApp.use(config.baseUrl, express.static(path.join(__dirname, 'public')));
 
 if (config.baseUrl != '/') {
-	app.get('/', (req, res) => res.redirect(config.baseUrl));
+	expressApp.get('/', (req, res) => res.redirect(config.baseUrl));
 }
 
 process.on("unhandledRejection", (reason, p) => {
@@ -433,7 +433,7 @@ function refreshNetworkVolumes() {
 }
 
 
-app.onStartup = function() {
+expressApp.onStartup = function() {
 	global.appStartTime = new Date().getTime();
 	
 	global.config = config;
@@ -447,7 +447,7 @@ app.onStartup = function() {
 	loadChangelog();
 
 	global.nodeVersion = process.version;
-	debugLog(`Environment(${app.get("env")}) - Node: ${process.version}, Platform: ${process.platform}, Versions: ${JSON.stringify(process.versions)}`);
+	debugLog(`Environment(${expressApp.get("env")}) - Node: ${process.version}, Platform: ${process.platform}, Versions: ${JSON.stringify(process.versions)}`);
 
 
 	// dump "startup" heap after 5sec
@@ -483,17 +483,17 @@ app.onStartup = function() {
 				debugLog(`Starting ${global.coinConfig.ticker} RPC Explorer, v${global.appVersion} (commit: '${global.sourcecodeVersion}', date: ${global.sourcecodeDate}) at http://${config.host}:${config.port}${config.baseUrl}`);
 			}
 
-			app.continueStartup();
+			expressApp.continueStartup();
 		});
 
 	} else {
 		debugLog(`Starting ${global.coinConfig.ticker} RPC Explorer, v${global.appVersion} at http://${config.host}:${config.port}${config.baseUrl}`);
 
-		app.continueStartup();
+		expressApp.continueStartup();
 	}
 }
 
-app.continueStartup = function() {
+expressApp.continueStartup = function() {
 	var rpcCred = config.credentials.rpc;
 	debugLog(`Connecting to RPC node at ${rpcCred.host}:${rpcCred.port}`);
 
@@ -563,14 +563,14 @@ app.continueStartup = function() {
 	setInterval(utils.logMemoryUsage, 5000);
 };
 
-app.use(function(req, res, next) {
+expressApp.use(function(req, res, next) {
 	req.startTime = Date.now();
 	req.startMem = process.memoryUsage().heapUsed;
 
 	next();
 });
 
-app.use(function(req, res, next) {
+expressApp.use(function(req, res, next) {
 	// make session available in templates
 	res.locals.session = req.session;
 
@@ -688,17 +688,18 @@ app.use(function(req, res, next) {
 	next();
 });
 
-app.use(csurf(), (req, res, next) => {
+expressApp.use(csurf(), (req, res, next) => {
 	res.locals.csrfToken = req.csrfToken();
+
 	next();
 });
 
-app.use(config.baseUrl, baseActionsRouter);
-app.use(config.baseUrl + 'api/', apiActionsRouter);
-app.use(config.baseUrl + 'snippet/', snippetActionsRouter);
-app.use(config.baseUrl + 'admin/', adminActionsRouter);
+expressApp.use(config.baseUrl, baseActionsRouter);
+expressApp.use(config.baseUrl + 'api/', apiActionsRouter);
+expressApp.use(config.baseUrl + 'snippet/', snippetActionsRouter);
+expressApp.use(config.baseUrl + 'admin/', adminActionsRouter);
 
-app.use(function(req, res, next) {
+expressApp.use(function(req, res, next) {
 	var time = Date.now() - req.startTime;
 	var memdiff = process.memoryUsage().heapUsed - req.startMem;
 
@@ -707,7 +708,7 @@ app.use(function(req, res, next) {
 });
 
 /// catch 404 and forwarding to error handler
-app.use(function(req, res, next) {
+expressApp.use(function(req, res, next) {
 	var err = new Error('Not Found');
 	err.status = 404;
 	next(err);
@@ -717,8 +718,8 @@ app.use(function(req, res, next) {
 
 // development error handler
 // will print stacktrace
-if (app.get('env') === 'development') {
-	app.use(function(err, req, res, next) {
+if (expressApp.get('env') === 'development') {
+	expressApp.use(function(err, req, res, next) {
 		res.status(err.status || 500);
 		res.render('error', {
 			message: err.message,
@@ -729,7 +730,7 @@ if (app.get('env') === 'development') {
 
 // production error handler
 // no stacktraces leaked to user
-app.use(function(err, req, res, next) {
+expressApp.use(function(err, req, res, next) {
 	res.status(err.status || 500);
 	res.render('error', {
 		message: err.message,
@@ -737,11 +738,11 @@ app.use(function(err, req, res, next) {
 	});
 });
 
-app.locals.moment = moment;
-app.locals.Decimal = Decimal;
-app.locals.utils = utils;
-app.locals.markdown = src => markdown.render(src);
+expressApp.locals.moment = moment;
+expressApp.locals.Decimal = Decimal;
+expressApp.locals.utils = utils;
+expressApp.locals.markdown = src => markdown.render(src);
 
 
 
-module.exports = app;
+module.exports = expressApp;
