@@ -704,7 +704,10 @@ expressApp.use(function(req, res, next) {
 	var memdiff = process.memoryUsage().heapUsed - req.startMem;
 
 	debugPerfLog("Finished action '%s' in %d ms", req.path, time);
-	next();
+
+	if (!res.headersSent) {
+		next();
+	}
 });
 
 /// catch 404 and forwarding to error handler
