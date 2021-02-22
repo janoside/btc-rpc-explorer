@@ -565,7 +565,6 @@ expressApp.continueStartup = function() {
 
 expressApp.use(function(req, res, next) {
 	req.startTime = Date.now();
-	req.startMem = process.memoryUsage().heapUsed;
 
 	next();
 });
@@ -701,8 +700,7 @@ expressApp.use(config.baseUrl + 'admin/', adminActionsRouter);
 
 expressApp.use(function(req, res, next) {
 	var time = Date.now() - req.startTime;
-	var memdiff = process.memoryUsage().heapUsed - req.startMem;
-
+	
 	debugPerfLog("Finished action '%s' in %d ms", req.path, time);
 
 	if (!res.headersSent) {
@@ -714,6 +712,7 @@ expressApp.use(function(req, res, next) {
 expressApp.use(function(req, res, next) {
 	var err = new Error('Not Found');
 	err.status = 404;
+
 	next(err);
 });
 
@@ -723,6 +722,10 @@ expressApp.use(function(req, res, next) {
 // will print stacktrace
 if (expressApp.get('env') === 'development') {
 	expressApp.use(function(err, req, res, next) {
+		if (err) {
+			utils.logError("3289023yege", err);
+		}
+
 		res.status(err.status || 500);
 		res.render('error', {
 			message: err.message,
@@ -734,6 +737,10 @@ if (expressApp.get('env') === 'development') {
 // production error handler
 // no stacktraces leaked to user
 expressApp.use(function(err, req, res, next) {
+	if (err) {
+		utils.logError("2309832hcxwgeeew", err);
+	}
+
 	res.status(err.status || 500);
 	res.render('error', {
 		message: err.message,
