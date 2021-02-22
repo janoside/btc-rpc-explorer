@@ -87,11 +87,20 @@ const processAndReset = (perfFunc, valueFunc, eventFunc) => {
 	eventStats = {};
 };
 
+const currentStats = () => {
+	return {
+		performance: performanceStats,
+		event: eventStats,
+		value: valueStats
+	};
+};
+
 module.exports = {
 	trackPerformance: trackPerformance,
 	trackValue: trackValue,
 	trackEvent: trackEvent,
 	
+	currentStats: currentStats,
 	processAndReset: processAndReset
 };
 

@@ -24,6 +24,8 @@ const config = require("./../app/config.js");
 const coreApi = require("./../app/api/coreApi.js");
 const addressApi = require("./../app/api/addressApi.js");
 
+const statTracker = require("./../app/statTracker.js");
+
 const forceCsrf = csurf({ ignoreMethods: [] });
 
 
@@ -64,6 +66,44 @@ router.get("/dashboard", function(req, res, next) {
 	};
 
 	res.render("admin/dashboard");
+
+	next();
+});
+
+router.get("/stats", function(req, res, next) {
+	res.locals.stats = statTracker.currentStats();
+
+	res.locals.performanceStats = [];
+	for (const [key, value] of Object.entries(res.locals.stats.performance)) {
+		res.locals.performanceStats.push([key, value]);
+	}
+
+	res.locals.performanceStats.sort((a, b) => {
+		return a[0].localeCompare(b[0]);
+	});
+
+
+	res.locals.eventStats = [];
+	for (const [key, value] of Object.entries(res.locals.stats.event)) {
+		res.locals.eventStats.push([key, value]);
+	}
+
+	res.locals.eventStats.sort((a, b) => {
+		return a[0].localeCompare(b[0]);
+	});
+
+
+	res.locals.valueStats = [];
+	for (const [key, value] of Object.entries(res.locals.stats.value)) {
+		res.locals.valueStats.push([key, value]);
+	}
+
+	res.locals.valueStats.sort((a, b) => {
+		return a[0].localeCompare(b[0]);
+	});
+	
+
+	res.render("admin/stats");
 
 	next();
 });
