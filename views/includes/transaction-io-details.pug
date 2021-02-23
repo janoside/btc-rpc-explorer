@@ -15,7 +15,7 @@ script.
 
 div.row.text-monospace
 	div.col-lg-6
-		if (true)
+		if (txInputs || !global.txindexAvailable)
 			- var extraInputCount = 0;
 			each txVin, txVinIndex in tx.vin
 				if (!txVin.coinbase)
@@ -23,11 +23,12 @@ div.row.text-monospace
 					if (txInputs && txInputs[txVinIndex])
 						- var txInput = txInputs[txVinIndex];
 						- var vout = txInput;
-					else
+
+					else if (!global.txindexAvailable)
 						- var txInput = {txid:txVin.txid, vout:txVin.vout};
 						- var vout = {};
 
-				if (true)
+				if (txVin.coinbase || vout || !global.txindexAvailable)
 					div.clearfix
 						div.tx-io-label
 							a(data-toggle="tooltip", title=`Input #${txVinIndex.toLocaleString()}`, style="white-space: nowrap;")
@@ -118,7 +119,7 @@ div.row.text-monospace
 											- var currencyValue = vout.value;
 											include ./value-display.pug
 
-										else
+										else if (!global.txindexAvailable)
 											span(title="This data is unavailable. Your node must have its transaction index (txindex) setting enabled to view it.", data-toggle="tooltip")
 												i.fas.fa-backspace.text-danger
 
@@ -138,13 +139,13 @@ div.row.text-monospace
 					div.tx-io-content
 						div.clearfix
 							div.tx-io-desc
-								span.text-reset #{extraInputCount.toLocaleString()} more input
+								span.text-reset.border-dotted(title=`The details for the remaining inputs were truncated for performance purposes. The full details are available by clicking through to the transaction details.`, data-toggle="tooltip") #{extraInputCount.toLocaleString()} more input
 									if (extraInputCount > 1)
 										span s
 								br
 								small.text-muted (see&nbsp;
-									a(href=`./tx/${tx.txid}`) transaction page
-									span  for details)
+									a(href=`./tx/${tx.txid}`) transaction details
+									span )
 
 							div.tx-io-value
 								- var currencyValue = new Decimal(totalIOValues.output).minus(new Decimal(totalIOValues.input));
