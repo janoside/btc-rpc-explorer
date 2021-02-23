@@ -932,9 +932,16 @@ function getBlockByHashWithTransactions(blockHash, txLimit, txOffset) {
 				}
 
 				resolve({ getblock:block, transactions:txsResult.transactions, txInputsByTransaction:txsResult.txInputsByTransaction });
+				
 			}).catch(function(err) {
-				// likely due to pruning or no txindex, report the error but continue with an empty transaction list
-				resolve({ getblock:block, transactions:[], txInputsByTransaction:{} });
+				if (!global.txindexAvailable || global.prunedBlockchain) {
+					// likely due to pruning or no txindex, report the error but continue with an empty transaction list
+					resolve({ getblock:block, transactions:[], txInputsByTransaction:{} });
+
+				} else {
+					reject(err);
+				}
+
 			});
 		}).catch(reject);
 	});
