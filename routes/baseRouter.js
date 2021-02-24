@@ -306,9 +306,19 @@ router.get("/mempool-summary", asyncHandler(async (req, res, next) => {
 	}
 }));
 
-router.get("/peers", function(req, res, next) {
-	coreApi.getPeerSummary().then(function(peerSummary) {
-		res.locals.peerSummary = peerSummary;
+router.get("/peers", asyncHandler(async (req, res, next) => {
+	try {
+		const promises = [];
+
+		promises.push(new Promise(async (resolve, reject) => {
+			res.locals.peerSummary = await utils.timePromise("promises.peers.getPeerSummary", coreApi.getPeerSummary());
+
+			resolve();
+		}));
+
+		await Promise.all(promises);
+
+		var peerSummary = res.locals.peerSummary;
 
 		var peerIps = [];
 		for (var i = 0; i < peerSummary.getpeerinfo.length; i++) {
@@ -322,26 +332,24 @@ router.get("/peers", function(req, res, next) {
 		}
 
 		if (peerIps.length > 0) {
-			utils.geoLocateIpAddresses(peerIps).then(function(results) {
-				res.locals.peerIpSummary = results;
-				
-				res.render("peers");
-
-				next();
-			});
-		} else {
-			res.render("peers");
-
-			next();
+			res.locals.peerIpSummary = await utils.timePromise("promises.peers.geoLocateIpAddresses", utils.geoLocateIpAddresses(peerIps));
 		}
-	}).catch(function(err) {
+
+
+		res.render("peers");
+
+		next();
+
+	} catch (err) {
+		utils.logError("394rhweghe", err);
+					
 		res.locals.userMessage = "Error: " + err;
 
 		res.render("peers");
 
 		next();
-	});
-});
+	}
+}));
 
 router.post("/connect", function(req, res, next) {
 	var host = req.body.host;
@@ -404,32 +412,34 @@ router.get("/changeSetting", function(req, res, next) {
 	res.redirect(req.headers.referer);
 });
 
-router.get("/blocks", function(req, res, next) {
-	var limit = config.site.browseBlocksPageSize;
-	var offset = 0;
-	var sort = "desc";
+router.get("/blocks", asyncHandler(async (req, res, next) => {
+	try {
+		var limit = config.site.browseBlocksPageSize;
+		var offset = 0;
+		var sort = "desc";
 
-	if (req.query.limit) {
-		limit = parseInt(req.query.limit);
-	}
+		if (req.query.limit) {
+			limit = parseInt(req.query.limit);
+		}
 
-	if (req.query.offset) {
-		offset = parseInt(req.query.offset);
-	}
+		if (req.query.offset) {
+			offset = parseInt(req.query.offset);
+		}
 
-	if (req.query.sort) {
-		sort = req.query.sort;
-	}
+		if (req.query.sort) {
+			sort = req.query.sort;
+		}
 
-	res.locals.limit = limit;
-	res.locals.offset = offset;
-	res.locals.sort = sort;
-	res.locals.paginationBaseUrl = "./blocks";
+		res.locals.limit = limit;
+		res.locals.offset = offset;
+		res.locals.sort = sort;
+		res.locals.paginationBaseUrl = "./blocks";
 
-	// if pruning is active, global.pruneHeight is used when displaying this page
-	// global.pruneHeight is updated whenever we send a getblockchaininfo RPC to the node
+		// if pruning is active, global.pruneHeight is used when displaying this page
+		// global.pruneHeight is updated whenever we send a getblockchaininfo RPC to the node
 
-	coreApi.getBlockchainInfo().then(function(getblockchaininfo) {
+		var getblockchaininfo = await utils.timePromise("promises.blocks.geoLocateIpAddresses", coreApi.getBlockchainInfo());
+
 		res.locals.blockCount = getblockchaininfo.blocks;
 		res.locals.blockOffset = offset;
 
@@ -452,63 +462,81 @@ router.get("/blocks", function(req, res, next) {
 			return h >= 0 && h <= getblockchaininfo.blocks;
 		});
 
+
 		var promises = [];
 
-		promises.push(coreApi.getBlocksByHeight(blockHeights));
+		promises.push(new Promise(async (resolve, reject) => {
+			res.locals.blocks = await utils.timePromise("promises.blocks.getBlocksByHeight", coreApi.getBlocksByHeight(blockHeights));
 
-		promises.push(coreApi.getBlocksStatsByHeight(blockHeights).catch(_ => ({})));
+			resolve();
+		}));
 
-		Promise.all(promises).then(function(promiseResults) {
-			res.locals.blocks = promiseResults[0];
-			var rawblockstats = promiseResults[1];
+		promises.push(new Promise(async (resolve, reject) => {
+			try {
+				var rawblockstats = await utils.timePromise("promises.blocks.getBlocksStatsByHeight", coreApi.getBlocksStatsByHeight(blockHeights));
 
-			if (rawblockstats != null && rawblockstats.length > 0 && rawblockstats[0] != null) {
-				res.locals.blockstatsByHeight = {};
+				if (rawblockstats != null && rawblockstats.length > 0 && rawblockstats[0] != null) {
+					res.locals.blockstatsByHeight = {};
 
-				for (var i = 0; i < rawblockstats.length; i++) {
-					var blockstats = rawblockstats[i];
+					for (var i = 0; i < rawblockstats.length; i++) {
+						var blockstats = rawblockstats[i];
 
-					res.locals.blockstatsByHeight[blockstats.height] = blockstats;
+						res.locals.blockstatsByHeight[blockstats.height] = blockstats;
+					}
+				}
+
+				resolve();
+
+			} catch (err) {
+				if (!global.prunedBlockchain) {
+					reject(err);
+
+				} else {
+					// failure may be due to pruning, let it pass
+					// TODO: be more discerning here
+					resolve();
 				}
 			}
+		}));
 
-			res.render("blocks");
 
-			next();
+		await Promise.all(promises);
 
-		}).catch(function(err) {
-			res.locals.pageErrors.push(utils.logError("32974hrbfbvc", err));
+		res.render("blocks");
 
-			res.render("blocks");
+		next();
 
-			next();
-		});
+	} catch (err) {
+		res.locals.pageErrors.push(utils.logError("32974hrbfbvc", err));
 
-	}).catch(function(err) {
 		res.locals.userMessage = "Error: " + err;
 
 		res.render("blocks");
 
 		next();
-	});
-});
+	}
+}));
 
-router.get("/mining-summary", function(req, res, next) {
-	coreApi.getBlockchainInfo().then(function(getblockchaininfo) {
+router.get("/mining-summary", asyncHandler(async (req, res, next) => {
+	try {
+		var getblockchaininfo = await utils.timePromise("promises.mining-summary.getBlockchainInfo", coreApi.getBlockchainInfo());
+
 		res.locals.currentBlockHeight = getblockchaininfo.blocks;
 
 		res.render("mining-summary");
 
 		next();
 
-	}).catch(function(err) {
+	} catch (err) {
+		res.locals.pageErrors.push(utils.logError("39342heuges", err));
+
 		res.locals.userMessage = "Error: " + err;
 
 		res.render("mining-summary");
 
 		next();
-	});
-});
+	}
+}));
 
 router.get("/block-stats", function(req, res, next) {
 	if (semver.lt(global.btcNodeSemver, rpcApi.minRpcVersions.getblockstats)) {
@@ -1421,13 +1449,9 @@ router.get("/terminal", function(req, res, next) {
 });
 
 router.post("/terminal", function(req, res, next) {
-	console.log("here");
-
 	var params = req.body.cmd.trim().split(/\s+/);
 	var cmd = params.shift();
 	var paramsStr = req.body.cmd.trim().substring(cmd.length).trim();
-
-	console.log("abc: " + params + ", " + cmd + ", " + paramsStr);
 
 	if (cmd == "parsescript") {
 		const nbs = require('node-bitcoin-script');
