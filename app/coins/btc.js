@@ -675,6 +675,25 @@ module.exports = {
 			alertBodyHtml: "This transaction encodes the Bitcoin whitepaper PDF in 945 of its 947 outputs. You can view the PDF, decoded from data served by your own node here: <a href='./bitcoin-whitepaper'>bitcoin whitepaper</a>. Or read more about the technical details - ",
 			referenceUrl: "https://bitcoin.stackexchange.com/questions/35959/how-is-the-whitepaper-decoded-from-the-blockchain-tx-with-1000x-m-of-n-multisi"
 		},
+		{
+			type: "link",
+			date: "2021-01-31",
+			chain: "main",
+			address: "1Hf2CKoVDyPj7dNn3vgTeFMgDqVvbVNZQq",
+			url: "./address/1Hf2CKoVDyPj7dNn3vgTeFMgDqVvbVNZQq?sort=asc&limit=2&offset=11",
+			summary: "Transaction output values used to encode botnet command-and-control IP address",
+			alertBodyHtml: "Two of the transactions sent to this address encode the IP address of a botnet's command-and-control server. Using the censorship-resistant Bitcoin network to serve this data makes the botnet more resistant to takedown. The output value '6957' (in transaction <a href='./tx/35ef7fa5dd1e4d572279a74a83082bd3e77a0c3a468723b5def5d014ed634e84'>35ef7fa5dd…</a>) and the output value '36305' (in transaction <a href='./tx/3a1fcdea5495fb3a1aa410772860afd7841ba8830ffc0ab474d4d69458244e42'>3a1fcdea54…</a>) combine to encode the IPv4 address '209.141.45.27'.",
+			referenceUrl: "https://arstechnica.com/information-technology/2021/02/crooks-use-the-bitcoin-blockchain-to-protect-their-botnets-from-takedown/"
+		},
+				{
+			type: "blockheight",
+			date: "2013-03-24",
+			chain: "main",
+			blockHeight: 227835,
+			summary: "The last 'Version 1' block.",
+			alertBodyHtml: "This block was the last 'Version 1' block to be mined. <a href='https://github.com/bitcoin/bips/blob/master/bip-0034.mediawiki'>BIP-34</a> defined 'Version 2' blocks and the 'bip34' soft fork was officially locked in 96 blocks after this one, in block #<a href='./block-height/227931'>227,931</a>.",
+			referenceUrl: "https://github.com/bitcoin/bips/blob/master/bip-0034.mediawiki"
+		},
 
 
 
