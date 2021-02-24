@@ -99,7 +99,10 @@ div.table-responsive
 									- var colorClass = "text-danger";
 
 								span.font-weight-light(class=colorClass)
-									span #{timeDiff.format()}
+									if (timeDiff == 0)
+										span 0:00
+									else
+										span #{timeDiff.format()}
 									
 									if (false)
 										if (timeDiff.asMinutes() < 1)
@@ -116,6 +119,11 @@ div.table-responsive
 						td.data-cell.text-monospace.text-right
 							if (block.miner && block.miner.name)
 								small.rounded.bg-primary.text-white.px-2.py-1(data-toggle="tooltip", title=`Identified by: ${block.miner.identifiedBy}`) #{utils.ellipsize(block.miner.name, 10)}
+
+							else if (block.height < global.pruneHeight)
+								span.border-dotted(title="Determining the miner of a block requires that the block not be pruned. Sadly, this block has been pruned.", data-toggle="tooltip")
+									i.fas.fa-backspace.text-danger.mr-2
+									| ?
 							else
 								span ?
 
