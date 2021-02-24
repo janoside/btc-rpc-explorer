@@ -211,8 +211,6 @@ function getBlockHashByHeight(blockHeight) {
 }
 
 function getBlockByHash(blockHash) {
-	debugLog("getBlockByHash: %s", blockHash);
-
 	return getRpcDataWithParams({method:"getblock", parameters:[blockHash]})
 		.then(function(block) {
 			return getRawTransaction(block.tx[0], blockHash).then(function(tx) {
@@ -237,8 +235,6 @@ function getAddress(address) {
 }
 
 function getRawTransaction(txid, blockhash) {
-	debugLog("getRawTransaction: %s %s", txid, blockhash);
-
 	return new Promise(function(resolve, reject) {
 		if (coins[config.coin].genesisCoinbaseTransactionIdsByNetwork[global.activeBlockchain] && txid == coins[config.coin].genesisCoinbaseTransactionIdsByNetwork[global.activeBlockchain]) {
 			// copy the "confirmations" field from genesis block to the genesis-coinbase tx
@@ -325,8 +321,6 @@ async function getWalletTransaction(wallet, txid) {
 }
 
 function getUtxo(txid, outputIndex) {
-	debugLog("getUtxo: %s (%d)", txid, outputIndex);
-
 	return new Promise(function(resolve, reject) {
 		getRpcDataWithParams({method:"gettxout", parameters:[txid, outputIndex]}).then(function(result) {
 			if (result == null) {
@@ -350,8 +344,6 @@ function getUtxo(txid, outputIndex) {
 }
 
 function getMempoolTxDetails(txid, includeAncDec=true) {
-	debugLog("getMempoolTxDetails: %s", txid);
-
 	var promises = [];
 
 	var mempoolDetails = {};
