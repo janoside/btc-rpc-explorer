@@ -1,6 +1,6 @@
 div.mb-2
 	if (result.getblock.previousblockhash)
-		a.btn.btn-sm.btn-primary.mb-1(href=("./block/" + result.getblock.previousblockhash)) &laquo; Prev Block: 
+		a.btn.btn-sm.btn-primary.mb-1(href=`./block/${result.getblock.previousblockhash}`) &laquo; Prev Block: 
 			span.text-monospace ##{(result.getblock.height - 1).toLocaleString()}
 
 	else if (result.getblock.hash == genesisBlockHash)
@@ -9,7 +9,7 @@ div.mb-2
 	span.mx-2
 
 	if (result.getblock.nextblockhash)
-		a.btn.btn-sm.btn-primary.mb-1(href=("./block/" + result.getblock.nextblockhash)) Next Block: 
+		a.btn.btn-sm.btn-primary.mb-1(href=`./block/${result.getblock.nextblockhash}`) Next Block: 
 			span.text-monospace ##{(result.getblock.height + 1).toLocaleString()}
 			span  &raquo;
 	else
@@ -22,7 +22,7 @@ ul.nav.nav-tabs.mb-3
 	li.nav-item
 		a.nav-link(data-toggle="tab", href="#tab-json", role="tab") JSON
 
-- var txCount = result.getblock.tx.length;
+- var txCount = result.getblock.nTx;
 
 div.tab-content
 	div.tab-pane.active(id="tab-details", role="tabpanel")
@@ -39,7 +39,7 @@ div.tab-content
 						span !{sbInfo.alertBodyHtml}
 
 						if (sbInfo.referenceUrl && sbInfo.referenceUrl.trim().length > 0 && sbInfo.alertBodyHtml.indexOf(sbInfo.referenceUrl) == -1)
-							span  
+							span &nbsp;
 								a(href=sbInfo.referenceUrl) Read more
 
 				else
@@ -47,7 +47,7 @@ div.tab-content
 						span #{sbInfo.summary}
 
 						if (sbInfo.referenceUrl && sbInfo.referenceUrl.trim().length > 0)
-							span  
+							span &nbsp;
 								a(href=sbInfo.referenceUrl) Read more
 
 		div.row
@@ -116,7 +116,7 @@ div.tab-content
 										- var sizeDeltaData = utils.formatLargeNumber(Math.abs(result.blockstats.utxo_size_inc), 1);
 										- var plusMinus = (result.blockstats.utxo_increase > 0) ? "+" : "";
 										if (result.blockstats.utxo_increase)
-											span #{plusMinus}#{result.blockstats.utxo_increase.toLocaleString()} 
+											span #{plusMinus}#{result.blockstats.utxo_increase.toLocaleString()}
 												span.text-muted (#{sizePlusMinus}#{sizeDeltaData[0]} 
 													small #{sizeDeltaData[1].abbreviation}B
 													span )
@@ -140,17 +140,27 @@ div.tab-content
 										else
 											span 0
 
-							- var blockRewardMax = coinConfig.blockRewardFunction(result.getblock.height, activeBlockchain);
-							- var coinbaseTxTotalOutputValue = new Decimal(0);
-							each vout in result.getblock.coinbaseTx.vout
-								- coinbaseTxTotalOutputValue = coinbaseTxTotalOutputValue.plus(new Decimal(vout.value));
+							if (result.getblock.coinbaseTx)
+								- var blockRewardMax = coinConfig.blockRewardFunction(result.getblock.height, activeBlockchain);
+								- var coinbaseTxTotalOutputValue = new Decimal(0);
+								each vout in result.getblock.coinbaseTx.vout
+									- coinbaseTxTotalOutputValue = coinbaseTxTotalOutputValue.plus(new Decimal(vout.value));
 
-							if (parseFloat(coinbaseTxTotalOutputValue) < blockRewardMax)
+								if (parseFloat(coinbaseTxTotalOutputValue) < blockRewardMax)
+									div.row
+										div(class=sumTableLabelClass)
+											span.border-dotted(data-toggle="tooltip" title="The miner of this block failed to collect this value. As a result, it is permanently lost.") Value Destroyed
+										div.text-monospace.text-danger(class=sumTableValueClass)
+											- var currencyValue = new Decimal(blockRewardMax).minus(coinbaseTxTotalOutputValue);
+											include ./value-display.pug
+
+							else if (result.getblock.subsidy != null)
 								div.row
 									div(class=sumTableLabelClass)
-										span.border-dotted(data-toggle="tooltip" title="The miner of this block failed to collect this value. As a result, it is permanently lost.") Value Destroyed
-									div.text-monospace.text-danger(class=sumTableValueClass)
-										- var currencyValue = new Decimal(blockRewardMax).minus(coinbaseTxTotalOutputValue);
+										span.border-dotted(title="Value of the block subsidy", data-toggle="tooltip")
+											span Subsidy
+									div.text-monospace(class=sumTableValueClass)
+										- var currencyValue = new Decimal(result.getblock.subsidy);
 										include ./value-display.pug
 
 							if (result.getblock.weight)
@@ -173,7 +183,7 @@ div.tab-content
 									div(class=sumTableLabelClass) Miner
 									div.text-monospace(class=sumTableValueClass)
 										if (result.getblock.miner.identifiedBy)
-											small.data-tag.bg-primary(data-toggle="tooltip", title=("Identified by: " + result.getblock.miner.identifiedBy)) #{result.getblock.miner.name}
+											small.data-tag.bg-primary(data-toggle="tooltip", title=`Identified by: ${result.getblock.miner.identifiedBy}`) #{result.getblock.miner.name}
 
 										else
 											small.data-tag.bg-primary #{result.getblock.miner.name}
@@ -348,8 +358,16 @@ div.tab-content
 									span.text-muted  (#{result.getblock.chainwork.replace(/^0+/, '')})
 									
 
-		div.card.shadow-sm.mb-3
-			div.card-body.px-2.px-md-3
+		if (!result.getblock.tx || result.getblock.tx.length == 0)
+			div.card.shadow-sm.mb-3: div.card-body.px-2.px-md-3
+				h2.h6.mb-0.d-inline-block #{txCount.toLocaleString()} Transaction#{txCount>1?'s':''}
+				.text-muted.pt-2
+					span.mr-2(title="This data is unavailable due to blockchain pruning", data-toggle="tooltip")
+						i.fas.fa-backspace.text-danger
+					
+					| Details unavailable due to blockchain pruning
+		else
+			div.card.shadow-sm.mb-3: div.card-body.px-2.px-md-3
 				div.row
 					div.col-md-4
 						h2.h6.mb-0.d-inline-block #{txCount.toLocaleString()} 
@@ -358,21 +376,22 @@ div.tab-content
 							else
 								span Transactions
 
-						a.ml-2.border-dotted(href=`./block-analysis/${result.getblock.hash}`, title="See a summary analysis of all transactions in this block.", data-toggle="tooltip") See Block Analysis &raquo;
+						if (result.getblock.tx != null && result.getblock.tx.length > 0)
+							a.ml-2.border-dotted(href=`./block-analysis/${result.getblock.hash}`, title="See a summary analysis of all transactions in this block.", data-toggle="tooltip") See Block Analysis &raquo;
 
 					if (false || (!config.demoSite && !crawlerBot && txCount > 20))
 						div.col-md-8.text-right
 							small.mr-1.text-muted Show
 							div.btn-group(role="group")
-								a.btn.btn-sm.btn-primary.px-2.py-0(href=(paginationBaseUrl + "?limit=20"), class=((limit == 20 && txCount > limit) ? "active" : false)) 20
+								a.btn.btn-sm.btn-primary.px-2.py-0(href=`${paginationBaseUrl}?limit=20`, class=((limit == 20 && txCount > limit) ? "active" : false)) 20
 								
 								if (txCount > 50)
-									a.btn.btn-sm.btn-primary.px-2.py-0(href=(paginationBaseUrl + "?limit=50") class=(limit == 50 ? "active" : false)) 50
+									a.btn.btn-sm.btn-primary.px-2.py-0(href=`${paginationBaseUrl}?limit=50` class=(limit == 50 ? "active" : false)) 50
 								
 								if (txCount > 100)
-									a.btn.btn-sm.btn-primary.px-2.py-0(href=(paginationBaseUrl + "?limit=100"), class=(limit == 100 ? "active" : false)) 100
+									a.btn.btn-sm.btn-primary.px-2.py-0(href=`${paginationBaseUrl}?limit=100`, class=(limit == 100 ? "active" : false)) 100
 								
-								a.btn.btn-sm.btn-primary.px-2.py-0(href=(paginationBaseUrl + "?limit=3000"), class=(limit >= txCount ? "active" : false)) all
+								a.btn.btn-sm.btn-primary.px-2.py-0(href=`${paginationBaseUrl}?limit=3000`, class=(limit >= txCount ? "active" : false)) all
 
 				hr
 
@@ -380,17 +399,18 @@ div.tab-content
 				- var fontawesomeOutputName = "sign-out-alt";
 
 				div
+					- tx_height_param = !global.txindexAvailable ? `@${result.getblock.height}` : ''
 					each tx, txIndex in result.transactions
 						div.card.shadow-sm(class=(" " + ((txIndex < (result.transactions.length - 1) || txCount > limit) ? "mb-3" : "")))
 							div.card-header.text-monospace
 								if (tx && tx.txid)
 									span(title=`Index in Block: #${(txIndex + offset).toLocaleString()}`, data-toggle="tooltip") ##{(txIndex + offset).toLocaleString()}
-									span  &ndash; 
-									a(href=("./tx/" + tx.txid)) #{tx.txid}
+									span  &ndash;&nbsp;
+									a(href=`./tx/${tx.txid}${tx_height_param}`) #{tx.txid}
 
 									if (global.specialTransactions && global.specialTransactions[tx.txid])
-										span  
-										a(data-toggle="tooltip", title=(coinConfig.name + " Fun! See transaction for details"))
+										span &nbsp;
+										a(data-toggle="tooltip", title=`${coinConfig.name} Fun! See transaction for details`)
 											i.fas.fa-certificate.text-primary
 										
 							div.card-body.px-2.px-md-3

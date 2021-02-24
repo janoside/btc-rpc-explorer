@@ -1,4 +1,6 @@
-var basicAuth = require('basic-auth');
+"use strict";
+
+const basicAuth = require('basic-auth');
 
 module.exports = pass => (req, res, next) => {
 	var cred = basicAuth(req);

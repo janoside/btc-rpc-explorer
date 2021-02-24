@@ -39,9 +39,21 @@ See [CHANGELOG.md](/CHANGELOG.md).
 
 ## Prerequisites
 
-1. Install and run a full, archiving node - [instructions](https://bitcoin.org/en/full-node). Ensure that your bitcoin node has full transaction indexing enabled (`txindex=1`) and the RPC server enabled (`server=1`).
+1. Install and run a full, archiving node - [instructions](https://bitcoin.org/en/full-node). Ensure that your bitcoin node has its RPC server enabled (`server=1`).
 2. Synchronize your node with the Bitcoin network (you *can* use this tool while your node is still sychronizing, but some pages may fail).
 3. Install a "recent" version of Node.js (8+ recommended).
+
+### Note about pruning and indexing configurations
+
+This tool is designed to work best with full transaction indexing enabled (`txindex=1`) and pruning **disabled**. Running Bitcoin Core *without* `txindex` enabled and/or *with* `pruning` enabled works, but some data will be incomplete or missing. Also note that such Bitcoin Core configurations receive less thorough testing.
+
+In particular, with `pruning` enabled and/or `txindex` disabled, the following functionality is altered:
+
+* You will only be able to search for mempool, recently confirmed, and wallet transactions by their txid. Searching for non-wallet transactions that were confirmed over 3 blocks ago is only possible if you provide the confirmed block height in addition to the txid.
+* Pruned blocks will display basic header information, without the list of transactions. Transactions in pruned blocks will not be available, unless they're wallet-related. Block stats will only work for unpruned blocks.
+* The address and amount of previous transaction outputs will not be shown, only the txid:vout.
+* The mining fee will only be available for unconfirmed transactions.
+
 
 ## Install / Run
 

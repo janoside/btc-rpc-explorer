@@ -1,20 +1,22 @@
-var debug = require("debug");
+"use strict";
 
-var debugLog = debug("btcexp:utils");
-var debugErrorLog = debug("btcexp:error");
-var debugErrorVerboseLog = debug("btcexp:errorVerbose");
+const debug = require("debug");
+const debugLog = debug("btcexp:utils");
+const debugErrorLog = debug("btcexp:error");
+const debugErrorVerboseLog = debug("btcexp:errorVerbose");
 
-var Decimal = require("decimal.js");
-var request = require("request");
-var qrcode = require("qrcode");
+const Decimal = require("decimal.js");
+const request = require("request");
+const qrcode = require("qrcode");
 
-var config = require("./config.js");
-var coins = require("./coins.js");
-var coinConfig = coins[config.coin];
-var redisCache = require("./redisCache.js");
+const config = require("./config.js");
+const coins = require("./coins.js");
+const coinConfig = coins[config.coin];
+const redisCache = require("./redisCache.js");
+const statTracker = require("./statTracker.js");
 
 
-var exponentScales = [
+const exponentScales = [
 	{val:1000000000000000000000000000000000, name:"?", abbreviation:"V", exponent:"33"},
 	{val:1000000000000000000000000000000, name:"?", abbreviation:"W", exponent:"30"},
 	{val:1000000000000000000000000000, name:"?", abbreviation:"X", exponent:"27"},
@@ -28,11 +30,26 @@ var exponentScales = [
 	{val:1000, name:"kilo", abbreviation:"K", exponent:"3", textDesc:"thou"}
 ];
 
-var ipMemoryCache = {};
+const crawlerBotUserAgentStrings = {
+	"google": new RegExp("adsbot-google|Googlebot|mediapartners-google", "i"),
+	"microsoft": new RegExp("Bingbot|bingpreview|msnbot", "i"),
+	"yahoo": new RegExp("Slurp", "i"),
+	"duckduckgo": new RegExp("DuckDuckBot", "i"),
+	"baidu": new RegExp("Baidu", "i"),
+	"yandex": new RegExp("YandexBot", "i"),
+	"teoma": new RegExp("teoma", "i"),
+	"sogou": new RegExp("Sogou", "i"),
+	"exabot": new RegExp("Exabot", "i"),
+	"facebook": new RegExp("facebot", "i"),
+	"alexa": new RegExp("ia_archiver", "i"),
+	"aol": new RegExp("aolbuild", "i"),
+};
 
-var ipRedisCache = null;
+const ipMemoryCache = {};
+
+let ipRedisCache = null;
 if (redisCache.active) {
-	var onRedisCacheEvent = function(cacheType, eventType, cacheKey) {
+	const onRedisCacheEvent = function(cacheType, eventType, cacheKey) {
 		global.cacheStats.redis[eventType]++;
 		//debugLog(`cache.${cacheType}.${eventType}: ${cacheKey}`);
 	}
@@ -40,7 +57,7 @@ if (redisCache.active) {
 	ipRedisCache = redisCache.createCache("v0", onRedisCacheEvent);
 }
 
-var ipCache = {
+const ipCache = {
 	get:function(key) {
 		return new Promise(function(resolve, reject) {
 			if (ipMemoryCache[key] != null) {
@@ -451,26 +468,30 @@ function getTxTotalInputOutputValues(tx, txInputs, blockHeight) {
 	var totalOutputValue = new Decimal(0);
 
 	try {
-		for (var i = 0; i < tx.vin.length; i++) {
-			if (tx.vin[i].coinbase) {
-				totalInputValue = totalInputValue.plus(new Decimal(coinConfig.blockRewardFunction(blockHeight, global.activeBlockchain)));
+		if (txInputs) {
+			for (var i = 0; i < tx.vin.length; i++) {
+				if (tx.vin[i].coinbase) {
+					totalInputValue = totalInputValue.plus(new Decimal(coinConfig.blockRewardFunction(blockHeight, global.activeBlockchain)));
 
-			} else {
-				var txInput = txInputs[i];
+				} else {
+					var txInput = txInputs[i];
 
-				if (txInput) {
-					try {
-						var vout = txInput;
-						if (vout.value) {
-							totalInputValue = totalInputValue.plus(new Decimal(vout.value));
+					if (txInput) {
+						try {
+							var vout = txInput;
+							if (vout.value) {
+								totalInputValue = totalInputValue.plus(new Decimal(vout.value));
+							}
+						} catch (err) {
+							logError("2397gs0gsse", err, {txid:tx.txid, vinIndex:i});
 						}
-					} catch (err) {
-						logError("2397gs0gsse", err, {txid:tx.txid, vinIndex:i});
 					}
 				}
 			}
+		} else {
+			totalInputValue = null
 		}
-		
+
 		for (var i = 0; i < tx.vout.length; i++) {
 			totalOutputValue = totalOutputValue.plus(new Decimal(tx.vout[i].value));
 		}
@@ -706,6 +727,9 @@ function logError(errorId, err, optionalUserData = null) {
 		};
 	}
 
+	statTracker.trackEvent(`errors.${errorId}`);
+	statTracker.trackEvent(`errors.*`);
+
 	global.errorStats[errorId].count++;
 	global.errorStats[errorId].lastSeen = new Date().getTime();
 
@@ -826,6 +850,38 @@ function asAddress(value) {
 const arrayFromHexString = hexString =>
 	new Uint8Array(hexString.match(/.{1,2}/g).map(byte => parseInt(byte, 16)));
 
+const getCrawlerFromUserAgentString = userAgentString => {
+	for (const [name, regex] of Object.entries(crawlerBotUserAgentStrings)) {
+		if (regex.test(userAgentString)) {
+			return name;
+		}
+	}
+
+	return null;
+};
+
+const timePromise = async (name, promise) => {
+	const startTime = startTimeNanos();
+
+	const response = await promise;
+
+	const responseTimeMillis = dtMillis(startTime);
+
+	statTracker.trackPerformance(name, responseTimeMillis);
+
+	return response;
+};
+
+const startTimeNanos = () => {
+	return process.hrtime.bigint();
+};
+
+const dtMillis = (startTimeNanos) => {
+	const dtNanos = process.hrtime.bigint() - startTimeNanos;
+
+	return parseInt(dtNanos) * 1e-6;
+};
+
 module.exports = {
 	reflectPromise: reflectPromise,
 	redirectToConnectPageIfNeeded: redirectToConnectPageIfNeeded,
@@ -864,5 +920,9 @@ module.exports = {
 	asHash: asHash,
 	asHashOrHeight: asHashOrHeight,
 	asAddress: asAddress,
-	arrayFromHexString: arrayFromHexString
+	arrayFromHexString: arrayFromHexString,
+	getCrawlerFromUserAgentString: getCrawlerFromUserAgentString,
+	timePromise: timePromise,
+	startTimeNanos: startTimeNanos,
+	dtMillis: dtMillis
 };

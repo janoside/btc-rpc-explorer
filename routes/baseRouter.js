@@ -1,86 +1,123 @@
-var debug = require("debug");
-var debugLog = debug("btcexp:router");
+"use strict";
 
-var express = require('express');
-var csurf = require('csurf');
-var router = express.Router();
-var util = require('util');
-var moment = require('moment');
-var bitcoinCore = require("bitcoin-core");
-var qrcode = require('qrcode');
-var bitcoinjs = require('bitcoinjs-lib');
-var sha256 = require("crypto-js/sha256");
-var hexEnc = require("crypto-js/enc-hex");
-var Decimal = require("decimal.js");
-var semver = require("semver");
-var markdown = require("markdown-it")();
+const debug = require("debug");
+const debugLog = debug("btcexp:router");
 
-var utils = require('./../app/utils.js');
-var coins = require("./../app/coins.js");
-var config = require("./../app/config.js");
-var coreApi = require("./../app/api/coreApi.js");
-var addressApi = require("./../app/api/addressApi.js");
-var rpcApi = require("./../app/api/rpcApi.js");
+const express = require('express');
+const csurf = require('csurf');
+const router = express.Router();
+const util = require('util');
+const moment = require('moment');
+const bitcoinCore = require("bitcoin-core");
+const qrcode = require('qrcode');
+const bitcoinjs = require('bitcoinjs-lib');
+const sha256 = require("crypto-js/sha256");
+const hexEnc = require("crypto-js/enc-hex");
+const Decimal = require("decimal.js");
+const semver = require("semver");
+const markdown = require("markdown-it")();
+const asyncHandler = require("express-async-handler");
 
-const v8 = require('v8');
+const utils = require('./../app/utils.js');
+const coins = require("./../app/coins.js");
+const config = require("./../app/config.js");
+const coreApi = require("./../app/api/coreApi.js");
+const addressApi = require("./../app/api/addressApi.js");
+const rpcApi = require("./../app/api/rpcApi.js");
 
 const forceCsrf = csurf({ ignoreMethods: [] });
 
-router.get("/", function(req, res, next) {
-	if (req.session.host == null || req.session.host.trim() == "") {
-		if (req.cookies['rpc-host']) {
-			res.locals.host = req.cookies['rpc-host'];
+var noTxIndexMsg = "\n\nYour node does not have `txindex` enabled. Without it, you can only lookup wallet, mempool, and recently confirmed transactions by their `txid`. Searching for non-wallet transactions that were confirmed more than "+config.noTxIndexSearchDepth+" blocks ago is only possible if you provide the confirmed block height in addition to the txid, using `<txid>@<height>` in the search box.";
+
+router.get("/", asyncHandler(async (req, res, next) => {
+	try {
+		if (req.session.host == null || req.session.host.trim() == "") {
+			if (req.cookies['rpc-host']) {
+				res.locals.host = req.cookies['rpc-host'];
+			}
+
+			if (req.cookies['rpc-port']) {
+				res.locals.port = req.cookies['rpc-port'];
+			}
+
+			if (req.cookies['rpc-username']) {
+				res.locals.username = req.cookies['rpc-username'];
+			}
+
+			res.render("connect");
+			res.end();
+
+			return;
 		}
 
-		if (req.cookies['rpc-port']) {
-			res.locals.port = req.cookies['rpc-port'];
-		}
-
-		if (req.cookies['rpc-username']) {
-			res.locals.username = req.cookies['rpc-username'];
-		}
-
-		res.render("connect");
-		res.end();
-
-		return;
-	}
-
-	res.locals.homepage = true;
-	
-	// don't need timestamp on homepage "blocks-list", this flag disables
-	res.locals.hideTimestampColumn = true;
+		res.locals.homepage = true;
+		
+		// don't need timestamp on homepage "blocks-list", this flag disables
+		res.locals.hideTimestampColumn = true;
 
 
-	// variables used by blocks-list.pug
-	res.locals.offset = 0;
-	res.locals.sort = "desc";
+		// variables used by blocks-list.pug
+		res.locals.offset = 0;
+		res.locals.sort = "desc";
 
-	var feeConfTargets = [1, 6, 144, 1008];
-	res.locals.feeConfTargets = feeConfTargets;
-
-
-	var promises = [];
-
-	// promiseResults[0]
-	promises.push(coreApi.getMempoolInfo());
-
-	// promiseResults[1]
-	promises.push(coreApi.getMiningInfo());
-
-	// promiseResults[2]
-	promises.push(coreApi.getSmartFeeEstimates("CONSERVATIVE", feeConfTargets));
-
-	// promiseResults[3] and [4]
-	promises.push(coreApi.getNetworkHashrate(144));
-	promises.push(coreApi.getNetworkHashrate(1008));
+		var feeConfTargets = [1, 6, 144, 1008];
+		res.locals.feeConfTargets = feeConfTargets;
 
 
-	coreApi.getBlockchainInfo().then(function(getblockchaininfo) {
+		var promises = [];
+
+		// promiseResults[0]
+		promises.push(new Promise(async (resolve, reject) => {
+			res.locals.mempoolInfo = await utils.timePromise("promises.index.getMempoolInfo", coreApi.getMempoolInfo());
+			
+			resolve();
+		}));
+
+		promises.push(new Promise(async (resolve, reject) => {
+			res.locals.miningInfo = await utils.timePromise("promises.index.getMiningInfo", coreApi.getMiningInfo());
+
+			resolve();
+		}));
+
+		promises.push(new Promise(async (resolve, reject) => {
+			const rawSmartFeeEstimates = await utils.timePromise("promises.index.getSmartFeeEstimates", coreApi.getSmartFeeEstimates("CONSERVATIVE", feeConfTargets));
+
+			var smartFeeEstimates = {};
+
+			for (var i = 0; i < feeConfTargets.length; i++) {
+				var rawSmartFeeEstimate = rawSmartFeeEstimates[i];
+
+				if (rawSmartFeeEstimate.errors) {
+					smartFeeEstimates[feeConfTargets[i]] = "?";
+
+				} else {
+					smartFeeEstimates[feeConfTargets[i]] = parseInt(new Decimal(rawSmartFeeEstimate.feerate).times(coinConfig.baseCurrencyUnit.multiplier).dividedBy(1000));
+				}
+			}
+
+			res.locals.smartFeeEstimates = smartFeeEstimates;
+
+			resolve();
+		}));
+
+		promises.push(new Promise(async (resolve, reject) => {
+			res.locals.hashrate1d = await utils.timePromise("promises.index.getNetworkHashrate-144", coreApi.getNetworkHashrate(144));
+
+			resolve();
+		}));
+
+		promises.push(new Promise(async (resolve, reject) => {
+			res.locals.hashrate7d = await utils.timePromise("promises.index.getNetworkHashrate-1008", coreApi.getNetworkHashrate(1008));
+
+			resolve();
+		}));
+
+
+		const getblockchaininfo = await utils.timePromise("promises.index.getBlockchainInfo", coreApi.getBlockchainInfo());
 		res.locals.getblockchaininfo = getblockchaininfo;
 
 		res.locals.difficultyPeriod = parseInt(Math.floor(getblockchaininfo.blocks / coinConfig.difficultyAdjustmentBlockCount));
-		
+			
 
 		var blockHeights = [];
 		if (getblockchaininfo.blocks) {
@@ -94,171 +131,147 @@ router.get("/", function(req, res, next) {
 			blockHeights.push(0);
 		}
 
-		// promiseResults[5]
-		promises.push(coreApi.getBlocksStatsByHeight(blockHeights));
+		promises.push(new Promise(async (resolve, reject) => {
+			const rawblockstats = await utils.timePromise("promises.index.getBlocksStatsByHeight", coreApi.getBlocksStatsByHeight(blockHeights));
 
-		// promiseResults[6]
-		promises.push(new Promise(function(resolve, reject) {
-			coreApi.getBlockHeaderByHeight(coinConfig.difficultyAdjustmentBlockCount * res.locals.difficultyPeriod).then(function(difficultyPeriodFirstBlockHeader) {
-				resolve(difficultyPeriodFirstBlockHeader);
-			});
+			if (rawblockstats && rawblockstats.length > 0 && rawblockstats[0] != null) {
+				res.locals.blockstatsByHeight = {};
+
+				for (var i = 0; i < rawblockstats.length; i++) {
+					var blockstats = rawblockstats[i];
+
+					res.locals.blockstatsByHeight[blockstats.height] = blockstats;
+				}
+			}
+
+			resolve();
+		}));
+
+		promises.push(new Promise(async (resolve, reject) => {
+			let h = coinConfig.difficultyAdjustmentBlockCount * res.locals.difficultyPeriod;
+			res.locals.difficultyPeriodFirstBlockHeader = await utils.timePromise("promises.index.getBlockHeaderByHeight", coreApi.getBlockHeaderByHeight(h));
+			
+			resolve();
+		}));
+
+		promises.push(new Promise(async (resolve, reject) => {
+			const latestBlocks = await utils.timePromise(`promises.index.getBlocksByHeight`, coreApi.getBlocksByHeight(blockHeights));
+
+			res.locals.latestBlocks = latestBlocks;
+			res.locals.blocksUntilDifficultyAdjustment = ((res.locals.difficultyPeriod + 1) * coinConfig.difficultyAdjustmentBlockCount) - latestBlocks[0].height;
+			
+			resolve();
 		}));
 
 		if (getblockchaininfo.chain !== 'regtest') {
 			var targetBlocksPerDay = 24 * 60 * 60 / global.coinConfig.targetBlockTimeSeconds;
 
-			// promiseResults[7] (if not regtest)
-			promises.push(coreApi.getTxCountStats(targetBlocksPerDay / 4, -targetBlocksPerDay, "latest"));
+			promises.push(new Promise(async (resolve, reject) => {
+				res.locals.txStats = await utils.timePromise("promises.index.getTxCountStats", coreApi.getTxCountStats(targetBlocksPerDay / 4, -targetBlocksPerDay, "latest"));
+				
+				resolve();
+			}));
 
-			var chainTxStatsIntervals = [ targetBlocksPerDay, targetBlocksPerDay * 7, targetBlocksPerDay * 30, targetBlocksPerDay * 365 ]
-				.filter(numBlocks => numBlocks <= getblockchaininfo.blocks);
-
-			res.locals.chainTxStatsLabels = [ "24 hours", "1 week", "1 month", "1 year" ]
-				.slice(0, chainTxStatsIntervals.length)
-				.concat("All time");
+			var chainTxStatsIntervals = [ [targetBlocksPerDay, "24 hours"], [targetBlocksPerDay * 7, "1 week"], [targetBlocksPerDay * 30, "1 month"], [targetBlocksPerDay * 365, "1 year"] ]
+				.filter(dat => dat[0] <= getblockchaininfo.blocks);
 
 			// promiseResults[8-X] (if not regtest)
+			res.locals.chainTxStats = {};
 			for (var i = 0; i < chainTxStatsIntervals.length; i++) {
-				promises.push(coreApi.getChainTxStats(chainTxStatsIntervals[i]));
+				promises.push(new Promise(async (resolve, reject) => {
+					res.locals.chainTxStats[chainTxStatsIntervals[i][0]] = await utils.timePromise(`promises.index.getChainTxStats-${chainTxStatsIntervals[i][0]}`, coreApi.getChainTxStats(chainTxStatsIntervals[i][0]));
+					
+					resolve();
+				}));
 			}
+
+			chainTxStatsIntervals.push([-1, "All time"]);
+			res.locals.chainTxStatsIntervals = chainTxStatsIntervals;
+
+			promises.push(new Promise(async (resolve, reject) => {
+				res.locals.chainTxStats[-1] = await utils.timePromise(`promises.index.getChainTxStats-allTime`, coreApi.getChainTxStats(getblockchaininfo.blocks - 1));
+				
+				resolve();
+			}));
 		}
 
-		if (getblockchaininfo.chain !== 'regtest') {
-			promises.push(coreApi.getChainTxStats(getblockchaininfo.blocks - 1));
-		}
-
-		coreApi.getBlocksByHeight(blockHeights).then(function(latestBlocks) {
-			res.locals.latestBlocks = latestBlocks;
-			res.locals.blocksUntilDifficultyAdjustment = ((res.locals.difficultyPeriod + 1) * coinConfig.difficultyAdjustmentBlockCount) - latestBlocks[0].height;
-
-			Promise.all(promises).then(function(promiseResults) {
-				res.locals.mempoolInfo = promiseResults[0];
-				res.locals.miningInfo = promiseResults[1];
-
-				var rawSmartFeeEstimates = promiseResults[2];
-
-				var smartFeeEstimates = {};
-
-				for (var i = 0; i < feeConfTargets.length; i++) {
-					var rawSmartFeeEstimate = rawSmartFeeEstimates[i];
-
-					if (rawSmartFeeEstimate.errors) {
-						smartFeeEstimates[feeConfTargets[i]] = "?";
-
-					} else {
-						smartFeeEstimates[feeConfTargets[i]] = parseInt(new Decimal(rawSmartFeeEstimate.feerate).times(coinConfig.baseCurrencyUnit.multiplier).dividedBy(1000));
-					}
-				}
-
-				res.locals.smartFeeEstimates = smartFeeEstimates;
-
-
-				res.locals.hashrate1d = promiseResults[3];
-				res.locals.hashrate7d = promiseResults[4];
-
-				
-				var rawblockstats = promiseResults[5];
-				if (rawblockstats && rawblockstats.length > 0 && rawblockstats[0] != null) {
-					res.locals.blockstatsByHeight = {};
-
-					for (var i = 0; i < rawblockstats.length; i++) {
-						var blockstats = rawblockstats[i];
-
-						res.locals.blockstatsByHeight[blockstats.height] = blockstats;
-					}
-				}
-
-				res.locals.difficultyPeriodFirstBlockHeader = promiseResults[6];
-				
-
-				if (getblockchaininfo.chain !== 'regtest') {
-					res.locals.txStats = promiseResults[7];
-
-					var chainTxStats = [];
-					for (var i = 0; i < res.locals.chainTxStatsLabels.length; i++) {
-						chainTxStats.push(promiseResults[i + 8]);
-					}
-
-					res.locals.chainTxStats = chainTxStats;
-				}
-
-				res.render("index");
-
-				next();
-
-			}).catch(function(err) {
-				utils.logError("32978efegdde", err);
-				
-				res.locals.userMessage = "Error loading recent blocks: " + err;
-
-				res.render("index");
-
-				next();
-			});
-		});
-	}).catch(function(err) {
-		res.locals.userMessage = "Error loading recent blocks: " + err;
+		await Promise.all(promises);
 
 		res.render("index");
 
 		next();
-	});
-});
 
-router.get("/node-status", function(req, res, next) {
-	coreApi.getBlockchainInfo().then(function(getblockchaininfo) {
-		res.locals.getblockchaininfo = getblockchaininfo;
+	} catch (err) {
+		utils.logError("238023hw87gddd", err);
+					
+		res.locals.userMessage = "Error building page: " + err;
 
-		coreApi.getNetworkInfo().then(function(getnetworkinfo) {
-			res.locals.getnetworkinfo = getnetworkinfo;
+		res.render("index");
 
-			coreApi.getUptimeSeconds().then(function(uptimeSeconds) {
-				res.locals.uptimeSeconds = uptimeSeconds;
+		next();
+	}
+}));
 
-				coreApi.getNetTotals().then(function(getnettotals) {
-					res.locals.getnettotals = getnettotals;
+router.get("/node-status", asyncHandler(async (req, res, next) => {
+	try {
+		const promises = [];
 
-					res.render("node-status");
+		promises.push(new Promise(async (resolve, reject) => {
+			res.locals.getblockchaininfo = await utils.timePromise("promises.node-status.getBlockchainInfo", coreApi.getBlockchainInfo());
 
-					next();
+			resolve();
+		}));
 
-				}).catch(function(err) {
-					res.locals.userMessage = "Error getting node status: (id=0), err=" + err;
+		promises.push(new Promise(async (resolve, reject) => {
+			res.locals.getnetworkinfo = await utils.timePromise("promises.node-status.getNetworkInfo", coreApi.getNetworkInfo());
 
-					res.render("node-status");
+			resolve();
+		}));
 
-					next();
-				});
-			}).catch(function(err) {
-				res.locals.userMessage = "Error getting node status: (id=1), err=" + err;
+		promises.push(new Promise(async (resolve, reject) => {
+			res.locals.uptimeSeconds = await utils.timePromise("promises.node-status.getUptimeSeconds", coreApi.getUptimeSeconds());
 
-				res.render("node-status");
+			resolve();
+		}));
 
-				next();
-			});
-		}).catch(function(err) {
-			res.locals.userMessage = "Error getting node status: (id=2), err=" + err;
+		promises.push(new Promise(async (resolve, reject) => {
+			res.locals.getnettotals = await utils.timePromise("promises.node-status.getNetTotals", coreApi.getNetTotals());
 
-			res.render("node-status");
+			resolve();
+		}));
 
-			next();
-		});
-	}).catch(function(err) {
-		res.locals.userMessage = "Error getting node status: (id=3), err=" + err;
+		await Promise.all(promises);
 
 		res.render("node-status");
 
 		next();
-	});
-});
 
-router.get("/mempool-summary", function(req, res, next) {
-	res.locals.satoshiPerByteBucketMaxima = coinConfig.feeSatoshiPerByteBucketMaxima;
+	} catch (err) {
+		utils.logError("32978efegdde", err);
+					
+		res.locals.userMessage = "Error building page: " + err;
 
-	coreApi.getMempoolInfo().then(function(mempoolinfo) {
-		res.locals.mempoolinfo = mempoolinfo;
+		res.render("node-status");
 
-		coreApi.getMempoolTxids().then(function(mempooltxids) {
+		next();
+	}
+}));
+
+router.get("/mempool-summary", asyncHandler(async (req, res, next) => {
+	try {
+		res.locals.satoshiPerByteBucketMaxima = coinConfig.feeSatoshiPerByteBucketMaxima;
+
+		const promises = [];
+
+		promises.push(new Promise(async (resolve, reject) => {
+			res.locals.mempoolinfo = await utils.timePromise("promises.mempool-summary.getMempoolInfo", coreApi.getMempoolInfo());
+
+			resolve();
+		}));
+
+		promises.push(new Promise(async (resolve, reject) => {
+			const mempooltxids = await utils.timePromise("promises.mempool-summary.getMempoolTxids", coreApi.getMempoolTxids());
+
 			var debugMaxCount = 0;
 
 			if (debugMaxCount > 0) {
@@ -272,21 +285,26 @@ router.get("/mempool-summary", function(req, res, next) {
 			} else {
 				res.locals.mempooltxidChunks = utils.splitArrayIntoChunks(mempooltxids, 25);
 			}
-			
 
-			res.render("mempool-summary");
+			resolve();
+		}));
 
-			next();
-		});
-
-	}).catch(function(err) {
-		res.locals.userMessage = "Error: " + err;
+		await Promise.all(promises);
 
 		res.render("mempool-summary");
 
 		next();
-	});
-});
+
+	} catch (err) {
+		utils.logError("390824yw7e332", err);
+					
+		res.locals.userMessage = "Error building page: " + err;
+
+		res.render("mempool-summary");
+
+		next();
+	}
+}));
 
 router.get("/peers", function(req, res, next) {
 	coreApi.getPeerSummary().then(function(peerSummary) {
@@ -408,6 +426,9 @@ router.get("/blocks", function(req, res, next) {
 	res.locals.sort = sort;
 	res.locals.paginationBaseUrl = "./blocks";
 
+	// if pruning is active, global.pruneHeight is used when displaying this page
+	// global.pruneHeight is updated whenever we send a getblockchaininfo RPC to the node
+
 	coreApi.getBlockchainInfo().then(function(getblockchaininfo) {
 		res.locals.blockCount = getblockchaininfo.blocks;
 		res.locals.blockOffset = offset;
@@ -435,7 +456,7 @@ router.get("/blocks", function(req, res, next) {
 
 		promises.push(coreApi.getBlocksByHeight(blockHeights));
 
-		promises.push(coreApi.getBlocksStatsByHeight(blockHeights));
+		promises.push(coreApi.getBlocksStatsByHeight(blockHeights).catch(_ => ({})));
 
 		Promise.all(promises).then(function(promiseResults) {
 			res.locals.blocks = promiseResults[0];
@@ -530,66 +551,35 @@ router.post("/search", function(req, res, next) {
 
 	req.session.query = req.body.query;
 
+	// Support txid@height lookups
+	if (/^[a-f0-9]{64}@\d+$/.test(query)) {
+		return res.redirect("./tx/" + query);
+	}
+
 	if (query.length == 64) {
 		coreApi.getRawTransaction(query).then(function(tx) {
-			if (tx) {
-				res.redirect("./tx/" + query);
-
-				return;
-			}
-
-			coreApi.getBlockByHash(query).then(function(blockByHash) {
-				if (blockByHash) {
-					res.redirect("./block/" + query);
-
-					return;
-				}
-
-				coreApi.getAddress(rawCaseQuery).then(function(validateaddress) {
-					if (validateaddress && validateaddress.isvalid) {
-						res.redirect("./address/" + rawCaseQuery);
-
-						return;
-					}
-				});
-
-				req.session.userMessage = "No results found for query: " + query;
-
-				res.redirect("./");
-
-			}).catch(function(err) {
-				req.session.userMessage = "No results found for query: " + query;
-
-				res.redirect("./");
-			});
+			res.redirect("./tx/" + query);
 
 		}).catch(function(err) {
 			coreApi.getBlockByHash(query).then(function(blockByHash) {
-				if (blockByHash) {
-					res.redirect("./block/" + query);
-
-					return;
-				}
-
-				req.session.userMessage = "No results found for query: " + query;
-
-				res.redirect("./");
+				res.redirect("./block/" + query);
 
 			}).catch(function(err) {
 				req.session.userMessage = "No results found for query: " + query;
 
+				if (!global.txindexAvailable) {
+					req.session.userMessage += noTxIndexMsg;
+				}
+				
 				res.redirect("./");
 			});
 		});
 
 	} else if (!isNaN(query)) {
 		coreApi.getBlockByHeight(parseInt(query)).then(function(blockByHeight) {
-			if (blockByHeight) {
-				res.redirect("./block-height/" + query);
-
-				return;
-			}
-
+			res.redirect("./block-height/" + query);
+			
+		}).catch(function(err) {
 			req.session.userMessage = "No results found for query: " + query;
 
 			res.redirect("./");
@@ -609,81 +599,80 @@ router.post("/search", function(req, res, next) {
 	}
 });
 
-router.get("/block-height/:blockHeight", function(req, res, next) {
-	var blockHeight = parseInt(req.params.blockHeight);
+router.get("/block-height/:blockHeight", asyncHandler(async (req, res, next) => {
+	try {
+		var blockHeight = parseInt(req.params.blockHeight);
 
-	res.locals.blockHeight = blockHeight;
+		res.locals.blockHeight = blockHeight;
 
-	res.locals.result = {};
+		res.locals.result = {};
 
-	var limit = config.site.blockTxPageSize;
-	var offset = 0;
+		var limit = config.site.blockTxPageSize;
+		var offset = 0;
 
-	if (req.query.limit) {
-		limit = parseInt(req.query.limit);
+		if (req.query.limit) {
+			limit = parseInt(req.query.limit);
 
-		// for demo sites, limit page sizes
-		if (config.demoSite && limit > config.site.blockTxPageSize) {
-			limit = config.site.blockTxPageSize;
+			// for demo sites, limit page sizes
+			if (config.demoSite && limit > config.site.blockTxPageSize) {
+				limit = config.site.blockTxPageSize;
 
-			res.locals.userMessage = "Transaction page size limited to " + config.site.blockTxPageSize + ". If this is your site, you can change or disable this limit in the site config.";
+				res.locals.userMessage = "Transaction page size limited to " + config.site.blockTxPageSize + ". If this is your site, you can change or disable this limit in the site config.";
+			}
 		}
-	}
 
-	if (req.query.offset) {
-		offset = parseInt(req.query.offset);
-	}
+		if (req.query.offset) {
+			offset = parseInt(req.query.offset);
+		}
 
-	res.locals.limit = limit;
-	res.locals.offset = offset;
-	res.locals.paginationBaseUrl = "./block-height/" + blockHeight;
+		res.locals.limit = limit;
+		res.locals.offset = offset;
+		res.locals.paginationBaseUrl = "./block-height/" + blockHeight;
 
-	coreApi.getBlockByHeight(blockHeight).then(function(result) {
+		const result = await utils.timePromise("promises.block-height.getBlockByHeight", coreApi.getBlockByHeight(blockHeight));
 		res.locals.result.getblockbyheight = result;
 
 		var promises = [];
 
-		promises.push(new Promise(function(resolve, reject) {
-			coreApi.getBlockByHashWithTransactions(result.hash, limit, offset).then(function(result) {
-				res.locals.result.getblock = result.getblock;
-				res.locals.result.transactions = result.transactions;
-				res.locals.result.txInputsByTransaction = result.txInputsByTransaction;
+		promises.push(new Promise(async (resolve, reject) => {
+			const blockWithTransactions = await utils.timePromise("promises.block-height.getBlockByHashWithTransactions", coreApi.getBlockByHashWithTransactions(result.hash, limit, offset));
+
+			res.locals.result.getblock = blockWithTransactions.getblock;
+			res.locals.result.transactions = blockWithTransactions.transactions;
+			res.locals.result.txInputsByTransaction = blockWithTransactions.txInputsByTransaction;
+
+			resolve();
+		}));
+
+		promises.push(new Promise(async (resolve, reject) => {
+			try {
+				const blockStats = await utils.timePromise("promises.block-height.getBlockStats", coreApi.getBlockStats(result.hash));
+				
+				res.locals.result.blockstats = blockStats;
 
 				resolve();
 
-			}).catch(function(err) {
-				res.locals.pageErrors.push(utils.logError("98493y4758h55", err));
+			} catch (err) {
+				if (global.prunedBlockchain) {
+					// unavailable, likely due to pruning
+					debugLog('Failed loading block stats', err);
+					res.locals.result.blockstats = null;
 
-				reject(err);
-			});
+					resolve();
+
+				} else {
+					throw err;
+				}
+			}
 		}));
 
-		promises.push(new Promise(function(resolve, reject) {
-			coreApi.getBlockStats(result.hash).then(function(result) {
-				res.locals.result.blockstats = result;
+		await Promise.all(promises);
 
-				resolve();
+		res.render("block");
 
-			}).catch(function(err) {
-				res.locals.pageErrors.push(utils.logError("983yr435r76d", err));
+		next();
 
-				reject(err);
-			});
-		}));
-
-		Promise.all(promises).then(function() {
-			res.render("block");
-
-			next();
-
-		}).catch(function(err) {
-			res.locals.userMessageMarkdown = `Failed loading block: height=**${blockHeight}**`;
-
-			res.render("block");
-
-			next();
-		});
-	}).catch(function(err) {
+	} catch (err) {
 		res.locals.userMessageMarkdown = `Failed loading block: height=**${blockHeight}**`;
 
 		res.locals.pageErrors.push(utils.logError("389wer07eghdd", err));
@@ -691,81 +680,88 @@ router.get("/block-height/:blockHeight", function(req, res, next) {
 		res.render("block");
 
 		next();
-	});
-});
+	}
+}));
 
-router.get("/block/:blockHash", function(req, res, next) {
-	var blockHash = utils.asHash(req.params.blockHash);
+router.get("/block/:blockHash", asyncHandler(async (req, res, next) => {
+	try {
+		var blockHash = utils.asHash(req.params.blockHash);
 
-	res.locals.blockHash = blockHash;
+		res.locals.blockHash = blockHash;
 
-	res.locals.result = {};
+		res.locals.result = {};
 
-	var limit = config.site.blockTxPageSize;
-	var offset = 0;
+		var limit = config.site.blockTxPageSize;
+		var offset = 0;
 
-	if (req.query.limit) {
-		limit = parseInt(req.query.limit);
+		if (req.query.limit) {
+			limit = parseInt(req.query.limit);
 
-		// for demo sites, limit page sizes
-		if (config.demoSite && limit > config.site.blockTxPageSize) {
-			limit = config.site.blockTxPageSize;
+			// for demo sites, limit page sizes
+			if (config.demoSite && limit > config.site.blockTxPageSize) {
+				limit = config.site.blockTxPageSize;
 
-			res.locals.userMessage = "Transaction page size limited to " + config.site.blockTxPageSize + ". If this is your site, you can change or disable this limit in the site config.";
+				res.locals.userMessage = "Transaction page size limited to " + config.site.blockTxPageSize + ". If this is your site, you can change or disable this limit in the site config.";
+			}
 		}
-	}
 
-	if (req.query.offset) {
-		offset = parseInt(req.query.offset);
-	}
+		if (req.query.offset) {
+			offset = parseInt(req.query.offset);
+		}
 
-	res.locals.limit = limit;
-	res.locals.offset = offset;
-	res.locals.paginationBaseUrl = "./block/" + blockHash;
+		res.locals.limit = limit;
+		res.locals.offset = offset;
+		res.locals.paginationBaseUrl = "./block/" + blockHash;
 
-	var promises = [];
+		var promises = [];
 
-	promises.push(new Promise(function(resolve, reject) {
-		coreApi.getBlockByHashWithTransactions(blockHash, limit, offset).then(function(result) {
-			res.locals.result.getblock = result.getblock;
-			res.locals.result.transactions = result.transactions;
-			res.locals.result.txInputsByTransaction = result.txInputsByTransaction;
+		promises.push(new Promise(async (resolve, reject) => {
+			const blockWithTransactions = await utils.timePromise("promises.block-hash.getBlockByHashWithTransactions", coreApi.getBlockByHashWithTransactions(blockHash, limit, offset));
+			
+			res.locals.result.getblock = blockWithTransactions.getblock;
+			res.locals.result.transactions = blockWithTransactions.transactions;
+			res.locals.result.txInputsByTransaction = blockWithTransactions.txInputsByTransaction;
 
 			resolve();
+		}));
 
-		}).catch(function(err) {
-			res.locals.pageErrors.push(utils.logError("238h38sse", err));
-			
-			reject(err);
-		});
-	}));
+		promises.push(new Promise(async (resolve, reject) => {
+			try {
+				const blockStats = await utils.timePromise("promises.block-hash.getBlockStats", coreApi.getBlockStats(blockHash));
+				
+				res.locals.result.blockstats = blockStats;
 
-	promises.push(new Promise(function(resolve, reject) {
-		coreApi.getBlockStats(blockHash).then(function(result) {
-			res.locals.result.blockstats = result;
+				resolve();
 
-			resolve();
+			} catch (err) {
+				if (global.prunedBlockchain) {
+					// unavailable, likely due to pruning
+					debugLog('Failed loading block stats, likely due to pruning', err);
 
-		}).catch(function(err) {
-			res.locals.pageErrors.push(utils.logError("21983ue8hye", err));
-			
-			reject(err);
-		});
-	}));
+					resolve();
 
-	Promise.all(promises).then(function() {
+				} else {
+					reject(err);
+				}
+			}
+		}));
+
+		await Promise.all(promises);
+		
 		res.render("block");
 
 		next();
 
-	}).catch(function(err) {
+	} catch (err) {
 		res.locals.userMessageMarkdown = `Failed to load block: **${blockHash}**`;
 
+		res.locals.pageErrors.push(utils.logError("32824yhr2973t3d", err));
+
 		res.render("block");
 
 		next();
-	});
-});
+	}
+}));
 
 router.get("/block-analysis/:blockHashOrHeight", function(req, res, next) {
 	var blockHashOrHeight = utils.asHashOrHeight(req.params.blockHashOrHeight);
@@ -784,6 +780,7 @@ router.get("/block-analysis/:blockHashOrHeight", function(req, res, next) {
 		res.locals.result = {};
 
 		coreApi.getBlockByHash(blockHash).then(function(block) {
+			res.locals.block = block;
 			res.locals.result.getblock = block;
 
 			res.render("block-analysis");
@@ -814,56 +811,69 @@ router.get("/block-analysis", function(req, res, next) {
 	next();
 });
 
-router.get("/tx/:transactionId", function(req, res, next) {
-	var txid = utils.asHash(req.params.transactionId);
+router.get("/tx/:transactionId@:blockHeight", asyncHandler(async (req, res, next) => {
+	req.query.blockHeight = req.params.blockHeight;
+	req.url = "/tx/" + req.params.transactionId;
 
-	var output = -1;
-	if (req.query.output) {
-		output = parseInt(req.query.output);
-	}
+	next();
+}));
 
-	res.locals.txid = txid;
-	res.locals.output = output;
 
-	res.locals.result = {};
+router.get("/tx/:transactionId", asyncHandler(async (req, res, next) => {
+	try {
+		var txid = utils.asHash(req.params.transactionId);
 
-	coreApi.getRawTransactionsWithInputs([txid]).then(function(rawTxResult) {
+		var output = -1;
+		if (req.query.output) {
+			output = parseInt(req.query.output);
+		}
+
+		res.locals.txid = txid;
+		res.locals.output = output;
+
+
+		if (req.query.blockHeight) {
+			res.locals.blockHeight = req.query.blockHeight;
+		}
+
+		res.locals.result = {};
+
+		var txPromise = req.query.blockHeight ? 
+				coreApi.getBlockByHeight(parseInt(req.query.blockHeight))
+				.then(block => {
+					res.locals.block = block;
+					return coreApi.getRawTransactionsWithInputs([txid], -1, block.hash)
+				})
+				: coreApi.getRawTransactionsWithInputs([txid], -1);
+
+		const rawTxResult = await utils.timePromise("promises.tx.getRawTransactionsWithInputs", txPromise);
+
 		var tx = rawTxResult.transactions[0];
 
 		res.locals.result.getrawtransaction = tx;
-		res.locals.result.txInputs = rawTxResult.txInputsByTransaction[txid];
+		res.locals.result.txInputs = rawTxResult.txInputsByTransaction[txid] || {};
 
 		var promises = [];
 
-		promises.push(new Promise(function(resolve, reject) {
-			coreApi.getTxUtxos(tx).then(function(utxos) {
-				res.locals.utxos = utxos;
+		promises.push(new Promise(async (resolve, reject) => {
+			const utxos = await utils.timePromise("promises.tx.getTxUtxos", coreApi.getTxUtxos(tx));
+			
+			res.locals.utxos = utxos;
 				
-				resolve();
-
-			}).catch(function(err) {
-				res.locals.pageErrors.push(utils.logError("3208yhdsghssr", err));
-
-				reject(err);
-			});
+			resolve();
 		}));
 
 		if (tx.confirmations == null) {
-			promises.push(new Promise(function(resolve, reject) {
-				coreApi.getMempoolTxDetails(txid, true).then(function(mempoolDetails) {
-					res.locals.mempoolDetails = mempoolDetails;
+			promises.push(new Promise(async (resolve, reject) => {
+				const mempoolDetails = await utils.timePromise("promises.tx.getMempoolTxDetails", coreApi.getMempoolTxDetails(txid, true));
+
+				res.locals.mempoolDetails = mempoolDetails;
 					
-					resolve();
-
-				}).catch(function(err) {
-					res.locals.pageErrors.push(utils.logError("0q83hreuwgd", err));
-
-					reject(err);
-				});
+				resolve();
 			}));
 		}
 
-		promises.push(new Promise(function(resolve, reject) {
+		promises.push(new Promise(async (resolve, reject) => {
 			global.rpcClient.command('getblock', tx.blockhash, function(err3, result3, resHeaders3) {
 				res.locals.result.getblock = result3;
 
@@ -871,22 +881,26 @@ router.get("/tx/:transactionId", function(req, res, next) {
 			});
 		}));
 
-		Promise.all(promises).then(function() {
-			res.render("transaction");
+		await Promise.all(promises);
+		
+		res.render("transaction");
 
-			next();
-		});
+		next();
 
-	}).catch(function(err) {
+	} catch (err) {
 		res.locals.userMessageMarkdown = `Failed to load transaction: txid=**${txid}**`;
 
-		res.locals.pageErrors.push(utils.logError("1237y4ewssgt", err));
+		if (!global.txindexAvailable) {
+			res.locals.noTxIndexMsg = noTxIndexMsg;
+		}
+
+		utils.logError("1237y4ewssgt", err);
 
 		res.render("transaction");
 
 		next();
-	});
-});
+	}
+}));
 
 router.get("/address/:address", function(req, res, next) {
 	var limit = config.site.addressTxPageSize;
@@ -1003,118 +1017,122 @@ router.get("/address/:address", function(req, res, next) {
 							}
 
 							res.locals.txids = txids;
-							
-							coreApi.getRawTransactionsWithInputs(txids).then(function(rawTxResult) {
-								res.locals.transactions = rawTxResult.transactions;
-								res.locals.txInputsByTransaction = rawTxResult.txInputsByTransaction;
 
-								// for coinbase txs, we need the block height in order to calculate subsidy to display
-								var coinbaseTxs = [];
-								for (var i = 0; i < rawTxResult.transactions.length; i++) {
-									var tx = rawTxResult.transactions[i];
+							if (global.txindexAvailable) {
+								coreApi.getRawTransactionsWithInputs(txids).then(function(rawTxResult) {
+									res.locals.transactions = rawTxResult.transactions;
+									res.locals.txInputsByTransaction = rawTxResult.txInputsByTransaction;
 
-									for (var j = 0; j < tx.vin.length; j++) {
-										if (tx.vin[j].coinbase) {
-											// addressApi sometimes has blockHeightByTxid already available, otherwise we need to query for it
-											if (!blockHeightsByTxid[tx.txid]) {
-												coinbaseTxs.push(tx);
-											}
-										}
-									}
-								}
-
-
-								var coinbaseTxBlockHashes = [];
-								var blockHashesByTxid = {};
-								coinbaseTxs.forEach(function(tx) {
-									coinbaseTxBlockHashes.push(tx.blockhash);
-									blockHashesByTxid[tx.txid] = tx.blockhash;
-								});
-
-								var blockHeightsPromises = [];
-								if (coinbaseTxs.length > 0) {
-									// we need to query some blockHeights by hash for some coinbase txs
-									blockHeightsPromises.push(new Promise(function(resolve2, reject2) {
-										coreApi.getBlocksByHash(coinbaseTxBlockHashes).then(function(blocksByHashResult) {
-											for (var txid in blockHashesByTxid) {
-												if (blockHashesByTxid.hasOwnProperty(txid)) {
-													blockHeightsByTxid[txid] = blocksByHashResult[blockHashesByTxid[txid]].height;
-												}
-											}
-
-											resolve2();
-
-										}).catch(function(err) {
-											res.locals.pageErrors.push(utils.logError("78ewrgwetg3", err));
-
-											reject2(err);
-										});
-									}));
-								}
-
-								Promise.all(blockHeightsPromises).then(function() {
-									var addrGainsByTx = {};
-									var addrLossesByTx = {};
-
-									res.locals.addrGainsByTx = addrGainsByTx;
-									res.locals.addrLossesByTx = addrLossesByTx;
-
-									var handledTxids = [];
-
+									// for coinbase txs, we need the block height in order to calculate subsidy to display
+									var coinbaseTxs = [];
 									for (var i = 0; i < rawTxResult.transactions.length; i++) {
 										var tx = rawTxResult.transactions[i];
-										var txInputs = rawTxResult.txInputsByTransaction[tx.txid];
-										
-										if (handledTxids.includes(tx.txid)) {
-											continue;
-										}
-
-										handledTxids.push(tx.txid);
-
-										for (var j = 0; j < tx.vout.length; j++) {
-											if (tx.vout[j].value > 0 && tx.vout[j].scriptPubKey && tx.vout[j].scriptPubKey.addresses && tx.vout[j].scriptPubKey.addresses.includes(address)) {
-												if (addrGainsByTx[tx.txid] == null) {
-													addrGainsByTx[tx.txid] = new Decimal(0);
-												}
-
-												addrGainsByTx[tx.txid] = addrGainsByTx[tx.txid].plus(new Decimal(tx.vout[j].value));
-											}
-										}
 
 										for (var j = 0; j < tx.vin.length; j++) {
-											var txInput = txInputs[j];
-											var vinJ = tx.vin[j];
-
-											if (txInput != null) {
-												if (txInput && txInput.scriptPubKey && txInput.scriptPubKey.addresses && txInput.scriptPubKey.addresses.includes(address)) {
-													if (addrLossesByTx[tx.txid] == null) {
-														addrLossesByTx[tx.txid] = new Decimal(0);
-													}
-
-													addrLossesByTx[tx.txid] = addrLossesByTx[tx.txid].plus(new Decimal(txInput.value));
+											if (tx.vin[j].coinbase) {
+												// addressApi sometimes has blockHeightByTxid already available, otherwise we need to query for it
+												if (!blockHeightsByTxid[tx.txid]) {
+													coinbaseTxs.push(tx);
 												}
 											}
 										}
-
-										//debugLog("tx: " + JSON.stringify(tx));
-										//debugLog("txInputs: " + JSON.stringify(txInputs));
 									}
 
-									res.locals.blockHeightsByTxid = blockHeightsByTxid;
 
-									resolve();
+									var coinbaseTxBlockHashes = [];
+									var blockHashesByTxid = {};
+									coinbaseTxs.forEach(function(tx) {
+										coinbaseTxBlockHashes.push(tx.blockhash);
+										blockHashesByTxid[tx.txid] = tx.blockhash;
+									});
+
+									var blockHeightsPromises = [];
+									if (coinbaseTxs.length > 0) {
+										// we need to query some blockHeights by hash for some coinbase txs
+										blockHeightsPromises.push(new Promise(function(resolve2, reject2) {
+											coreApi.getBlocksByHash(coinbaseTxBlockHashes).then(function(blocksByHashResult) {
+												for (var txid in blockHashesByTxid) {
+													if (blockHashesByTxid.hasOwnProperty(txid)) {
+														blockHeightsByTxid[txid] = blocksByHashResult[blockHashesByTxid[txid]].height;
+													}
+												}
+
+												resolve2();
+
+											}).catch(function(err) {
+												res.locals.pageErrors.push(utils.logError("78ewrgwetg3", err));
+
+												reject2(err);
+											});
+										}));
+									}
+
+									Promise.all(blockHeightsPromises).then(function() {
+										var addrGainsByTx = {};
+										var addrLossesByTx = {};
+
+										res.locals.addrGainsByTx = addrGainsByTx;
+										res.locals.addrLossesByTx = addrLossesByTx;
+
+										var handledTxids = [];
+
+										for (var i = 0; i < rawTxResult.transactions.length; i++) {
+											var tx = rawTxResult.transactions[i];
+											var txInputs = rawTxResult.txInputsByTransaction[tx.txid];
+											
+											if (handledTxids.includes(tx.txid)) {
+												continue;
+											}
+
+											handledTxids.push(tx.txid);
+
+											for (var j = 0; j < tx.vout.length; j++) {
+												if (tx.vout[j].value > 0 && tx.vout[j].scriptPubKey && tx.vout[j].scriptPubKey.addresses && tx.vout[j].scriptPubKey.addresses.includes(address)) {
+													if (addrGainsByTx[tx.txid] == null) {
+														addrGainsByTx[tx.txid] = new Decimal(0);
+													}
+
+													addrGainsByTx[tx.txid] = addrGainsByTx[tx.txid].plus(new Decimal(tx.vout[j].value));
+												}
+											}
+
+											for (var j = 0; j < tx.vin.length; j++) {
+												var txInput = txInputs[j];
+												var vinJ = tx.vin[j];
+
+												if (txInput != null) {
+													if (txInput && txInput.scriptPubKey && txInput.scriptPubKey.addresses && txInput.scriptPubKey.addresses.includes(address)) {
+														if (addrLossesByTx[tx.txid] == null) {
+															addrLossesByTx[tx.txid] = new Decimal(0);
+														}
+
+														addrLossesByTx[tx.txid] = addrLossesByTx[tx.txid].plus(new Decimal(txInput.value));
+													}
+												}
+											}
+
+											//debugLog("tx: " + JSON.stringify(tx));
+											//debugLog("txInputs: " + JSON.stringify(txInputs));
+										}
+
+										res.locals.blockHeightsByTxid = blockHeightsByTxid;
+
+										resolve();
+
+									}).catch(function(err) {
+										res.locals.pageErrors.push(utils.logError("230wefrhg0egt3", err));
+
+										reject(err);
+									});
 
 								}).catch(function(err) {
-									res.locals.pageErrors.push(utils.logError("230wefrhg0egt3", err));
+									res.locals.pageErrors.push(utils.logError("asdgf07uh23", err));
 
 									reject(err);
 								});
-
-							}).catch(function(err) {
-								res.locals.pageErrors.push(utils.logError("asdgf07uh23", err));
-
-								reject(err);
-							});
+							} else {
+								resolve();
+							}
 
 						} else {
 							// no addressDetails.txids available
@@ -1532,30 +1550,6 @@ router.get("/tools", function(req, res, next) {
 	next();
 });
 
-router.get("/admin", function(req, res, next) {
-	res.locals.appStartTime = global.appStartTime;
-	res.locals.memstats = v8.getHeapStatistics();
-	res.locals.rpcStats = global.rpcStats;
-	res.locals.electrumStats = global.electrumStats;
-	res.locals.cacheStats = global.cacheStats;
-	res.locals.errorStats = global.errorStats;
-
-	res.locals.appConfig = {
-		privacyMode: config.privacyMode,
-		slowDeviceMode: config.slowDeviceMode,
-		demoSite: config.demoSite,
-		rpcConcurrency: config.rpcConcurrency,
-		addressApi: config.addressApi,
-		ipStackComApiAccessKey: !!config.credentials.ipStackComApiAccessKey,
-		redisCache: !!config.redisUrl,
-		noInmemoryRpcCache: config.noInmemoryRpcCache
-	};
-
-	res.render("admin");
-
-	next();
-});
-
 router.get("/changelog", function(req, res, next) {
 	res.locals.changelogHtml = markdown.render(global.changelogMarkdown);
 
@@ -1606,37 +1600,24 @@ router.get("/bitcoin.pdf", function(req, res, next) {
 	// ref: https://bitcoin.stackexchange.com/questions/35959/how-is-the-whitepaper-decoded-from-the-blockchain-tx-with-1000x-m-of-n-multisi
 	const whitepaperTxid = "54e48e5f5c656b26c3bca14a8c95aa583d07ebe84dde3b7dd4a78f4e4186e713";
 
-	coreApi.getRawTransaction(whitepaperTxid).then(function(tx) {
-		var pdfData = "";
-		var start;
+	// get all outputs except the last 2 using `gettxout`
+	Promise.all([...Array(946).keys()].map(vout => coreApi.getTxOut(whitepaperTxid, vout)))
+	.then(function (vouts) {
+		// concatenate all multisig pubkeys
+		var pdfData = vouts.map((out, n) => {
+			var parts = out.scriptPubKey.asm.split(" ")
+			// the last output is a 1-of-1
+			return n == 945 ? parts[1] : parts.slice(1,4).join('')
+		}).join('')
 
-		// all outputs, except last 3, are 1-of-3 multisigs
-		for (var i = 0; i < tx.vout.length - 3; i++) {
-			var parts = tx.vout[i].scriptPubKey.asm.split(" ");
-
-			pdfData += parts[1];
-			pdfData += parts[2];
-			pdfData += parts[3];
-		}
-
-		// the last bit of pdf data is in 3rd-from-last output, a 1-of-1 multisig (last 2 outputs are unused for pdf data)
-		var parts = tx.vout[tx.vout.length - 3].scriptPubKey.asm.split(" ");
-
-		// last bit is zeroes and is excluded
-		pdfData += parts[1].substring(0, 50);
-
-		// strip size and checksum from start
-		pdfData = pdfData.substring(16);
+		// strip size and checksum from start and null bytes at the end
+		pdfData = pdfData.slice(16).slice(0, -16);
 
 		const hexArray = utils.arrayFromHexString(pdfData);
-
 		res.contentType("application/pdf");
 		res.send(Buffer.alloc(hexArray.length, hexArray, "hex"));
-		
-		next();
-
 	}).catch(function(err) {
-		res.locals.userMessageMarkdown = `Failed to load transaction: txid=**${whitepaperTxid}**`;
+		res.locals.userMessageMarkdown = `Failed to load transaction outputs: txid=**${whitepaperTxid}**`;
 
 		res.locals.pageErrors.push(utils.logError("432907twhgeyedg", err));
 

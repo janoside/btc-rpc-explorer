@@ -1,20 +1,23 @@
-var debug = require("debug");
-var debugLog = debug("btcexp:electrumx");
+"use strict";
 
-var config = require("./../config.js");
-var coins = require("../coins.js");
-var utils = require("../utils.js");
-var sha256 = require("crypto-js/sha256");
-var hexEnc = require("crypto-js/enc-hex");
+const debug = require("debug");
+const debugLog = debug("btcexp:electrumx");
+
+const config = require("./../config.js");
+const coins = require("../coins.js");
+const utils = require("../utils.js");
+const sha256 = require("crypto-js/sha256");
+const hexEnc = require("crypto-js/enc-hex");
  
-var coinConfig = coins[config.coin];
+const coinConfig = coins[config.coin];
+const statTracker = require("../statTracker.js");
 
 global.net = require('net');
 global.tls = require('tls');
 
 const ElectrumClient = require('electrum-client');
 
-var electrumClients = [];
+const electrumClients = [];
 
 global.electrumStats = {
 	base: {
@@ -25,7 +28,7 @@ global.electrumStats = {
 	rpc: {}
 };
 
-var noConnectionsErrorText = "No ElectrumX connection available. This could mean that the connection was lost or that ElectrumX is processing transactions and therefore not accepting requests. This tool will try to reconnect. If you manage your own ElectrumX server you may want to check your ElectrumX logs.";
+const noConnectionsErrorText = "No ElectrumX connection available. This could mean that the connection was lost or that ElectrumX is processing transactions and therefore not accepting requests. This tool will try to reconnect. If you manage your own ElectrumX server you may want to check your ElectrumX logs.";
 
 
 function connectToServers() {
@@ -67,6 +70,8 @@ function connectToServer(host, port, protocol) {
 				global.electrumStats.base.connect.firstSeenAt = new Date();
 			}
 
+			statTracker.trackEvent("electrumx.connected");
+
 			electrumClients.push(client);
 
 			resolve();
@@ -81,6 +86,8 @@ function connectToServer(host, port, protocol) {
 			if (global.electrumStats.base.disconnect.firstSeenAt == null) {
 				global.electrumStats.base.disconnect.firstSeenAt = new Date();
 			}
+
+			statTracker.trackEvent("electrumx.disconnected");
 
 			var index = electrumClients.indexOf(client);
 
@@ -98,6 +105,8 @@ function connectToServer(host, port, protocol) {
 			if (global.electrumStats.base.error.firstSeenAt == null) {
 				global.electrumStats.base.error.firstSeenAt = new Date();
 			}
+
+			statTracker.trackEvent("electrumx.connection-error");
 
 			utils.logError("937gf47dsyde", err, {host:host, port:port, protocol:protocol});
 		};
@@ -323,6 +332,25 @@ function getAddressBalance(addrScripthash) {
 	});
 }
 
+// Lookup the confirming block hash of a given txid. This only works with Electrs.
+// https://github.com/romanz/electrs/commit/a0a3d4f9392e21f9e92fdc274c88fed6d0634794
+function lookupTxBlockHash(txid) {
+	if (electrumClients.length == 0) {
+		return Promise.reject({ error: "No ElectrumX Connection", userText: noConnectionsErrorText });
+	}
+
+	return runOnAllServers(function(electrumClient) {
+		return electrumClient.request('blockchain.transaction.get_confirmed_blockhash', [txid]);
+	}).then(function(results) {
+		var blockhash = results[0].result;
+		if (results.slice(1).every(({ result }) => result == blockhash)) {
+			return blockhash;
+		} else {
+			return Promise.reject({conflictedResults:results});
+		}
+	});
+}
+
 function logStats(cmd, dt, success) {
 	if (!global.electrumStats.rpc[cmd]) {
 		global.electrumStats.rpc[cmd] = {count:0, time:0, successes:0, failures:0};
@@ -331,16 +359,24 @@ function logStats(cmd, dt, success) {
 	global.electrumStats.rpc[cmd].count++;
 	global.electrumStats.rpc[cmd].time += dt;
 
+	statTracker.trackPerformance(`electrumx.${cmd}`, dt);
+	statTracker.trackPerformance(`electrumx.*`, dt);
+
 	if (success) {
 		global.electrumStats.rpc[cmd].successes++;
+		statTracker.trackEvent(`electrumx-result.${cmd}.success`);
+		statTracker.trackEvent(`electrumx-result.*.success`);
 
 	} else {
 		global.electrumStats.rpc[cmd].failures++;
+		statTracker.trackEvent(`electrumx-result.${cmd}.failure`);
+		statTracker.trackEvent(`electrumx-result.*.failure`);
 	}
 }
 
 module.exports = {
 	connectToServers: connectToServers,
-	getAddressDetails: getAddressDetails
+	getAddressDetails: getAddressDetails,
+	lookupTxBlockHash: lookupTxBlockHash,
 };
 

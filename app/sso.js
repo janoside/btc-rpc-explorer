@@ -8,6 +8,8 @@
 //
 // So before you change anything, please think twice about the consequences.
 
+"use strict";
+
 const crypto = require('crypto');
 const fs = require('fs');
 

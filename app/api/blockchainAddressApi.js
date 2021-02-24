@@ -1,5 +1,7 @@
-var request = require("request");
-var utils = require("./../utils.js");
+"use strict";
+
+const request = require("request");
+const utils = require("./../utils.js");
 
 
 function getAddressDetails(address, scriptPubkey, sort, limit, offset) {
