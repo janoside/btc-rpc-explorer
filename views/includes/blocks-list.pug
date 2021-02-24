@@ -29,7 +29,6 @@ div.table-responsive
 
 				if (blocks && blocks.length > 0 && blocks[0].weight)
 					th.data-header.text-right % Full
-						//span.border-dotted(title="Block weight, in kWu.", data-toggle="tooltip") Weight
 
 				else
 					th.data-header.text-right Size
@@ -171,17 +170,14 @@ div.table-responsive
 								if block.weight
 									if (true)
 										- var full = new Decimal(block.weight).dividedBy(coinConfig.maxBlockWeight).times(100);
-										- var full2 = full.toDP(2);
+										- var full2 = full.toDP(0);
 
-										span #{full2} 
-										if (full > 90)
-											img(src="./img/block-fullness-3.png", style="width: 18px; height: 18px;")
-										else if (full > 50)
-											img(src="./img/block-fullness-2.png", style="width: 18px; height: 18px;")
-										else if (full > 25)
-											img(src="./img/block-fullness-1.png", style="width: 18px; height: 18px;")
+										
+										if (full >= 99 || full2 == 99)
+											span.text-success 99+
+
 										else
-											img(src="./img/block-fullness-0.png", style="width: 18px; height: 18px;")
+											span.text-primary #{full2}
 
 									else
 										- var bWeightK = parseInt(block.weight / 1000);
