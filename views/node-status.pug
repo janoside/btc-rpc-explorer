@@ -29,20 +29,12 @@ block content
 
 		div.tab-content
 			div.tab-pane.active(id="tab-details", role="tabpanel")
-				div.card.shadow-sm.mb-3
+				div.card.rounded-lg.shadow-sm.mb-3
 					div.card-body.px-2.px-sm-3
-						h3.h6.mb-0 Summary
+						h3.h6.mb-0 Node Summary
 						hr
 
 						div.clearfix
-							div.row
-								div.summary-table-label Host : Port
-								div.summary-table-content.text-monospace #{global.rpcClient.host + " : " + global.rpcClient.port}
-
-							div.row
-								div.summary-table-label Chain
-								div.summary-table-content.text-monospace #{getblockchaininfo.chain}
-
 							div.row
 								div.summary-table-label Version
 								div.summary-table-content.text-monospace #{getnetworkinfo.version} (#{getnetworkinfo.subversion})
@@ -50,6 +42,79 @@ block content
 							div.row
 								div.summary-table-label Protocol Version
 								div.summary-table-content.text-monospace #{getnetworkinfo.protocolversion}
+
+							div.row
+								div.summary-table-label Status
+								div.summary-table-content.text-monospace
+									if (getblockchaininfo.initialblockdownload || getblockchaininfo.headers > getblockchaininfo.blocks)
+										span Initial block download progress #{(100 * getblockchaininfo.verificationprogress).toLocaleString()}%
+									else
+										span.text-success Synchronized with network
+
+							div.row
+								div.summary-table-label Uptime
+								div.summary-table-content.text-monospace
+									- var startTimeAgo = moment.duration(uptimeSeconds * 1000);
+									span #{startTimeAgo.format()}
+
+							div.row
+								div.summary-table-label Warnings
+								div.summary-table-content.text-monospace
+									if (getblockchaininfo.warnings && getblockchaininfo.warnings.trim().length > 0)
+										span.text-danger #{getblockchaininfo.warnings}
+									else
+										span.text-success None
+
+				div.card.shadow-sm.mb-3
+					div.card-body.px-2.px-sm-3
+						h3.h6.mb-0 Blockchain Summary
+						hr
+
+						div.clearfix
+							div.row
+								div.summary-table-label Chain
+								div.summary-table-content.text-monospace #{getblockchaininfo.chain}
+
+							div.row
+								div.summary-table-label Block Count
+								div.summary-table-content.text-monospace #{getblockchaininfo.blocks.toLocaleString()}
+									br
+									span.text-muted (headers: #{getblockchaininfo.headers.toLocaleString()})
+
+							div.row
+								div.summary-table-label Difficulty
+								div.summary-table-content.text-monospace
+									- var difficultyData = utils.formatLargeNumber(getblockchaininfo.difficulty, 3);
+									span.border-dotted(title=parseFloat(getblockchaininfo.difficulty).toLocaleString(), data-toggle="tooltip")
+										span #{difficultyData[0]}
+										span  x 10
+										sup #{difficultyData[1].exponent}
+
+							if (getblockchaininfo.softforks)
+								- var forkUrls = {"bip34":"https://github.com/bitcoin/bips/blob/master/bip-0034.mediawiki", "bip65":"https://github.com/bitcoin/bips/blob/master/bip-0065.mediawiki", "bip66":"https://github.com/bitcoin/bips/blob/master/bip-0066.mediawiki", "csv":"https://github.com/bitcoin/bips/blob/master/bip-0112.mediawiki", "segwit":"https://github.com/bitcoin/bips/blob/master/bip-0141.mediawiki", "taproot":"https://github.com/bitcoin/bips/blob/master/bip-0341.mediawiki"};
+								div.row
+									div.summary-table-label Soft Forks
+									div.summary-table-content.text-monospace
+										ul.list-unstyled
+											each item, itemName in getblockchaininfo.softforks
+												li
+													div.d-inline-block.text-right(style="width: 75px;")
+														if (forkUrls[itemName])
+															a.font-weight-bold(href=forkUrls[itemName]) #{itemName}
+															| :&nbsp;
+														else
+															span.font-weight-bold #{itemName}
+															| :&nbsp;
+													
+													if (item.type == "bip9")
+														span.mr-2.ml-2 #{item.type} - #{JSON.stringify(item.bip9)}
+
+													if (item.active)
+														span.mr-2
+															span.text-success active
+															small.text-muted.ml-2 (since: #
+																a(href=`./block-height/${item.height}`) #{item.height.toLocaleString()}
+																| )
 
 							if (getblockchaininfo.size_on_disk)
 								- var sizeData = utils.formatLargeNumber(getblockchaininfo.size_on_disk, 2);
@@ -73,7 +138,7 @@ block content
 
 										span.border-dotted(title="This is the approximate amount of non-essential blockchain data that your node will store.", data-toggle="tooltip") Prune target size
 
-										span : 
+										span :&nbsp;
 											- var pruneTargetSize = utils.formatLargeNumber(getblockchaininfo.prune_target_size, 2);
 									
 											span #{pruneTargetSize[0]} #{pruneTargetSize[1].abbreviation}B
@@ -84,7 +149,7 @@ block content
 									ul.list-unstyled
 										li
 											span.font-weight-bold txindex
-											| : 
+											| :&nbsp;
 											if (getindexinfo.txindex)
 												span.text-success available
 											else
@@ -92,73 +157,23 @@ block content
 
 										li
 											span.font-weight-bold blockfilterindex
-											| : 
+											| :&nbsp;
 											if (getindexinfo["basic block filter index"])
 												span.text-success available
 											else
 												span.text-danger unavailable
 
-							if (getblockchaininfo.softforks)
-								div.row
-									div.summary-table-label Soft Forks
-									div.summary-table-content.text-monospace
-										ul.list-unstyled
-											each item, itemName in getblockchaininfo.softforks
-												li
-													div.d-inline-block.text-right(style="width: 75px;")
-														span.font-weight-bold #{itemName}:
-													
-													span.mr-2.ml-2 type=#{item.type},
-
-													if (item.active)
-														span.mr-2
-															span status=
-															span.text-success active
-															small.text-muted.ml-2 (height: #{item.height.toLocaleString()})
-
-							div.row
-								div.summary-table-label Block Count
-								div.summary-table-content.text-monospace #{getblockchaininfo.blocks.toLocaleString()}
-									br
-									span.text-muted (headers: #{getblockchaininfo.headers.toLocaleString()})
-
-							div.row
-								div.summary-table-label Difficulty
-								div.summary-table-content.text-monospace
-									- var difficultyData = utils.formatLargeNumber(getblockchaininfo.difficulty, 3);
-									span(title=parseFloat(getblockchaininfo.difficulty).toLocaleString(), data-toggle="tooltip")
-										span #{difficultyData[0]}
-										span  x 10
-										sup #{difficultyData[1].exponent}
-
-							div.row
-								div.summary-table-label Status
-								div.summary-table-content.text-monospace
-									if (getblockchaininfo.initialblockdownload || getblockchaininfo.headers > getblockchaininfo.blocks)
-										span Initial block download progress #{(100 * getblockchaininfo.verificationprogress).toLocaleString()}%
-									else
-										span.text-success Synchronized with network
-
-							div.row
-								div.summary-table-label Uptime
-								div.summary-table-content.text-monospace
-									- var startTimeAgo = moment.duration(uptimeSeconds * 1000);
-									span #{startTimeAgo.format()}
-
-							div.row
-								div.summary-table-label Warnings
-								div.summary-table-content.text-monospace
-									if (getblockchaininfo.warnings && getblockchaininfo.warnings.trim().length > 0)
-										span.text-danger #{getblockchaininfo.warnings}
-									else
-										span None
 
 				div.card.shadow-sm.mb-3
 					div.card-body.px-2.px-sm-3
-						h3.h6.mb-0 Network Info
+						h3.h6.mb-0 Network Summary
 						hr
 
 						div.clearfix
+							div.row
+								div.summary-table-label Host : Port
+								div.summary-table-content.text-monospace #{global.rpcClient.host + " : " + global.rpcClient.port}
+
 							div.row
 								div.summary-table-label Peers
 								div.summary-table-content.text-monospace
@@ -188,7 +203,10 @@ block content
 									div.summary-table-content.text-monospace
 										each item, index in getnetworkinfo.networks
 											div
-												span.font-weight-bold #{item.name}: 
+												div.d-inline-block.text-right(style="width: 75px;")
+													span.font-weight-bold #{item.name}
+													| :&nbsp;
+													
 												if (item.reachable)
 													span.text-success reachable
 
