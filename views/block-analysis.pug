@@ -124,6 +124,7 @@ block content
 										td.data-tx-link
 										td.text-right.data-tx-value
 
+			if (global.txindexAvailable)
 			div.col-xl-6
 				div.card.shadow-sm.mb-3
 					div.card-body
@@ -160,6 +161,7 @@ block content
 										td.data-tx-link
 										td.text-right.data-tx-value
 
+			if (global.txindexAvailable)
 			div.col-lg-6.mb-3
 				div.card.shadow-sm(style="height: 100%;")
 					div.card-body
@@ -174,7 +176,7 @@ block content
 
 									td.data-count
 								
-			div.col-lg-6.mb-3
+			div.col-lg-6.mb-3(class=(!global.txindexAvailable ? "col-lg-12" : ""))
 				div.card.shadow-sm(style="height: 100%;")
 					div.card-body
 						h3.h6.mb-0 Output Types
@@ -205,6 +207,7 @@ block content
 
 						canvas(id="chart-tx-value-distribution")
 
+			if (global.txindexAvailable)
 			div.col-lg-6
 				div.card.shadow-sm.mb-3
 					div.card-body
@@ -279,8 +282,10 @@ block endOfBody
 	script.
 		var txidChunkSize = !{txidChunkSize};
 		var prunedBlock = !{(block && (!block.tx || block.tx.length == 0) && global.prunedBlockchain)};
+		var txindexAvailable = !{global.txindexAvailable};
 		var txidChunks = !{JSON.stringify(utils.splitArrayIntoChunks(result.getblock.tx, txidChunkSize))};
 		var blockHeight = !{result.getblock.height};
+		var blockHash = "!{result.getblock.hash}";
 		var satsMultiplier = !{coinConfig.baseCurrencyUnit.multiplier};
 		var vByteSizes = false;
 
@@ -326,23 +331,30 @@ block endOfBody
 				var summary = summarizeData(results);
 
 				fillTopValueTxTable(summary);
+				fillTopSizeTxTable(summary);
+
+				if (txindexAvailable) {
 				fillTopFeeTxTable(summary);
 				fillTopFeeRateTxTable(summary);
-				fillTopSizeTxTable(summary);
+				}
 
 				fillInputOutputTypesTable(summary);
 
 				createGraph("graph-tx-value", summary.txValueGraphData, "Value");
-				createGraph("graph-tx-fee", summary.txFeeGraphData, "Fee");
-				createGraph("graph-tx-fee-rate", summary.txFeeRateGraphData, "Fee");
 				createGraph("graph-tx-inputs", summary.txInputCountGraphData, "Input Count");
 				createGraph("graph-tx-outputs", summary.txOutputCountGraphData, "Output Count");
 				createGraph("graph-tx-size", summary.txSizeGraphData, "Size");
 
 				createChart("chart-tx-value-distribution", summary.valueDistribution, summary.valueDistributionLabels);
+				createChart("chart-tx-size-distribution", summary.sizeDistribution, summary.sizeDistributionLabels);
+
+				if (txindexAvailable) {
+					createGraph("graph-tx-fee", summary.txFeeGraphData, "Fee");
+					createGraph("graph-tx-fee-rate", summary.txFeeRateGraphData, "Fee");
+
 				createChart("chart-tx-fee-distribution", summary.feeDistribution, summary.feeDistributionLabels);
 				createChart("chart-tx-fee-rate-distribution", summary.feeRateDistribution, summary.feeRateDistributionLabels);
-				createChart("chart-tx-size-distribution", summary.sizeDistribution, summary.sizeDistributionLabels);
+				}
 
 				//$(".abc").text(JSON.stringify(summary));
 
@@ -574,7 +586,7 @@ block endOfBody
 				return;
 			}
 
-			var url = `./api/block-tx-summaries/${blockHeight}/${chunks[chunkIndex]}`;
+			var url = `./api/block-tx-summaries/${blockHash}/${blockHeight}/${chunks[chunkIndex]}`;
 			
 			//console.log(url);
 
