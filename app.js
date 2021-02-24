@@ -113,9 +113,11 @@ expressApp.engine('pug', (path, options, fn) => {
 
 expressApp.set('view engine', 'pug');
 
-// enable view cache regardless of env (development/production)
-// ref: https://pugjs.org/api/express.html
-expressApp.enable('view cache');
+if (process.env.NODE_ENV != "local") {
+	// enable view cache regardless of env (development/production)
+	// ref: https://pugjs.org/api/express.html
+	expressApp.enable('view cache');
+}
 
 expressApp.use(cookieParser());
 
