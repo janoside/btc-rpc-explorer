@@ -1,3 +1,13 @@
+//
+// IMPORTANT MESSAGE!!!
+//
+// Dear contributor, please take great care when modifying this code.
+// It was written defensively with attention to a lot of details in order to prevent security issues.
+// As a result of such care it avoided a problem that occurred in RTL which had similar but subtly broken logic
+// see https://github.com/Ride-The-Lightning/RTL/issues/610
+//
+// So before you change anything, please think twice about the consequences.
+
 const crypto = require('crypto');
 const fs = require('fs');
 
@@ -12,8 +22,14 @@ function generateToken() {
 }
 
 function updateToken(tokenFile) {
+	// This implements atomic update of the token file to avoid corrupted tokens causing trouble
+	// If first saves the token into a temporary file and then moves it over. The move is atomic.
+	// The token could also be synced but since the next boot overwrites it anyway, disk corruption
+	// is not an issue.
 	var newToken = generateToken();
 	var tmpFileName = tokenFile + ".tmp";
+	// It is important that we use the generated token, and NOT read back what was written.
+	// This avoids using predictable token if filesystem gets corrupted (e.g. in case of ENOSPC).
 	fs.writeFileSync(tmpFileName, newToken);
 	fs.renameSync(tmpFileName, tokenFile);
 	
@@ -21,6 +37,9 @@ function updateToken(tokenFile) {
 }
 
 module.exports = (tokenFile, loginRedirect) => {
+	// Reinitializing the token at start is important due to same reason we don't read it back.
+	// It also avoids races when another process binds the same port and reads the token in order to later use
+	// it to attack this app.
 	var token = updateToken(tokenFile);
 	var cookies = new Set();
 
@@ -31,7 +50,8 @@ module.exports = (tokenFile, loginRedirect) => {
 			return next();
 		}
 
-		if (req.query.token === token) {
+		// We have to use timingSafeEqual to avoid timing attacks
+		if (crypto.timingSafeEqual(Buffer.from(req.query.token, "utf8"), Buffer.from(token, "utf8"))) {
 			req.authenticated = true;
 			token = updateToken(tokenFile);
 			cookie = generateToken();
