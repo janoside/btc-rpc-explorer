@@ -67,19 +67,19 @@ const processAndReset = (perfFunc, valueFunc, eventFunc) => {
 	for (const [key, value] of Object.entries(performanceStats)) {
 		perfFunc(key, value);
 
-		debugLog(key + ": " + JSON.stringify(value));
+		//debugLog(key + ": " + JSON.stringify(value));
 	}
 
 	for (const [key, value] of Object.entries(valueStats)) {
 		valueFunc(key, value);
 
-		debugLog(key + ": " + JSON.stringify(value));
+		//debugLog(key + ": " + JSON.stringify(value));
 	}
 
 	for (const [key, value] of Object.entries(eventStats)) {
 		eventFunc(key, {count:value});
 
-		debugLog(key + ": " + JSON.stringify(value));
+		//debugLog(key + ": " + JSON.stringify(value));
 	}
 
 	performanceStats = {};
