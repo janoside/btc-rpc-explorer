@@ -110,7 +110,8 @@ router.get("/raw-tx-with-inputs/:txid", function(req, res, next) {
 	});
 });
 
-router.get("/block-tx-summaries/:blockHeight/:txids", function(req, res, next) {
+router.get("/block-tx-summaries/:blockHash/:blockHeight/:txids", function(req, res, next) {
+	var blockHash = req.params.blockHash;
 	var blockHeight = parseInt(req.params.blockHeight);
 	var txids = req.params.txids.split(",").map(utils.asHash);
 
@@ -119,7 +120,7 @@ router.get("/block-tx-summaries/:blockHeight/:txids", function(req, res, next) {
 	var results = [];
 
 	promises.push(new Promise(function(resolve, reject) {
-		coreApi.buildBlockAnalysisData(blockHeight, txids, 0, results, resolve);
+		coreApi.buildBlockAnalysisData(blockHeight, blockHash, txids, 0, results, resolve);
 	}));
 
 	Promise.all(promises).then(function() {

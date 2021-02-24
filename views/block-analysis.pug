@@ -124,57 +124,59 @@ block content
 										td.data-tx-link
 										td.text-right.data-tx-value
 
-			div.col-xl-6
-				div.card.shadow-sm.mb-3
-					div.card-body
-						h3.h6.mb-0 Top Fee Transactions
-						hr
+			if (global.txindexAvailable)
+				div.col-xl-6
+					div.card.shadow-sm.mb-3
+						div.card-body
+							h3.h6.mb-0 Top Fee Transactions
+							hr
 
-						div.table-responsive
+							div.table-responsive
+								table.table.table-striped.mb-0
+									thead
+										tr
+											th.data-header Transaction
+											th.data-header.text-right Fee
+
+									tbody(id="tbody-top-fee-tx")
+										tr.text-monospace.row-prototype(style="display: none;")
+											td.data-tx-link
+											td.text-right.data-tx-value
+
+				div.col-xl-6
+					div.card.shadow-sm.mb-3
+						div.card-body
+							h3.h6.mb-0 Top Fee Rate Transactions
+							hr
+
+							div.table-responsive
+								table.table.table-striped.mb-0
+									thead
+										tr
+											th.data-header Transaction
+											th.data-header.text-right Fee Rate
+
+									tbody(id="tbody-top-fee-rate-tx")
+										tr.text-monospace.row-prototype(style="display: none;")
+											td.data-tx-link
+											td.text-right.data-tx-value
+
+			if (global.txindexAvailable)
+				div.col-lg-6.mb-3
+					div.card.shadow-sm(style="height: 100%;")
+						div.card-body
+							h3.h6.mb-0 Input Types
+							hr
+
 							table.table.table-striped.mb-0
-								thead
-									tr
-										th.data-header Transaction
-										th.data-header.text-right Fee
-
-								tbody(id="tbody-top-fee-tx")
+								tbody(id="tbody-input-types")
 									tr.text-monospace.row-prototype(style="display: none;")
-										td.data-tx-link
-										td.text-right.data-tx-value
+										td
+											small.data-tag.bg-dark.data-type
 
-			div.col-xl-6
-				div.card.shadow-sm.mb-3
-					div.card-body
-						h3.h6.mb-0 Top Fee Rate Transactions
-						hr
-
-						div.table-responsive
-							table.table.table-striped.mb-0
-								thead
-									tr
-										th.data-header Transaction
-										th.data-header.text-right Fee Rate
-
-								tbody(id="tbody-top-fee-rate-tx")
-									tr.text-monospace.row-prototype(style="display: none;")
-										td.data-tx-link
-										td.text-right.data-tx-value
-
-			div.col-lg-6.mb-3
-				div.card.shadow-sm(style="height: 100%;")
-					div.card-body
-						h3.h6.mb-0 Input Types
-						hr
-
-						table.table.table-striped.mb-0
-							tbody(id="tbody-input-types")
-								tr.text-monospace.row-prototype(style="display: none;")
-									td
-										small.data-tag.bg-dark.data-type
-
-									td.data-count
+										td.data-count
 								
-			div.col-lg-6.mb-3
+			div.col-lg-6.mb-3(class=(!global.txindexAvailable ? "col-lg-12" : ""))
 				div.card.shadow-sm(style="height: 100%;")
 					div.card-body
 						h3.h6.mb-0 Output Types
@@ -205,37 +207,38 @@ block content
 
 						canvas(id="chart-tx-value-distribution")
 
-			div.col-lg-6
-				div.card.shadow-sm.mb-3
-					div.card-body
-						h3.h6.mb-0 Transaction Fee
-						hr
+			if (global.txindexAvailable)
+				div.col-lg-6
+					div.card.shadow-sm.mb-3
+						div.card-body
+							h3.h6.mb-0 Transaction Fee
+							hr
 
-						canvas(id="graph-tx-fee")
+							canvas(id="graph-tx-fee")
 
-			div.col-lg-6
-				div.card.shadow-sm.mb-3
-					div.card-body
-						h3.h6.mb-0 Transaction Fee Distribution
-						hr
+				div.col-lg-6
+					div.card.shadow-sm.mb-3
+						div.card-body
+							h3.h6.mb-0 Transaction Fee Distribution
+							hr
 
-						canvas(id="chart-tx-fee-distribution")
+							canvas(id="chart-tx-fee-distribution")
 
-			div.col-lg-6
-				div.card.shadow-sm.mb-3
-					div.card-body
-						h3.h6.mb-0 Transaction Fee Rate
-						hr
+				div.col-lg-6
+					div.card.shadow-sm.mb-3
+						div.card-body
+							h3.h6.mb-0 Transaction Fee Rate
+							hr
 
-						canvas(id="graph-tx-fee-rate")
+							canvas(id="graph-tx-fee-rate")
 
-			div.col-lg-6
-				div.card.shadow-sm.mb-3
-					div.card-body
-						h3.h6.mb-0 Transaction Fee Rate Distribution
-						hr
+				div.col-lg-6
+					div.card.shadow-sm.mb-3
+						div.card-body
+							h3.h6.mb-0 Transaction Fee Rate Distribution
+							hr
 
-						canvas(id="chart-tx-fee-rate-distribution")
+							canvas(id="chart-tx-fee-rate-distribution")
 
 			div.col-lg-6
 				div.card.shadow-sm.mb-3
@@ -279,8 +282,10 @@ block endOfBody
 	script.
 		var txidChunkSize = !{txidChunkSize};
 		var prunedBlock = !{(block && (!block.tx || block.tx.length == 0) && global.prunedBlockchain)};
+		var txindexAvailable = !{global.txindexAvailable};
 		var txidChunks = !{JSON.stringify(utils.splitArrayIntoChunks(result.getblock.tx, txidChunkSize))};
 		var blockHeight = !{result.getblock.height};
+		var blockHash = "!{result.getblock.hash}";
 		var satsMultiplier = !{coinConfig.baseCurrencyUnit.multiplier};
 		var vByteSizes = false;
 
@@ -326,23 +331,30 @@ block endOfBody
 				var summary = summarizeData(results);
 
 				fillTopValueTxTable(summary);
-				fillTopFeeTxTable(summary);
-				fillTopFeeRateTxTable(summary);
 				fillTopSizeTxTable(summary);
+
+				if (txindexAvailable) {
+					fillTopFeeTxTable(summary);
+					fillTopFeeRateTxTable(summary);
+				}
 
 				fillInputOutputTypesTable(summary);
 
 				createGraph("graph-tx-value", summary.txValueGraphData, "Value");
-				createGraph("graph-tx-fee", summary.txFeeGraphData, "Fee");
-				createGraph("graph-tx-fee-rate", summary.txFeeRateGraphData, "Fee");
 				createGraph("graph-tx-inputs", summary.txInputCountGraphData, "Input Count");
 				createGraph("graph-tx-outputs", summary.txOutputCountGraphData, "Output Count");
 				createGraph("graph-tx-size", summary.txSizeGraphData, "Size");
 
 				createChart("chart-tx-value-distribution", summary.valueDistribution, summary.valueDistributionLabels);
-				createChart("chart-tx-fee-distribution", summary.feeDistribution, summary.feeDistributionLabels);
-				createChart("chart-tx-fee-rate-distribution", summary.feeRateDistribution, summary.feeRateDistributionLabels);
 				createChart("chart-tx-size-distribution", summary.sizeDistribution, summary.sizeDistributionLabels);
+
+				if (txindexAvailable) {
+					createGraph("graph-tx-fee", summary.txFeeGraphData, "Fee");
+					createGraph("graph-tx-fee-rate", summary.txFeeRateGraphData, "Fee");
+
+					createChart("chart-tx-fee-distribution", summary.feeDistribution, summary.feeDistributionLabels);
+					createChart("chart-tx-fee-rate-distribution", summary.feeRateDistribution, summary.feeRateDistributionLabels);
+				}
 
 				//$(".abc").text(JSON.stringify(summary));
 
@@ -574,7 +586,7 @@ block endOfBody
 				return;
 			}
 
-			var url = `./api/block-tx-summaries/${blockHeight}/${chunks[chunkIndex]}`;
+			var url = `./api/block-tx-summaries/${blockHash}/${blockHeight}/${chunks[chunkIndex]}`;
 			
 			//console.log(url);
 

@@ -791,7 +791,7 @@ function getRawTransactions(txids, blockhash) {
 	});
 }
 
-function buildBlockAnalysisData(blockHeight, txids, txIndex, results, callback) {
+function buildBlockAnalysisData(blockHeight, blockHash, txids, txIndex, results, callback) {
 	if (txIndex >= txids.length) {
 		callback();
 
@@ -800,10 +800,10 @@ function buildBlockAnalysisData(blockHeight, txids, txIndex, results, callback) 
 
 	var txid = txids[txIndex];
 
-	getRawTransactionsWithInputs([txid]).then(function(txData) {
+	getRawTransactionsWithInputs([txid], -1, blockHash).then(function(txData) {
 		results.push(summarizeBlockAnalysisData(blockHeight, txData.transactions[0], txData.txInputsByTransaction[txid]));
 		
-		buildBlockAnalysisData(blockHeight, txids, txIndex + 1, results, callback);
+		buildBlockAnalysisData(blockHeight, blockHash, txids, txIndex + 1, results, callback);
 	});
 }
 
@@ -842,19 +842,25 @@ function summarizeBlockAnalysisData(blockHeight, tx, inputs) {
 	} else {
 		for (var i = 0; i < tx.vin.length; i++) {
 			var vin = tx.vin[i];
-			var inputVout = inputs[i];
-
-			txSummary.totalInput = txSummary.totalInput.plus(new Decimal(inputVout.value));
-
-			txSummary.vin.push({
+			
+			var txSummaryVin = {
 				txid: tx.vin[i].txid,
 				vout: tx.vin[i].vout,
-				sequence: tx.vin[i].sequence,
-				value: inputVout.value,
-				type: inputVout.scriptPubKey.type,
-				reqSigs: inputVout.scriptPubKey.reqSigs,
-				addressCount: (inputVout.scriptPubKey.addresses ? inputVout.scriptPubKey.addresses.length : 0)
-			});
+				sequence: tx.vin[i].sequence
+			};
+
+			if (inputs) {
+				var inputVout = inputs[i];
+
+				txSummary.totalInput = txSummary.totalInput.plus(new Decimal(inputVout.value));
+
+				txSummaryVin.value = inputVout.value;
+				txSummaryVin.type = inputVout.scriptPubKey.type;
+				txSummaryVin.reqSigs = inputVout.scriptPubKey.reqSigs;
+				txSummaryVin.addressCount = (inputVout.scriptPubKey.addresses ? inputVout.scriptPubKey.addresses.length : 0);
+			}
+
+			txSummary.vin.push(txSummaryVin);
 		}
 	}
 
