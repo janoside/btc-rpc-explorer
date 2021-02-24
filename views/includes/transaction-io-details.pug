@@ -3,16 +3,6 @@
 
 - var totalIOValues = utils.getTxTotalInputOutputValues(tx, txInputs, blockHeight);
 
-script.
-	function showAllTxOutputs(link, txid) {
-		var hiddenRows = document.querySelectorAll("[data-txid='" + txid + "']");
-		hiddenRows.forEach(function(hiddenRow) {
-			hiddenRow.classList.remove("d-none");
-		});
-
-		link.classList.add("d-none");
-	}
-
 div.row.text-monospace
 	div.col-lg-6
 		if (txInputs || !global.txindexAvailable)
