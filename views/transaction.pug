@@ -190,12 +190,12 @@ block content
 											span Spendable in block 
 											a(href=`./block-height/${result.getrawtransaction.locktime}`) ##{result.getrawtransaction.locktime.toLocaleString()}
 											span  or later 
-											a(href="https://bitcoin.org/en/developer-guide#locktime-and-sequence-number", data-toggle="tooltip", title="More info about locktime", target="_blank") 
+											a(href="https://developer.bitcoin.org/devguide/transactions.html#locktime-and-sequence-number", data-toggle="tooltip", title="More info about locktime", target="_blank") 
 												i.fas.fa-info-circle
 										else
 											span Spendable after #{moment.utc(new Date(result.getrawtransaction.locktime * 1000)).format("Y-MM-DD HH:mm:ss")} 
 												small utc 
-											a(href="https://bitcoin.org/en/developer-guide#locktime-and-sequence-number", data-toggle="tooltip", title="More info about locktime", target="_blank") 
+											a(href="https://developer.bitcoin.org/devguide/transactions.html#locktime-and-sequence-number", data-toggle="tooltip", title="More info about locktime", target="_blank") 
 												i.fas.fa-info-circle
 
 							if (isTxConfirmed)
