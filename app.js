@@ -121,13 +121,15 @@ if (process.env.NODE_ENV != "local") {
 
 expressApp.use(cookieParser());
 
-// basic http authentication
+expressApp.disable('x-powered-by');
+
+
 if (process.env.BTCEXP_BASIC_AUTH_PASSWORD) {
-	expressApp.disable('x-powered-by');
+	// basic http authentication
 	expressApp.use(auth(process.env.BTCEXP_BASIC_AUTH_PASSWORD));
-// sso authentication
+
 } else if (process.env.BTCEXP_SSO_TOKEN_FILE) {
-	expressApp.disable('x-powered-by');
+	// sso authentication
 	expressApp.use(sso(process.env.BTCEXP_SSO_TOKEN_FILE, process.env.BTCEXP_SSO_LOGIN_REDIRECT_URL));
 }
 
