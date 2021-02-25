@@ -144,7 +144,10 @@ expressApp.use(session({
 	saveUninitialized: false
 }));
 
-expressApp.use(config.baseUrl, express.static(path.join(__dirname, 'public')));
+expressApp.use(config.baseUrl, express.static(path.join(__dirname, 'public'), {
+	maxAge: 60 * 60 * 1000
+}));
+
 
 if (config.baseUrl != '/') {
 	expressApp.get('/', (req, res) => res.redirect(config.baseUrl));
