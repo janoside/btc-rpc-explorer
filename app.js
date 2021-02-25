@@ -712,7 +712,7 @@ expressApp.use(function(req, res, next) {
 
 /// catch 404 and forwarding to error handler
 expressApp.use(function(req, res, next) {
-	var err = new Error('Not Found');
+	var err = new Error(`Not Found: ${req ? req.url : 'unknown url'}`);
 	err.status = 404;
 
 	next(err);
