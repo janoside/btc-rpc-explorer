@@ -180,12 +180,12 @@ module.exports = {
 
 	site: {
 		homepage:{
-			recentBlocksCount:10
+			recentBlocksCount: (process.env.BTCEXP_CONFIG_HOME_RECENT_BLOCKS_COUNT || 10)
 		},
 		blockTxPageSize:20,
 		addressTxPageSize:10,
 		txMaxInput:15,
-		browseBlocksPageSize:50,
+		browseBlocksPageSize: (process.env.BTCEXP_CONFIG_BLOCKS_PAGE_SIZE || 50),
 		addressPage:{
 			txOutputMaxDefaultDisplay:10
 		},
