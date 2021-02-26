@@ -1,23 +1,25 @@
-var debug = require("debug");
-var debugLog = debug("btcexp:router");
+"use strict";
 
-var express = require('express');
-var csurf = require('csurf');
-var router = express.Router();
-var util = require('util');
-var moment = require('moment');
-var bitcoinCore = require("bitcoin-core");
-var qrcode = require('qrcode');
-var bitcoinjs = require('bitcoinjs-lib');
-var sha256 = require("crypto-js/sha256");
-var hexEnc = require("crypto-js/enc-hex");
-var Decimal = require("decimal.js");
+const debug = require("debug");
+const debugLog = debug("btcexp:router");
 
-var utils = require('./../app/utils.js');
-var coins = require("./../app/coins.js");
-var config = require("./../app/config.js");
-var coreApi = require("./../app/api/coreApi.js");
-var addressApi = require("./../app/api/addressApi.js");
+const express = require('express');
+const csurf = require('csurf');
+const router = express.Router();
+const util = require('util');
+const moment = require('moment');
+const bitcoinCore = require("bitcoin-core");
+const qrcode = require('qrcode');
+const bitcoinjs = require('bitcoinjs-lib');
+const sha256 = require("crypto-js/sha256");
+const hexEnc = require("crypto-js/enc-hex");
+const Decimal = require("decimal.js");
+
+const utils = require('./../app/utils.js');
+const coins = require("./../app/coins.js");
+const config = require("./../app/config.js");
+const coreApi = require("./../app/api/coreApi.js");
+const addressApi = require("./../app/api/addressApi.js");
 
 const forceCsrf = csurf({ ignoreMethods: [] });
 
@@ -35,9 +37,7 @@ router.get("/blocks-by-height/:blockHeights", function(req, res, next) {
 
 	coreApi.getBlocksByHeight(blockHeights).then(function(result) {
 		res.json(result);
-
-		next();
-	});
+	}).catch(next);
 });
 
 router.get("/block-headers-by-height/:blockHeights", function(req, res, next) {
@@ -110,7 +110,8 @@ router.get("/raw-tx-with-inputs/:txid", function(req, res, next) {
 	});
 });
 
-router.get("/block-tx-summaries/:blockHeight/:txids", function(req, res, next) {
+router.get("/block-tx-summaries/:blockHash/:blockHeight/:txids", function(req, res, next) {
+	var blockHash = req.params.blockHash;
 	var blockHeight = parseInt(req.params.blockHeight);
 	var txids = req.params.txids.split(",").map(utils.asHash);
 
@@ -119,7 +120,7 @@ router.get("/block-tx-summaries/:blockHeight/:txids", function(req, res, next) {
 	var results = [];
 
 	promises.push(new Promise(function(resolve, reject) {
-		coreApi.buildBlockAnalysisData(blockHeight, txids, 0, results, resolve);
+		coreApi.buildBlockAnalysisData(blockHeight, blockHash, txids, 0, results, resolve);
 	}));
 
 	Promise.all(promises).then(function() {

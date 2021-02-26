@@ -376,9 +376,9 @@
             "name" : "Hummerpool",
             "link" : ""
         },
-        "by emcd" : {
-            "name" : "EMCD.IO",
-            "link" : "https://emcd.io"
+        "one_more_mcd" : {
+            "name" : "EMCD Pool",
+            "link" : "https://pool.emcd.io"
         },
         "/1THash&58COIN/": {
             "name": "1THash&58COIN",
@@ -475,6 +475,14 @@
         "MiningCity":{
             "name":"MiningCity",
             "link":"https://www.miningcity.com/"
+	},
+        "SBI Crypto": {
+            "name": "SBI Crypto",
+            "link": "https://www.sbicrypto.com"
+        },
+        "SBICrypto": {
+            "name": "SBI Crypto",
+            "link": "https://www.sbicrypto.com"
         }
     },
     "payout_addresses" : {

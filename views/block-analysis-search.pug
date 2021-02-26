@@ -23,13 +23,21 @@ block content
 
 			hr.my-4
 
-			h6 Selection of example blocks:
+			if (global.prunedBlockchain)
+				div.alert.alert-primary.pb-0(role="alert")
+					h6.mb-2 Note About Pruning
+					- var msgMarkdown = `Blockchain \`pruning\` is enabled on your node. This setting tells your node that after validating transactions it may discard data that is non-essential for future validation needs.\n\nThe current \`prune height\` for your node is ${global.pruneHeight.toLocaleString()}, and a block analysis will fail for any block height earlier than that.`;
+					| !{markdown(msgMarkdown)}
 
-			- var heights = [0, 170, 100000, 210000, 420000, 481824];
-			ul.text-monospace
-				each height in heights
-					li
-						a(href=`./block-analysis/${height}`) Block ##{height.toLocaleString()}
+			else
+
+				h6 Selection of example blocks:
+
+				- var heights = [0, 170, 100000, 210000, 420000, 481824];
+				ul.text-monospace
+					each height in heights
+						li
+							a(href=`./block-analysis/${height}`) Block ##{height.toLocaleString()}
 
 block endOfBody
 	script.

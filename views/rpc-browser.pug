@@ -27,7 +27,7 @@ block content
 										span  Command
 
 								div.float-right
-									a(href=("https://bitcoin.org/en/developer-reference#" + method)) Docs for #{method} &raquo;
+									a(href=`https://developer.bitcoin.org/reference/rpc/${method}.html`) Docs for #{method} &raquo;
 							hr
 
 							ul.nav.nav-tabs.mb-3
@@ -93,10 +93,10 @@ block content
 
 													if (method == "verifymessage" && argX.name == "message")
 														- var newline = String.fromCharCode(13, 10);
-														textarea.form-control(id=("arg_" + argX.name), name=("args[" + index + "]"), placeholder=argX.name, rows="8") #{(valX ? valX.split('\\n').join(newline) : "")}
+														textarea.form-control(id=`arg_${argX.name}`, name=`args[${index}]`, placeholder=argX.name, rows="8") #{(valX ? valX.split('\\n').join(newline) : "")}
 														
 													else
-														input.form-control(id=("arg_" + argX.name), type="text", name=("args[" + index + "]"), placeholder=argX.name, value=(valX ? valX : ""))
+														input.form-control(id=`arg_${argX.name}`, type="text", name=`args[${index}]`, placeholder=argX.name, value=(valX ? valX : ""))
 
 											if (!methodhelp.args || methodhelp.args.length == 0)
 												span.text-muted None
@@ -132,5 +132,5 @@ block content
 							ol(style="padding-left: 30px;")
 								each methodX, methodIndex in section.methods
 									li
-										a.text-monospace(href=("./rpc-browser?method=" + methodX.name), style=(methodX.name == method ? "font-weight: bold; font-style: italic;" : false)) #{methodX.name}
+										a.text-monospace(href=`./rpc-browser?method=${methodX.name}`, style=(methodX.name == method ? "font-weight: bold; font-style: italic;" : false)) #{methodX.name}
 

@@ -11,7 +11,12 @@ This is a simple, self-hosted explorer for the Bitcoin blockchain, driven by RPC
 
 Whatever reasons one may have for running a full node (trustlessness, technical curiosity, supporting the network, etc) it's helpful to appreciate the "fullness" of your node. With this explorer, you can explore not just the blockchain database, but also explore the functional capabilities of your own node.
 
-Live demo available at: [https://explorer.btc21.org](https://explorer.btc21.org)
+Live demos available at:
+
+* Mainnet - [https://explorer.btc21.org](https://explorer.btc21.org)
+* Testnet - [https://testnet.btc21.org](https://testnet.btc21.org)
+* Signet - [https://signet.btc21.org](https://signet.btc21.org)
+
 
 # Features
 
@@ -24,17 +29,31 @@ Live demo available at: [https://explorer.btc21.org](https://explorer.btc21.org)
 * Mempool summary, with fee, size, and age breakdowns
 * RPC command browser and terminal
 
+
 # Changelog / Release notes
 
 See [CHANGELOG.md](/CHANGELOG.md).
+
 
 # Getting started
 
 ## Prerequisites
 
-1. Install and run a full, archiving node - [instructions](https://bitcoin.org/en/full-node). Ensure that your bitcoin node has full transaction indexing enabled (`txindex=1`) and the RPC server enabled (`server=1`).
+1. Install and run a full, archiving node - [instructions](https://bitcoin.org/en/full-node). Ensure that your bitcoin node has its RPC server enabled (`server=1`).
 2. Synchronize your node with the Bitcoin network (you *can* use this tool while your node is still sychronizing, but some pages may fail).
 3. Install a "recent" version of Node.js (8+ recommended).
+
+### Note about pruning and indexing configurations
+
+This tool is designed to work best with full transaction indexing enabled (`txindex=1`) and pruning **disabled**. Running Bitcoin Core *without* `txindex` enabled and/or *with* `pruning` enabled works, but some data will be incomplete or missing. Also note that such Bitcoin Core configurations receive less thorough testing.
+
+In particular, with `pruning` enabled and/or `txindex` disabled, the following functionality is altered:
+
+* You will only be able to search for mempool, recently confirmed, and wallet transactions by their txid. Searching for non-wallet transactions that were confirmed over 3 blocks ago is only possible if you provide the confirmed block height in addition to the txid.
+* Pruned blocks will display basic header information, without the list of transactions. Transactions in pruned blocks will not be available, unless they're wallet-related. Block stats will only work for unpruned blocks.
+* The address and amount of previous transaction outputs will not be shown, only the txid:vout.
+* The mining fee will only be available for unconfirmed transactions.
+
 
 ## Install / Run
 
@@ -107,6 +126,7 @@ This causes the users to be redirected to login page if not logged in.
 ## Reverse proxy with HTTPS
 
 See [instructions here](docs/nginx-reverse-proxy.md) for using nginx+certbot (letsencrypt) for an HTTPS-accessible, reverse-proxied site.
+
 
 # Support
 

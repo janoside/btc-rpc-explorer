@@ -29,7 +29,6 @@ div.table-responsive
 
 				if (blocks && blocks.length > 0 && blocks[0].weight)
 					th.data-header.text-right % Full
-						//span.border-dotted(title="Block weight, in kWu.", data-toggle="tooltip") Weight
 
 				else
 					th.data-header.text-right Size
@@ -37,6 +36,17 @@ div.table-responsive
 		tbody
 
 			each block, blockIndex in blocks
+
+				if (global.prunedBlockchain && global.pruneHeight == (block.height + 1))
+					tr
+						td.text-center(colspan="100%")
+							h6.my-3 
+								i.fas.fa-backspace.text-danger.mr-2
+								| Blocks older than this point have been 
+								i pruned
+								| , meaning that some or all data that is non-essential for blockchain verification has been deleted.
+
+
 				if (block && ((sort == "desc" && (blockIndex < blocks.length - 1 || block.height == 0)) || (sort == "asc" && (block.height == 0 || blockIndex > 0))))
 					tr
 						td
@@ -47,10 +57,10 @@ div.table-responsive
 
 						td.data-cell.text-monospace.text-right
 							if (global.specialBlocks && global.specialBlocks[block.hash])
-								a(data-toggle="tooltip", title=(coinConfig.name + " Fun! See block for details"))
+								a(data-toggle="tooltip", title=`${coinConfig.name} Fun! See block for details`)
 									i.fas.fa-certificate.text-primary.mr-1
 
-							a(href=("./block-height/" + block.height)) #{block.height.toLocaleString()}
+							a(href=`./block-height/${block.height}`) #{block.height.toLocaleString()}
 						
 
 						- var timeAgoTime = moment.utc(new Date()).diff(moment.utc(new Date(parseInt(block.time) * 1000)));
@@ -89,7 +99,10 @@ div.table-responsive
 									- var colorClass = "text-danger";
 
 								span.font-weight-light(class=colorClass)
-									span #{timeDiff.format()}
+									if (timeDiff == 0)
+										span 0:00
+									else
+										span #{timeDiff.format()}
 									
 									if (false)
 										if (timeDiff.asMinutes() < 1)
@@ -105,12 +118,17 @@ div.table-responsive
 						
 						td.data-cell.text-monospace.text-right
 							if (block.miner && block.miner.name)
-								small.rounded.bg-primary.text-white.px-2.py-1(data-toggle="tooltip", title=("Identified by: " + block.miner.identifiedBy)) #{utils.ellipsize(block.miner.name, 10)}
+								small.rounded.bg-primary.text-white.px-2.py-1(data-toggle="tooltip", title=`Identified by: ${block.miner.identifiedBy}`) #{utils.ellipsize(block.miner.name, 10)}
+
+							else if (block.height < global.pruneHeight)
+								span.border-dotted(title="Determining the miner of a block requires that the block not be pruned. Sadly, this block has been pruned.", data-toggle="tooltip")
+									i.fas.fa-backspace.text-danger.mr-2
+									| ?
 							else
 								span ?
 
 						
-						td.data-cell.text-monospace.text-right #{block.tx.length.toLocaleString()}
+						td.data-cell.text-monospace.text-right #{block.nTx.toLocaleString()}
 
 						if (blockstatsByHeight)
 							td.data-cell.text-monospace.text-right
@@ -119,22 +137,34 @@ div.table-responsive
 									- var currencyValueDecimals = 0;
 									include ./value-display.pug
 
+									if (block.totalFees == null)
+										- block.totalFees = Decimal(blockstatsByHeight[block.height].totalfee).dividedBy(coinConfig.baseCurrencyUnit.multiplier)
+
 								else
 									span 0
 
 						td.data-cell.text-monospace.text-right
-							- var currencyValue = new Decimal(block.totalFees).dividedBy(block.strippedsize).times(coinConfig.baseCurrencyUnit.multiplier).toDecimalPlaces(1);
-							span #{currencyValue}
-							
+							if block.totalFees && block.strippedsize
+								- var currencyValue = new Decimal(block.totalFees).dividedBy(block.strippedsize).times(coinConfig.baseCurrencyUnit.multiplier).toDecimalPlaces(1);
+								span #{currencyValue}
+							else
+								span(title="This data is unavailable due to blockchain pruning", data-toggle="tooltip")
+									i.fas.fa-backspace.text-danger
+
 							// idea: show typical tx fee, maybe also optimized fee if not segwit
 							if (false)
 								- var feeEstimateVal = currencyValue.times(166).dividedBy(coinConfig.baseCurrencyUnit.multiplier);
 								span.border-dotted(title=`Value: ${feeEstimateVal}`, data-toggle="tooltip") #{currencyValue}
 
 						td.data-cell.text-monospace.text-right
-							- var currencyValue = new Decimal(block.totalFees);
-							- var currencyValueDecimals = 3;
-							include ./value-display.pug
+							if block.totalFees
+								- var currencyValue = new Decimal(block.totalFees);
+								- var currencyValueDecimals = 3;
+								include ./value-display.pug
+							else
+								span(title="This data is unavailable due to blockchain pruning", data-toggle="tooltip")
+									i.fas.fa-backspace.text-danger
+
 
 							
 						
@@ -145,35 +175,36 @@ div.table-responsive
 
 						if (blocks && blocks.length > 0 && blocks[0].weight)
 							td.data-cell.text-monospace.text-right
-								if (true)
-									- var full = new Decimal(block.weight).dividedBy(coinConfig.maxBlockWeight).times(100);
-									- var full2 = full.toDP(2);
+								if block.weight
+									if (true)
+										- var full = new Decimal(block.weight).dividedBy(coinConfig.maxBlockWeight).times(100);
+										- var full2 = full.toDP(0);
 
-									span #{full2} 
-									if (full > 90)
-										img(src="./img/block-fullness-3.png", style="width: 18px; height: 18px;")
-									else if (full > 50)
-										img(src="./img/block-fullness-2.png", style="width: 18px; height: 18px;")
-									else if (full > 25)
-										img(src="./img/block-fullness-1.png", style="width: 18px; height: 18px;")
+										
+										if (full >= 99 || full2 == 99)
+											span.text-success 99+
+
+										else
+											span.text-primary #{full2}
+
 									else
-										img(src="./img/block-fullness-0.png", style="width: 18px; height: 18px;")
+										- var bWeightK = parseInt(block.weight / 1000);
+										- var fullPercent = new Decimal(100 * block.weight / coinConfig.maxBlockWeight).toDecimalPlaces(1);
 
+										span #{bWeightK.toLocaleString()} 
+										small.font-weight-light.text-muted (#{fullPercent}%)
+
+										- var bSizeK = parseInt(block.size / 1000);
+										span.ml-1(data-toggle="tooltip", title=`Size: ${bSizeK.toLocaleString()} kB`)
+											i.fas.fa-ellipsis-h.text-muted
+
+										div.progress(style="height: 4px;")
+											div.progress-bar(role="progressbar", style=`width: ${fullPercent}%;`, aria-valuenow=parseInt(100 * block.weight / coinConfig.maxBlockWeight), aria-valuemin="0" ,aria-valuemax="100")
 								else
-									- var bWeightK = parseInt(block.weight / 1000);
-									- var fullPercent = new Decimal(100 * block.weight / coinConfig.maxBlockWeight).toDecimalPlaces(1);
+									span(title="This data is unavailable due to blockchain pruning", data-toggle="tooltip")
+										i.fas.fa-backspace.text-danger
 
-									span #{bWeightK.toLocaleString()} 
-									small.font-weight-light.text-muted (#{fullPercent}%)
-
-									- var bSizeK = parseInt(block.size / 1000);
-									span.ml-1(data-toggle="tooltip", title=`Size: ${bSizeK.toLocaleString()} kB`)
-										i.fas.fa-ellipsis-h.text-muted
-
-									div.progress(style="height: 4px;")
-										div.progress-bar(role="progressbar", style=("width: " + fullPercent + "%;"), aria-valuenow=parseInt(100 * block.weight / coinConfig.maxBlockWeight), aria-valuemin="0" ,aria-valuemax="100")
-
-						else
+						else if (block.size)
 							td.data-cell.text-monospace.text-right
 								- var bSizeK = parseInt(block.size / 1000);
 								- var fullPercent = new Decimal(100 * block.size / coinConfig.maxBlockSize).toDecimalPlaces(1);
@@ -182,6 +213,11 @@ div.table-responsive
 								small.font-weight-light.text-muted (#{fullPercent}%)
 
 								div.progress(style="height: 4px;")
-									div.progress-bar(role="progressbar", style=("width: " + fullPercent + "%;"), aria-valuenow=parseInt(100 * block.size / coinConfig.maxBlockSize), aria-valuemin="0" ,aria-valuemax="100")
+									div.progress-bar(role="progressbar", style=`width: ${fullPercent}%;`, aria-valuenow=parseInt(100 * block.size / coinConfig.maxBlockSize), aria-valuemin="0" ,aria-valuemax="100")
+
+						else
+							td.data-cell.text-monospace.text-right
+								span(title="This data is unavailable due to blockchain pruning", data-toggle="tooltip")
+									i.fas.fa-backspace.text-danger
 
 					- var lastBlock = block;

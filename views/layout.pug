@@ -20,7 +20,7 @@ html(lang="en")
 		
 		link(rel='stylesheet', href='./css/styling.css')
 
-		link(rel="icon", type="image/png", href=("./img/logo/" + config.coin.toLowerCase() + ".png"))
+		link(rel="icon", type="image/png", href=`./img/logo/${config.coin.toLowerCase()}.png`)
 
 		include includes/debug-overrides.pug
 
@@ -97,7 +97,8 @@ html(lang="en")
 								a.nav-link.dropdown-toggle(href="javascript:void(0)", role="button", data-toggle="dropdown", aria-haspopup="true", aria-expanded="false") 
 									span  Admin Tools
 								div.dropdown-menu.dropdown-menu-right.shadow(aria-label="Admin Tools Items")
-									a.dropdown-item(href="./admin") Admin Dashboard
+									a.dropdown-item(href="./admin/dashboard") Dashboard
+									a.dropdown-item(href="./admin/stats") Stats
 
 							li.nav-item.dropdown
 								a.nav-link.dropdown-toggle(href="javascript:void(0)", id="navbarDropdown", role="button", data-toggle="dropdown", aria-haspopup="true", aria-expanded="false") 
@@ -107,7 +108,7 @@ html(lang="en")
 										span.dropdown-header Currency Units
 										each item in coinConfig.currencyUnits
 											if (item.type == "native" || (config.queryExchangeRates && !config.privacyMode))
-												a.dropdown-item(href=("./changeSetting?name=currencyFormatType&value=" + item.values[0]))
+												a.dropdown-item(href=`./changeSetting?name=currencyFormatType&value=${item.values[0]}`)
 													each valueName in item.values
 														if (currencyFormatType == valueName)
 															i.fas.fa-check
@@ -194,7 +195,7 @@ html(lang="en")
 								if (sourcecodeVersion)
 									br
 									span commit: 
-										a(href=("https://github.com/janoside/btc-rpc-explorer/commit/" + sourcecodeVersion)) #{sourcecodeVersion}
+										a(href=`https://github.com/janoside/btc-rpc-explorer/commit/${sourcecodeVersion}`) #{sourcecodeVersion}
 								
 								br
 								span released: #{sourcecodeDate}
@@ -237,7 +238,7 @@ html(lang="en")
 
 		script(src="./js/highlight.min.js", integrity="sha384-xLrpH5gNLD6HMLgeDH1/p4FXigQ8T9mgNm+EKtCSXL0OJ5i1bnSi57dnwFuUMM9/")
 
-		script(src="./js/site.js", integrity="sha384-weZIj2Lafb8Qt+U1gwVB/HgL70q/yMT9Vo4NHBqqx67KMqGlMon2iv1WmZFiTKjw")
+		script(src="./js/site.js", integrity="sha384-VT6URWBBaQ+gBHYtXUO3QP6Rq8DnvRYIWx6nGW5l5u/usDvbitq+MkHc4ZxVTqzT")
 		
 		script.
 			$(document).ready(function() {

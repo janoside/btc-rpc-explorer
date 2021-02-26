@@ -80,7 +80,7 @@ block content
 					each graphId, graphIndex in graphIds
 						div.float-left.mr-3.mb-1
 							div.form-check
-								input.form-check-input.graph-toggle-checkbox(type="checkbox", id=("checkbox-" + graphId) checked="checked", data-graphId=graphId, autocomplete="off")
+								input.form-check-input.graph-toggle-checkbox(type="checkbox", id=`checkbox-${graphId}` checked="checked", data-graphId=graphId, autocomplete="off")
 								label.form-check-label(for=("checkbox-" + graphId)) #{graphTitles[graphIndex]}
 
 					div.float-left.mr-3.mb-1

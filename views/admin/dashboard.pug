@@ -1,10 +1,10 @@
-extends layout
+extends ../layout
 
 block headContent
-	title Admin
+	title Admin Dashboard
 
 block content
-	h1.h3 Admin
+	h1.h3 Admin Dashboard
 	hr
 
 	ul.nav.nav-tabs.mb-3
@@ -26,6 +26,16 @@ block content
 							div.summary-table-content.text-monospace
 								- var uptime = moment.duration(new Date().getTime() - appStartTime);
 								span #{uptime.format()}
+
+						div.row
+							div.summary-table-label Node Version
+							div.summary-table-content.text-monospace
+								span #{global.nodeVersion}
+
+						div.row
+							div.summary-table-label Node Env
+							div.summary-table-content.text-monospace
+								span #{process.env.NODE_ENV || "development"}
 
 			div.card.shadow-sm.mb-3
 				div.card-body
@@ -106,6 +116,14 @@ block content
 														small  %
 												else
 													span -
+
+			div.card.shadow-sm.mb-3
+				div.card-body
+					h3.h6 Cache Sizes
+					hr
+
+					pre
+						code.json #{JSON.stringify(cacheSizes, null, 4)}
 
 			div.card.shadow-sm.mb-3
 				div.card-body
