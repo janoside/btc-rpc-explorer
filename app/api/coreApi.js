@@ -791,6 +791,14 @@ function getRawTransactions(txids, blockhash) {
 	});
 }
 
+async function getRawTransactionsByHeights(txids, blockHeightsByTxid) {
+	return Promise.all(txids.map(async txid => {
+		var blockheight = blockHeightsByTxid[txid];
+		var blockhash = blockheight ? await getBlockByHeight(blockheight) : null;
+		return getRawTransaction(txid, blockhash);
+	}))
+}
+
 function buildBlockAnalysisData(blockHeight, blockHash, txids, txIndex, results, callback) {
 	if (txIndex >= txids.length) {
 		callback();
@@ -1144,6 +1152,7 @@ module.exports = {
 	getRawTransaction: getRawTransaction,
 	getRawTransactions: getRawTransactions,
 	getRawTransactionsWithInputs: getRawTransactionsWithInputs,
+	getRawTransactionsByHeights: getRawTransactionsByHeights,
 	getTxUtxos: getTxUtxos,
 	getMempoolTxDetails: getMempoolTxDetails,
 	getUptimeSeconds: getUptimeSeconds,
