@@ -1158,8 +1158,8 @@ router.get("/address/:address", function(req, res, next) {
 								});
 							}).catch(function(err) {
 								res.locals.pageErrors.push(utils.logError("asdgf07uh23", err));
-
-								reject(err);
+								// the transactions failed loading, render with just the txids list.
+								resolve();
 							});
 						} else {
 							// no addressDetails.txids available
