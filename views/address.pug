@@ -345,7 +345,9 @@ block content
 											div.row
 												div.col-md-8
 													if (tx && tx.txid)
-														a(href=`./tx/${tx.txid}`) #{tx.txid}
+														- var blockHeight = addressDetails.blockHeightsByTxid[tx.txid];
+														- var blockHeightParam = !global.txindexAvailable && blockHeight > 0 ? `@${blockHeight}` : "";
+														a(href=`./tx/${tx.txid}${blockHeightParam}`) #{tx.txid}
 
 														if (global.specialTransactions && global.specialTransactions[tx.txid])
 															span  
