@@ -258,9 +258,7 @@ function getRawTransaction(txid, blockhash) {
 			var extra_params = blockhash ? [ blockhash ] : [];
 			getRpcDataWithParams({method:"getrawtransaction", parameters:[txid, 1, ...extra_params]}).then(function(result) {
 				if (result == null || result.code && result.code < 0) {
-					reject(result);
-
-					return;
+					return Promise.reject(result);
 				}
 
 				resolve(result);
