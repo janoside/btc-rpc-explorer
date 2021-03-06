@@ -899,15 +899,16 @@ router.get("/tx/:transactionId", asyncHandler(async (req, res, next) => {
 					
 				resolve();
 			}));
+		} else {
+			promises.push(new Promise(async (resolve, reject) => {
+				global.rpcClient.command('getblockheader', tx.blockhash, function(err3, result3, resHeaders3) {
+					if (err3) return reject(err3);
+					res.locals.result.getblock = result3;
+
+					resolve();
+				});
+			}));
 		}
-
-		promises.push(new Promise(async (resolve, reject) => {
-			global.rpcClient.command('getblock', tx.blockhash, function(err3, result3, resHeaders3) {
-				res.locals.result.getblock = result3;
-
-				resolve();
-			});
-		}));
 
 		await Promise.all(promises);
 		
