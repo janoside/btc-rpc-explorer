@@ -266,9 +266,8 @@ function getRawTransaction(txid, blockhash) {
 				resolve(result);
 
 			}).catch(function(err) {
-				if (!global.txindexAvailable && !blockhash) {
-					noTxIndexTransactionLookup(txid).then(resolve, reject);
-					
+				if (!global.txindexAvailable) {
+					noTxIndexTransactionLookup(txid, !!blockhash).then(resolve, reject);
 				} else {
 					reject(err);
 				}
@@ -277,10 +276,10 @@ function getRawTransaction(txid, blockhash) {
 	});
 }
 
-async function noTxIndexTransactionLookup(txid) {
+async function noTxIndexTransactionLookup(txid, walletOnly) {
 	// Try looking up with an external Electrum server, using 'get_confirmed_blockhash'.
 	// This is only available in Electrs and requires enabling BTCEXP_ELECTRUM_TXINDEX.
-	if (config.addressApi == "electrumx" && config.electrumTxIndex) {
+	if (!walletOnly && config.addressApi == "electrumx" && config.electrumTxIndex) {
 		try {
 			var blockhash = await electrumAddressApi.lookupTxBlockHash(txid);
 			return await getRawTransaction(txid, blockhash);
@@ -296,11 +295,13 @@ async function noTxIndexTransactionLookup(txid) {
 	}
 
 	// Try looking up in recent blocks
-	var tip_height = await getRpcDataWithParams({method:"getblockcount", parameters:[]});
-	for (var height=tip_height; height>Math.max(tip_height - config.noTxIndexSearchDepth, 0); height--) {
-		var blockhash = await getRpcDataWithParams({method:"getblockhash", parameters:[height]});
-		try { return await getRawTransaction(txid, blockhash); }
-		catch (_) {}
+	if (!walletOnly) {
+		var tip_height = await getRpcDataWithParams({method:"getblockcount", parameters:[]});
+		for (var height=tip_height; height>Math.max(tip_height - config.noTxIndexSearchDepth, 0); height--) {
+			var blockhash = await getRpcDataWithParams({method:"getblockhash", parameters:[height]});
+			try { return await getRawTransaction(txid, blockhash); }
+			catch (_) {}
+		}
 	}
 
 	throw new Error(`The requested tx ${txid} cannot be found in wallet transactions, mempool transactions, or recently confirmed transactions`)
