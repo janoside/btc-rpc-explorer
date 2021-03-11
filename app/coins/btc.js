@@ -694,6 +694,16 @@ module.exports = {
 			alertBodyHtml: "This block was the last 'Version 1' block to be mined. <a href='https://github.com/bitcoin/bips/blob/master/bip-0034.mediawiki'>BIP-34</a> defined 'Version 2' blocks and the 'bip34' soft fork was officially locked in 96 blocks after this one, in block #<a href='./block-height/227931'>227,931</a>.",
 			referenceUrl: "https://github.com/bitcoin/bips/blob/master/bip-0034.mediawiki"
 		},
+		{
+			type: "tx",
+			date: "2013-11-05",
+			chain: "main",
+			txid: "d29c9c0e8e4d2a9790922af73f0b8d51f0bd4bb19940d9cf910ead8fbe85bc9b",
+			blockHeight: 268060,
+			summary: "Never gonna give you up...",
+			alertBodyHtml: "This transaction includes a 983-byte OP_RETURN output. Although the default max size for OP_RETURN data is often quoted as 80 bytes, the 80-byte limit is a non-consensus rule that can vary from node to node (and is only enforced at mempool-acceptance time).",
+			referenceUrl: "https://bitcoin.stackexchange.com/q/78572/3397"
+		},
 
 
 
