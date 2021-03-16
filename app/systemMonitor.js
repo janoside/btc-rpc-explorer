@@ -1,9 +1,14 @@
 const os = require("os");
 const v8 = require("v8");
 const pidusage = require("pidusage");
-const eventLoopStats = require("event-loop-stats");
 const statTracker = require("./statTracker.js");
+const debug = require("debug")("systemMonitor");
 
+try { var eventLoopStats = require("event-loop-stats"); }
+catch (err) {
+	debug("Failed loading event-loop-stats, skipping system monitor");
+	return;
+}
 
 const systemMonitorInterval = setInterval(() => {
 	pidusage(process.pid, (err, stat) => {
