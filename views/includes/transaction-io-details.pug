@@ -103,7 +103,8 @@ div.row.font-monospace
 								div.tx-io-value
 									if (txVin.coinbase)
 										- var currencyValue = coinConfig.blockRewardFunction(blockHeight, activeBlockchain);
-										include ./value-display.pug
+										span.border-dotted(title="This is the <b>block subsidy</b> - newly created coins awarded to the miner that found this block.", data-bs-toggle="tooltip", data-bs-html="true", class=(tx.vin.length == 1 ? "fw-bold" : false))
+											include ./value-display.pug
 									else
 										if (vout && vout.value)
 											- var currencyValue = vout.value;
