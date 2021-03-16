@@ -108,13 +108,15 @@ div.row.font-monospace
 									else
 										if (vout && vout.value)
 											- var currencyValue = vout.value;
-											include ./value-display.pug
+											span(class=(tx.vin.length == 1 ? "fw-bold" : false))
+												include ./value-display.pug
 
 										else if (!global.txindexAvailable)
 											span(title="This data is unavailable. Your node must have its transaction index (txindex) setting enabled to view it.", data-bs-toggle="tooltip")
 												i.fas.fa-backspace.text-danger
 
-					hr
+					if (tx.vin.length > 1)
+						hr
 
 				else
 					- extraInputCount = extraInputCount + 1;
@@ -143,14 +145,15 @@ div.row.font-monospace
 								include ./value-display.pug
 				hr
 
-			if (totalIOValues.input && totalIOValues.input > 0)
+			if (totalIOValues.input && totalIOValues.input > 0 && tx.vin.length > 1)
 				div.row.mb-5.mb-lg-0
 					div.col
 						div.fw-bold.text-start.text-md-end
 							if (totalIOValues.input > 0)
 								span.d-block.d-md-none Total Input:
 								- var currencyValue = totalIOValues.input;
-								include ./value-display.pug
+								span.fw-bold
+									include ./value-display.pug
 			
 			
 
@@ -270,19 +273,25 @@ div.row.font-monospace
 										i.fas.fa-lock-open.text-secondary.me-2(title="Spent output." data-bs-toggle="tooltip")
 
 								- var currencyValue = vout.value;
-								include ./value-display.pug
+								span(class=(tx.vout.length == 1 ? "fw-bold" : false))
+									include ./value-display.pug
 
 
-				hr
+				if (tx.vout.length > 1)
+					hr
+
+				else
+					div.mb-3
 
 		if (hiddenRowCount > 0)
 			a(href="javascript:void(0)", onclick=("showAllTxOutputs(this, '" + tx.txid + "');")) Show all #{tx.vout.length.toLocaleString()} outputs
 
-		div.row.mb-0.mb-lg-0
-			div.col
-				div.font-weight-bold.text-left.text-md-right
-					span.d-block.d-md-none Total Output:
-					- var currencyValue = totalIOValues.output;
-					include ./value-display.pug
+		if (tx.vout.length > 1)
+			div.row.mb-0.mb-lg-0
+				div.col
+					div.fw-bold.text-start.text-md-end
+						span.d-block.d-md-none Total Output:
+						- var currencyValue = totalIOValues.output;
+						include ./value-display.pug
 
 
