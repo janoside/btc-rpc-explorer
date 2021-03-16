@@ -13,25 +13,25 @@ block content
 			hr
 
 			div.clearfix
-				div.float-left.mr-4
+				div.float-start.me-4
 					div(id="time-range-buttons")
 						h3.h6 Latest N Blocks
 						div.btn-group
 							a.btn.btn-primary.block-count-btn(href="javascript:void(0)", data-blockCount="144") 144
-								small.ml-2 (~1d)
+								small.ms-2 (~1d)
 							a.btn.btn-outline-primary.block-count-btn(href="javascript:void(0)", data-blockCount="432") 432
-								small.ml-2 (~3d)
+								small.ms-2 (~3d)
 							a.btn.btn-outline-primary.block-count-btn(href="javascript:void(0)", data-blockCount="1008") 1,008
-								small.ml-2 (~7d)
+								small.ms-2 (~7d)
 							a.btn.btn-outline-primary.block-count-btn(href="javascript:void(0)", data-blockCount="4320") 4,320
-								small.ml-2 (~30d)
+								small.ms-2 (~30d)
 
-				div.float-left.mr-4
+				div.float-start.me-4
 					div(id="block-selections-buttons")
 						h3.h6 Preconfigured
 
 						div.dropdown
-							button.btn.btn-outline-primary.dropdown-toggle(type="button", id="preconfigured-dropdown", data-toggle="dropdown", aria-haspopup="true", aria-expanded="false") Selections
+							button.btn.btn-outline-primary.dropdown-toggle(type="button", id="preconfigured-dropdown", data-bs-toggle="dropdown", aria-haspopup="true", aria-expanded="false") Selections
 							div.dropdown-menu(aria-labelledby="preconfigured-dropdown")
 								a.dropdown-item(href="javascript:void(0)", data-blocks="0-199") First 200 Blocks
 								a.dropdown-item(href="javascript:void(0)", data-blocks="209900-210100") First Halving ±100
@@ -39,16 +39,16 @@ block content
 								a.dropdown-item(href="javascript:void(0)", data-blocks="629900-630100") Third Halving ±100
 								a.dropdown-item(href="javascript:void(0)", data-blocks="481724-481924") SegWit Activation ±100
 
-				div.float-left
+				div.float-start
 					div(id="time-range-buttons")
 						h3.h6 Custom Range
 
-						form.form-inline.mr-3(id="custom-range-form")
+						form.form-inline.me-3(id="custom-range-form")
 							div.input-group
 								input.form-control(type="text", id="custom-range-start", placeholder="min height", style="width: 125px;")
 								input.form-control(type="text", id="custom-range-end", placeholder="max height", style="width: 125px;")
-								div.input-group-append
-									button.btn.btn-primary(type="submit") Go
+								
+								button.btn.btn-primary(type="submit") Go
 
 	div#progress-wrapper.mb-huge
 		div.card.shadow-sm.mb-3
@@ -66,44 +66,44 @@ block content
 					thead
 						tr
 							th.data-header Miner
-							th.data-header.text-right Blocks
-							th.data-header.text-right Transactions
-							th.data-header.text-right Block Rewards
-							th.data-header.text-right Fees Collected
+							th.data-header.text-end Blocks
+							th.data-header.text-end Transactions
+							th.data-header.text-end Block Rewards
+							th.data-header.text-end Fees Collected
 							
 					tbody(id="summary-table-body")
 						tr(id="miner-summary-prototype", style="display: none;")
-							td.data-cell.text-monospace.miner-name
-							td.data-cell.text-monospace.text-right
+							td.data-cell.font-monospace.miner-name
+							td.data-cell.font-monospace.text-end
 								span.miner-block-count
-								small.text-muted.miner-block-percent.ml-2
-							td.data-cell.text-monospace.text-right
+								small.text-muted.miner-block-percent.ms-2
+							td.data-cell.font-monospace.text-end
 								span.miner-tx-count
-								small.text-muted.miner-tx-percent.ml-2
-							td.data-cell.text-monospace.text-right
+								small.text-muted.miner-tx-percent.ms-2
+							td.data-cell.font-monospace.text-end
 								span.miner-subsidy
-								small.text-muted.miner-subsidy-percent.ml-2
+								small.text-muted.miner-subsidy-percent.ms-2
 								//- var currencyValue = new Decimal(summary.totalSubsidiesCollected);
 								//include ./includes/value-display.pug
-							td.data-cell.text-monospace.text-right
+							td.data-cell.font-monospace.text-end
 								span.miner-fees
 								small.text-muted.miner-fees-percent
 								//- var currencyValue = new Decimal(summary.totalFeesCollected);
 								//include ./includes/value-display.pug
 
 						tr(id="miner-summary-totals", style="display: none;")
-							th.data-cell.text-monospace.miner-name Total
-							th.data-cell.text-monospace.text-right
+							th.data-cell.font-monospace.miner-name Total
+							th.data-cell.font-monospace.text-end
 								span.miner-block-count
-								small.text-muted.miner-block-percent.ml-2 (100%)
-							th.data-cell.text-monospace.text-right
+								small.text-muted.miner-block-percent.ms-2 (100%)
+							th.data-cell.font-monospace.text-end
 								span.miner-tx-count
-								small.text-muted.miner-tx-percent.ml-2 (100%)
-							th.data-cell.text-monospace.text-right
+								small.text-muted.miner-tx-percent.ms-2 (100%)
+							th.data-cell.font-monospace.text-end
 								span.miner-subsidy
 								//- var currencyValue = new Decimal(summary.totalSubsidiesCollected);
 								//include ./includes/value-display.pug
-							th.data-cell.text-monospace.text-right
+							th.data-cell.font-monospace.text-end
 								span.miner-fees
 								//- var currencyValue = new Decimal(summary.totalFeesCollected);
 								//include ./includes/value-display.pug
@@ -236,7 +236,7 @@ block endOfBody
 					
 					row.find(".miner-name").text(minerName);
 
-					row.find(".miner-block-count").html(`<a href='javascript:void(0);' onclick="javascipt:$('#miner-block-heights-${i}').toggle();" title="Click to show ${minerSummary.blockCount.toLocaleString()} block height(s)" data-toggle="tooltip">${minerSummary.blockCount.toLocaleString()}</a><br/><small id='miner-block-heights-${i}' style='display: none;'>${blockHeightsHtml}</small>`);
+					row.find(".miner-block-count").html(`<a href='javascript:void(0);' onclick="javascipt:$('#miner-block-heights-${i}').toggle();" title="Click to show ${minerSummary.blockCount.toLocaleString()} block height(s)" data-bs-toggle="tooltip">${minerSummary.blockCount.toLocaleString()}</a><br/><small id='miner-block-heights-${i}' style='display: none;'>${blockHeightsHtml}</small>`);
 					row.find(".miner-block-percent").text(`(${new Decimal(minerSummary.blockCount).dividedBy(summary.overallSummary.blockCount).times(100).toDecimalPlaces(1)}%)`);
 					
 					row.find(".miner-tx-count").text(minerSummary.transactionCount.toLocaleString());

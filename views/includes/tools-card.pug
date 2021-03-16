@@ -6,14 +6,14 @@ if (false)
 			div.row
 				each item, index in [[0, 1, 2], [4, 3, 5], [6, 7, 8]]
 					div.col-md-4
-						ul.pl-0(style="list-style-type: none;")
+						ul.ps-0(style="list-style-type: none;")
 							each toolIndex, toolIndexIndex in item
 								- var siteTool = config.siteTools[toolIndex];
 
 								li
-									div.float-left(style="height: 50px; width: 40px; margin-right: 10px;")
+									div.float-start(style="height: 50px; width: 40px; margin-right: 10px;")
 										span
-											i.fa-2x.mr-2(class=siteTool.fontawesome, style="margin-top: 6px;")
+											i.fa-2x.me-2(class=siteTool.fontawesome, style="margin-top: 6px;")
 
 									a(href=siteTool.url) #{siteTool.name}
 									br
@@ -27,8 +27,8 @@ if (false)
 					each listItem in list
 						- var siteTool = config.siteTools[listItem];
 						li.mb-2
-							span(title=siteTool.desc, data-toggle="tooltip")
-								i.mr-2.fa-lg(class=siteTool.fontawesome, style="width: 30px;")
+							span(title=siteTool.desc, data-bs-toggle="tooltip")
+								i.me-2.fa-lg(class=siteTool.fontawesome, style="width: 30px;")
 							a(href=siteTool.url)
 								span #{siteTool.name}
 
@@ -40,8 +40,8 @@ if (false)
 					each listItem in list
 						- var siteTool = config.siteTools[listItem];
 						li.mb-2
-							span(title=siteTool.desc, data-toggle="tooltip")
-								i.mr-2.fa-sm(class=siteTool.fontawesome, style="width: 30px;")
+							span(title=siteTool.desc, data-bs-toggle="tooltip")
+								i.me-2.fa-sm(class=siteTool.fontawesome, style="width: 30px;")
 							a(href=siteTool.url)
 								span #{siteTool.name}
 

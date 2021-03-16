@@ -9,9 +9,9 @@ block content
 
 	ul.nav.nav-tabs.mb-3
 		li.nav-item
-			a.nav-link.active(data-toggle="tab", href="#tab-details", role="tab") Details
+			a.nav-link.active(data-bs-toggle="tab", href="#tab-details", role="tab") Details
 		li.nav-item
-			a.nav-link(data-toggle="tab", href="#tab-json", role="tab") JSON
+			a.nav-link(data-bs-toggle="tab", href="#tab-json", role="tab") JSON
 
 	div.tab-content
 		div.tab-pane.active(id="tab-details", role="tabpanel")
@@ -23,18 +23,18 @@ block content
 					div.clearfix
 						div.row
 							div.summary-table-label Uptime
-							div.summary-table-content.text-monospace
+							div.summary-table-content.font-monospace
 								- var uptime = moment.duration(new Date().getTime() - appStartTime);
 								span #{uptime.format()}
 
 						div.row
 							div.summary-table-label Node Version
-							div.summary-table-content.text-monospace
+							div.summary-table-content.font-monospace
 								span #{global.nodeVersion}
 
 						div.row
 							div.summary-table-label Node Env
-							div.summary-table-content.text-monospace
+							div.summary-table-content.font-monospace
 								span #{process.env.NODE_ENV || "development"}
 
 			div.card.shadow-sm.mb-3
@@ -51,17 +51,17 @@ block content
 					hr
 
 					div.table-responsive
-						table.table.table-hover
+						table.table.table-borderless.table-hover
 							thead
 								tr
-									th.text-right Heap Size
-									th.text-right Used Heap
-									th.text-right Heap Limit
-									th.text-right Physical Size
-									th.text-right Available Size
+									th.text-end Heap Size
+									th.text-end Used Heap
+									th.text-end Heap Limit
+									th.text-end Physical Size
+									th.text-end Available Size
 
 							tbody
-								tr.text-right.text-monospace
+								tr.text-end.font-monospace
 									td
 										- var data = utils.formatLargeNumber(memstats.total_heap_size, 2);
 										span #{data[0]}
@@ -96,21 +96,21 @@ block content
 						hr
 
 						div.table-responsive
-							table.table.table-hover
+							table.table.table-borderless.table-hover
 								thead
 									tr
 										th Cache
-										th.text-right Hit
-										th.text-right Miss
-										th.text-right Hit Rate
+										th.text-end Hit
+										th.text-end Miss
+										th.text-end Hit Rate
 
 								tbody
 									each item, itemName in cacheStats
-										tr.text-monospace
+										tr.font-monospace
 											td #{itemName}
-											td.text-right #{item.hit.toLocaleString()}
-											td.text-right #{item.miss.toLocaleString()}
-											td.text-right
+											td.text-end #{item.hit.toLocaleString()}
+											td.text-end #{item.miss.toLocaleString()}
+											td.text-end
 												if (item.hit > 0 || item.miss > 0)
 													span #{(100 * item.hit / (item.hit + item.miss)).toLocaleString()}
 														small  %
@@ -131,31 +131,31 @@ block content
 					hr
 
 					div.table-responsive
-						table.table.table-hover.table-striped
+						table.table.table-borderless.table-striped
 							thead
 								tr
 									th Method
-									th.text-right Count
-									th.text-right Time
+									th.text-end Count
+									th.text-end Time
 										small  (s)
-									th.text-right Avg Time
+									th.text-end Avg Time
 										small  (ms)
-									th.text-right Successes / Failures
-									th.text-right Success Rate
+									th.text-end Successes / Failures
+									th.text-end Success Rate
 
 							tbody
 								each item, itemName in rpcStats
-									tr.text-monospace
+									tr.font-monospace
 										td #{itemName}
-										td.text-right #{item.count.toLocaleString()}
-										td.text-right #{(item.time / 1000).toLocaleString()}
-										td.text-right #{(item.time / item.count).toLocaleString()}
-										td.text-right
+										td.text-end #{item.count.toLocaleString()}
+										td.text-end #{(item.time / 1000).toLocaleString()}
+										td.text-end #{(item.time / item.count).toLocaleString()}
+										td.text-end
 											span.text-success #{item.successes.toLocaleString()}
 											span.mx-1 /
 											span.text-danger #{item.failures.toLocaleString()}
 
-										td.text-right
+										td.text-end
 											span #{new Decimal(item.successes).dividedBy(new Decimal(item.successes + item.failures)).times(100).toDP(1)}
 												small  %
 
@@ -166,58 +166,58 @@ block content
 						hr
 
 						div.table-responsive
-							table.table.table-hover.table-striped
+							table.table.table-borderless.table-striped
 								thead
 									tr
 										th Action
-										th.text-right Count
-										th.text-right First Seen
-										th.text-right Last Seen
+										th.text-end Count
+										th.text-end First Seen
+										th.text-end Last Seen
 
 								tbody
 									each item, itemName in electrumStats.base
-										tr.text-monospace
+										tr.font-monospace
 											td #{itemName}
-											td.text-right #{item.count.toLocaleString()}
+											td.text-end #{item.count.toLocaleString()}
 
 											if (item.firstSeenAt)
-												td.text-right #{moment.duration(new Date().getTime() - item.firstSeenAt.getTime()).format()} ago
+												td.text-end #{moment.duration(new Date().getTime() - item.firstSeenAt.getTime()).format()} ago
 											else
-												td.text-right -
+												td.text-end -
 
 											if (item.lastSeenAt)
-												td.text-right #{moment.duration(new Date().getTime() - item.lastSeenAt.getTime()).format()} ago
+												td.text-end #{moment.duration(new Date().getTime() - item.lastSeenAt.getTime()).format()} ago
 											else
-												td.text-right -
+												td.text-end -
 
 						hr
 
 						div.table-responsive
-							table.table.table-hover.table-striped
+							table.table.table-borderless.table-striped
 								thead
 									tr
 										th RPC
-										th.text-right Count
-										th.text-right Time
+										th.text-end Count
+										th.text-end Time
 											small  (s)
-										th.text-right Avg Time
+										th.text-end Avg Time
 											small  (ms)
-										th.text-right Successes / Failures
-										th.text-right Success Rate
+										th.text-end Successes / Failures
+										th.text-end Success Rate
 
 								tbody
 									each item, itemName in electrumStats.rpc
-										tr.text-monospace
+										tr.font-monospace
 											td #{itemName}
-											td.text-right #{item.count.toLocaleString()}
-											td.text-right #{(item.time / 1000).toLocaleString()}
-											td.text-right #{(item.time / item.count).toLocaleString()}
-											td.text-right
+											td.text-end #{item.count.toLocaleString()}
+											td.text-end #{(item.time / 1000).toLocaleString()}
+											td.text-end #{(item.time / item.count).toLocaleString()}
+											td.text-end
 												span.text-success #{item.successes.toLocaleString()}
 												span.mx-1 /
 												span.text-danger #{item.failures.toLocaleString()}
 
-											td.text-right
+											td.text-end
 												span #{new Decimal(item.successes).dividedBy(new Decimal(item.successes + item.failures)).times(100).toDP(1)}
 													small  %
 
@@ -231,21 +231,21 @@ block content
 
 					else
 						div.table-responsive
-							table.table.table-hover.table-striped
+							table.table.table-borderless.table-striped
 								thead
 									tr
 										th Error ID
-										th.text-right Count
-										th.text-right First Seen
-										th.text-right Last Seen
+										th.text-end Count
+										th.text-end First Seen
+										th.text-end Last Seen
 
 								tbody
 									each item, itemName in errorStats
-										tr.text-monospace
+										tr.font-monospace
 											td #{itemName}
-											td.text-right #{item.count.toLocaleString()}
-											td.text-right #{moment.duration(new Date().getTime() - item.firstSeen).format()} ago
-											td.text-right #{moment.duration(new Date().getTime() - item.lastSeen).format()} ago
+											td.text-end #{item.count.toLocaleString()}
+											td.text-end #{moment.duration(new Date().getTime() - item.firstSeen).format()} ago
+											td.text-end #{moment.duration(new Date().getTime() - item.lastSeen).format()} ago
 									
 
 		div.tab-pane(id="tab-json", role="tabpanel")

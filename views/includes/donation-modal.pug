@@ -17,7 +17,7 @@
 					
 					if (false)
 						h6
-							span.mr-2 Donate (via BTCPay)
+							span.me-2 Donate (via BTCPay)
 						- var amounts = [1, 5, 10, 25, 100];
 						- var icons = [ "thumbs-up", "beer", "hamburger", "utensils", "grin-hearts" ];
 						div.mb-2
@@ -28,8 +28,8 @@
 									input(type='hidden' name='currency' value='USD')
 									input(type='hidden' name='notifyEmail' value=config.donations.btcpayserver.notifyEmail)
 
-									button.btn.btn-primary.btn-lg.mr-2.mb-2(type='submit')
-										i(class=("fas mr-2 fa-" + icons[amtIndex]))
+									button.btn.btn-primary.btn-lg.me-2.mb-2(type='submit')
+										i(class=("fas me-2 fa-" + icons[amtIndex]))
 										span $#{amount.toLocaleString()}
 
 							form(method="POST" action=(config.donations.btcpayserver.host + "/api/v1/invoices"), style="display: inline;")
@@ -38,8 +38,8 @@
 								input(type='hidden' name='currency' value='BTC')
 								input(type='hidden' name='notifyEmail' value=config.donations.btcpayserver.notifyEmail)
 
-								button.btn.btn-primary.btn-lg.mr-2.mb-2(type='submit')
-									i.fas.mr-2.fa-bolt
+								button.btn.btn-primary.btn-lg.me-2.mb-2(type='submit')
+									i.fas.me-2.fa-bolt
 									span 1 satoshi
 
 					script.
@@ -55,7 +55,7 @@
 
 						div.mb-3
 							each coin, index in config.donations.addresses.coins
-								div.text-monospace
+								div.font-monospace
 									if (coinConfig.ticker == coin)
 										span #{config.donations.addresses[coin].address}
 									else
@@ -63,7 +63,7 @@
 										a.text-wrap(href=`${config.donations.addresses.sites[coin]}/address/${config.donations.addresses[coin].address}`) #{config.donations.addresses[coin].address}
 
 						each coin, index in config.donations.addresses.coins
-							div.text-center.mb-3.word-wrap.text-monospace(style="display: inline-block; max-width: 150px;", class=(index > 0 ? "ml-md-3" : false))
+							div.text-center.mb-3.word-wrap.font-monospace(style="display: inline-block; max-width: 150px;", class=(index > 0 ? "ms-md-3" : false))
 								img(src=donationAddressQrCodeUrls[coin], alt=config.donations.addresses[coin].address, style="border: solid 1px #ccc;")
 
 

@@ -7,19 +7,19 @@ if (currencyValue > 0)
 		- var parts = utils.formatCurrencyAmount(currencyValue, currencyFormatType);
 
 	//span #{JSON.stringify(currencyFormatInfo)}
-	span.text-monospace #{parts.val}#{(currencyValueDecimals && currencyFormatInfo.type == "native" && currencyFormatInfo.multiplier <= 1000) ? "…" : ""}
+	span.font-monospace #{parts.val}#{(currencyValueDecimals && currencyFormatInfo.type == "native" && currencyFormatInfo.multiplier <= 1000) ? "…" : ""}
 	if (parts.lessSignificantDigits)
-		span.text-monospace.text-small(style="margin-left: 2px;") #{parts.lessSignificantDigits}
+		span.font-monospace.text-small(style="margin-left: 2px;") #{parts.lessSignificantDigits}
 
 	if (currencyFormatInfo.type == "native")
 		if (exchangeRates)
-			small.border-dotted.ml-1(data-toggle="tooltip", title=utils.formatExchangedCurrency(currencyValue, "usd")) #{parts.currencyUnit}
+			small.border-dotted.ms-1(data-bs-toggle="tooltip", title=utils.formatExchangedCurrency(currencyValue, "usd")) #{parts.currencyUnit}
 				
 		else
-			small.ml-1 #{parts.currencyUnit}
+			small.ms-1 #{parts.currencyUnit}
 				
 	else if (currencyFormatInfo.type == "exchanged")
-		small.border-dotted.ml-1(data-toggle="tooltip", title=`${utils.formatCurrencyAmount(currencyValue, coinConfig.defaultCurrencyUnit.name).simpleVal} BTC`) #{parts.currencyUnit}
+		small.border-dotted.ms-1(data-bs-toggle="tooltip", title=`${utils.formatCurrencyAmount(currencyValue, coinConfig.defaultCurrencyUnit.name).simpleVal} BTC`) #{parts.currencyUnit}
 			
 else
-	span.text-monospace 0
+	span.font-monospace 0

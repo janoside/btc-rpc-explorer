@@ -18,8 +18,7 @@ block content
 					div.input-group
 						input.form-control(id="input-value", type="text", name="query", placeholder="block height/hash", value=(query), style="width: 400px;")
 						
-						div.input-group-append
-							button.btn.btn-primary(type="submit") Go
+						button.btn.btn-primary(type="submit") Go
 
 			hr.my-4
 
@@ -34,7 +33,7 @@ block content
 				h6 Selection of example blocks:
 
 				- var heights = [0, 170, 100000, 210000, 420000, 481824];
-				ul.text-monospace
+				ul.font-monospace
 					each height in heights
 						li
 							a(href=`./block-analysis/${height}`) Block ##{height.toLocaleString()}

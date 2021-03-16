@@ -9,9 +9,9 @@ block headContent
 block content
 	if (result.getblock)
 		h1.h3 Block 
-			small.text-monospace(style="width: 100%;") ##{result.getblock.height.toLocaleString()}
+			small.font-monospace(style="width: 100%;") ##{result.getblock.height.toLocaleString()}
 			br
-			small.text-monospace.word-wrap(style="width: 100%;") #{result.getblock.hash}
+			small.font-monospace.word-wrap(style="width: 100%;") #{result.getblock.hash}
 		hr
 
 		include includes/block-content.pug

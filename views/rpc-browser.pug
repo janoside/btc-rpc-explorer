@@ -20,25 +20,25 @@ block content
 					div.card.shadow-sm.mb-3
 						div.card-body
 							div.clearfix
-								div.float-left
+								div.float-start
 									h3.h6.mb-0
 										a.text-body(href=`./rpc-browser?method=${method}`)
-											span.font-weight-bold #{method}
+											span.fw-bold #{method}
 										span  Command
 
-								div.float-right
+								div.float-end
 									a(href=`https://developer.bitcoin.org/reference/rpc/${method}.html`) Docs for #{method} &raquo;
 							hr
 
 							ul.nav.nav-tabs.mb-3
 								li.nav-item
-									a.nav-link.active(data-toggle="tab", href="#tab-execute", role="tab") Execute
+									a.nav-link.active(data-bs-toggle="tab", href="#tab-execute", role="tab") Execute
 								li.nav-item
-									a.nav-link(data-toggle="tab", href="#tab-help-content", role="tab") Help Content
+									a.nav-link(data-bs-toggle="tab", href="#tab-help-content", role="tab") Help Content
 
 								if (methodhelp.args && methodhelp.args.length > 0)
 									li.nav-item
-										a.nav-link(data-toggle="tab", href="#tab-parsed-args", role="tab") Arguments Details
+										a.nav-link(data-bs-toggle="tab", href="#tab-parsed-args", role="tab") Arguments Details
 
 							div.tab-content
 								div.tab-pane.active(id="tab-execute", role="tabpanel")
@@ -63,13 +63,13 @@ block content
 											pre
 												code.json #{JSON.stringify(argValues, null, 4)}
 										
-										div.ml-3
+										div.ms-3
 											each argX, index in methodhelp.args
-												div.form-group
+												.mb-3
 													label(for=("arg_" + argX.name))
 														div
-															span.text-monospace.font-weight-bold #{argX.name}
-															span.text-monospace : 
+															span.font-monospace.fw-bold #{argX.name}
+															span.font-monospace : 
 																span  #{argX.properties.join(", ")}
 														if (argX.description)
 															span.text-muted Description: #{argX.description}
@@ -77,7 +77,7 @@ block content
 															- var detailsLines = "";
 															each detailsLine in argX.detailsLines
 																- detailsLines = (detailsLines + "<br/>" + detailsLine);
-															i.fas.fa-info-circle(data-toggle="tooltip", title=detailsLines)
+															i.fas.fa-info-circle(data-bs-toggle="tooltip", title=detailsLines)
 																
 
 
@@ -132,5 +132,5 @@ block content
 							ol(style="padding-left: 30px;")
 								each methodX, methodIndex in section.methods
 									li
-										a.text-monospace(href=`./rpc-browser?method=${methodX.name}`, style=(methodX.name == method ? "font-weight: bold; font-style: italic;" : false)) #{methodX.name}
+										a.font-monospace(href=`./rpc-browser?method=${methodX.name}`, style=(methodX.name == method ? "font-weight: bold; font-style: italic;" : false)) #{methodX.name}
 

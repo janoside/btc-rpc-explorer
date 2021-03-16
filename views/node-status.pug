@@ -22,9 +22,9 @@ block content
 
 		ul.nav.nav-tabs.mb-3
 			li.nav-item
-				a.nav-link.active(data-toggle="tab", href="#tab-details", role="tab") Details
+				a.nav-link.active(data-bs-toggle="tab", href="#tab-details", role="tab") Details
 			li.nav-item
-				a.nav-link(data-toggle="tab", href="#tab-json", role="tab") JSON
+				a.nav-link(data-bs-toggle="tab", href="#tab-json", role="tab") JSON
 
 
 		div.tab-content
@@ -37,15 +37,15 @@ block content
 						div.clearfix
 							div.row
 								div.summary-table-label Version
-								div.summary-table-content.text-monospace #{getnetworkinfo.version} (#{getnetworkinfo.subversion})
+								div.summary-table-content.font-monospace #{getnetworkinfo.version} (#{getnetworkinfo.subversion})
 
 							div.row
 								div.summary-table-label Protocol Version
-								div.summary-table-content.text-monospace #{getnetworkinfo.protocolversion}
+								div.summary-table-content.font-monospace #{getnetworkinfo.protocolversion}
 
 							div.row
 								div.summary-table-label Status
-								div.summary-table-content.text-monospace
+								div.summary-table-content.font-monospace
 									if (getblockchaininfo.initialblockdownload || getblockchaininfo.headers > getblockchaininfo.blocks)
 										span Initial block download progress #{(100 * getblockchaininfo.verificationprogress).toLocaleString()}%
 									else
@@ -53,13 +53,13 @@ block content
 
 							div.row
 								div.summary-table-label Uptime
-								div.summary-table-content.text-monospace
+								div.summary-table-content.font-monospace
 									- var startTimeAgo = moment.duration(uptimeSeconds * 1000);
 									span #{startTimeAgo.format()}
 
 							div.row
 								div.summary-table-label Warnings
-								div.summary-table-content.text-monospace
+								div.summary-table-content.font-monospace
 									if (getblockchaininfo.warnings && getblockchaininfo.warnings.trim().length > 0)
 										span.text-danger #{getblockchaininfo.warnings}
 									else
@@ -73,19 +73,19 @@ block content
 						div.clearfix
 							div.row
 								div.summary-table-label Chain
-								div.summary-table-content.text-monospace #{getblockchaininfo.chain}
+								div.summary-table-content.font-monospace #{getblockchaininfo.chain}
 
 							div.row
 								div.summary-table-label Block Count
-								div.summary-table-content.text-monospace #{getblockchaininfo.blocks.toLocaleString()}
+								div.summary-table-content.font-monospace #{getblockchaininfo.blocks.toLocaleString()}
 									br
 									span.text-muted (headers: #{getblockchaininfo.headers.toLocaleString()})
 
 							div.row
 								div.summary-table-label Difficulty
-								div.summary-table-content.text-monospace
+								div.summary-table-content.font-monospace
 									- var difficultyData = utils.formatLargeNumber(getblockchaininfo.difficulty, 3);
-									span.border-dotted(title=parseFloat(getblockchaininfo.difficulty).toLocaleString(), data-toggle="tooltip")
+									span.border-dotted(title=parseFloat(getblockchaininfo.difficulty).toLocaleString(), data-bs-toggle="tooltip")
 										span #{difficultyData[0]}
 										span  x 10
 										sup #{difficultyData[1].exponent}
@@ -94,25 +94,25 @@ block content
 								- var forkUrls = {"bip34":"https://github.com/bitcoin/bips/blob/master/bip-0034.mediawiki", "bip65":"https://github.com/bitcoin/bips/blob/master/bip-0065.mediawiki", "bip66":"https://github.com/bitcoin/bips/blob/master/bip-0066.mediawiki", "csv":"https://github.com/bitcoin/bips/blob/master/bip-0112.mediawiki", "segwit":"https://github.com/bitcoin/bips/blob/master/bip-0141.mediawiki", "taproot":"https://github.com/bitcoin/bips/blob/master/bip-0341.mediawiki"};
 								div.row
 									div.summary-table-label Soft Forks
-									div.summary-table-content.text-monospace
+									div.summary-table-content.font-monospace
 										ul.list-unstyled
 											each item, itemName in getblockchaininfo.softforks
 												li
-													div.d-inline-block.text-right(style="width: 75px;")
+													div.d-inline-block.text-end(style="width: 75px;")
 														if (forkUrls[itemName])
-															a.font-weight-bold(href=forkUrls[itemName]) #{itemName}
+															a.fw-bold(href=forkUrls[itemName]) #{itemName}
 															| :&nbsp;
 														else
-															span.font-weight-bold #{itemName}
+															span.fw-bold #{itemName}
 															| :&nbsp;
 													
 													if (item.type == "bip9")
-														span.mr-2.ml-2 #{item.type} - #{JSON.stringify(item.bip9)}
+														span.me-2.ms-2 #{item.type} - #{JSON.stringify(item.bip9)}
 
 													if (item.active)
-														span.mr-2
+														span.me-2
 															span.text-success active
-															small.text-muted.ml-2 (since: #
+															small.text-muted.ms-2 (since: #
 																a(href=`./block-height/${item.height}`) #{item.height.toLocaleString()}
 																| )
 
@@ -121,22 +121,22 @@ block content
 
 								div.row
 									div.summary-table-label Blockchain Size
-									div.summary-table-content.text-monospace #{sizeData[0]} #{sizeData[1].abbreviation}B
+									div.summary-table-content.font-monospace #{sizeData[0]} #{sizeData[1].abbreviation}B
 
 							if (getblockchaininfo.pruned)
 								div.row
 									div.summary-table-label
-										span.border-dotted(title="Whether your node prunes the blockchain. With pruning active, your node will delete some data that is non-essential for future verification needs, in order to reduce disk usage.", data-toggle="tooltip") Pruning?
-									div.summary-table-content.text-monospace
-										span.font-weight-bold Yes
+										span.border-dotted(title="Whether your node prunes the blockchain. With pruning active, your node will delete some data that is non-essential for future verification needs, in order to reduce disk usage.", data-bs-toggle="tooltip") Pruning?
+									div.summary-table-content.font-monospace
+										span.fw-bold Yes
 										br
-										span.border-dotted(title="This is the latest block for which your node has all block data; blocks older than this one have had some or all non-essential details deleted via pruning.", data-toggle="tooltip") Prune height
+										span.border-dotted(title="This is the latest block for which your node has all block data; blocks older than this one have had some or all non-essential details deleted via pruning.", data-bs-toggle="tooltip") Prune height
 
 										span : #{getblockchaininfo.pruneheight.toLocaleString()}
 
 										br
 
-										span.border-dotted(title="This is the approximate amount of non-essential blockchain data that your node will store.", data-toggle="tooltip") Prune target size
+										span.border-dotted(title="This is the approximate amount of non-essential blockchain data that your node will store.", data-bs-toggle="tooltip") Prune target size
 
 										span :&nbsp;
 											- var pruneTargetSize = utils.formatLargeNumber(getblockchaininfo.prune_target_size, 2);
@@ -145,18 +145,18 @@ block content
 
 							div.row
 								div.summary-table-label Indexes
-								div.summary-table-content.text-monospace
+								div.summary-table-content.font-monospace
 									ul.list-unstyled
 										li
-											span.font-weight-bold txindex
+											span.fw-bold txindex
 											| :&nbsp;
 											if (getindexinfo.txindex)
 												span.text-success available
 											else
-												span.text-danger.border-dotted(title="Your node's lack of a 'transaction index' means this explorer will be unable to show all blockchain data. See the project README for more details.", data-toggle="tooltip") unavailable
+												span.text-danger.border-dotted(title="Your node's lack of a 'transaction index' means this explorer will be unable to show all blockchain data. See the project README for more details.", data-bs-toggle="tooltip") unavailable
 
 										li
-											span.font-weight-bold blockfilterindex
+											span.fw-bold blockfilterindex
 											| :&nbsp;
 											if (getindexinfo["basic block filter index"])
 												span.text-success available
@@ -172,11 +172,11 @@ block content
 						div.clearfix
 							div.row
 								div.summary-table-label Host : Port
-								div.summary-table-content.text-monospace #{global.rpcClient.host + " : " + global.rpcClient.port}
+								div.summary-table-content.font-monospace #{global.rpcClient.host + " : " + global.rpcClient.port}
 
 							div.row
 								div.summary-table-label Peers
-								div.summary-table-content.text-monospace
+								div.summary-table-content.font-monospace
 									span #{getnetworkinfo.connections.toLocaleString()}
 
 									if (getnetworkinfo.connections_in)
@@ -185,7 +185,7 @@ block content
 
 							div.row
 								div.summary-table-label Network Traffic
-								div.summary-table-content.text-monospace
+								div.summary-table-content.font-monospace
 									- var downData = utils.formatLargeNumber(getnettotals.totalbytesrecv, 2);
 									- var downRateData = utils.formatLargeNumber(getnettotals.totalbytesrecv / uptimeSeconds, 2);
 									- var upData = utils.formatLargeNumber(getnettotals.totalbytessent, 2);
@@ -200,11 +200,11 @@ block content
 							if (getnetworkinfo.networks)
 								div.row
 									div.summary-table-label Interfaces
-									div.summary-table-content.text-monospace
+									div.summary-table-content.font-monospace
 										each item, index in getnetworkinfo.networks
 											div
-												div.d-inline-block.text-right(style="width: 75px;")
-													span.font-weight-bold #{item.name}
+												div.d-inline-block.text-end(style="width: 75px;")
+													span.fw-bold #{item.name}
 													| :&nbsp;
 													
 												if (item.reachable)
@@ -214,28 +214,28 @@ block content
 													span.text-danger unreachable
 
 												if (item.proxy)
-													span.text-muted.ml-3 (proxy: #{item.proxy})
+													span.text-muted.ms-3 (proxy: #{item.proxy})
 
 							if (getnetworkinfo.localaddresses)
 								div.row
 									div.summary-table-label Local Addresses
-									div.summary-table-content.text-monospace
+									div.summary-table-content.font-monospace
 										each item, index in getnetworkinfo.localaddresses
 											div #{item.address}:#{item.port}
-												span.text-muted.ml-3 (score: #{item.score.toLocaleString()})
+												span.text-muted.ms-3 (score: #{item.score.toLocaleString()})
 							
 
 			div.tab-pane(id="tab-json", role="tabpanel")
 
 				ul.nav.nav-pills.mb-3
 					li.nav-item
-						a.nav-link.active(data-toggle="tab", href="#tab-getblockchaininfo", role="tab") getblockchaininfo
+						a.nav-link.active(data-bs-toggle="tab", href="#tab-getblockchaininfo", role="tab") getblockchaininfo
 					li.nav-item
-						a.nav-link(data-toggle="tab", href="#tab-getnettotals", role="tab") getnettotals
+						a.nav-link(data-bs-toggle="tab", href="#tab-getnettotals", role="tab") getnettotals
 					li.nav-item
-						a.nav-link(data-toggle="tab", href="#tab-getnetworkinfo", role="tab") getnetworkinfo
+						a.nav-link(data-bs-toggle="tab", href="#tab-getnetworkinfo", role="tab") getnetworkinfo
 					li.nav-item
-						a.nav-link(data-toggle="tab", href="#tab-getindexinfo", role="tab") getindexinfo
+						a.nav-link(data-bs-toggle="tab", href="#tab-getindexinfo", role="tab") getindexinfo
 				
 				div.tab-content
 					div.tab-pane.active(id="tab-getblockchaininfo", role="tabpanel")

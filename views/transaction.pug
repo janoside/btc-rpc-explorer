@@ -12,7 +12,7 @@ block content
 	if (!result || !result.getrawtransaction)
 		h1.h3.word-wrap Transaction 
 			br
-			small.text-monospace #{txid}
+			small.font-monospace #{txid}
 		hr
 
 		if (block)
@@ -24,20 +24,20 @@ block content
 					div.clearfix
 						div.row
 							div.summary-table-label Block
-							div.summary-table-content.text-monospace
+							div.summary-table-content.font-monospace
 								a(href=`./block/${block.hash}`) ##{block.height.toLocaleString()}
 
 						div.row
 							div.summary-table-label Date
-							div.summary-table-content.text-monospace
+							div.summary-table-content.font-monospace
 								if (block.time)
-									td.text-monospace
+									td.font-monospace
 										- var timestampHuman = block.time;
 										include includes/timestamp-human.pug
-										small.ml-1 utc
+										small.ms-1 utc
 
 										- var timeAgoTime = block.time;
-										span.text-muted.ml-2 (
+										span.text-muted.ms-2 (
 											include includes/time-ago-text.pug
 											span  ago)
 
@@ -54,16 +54,16 @@ block content
 	if (result && result.getrawtransaction)
 		h1.h3.word-wrap Transaction 
 			br
-			small.text-monospace #{txid}
+			small.font-monospace #{txid}
 		hr
 
 		ul.nav.nav-tabs.mb-3
 			li.nav-item
-				a.nav-link.active(data-toggle="tab", href="#tab-details", role="tab") Details
+				a.nav-link.active(data-bs-toggle="tab", href="#tab-details", role="tab") Details
 			li.nav-item
-				a.nav-link(data-toggle="tab", href="#tab-scripts", role="tab") Scripts
+				a.nav-link(data-bs-toggle="tab", href="#tab-scripts", role="tab") Scripts
 			li.nav-item
-				a.nav-link(data-toggle="tab", href="#tab-json", role="tab") JSON
+				a.nav-link(data-bs-toggle="tab", href="#tab-json", role="tab") JSON
 
 		- DecimalRounded = Decimal.clone({ precision: 4, rounding: 2 })
 
@@ -84,10 +84,10 @@ block content
 			div.tab-pane.active(id="tab-details", role="tabpanel")
 				if (global.specialTransactions && global.specialTransactions[txid])
 					div.alert.alert-primary.shadow-sm.pb-0
-						div.float-left(style="width: 55px; height: 55px; font-size: 18px;")
+						div.float-start(style="width: 55px; height: 55px; font-size: 18px;")
 							i.fas.fa-certificate.fa-2x(style="margin-top: 10px;")
 
-						h4.alert-heading.h6.font-weight-bold #{coinConfig.name} Fun
+						h4.alert-heading.h6.fw-bold #{coinConfig.name} Fun
 
 						// special transaction info
 						- var stInfo = global.specialTransactions[txid];
@@ -119,13 +119,13 @@ block content
 							if (!isTxConfirmed)
 								div.row
 									div.summary-table-label Status
-									div.summary-table-content.text-monospace
+									div.summary-table-content.font-monospace
 										span.text-danger Unconfirmed
 
 								div.row
 									div.summary-table-label
-										span.border-dotted(title="Whether this unconfirmed transaction is replaceable using replace-by-fee (RBF)", data-toggle="tooltip") RBF
-									div.summary-table-content.text-monospace
+										span.border-dotted(title="Whether this unconfirmed transaction is replaceable using replace-by-fee (RBF)", data-bs-toggle="tooltip") RBF
+									div.summary-table-content.font-monospace
 										- var replaceable = false;
 										each vin, vinIndex in result.getrawtransaction.vin
 											// ref: https://github.com/bitcoin/bips/blob/master/bip-0125.mediawiki#summary
@@ -135,8 +135,8 @@ block content
 										if (replaceable)
 											span.text-success Yes
 										else if (mempoolDetails.ancestors.length > 0)
-											span.border-dotted(title="RBF may be signaled explicitly or implicitly. This transaction does not explicitly opt in, but if any of its unconfirmed ancestor transactions are replaceable then this one is too.", data-toggle="tooltip") No explicit opt-in
-											a.ml-2(href="https://github.com/bitcoin/bips/blob/master/bip-0125.mediawiki#summary", data-toggle="tooltip", title="More info about RBF", target="_blank")
+											span.border-dotted(title="RBF may be signaled explicitly or implicitly. This transaction does not explicitly opt in, but if any of its unconfirmed ancestor transactions are replaceable then this one is too.", data-bs-toggle="tooltip") No explicit opt-in
+											a.ms-2(href="https://github.com/bitcoin/bips/blob/master/bip-0125.mediawiki#summary", data-bs-toggle="tooltip", title="More info about RBF", target="_blank")
 												i.fas.fa-info-circle
 										else
 											span No
@@ -145,31 +145,31 @@ block content
 							if (isTxConfirmed)
 								div.row
 									div.summary-table-label Block
-									div.summary-table-content.text-monospace
+									div.summary-table-content.font-monospace
 										a(href=`./block/${result.getrawtransaction.blockhash}`) ##{result.getblock.height.toLocaleString()}
 
 							if (isTxConfirmed)
 								div.row
 									div.summary-table-label Date
-									div.summary-table-content.text-monospace
+									div.summary-table-content.font-monospace
 										if (result.getrawtransaction.time)
-											td.text-monospace
+											td.font-monospace
 												- var timestampHuman = result.getrawtransaction.time;
 												include includes/timestamp-human.pug
-												small.ml-1 utc
+												small.ms-1 utc
 
 												- var timeAgoTime = result.getrawtransaction.time;
-												span.text-muted.ml-2 (
+												span.text-muted.ms-2 (
 													include includes/time-ago-text.pug
 													span  ago)
 
 							div.row
 								div.summary-table-label Version
-								div.summary-table-content.text-monospace #{result.getrawtransaction.version}
+								div.summary-table-content.font-monospace #{result.getrawtransaction.version}
 
 							div.row
 								div.summary-table-label Size
-								div.summary-table-content.text-monospace
+								div.summary-table-content.font-monospace
 									if (result.getrawtransaction.vsize != result.getrawtransaction.size)
 										span #{result.getrawtransaction.vsize.toLocaleString()} 
 										small vB
@@ -185,38 +185,38 @@ block content
 							if (result.getrawtransaction.locktime > 0)
 								div.row
 									div.summary-table-label Locktime
-									div.summary-table-content.text-monospace
+									div.summary-table-content.font-monospace
 										if (result.getrawtransaction.locktime < 500000000)
 											span Spendable in block 
 											a(href=`./block-height/${result.getrawtransaction.locktime}`) ##{result.getrawtransaction.locktime.toLocaleString()}
 											span  or later 
-											a(href="https://developer.bitcoin.org/devguide/transactions.html#locktime-and-sequence-number", data-toggle="tooltip", title="More info about locktime", target="_blank") 
+											a(href="https://developer.bitcoin.org/devguide/transactions.html#locktime-and-sequence-number", data-bs-toggle="tooltip", title="More info about locktime", target="_blank") 
 												i.fas.fa-info-circle
 										else
 											span Spendable after #{moment.utc(new Date(result.getrawtransaction.locktime * 1000)).format("Y-MM-DD HH:mm:ss")} 
 												small utc 
-											a(href="https://developer.bitcoin.org/devguide/transactions.html#locktime-and-sequence-number", data-toggle="tooltip", title="More info about locktime", target="_blank") 
+											a(href="https://developer.bitcoin.org/devguide/transactions.html#locktime-and-sequence-number", data-bs-toggle="tooltip", title="More info about locktime", target="_blank") 
 												i.fas.fa-info-circle
 
 							if (isTxConfirmed)
 								div.row
 									div.summary-table-label Confirmations
-									div.summary-table-content.text-monospace
+									div.summary-table-content.font-monospace
 										if (result.getrawtransaction.confirmations < 6)
-											span.font-weight-bold.text-warning #{result.getrawtransaction.confirmations.toLocaleString()} 
-												a(data-toggle="tooltip", title="Fewer than 6 confirmations is generally considered 'unsettled' for high-value transactions. The applicability of this guidance may vary.")
+											span.fw-bold.text-warning #{result.getrawtransaction.confirmations.toLocaleString()} 
+												a(data-bs-toggle="tooltip", title="Fewer than 6 confirmations is generally considered 'unsettled' for high-value transactions. The applicability of this guidance may vary.")
 													i.fas.fa-unlock-alt
 
 										else
-											span.font-weight-bold.text-success #{result.getrawtransaction.confirmations.toLocaleString()} 
-												a(data-toggle="tooltip", title="6 confirmations is generally considered 'settled'. High-value transactions may require more; low-value transactions may require less.")
+											span.fw-bold.text-success #{result.getrawtransaction.confirmations.toLocaleString()} 
+												a(data-bs-toggle="tooltip", title="6 confirmations is generally considered 'settled'. High-value transactions may require more; low-value transactions may require less.")
 													i.fas.fa-lock
 
 
 							if (result.getrawtransaction.vin[0].coinbase)
 								div.row
 									div.summary-table-label Fees Collected
-									div.summary-table-content.text-monospace
+									div.summary-table-content.font-monospace
 										- var currencyValue = new Decimal(totalOutputValue).minus(totalInputValue);
 										include includes/value-display.pug
 
@@ -224,8 +224,8 @@ block content
 								if (parseFloat(totalOutputValue) < parseFloat(blockRewardMax))
 									div.row
 										div.summary-table-label
-											span.border-dotted(data-toggle="tooltip" title="The miner of this transaction's block failed to collect this value. As a result, it is permanently lost.") Value Destroyed
-										div.summary-table-content.text-monospace.text-danger
+											span.border-dotted(data-bs-toggle="tooltip" title="The miner of this transaction's block failed to collect this value. As a result, it is permanently lost.") Value Destroyed
+										div.summary-table-content.font-monospace.text-danger
 											- var currencyValue = new Decimal(blockRewardMax).minus(totalOutputValue);
 											include includes/value-display.pug
 
@@ -233,9 +233,9 @@ block content
 								if (minerInfo)
 									div.row
 										div.summary-table-label Miner
-										div.summary-table-content.text-monospace
+										div.summary-table-content.font-monospace
 											if (minerInfo.identifiedBy)
-												small.data-tag.bg-primary(data-toggle="tooltip", title=`Identified by: ${minerInfo.identifiedBy}`) #{minerInfo.name}
+												small.data-tag.bg-primary(data-bs-toggle="tooltip", title=`Identified by: ${minerInfo.identifiedBy}`) #{minerInfo.name}
 
 											else
 												small.data-tag.bg-primary #{minerInfo.name}
@@ -243,29 +243,29 @@ block content
 							else if (!mempoolDetails && !global.txindexAvailable)
 								div.row
 									div.summary-table-label Fee Paid
-									div.summary-table-content.text-monospace
-										span.border-dotted(title="Determining the fee of confirmed transactions requires txindex to be enabled", data-toggle="tooltip")
-											i.fas.fa-backspace.text-danger.mr-2
+									div.summary-table-content.font-monospace
+										span.border-dotted(title="Determining the fee of confirmed transactions requires txindex to be enabled", data-bs-toggle="tooltip")
+											i.fas.fa-backspace.text-danger.me-2
 											| ?
 							else
 								- var feePaid = mempoolDetails ? new Decimal(mempoolDetails.entry.fees.base) : new Decimal(totalInputValue).minus(totalOutputValue);
 
 								div.row
 									div.summary-table-label Fee Paid
-									div.summary-table-content.text-monospace
+									div.summary-table-content.font-monospace
 										- var currencyValue = feePaid;
 										include includes/value-display.pug
 
 										if (feePaid > 0 && totalInputValue > 0)
 											- var item1 = utils.formatCurrencyAmount(totalInputValue, currencyFormatType);
 											- var item2 = utils.formatCurrencyAmount(totalOutputValue, currencyFormatType);
-											span.ml-2(title=`${item1.simpleVal} - ${item2.simpleVal}`, data-toggle="tooltip")
+											span.ms-2(title=`${item1.simpleVal} - ${item2.simpleVal}`, data-bs-toggle="tooltip")
 												i.fas.fa-ellipsis-h
 
 								if (feePaid > 0)
 									div.row
 										div.summary-table-label Fee Rate
-										div.summary-table-content.text-monospace
+										div.summary-table-content.font-monospace
 											if (result.getrawtransaction.vsize != result.getrawtransaction.size)
 												span #{utils.addThousandsSeparators(new DecimalRounded(feePaid).dividedBy(result.getrawtransaction.vsize).times(100000000))} 
 												small sat/vB
@@ -293,10 +293,10 @@ block content
 							if (parseInt(daysDestroyed) > 0)
 								div.row
 									div.summary-table-label
-										span.border-dotted(title=`The sum of all input values multiplied by the number of days that input's UTXO existed before being spent. Large values can sometimes be interesting, indicating the spending of long-dormant coins. A 1 ${coinConfig.ticker} UTXO spent after 7 days dormant results in 7 days destroyed, as does a 7 ${coinConfig.ticker} UTXO spent after 1 day dormant.`, data-toggle="tooltip") Days Destroyed
-									div.summary-table-content.text-monospace
+										span.border-dotted(title=`The sum of all input values multiplied by the number of days that input's UTXO existed before being spent. Large values can sometimes be interesting, indicating the spending of long-dormant coins. A 1 ${coinConfig.ticker} UTXO spent after 7 days dormant results in 7 days destroyed, as does a 7 ${coinConfig.ticker} UTXO spent after 1 day dormant.`, data-bs-toggle="tooltip") Days Destroyed
+									div.summary-table-content.font-monospace
 										span #{utils.addThousandsSeparators(daysDestroyed.toDP(daysDestroyed > 1 ? 0 : 1))}
-											small.ml-1.border-dotted(title=`${coinConfig.name} Days`, data-toggle="tooltip") #{coinConfig.ticker.toLowerCase().substring(0, 1)}d
+											small.ms-1.border-dotted(title=`${coinConfig.name} Days`, data-bs-toggle="tooltip") #{coinConfig.ticker.toLowerCase().substring(0, 1)}d
 
 
 				if (result.getrawtransaction.vin[0].coinbase)
@@ -307,7 +307,7 @@ block content
 
 							h6 Hex
 							div.bg-light.px-2.py-2.mb-3.border
-								span.text-monospace.word-wrap #{result.getrawtransaction.vin[0].coinbase}
+								span.font-monospace.word-wrap #{result.getrawtransaction.vin[0].coinbase}
 
 							h6 Decoded
 							div.bg-light.px-2.py-2.border
@@ -356,7 +356,7 @@ block content
 								ol.mb-0
 									each ancestorTxid, ancestorIndex in mempoolDetails.ancestors
 										li
-											a.text-monospace(href=`./tx/${ancestorTxid}`) #{ancestorTxid}
+											a.font-monospace(href=`./tx/${ancestorTxid}`) #{ancestorTxid}
 
 					if (mempoolDetails.descendants.length > 0)
 						div.card.shadow-sm.mb-3
@@ -372,7 +372,7 @@ block content
 								ol.mb-0
 									each descendantTxid, descendantIndex in mempoolDetails.descendants
 										li
-											a.text-monospace(href=`./tx/${descendantTxid}`) #{descendantTxid}
+											a.font-monospace(href=`./tx/${descendantTxid}`) #{descendantTxid}
 
 			div.tab-pane(id="tab-scripts", role="tabpanel")
 				div.card.shadow-sm.mb-3
@@ -388,18 +388,18 @@ block content
 							tbody
 								each vin, vinIndex in result.getrawtransaction.vin
 									tr
-										th.text-monospace
-											a(data-toggle="tooltip", title=`Input #${vinIndex}`, style="white-space: nowrap;")
+										th.font-monospace
+											a(data-bs-toggle="tooltip", title=`Input #${vinIndex}`, style="white-space: nowrap;")
 												span > 
-												span.font-weight-normal ##{vinIndex.toLocaleString()}
+												span.fw-normal ##{vinIndex.toLocaleString()}
 
-										td.word-wrap.text-break.text-monospace
+										td.word-wrap.text-break.font-monospace
 											if (vin.scriptSig && vin.scriptSig.asm)
 												span #{vin.scriptSig.asm}
 
 											else if (vin.coinbase)
-												div.text-monospace(style="line-height: 1.75em;")
-													small.rounded.bg-primary.text-white.px-2.py-1.mr-2 coinbase
+												div.font-monospace(style="line-height: 1.75em;")
+													small.rounded.bg-primary.text-white.px-2.py-1.me-2 coinbase
 													br
 													span #{vin.coinbase}
 													br
@@ -418,12 +418,12 @@ block content
 							tbody
 								each vout, voutIndex in result.getrawtransaction.vout
 									tr
-										th.text-monospace
-											a(data-toggle="tooltip", title=`Output #${(voutIndex + 1)}`, style="white-space: nowrap;")
+										th.font-monospace
+											a(data-bs-toggle="tooltip", title=`Output #${(voutIndex + 1)}`, style="white-space: nowrap;")
 												span < 
-												span.font-weight-normal ##{voutIndex.toLocaleString()}
+												span.fw-normal ##{voutIndex.toLocaleString()}
 
-										td.text-monospace.word-wrap
+										td.font-monospace.word-wrap
 											if (vout.scriptPubKey && vout.scriptPubKey.asm)
 												span #{vout.scriptPubKey.asm}
 												if (vout.scriptPubKey.asm.startsWith("OP_RETURN"))

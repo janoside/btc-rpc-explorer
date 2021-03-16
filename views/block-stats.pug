@@ -10,9 +10,9 @@ block content
 	if (rpcApiUnsupportedError)
 		div.alert.alert-danger(style="margin-bottom: 200px;")
 			span Your node version doesn't support the 
-				span.text-monospace #{rpcApiUnsupportedError.rpc}
+				span.font-monospace #{rpcApiUnsupportedError.rpc}
 				span  RPC. To use this tool you need to upgrade to 
-				span.text-monospace v#{rpcApiUnsupportedError.version}
+				span.font-monospace v#{rpcApiUnsupportedError.version}
 				span  or later.
 
 	else
@@ -23,25 +23,25 @@ block content
 				hr
 
 				div.clearfix
-					div.float-left.mr-4
+					div.float-start.me-4
 						div(id="time-range-buttons")
 							h3.h6 Latest N Blocks
 							div.btn-group
 								a.btn.btn-primary.block-count-btn(href="javascript:void(0)", data-blockCount="144") 144
-									small.ml-2 (~1d)
+									small.ms-2 (~1d)
 								a.btn.btn-outline-primary.block-count-btn(href="javascript:void(0)", data-blockCount="432") 432
-									small.ml-2 (~3d)
+									small.ms-2 (~3d)
 								a.btn.btn-outline-primary.block-count-btn(href="javascript:void(0)", data-blockCount="1008") 1,008
-									small.ml-2 (~7d)
+									small.ms-2 (~7d)
 								a.btn.btn-outline-primary.block-count-btn(href="javascript:void(0)", data-blockCount="4320") 4,320
-									small.ml-2 (~30d)
+									small.ms-2 (~30d)
 
-					div.float-left.mr-4
+					div.float-start.me-4
 						div(id="block-selections-buttons")
 							h3.h6 Preconfigured
 
 							div.dropdown
-								button.btn.btn-outline-primary.dropdown-toggle(type="button", id="preconfigured-dropdown", data-toggle="dropdown", aria-haspopup="true", aria-expanded="false") Selections
+								button.btn.btn-outline-primary.dropdown-toggle(type="button", id="preconfigured-dropdown", data-bs-toggle="dropdown", aria-haspopup="true", aria-expanded="false") Selections
 								div.dropdown-menu(aria-labelledby="preconfigured-dropdown")
 									a.dropdown-item(href="javascript:void(0)", data-blocks="0-199") First 200 Blocks
 									a.dropdown-item(href="javascript:void(0)", data-blocks="209900-210100") First Halving ±100
@@ -49,16 +49,16 @@ block content
 									a.dropdown-item(href="javascript:void(0)", data-blocks="629900-630100") Third Halving ±100
 									a.dropdown-item(href="javascript:void(0)", data-blocks="481724-481924") SegWit Activation ±100
 
-					div.float-left
+					div.float-start
 						div(id="time-range-buttons")
 							h3.h6 Custom Range
 
-							form.form-inline.mr-3(id="custom-range-form")
+							form.form-inline.me-3(id="custom-range-form")
 								div.input-group
 									input.form-control(type="text", id="custom-range-start", placeholder="min height", style="width: 125px;")
 									input.form-control(type="text", id="custom-range-end", placeholder="max height", style="width: 125px;")
-									div.input-group-append
-										button.btn.btn-primary(type="submit") Go
+									
+									button.btn.btn-primary(type="submit") Go
 
 		div#progress-wrapper.mb-huge
 			div.card.shadow-sm.mb-3
@@ -78,18 +78,18 @@ block content
 			div.card-body
 				div.clearfix
 					each graphId, graphIndex in graphIds
-						div.float-left.mr-3.mb-1
+						div.float-start.me-3.mb-1
 							div.form-check
 								input.form-check-input.graph-toggle-checkbox(type="checkbox", id=`checkbox-${graphId}` checked="checked", data-graphId=graphId, autocomplete="off")
 								label.form-check-label(for=("checkbox-" + graphId)) #{graphTitles[graphIndex]}
 
-					div.float-left.mr-3.mb-1
-						a.mr-3(id="link-show-all", href="javascript:void(0)") show all
+					div.float-start.me-3.mb-1
+						a.me-3(id="link-show-all", href="javascript:void(0)") show all
 						a(id="link-hide-all", href="javascript:void(0)") hide all
 
 		div.row.clearfix
 			each graphId, graphIndex in graphIds
-				div.col-lg-6.float-left
+				div.col-lg-6.float-start
 					div.card.shadow-sm.mb-3.graph-wrapper(id=`graph-wrapper-${graphId}`)
 						div.card-body
 							h3.h6.mb-0 #{graphTitles[graphIndex]}

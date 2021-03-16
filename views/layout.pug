@@ -42,12 +42,12 @@ html(lang="en")
 						else
 							span Bitcoin Explorer
 						
-				button.navbar-toggler.navbar-toggler-right(type="button", data-toggle="collapse", data-target="#navbarNav", aria-label="collapse navigation")
+				button.navbar-toggler.navbar-toggler-end(type="button", data-bs-toggle="collapse", data-target="#navbarNav", aria-label="collapse navigation")
 					span.navbar-toggler-icon
 					
 				div.collapse.navbar-collapse(id="navbarNav")
 					if (rpcClient)
-						ul.navbar-nav.mr-auto
+						ul.navbar-nav.me-auto
 							if (false)
 								li.nav-item
 									a.nav-link(href="./about")
@@ -57,11 +57,11 @@ html(lang="en")
 								- var chainName = activeBlockchain == "test" ? "testnet" : activeBlockchain
 
 								li.nav-item
-									a.nav-link.text-warning(title=`Current node's chain: ${activeBlockchain}` data-toggle="tooltip") [#{chainName}]
+									a.nav-link.text-warning(title=`Current node's chain: ${activeBlockchain}` data-bs-toggle="tooltip") [#{chainName}]
 
 							if (config.siteTools)
 								li.nav-item.dropdown
-									a.nav-link.dropdown-toggle(href="javascript:void(0)", role="button", data-toggle="dropdown", aria-haspopup="true", aria-expanded="false") 
+									a.nav-link.dropdown-toggle(href="javascript:void(0)", role="button", data-bs-toggle="dropdown", aria-haspopup="true", aria-expanded="false") 
 										span  Tools
 									div.dropdown-menu.shadow(aria-label="Tools Items")
 										each itemIndex in config.site.prioritizedToolIdsList
@@ -74,7 +74,7 @@ html(lang="en")
 							if (config.site.header.dropdowns)
 								each dropdown, ddIndex in config.site.header.dropdowns
 									li.nav-item.dropdown
-										a.nav-link.dropdown-toggle(href="javascript:void(0)", role="button", data-toggle="dropdown", aria-haspopup="true", aria-expanded="false") 
+										a.nav-link.dropdown-toggle(href="javascript:void(0)", role="button", data-bs-toggle="dropdown", aria-haspopup="true", aria-expanded="false") 
 											span  #{dropdown.title}
 										div.dropdown-menu.shadow(aria-label=(dropdown.title + " Items"))
 											each dropdownLink in dropdown.links
@@ -84,26 +84,26 @@ html(lang="en")
 													span  #{dropdownLink.name}
 
 							
-						form.form-inline.mr-3(method="post", action="./search")
+						form.form-inline.me-3(method="post", action="./search")
 							input(type="hidden", name="_csrf", value=csrfToken)
 							div.input-group.input-group-sm
 								input.form-control.form-control-sm(type="text", name="query", placeholder="block height/hash, txid, address", value=(query))
-								div.input-group-append
-									button.btn.btn-primary(type="submit")
-										i.fas.fa-search
+								
+								button.btn.btn-primary(type="submit")
+									i.fas.fa-search
 
 						ul.navbar-nav
 							li.nav-item.dropdown
-								a.nav-link.dropdown-toggle(href="javascript:void(0)", role="button", data-toggle="dropdown", aria-haspopup="true", aria-expanded="false") 
+								a.nav-link.dropdown-toggle(href="javascript:void(0)", role="button", data-bs-toggle="dropdown", aria-haspopup="true", aria-expanded="false") 
 									span  Admin Tools
-								div.dropdown-menu.dropdown-menu-right.shadow(aria-label="Admin Tools Items")
+								div.dropdown-menu.dropdown-menu-end.shadow(aria-label="Admin Tools Items")
 									a.dropdown-item(href="./admin/dashboard") Dashboard
 									a.dropdown-item(href="./admin/stats") Stats
 
 							li.nav-item.dropdown
-								a.nav-link.dropdown-toggle(href="javascript:void(0)", id="navbarDropdown", role="button", data-toggle="dropdown", aria-haspopup="true", aria-expanded="false") 
-									i.fas.fa-cog.mr-1 
-								div.dropdown-menu.dropdown-menu-right.shadow(aria-labelledby="navbarDropdown")
+								a.nav-link.dropdown-toggle(href="javascript:void(0)", id="navbarDropdown", role="button", data-bs-toggle="dropdown", aria-haspopup="true", aria-expanded="false") 
+									i.fas.fa-cog.me-1 
+								div.dropdown-menu.dropdown-menu-end.shadow(aria-labelledby="navbarDropdown")
 									if (coinConfig.currencyUnits)
 										span.dropdown-header Currency Units
 										each item in coinConfig.currencyUnits
@@ -130,8 +130,8 @@ html(lang="en")
 					each itemIndex in config.site.subHeaderToolsList
 						- var item = config.siteTools[itemIndex];
 						li.nav-item
-							a.nav-link.text-white.px-2.text-decoration-underline.mr-3(href=item.url)
-								i.mr-1(class=item.fontawesome)
+							a.nav-link.text-white.px-2.text-decoration-underline.me-3(href=item.url)
+								i.me-1(class=item.fontawesome)
 								span #{item.name}
 		
 		- var bodyBgColor = "#f8f9fa;";
@@ -145,8 +145,8 @@ html(lang="en")
 
 					div.alert.alert-danger
 						- var errorText = `This page encountered ${pageErrors.length.toLocaleString()} error${pageErrors.length == 1 ? "" : "s"}:`;
-						span.font-weight-bold #{errorText} 
-						a(href="javascript:void(0)", data-toggle="modal", data-target="#pageErrorsModal") Error details
+						span.fw-bold #{errorText} 
+						a(href="javascript:void(0)", data-bs-toggle="modal", data-target="#pageErrorsModal") Error details
 
 				if (userMessageMarkdown)
 					div.alert(class=(userMessageType ? `alert-${userMessageType}` : "alert-warning"), role="alert")
@@ -177,14 +177,14 @@ html(lang="en")
 								
 								if (global.sourcecodeProjectMetadata)
 									div.mt-2
-										a.btn.btn-primary.btn-sm.mr-3.mb-1.text-decoration-none(href="https://github.com/janoside/btc-rpc-explorer")
-											i.fas.fa-star.mr-2
-											span.mr-2 Star 
+										a.btn.btn-primary.btn-sm.me-3.mb-1.text-decoration-none(href="https://github.com/janoside/btc-rpc-explorer")
+											i.fas.fa-star.me-2
+											span.me-2 Star 
 											span.badge.bg-white.text-dark #{global.sourcecodeProjectMetadata.stargazers_count}
 
-										a.btn.btn-primary.btn-sm.mr-3.mb-1.text-decoration-none(href="https://github.com/janoside/btc-rpc-explorer/fork")
-											i.fas.fa-code-branch.mr-2
-											span.mr-2 Fork 
+										a.btn.btn-primary.btn-sm.me-3.mb-1.text-decoration-none(href="https://github.com/janoside/btc-rpc-explorer/fork")
+											i.fas.fa-code-branch.me-2
+											span.me-2 Fork 
 											span.badge.bg-white.text-dark #{global.sourcecodeProjectMetadata.forks_count}
 
 
@@ -218,17 +218,17 @@ html(lang="en")
 										- demoSites.push({url:"https://signet.btc21.org", logoUrl:"./img/logo/signet.svg", title:"Signet Explorer"});
 
 										each demoSite in demoSites
-											a.mr-2(href=demoSite.url, title=demoSite.title, data-toggle="tooltip")
+											a.me-2(href=demoSite.url, title=demoSite.title, data-bs-toggle="tooltip")
 												img(src=demoSite.logoUrl, alt=demoSite.title)
 
-										a.mr-2(href="https://lnd-admin.btc21.org", title="LND Admin", data-toggle="tooltip")
+										a.me-2(href="https://lnd-admin.btc21.org", title="LND Admin", data-bs-toggle="tooltip")
 											img(src=("./img/logo/lnd-admin.png"), style="width: 32px; height: 32px;", alt="LND Admin")
 
-					div.col-md-7.text-md-right
+					div.col-md-7.text-md-end
 						dl
 							dd
-								button.btn.btn-primary(type="button", data-toggle="modal", data-target="#exampleModalCenter")
-									i.fas.fa-heart.mr-2
+								button.btn.btn-primary(type="button", data-bs-toggle="modal", data-target="#exampleModalCenter")
+									i.fas.fa-heart.me-2
 									span Support Project
 		
 		script(src="./js/jquery.min.js", integrity="sha384-vk5WoKIaW/vJyUAd9n/wmopsmNhiy+L2Z+SBxGYnUkunIxVxAv/UtMOhba/xskxh")

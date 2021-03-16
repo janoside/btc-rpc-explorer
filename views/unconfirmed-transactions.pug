@@ -26,7 +26,7 @@ block content
 
 				each tx, txIndex in mempoolDetails.transactions
 					div.card.shadow-sm.mb-3
-						div.card-header.text-monospace
+						div.card-header.font-monospace
 							if (tx && tx.txid)
 								span ##{(txIndex + offset).toLocaleString()}
 								span  &ndash; 

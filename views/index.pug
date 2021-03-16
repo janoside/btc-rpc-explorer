@@ -21,7 +21,7 @@ block content
 		if (config.demoSite && session.hideHomepageBanner != "true")
 			div.alert.alert-primary.alert-dismissible.shadow-sm.mb-3(role="alert")
 				span
-					span.font-weight-bold #{coinConfig.siteTitlesByNetwork[activeBlockchain]}
+					span.fw-bold #{coinConfig.siteTitlesByNetwork[activeBlockchain]}
 					span  is 
 					a(href="https://github.com/janoside/btc-rpc-explorer", target="_blank") open-source
 					span  and easy to set up. It can communicate with your 
@@ -32,24 +32,24 @@ block content
 
 				if (global.sourcecodeProjectMetadata)
 					div.mt-2
-						a.btn.btn-primary.btn-sm.mr-3.mb-1(href="https://github.com/janoside/btc-rpc-explorer")
-							i.fas.fa-star.mr-2
-							span.mr-2 Star 
+						a.btn.btn-primary.btn-sm.me-3.mb-1(href="https://github.com/janoside/btc-rpc-explorer")
+							i.fas.fa-star.me-2
+							span.me-2 Star 
 							span.badge.bg-white.text-dark #{global.sourcecodeProjectMetadata.stargazers_count}
 
-						a.btn.btn-primary.btn-sm.mr-3.mb-1(href="https://github.com/janoside/btc-rpc-explorer/fork")
-							i.fas.fa-code-branch.mr-2
-							span.mr-2 Fork 
+						a.btn.btn-primary.btn-sm.me-3.mb-1(href="https://github.com/janoside/btc-rpc-explorer/fork")
+							i.fas.fa-code-branch.me-2
+							span.me-2 Fork 
 							span.badge.bg-white.text-dark #{global.sourcecodeProjectMetadata.forks_count}
 						
 						if (!crawlerBot)
-							button.btn.btn-primary.btn-sm.mb-1(type="button", data-toggle="modal", data-target="#exampleModalCenter")
-								i.fas.fa-heart.mr-2
+							button.btn.btn-primary.btn-sm.mb-1(type="button", data-bs-toggle="modal", data-target="#exampleModalCenter")
+								i.fas.fa-heart.me-2
 								span Support Project
 
 				if (false)
 					div.mt-2
-						a.mr-2(href="https://www.npmjs.com/package/btc-rpc-explorer" rel="nofollow" target="_blank")
+						a.me-2(href="https://www.npmjs.com/package/btc-rpc-explorer" rel="nofollow" target="_blank")
 							img(src="https://camo.githubusercontent.com/a2a28dff9062102df7988314d014e68d4612bd83/68747470733a2f2f696d672e736869656c64732e696f2f6e706d2f762f6274632d7270632d6578706c6f7265722e7376673f7374796c653d666c6174" alt="npm version" data-canonical-src="https://img.shields.io/npm/v/btc-rpc-explorer.svg?style=flat" style="max-width:100%;")
 
 						a(href="https://npmcharts.com/compare/btc-rpc-explorer?minimal=true" rel="nofollow" target="_blank")
@@ -62,7 +62,7 @@ block content
 
 		if (getblockchaininfo.initialblockdownload && !["regtest", "signet"].includes(global.activeBlockchain))
 			div.alert.alert-warning.shadow-sm.border.mb-3
-				div.font-weight-bold.mb-1 Initial Block Download (IBD) - In Progress...
+				div.fw-bold.mb-1 Initial Block Download (IBD) - In Progress...
 
 				div.mb-1 Your node is currently downloading and verifying blockchain data. Until the process is finished, some features of this tool will be unusable and/or unreliable.
 
@@ -147,7 +147,7 @@ block content
 								div.col
 									h3.h6.mb-0 Transaction Stats
 									
-								div.col.text-right
+								div.col.text-end
 									a(href="./tx-stats") See more &raquo;
 
 							hr
@@ -155,7 +155,7 @@ block content
 							div.row
 								div.col-lg-6
 									div.table-responsive
-										table.table.text-right.mb-3.mb-lg-0
+										table.table.text-end.mb-3.mb-lg-0
 											thead
 												tr
 													th Period
@@ -163,7 +163,7 @@ block content
 													th Transactions Per Sec
 											tbody
 												each item, index in chainTxStatsIntervals
-													tr.text-monospace
+													tr.font-monospace
 														td #{item[1]}
 														td #{chainTxStats[item[0]].window_tx_count.toLocaleString()}
 														td #{new Decimal(chainTxStats[item[0]].txrate).toDecimalPlaces(4)}

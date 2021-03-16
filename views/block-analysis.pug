@@ -5,15 +5,15 @@ block headContent
 
 block content
 	h1.h3 Block Analysis 
-		small.text-monospace(style="width: 100%;") ##{result.getblock.height.toLocaleString()}
+		small.font-monospace(style="width: 100%;") ##{result.getblock.height.toLocaleString()}
 		br
-		small.text-monospace.word-wrap(style="width: 100%;") #{result.getblock.hash}
+		small.font-monospace.word-wrap(style="width: 100%;") #{result.getblock.hash}
 	hr
 
 	div.mb-2
 		if (result.getblock)
 			a.btn.btn-sm.btn-primary.mb-1(href=`./block/${result.getblock.hash}`) &laquo; Block Details: 
-				span.text-monospace ##{result.getblock.height.toLocaleString()}
+				span.font-monospace ##{result.getblock.height.toLocaleString()}
 
 	if (block && (!block.tx || block.tx.length == 0) && global.prunedBlockchain)
 		div.alert.alert-warning.pb-0(role="alert")
@@ -35,20 +35,20 @@ block content
 						div.clearfix
 							div.row
 								div.summary-table-label Date
-								div.summary-table-content.text-monospace
+								div.summary-table-content.font-monospace
 									- var timestampHuman = result.getblock.time;
 									include includes/timestamp-human.pug
-									small.ml-1 utc
+									small.ms-1 utc
 
 									- var timeAgoTime = result.getblock.time;
-									span.text-muted.ml-2 (
+									span.text-muted.ms-2 (
 										include includes/time-ago-text.pug
 										span  ago)
 
 							if (result.getblock.weight)
 								div.row
 									div.summary-table-label Weight
-									div.summary-table-content.text-monospace
+									div.summary-table-content.font-monospace
 										span #{result.getblock.weight.toLocaleString()} 
 											small wu 
 
@@ -57,23 +57,23 @@ block content
 							else if (result.getblock.size)
 								div.row
 									div.summary-table-label Size
-									div.summary-table-content.text-monospace #{result.getblock.size.toLocaleString()}
+									div.summary-table-content.font-monospace #{result.getblock.size.toLocaleString()}
 										small B
 
 							div.row
 								div.summary-table-label Transactions
-								div.summary-table-content.text-monospace #{result.getblock.nTx.toLocaleString()}
+								div.summary-table-content.font-monospace #{result.getblock.nTx.toLocaleString()}
 
 							div.row
 								div.summary-table-label Confirmations
-								div.summary-table-content.text-monospace
+								div.summary-table-content.font-monospace
 									if (result.getblock.confirmations < 6)
-										span.font-weight-bold.text-warning #{result.getblock.confirmations.toLocaleString()} 
-											a(data-toggle="tooltip", title="Fewer than 6 confirmations is generally considered 'unsettled' for high-value transactions. The applicability of this guidance may vary.")
+										span.fw-bold.text-warning #{result.getblock.confirmations.toLocaleString()} 
+											a(data-bs-toggle="tooltip", title="Fewer than 6 confirmations is generally considered 'unsettled' for high-value transactions. The applicability of this guidance may vary.")
 												i.fas.fa-unlock-alt
 									else
-										span.font-weight-bold.text-success #{result.getblock.confirmations.toLocaleString()} 
-											a(data-toggle="tooltip", title="6 confirmations is generally considered 'settled'. High-value transactions may require more; low-value transactions may require less.")
+										span.fw-bold.text-success #{result.getblock.confirmations.toLocaleString()} 
+											a(data-bs-toggle="tooltip", title="6 confirmations is generally considered 'settled'. High-value transactions may require more; low-value transactions may require less.")
 												i.fas.fa-lock
 
 
@@ -99,12 +99,12 @@ block content
 								thead
 									tr
 										th.data-header Transaction
-										th.data-header.text-right Output Value
+										th.data-header.text-end Output Value
 
 								tbody(id="tbody-top-value-tx")
-									tr.text-monospace.row-prototype(style="display: none;")
+									tr.font-monospace.row-prototype(style="display: none;")
 										td.data-tx-link
-										td.text-right.data-tx-value
+										td.text-end.data-tx-value
 
 			div.col-xl-6
 				div.card.shadow-sm.mb-3
@@ -117,12 +117,12 @@ block content
 								thead
 									tr
 										th.data-header Transaction
-										th.data-header.text-right Size
+										th.data-header.text-end Size
 
 								tbody(id="tbody-top-size-tx")
-									tr.text-monospace.row-prototype(style="display: none;")
+									tr.font-monospace.row-prototype(style="display: none;")
 										td.data-tx-link
-										td.text-right.data-tx-value
+										td.text-end.data-tx-value
 
 			if (global.txindexAvailable)
 				div.col-xl-6
@@ -136,12 +136,12 @@ block content
 									thead
 										tr
 											th.data-header Transaction
-											th.data-header.text-right Fee
+											th.data-header.text-end Fee
 
 									tbody(id="tbody-top-fee-tx")
-										tr.text-monospace.row-prototype(style="display: none;")
+										tr.font-monospace.row-prototype(style="display: none;")
 											td.data-tx-link
-											td.text-right.data-tx-value
+											td.text-end.data-tx-value
 
 				div.col-xl-6
 					div.card.shadow-sm.mb-3
@@ -154,12 +154,12 @@ block content
 									thead
 										tr
 											th.data-header Transaction
-											th.data-header.text-right Fee Rate
+											th.data-header.text-end Fee Rate
 
 									tbody(id="tbody-top-fee-rate-tx")
-										tr.text-monospace.row-prototype(style="display: none;")
+										tr.font-monospace.row-prototype(style="display: none;")
 											td.data-tx-link
-											td.text-right.data-tx-value
+											td.text-end.data-tx-value
 
 			if (global.txindexAvailable)
 				div.col-lg-6.mb-3
@@ -170,7 +170,7 @@ block content
 
 							table.table.table-striped.mb-0
 								tbody(id="tbody-input-types")
-									tr.text-monospace.row-prototype(style="display: none;")
+									tr.font-monospace.row-prototype(style="display: none;")
 										td
 											small.data-tag.bg-dark.data-type
 
@@ -184,7 +184,7 @@ block content
 
 						table.table.table-striped.mb-0
 							tbody(id="tbody-output-types")
-								tr.text-monospace.row-prototype(style="display: none;")
+								tr.font-monospace.row-prototype(style="display: none;")
 									td
 										small.data-tag.bg-dark.data-type
 
@@ -479,8 +479,8 @@ block endOfBody
 					row.addClass("table-borderless");
 				}
 				
-				// span(title=`Output Type: ${utils.outputTypeName(inputTypeKey)}`, data-toggle="tooltip") #{utils.outputTypeAbbreviation(inputTypeKey)}
-				row.find(".data-type").html(`<span title='Type: ${item.type}' data-toggle='tooltip'>${item.type}</span>`);
+				// span(title=`Output Type: ${utils.outputTypeName(inputTypeKey)}`, data-bs-toggle="tooltip") #{utils.outputTypeAbbreviation(inputTypeKey)}
+				row.find(".data-type").html(`<span title='Type: ${item.type}' data-bs-toggle='tooltip'>${item.type}</span>`);
 				row.find(".data-count").text(item.count.toLocaleString());
 
 				row.show();
@@ -499,8 +499,8 @@ block endOfBody
 					row.addClass("table-borderless");
 				}
 				
-				// span(title=`Output Type: ${utils.outputTypeName(inputTypeKey)}`, data-toggle="tooltip") #{utils.outputTypeAbbreviation(inputTypeKey)}
-				row.find(".data-type").html(`<span title='Type: ${item.type}' data-toggle='tooltip'>${item.type}</span>`);
+				// span(title=`Output Type: ${utils.outputTypeName(inputTypeKey)}`, data-bs-toggle="tooltip") #{utils.outputTypeAbbreviation(inputTypeKey)}
+				row.find(".data-type").html(`<span title='Type: ${item.type}' data-bs-toggle='tooltip'>${item.type}</span>`);
 				row.find(".data-count").text(item.count.toLocaleString());
 
 				row.show();

@@ -26,9 +26,9 @@ block content
 
 	ul.nav.nav-tabs.mb-3
 		li.nav-item
-			a.nav-link.active(data-toggle="tab", href="#tab-summary", role="tab") Summary
+			a.nav-link.active(data-bs-toggle="tab", href="#tab-summary", role="tab") Summary
 		li.nav-item
-			a.nav-link(data-toggle="tab", href="#tab-json", role="tab") JSON
+			a.nav-link(data-bs-toggle="tab", href="#tab-json", role="tab") JSON
 
 	div.tab-content
 		div.tab-pane.active(id="tab-summary", role="tabpanel")
@@ -52,10 +52,10 @@ block content
 								tbody
 									each item, index in peerSummary.versionSummary
 										tr(class=(index >= 5 ? "versions-hidden-rows" : false))
-											td.data-cell.font-weight-bold #{index + 1}
+											td.data-cell.fw-bold #{index + 1}
 
-											td.data-cell.text-monospace #{item[0]}
-											td.data-cell.text-monospace #{item[1].toLocaleString()}
+											td.data-cell.font-monospace #{item[0]}
+											td.data-cell.font-monospace #{item[1].toLocaleString()}
 
 				div.col-md-6
 					div.card.shadow-sm.mb-3
@@ -72,10 +72,10 @@ block content
 								tbody
 									each item, index in peerSummary.servicesSummary
 										tr(class=(index >= 5 ? "services-hidden-rows" : false))
-											td.data-cell.font-weight-bold #{index + 1}
+											td.data-cell.fw-bold #{index + 1}
 
-											td.data-cell.text-monospace #{item[0]}
-											td.data-cell.text-monospace #{item[1].toLocaleString()}
+											td.data-cell.font-monospace #{item[0]}
+											td.data-cell.font-monospace #{item[1].toLocaleString()}
 
 
 			div.row
@@ -95,10 +95,10 @@ block content
 									tbody
 										each item, index in peerSummary.networkTypeSummary
 											tr
-												td.data-cell.font-weight-bold #{index + 1}
+												td.data-cell.fw-bold #{index + 1}
 
-												td.data-cell.text-monospace #{item[0]}
-												td.data-cell.text-monospace #{item[1].toLocaleString()}
+												td.data-cell.font-monospace #{item[0]}
+												td.data-cell.font-monospace #{item[1].toLocaleString()}
 
 				if (peerSummary.connectionTypeSummary)
 					div.col-md-6
@@ -116,10 +116,10 @@ block content
 									tbody
 										each item, index in peerSummary.connectionTypeSummary
 											tr
-												td.data-cell.font-weight-bold #{index + 1}
+												td.data-cell.fw-bold #{index + 1}
 
-												td.data-cell.text-monospace #{item[0]}
-												td.data-cell.text-monospace #{item[1].toLocaleString()}
+												td.data-cell.font-monospace #{item[0]}
+												td.data-cell.font-monospace #{item[1].toLocaleString()}
 							
 
 			div.card.shadow-sm.mb-3
@@ -153,12 +153,12 @@ block content
 								tr
 									th.data-cell #{index + 1}
 
-									td.data-cell.text-monospace #{item.subver}
-									td.data-cell.text-monospace #{item.addr}
-									td.data-cell.text-monospace #{item.services}
+									td.data-cell.font-monospace #{item.subver}
+									td.data-cell.font-monospace #{item.addr}
+									td.data-cell.font-monospace #{item.services}
 
 									if (peerIpSummary.ips)
-										td.data-cell.text-monospace
+										td.data-cell.font-monospace
 											- var ipAddr = item.addr.substring(0, item.addr.lastIndexOf(":"));
 											if (peerIpSummary.ips && peerIpSummary.ips.includes(ipAddr))
 												- var ipDetails = peerIpSummary.detailsByIp[ipAddr];
@@ -174,7 +174,7 @@ block content
 
 											- var ipAddr = null;
 
-									td.data-cell.text-monospace #{lastSendAgo} / #{lastRecvAgo}
+									td.data-cell.font-monospace #{lastSendAgo} / #{lastRecvAgo}
 			
 
 
@@ -184,7 +184,7 @@ block content
 					a(href="javascript:void(0)" onclick=("javascript:var peer = document.getElementById('peerinfo_" + index + "'); peer.style.display = peer.style.display === 'none' ? '' : 'none';"))
 						i.fas.fa-plus-circle 
 
-					span.text-monospace  #{item.addr}
+					span.font-monospace  #{item.addr}
 
 				div.p-3(style="display: none;", id=`peerinfo_${index}`)
 					div.card.shadow-sm.mb-3

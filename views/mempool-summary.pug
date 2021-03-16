@@ -25,23 +25,23 @@ block content
 				div.clearfix
 					div.row
 						div.summary-table-label Tx Count
-						div.summary-table-content.text-monospace(id="tx-count")
+						div.summary-table-content.font-monospace(id="tx-count")
 
 					div.row
 						div.summary-table-label Memory Usage
-						div.summary-table-content.text-monospace(id="mem-usage")
+						div.summary-table-content.font-monospace(id="mem-usage")
 
 					div.row
 						div.summary-table-label Total Fees
-						div.summary-table-content.text-monospace(id="total-fees")
+						div.summary-table-content.font-monospace(id="total-fees")
 
 					div.row
 						div.summary-table-label Avg Fee
-						div.summary-table-content.text-monospace(id="avg-fee")
+						div.summary-table-content.font-monospace(id="avg-fee")
 
 					div.row
 						div.summary-table-label Avg Fee Rate
-						div.summary-table-content.text-monospace(id="avg-fee-rate")
+						div.summary-table-content.font-monospace(id="avg-fee-rate")
 
 		div#detail-charts-and-data
 			div.card.shadow-sm.mb-3
@@ -56,17 +56,17 @@ block content
 							thead
 								tr
 									th Fee Rate
-									th.text-right Tx Count
-									th.text-right Total Fees
-									th.text-right Avg Fee
-									th.text-right Avg Fee Rate
+									th.text-end Tx Count
+									th.text-end Total Fees
+									th.text-end Avg Fee
+									th.text-end Avg Fee Rate
 							tbody(id="fee-rate-table-body")
 								tr(id="fee-rate-table-row-prototype", style="display: none;")
-									td.text-monospace.data-label
-									td.text-monospace.text-right.data-count
-									td.text-monospace.text-right.data-total-fees
-									td.text-monospace.text-right.data-avg-fee
-									td.text-monospace.text-right.data-fee-rate
+									td.font-monospace.data-label
+									td.font-monospace.text-end.data-count
+									td.font-monospace.text-end.data-total-fees
+									td.font-monospace.text-end.data-avg-fee
+									td.font-monospace.text-end.data-fee-rate
 
 			div.card.shadow-sm.mb-3
 				div.card-body.px-2.px-md-3
