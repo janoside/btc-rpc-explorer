@@ -128,7 +128,7 @@ This causes the users to be redirected to login page if not logged in.
 See [instructions here](docs/nginx-reverse-proxy.md) for using nginx+certbot (letsencrypt) for an HTTPS-accessible, reverse-proxied site.
 
 
-# Support
+# Support.
 
 If you get value from this project, please consider supporting my continued work with a donation. Any and all donations are truly appreciated.
 
@@ -139,4 +139,5 @@ If you get value from this project, please consider supporting my continued work
 [npm-ver-url]: https://www.npmjs.com/package/btc-rpc-explorer
 [npm-dl-img]: http://img.shields.io/npm/dm/btc-rpc-explorer.svg?style=flat
 [npm-dl-url]: https://npmcharts.com/compare/btc-rpc-explorer?minimal=true
+
 
