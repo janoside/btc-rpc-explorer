@@ -1,11 +1,24 @@
-##### Unreleased
+##### v3.0
+###### Unreleased
 
+* Major visual refresh!
+	* All new design (layout, fonts, colors, etc)
+	* Redesigned Dark Mode (now the default)
+	* New app icon (this tools needs more of an identity of its own!)
 * Support for pruned nodes and nodes with disabled `txindex`! (HUGE Thanks to [@shesek](https://github.com/shesek))
+* Upgraded to Bootstrap 5 (currently beta3...)
 * Fix for 404 pages hanging (Thanks [@shesek](https://github.com/shesek))
 * Add convenience redirect for baseUrl (Thanks [@shesek](https://github.com/shesek))
 * Make url in logs clickable (Thanks [@shesek](https://github.com/shesek))
 * Caching for static files (maxAge=1hr)
-* Major code refactoring/modernization
+* Frontend performance optimizations
+* Major refactoring, modernization, and code-reuse improvements
+* UX improvements and polish throughout
+* `/unconfirmed-tx` URL changed to `/mempool-tx`
+* Updated dependencies
+	* jQuery: v3.4.1 -> v3.6.0
+	* highlight.js: v9.14.2 -> v10.7.1
+	* fontawesome: v5.7.1 -> v5.15.3
 
 ##### v2.2.0
 ###### 2021-01-22
@@ -171,7 +184,7 @@
 * Show mempool ancestor/descendant txs on tx detail pages
 * Blacklist 'createwallet' by default
 * Show RBF status for unconfirmed txs
-* Faster, more reliable display of `/mempool-summary` and `/unconfirmed-tx` pages
+* Faster, more reliable display of `/mempool-summary` and `/mempool-tx` pages
 * Fix for persisting arg values in UI on `/rpc-browser`
 * Misc minor fixes and ux tweaks
 

@@ -4,16 +4,23 @@ function updateCurrencyValue(element, val) {
 
 	}).done(function(result) {
 		element.html(result);
-		$('[data-toggle="tooltip"]').tooltip();
+		$('[data-bs-toggle="tooltip"]').tooltip();
 	});
 }
 
-function updateFeeRateValue(element, val, digits) {
+function updateUserSetting(name, val) {
+	$.ajax({
+		url: `./changeSetting?name=${name}&value=${val}`
+
+	}).done(res => {});
+}
+
+function updateFeeRateValue(element, val, digits, showUnit=true) {
 	$.ajax({
 		url: `./api/utils/formatCurrencyAmountInSmallestUnits/${val},${digits}`
 
 	}).done(function(result) {
-		element.html(`<span>${result.val} <small>${result.currencyUnit}/vB</small></span>`);
+		element.html(`<span>${result.val}${showUnit ? ("<small class='ms-2'>" + result.currencyUnit + "/vB</small>") : ""}</span>`);
 	});
 }
 
@@ -24,4 +31,10 @@ function showAllTxOutputs(link, txid) {
 	});
 
 	link.classList.add("d-none");
+}
+
+function copyTextToClipboard(text) {
+	navigator.clipboard.writeText(text).then(() => {}, (err) => {
+		console.error('Error copying text: ', err);
+	});
 }

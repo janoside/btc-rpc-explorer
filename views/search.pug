@@ -4,15 +4,14 @@ block headContent
 	title Search
 
 block content
-	h1.h3 Search
-	hr
+	+pageTitle("Search")
 
-	div.card.shadow-sm.mb-huge
-		div.card-body
-			form.form.form-inline(method="post", action="./search")
-				input(type="hidden", name="_csrf", value=csrfToken)
+	+contentSection
+		form.form.form-inline(method="post", action="./search")
+			input(type="hidden", name="_csrf", value=csrfToken)
 
-				div.input-group
-					input.form-control(type="text", name="query", placeholder="block height/hash, txid, address", value=(query), style="width: 400px;")
-					
-					button.btn.btn-primary(type="submit") Search
+			div.input-group
+				input.form-control(type="text", name="query", placeholder="block height/hash, txid, address", value=(query), style="width: 400px;")
+				
+				button.btn.btn-primary(type="submit") Search
+		

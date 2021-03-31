@@ -109,6 +109,17 @@ router.get("/stats", function(req, res, next) {
 });
 
 
+router.get('/resetUserSettings', (req, res) => {
+	req.session.userSettings = {};
+
+	var userSettings = {};
+
+	res.cookie("user-settings", JSON.stringify(userSettings));
+
+	res.redirect(req.headers.referer);
+});
+
+
 router.get('/heapdump', (req, res) => {
 	const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
 

@@ -4,52 +4,57 @@ block headContent
 	title #{coinConfig.name} Fun
 
 block content
-	h1.h3 #{coinConfig.name} Fun
-	hr
+	+pageTitle(`${coinConfig.name} Fun`)
 
-	div.card.shadow-sm.mb-3
-		div.card-body
-			p Below is a list of fun/interesting things in the #{coinConfig.name} blockchain. Some are historical firsts, others are just fun or cool.
-			
-			div.table-responsive
-				table.table.table-striped
-					thead
-						tr
-							th.data-header Date
-							th.data-header Description
-							th.data-header Link
-							th.data-header Reference
-					tbody
-						each item, index in coinConfig.historicalData
-							if (item.chain == activeBlockchain)
-								tr
-									td.data-cell #{item.date}
 
-									td.data-cell #{item.summary}
-									
-									td.data-cell.font-monospace
-										if (item.type == "tx")
-											a(href=`./tx/${item.txid}@${item.blockHeight}`, title=item.txid, data-bs-toggle="tooltip") Tx #{utils.ellipsize(item.txid, 23)}
-										else if (item.type == "block")
-											a(href=`./block/${item.blockHash}`, title=`Block ${item.blockHash}`, data-bs-toggle="tooltip") Block #{utils.ellipsize(item.blockHash, 20)}
-										else if (item.type == "blockheight")
-											a(href=`./block/${item.blockHash}`) Block ##{item.blockHeight}
-										else if (item.type == "address")
-											a(href=`./address/${item.address}`, title=item.address, data-bs-toggle="tooltip") Address #{utils.ellipsize(item.address, 18)}
-										else if (item.type == "link")
-											a(href=item.url) #{item.url.substring(0, 20)}...
+	+dismissableInfoAlert("funPageNoteDismissed", "About Bitcoin Fun...")
+		.mb-2 This is a curated list of fun and interesting things in the blockchain or related to the underlying data:
+		ul
+			li Historical firsts
+			li Technical quirks and oddities
+			li Cultural references
 
+		.mb-0 Help curating this list is welcome! You can submit new items by opening an issue or PR on <a href="https://github.com/janoside/btc-rpc-explorer">Github</a>.
+
+
+	+contentSection
+		.table-responsive
+			table.table.table-borderless.table-striped
+				thead
+					tr
+						th.data-header Date
+						th.data-header Item
+						th.data-header Reference
+				tbody
+					each item, index in coinConfig.historicalData
+						if (item.chain == activeBlockchain)
+							tr
+								td.data-cell #{item.date}
+
+								if (true)
 									td.data-cell
-										if (item.referenceUrl && item.referenceUrl.trim().length > 0)
-											- var matches = item.referenceUrl.match(/^https?\:\/\/([^\/:?#]+)(?:[\/:?#]|$)/i);
+										if (item.type == "tx")
+											a(href=`./tx/${item.txid}@${item.blockHeight}`) #{item.summary}
+										else if (item.type == "block")
+											a(href=`./block/${item.blockHash}`) #{item.summary}
+										else if (item.type == "blockheight")
+											a(href=`./block/${item.blockHash}`) #{item.summary}
+										else if (item.type == "address")
+											a(href=`./address/${item.address}`) #{item.summary}
+										else if (item.type == "link")
+											a(href=item.url) #{item.summary}
+								
+								td.data-cell
+									if (item.referenceUrl && item.referenceUrl.trim().length > 0)
+										- var matches = item.referenceUrl.match(/^https?\:\/\/([^\/:?#]+)(?:[\/:?#]|$)/i);
 
-											- var domain = null;
-											- var domain = matches && matches[1];
+										- var domain = null;
+										- var domain = matches && matches[1];
 
-											if (domain)
-												a(href=item.referenceUrl, rel="nofollow") #{domain} 
-													i.fas.fa-external-link-alt
-											else
-												a(href=item.referenceUrl, rel="nofollow") Reference
+										if (domain)
+											a(href=item.referenceUrl, rel="nofollow") #{domain} 
+												i.fas.fa-external-link-alt
 										else
-											span -
+											a(href=item.referenceUrl, rel="nofollow") Reference
+									else
+										span -

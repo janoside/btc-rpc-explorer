@@ -285,11 +285,11 @@ function formatValueInActiveCurrency(amount) {
 }
 
 
-function formatValueInGold(amount) {
+function formatValueInGoldOunces(amount) {
 	var currencyFormat = global.currencyFormatType.toLowerCase() || "usd";
 
 	if (global.exchangeRates[currencyFormat] && global.goldExchangeRates[currencyFormat]) {
-		return formatExchangedCurrency(amount, "au");
+		return formatExchangedCurrency(amount, "au", false);
 
 	} else {
 		return formatExchangedCurrency(amount, "usd");
@@ -339,17 +339,17 @@ function satoshisPerUnitOfActiveCurrency() {
 	}
 }
 
-function formatExchangedCurrency(amount, exchangeType) {
+function formatExchangedCurrency(amount, exchangeType, includeUnit=true) {
 	if (global.exchangeRates != null && global.exchangeRates[exchangeType.toLowerCase()] != null) {
 		var dec = new Decimal(amount);
 		dec = dec.times(global.exchangeRates[exchangeType.toLowerCase()]);
 		var exchangedAmt = parseFloat(Math.round(dec * 100) / 100).toFixed(2);
 
 		if (exchangeType == "eur") {
-			return "€" + addThousandsSeparators(exchangedAmt);
+			return (includeUnit ? "€" : "") + addThousandsSeparators(exchangedAmt);
 
 		} else {
-			return "$" + addThousandsSeparators(exchangedAmt);
+			return (includeUnit ? "$" : "") + addThousandsSeparators(exchangedAmt);
 		}
 		
 	} else if (exchangeType == "au") {
@@ -358,7 +358,7 @@ function formatExchangedCurrency(amount, exchangeType) {
 			dec = dec.times(global.exchangeRates.usd).dividedBy(global.goldExchangeRates.usd);
 			var exchangedAmt = parseFloat(Math.round(dec * 100) / 100).toFixed(2);
 
-			return addThousandsSeparators(exchangedAmt) + "oz";
+			return addThousandsSeparators(exchangedAmt) + (includeUnit ? "oz" : "");
 		}
 	}
 
@@ -381,6 +381,30 @@ function ellipsize(str, length, ending="…") {
 
 	} else {
 		return str.substring(0, length - ending.length) + ending;
+	}
+}
+
+function ellipsizeMiddle(str, length, replacement="…", extraCharAtStart=true) {
+	if (str.length <= length) {
+		return str;
+
+	} else {
+		//"abcde"(3)->"a…e"
+		//"abcdef"(3)->"a…f"
+		//"abcdef"(5)->"ab…ef"
+		//"abcdef"(4)->"ab…f"
+		if ((length - replacement.length) % 2 == 0) {
+			return str.substring(0, (length - replacement.length) / 2) + replacement + str.slice(-(length - replacement.length) / 2);
+
+		} else {
+			if (extraCharAtStart) {
+				return str.substring(0, Math.ceil((length - replacement.length) / 2)) + replacement + str.slice(-Math.floor((length - replacement.length) / 2));
+
+			} else {
+				return str.substring(0, Math.floor((length - replacement.length) / 2)) + replacement + str.slice(-Math.ceil((length - replacement.length) / 2));
+			}
+			
+		}
 	}
 }
 
@@ -523,6 +547,23 @@ function getBlockTotalFeesFromCoinbaseTxAndBlockHeight(coinbaseTx, blockHeight) 
 	} else {
 		return totalOutput.minus(new Decimal(blockReward));
 	}
+}
+
+function estimatedSupply(height) {
+	var checkpointData = coinConfig.coinSupplyCheckpointsByNetwork[global.activeBlockchain];
+	var checkpointHeight = checkpointData[0];
+	var checkpointSupply = checkpointData[1];
+
+	var supply = checkpointSupply;
+	
+	var i = checkpointHeight;
+	while (i < height) {
+		supply = supply.plus(new Decimal(coinConfig.blockRewardFunction(i, global.activeBlockchain)));
+
+		i++;
+	}
+	
+	return supply;
 }
 
 function refreshExchangeRates() {
@@ -882,6 +923,17 @@ const dtMillis = (startTimeNanos) => {
 	return parseInt(dtNanos) * 1e-6;
 };
 
+function objectProperties(obj) {
+	const props = [];
+	for (const prop in obj) {
+		if (Object.prototype.hasOwnProperty.call(obj, prop)) {
+			props.push(prop);
+		}
+	}
+
+	return props;
+}
+
 module.exports = {
 	reflectPromise: reflectPromise,
 	redirectToConnectPageIfNeeded: redirectToConnectPageIfNeeded,
@@ -894,7 +946,7 @@ module.exports = {
 	formatCurrencyAmountWithForcedDecimalPlaces: formatCurrencyAmountWithForcedDecimalPlaces,
 	formatExchangedCurrency: formatExchangedCurrency,
 	formatValueInActiveCurrency: formatValueInActiveCurrency,
-	formatValueInGold: formatValueInGold,
+	formatValueInGoldOunces: formatValueInGoldOunces,
 	satoshisPerUnitOfActiveCurrency: satoshisPerUnitOfActiveCurrency,
 	addThousandsSeparators: addThousandsSeparators,
 	formatCurrencyAmountInSmallestUnits: formatCurrencyAmountInSmallestUnits,
@@ -903,6 +955,7 @@ module.exports = {
 	logMemoryUsage: logMemoryUsage,
 	getMinerFromCoinbaseTx: getMinerFromCoinbaseTx,
 	getBlockTotalFeesFromCoinbaseTxAndBlockHeight: getBlockTotalFeesFromCoinbaseTxAndBlockHeight,
+	estimatedSupply: estimatedSupply,
 	refreshExchangeRates: refreshExchangeRates,
 	parseExponentStringDouble: parseExponentStringDouble,
 	formatLargeNumber: formatLargeNumber,
@@ -914,6 +967,7 @@ module.exports = {
 	logError: logError,
 	buildQrCodeUrls: buildQrCodeUrls,
 	ellipsize: ellipsize,
+	ellipsizeMiddle: ellipsizeMiddle,
 	shortenTimeDiff: shortenTimeDiff,
 	outputTypeAbbreviation: outputTypeAbbreviation,
 	outputTypeName: outputTypeName,
@@ -924,5 +978,6 @@ module.exports = {
 	getCrawlerFromUserAgentString: getCrawlerFromUserAgentString,
 	timePromise: timePromise,
 	startTimeNanos: startTimeNanos,
-	dtMillis: dtMillis
+	dtMillis: dtMillis,
+	objectProperties: objectProperties
 };

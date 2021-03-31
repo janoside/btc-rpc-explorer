@@ -54,6 +54,8 @@ const axios = require("axios");
 const package_json = require('./package.json');
 global.appVersion = package_json.version;
 
+global.btcNodeSemver = "0.0.0";
+
 
 const baseActionsRouter = require('./routes/baseRouter.js');
 const apiActionsRouter = require('./routes/apiRouter.js');
@@ -610,56 +612,27 @@ expressApp.use(function(req, res, next) {
 	res.locals.pageErrors = [];
 
 
+	if (!req.session.userSettings) {
+		req.session.userSettings = JSON.parse(req.cookies["user-settings"] || "{}");
+	}
+
+	const userSettings = req.session.userSettings;
+	res.locals.userSettings = userSettings;
+
+
 	// currency format type
-	if (!req.session.currencyFormatType) {
-		var cookieValue = req.cookies['user-setting-currencyFormatType'];
-
-		if (cookieValue) {
-			req.session.currencyFormatType = cookieValue;
-
-		} else {
-			req.session.currencyFormatType = "";
-		}
+	if (!userSettings.currencyFormatType) {
+		userSettings.currencyFormatType = "";
 	}
 
 	// theme
-	if (!req.session.uiTheme) {
-		var cookieValue = req.cookies['user-setting-uiTheme'];
-
-		if (cookieValue) {
-			req.session.uiTheme = cookieValue;
-
-		} else {
-			req.session.uiTheme = "";
-		}
+	if (!userSettings.uiTheme) {
+		userSettings.uiTheme = config.defaultTheme;
 	}
 
-	// blockPage.showTechSummary
-	if (!req.session.blockPageShowTechSummary) {
-		var cookieValue = req.cookies['user-setting-blockPageShowTechSummary'];
 
-		if (cookieValue) {
-			req.session.blockPageShowTechSummary = cookieValue;
-
-		} else {
-			req.session.blockPageShowTechSummary = "true";
-		}
-	}
-
-	// homepage banner
-	if (!req.session.hideHomepageBanner) {
-		var cookieValue = req.cookies['user-setting-hideHomepageBanner'];
-
-		if (cookieValue) {
-			req.session.hideHomepageBanner = cookieValue;
-
-		} else {
-			req.session.hideHomepageBanner = "false";
-		}
-	}
-
-	res.locals.currencyFormatType = req.session.currencyFormatType;
-	global.currencyFormatType = req.session.currencyFormatType;
+	res.locals.currencyFormatType = userSettings.currencyFormatType;
+	global.currencyFormatType = userSettings.currencyFormatType;
 
 
 	if (!["/", "/connect"].includes(req.originalUrl)) {
@@ -727,7 +700,7 @@ expressApp.use(function(req, res, next) {
 
 // development error handler
 // will print stacktrace
-if (expressApp.get('env') === 'development') {
+if (expressApp.get("env") === "development" || expressApp.get("env") === "local") {
 	expressApp.use(function(err, req, res, next) {
 		if (err) {
 			utils.logError("3289023yege", err);

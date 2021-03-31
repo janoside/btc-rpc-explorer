@@ -55,10 +55,21 @@ module.exports = {
 	name:"Bitcoin",
 	ticker:"BTC",
 	logoUrlsByNetwork:{
+		"main":"./img/logo/logo.svg",
+		"test":"./img/logo/logo-testnet.svg",
+		"regtest":"./img/logo/logo-regtest.svg",
+		"signet":"./img/logo/logo-signet.svg"
+	},
+	coinIconUrlsByNetwork:{
 		"main":"./img/logo/btc.svg",
-		"test":"./img/logo/tbtc.svg",
-		"regtest":"./img/logo/tbtc.svg",
-		"signet":"./img/logo/signet.svg"
+		"test":"./img/logo/btc-testnet.svg",
+		"signet":"./img/logo/btc-signet.svg"
+	},
+	coinColorsByNetwork: {
+		"main": "#F7931A",
+		"test": "#1daf00",
+		"signet": "#af008c",
+		"regtest": "#777"
 	},
 	siteTitlesByNetwork: {
 		"main":"Bitcoin Explorer",
@@ -69,7 +80,11 @@ module.exports = {
 	siteDescriptionHtml:"<b>BTC Explorer</b> is <a href='https://github.com/janoside/btc-rpc-explorer). If you run your own [Bitcoin Full Node](https://bitcoin.org/en/full-node), **BTC Explorer** can easily run alongside it, communicating via RPC calls. See the project [ReadMe](https://github.com/janoside/btc-rpc-explorer) for a list of features and instructions for running.",
 	nodeTitle:"Bitcoin Full Node",
 	nodeUrl:"https://bitcoin.org/en/full-node",
-	demoSiteUrl: "https://explorer.btc21.org",
+	demoSiteUrlsByNetwork: {
+		"main": "https://explorer.btc21.org",
+		"test": "https://testnet.btc21.org",
+		"signet": "https://signet.btc21.org",
+	},
 	miningPoolsConfigUrls:[
 		"https://raw.githubusercontent.com/btc21/Bitcoin-Known-Miners/master/miners.json",
 		"https://raw.githubusercontent.com/btccom/Blockchain-Known-Pools/master/pools.json",
@@ -91,6 +106,21 @@ module.exports = {
 	baseCurrencyUnit:currencyUnits[3],
 	defaultCurrencyUnit:currencyUnits[0],
 	feeSatoshiPerByteBucketMaxima: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 20, 25, 50, 75, 100, 150],
+	
+	halvingBlockIntervalsByNetwork: {
+		"main": 210000,
+		"test": 210000,
+		"regtest": 150,
+		"signet": 210000
+	},
+
+	// used for supply estimates that don't need full gettxoutset accuracy
+	coinSupplyCheckpointsByNetwork: {
+		"main": [ 675046, new Decimal(18656332.38) ],
+		"test": [ 1940614, new Decimal(20963051.112) ],
+		"signet": [ 29472, new Decimal(1473600) ]
+	},
+	
 	genesisBlockHashesByNetwork:{
 		"main":	"000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f",
 		"test":	"000000000933ea01ad0ee984209779baaec3ced90fa3f408719526f8d77f4943",
@@ -391,7 +421,7 @@ module.exports = {
 			blockHeight: 0,
 			blockHash: "000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f",
 			summary: "The Bitcoin Genesis Block.",
-			alertBodyHtml: "This is the first block in the Bitcoin blockchain, known as the 'Genesis Block'. This block was mined by Bitcoin's creator Satoshi Nakamoto. You can read more about <a href='https://en.bitcoin.it/wiki/Genesis_block'>the genesis block</a>.",
+			alertBodyHtml: "This is the first block in the Bitcoin blockchain, known as the <b>Genesis Block</b>. This block was mined by Bitcoin's creator <b>Satoshi Nakamoto</b>.<br/>Read more here: <a href='https://en.bitcoin.it/wiki/Genesis_block'>bitcoin.it/wiki/Genesis_block</a>.",
 			referenceUrl: "https://en.bitcoin.it/wiki/Genesis_block"
 		},
 		{
@@ -401,7 +431,7 @@ module.exports = {
 			txid: "4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b",
 			blockHeight: 0,
 			summary: "The coinbase transaction of the Genesis Block.",
-			alertBodyHtml: "This transaction doesn't really exist! This is the coinbase transaction of the <a href='./block/000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f'>Bitcoin Genesis Block</a>. For more background about this special-case transaction, you can read <a href='https://github.com/bitcoin/bitcoin/issues/3303'>this brief discussion</a> among some of the <a href='https://bitcoin.org'>Bitcoin</a> developers.",
+			alertBodyHtml: "This transaction doesn't really exist! This is the <b>coinbase transaction</b> of the <a href='./block/000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f'>Bitcoin Genesis Block</a>. For more background about this special-case transaction, you can read <a href='https://github.com/bitcoin/bitcoin/issues/3303'>this brief discussion</a> among some of the <a href='https://bitcoin.org'>Bitcoin</a> developers.",
 			referenceUrl: "https://github.com/bitcoin/bitcoin/issues/3303"
 		},
 		{
@@ -690,6 +720,7 @@ module.exports = {
 			date: "2013-03-24",
 			chain: "main",
 			blockHeight: 227835,
+			blockHash: "00000000000001aa077d7aa84c532a4d69bdbff519609d1da0835261b7a74eb6",
 			summary: "The last 'Version 1' block.",
 			alertBodyHtml: "This block was the last 'Version 1' block to be mined. <a href='https://github.com/bitcoin/bips/blob/master/bip-0034.mediawiki'>BIP-34</a> defined 'Version 2' blocks and the 'bip34' soft fork was officially locked in 96 blocks after this one, in block #<a href='./block-height/227931'>227,931</a>.",
 			referenceUrl: "https://github.com/bitcoin/bips/blob/master/bip-0034.mediawiki"

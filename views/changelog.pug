@@ -4,12 +4,9 @@ block headContent
 	title Changelog
 
 	style.
-		code { padding: 0px 3px; border: solid 1px #ccc; border-radius: 3px; background-color: #ccc; color: black; }
 
 block content
-	h1.h3 Changelog
-	hr
+	+pageTitle("Changelog / Release Notes")
 
-	div.card.shadow-sm.mb-3
-		div.card-body
-			| !{changelogHtml}
+	+contentSection
+		| !{changelogHtml}

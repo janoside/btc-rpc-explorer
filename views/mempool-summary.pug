@@ -4,88 +4,86 @@ block headContent
 	title Mempool Summary
 
 block content
-	h1.h3 Mempool Summary
-	hr
+	+pageTitle("Mempool Summary")
+
+	
+	+dismissableInfoAlert("mempoolSummaryNoteDismissed", "About Mempool Summary...")
+		.mb-2 This tool summarizes data about the transactions in your node's <b>mempool</b> - the set of transactions that your node has received from the network but are not yet confirmed in a block.
+		.mb-2 The fee-rate summary data can be helpful for deciding what fee is necessary to get a transaction included in a future block, depending on its priority.
+
 
 	div#progress-wrapper.mb-huge
 		div.card.shadow-sm.mb-3
 			div.card-body
-				h4.h6 Loading mempool transactions: 
+				span Loading mempool transactions: 
 					span(id="progress-text")
 				div.progress.mt-2(id="progress-bar", style="height: 7px;")
 					div.progress-bar(id="data-progress", role="progressbar", aria-valuenow="0", aria-valuemin="0" ,aria-valuemax="100")
 	
 
 	div(id="main-content", style="display: none;")
-		div.card.shadow-sm.mb-3
-			div.card-body.px-2.px-md-3
-				h3.h6.mb-0 Summary
-				hr
+		+contentSection("Summary")
+			+summaryRow(5)
+				+summaryItem("Transactions")
+					span#tx-count
 
-				div.clearfix
-					div.row
-						div.summary-table-label Tx Count
-						div.summary-table-content.font-monospace(id="tx-count")
+				+summaryItem("Memory Usage")
+					span#mem-usage
 
-					div.row
-						div.summary-table-label Memory Usage
-						div.summary-table-content.font-monospace(id="mem-usage")
+				+summaryItem("Total Fees")
+					span#total-fees
 
-					div.row
-						div.summary-table-label Total Fees
-						div.summary-table-content.font-monospace(id="total-fees")
+				+summaryItem("Avg Fee")
+					span#avg-fee
 
-					div.row
-						div.summary-table-label Avg Fee
-						div.summary-table-content.font-monospace(id="avg-fee")
-
-					div.row
-						div.summary-table-label Avg Fee Rate
-						div.summary-table-content.font-monospace(id="avg-fee-rate")
+				+summaryItem("Avg Fee Rate", null, "sat/vB")
+					span#avg-fee-rate
 
 		div#detail-charts-and-data
-			div.card.shadow-sm.mb-3
-				div.card-body.px-2.px-md-3
-					h3.h6.mb-0 Transactions by fee rate
-					hr
+			+contentSection("Fee Rate Distribution")
+				canvas.mb-3(id="mempoolBarChart", height="100")
 
-					canvas.mb-3(id="mempoolBarChart", height="100")
+				hr.mt-3
 
-					div.table-responsive
-						table.table.table-striped.mb-3
-							thead
-								tr
-									th Fee Rate
-									th.text-end Tx Count
-									th.text-end Total Fees
-									th.text-end Avg Fee
-									th.text-end Avg Fee Rate
-							tbody(id="fee-rate-table-body")
-								tr(id="fee-rate-table-row-prototype", style="display: none;")
-									td.font-monospace.data-label
-									td.font-monospace.text-end.data-count
-									td.font-monospace.text-end.data-total-fees
-									td.font-monospace.text-end.data-avg-fee
-									td.font-monospace.text-end.data-fee-rate
+				.table-responsive
+					table.table.table-striped.table-borderless.mb-3
+						thead
+							tr
+								th Fee Rate
+								th.text-end Tx Count
+								th.text-end Total Fees
+								th.text-end Avg Fee
+								th.text-end Avg Fee Rate
+									small.fw-normal.text-muted.ms-2 (sat/vB)
+						tbody(id="fee-rate-table-body")
+							tr(id="fee-rate-table-row-prototype", style="display: none;")
+								td.font-monospace.data-label
+								td.font-monospace.text-end.data-count
+								td.font-monospace.text-end.data-total-fees
+								td.font-monospace.text-end.data-avg-fee
+								td.font-monospace.text-end.data-fee-rate
 
-			div.card.shadow-sm.mb-3
-				div.card-body.px-2.px-md-3
-					h3.h6.mb-0 Transactions by size
-					hr
+							tr(id="empty-row-to-fix-striped-coloring", style="display: none;")
 
-					canvas.mb-3(id="txSizesBarChart", height="100")
+					
 
-			div.card.shadow-sm.mb-3
-				div.card-body.px-2.px-md-3
-					h3.h6.mb-0 Transactions by age
-					hr
+			+contentSection("Size Distribution")
+				canvas.mb-3(id="txSizesBarChart", height="100")
 
-					canvas.mb-3(id="txAgesBarChart", height="100")
+					
+
+			+contentSection("Age Distribution")
+				canvas.mb-3(id="txAgesBarChart", height="100")
+
+					
 		
 
 block endOfBody
-	script(src="./js/chart.bundle.min.js", integrity="sha384-qgOtiGNaHh9fVWUnRjyHlV39rfbDcvPPkEzL1RHvsHKbuqUqM6uybNuVnghY2z4/")
+
+	+graphPageScriptSetup
+	
 	script(src='./js/decimal.js')
+
 	script.
 		var txidChunks = !{JSON.stringify(mempooltxidChunks)};
 		var satoshiPerByteBucketMaxima = !{JSON.stringify(satoshiPerByteBucketMaxima)};
@@ -155,7 +153,7 @@ block endOfBody
 				$("#avg-fee-rate").text(summary.averageFeePerByte);
 
 				$.ajax({
-					url: `./api/utils/formatLargeNumber/${summary.totalBytes},2`
+					url: `./api/utils/formatLargeNumber/${summary.totalBytes},1`
 
 				}).done(function(result) {
 					$("#mem-usage").html(`<span>${result[0]} <small>${result[1].abbreviation}B</small></span>`);
@@ -164,7 +162,7 @@ block endOfBody
 				updateCurrencyValue($("#total-fees"), summary.totalFees);
 				updateCurrencyValue($("#avg-fee"), summary.averageFee);
 
-				updateFeeRateValue($("#avg-fee-rate"), summary.averageFeePerByte, 2);
+				updateFeeRateValue($("#avg-fee-rate"), summary.averageFeePerByte, 2, false);
 
 
 				//$("#summary-json").text(JSON.stringify(summary, null, 4));
@@ -186,9 +184,17 @@ block endOfBody
 							display: false
 						},
 						scales: {
+							xAxes: [{
+								gridLines: {
+									color: gridLineColor
+								}
+							}],
 							yAxes: [{
 								ticks: {
 									beginAtZero:true
+								},
+								gridLines: {
+									color: gridLineColor
 								}
 							}]
 						}
@@ -211,9 +217,17 @@ block endOfBody
 							display: false
 						},
 						scales: {
+							xAxes: [{
+								gridLines: {
+									color: gridLineColor
+								}
+							}],
 							yAxes: [{
 								ticks: {
 									beginAtZero:true
+								},
+								gridLines: {
+									color: gridLineColor
 								}
 							}]
 						}
@@ -236,9 +250,17 @@ block endOfBody
 							display: false
 						},
 						scales: {
+							xAxes: [{
+								gridLines: {
+									color: gridLineColor
+								}
+							}],
 							yAxes: [{
 								ticks: {
 									beginAtZero:true
+								},
+								gridLines: {
+									color: gridLineColor
 								}
 							}]
 						}
@@ -264,7 +286,7 @@ block endOfBody
 						updateCurrencyValue(row.find(".data-total-fees"), item.totalFees);
 						updateCurrencyValue(row.find(".data-avg-fee"), item.totalFees / item.count);
 
-						updateFeeRateValue(row.find(".data-fee-rate"), item.totalFees / item.totalBytes, 2);
+						updateFeeRateValue(row.find(".data-fee-rate"), item.totalFees / item.totalBytes, 2, false);
 					}
 
 					row.show();

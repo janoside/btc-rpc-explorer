@@ -4,23 +4,19 @@ block headContent
 	title Terminal
 
 block content
-	div.row
-		div.col
-			h1.h3 Terminal
-	
-	hr
+	+pageTitle("Terminal")
 
-	:markdown-it
-		Use this interactive terminal to send RPC commands to your node. Results will be shown inline. To browse all available RPC commands you can use the [RPC Browser](/rpc-browser).
+	+dismissableInfoAlert
+		.mb-3 This is an internal developer tool.
 
-	div.card.shadow-sm.mb-3
-		div.card-body
-			form(id="terminal-form")
-				.mb-3
-					label(for="input-cmd") Command
-					input.form-control(type="text", id="input-cmd", name="cmd")
+	+contentSection
+		form(id="terminal-form")
+			.mb-3
+				label(for="input-cmd") Command
+				input.form-control(type="text", id="input-cmd", name="cmd")
 
-				input.btn.btn-primary.w-100(type="submit", value="Send")
+			input.btn.btn-primary.w-100(type="submit", value="Send")
+			
 
 	hr
 	

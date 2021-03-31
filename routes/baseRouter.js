@@ -27,7 +27,7 @@ const rpcApi = require("./../app/api/rpcApi.js");
 
 const forceCsrf = csurf({ ignoreMethods: [] });
 
-var noTxIndexMsg = "\n\nYour node does not have `txindex` enabled. Without it, you can only lookup wallet, mempool, and recently confirmed transactions by their `txid`. Searching for non-wallet transactions that were confirmed more than "+config.noTxIndexSearchDepth+" blocks ago is only possible if you provide the confirmed block height in addition to the txid, using `<txid>@<height>` in the search box.";
+var noTxIndexMsg = "\n\nYour node does not have **txindex** enabled. Without it, you can only lookup wallet, mempool, and recently confirmed transactions by their **txid**. Searching for non-wallet transactions that were confirmed more than "+config.noTxIndexSearchDepth+" blocks ago is only possible if the confirmed block height is available.";
 
 router.get("/", asyncHandler(async (req, res, next) => {
 	try {
@@ -101,13 +101,13 @@ router.get("/", asyncHandler(async (req, res, next) => {
 		}));
 
 		promises.push(new Promise(async (resolve, reject) => {
-			res.locals.hashrate1d = await utils.timePromise("promises.index.getNetworkHashrate-144", coreApi.getNetworkHashrate(144));
+			res.locals.hashrate7d = await utils.timePromise("promises.index.getNetworkHashrate-1008", coreApi.getNetworkHashrate(1008));
 
 			resolve();
 		}));
 
 		promises.push(new Promise(async (resolve, reject) => {
-			res.locals.hashrate7d = await utils.timePromise("promises.index.getNetworkHashrate-1008", coreApi.getNetworkHashrate(1008));
+			res.locals.hashrate30d = await utils.timePromise("promises.index.getNetworkHashrate-4320", coreApi.getNetworkHashrate(4320));
 
 			resolve();
 		}));
@@ -163,19 +163,19 @@ router.get("/", asyncHandler(async (req, res, next) => {
 			resolve();
 		}));
 
-		if (getblockchaininfo.chain !== 'regtest') {
-			var targetBlocksPerDay = 24 * 60 * 60 / global.coinConfig.targetBlockTimeSeconds;
+		var targetBlocksPerDay = 24 * 60 * 60 / global.coinConfig.targetBlockTimeSeconds;
+		res.locals.targetBlocksPerDay = targetBlocksPerDay;
 
-			promises.push(new Promise(async (resolve, reject) => {
+		if (getblockchaininfo.chain !== 'regtest') {
+			/*promises.push(new Promise(async (resolve, reject) => {
 				res.locals.txStats = await utils.timePromise("promises.index.getTxCountStats", coreApi.getTxCountStats(targetBlocksPerDay / 4, -targetBlocksPerDay, "latest"));
 				
 				resolve();
-			}));
+			}));*/
 
-			var chainTxStatsIntervals = [ [targetBlocksPerDay, "24 hours"], [targetBlocksPerDay * 7, "1 week"], [targetBlocksPerDay * 30, "1 month"], [targetBlocksPerDay * 365, "1 year"] ]
+			var chainTxStatsIntervals = [ [targetBlocksPerDay, "24 hours"], [7 * targetBlocksPerDay, "7 days"], [30 * targetBlocksPerDay, "30 days"] ]
 				.filter(dat => dat[0] <= getblockchaininfo.blocks);
 
-			// promiseResults[8-X] (if not regtest)
 			res.locals.chainTxStats = {};
 			for (var i = 0; i < chainTxStatsIntervals.length; i++) {
 				promises.push(new Promise(async (resolve, reject) => {
@@ -195,7 +195,83 @@ router.get("/", asyncHandler(async (req, res, next) => {
 			}));
 		}
 
+		/*promises.push(new Promise(async (resolve, reject) => {
+			global.rpcClient.command('getblocktemplate', {"rules": ["segwit"]}, function(err, result, resHeaders) {
+				if (err) {
+					return reject(err);
+				}
+
+				res.locals.nextBlockTemplate = result;
+
+				var minFeeRate = 1000000;
+				var maxFeeRate = 0;
+				var minFeeTxid = null;
+				var maxFeeTxid = null;
+
+				result.transactions.forEach(tx => {
+					var feeRate = tx.fee / tx.weight * 4;
+					
+					if (feeRate < minFeeRate) {
+						minFeeRate = feeRate;
+						minFeeTxid = tx.txid;
+					}
+
+					if (feeRate > maxFeeRate) {
+						maxFeeRate = feeRate;
+						maxFeeTxid = tx.txid;
+					}
+				});
+
+				res.locals.nextBlockMinFeeRate = minFeeRate;
+				res.locals.nextBlockMaxFeeRate = maxFeeRate;
+				res.locals.nextBlockMinFeeTxid = minFeeTxid;
+				res.locals.nextBlockMaxFeeTxid = maxFeeTxid;
+
+				resolve();
+			});
+		}));*/
+
+
 		await Promise.all(promises);
+		
+		
+		var firstBlockHeader = res.locals.difficultyPeriodFirstBlockHeader;
+		var currentBlock = res.locals.latestBlocks[0];
+		var heightDiff = currentBlock.height - firstBlockHeader.height;
+		var timeDiff = currentBlock.mediantime - firstBlockHeader.mediantime;
+		var timePerBlock = timeDiff / heightDiff;
+		var timePerBlockDuration = moment.duration(timePerBlock * 1000);
+		var daysUntilAdjustment = new Decimal(res.locals.blocksUntilDifficultyAdjustment).times(timePerBlock).dividedBy(60 * 60 * 24);
+		var duaDP1 = daysUntilAdjustment.toDP(1);
+		var daysUntilAdjustmentStr = daysUntilAdjustment > 1 ? `~${duaDP1} day${duaDP1 == "1" ? "" : "s"}` : "< 1 day";
+
+		if (timePerBlock > 600) {
+			var diffAdjPercent = new Decimal(timeDiff / heightDiff / 600).times(100).minus(100);
+			var diffAdjText = `Blocks during the current difficulty epoch have taken this long, on average, to be mined. If this pace continues, then in ${res.locals.blocksUntilDifficultyAdjustment.toLocaleString()} block${res.locals.blocksUntilDifficultyAdjustment == 1 ? "" : "s"} (${daysUntilAdjustmentStr}) the difficulty will adjust downward: -${diffAdjPercent.toDP(1)}%`;
+			var diffAdjSign = "-";
+			var textColorClass = "text-danger";
+
+		} else {
+			var diffAdjPercent = new Decimal(100).minus(new Decimal(timeDiff / heightDiff / 600).times(100));
+			var diffAdjText = `Blocks during the current difficulty epoch have taken this long, on average, to be mined. If this pace continues, then in ${res.locals.blocksUntilDifficultyAdjustment.toLocaleString()} block${res.locals.blocksUntilDifficultyAdjustment == 1 ? "" : "s"} (${daysUntilAdjustmentStr}) the difficulty will adjust upward: +${diffAdjPercent.toDP(1)}%`;
+			var diffAdjSign = "+";
+			var textColorClass = "text-success";
+		}
+
+		res.locals.difficultyAdjustmentData = {
+			estimateAvailable: !isNaN(diffAdjPercent),
+
+			blocksLeft: res.locals.blocksUntilDifficultyAdjustment,
+			daysLeftStr: daysUntilAdjustmentStr,
+			calculationBlockCount: heightDiff,
+			currentEpoch: res.locals.difficultyPeriod,
+
+			delta: diffAdjPercent,
+			sign: diffAdjSign
+
+			//nameDesc: `Estimate for the difficulty adjustment that will occur in ${res.locals.blocksUntilDifficultyAdjustment.toLocaleString()} block${res.locals.blocksUntilDifficultyAdjustment == 1 ? "" : "s"} (${daysUntilAdjustmentStr}). This is calculated using the average block time over the last ${heightDiff} block(s). This estimate becomes more reliable as the difficulty epoch nears its end.`,
+		};
+
 
 		res.render("index");
 
@@ -270,7 +346,7 @@ router.get("/mempool-summary", asyncHandler(async (req, res, next) => {
 		}));
 
 		promises.push(new Promise(async (resolve, reject) => {
-			const mempooltxids = await utils.timePromise("promises.mempool-summary.getMempoolTxids", coreApi.getMempoolTxids());
+			const mempooltxids = await utils.timePromise("promises.mempool-summary.getAllMempoolTxids", coreApi.getAllMempoolTxids());
 
 			var debugMaxCount = 0;
 
@@ -404,9 +480,16 @@ router.get("/disconnect", function(req, res, next) {
 
 router.get("/changeSetting", function(req, res, next) {
 	if (req.query.name) {
-		req.session[req.query.name] = req.query.value;
+		if (!req.session.userSettings) {
+			req.session.userSettings = {};
+		}
 
-		res.cookie('user-setting-' + req.query.name, req.query.value);
+		req.session.userSettings[req.query.name] = req.query.value;
+
+		var userSettings = JSON.parse(req.cookies["user-settings"] || "{}");
+		userSettings[req.query.name] = req.query.value;
+
+		res.cookie("user-settings", JSON.stringify(userSettings));
 	}
 
 	res.redirect(req.headers.referer);
@@ -878,6 +961,10 @@ router.get("/tx/:transactionId", asyncHandler(async (req, res, next) => {
 
 		var tx = rawTxResult.transactions[0];
 
+		res.locals.tx = tx;
+		res.locals.isCoinbaseTx = tx.vin[0].coinbase;
+
+
 		res.locals.result.getrawtransaction = tx;
 		res.locals.result.txInputs = rawTxResult.txInputsByTransaction[txid] || {};
 
@@ -917,11 +1004,21 @@ router.get("/tx/:transactionId", asyncHandler(async (req, res, next) => {
 		next();
 
 	} catch (err) {
-		res.locals.userMessageMarkdown = `Failed to load transaction: txid=**${txid}**`;
+		if (global.prunedBlockchain && res.locals.blockHeight && res.locals.blockHeight < global.pruneHeight) {
+			// Failure to load tx here is expected and a full description of the situation is given to the user
+			// in the UI. No need to also show an error userMessage here.
 
-		if (!global.txindexAvailable) {
+		} else if (!global.txindexAvailable) {
 			res.locals.noTxIndexMsg = noTxIndexMsg;
+
+			// As above, failure to load the tx is expected here and good user feedback is given in the UI.
+			// No need for error userMessage.
+
+		} else {
+			res.locals.userMessageMarkdown = `Failed to load transaction: txid=**${txid}**`;
 		}
+
+		
 
 		utils.logError("1237y4ewssgt", err);
 
@@ -1048,7 +1145,7 @@ router.get("/address/:address", function(req, res, next) {
 							res.locals.txids = txids;
 
 							(global.txindexAvailable
-								? coreApi.getRawTransactionsWithInputs(txids)
+								? coreApi.getRawTransactionsWithInputs(txids, 5)
 								: coreApi.getRawTransactionsByHeights(txids, blockHeightsByTxid)
 									.then(transactions => ({ transactions, txInputsByTransaction: {} }))
 							).then(function(rawTxResult) {
@@ -1471,43 +1568,76 @@ router.post("/terminal", function(req, res, next) {
 	}
 });
 
-router.get("/unconfirmed-tx", function(req, res, next) {
-	var limit = config.site.browseBlocksPageSize;
-	var offset = 0;
-	var sort = "desc";
+router.get("/mempool-tx", asyncHandler(async (req, res, next) => {
+	try {
+		var limit = config.site.browseBlocksPageSize;
+		var offset = 0;
+		var sort = "desc";
 
-	if (req.query.limit) {
-		limit = parseInt(req.query.limit);
-	}
+		if (req.query.limit) {
+			limit = parseInt(req.query.limit);
+		}
 
-	if (req.query.offset) {
-		offset = parseInt(req.query.offset);
-	}
+		if (req.query.offset) {
+			offset = parseInt(req.query.offset);
+		}
 
-	if (req.query.sort) {
-		sort = req.query.sort;
-	}
+		if (req.query.sort) {
+			sort = req.query.sort;
+		}
 
-	res.locals.limit = limit;
-	res.locals.offset = offset;
-	res.locals.sort = sort;
-	res.locals.paginationBaseUrl = "./unconfirmed-tx";
+		res.locals.limit = limit;
+		res.locals.offset = offset;
+		res.locals.sort = sort;
+		res.locals.paginationBaseUrl = "./mempool-tx";
 
-	coreApi.getMempoolDetails(offset, limit).then(function(mempoolDetails) {
-		res.locals.mempoolDetails = mempoolDetails;
+		const mempoolData = await utils.timePromise("promises.mempool-tx.getMempoolTxids", coreApi.getMempoolTxids(limit, offset));
 
-		res.render("unconfirmed-transactions");
+		const txids = mempoolData.txids;
+		res.locals.txCount = mempoolData.txCount;
+
+		
+		const promises = [];
+
+		promises.push(new Promise(async (resolve, reject) => {
+			const transactionData = await utils.timePromise("promises.mempool-tx.getRawTransactionsWithInputs", coreApi.getRawTransactionsWithInputs(txids, 5));
+
+			res.locals.transactions = transactionData.transactions;
+			res.locals.txInputsByTransaction = transactionData.txInputsByTransaction;
+			
+			resolve();
+		}));
+
+		res.locals.mempoolDetailsByTxid = {};
+
+		txids.forEach(txid => {
+			promises.push(new Promise(async (resolve, reject) => {
+				const mempoolTxidDetails = await utils.timePromise("promises.mempool-tx.getMempoolTxDetails", coreApi.getMempoolTxDetails(txid, false));
+
+				res.locals.mempoolDetailsByTxid[txid] = mempoolTxidDetails;
+
+				resolve();
+			}));
+		});
+
+
+		await Promise.all(promises);
+
+
+		res.render("mempool-tx");
 
 		next();
 
-	}).catch(function(err) {
-		res.locals.userMessage = "Error: " + err;
+	} catch (err) {
+		utils.logError("3297gfsdyde3q", err);
+					
+		res.locals.userMessage = "Error building page: " + err;
 
-		res.render("unconfirmed-transactions");
+		res.render("mempool-tx");
 
 		next();
-	});
-});
+	}
+}));
 
 router.get("/tx-stats", function(req, res, next) {
 	var dataPoints = 100;

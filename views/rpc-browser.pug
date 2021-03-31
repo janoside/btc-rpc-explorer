@@ -10,13 +10,14 @@ block headContent
 		}
 
 block content
-	h1.h3.mb-0 RPC Browser
-	hr
+	+pageTitle("RPC Browser")
 
 	if (gethelp)
 		div.row
 			div.col-md-9
 				if (methodhelp)
+					+contentSection(`Command: ${method}`)
+
 					div.card.shadow-sm.mb-3
 						div.card-body
 							div.clearfix
@@ -48,7 +49,7 @@ block content
 												h3.h6.mt-3 Result
 
 											pre.border.mb-3
-												code.json.bg-light(data-lang="json") #{JSON.stringify(methodResult, null, 4)}
+												code.json(data-lang="json") #{JSON.stringify(methodResult, null, 4)}
 
 										hr
 
@@ -106,31 +107,29 @@ block content
 										input.btn.btn-primary.px-3(type="submit", name="execute", value="Execute")
 
 								div.tab-pane(id="tab-help-content", role="tabpanel")
-									pre.border
-										code.json.bg-light(data-lang="txt") #{methodhelp.string}
+									pre
+										code.json(data-lang="txt") #{methodhelp.string}
 
 								if (methodhelp.args && methodhelp.args.length > 0)
 									div.tab-pane(id="tab-parsed-args", role="tabpanel")
 										pre.border
-											code.json.bg-light(data-lang="json") #{JSON.stringify(methodhelp.args, null, 4)}
+											code.json(data-lang="json") #{JSON.stringify(methodhelp.args, null, 4)}
 
 					
 							
 
 				else
-					:markdown-it
-						Browse RPC commands from the list. The list is built from the results of the `help` command and organized into sections accordingly.
 
-			div.col-md-3
+					+dismissableInfoAlert("rpcBrowserNoteDismissed", "About RPC Browser...")
+						.mb-2 This tool lists all RPC commands that your node makes publicly visible. Clicking on any command in the list will display additional information about that command and provide an interactive tool for submitting the command to your node.
+
+			.col-md-3
 				each section, sectionIndex in gethelp
-					div.card.shadow-sm.mb-3
-						div.card-body
-							h4.h6.mb-0 #{section.name}
-								small  (#{section.methods.length})
-							hr
+					+contentSection(`${section.name} (${section.methods.length})`)
+						ol.mb-0.ps-4
+							each methodX, methodIndex in section.methods
+								li
+									a(href=`./rpc-browser?method=${methodX.name}`, style=(methodX.name == method ? "font-weight: bold; font-style: italic;" : false)) #{methodX.name}
 							
-							ol(style="padding-left: 30px;")
-								each methodX, methodIndex in section.methods
-									li
-										a.font-monospace(href=`./rpc-browser?method=${methodX.name}`, style=(methodX.name == method ? "font-weight: bold; font-style: italic;" : false)) #{methodX.name}
+							
 

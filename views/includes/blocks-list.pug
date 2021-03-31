@@ -1,9 +1,10 @@
-div.table-responsive
+.table-responsive
 	table.table.table-borderless.table-striped.mb-0
 		thead
 			tr
 				//th
-				th
+				if (!hideBlockIndex)
+					th
 
 				th.data-header.text-end Height
 
@@ -13,7 +14,7 @@ div.table-responsive
 
 				th.data-header.text-end Age
 				th.data-header.text-end
-					span.border-dotted(title="Time To Mine - The time it took to mine this block after the previous block. 'Fast' blocks (mined in < 5min) are shown in green; 'slow' blocks (mined in > 15min) are shown in red.", data-bs-toggle="tooltip") T.T.M.
+					span.border-dotted(title="<b>Time To Mine</b><br/>The time it took to mine this block after the previous block. <span class='text-success'>Fast</span> blocks (< 5min) and <span class='text-danger'>Slow</span> blocks (> 15min) are highlighted.", data-bs-toggle="tooltip", data-bs-html="true") TTM
 				th.data-header.text-end Miner
 				th.data-header.text-end
 					span.border-dotted(title="The number of transactions included in each block.", data-bs-toggle="tooltip") N(tx)
@@ -50,16 +51,18 @@ div.table-responsive
 
 				if (block && ((sort == "desc" && (blockIndex < blocks.length - 1 || block.height == 0)) || (sort == "asc" && (block.height == 0 || blockIndex > 0))))
 					tr
-						td
-							if (sort == "desc")
-								small.text-muted #{(blockIndex + offset + 1).toLocaleString()}
-							else
-								small.text-muted #{(blockIndex + offset).toLocaleString()}
+						if (!hideBlockIndex)
+							td
+								if (sort == "desc")
+									small.text-muted #{(blockIndex + offset + 1).toLocaleString()}
+								else
+									small.text-muted #{(blockIndex + offset).toLocaleString()}
 
 						td.data-cell.font-monospace.text-end
 							if (global.specialBlocks && global.specialBlocks[block.hash])
-								a(data-bs-toggle="tooltip", title=`${coinConfig.name} Fun! See block for details`)
-									i.fas.fa-certificate.text-primary.me-1
+								a(data-bs-toggle="tooltip", title=`<b>${coinConfig.name} Fun!</b><br/>There's something special about this block...<br/>Click to read more.`, data-bs-html="true")
+									span.me-2
+										+funItemIcon
 
 							a(href=`./block-height/${block.height}`) #{block.height.toLocaleString()}
 						
@@ -78,8 +81,7 @@ div.table-responsive
 
 						if (!hideTimestampColumn)
 							td.data-cell.font-monospace.text-end
-								- var timestampHuman = block.time;
-								include timestamp-human.pug
+								+timestamp(block.time, false)
 							
 
 						td.data-cell.font-monospace.text-end
@@ -122,9 +124,9 @@ div.table-responsive
 								span.badge.bg-primary(data-bs-toggle="tooltip", title=`Identified by: ${block.miner.identifiedBy}`) #{utils.ellipsize(block.miner.name, 14)}
 
 							else if (block.height < global.pruneHeight)
-								span.border-dotted(title="Determining the miner of a block requires that the block not be pruned. Sadly, this block has been pruned.", data-bs-toggle="tooltip")
-									i.fas.fa-backspace.text-danger.me-2
-									| ?
+								span(title="This data is unavailable due to blockchain pruning", data-bs-toggle="tooltip")
+									i.fas.fa-backspace.text-danger
+										
 							else
 								span ?
 
@@ -145,9 +147,13 @@ div.table-responsive
 									span 0
 
 						td.data-cell.font-monospace.text-end
-							if block.totalFees && block.strippedsize
+							if (block.totalFees && block.strippedsize)
 								- var currencyValue = new Decimal(block.totalFees).dividedBy(block.strippedsize).times(coinConfig.baseCurrencyUnit.multiplier).toDecimalPlaces(0);
-								span #{currencyValue}
+								if (currencyValue > 0)
+									span #{currencyValue}
+								else
+									span -
+									
 							else
 								span(title="This data is unavailable due to blockchain pruning", data-bs-toggle="tooltip")
 									i.fas.fa-backspace.text-danger

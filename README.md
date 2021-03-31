@@ -1,6 +1,6 @@
 # BTC RPC Explorer
 
-![homepage](https://github.com/janoside/btc-rpc-explorer/blob/master/public/img/screenshots/homepage.png?raw=true)
+![homepage](./public/img/screenshots/homepage-v3.png)
 
 [![npm version][npm-ver-img]][npm-ver-url] [![NPM downloads][npm-dl-img]][npm-dl-url]
 

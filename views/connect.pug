@@ -1,8 +1,7 @@
 extends layout
 
 block content
-	h1.h3 RPC Connect
-	hr
+	+pageTitle("RPC Connect")
 
 	form(method="post", action="./connect")
 		input(type="hidden", name="_csrf", value=csrfToken)

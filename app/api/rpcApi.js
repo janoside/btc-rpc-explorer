@@ -75,7 +75,7 @@ function getPeerInfo() {
 	return getRpcData("getpeerinfo");
 }
 
-function getMempoolTxids() {
+function getAllMempoolTxids() {
 	return getRpcDataWithParams({method:"getrawmempool", parameters:[false]});
 }
 
@@ -553,7 +553,7 @@ module.exports = {
 	getNetworkInfo: getNetworkInfo,
 	getNetTotals: getNetTotals,
 	getMempoolInfo: getMempoolInfo,
-	getMempoolTxids: getMempoolTxids,
+	getAllMempoolTxids: getAllMempoolTxids,
 	getMiningInfo: getMiningInfo,
 	getIndexInfo: getIndexInfo,
 	getBlockByHeight: getBlockByHeight,

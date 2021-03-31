@@ -277,9 +277,9 @@ function getIndexInfo() {
 	return tryCacheThenRpcApi(miscCache, "getIndexInfo", 10 * ONE_SEC, rpcApi.getIndexInfo);
 }
 
-function getMempoolTxids() {
+function getAllMempoolTxids() {
 	// no caching, that would be dumb
-	return rpcApi.getMempoolTxids();
+	return rpcApi.getAllMempoolTxids();
 }
 
 function getMiningInfo() {
@@ -568,18 +568,16 @@ function getPeerSummary() {
 	});
 }
 
-function getMempoolDetails(start, count) {
+function getMempoolTxids(limit, offset) {
 	return new Promise(function(resolve, reject) {
-		tryCacheThenRpcApi(miscCache, "getMempoolTxids", ONE_SEC, rpcApi.getMempoolTxids).then(function(resultTxids) {
+		tryCacheThenRpcApi(miscCache, "getMempoolTxids", ONE_SEC, rpcApi.getAllMempoolTxids).then(function(resultTxids) {
 			var txids = [];
 
-			for (var i = start; (i < resultTxids.length && i < (start + count)); i++) {
+			for (var i = offset; (i < resultTxids.length && i < (offset + limit)); i++) {
 				txids.push(resultTxids[i]);
 			}
 
-			getRawTransactionsWithInputs(txids, config.site.txMaxInput).then(function(result) {
-				resolve({ txCount:resultTxids.length, transactions:result.transactions, txInputsByTransaction:result.txInputsByTransaction });
-			});
+			resolve({ txCount:resultTxids.length, txids:txids });
 
 		}).catch(function(err) {
 			reject(err);
@@ -1140,7 +1138,7 @@ module.exports = {
 	getNetworkInfo: getNetworkInfo,
 	getNetTotals: getNetTotals,
 	getMempoolInfo: getMempoolInfo,
-	getMempoolTxids: getMempoolTxids,
+	getAllMempoolTxids: getAllMempoolTxids,
 	getMiningInfo: getMiningInfo,
 	getIndexInfo: getIndexInfo,
 	getBlockByHeight: getBlockByHeight,
@@ -1162,7 +1160,7 @@ module.exports = {
 	logCacheSizes: logCacheSizes,
 	getPeerSummary: getPeerSummary,
 	getChainTxStats: getChainTxStats,
-	getMempoolDetails: getMempoolDetails,
+	getMempoolTxids: getMempoolTxids,
 	getTxCountStats: getTxCountStats,
 	getSmartFeeEstimates: getSmartFeeEstimates,
 	getSmartFeeEstimate: getSmartFeeEstimate,

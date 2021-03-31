@@ -1,0 +1,132 @@
+$body-bg: #031b40;
+$body-color: #f7f9fa;
+
+$main-bg: darken($body-bg, 6%);
+
+$text-muted: #b7bfc7;
+
+$dark: #3d454d;
+
+/*$theme-colors: (
+	"dark": #292e33
+);*/
+
+
+
+
+$border-color: lighten($body-bg, 4%);
+
+$card-border-color: $border-color;
+
+$link-hover-color:			#408cff;
+
+
+$table-striped-bg: lighten($body-bg, 4%);
+
+
+$pagination-bg: 					$body-bg;
+$pagination-border-color: 			lighten($border-color, 5%);
+$pagination-active-bg: 				$body-bg;
+$pagination-active-border-color: 	lighten($border-color, 5%);
+$pagination-hover-bg: 				lighten($pagination-bg, 15%);
+$pagination-hover-border-color: 	lighten($border-color, 5%);
+$pagination-disabled-bg: 			darken($pagination-bg, 3%);
+$pagination-disabled-border-color: 	lighten($border-color, 5%);
+
+
+$tooltip-bg: lighten($body-bg, 15%);
+
+
+$nav-tabs-link-active-color:		darken($body-color, 5%);
+//$nav-tabs-link-active-bg:			$body-bg !default;
+$nav-tabs-link-active-border-color:	#ced4da #ced4da $body-bg !important;
+
+
+$btn-close-color: #fff;
+
+
+$tooltip-opacity: 1.0;
+
+$dropdown-bg: lighten($body-bg, 10%);
+$dropdown-link-color: $body-color;
+$dropdown-link-hover-bg: lighten($dropdown-bg, 10%);
+$dropdown-link-hover-color: $body-color;
+$dropdown-link-active-bg: lighten($dropdown-bg, 5%);
+$dropdown-dark-bg: #ff0;
+$dropdown-dark-link-hover-bg: #0ff;
+$dropdown-dark-link-active-bg: #f0f;
+$dropdown-link-active-color: lighten($dropdown-bg, 5%);
+
+$dropdown-header-color: $body-color;
+
+$dropdown-box-shadow: 0 1.5rem 1rem rgba(#000, .35);
+
+
+$input-bg: darken(#fff, 0%);
+//$input-border-color: lighten($input-bg, 9%);
+$input-color: #212529;
+
+
+
+@import "./main";
+@import "../../node_modules/bootstrap/scss/bootstrap";
+
+
+
+
+.alert-primary {
+	color: $body-color;
+	background-color: lighten($body-bg, 8%);
+	border-color: lighten($body-bg, 20%);
+	border-width: 2px;
+}
+
+.alert-danger {
+	color: $body-color;
+	background-color: #7d323b;
+	border-color: #7d1f29;
+	border-width: 2px;
+}
+
+.alert-danger a {
+	color: $body-color;
+	text-decoration: underline;
+}
+
+.alert-warning {
+	color: $body-color;
+	background-color: #d9962b;
+	border-color: darken(#d9962b, 10%);
+	border-width: 2px;
+}
+
+
+
+.bg-main {
+	background-color: $main-bg !important;
+}
+
+.bg-header-footer {
+	background-color: #162740 !important;
+}
+
+.bg-header-footer-highlight {
+	background-color: lighten(#162740, 15%) !important;
+}
+
+.bg-gradient-body-to-main {
+	background: linear-gradient(0deg, $main-bg 0%, $body-bg 100%);
+}
+
+.card-highlight {
+	background-color: lighten($card-bg, 5%);
+	border: solid 1px lighten($card-bg, 10%) !important;
+	color: $body-color;
+}
+
+code {
+	padding: 0px 3px;
+	border-radius: 3px;
+	background-color: lighten($card-bg, 15%);
+	color: #198754;
+}

@@ -1,16 +1,15 @@
 extends layout
 
 block content
-	h1 Error
-	hr
+	+pageTitle("Error")
 
 	if (message)
 		pre
-			code.json.bg-light !{message}
+			code.json.bg-body !{message}
 	else
 		p Unknown error
 
 	if (error)
 		h2 #{error.status}
 		pre
-			code.json.bg-light #{error.stack}
+			code.json.bg-body #{error.stack}

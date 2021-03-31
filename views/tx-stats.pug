@@ -4,12 +4,11 @@ block headContent
 	title Transaction Stats
 	
 block content
-	h1.h3 Transaction Stats
-	hr
+	+pageTitle("Transaction Stats")
 
 	if (false)
 		pre
-			code.json.bg-light #{JSON.stringify(txStatResults, null, 4)}
+			code.json #{JSON.stringify(txStatResults, null, 4)}
 
 	if (true)
 		if (false)
@@ -18,109 +17,90 @@ block content
 		if (true)
 			div.row
 				div.col-lg-6
-					div.card.shadow-sm.mb-3
-						div.card-body
-							h3.h6.mb-0 Transactions, 24hr
-							hr
+					+contentSection("1day Transactions")
+						script var txCountDataDay = [];
+						each item, index in txStatsDay.txCounts
+							script txCountDataDay.push({x:#{item.x}, y:#{item.y}});
 
-							script var txCountDataDay = [];
-							each item, index in txStatsDay.txCounts
-								script txCountDataDay.push({x:#{item.x}, y:#{item.y}});
+						- var graphData = {id:"graphDay", dataVar:"txCountDataDay", labels:txStatsDay.txLabels, title:"Transactions, 24hr", xaxisTitle:"Block", xaxisStep:5, yaxisTitle:"Tx Count"};
+						include ./includes/line-graph.pug
 
-							- var graphData = {id:"graphDay", dataVar:"txCountDataDay", labels:txStatsDay.txLabels, title:"Transactions, 24hr", xaxisTitle:"Block", xaxisStep:5, yaxisTitle:"Tx Count"};
-							include ./includes/line-graph.pug
+							
 
 				div.col-lg-6
-					div.card.shadow-sm.mb-3
-						div.card-body
-							h3.h6.mb-0 Transactions, 7day
-							hr
+					+contentSection("7day Transactions")
+						script var txCountDataWeek = [];
+						each item, index in txStatsWeek.txCounts
+							script txCountDataWeek.push({x:#{item.x}, y:#{item.y}});
 
-							script var txCountDataWeek = [];
-							each item, index in txStatsWeek.txCounts
-								script txCountDataWeek.push({x:#{item.x}, y:#{item.y}});
-
-							- var graphData = {id:"graphWeek", dataVar:"txCountDataWeek", labels:txStatsWeek.txLabels, title:"Transactions, 7day", xaxisTitle:"Block", xaxisStep:100, yaxisTitle:"Tx Count"};
-							include ./includes/line-graph.pug
+						- var graphData = {id:"graphWeek", dataVar:"txCountDataWeek", labels:txStatsWeek.txLabels, title:"Transactions, 7day", xaxisTitle:"Block", xaxisStep:100, yaxisTitle:"Tx Count"};
+						include ./includes/line-graph.pug
+	
 
 				div.col-lg-6
-					div.card.shadow-sm.mb-3
-						div.card-body
-							h3.h6.mb-0 Transactions, 30day
-							hr
+					+contentSection("30day Transactions")
+						script var txCountDataMonth = [];
+						each item, index in txStatsMonth.txCounts
+							script txCountDataMonth.push({x:#{item.x}, y:#{item.y}});
 
-							script var txCountDataMonth = [];
-							each item, index in txStatsMonth.txCounts
-								script txCountDataMonth.push({x:#{item.x}, y:#{item.y}});
-
-							- var graphData = {id:"graphMonth", dataVar:"txCountDataMonth", labels:txStatsMonth.txLabels, title:"Transactions, 30day", xaxisTitle:"Block", xaxisStep:500, yaxisTitle:"Tx Count"};
-							include ./includes/line-graph.pug
+						- var graphData = {id:"graphMonth", dataVar:"txCountDataMonth", labels:txStatsMonth.txLabels, title:"Transactions, 30day", xaxisTitle:"Block", xaxisStep:500, yaxisTitle:"Tx Count"};
+						include ./includes/line-graph.pug
+							
 
 				div.col-lg-6
-					div.card.shadow-sm.mb-3
-						div.card-body
-							h3.h6.mb-0 Transactions, All time
-							hr
+					+contentSection("All-Time Transactions")
+						script var txCountDataAlltime = [];
+						each item, index in txStats.txCounts
+							script txCountDataAlltime.push({x:#{item.x}, y:#{item.y}});
 
-							script var txCountDataAlltime = [];
-							each item, index in txStats.txCounts
-								script txCountDataAlltime.push({x:#{item.x}, y:#{item.y}});
+						- var graphData = {id:"graphAlltime", dataVar:"txCountDataAlltime", labels:txStatsMonth.txLabels, title:"Transactions, All time", xaxisTitle:"Block", xaxisStep:500, yaxisTitle:"Tx Count"};
+						include ./includes/line-graph.pug
 
-							- var graphData = {id:"graphAlltime", dataVar:"txCountDataAlltime", labels:txStatsMonth.txLabels, title:"Transactions, All time", xaxisTitle:"Block", xaxisStep:500, yaxisTitle:"Tx Count"};
-							include ./includes/line-graph.pug
 
 
 			div.row
 				div.col-lg-6
-					div.card.shadow-sm.mb-3
-						div.card-body
-							h3.h6.mb-0 Tx Rate, 24hr
-							hr
+					+contentSection("1day Tx Rate")
+						script var txRateDataDay = [];
+						each item, index in txStatsDay.txRates
+							script txRateDataDay.push({x:#{item.x}, y:#{item.y}});
 
-							script var txRateDataDay = [];
-							each item, index in txStatsDay.txRates
-								script txRateDataDay.push({x:#{item.x}, y:#{item.y}});
+						- var graphData = {id:"graphRateDay", dataVar:"txRateDataDay", labels:txStatsDay.txLabels, title:"Tx Rate, 24hr", xaxisTitle:"Block", xaxisStep:5, yaxisTitle:"Tx Per Sec"};
+						include ./includes/line-graph.pug
 
-							- var graphData = {id:"graphRateDay", dataVar:"txRateDataDay", labels:txStatsDay.txLabels, title:"Tx Rate, 24hr", xaxisTitle:"Block", xaxisStep:5, yaxisTitle:"Tx Per Sec"};
-							include ./includes/line-graph.pug
+							
 
 				div.col-lg-6
-					div.card.shadow-sm.mb-3
-						div.card-body
-							h3.h6.mb-0 Tx Rate, 7day
-							hr
+					+contentSection("7day Tx Rate")
+						script var txRateDataWeek = [];
+						each item, index in txStatsWeek.txRates
+							script txRateDataWeek.push({x:#{item.x}, y:#{item.y}});
 
-							script var txRateDataWeek = [];
-							each item, index in txStatsWeek.txRates
-								script txRateDataWeek.push({x:#{item.x}, y:#{item.y}});
+						- var graphData = {id:"graphRateWeek", dataVar:"txRateDataWeek", labels:txStatsWeek.txLabels, title:"Tx Rate, 7day", xaxisTitle:"Block", xaxisStep:100, yaxisTitle:"Tx Per Sec"};
+						include ./includes/line-graph.pug
 
-							- var graphData = {id:"graphRateWeek", dataVar:"txRateDataWeek", labels:txStatsWeek.txLabels, title:"Tx Rate, 7day", xaxisTitle:"Block", xaxisStep:100, yaxisTitle:"Tx Per Sec"};
-							include ./includes/line-graph.pug
+							
 
 				div.col-lg-6
-					div.card.shadow-sm.mb-3
-						div.card-body
-							h3.h6.mb-0 Tx Rate, 30day
-							hr
+					+contentSection("30day Tx Rate")
+						script var txRateDataMonth = [];
+						each item, index in txStatsMonth.txRates
+							script txRateDataMonth.push({x:#{item.x}, y:#{item.y}});
 
-							script var txRateDataMonth = [];
-							each item, index in txStatsMonth.txRates
-								script txRateDataMonth.push({x:#{item.x}, y:#{item.y}});
+						- var graphData = {id:"graphRateMonth", dataVar:"txRateDataMonth", labels:txStatsMonth.txLabels, title:"Tx Rate, 30day", xaxisTitle:"Block", xaxisStep:500, yaxisTitle:"Tx Per Sec"};
+						include ./includes/line-graph.pug
 
-							- var graphData = {id:"graphRateMonth", dataVar:"txRateDataMonth", labels:txStatsMonth.txLabels, title:"Tx Rate, 30day", xaxisTitle:"Block", xaxisStep:500, yaxisTitle:"Tx Per Sec"};
-							include ./includes/line-graph.pug
+							
 
 				div.col-lg-6
-					div.card.shadow-sm.mb-3
-						div.card-body
-							h3.h6.mb-0 Tx Rate, All time
-							hr
+					+contentSection("All-Time Tx Rate")
+						script var txRateDataAlltime = [];
+						each item, index in txStats.txRates
+							script txRateDataAlltime.push({x:#{item.x}, y:#{item.y}});
+
+						- var graphData = {id:"graphRateAlltime", dataVar:"txRateDataAlltime", labels:txStatsMonth.txLabels, title:"Tx Rate, All time", xaxisTitle:"Block", xaxisStep:500, yaxisTitle:"Tx Per Sec"};
+						include ./includes/line-graph.pug
 								
-							script var txRateDataAlltime = [];
-							each item, index in txStats.txRates
-								script txRateDataAlltime.push({x:#{item.x}, y:#{item.y}});
-
-							- var graphData = {id:"graphRateAlltime", dataVar:"txRateDataAlltime", labels:txStatsMonth.txLabels, title:"Tx Rate, All time", xaxisTitle:"Block", xaxisStep:500, yaxisTitle:"Tx Per Sec"};
-							include ./includes/line-graph.pug
+							
 
 			

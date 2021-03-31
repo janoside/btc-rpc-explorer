@@ -4,137 +4,169 @@ block headContent
 	title Admin Dashboard
 
 block content
-	h1.h3 Admin Dashboard
-	hr
+	+pageTitle("Admin Dashboard")
 
-	ul.nav.nav-tabs.mb-3
-		li.nav-item
-			a.nav-link.active(data-bs-toggle="tab", href="#tab-details", role="tab") Details
-		li.nav-item
-			a.nav-link(data-bs-toggle="tab", href="#tab-json", role="tab") JSON
+	+pageTabs(["Details", "JSON"])
 
-	div.tab-content
-		div.tab-pane.active(id="tab-details", role="tabpanel")
-			div.card.shadow-sm.mb-3
-				div.card-body
-					h3.h6 Basics
-					hr
+	.tab-content
+		+pageTab("Details", true)
 
-					div.clearfix
-						div.row
-							div.summary-table-label Uptime
-							div.summary-table-content.font-monospace
-								- var uptime = moment.duration(new Date().getTime() - appStartTime);
-								span #{uptime.format()}
+			+contentSection("Tools")
+				a.btn.btn-primary(href="./admin/resetUserSettings") Reset User Settings
 
-						div.row
-							div.summary-table-label Node Version
-							div.summary-table-content.font-monospace
-								span #{global.nodeVersion}
+			+contentSection("Basics")
+				+summaryRow(3)
+					+summaryItem("Uptime")
+						- var uptime = moment.duration(new Date().getTime() - appStartTime);
+						| #{uptime.format()}
 
-						div.row
-							div.summary-table-label Node Env
-							div.summary-table-content.font-monospace
-								span #{process.env.NODE_ENV || "development"}
+					+summaryItem("Node Version")
+						| #{global.nodeVersion}
 
-			div.card.shadow-sm.mb-3
-				div.card-body
-					h3.h6 App Config
-					hr
+					+summaryItem("Node Env")
+						| #{process.env.NODE_ENV || "development"}
 
-					pre
-						code.json #{JSON.stringify(appConfig, null, 4)}
+			+contentSection("User Settings")
+				pre
+					code.json #{JSON.stringify(userSettings, null, 4)}
 
-			div.card.shadow-sm.mb-3
-				div.card-body
-					h3.h6 Memory Stats
-					hr
+			+contentSection("App Config")
+				pre
+					code.json #{JSON.stringify(appConfig, null, 4)}
 
-					div.table-responsive
-						table.table.table-borderless.table-hover
-							thead
-								tr
-									th.text-end Heap Size
-									th.text-end Used Heap
-									th.text-end Heap Limit
-									th.text-end Physical Size
-									th.text-end Available Size
+			+contentSection("Memory Stats")
+				.table-responsive
+					table.table.table-borderless.table-hover.table-striped
+						thead
+							tr
+								th.text-end Heap Size
+								th.text-end Used Heap
+								th.text-end Heap Limit
+								th.text-end Physical Size
+								th.text-end Available Size
 
-							tbody
-								tr.text-end.font-monospace
-									td
-										- var data = utils.formatLargeNumber(memstats.total_heap_size, 2);
-										span #{data[0]}
-											small  #{data[1].abbreviation}B
+						tbody
+							tr.text-end.font-monospace
+								td
+									- var data = utils.formatLargeNumber(memstats.total_heap_size, 2);
+									span #{data[0]}
+										small  #{data[1].abbreviation}B
 
-									td
-										- var data = utils.formatLargeNumber(memstats.used_heap_size, 2);
-										span #{data[0]}
-											small  #{data[1].abbreviation}B
+								td
+									- var data = utils.formatLargeNumber(memstats.used_heap_size, 2);
+									span #{data[0]}
+										small  #{data[1].abbreviation}B
 
-									td
-										- var data = utils.formatLargeNumber(memstats.heap_size_limit, 2);
-										span #{data[0]}
-											small  #{data[1].abbreviation}B
+								td
+									- var data = utils.formatLargeNumber(memstats.heap_size_limit, 2);
+									span #{data[0]}
+										small  #{data[1].abbreviation}B
 
-									td
-										- var data = utils.formatLargeNumber(memstats.total_physical_size, 2);
-										span #{data[0]}
-											small  #{data[1].abbreviation}B
+								td
+									- var data = utils.formatLargeNumber(memstats.total_physical_size, 2);
+									span #{data[0]}
+										small  #{data[1].abbreviation}B
 
-									td
-										- var data = utils.formatLargeNumber(memstats.total_available_size, 2);
-										span #{data[0]}
-											small  #{data[1].abbreviation}B
+								td
+									- var data = utils.formatLargeNumber(memstats.total_available_size, 2);
+									span #{data[0]}
+										small  #{data[1].abbreviation}B
 
 					
 
 			if (JSON.stringify(cacheStats) != "{}")
-				div.card.shadow-sm.mb-3
-					div.card-body
-						h3.h6 Cache Stats
-						hr
+				+contentSection("Cache Stats")
+					.table-responsive
+						table.table.table-borderless.table-hover.table-striped
+							thead
+								tr
+									th Cache
+									th.text-end Hit
+									th.text-end Miss
+									th.text-end Hit Rate
 
-						div.table-responsive
-							table.table.table-borderless.table-hover
-								thead
-									tr
-										th Cache
-										th.text-end Hit
-										th.text-end Miss
-										th.text-end Hit Rate
+							tbody
+								each item, itemName in cacheStats
+									tr.font-monospace
+										td #{itemName}
+										td.text-end #{item.hit.toLocaleString()}
+										td.text-end #{item.miss.toLocaleString()}
+										td.text-end
+											if (item.hit > 0 || item.miss > 0)
+												span #{(100 * item.hit / (item.hit + item.miss)).toLocaleString()}
+													small  %
+											else
+												span -
 
-								tbody
-									each item, itemName in cacheStats
-										tr.font-monospace
-											td #{itemName}
-											td.text-end #{item.hit.toLocaleString()}
-											td.text-end #{item.miss.toLocaleString()}
-											td.text-end
-												if (item.hit > 0 || item.miss > 0)
-													span #{(100 * item.hit / (item.hit + item.miss)).toLocaleString()}
-														small  %
-												else
-													span -
+			+contentSection("Cache Sizes")
+				pre
+					code.json #{JSON.stringify(cacheSizes, null, 4)}
+					
 
-			div.card.shadow-sm.mb-3
-				div.card-body
-					h3.h6 Cache Sizes
-					hr
+			+contentSection("RPC Stats")
+				.table-responsive
+					table.table.table-borderless.table-striped
+						thead
+							tr
+								th Method
+								th.text-end Count
+								th.text-end Time
+									small  (s)
+								th.text-end Avg Time
+									small  (ms)
+								th.text-end Successes / Failures
+								th.text-end Success Rate
 
-					pre
-						code.json #{JSON.stringify(cacheSizes, null, 4)}
+						tbody
+							each item, itemName in rpcStats
+								tr.font-monospace
+									td #{itemName}
+									td.text-end #{item.count.toLocaleString()}
+									td.text-end #{(item.time / 1000).toLocaleString()}
+									td.text-end #{(item.time / item.count).toLocaleString()}
+									td.text-end
+										span.text-success #{item.successes.toLocaleString()}
+										span.mx-1 /
+										span.text-danger #{item.failures.toLocaleString()}
 
-			div.card.shadow-sm.mb-3
-				div.card-body
-					h3.h6 RPC Stats
-					hr
+									td.text-end
+										span #{new Decimal(item.successes).dividedBy(new Decimal(item.successes + item.failures)).times(100).toDP(1)}
+											small  %
 
-					div.table-responsive
+			if (electrumStats)
+				+contentSection("Electrum Stats")
+					.table-responsive
 						table.table.table-borderless.table-striped
 							thead
 								tr
-									th Method
+									th Action
+									th.text-end Count
+									th.text-end First Seen
+									th.text-end Last Seen
+
+							tbody
+								each item, itemName in electrumStats.base
+									tr.font-monospace
+										td #{itemName}
+										td.text-end #{item.count.toLocaleString()}
+
+										if (item.firstSeenAt)
+											td.text-end #{moment.duration(new Date().getTime() - item.firstSeenAt.getTime()).format()} ago
+										else
+											td.text-end -
+
+										if (item.lastSeenAt)
+											td.text-end #{moment.duration(new Date().getTime() - item.lastSeenAt.getTime()).format()} ago
+										else
+											td.text-end -
+
+					hr
+
+					.table-responsive
+						table.table.table-borderless.table-striped
+							thead
+								tr
+									th RPC
 									th.text-end Count
 									th.text-end Time
 										small  (s)
@@ -144,7 +176,7 @@ block content
 									th.text-end Success Rate
 
 							tbody
-								each item, itemName in rpcStats
+								each item, itemName in electrumStats.rpc
 									tr.font-monospace
 										td #{itemName}
 										td.text-end #{item.count.toLocaleString()}
@@ -159,110 +191,38 @@ block content
 											span #{new Decimal(item.successes).dividedBy(new Decimal(item.successes + item.failures)).times(100).toDP(1)}
 												small  %
 
-			if (electrumStats)
-				div.card.shadow-sm.mb-3
-					div.card-body
-						h3.h6 Electrum Stats
-						hr
 
-						div.table-responsive
-							table.table.table-borderless.table-striped
-								thead
-									tr
-										th Action
-										th.text-end Count
-										th.text-end First Seen
-										th.text-end Last Seen
+			+contentSection("Error Stats")
+				if (JSON.stringify(errorStats) == "{}")
+					span.text-success No errors encountered
 
-								tbody
-									each item, itemName in electrumStats.base
-										tr.font-monospace
-											td #{itemName}
-											td.text-end #{item.count.toLocaleString()}
+				else
+					div.table-responsive
+						table.table.table-borderless.table-striped
+							thead
+								tr
+									th Error ID
+									th.text-end Count
+									th.text-end First Seen
+									th.text-end Last Seen
 
-											if (item.firstSeenAt)
-												td.text-end #{moment.duration(new Date().getTime() - item.firstSeenAt.getTime()).format()} ago
-											else
-												td.text-end -
+							tbody
+								each item, itemName in errorStats
+									tr.font-monospace
+										td #{itemName}
+										td.text-end #{item.count.toLocaleString()}
+										td.text-end #{moment.duration(new Date().getTime() - item.firstSeen).format()} ago
+										td.text-end #{moment.duration(new Date().getTime() - item.lastSeen).format()} ago
 
-											if (item.lastSeenAt)
-												td.text-end #{moment.duration(new Date().getTime() - item.lastSeenAt.getTime()).format()} ago
-											else
-												td.text-end -
-
-						hr
-
-						div.table-responsive
-							table.table.table-borderless.table-striped
-								thead
-									tr
-										th RPC
-										th.text-end Count
-										th.text-end Time
-											small  (s)
-										th.text-end Avg Time
-											small  (ms)
-										th.text-end Successes / Failures
-										th.text-end Success Rate
-
-								tbody
-									each item, itemName in electrumStats.rpc
-										tr.font-monospace
-											td #{itemName}
-											td.text-end #{item.count.toLocaleString()}
-											td.text-end #{(item.time / 1000).toLocaleString()}
-											td.text-end #{(item.time / item.count).toLocaleString()}
-											td.text-end
-												span.text-success #{item.successes.toLocaleString()}
-												span.mx-1 /
-												span.text-danger #{item.failures.toLocaleString()}
-
-											td.text-end
-												span #{new Decimal(item.successes).dividedBy(new Decimal(item.successes + item.failures)).times(100).toDP(1)}
-													small  %
-
-			div.card.shadow-sm.mb-3
-				div.card-body
-					h3.h6 Error Stats
-					hr
-
-					if (JSON.stringify(errorStats) == "{}")
-						span.text-success No errors encountered
-
-					else
-						div.table-responsive
-							table.table.table-borderless.table-striped
-								thead
-									tr
-										th Error ID
-										th.text-end Count
-										th.text-end First Seen
-										th.text-end Last Seen
-
-								tbody
-									each item, itemName in errorStats
-										tr.font-monospace
-											td #{itemName}
-											td.text-end #{item.count.toLocaleString()}
-											td.text-end #{moment.duration(new Date().getTime() - item.firstSeen).format()} ago
-											td.text-end #{moment.duration(new Date().getTime() - item.lastSeen).format()} ago
+					
 									
+		+pageTab("JSON")
+			+contentSection("Memory Stats")
+				pre
+					code.json #{JSON.stringify(memstats, null, 4)}
+						
+			+contentSection("Error Stats")
+				pre
+					code.json #{JSON.stringify(errorStats, null, 4)}
 
-		div.tab-pane(id="tab-json", role="tabpanel")
-			div.card.shadow-sm.mb-3
-				div.card-body
-					h3.h6 Memory Stats
-					hr
 
-					div.highlight
-						pre
-							code.json #{JSON.stringify(memstats, null, 4)}
-
-			div.card.shadow-sm.mb-3
-				div.card-body
-					h3.h6 Error Stats
-					hr
-
-					div.highlight
-						pre
-							code.json #{JSON.stringify(errorStats, null, 4)}

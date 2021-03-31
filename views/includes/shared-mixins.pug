@@ -1,0 +1,425 @@
+mixin pageTitle(text, subtext, copyableSubtext=false)
+	h1.fw-light.word-wrap.mb-4
+		| #{text}
+		br
+		span.text-tiny #{subtext}
+			if (copyableSubtext)
+				small
+					+copyTextButton(subtext)
+	
+	//hr.mb-3
+
+
+mixin sectionTitle(text, toggle=false, toggleUniqueClass, toggleUserSettingName, toggleOpen)
+	if (false)
+		pre
+			code.json #{JSON.stringify(session.userSettings)}
+
+	h3.h5.mb-1.fw-light(class=(toggle && !toggleOpen ? "mb-section" : false), class=(!toggle || toggleOpen ? "d-block" : "d-none"))
+		| #{text}
+
+		if (toggle)
+			small(title=`Toggle ${text}`, data-bs-toggle="tooltip")
+				a.text-muted.fs-6(href=`./changeSetting?name=${toggleUserSettingName}&value=false`)
+					i.toggle-plus-minus.far.ms-2(class=(toggleOpen ? "fa-minus-square" : "fa-plus-square"))
+
+
+mixin contentSection(title, toggleable=false, toggleUserSettingName, defaultOpen=true, cardUi=true)
+	if (toggleable)
+		- var toggleUniqueClass = `section-${utils.getRandomString(10, "aA#")}`;
+		- var toggleOpen = userSettings[toggleUserSettingName] == null ? defaultOpen : (userSettings[toggleUserSettingName] == "true" || userSettings[toggleUserSettingName] == true);
+
+	if (title)
+		+sectionTitle(title, toggleable, toggleUniqueClass, toggleUserSettingName, toggleOpen)
+
+	.mb-section(class=toggleUniqueClass, style=(toggleable && !toggleOpen ? "display: none;" : false))
+		if (cardUi)
+			.card.mb-section.shadow-sm
+				.card-body
+					block
+
+		else
+			block
+
+
+mixin summaryRow(itemCount)
+	- locals.summaryItemCount = itemCount;
+	- locals.summaryItemIndex = 0;
+	
+	- locals.colCounts = {"sm": 1, "md": Math.min(itemCount, 3), "lg": Math.min(itemCount, 4), "xl": Math.min(itemCount, 5)};
+	- locals.rowCountsArray = utils.objectProperties(locals.colCounts).map(x => [x, locals.colCounts[x]]).map(x => [x[0], (Math.floor(itemCount / x[1]) + ((itemCount % x[1] > 0) ? 1 : 0))]);
+	- locals.rowCounts = {};
+	- locals.rowCountsArray.forEach(x => locals.rowCounts[x[0]] = x[1]);
+
+	//h1 #{itemCount} #{JSON.stringify(locals.rowCounts)}
+
+	.row.row-cols-1(class=utils.objectProperties(locals.colCounts).map(x => `row-cols-${x}-${locals.colCounts[x]}`).join(" "))
+		block
+
+
+mixin summaryTitle(title, titleDesc, subtitle, subtitleDesc)
+	span.fs-6.text-uppercase.fw-light.text-muted(class=(titleDesc ? "border-dotted" : false), class=(subtitle ? "me-2" : false), title=titleDesc, data-bs-toggle="tooltip", data-bs-html="true") #{title}
+	if (subtitle)
+		small.text-muted
+			| (
+			span(class=(subtitleDesc ? "border-dotted" : false), title=subtitleDesc, data-bs-toggle="tooltip", data-bs-html="true") #{subtitle}
+			| )
+
+
+mixin summaryItem(title, titleDesc, subtitle, subtitleDesc)
+	- var rowIndexes = utils.objectProperties(locals.colCounts).map(x => [x, locals.colCounts[x]]).map(x => [x[0], Math.floor(locals.summaryItemIndex / x[1])]);
+
+	.col(class=(locals.summaryItemIndex == (locals.summaryItemCount - 1) ? "mb-0" : "mb-3"), class=rowIndexes.map(x => `mb-${x[0]}-${(x[1] < (locals.rowCounts[x[0]] - 1) ? "4" : "0")}`))
+		//span.text-danger (#{JSON.stringify(locals.rowCounts)})
+		.text-start.text-md-center
+			+summaryTitle(title, titleDesc, subtitle, subtitleDesc)
+			
+
+		.lead.text-start.text-md-center
+			block
+
+	- locals.summaryItemIndex++;
+
+
+// options keys:
+// 		- blockHeightsByTxid
+// 		- sharedBlockHeight (int)
+// 		- showDates (true|false)
+// 		- highlightAddress (address)
+// 		- addrGainsByTxid (map)
+// 		- addrLossesByTxid (map)
+// 		- mempoolDetailsByTxid (map)
+
+// txBlockHeightsByTxid_orSharedBlockHeight, showDates=false, highlightAddress, addrGainsByTxid, addrLossesByTxid)
+mixin txList(visibleTxs, txCount, limit, offset, inputsByTxid, options)
+	if (txCount > limit)
+		.rounded-0.rounded-top.bg-body.border
+			.p-3
+				h6.fw-normal.mb-2 #{offset.toLocaleString()} - #{Math.min(offset + limit - 1, txCount - 1).toLocaleString()} of #{txCount.toLocaleString()}
+				+pagination(limit, offset, null, txCount, paginationBaseUrl)
+					
+	
+		.border.border-2
+
+
+	each tx, txIndex in visibleTxs
+		- var txBlockHeight = null;
+		if (options.blockHeightsByTxid)
+			- txBlockHeight = options.blockHeightsByTxid[tx.txid];
+		else if (options.sharedBlockHeight != undefined)
+			- txBlockHeight = options.sharedBlockHeight;
+
+		- var tx_height_param = (!global.txindexAvailable && txBlockHeight) ? `@${txBlockHeight}` : '';
+
+		.border.bg-body.p-3(class=(txIndex == 0 && txCount <= limit ? "rounded-top" : false), class=(txCount <= limit && txIndex == (visibleTxs.length - 1) ? "rounded-bottom" : false))
+			if (tx && tx.txid)
+				.clearfix
+					.float-start
+						.mb-4.word-wrap
+							span.badge.bg-primary.fw-normal.me-2(title=`Index in Block: #${(txIndex + offset).toLocaleString()}`, data-bs-toggle="tooltip") ##{(txIndex + offset).toLocaleString()}
+							a(href=`./tx/${tx.txid}${tx_height_param}`) #{tx.txid}
+
+							if (global.specialTransactions && global.specialTransactions[tx.txid])
+								a.ms-2(data-bs-toggle="tooltip", title=`<b>${coinConfig.name} Fun!</b><br/>There's something special about this transaction...<br/>Click to read more.`, data-bs-html="true")
+									+funItemIcon
+
+
+					.float-end
+						if (options.mempoolDetailsByTxid && options.mempoolDetailsByTxid[tx.txid])
+							- var mempoolDetails = options.mempoolDetailsByTxid[tx.txid].entry;
+							- var feeRate = new Decimal(mempoolDetails.fee).times(coinConfig.baseCurrencyUnit.multiplier).dividedBy(mempoolDetails.vsize);
+							
+							span.badge.bg-dark.ms-2
+								| #{feeRate.toDP(0)}
+								span.fw-light.ms-1 sat/vB
+
+						if (options.addrGainsByTxid && options.addrGainsByTxid[tx.txid])
+							- var currencyValue = options.addrGainsByTxid[tx.txid];
+							span.badge.bg-success.ms-2 +
+								include ./value-display.pug
+
+						if (options.addrLossesByTxid && options.addrLossesByTxid[tx.txid])
+							- var currencyValue = options.addrLossesByTxid[tx.txid];
+							span.badge.bg-danger.ms-2 -
+								include ./value-display.pug
+
+						if (options.showDates)
+							span.badge.bg-dark.ms-2
+								i.far.fa-clock.me-1
+
+								if (tx.time)
+									+timeAgo(tx.time, true)
+									span.ms-1 ago
+
+								else
+									| unconfirmed
+
+						
+			div
+				- var txInputs = inputsByTxid[tx.txid];
+				- var blockHeight = txBlockHeight != undefined ? txBlockHeight : -1;
+				
+				if (options.highlightAddress)
+					- var txIOHighlightAddress = options.highlightAddress;
+
+				include ./transaction-io-details.pug
+
+		if (txIndex < (visibleTxs.length - 1) || txCount > limit)
+			.border.border-2
+
+
+	if (txCount > limit)
+		.rounded-0.rounded-bottom.bg-body.border
+			.p-3
+				if (!crawlerBot && txCount > limit)
+					h6.fw-normal.mb-2 #{offset.toLocaleString()} - #{Math.min(offset + limit - 1, txCount - 1).toLocaleString()} of #{txCount.toLocaleString()}
+					+pagination(limit, offset, null, txCount, paginationBaseUrl)
+
+
+mixin pageTabs(names)
+	ul.nav.nav-tabs
+		each name, nameIndex in names
+			li.nav-item(style=(nameIndex == 0 ? "margin-left: 10px;" : false))
+				a.nav-link(class=(nameIndex == 0 ? "active" : false), data-bs-toggle="tab", href=`#tab-${name.replace(" ", "-")}`, role="tab") #{name}
+
+	.bg-gradient-body-to-main.pb-4.mb-4
+
+
+mixin pillTabs(names)
+	ul.nav.nav-pills.mb-3
+		each name, nameIndex in names
+			li.nav-item
+				a.nav-link(class=(nameIndex == 0 ? "active" : false), data-bs-toggle="tab", href=`#tab-${name.replace(" ", "-")}`, role="tab") #{name}
+
+
+mixin pageTab(name, defaultActive=false)
+	div.tab-pane(id=`tab-${name.replace(" ", "-")}`, class=(defaultActive ? "active" : false), role="tabpanel")
+		block
+
+
+mixin confirmations(confirmations, abbreviated=true)
+	if (confirmations < 6)
+		span.text-warning.border-dotted(title="Fewer than 6 confirmations is generally considered <b>unsettled</b> for high-value transactions because block <b>re-organizations</b> that could affect them have reasonable probability.", data-bs-toggle="tooltip", data-bs-html="true") #{confirmations.toLocaleString()}
+			i.fas.fa-unlock-alt.ms-1
+	else
+		span.border-dotted.text-success(title="6 confirmations is generally considered <b>settled</b>. High-value transactions may require more;<br/>Low-value transactions may require fewer.", data-bs-toggle="tooltip", data-bs-html="true")
+			| #{abbreviated && confirmations > 1000 ? `${Math.floor(confirmations/1000)}k` : confirmations.toLocaleString()}
+			i.fas.fa-check.ms-1
+
+
+mixin timestamp(timestamp, includeAgo=true)
+	- var utcMoment = moment.utc(new Date(parseInt(timestamp) * 1000));
+
+	- var yearStr = utcMoment.format("Y");
+	- var nowYearStr = moment.utc(new Date()).format("Y");
+
+	- var dateStr = utcMoment.format("Y-M-D");
+	- var nowDateStr = moment.utc(new Date()).format("Y-M-D");
+
+	- var titleStr = `${utcMoment.format("Y-MM-DD HH:mm:ss")} utc`;
+
+	if (dateStr == nowDateStr)
+		span.border-dotted(title=titleStr, data-bs-toggle="tooltip")
+			| #{utcMoment.format("HH:mm")}
+			small.text-muted.ms-1 utc
+
+	else if (yearStr == nowYearStr)
+		span.border-dotted(title=titleStr, data-bs-toggle="tooltip")
+			| #{utcMoment.format("M/D HH:mm")}
+			small.text-muted.ms-1 utc
+
+	else
+		span.border-dotted(title=titleStr, data-bs-toggle="tooltip")
+			| #{utcMoment.format("YYYY-MM-DD")}
+
+	if (includeAgo)
+		small.text-muted.ms-2 (
+			+timeAgo(timestamp, true)
+			span  ago)
+
+
+mixin funAlert(html, text, referenceUrl)
+	.alert.alert-primary.shadow-sm.pb-0(role="alert", style="padding-left: 4rem;")
+		i.fas.fa-flag.fa-2x.fontawesome-shadow.text-warning.d-inline-block(style="position: absolute; top: 0; left: 0; width: 40px; margin-left: 0.8rem; margin-top: 1.2rem;")
+
+		h5.mb-2.fw-light #{coinConfig.name} Fun
+
+		if (html)
+			p
+				span !{html}
+
+				if (referenceUrl && referenceUrl.trim().length > 0 && html.indexOf(referenceUrl) == -1)
+					span &nbsp;
+						a(href=referenceUrl) Read more
+
+		else if (text)
+			p
+				span #{text}
+
+				if (referenceUrl && referenceUrl.trim().length > 0)
+					span &nbsp;
+						a(href=referenceUrl) Read more
+
+		else if (block)
+			p
+				block
+
+
+mixin funItemIcon
+	i.fas.fa-flag.text-warning
+
+
+mixin timeAgo(timeAgoTime, only1Element=false)
+	- var timeAgo = moment.duration(moment.utc(new Date()).diff(moment.utc(new Date(parseInt(timeAgoTime) * 1000))));
+
+	if (timeAgo.asHours() < 1)
+		if (timeAgo.asMinutes() < 1)
+			span #{timeAgo.seconds()}s
+		else
+			span #{timeAgo.minutes()}m
+
+	else
+		if (timeAgo.asHours() >= 1 && timeAgo.asHours() < 24)
+			span #{timeAgo.hours()}h
+
+			if (!only1Element && timeAgo.minutes() > 0)
+				span.ms-1 #{timeAgo.minutes()}m
+
+		else
+			if (only1Element)
+				span #{utils.shortenTimeDiff(timeAgo.format()).split(/,?\s+/)[0]}
+			else
+				span #{utils.shortenTimeDiff(timeAgo.format())}
+
+
+mixin copyTextButton(text)
+	small.ms-2
+		if (false)
+			a.btn-clipboard(href="javascript:void(0)", title="Copy", data-clipboard-text=text, data-bs-toggle="tooltip", onclick=`copyTextToClipboard("${text}"); $(".icon-copy").toggle(); $(this).find(".icon-copied").toggle(); setTimeout(() => { $(this).find(".icon-copy").toggle(); $(this).find(".icon-copied").toggle(); }, 2000); return false;`)
+				i.far.fa-copy.text-info.icon-copy
+				i.fas.fa-check.text-success.icon-copied(style="display: none;")
+
+		a.btn-clipboard(href="javascript:void(0)", title="Copy", data-clipboard-text=text, data-bs-toggle="tooltip", onclick=`copyTextToClipboard("${text}"); $(this).attr("data-bs-original-title", "Copied!"); $(this).mouseleave(function() { $(this).tooltip("hide"); $(this).attr("data-bs-original-title", "Copy"); }); return false;`)
+			i.far.fa-copy.text-info
+
+
+mixin dismissableInfoAlert(userSettingDismissedName, textToShowWhenClosed)
+	if (session.userSettings[userSettingDismissedName] != "true")
+		.alert.alert-primary.alert-dismissible.shadow-sm.mb-4(role="alert", style="padding-left: 4rem;")
+			i.fas.fa-info-circle.fa-2x.d-inline-block(style="position: absolute; top: 0; left: 0; width: 40px; margin-left: 0.8rem; margin-top: 1.2rem;")
+
+			block
+
+			a.btn-close(href=`./changeSetting?name=${userSettingDismissedName}&value=true`, aria-label="Close", style="text-decoration: none;", title="Hide this note", data-bs-toggle="tooltip")
+			//button.btn-close.text-muted(type="button", data-bs-dismiss="alert", aria-label="Close", title="Hide this note", data-bs-toggle="tooltip")
+
+	else if (textToShowWhenClosed)
+		.alert.alert-primary.shadow-sm.mb-4(role="alert")
+			.clearfix
+				.float-start
+					i.fas.fa-info-circle.fa-lg.me-3
+					| #{textToShowWhenClosed}
+
+				.float-end
+					a.text-muted(href=`./changeSetting?name=${userSettingDismissedName}&value=false`, aria-label="Close", style="text-decoration: none;", title="Open this note", data-bs-toggle="tooltip")
+						i.far.fa-plus-square.fa-lg
+
+
+mixin warningAlert
+	.alert.alert-warning.shadow-sm.mb-4(role="alert", style="padding-left: 4rem;")
+		i.fas.fa-exclamation-triangle.fa-2x.d-inline-block(style="position: absolute; top: 0; left: 0; width: 40px; margin-left: 0.8rem; margin-top: 1.2rem;")
+
+		block
+				
+
+mixin blockRangeFilters
+	.clearfix
+		.float-start.me-4
+			div(id="time-range-buttons")
+				div.mb-2
+					span.border-dotted(title="Analyze blocks over the last N days (approximated using average block time).", data-bs-toggle="tooltip") Time Range
+				div.btn-group
+					a.btn.btn-primary.block-count-btn(href="javascript:void(0)", data-blockCount="144") 1 day
+					a.btn.btn-outline-primary.block-count-btn(href="javascript:void(0)", data-blockCount="432") 3 day
+					a.btn.btn-outline-primary.block-count-btn(href="javascript:void(0)", data-blockCount="1008") 7 day
+					a.btn.btn-outline-primary.block-count-btn(href="javascript:void(0)", data-blockCount="4320") 30 day
+
+		.float-start.me-4
+			div(id="block-selections-buttons")
+				div.mb-2
+					span.border-dotted(title="Choose from a list of pre-configured 'interesting' historical block ranges.", data-bs-toggle="tooltip") Interesting History
+
+				div.dropdown
+					button.btn.btn-outline-primary.dropdown-toggle(type="button", id="preconfigured-dropdown", data-bs-toggle="dropdown", aria-haspopup="true", aria-expanded="false") Selections
+					div.dropdown-menu(aria-labelledby="preconfigured-dropdown")
+						a.dropdown-item(href="javascript:void(0)", data-blocks="0-199") First 200 Blocks
+						a.dropdown-item(href="javascript:void(0)", data-blocks="209900-210100") First Halving ±100
+						a.dropdown-item(href="javascript:void(0)", data-blocks="419900-420100") Second Halving ±100
+						a.dropdown-item(href="javascript:void(0)", data-blocks="629900-630100") Third Halving ±100
+						a.dropdown-item(href="javascript:void(0)", data-blocks="481724-481924") SegWit Activation ±100
+
+		.float-start
+			div(id="time-range-buttons")
+				div.mb-2
+					span.border-dotted(title="Manually enter a range of blocks to analyze.", data-bs-toggle="tooltip") Custom Block Range
+
+				form.form-inline.me-3(id="custom-range-form")
+					div.input-group
+						input.form-control(type="text", id="custom-range-start", placeholder="min height", style="width: 125px;")
+						input.form-control(type="text", id="custom-range-end", placeholder="max height", style="width: 125px;")
+						
+						button.btn.btn-primary(type="submit") Go
+
+
+
+mixin pagination(limit, offset, sort, itemCount, baseUrl, justification="start", large=false)
+	- var pageNumber = offset / limit + 1;
+	- var pageCount = Math.floor(itemCount / limit);
+	- if (pageCount * limit < itemCount) {
+		- pageCount++;
+	- }
+	- var paginationUrlFunction = function(x) {
+		- return `${baseUrl}?limit=${limit}&offset=${(x - 1) * limit}${sort ? ("&sort=" + sort) : ""}`
+		//- return baseUrl + "?limit=" + limit + "&offset=" + ((x - 1) * limit);
+		//- return baseUrl + "?limit=" + limit + "&offset=" + ((x - 1) * limit + "&sort=" + sort);
+	- }
+
+	- var pageNumbers = [];
+	- for (var x = 1; x <= pageCount; x++) {
+		- pageNumbers.push(x);
+	- }
+
+	nav(aria-label="Page navigation")
+		ul.pagination.flex-wrap.mb-0(class=`justify-content-${justification}`, class=(large ? "pagination-lg" : false))
+			li.page-item(class=(pageNumber == 1 ? "disabled" : false))
+				a.page-link(href=(pageNumber == 1 ? "javascript:void(0)" : paginationUrlFunction(pageNumber - 1)), aria-label="Previous")
+					span(aria-hidden="true") &laquo;
+			each x, xIndex in pageNumbers
+				if (x >= (pageNumber - 4) && x <= (pageNumber + 4) || xIndex == 0 || xIndex == (pageNumbers.length - 1))
+					li.page-item(class=(x == pageNumber ? "active" : false))
+						a.page-link(href=(paginationUrlFunction(x))) #{x}
+
+					if (x == 1 && pageNumber > 6)
+						li.page-item.disabled
+							a.page-link(href="javascript:void(0)") ...
+
+				else if (x == (pageCount - 1) && pageNumber < (pageCount - 5))
+					li.page-item.disabled
+						a.page-link(href="javascript:void(0)") ...
+				
+			li.page-item(class=(pageNumber == pageCount ? "disabled" : false))
+				a.page-link(href=(pageNumber == pageCount ? "javascript:void(0)" : paginationUrlFunction(pageNumber + 1)), aria-label="Next")
+					span(aria-hidden="true") &raquo;
+
+
+mixin graphPageScriptSetup
+	script(src="./js/chart.bundle.min.js", integrity="sha384-qgOtiGNaHh9fVWUnRjyHlV39rfbDcvPPkEzL1RHvsHKbuqUqM6uybNuVnghY2z4/")
+	
+	if (userSettings.uiTheme && userSettings.uiTheme == "dark")
+		script.
+			Chart.defaults.global.defaultFontColor='white';
+			var gridLineColor = "#1a4280";
+	else
+		script.
+			Chart.defaults.global.defaultFontColor='black';
+			var gridLineColor = "#dddddd";
