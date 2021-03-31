@@ -555,6 +555,10 @@
 		"ZULUPool" : {
 			"name" : "ZULUPool",
 			"link" : ""
+		},
+		"/ArkPool/" : {
+			"name" : "ArkPool",
+			"link" : ""
 		}
 	},
 	"payout_addresses" : {
@@ -1180,6 +1184,10 @@
 		},
 		"1ZULUPooLEQfkrTgynLV4uHyMgQYx71ip" : {
 			"name" : "ZULUPool",
+			"link" : ""
+		},
+		"1QEiAhdHdMhBgVbDM7zUXWGkNhgEEJ6uLd" : {
+			"name" : "ArkPool",
 			"link" : ""
 		}
 	},
