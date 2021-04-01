@@ -92,12 +92,14 @@ if (exchangeRates)
 				| #{chainTxStats[7 * targetBlocksPerDay].window_tx_count.toLocaleString()}
 
 		if (difficultyAdjustmentData)
-			- var desc = `Estimate for the difficulty adjustment that will occur in ${difficultyAdjustmentData.blocksLeft.toLocaleString()} block${difficultyAdjustmentData.blocksLeft == 1 ? "" : "s"} (${difficultyAdjustmentData.daysLeftStr}). This is calculated using the average block time over the last ${difficultyAdjustmentData.calculationBlockCount} block(s). This estimate becomes more reliable as the difficulty epoch nears its end.`;
+			- var desc = `Estimate for the difficulty adjustment that will occur in ${difficultyAdjustmentData.blocksLeft.toLocaleString()} block${difficultyAdjustmentData.blocksLeft == 1 ? "" : "s"} (${difficultyAdjustmentData.timeLeftStr}). This is calculated using the average block time over the last ${difficultyAdjustmentData.calculationBlockCount.toLocaleString()} block(s). This estimate becomes more reliable as the difficulty epoch nears its end.`;
 			
 			+summaryItem("Difficulty Δ", desc)
 				span.me-2(class=(difficultyAdjustmentData.sign == "+" ? "text-success" : "text-danger")) #{difficultyAdjustmentData.sign}#{difficultyAdjustmentData.delta.toDP(2)}
 				small.text-muted
-					| (#{difficultyAdjustmentData.daysLeftStr})
+					| (
+					span.border-dotted(title=`${difficultyAdjustmentData.blocksLeft.toLocaleString()} block(s)`, data-bs-toggle="tooltip") #{difficultyAdjustmentData.timeLeftStr}
+					| )
 
 		+summaryItem("Coins", utxoSetSummary ? null : `This value is estimated.`)
 			- var maxSupply = coinConfig.maxSupplyByNetwork[activeBlockchain];
@@ -112,7 +114,7 @@ if (exchangeRates)
 			else
 				- var estimatedSupply = utils.estimatedSupply(getblockchaininfo.blocks);
 
-				span #{parseFloat(estimatedSupply).toLocaleString()}
+				span #{parseInt(estimatedSupply).toLocaleString()}
 				small.ms-2.text-muted
 					| (
 					span.border-dotted(title=`${estimatedSupply.dividedBy(maxSupply).times(100).toDP(4)}% have been mined into circulation`, data-bs-toggle="tooltip") #{estimatedSupply.dividedBy(maxSupply).times(100).toDP(1)}%
@@ -120,7 +122,7 @@ if (exchangeRates)
 
 		
 
-	hr.mt-4.mb-4
+	hr.mt-3.mb-3
 
 	+summaryRow(4)
 		+summaryItem("Mempool")
@@ -149,7 +151,7 @@ if (exchangeRates)
 			small.ms-2.text-muted sat/vB
 
 	if (userSettings.homepageShowTechDetails == "true")
-		hr.mt-4.mb-4
+		hr.mt-3.mb-3
 
 		+summaryRow(1 + (getblockchaininfo.size_on_disk ? 1 : 0) + (utxoSetSummary || utxoSetSummaryPending ? 1 : 0))
 			if (getblockchaininfo.size_on_disk)

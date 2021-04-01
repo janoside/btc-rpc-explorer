@@ -242,8 +242,10 @@ router.get("/", asyncHandler(async (req, res, next) => {
 		var timePerBlock = timeDiff / heightDiff;
 		var timePerBlockDuration = moment.duration(timePerBlock * 1000);
 		var daysUntilAdjustment = new Decimal(res.locals.blocksUntilDifficultyAdjustment).times(timePerBlock).dividedBy(60 * 60 * 24);
+		var hoursUntilAdjustment = new Decimal(res.locals.blocksUntilDifficultyAdjustment).times(timePerBlock).dividedBy(60 * 60);
 		var duaDP1 = daysUntilAdjustment.toDP(1);
 		var daysUntilAdjustmentStr = daysUntilAdjustment > 1 ? `~${duaDP1} day${duaDP1 == "1" ? "" : "s"}` : "< 1 day";
+		var hoursUntilAdjustmentStr = hoursUntilAdjustment > 1 ? `~${hoursUntilAdjustment.toDP(0)} hr${hoursUntilAdjustment.toDP(1) == "1" ? "" : "s"}` : "< 1 hr";
 
 		if (timePerBlock > 600) {
 			var diffAdjPercent = new Decimal(timeDiff / heightDiff / 600).times(100).minus(100);
@@ -263,6 +265,7 @@ router.get("/", asyncHandler(async (req, res, next) => {
 
 			blocksLeft: res.locals.blocksUntilDifficultyAdjustment,
 			daysLeftStr: daysUntilAdjustmentStr,
+			timeLeftStr: (daysUntilAdjustment < 1 ? hoursUntilAdjustmentStr : daysUntilAdjustmentStr),
 			calculationBlockCount: heightDiff,
 			currentEpoch: res.locals.difficultyPeriod,
 
