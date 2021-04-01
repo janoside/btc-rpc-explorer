@@ -349,6 +349,7 @@ function getMempoolTxDetails(txid, includeAncDec=true) {
 
 	promises.push(new Promise(function(resolve, reject) {
 		getRpcDataWithParams({method:"getmempoolentry", parameters:[txid]}).then(function(result) {
+			result.txid = txid;
 			mempoolDetails.entry = result;
 
 			resolve();

@@ -22,60 +22,85 @@ block content
 	
 
 	div(id="main-content", style="display: none;")
-		+contentSection("Summary")
-			+summaryRow(5)
-				+summaryItem("Transactions")
-					span#tx-count
+		+pageTabs(["Mempool Summary", "Locate Transaction"])
 
-				+summaryItem("Memory Usage")
-					span#mem-usage
+		.tab-content
+			+pageTab("Mempool Summary", true)
 
-				+summaryItem("Total Fees")
-					span#total-fees
+				+contentSection("Summary")
+					+summaryRow(5)
+						+summaryItem("Transactions")
+							span#tx-count
 
-				+summaryItem("Avg Fee")
-					span#avg-fee
+						+summaryItem("Memory Usage")
+							span#mem-usage
 
-				+summaryItem("Avg Fee Rate", null, "sat/vB")
-					span#avg-fee-rate
+						+summaryItem("Total Fees")
+							span#total-fees
 
-		div#detail-charts-and-data
-			+contentSection("Fee Rate Distribution")
-				canvas.mb-3(id="mempoolBarChart", height="100")
+						+summaryItem("Avg Fee")
+							span#avg-fee
 
-				hr.mt-3
+						+summaryItem("Avg Fee Rate", null, "sat/vB")
+							span#avg-fee-rate
 
-				.table-responsive
-					table.table.table-striped.table-borderless.mb-3
-						thead
-							tr
-								th Fee Rate
-								th.text-end Tx Count
-								th.text-end Total Fees
-								th.text-end Avg Fee
-								th.text-end Avg Fee Rate
-									small.fw-normal.text-muted.ms-2 (sat/vB)
-						tbody(id="fee-rate-table-body")
-							tr(id="fee-rate-table-row-prototype", style="display: none;")
-								td.font-monospace.data-label
-								td.font-monospace.text-end.data-count
-								td.font-monospace.text-end.data-total-fees
-								td.font-monospace.text-end.data-avg-fee
-								td.font-monospace.text-end.data-fee-rate
+				div#detail-charts-and-data
+					+contentSection("Fee Rate Distribution")
+						canvas.mb-3(id="mempoolBarChart", height="100")
 
-							tr(id="empty-row-to-fix-striped-coloring", style="display: none;")
+						hr.mt-3
+
+						.table-responsive
+							table.table.table-striped.table-borderless.mb-3
+								thead
+									tr
+										th Fee Rate
+										th.text-end Tx Count
+										th.text-end Total Fees
+										th.text-end Avg Fee
+										th.text-end Avg Fee Rate
+											small.fw-normal.text-muted.ms-2 (sat/vB)
+								tbody(id="fee-rate-table-body")
+									tr(id="fee-rate-table-row-prototype", style="display: none;")
+										td.font-monospace.data-label
+										td.font-monospace.text-end.data-count
+										td.font-monospace.text-end.data-total-fees
+										td.font-monospace.text-end.data-avg-fee
+										td.font-monospace.text-end.data-fee-rate
+
+									tr(id="empty-row-to-fix-striped-coloring", style="display: none;")
+
+					
+
+					+contentSection("Size Distribution")
+						canvas.mb-3(id="txSizesBarChart", height="100")
 
 					
 
-			+contentSection("Size Distribution")
-				canvas.mb-3(id="txSizesBarChart", height="100")
+					+contentSection("Age Distribution")
+						canvas.mb-3(id="txAgesBarChart", height="100")
 
-					
+			+pageTab("Locate Transaction")
+				+contentSection("Locate Transaction")
+					form.form-inline.mr-3(method="post", action="javascript:void(0)")
+						.input-group.input-group-sm
+							input.form-control.form-control-sm(type="text", name="mempoolquery", id="mempoolquery", placeholder="txid", value=(mempoolquery))
+							.input-group-append
+								button.btn.btn-primary(type="submit" onclick="handleLocateTransaction()")
+									i.fas.fa-search
 
-			+contentSection("Age Distribution")
-				canvas.mb-3(id="txAgesBarChart", height="100")
+				+contentSection("Results")
+					.row
+						.summary-table-label Transaction Id
+						.summary-table-content.text-monospace(id="tx-id")
 
-					
+					.row
+						.summary-table-label sat/vB
+						.summary-table-content.text-monospace(id="tx-feeperbyte")
+
+					.row
+						.summary-table-label Blocks to wait
+						.summary-table-content.text-monospace(id="tx-mempooldepth")
 		
 
 block endOfBody
@@ -87,6 +112,7 @@ block endOfBody
 	script.
 		var txidChunks = !{JSON.stringify(mempooltxidChunks)};
 		var satoshiPerByteBucketMaxima = !{JSON.stringify(satoshiPerByteBucketMaxima)};
+		var results = []; // global scope for use with locate transactions
 
 		$(document).ready(function() {
 			loadMempool(txidChunks, 25, txidChunks.length * 25);
@@ -112,8 +138,6 @@ block endOfBody
 			}
 
 			//alert(JSON.stringify(chunks));
-
-			var results = [];
 
 			var statusCallback = function(chunkIndexDone, chunkCount) {
 				//console.log("Done: " + Math.min(((chunkIndexDone + 1) * chunkSize), count) + " of " + count);
@@ -566,4 +590,50 @@ block endOfBody
 			}
 
 			return summary;
+		}
+
+		function handleLocateTransaction(){
+			var avgTransactionsPerBlock = 3000;
+			var satsPerBitcoin = 100000000; // TODO: magic number - replace with coinConfig.baseCurrencyUnit.multiplier
+			var txId = $("#mempoolquery").val();
+			var numTransactions = results.length;
+			$("#tx-id").text(txId);
+			
+			//sort results	from highest sat/vB to lowest sat/vB		
+			results.sort(function compare(a, b) {
+				if (a.entry.modifiedfee < b.entry.modifiedfee) {
+					return 1;
+				}
+				if (a.entry.modifiedfee > b.entry.modifiedfee) {
+					return -1;
+				}
+				// a must be equal to b
+				return 0;
+			})			
+			
+			var foundIndex = null;
+			var foundItem = null;
+			for(var i = 0; i < numTransactions; i++){
+				var item = results[i];
+				if(txId == item.entry.txid){
+					foundIndex = i;
+				}
+			
+			}
+			if(foundIndex != null){
+				foundItem = results[foundIndex].entry;
+				console.log("found index " + foundIndex)
+				console.log(JSON.stringify(foundItem))
+			
+				var size = foundItem.vsize ? foundItem.vsize : foundItem.size;
+				var feePerByte = foundItem.modifiedfee / size;
+				var satoshiPerByte = Math.floor(feePerByte * satsPerBitcoin);
+				$("#tx-feeperbyte").text(satoshiPerByte);
+				var depthInMempool = Math.floor(foundIndex / avgTransactionsPerBlock) + 1;
+				$("#tx-mempooldepth").text(depthInMempool);
+			}
+			else{
+				$("#tx-feeperbyte").text("Not found");
+				$("#tx-mempooldepth").text("Not found");
+			}
 		}
