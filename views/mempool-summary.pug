@@ -13,12 +13,17 @@ block content
 
 
 	div#progress-wrapper.mb-huge
-		div.card.shadow-sm.mb-3
-			div.card-body
-				span Loading mempool transactions: 
-					span(id="progress-text")
-				div.progress.mt-2(id="progress-bar", style="height: 7px;")
-					div.progress-bar(id="data-progress", role="progressbar", aria-valuenow="0", aria-valuemin="0" ,aria-valuemax="100")
+		.card.shadow-sm.mb-3
+			.card-body
+				.d-flex.align-items-center
+					.spinner-border.text-primary.me-3(role="status")
+					span Loading Mempool...
+
+				if (false)
+					span Loading mempool transactions: 
+						span(id="progress-text")
+					div.progress.mt-2(id="progress-bar", style="height: 7px;")
+						div.progress-bar(id="data-progress", role="progressbar", aria-valuenow="0", aria-valuemin="0" ,aria-valuemax="100")
 	
 
 	div(id="main-content", style="display: none;")
@@ -85,34 +90,12 @@ block endOfBody
 	script(src='./js/decimal.js')
 
 	script.
-		var txidChunks = !{JSON.stringify(mempooltxidChunks)};
-		var satoshiPerByteBucketMaxima = !{JSON.stringify(satoshiPerByteBucketMaxima)};
-
+		
 		$(document).ready(function() {
-			loadMempool(txidChunks, 25, txidChunks.length * 25);
+			loadMempool();
 		});
 
-		function loadMempool(txidChunks, chunkSize, count) {
-			var chunkStrs = [];
-			
-			for (var i = 0; i < txidChunks.length; i++) {
-				var txidChunk = txidChunks[i];
-
-				var chunkStr = "";
-
-				for (var j = 0; j < txidChunk.length; j++) {
-					if (j > 0) {
-						chunkStr += ",";
-					}
-
-					chunkStr += txidChunk[j];
-				}
-
-				chunkStrs.push(chunkStr);
-			}
-
-			//alert(JSON.stringify(chunks));
-
+		function loadMempool() {
 			var results = [];
 
 			var statusCallback = function(chunkIndexDone, chunkCount) {
@@ -124,9 +107,7 @@ block endOfBody
 				$("#progress-text").text(`${Math.min(((chunkIndexDone + 1) * chunkSize), count).toLocaleString()} of ${count.toLocaleString()} (${wPercent})`);
 			};
 
-			var finishedCallback = function() {
-				var summary = summarizeData(results);
-
+			var finishedCallback = function(summary) {
 				var feeRateGraphData = buildFeeRateGraphData(summary);
 				var txSizeGraphData = buildTxSizeGraphData(summary);
 				var txAgeGraphData = buildTxAgeGraphData(summary);
@@ -299,31 +280,13 @@ block endOfBody
 				$("#progress-wrapper").hide();
 			};
 
-			getTxData(results, chunkStrs, 0, statusCallback, finishedCallback);
-		}
-
-		function getTxData(results, chunkStrs, chunkIndex, statusCallback, finishedCallback) {
-			if (chunkIndex > chunkStrs.length - 1) {
-				finishedCallback();
-
-				return;
-			}
-
-			var url = `./api/mempool-txs/${chunkStrs[chunkIndex]}`;
-			
-			//console.log(url);
-
 			$.ajax({
-				url: url
+				url: `./api/mempool-summary`
 
 			}).done(function(result) {
-				for (var i = 0; i < result.length; i++) {
-					results.push(result[i]);
-				}
+				console.log(JSON.stringify(result));
 
-				statusCallback(chunkIndex, chunkStrs.length);
-				
-				getTxData(results, chunkStrs, chunkIndex + 1, statusCallback, finishedCallback);
+				finishedCallback(result);
 			});
 		}
 
@@ -393,7 +356,7 @@ block endOfBody
 			};
 		}
 
-		function summarizeData(rawdata) {
+		/*function summarizeData(rawdata) {
 			var summary = [];
 
 			var maxFee = 0;
@@ -404,19 +367,19 @@ block endOfBody
 			var sizes = [];
 
 			for (var i = 0; i < rawdata.length; i++) {
-				var txMempoolInfo = rawdata[i].entry;
+				var txMempoolInfo = rawdata[i];
 
-				var fee = txMempoolInfo.modifiedfee;
-				var size = txMempoolInfo.vsize ? txMempoolInfo.vsize : txMempoolInfo.size;
-				var feePerByte = txMempoolInfo.modifiedfee / size;
-				var age = Date.now() / 1000 - txMempoolInfo.time;
+				var fee = txMempoolInfo.f;
+				var size = txMempoolInfo.sz;
+				var feePerByte = txMempoolInfo.f / size;
+				var age = Date.now() / 1000 - txMempoolInfo.t;
 
 				if (fee > maxFee) {
-					maxFee = txMempoolInfo.modifiedfee;
+					maxFee = fee;
 				}
 
 				if (feePerByte > maxFeePerByte) {
-					maxFeePerByte = txMempoolInfo.modifiedfee / size;
+					maxFeePerByte = feePerByte;
 				}
 
 				ages.push({age:age, txid:"abc"});
@@ -516,12 +479,12 @@ block endOfBody
 			};
 
 			for (var x = 0; x < rawdata.length; x++) {
-				var txMempoolInfo = rawdata[x].entry;
-				var fee = txMempoolInfo.modifiedfee;
-				var size = txMempoolInfo.vsize ? txMempoolInfo.vsize : txMempoolInfo.size;
-				var feePerByte = txMempoolInfo.modifiedfee / size;
+				var txMempoolInfo = rawdata[x];
+				var fee = txMempoolInfo.f;
+				var size = txMempoolInfo.sz;
+				var feePerByte = txMempoolInfo.f / size;
 				var satoshiPerByte = feePerByte * 100000000; // TODO: magic number - replace with coinConfig.baseCurrencyUnit.multiplier
-				var age = Date.now() / 1000 - txMempoolInfo.time;
+				var age = Date.now() / 1000 - txMempoolInfo.t;
 
 				var addedToBucket = false;
 				for (var i = 0; i < satoshiPerByteBucketMaxima.length; i++) {
@@ -543,7 +506,7 @@ block endOfBody
 				}
 
 				summary["count"]++;
-				summary["totalFees"] += txMempoolInfo.modifiedfee;
+				summary["totalFees"] += fee;
 				summary["totalBytes"] += size;
 
 				var ageBucketIndex = Math.min(ageBucketCount - 1, parseInt(age / (maxAge / ageBucketCount)));
@@ -566,4 +529,4 @@ block endOfBody
 			}
 
 			return summary;
-		}
+		}*/
