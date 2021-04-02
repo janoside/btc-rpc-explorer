@@ -23,6 +23,12 @@ module.exports = {
 	// format: "ID_FROM_IPSTACK"
 	ipStackComApiAccessKey: process.env.BTCEXP_IPSTACK_APIKEY,
 
+	// optional: enter your api access key from mapbox.com below
+	// to enable the tiles for map of the estimated locations of
+	// your node's peers
+	// format: "APIKEY_FROM_MAPBOX"
+	mapBoxComApiAccessKey: process.env.BTCEXP_MAPBOX_APIKEY,
+
 	// optional: GA tracking code
 	// format: "UA-..."
 	googleAnalyticsTrackingId: process.env.BTCEXP_GANALYTICS_TRACKING,
