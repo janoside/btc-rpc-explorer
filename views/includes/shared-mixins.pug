@@ -130,7 +130,7 @@ mixin txList(visibleTxs, txCount, limit, offset, inputsByTxid, options)
 								- var mempoolDetails = options.mempoolDetailsByTxid[tx.txid].entry;
 								- var feeRate = new Decimal(mempoolDetails.fee).times(coinConfig.baseCurrencyUnit.multiplier).dividedBy(mempoolDetails.vsize);
 								
-								+darkBadge
+								+lightBadge
 									| #{feeRate.toDP(0)}
 									span.fw-light.ms-1 sat/vB
 
@@ -241,6 +241,12 @@ mixin timestamp(timestamp, includeAgo=true)
 
 mixin darkBadge(text)
 	span.badge.bg-dark.border.border-dark.me-2 #{text ? text : ""}
+		if (block)
+			block
+
+
+mixin lightBadge(text)
+	span.badge.bg-light.text-dark.border.me-2 #{text ? text : ""}
 		if (block)
 			block
 
