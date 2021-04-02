@@ -147,10 +147,11 @@ block content
 		+pageTab("JSON")
 			each item, index in peerSummary.getpeerinfo
 				div.border-bottom.p-1
-					a(href="javascript:void(0)" onclick=("javascript:var peer = document.getElementById('peerinfo_" + index + "'); peer.style.display = peer.style.display === 'none' ? '' : 'none';"))
-						i.fas.fa-plus-circle 
+					a.me-2(href="javascript:void(0)" onclick=`$("#peerinfo_${index}").toggle(); $(this).find(".toggle-buttons").toggle();`)
+						i.far.fa-plus-square.text-muted.toggle-buttons
+						i.far.fa-minus-square.text-muted.toggle-buttons(style="display: none;")
 
-					span.font-monospace  #{item.addr}
+					span.font-monospace #{item.addr}
 
 				.p-3(style="display: none;", id=`peerinfo_${index}`)
 					+contentSection("Peer Details")
