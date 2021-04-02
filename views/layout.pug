@@ -151,7 +151,7 @@ html(lang="en")
 		footer.footer.border-top.border-primary.bg-header-footer.pt-3.pb-1.px-3.text-white(style="border-width: 5px !important;")
 			.container
 				.row.mb-7
-					.col-6
+					.col-7
 						.text-start
 							- var darkTheme = (userSettings.uiTheme == "dark");
 							a.btn.fa-lg.bg-header-footer-highlight.me-2(href=`./changeSetting?name=uiTheme&value=${darkTheme ? "light" : "dark"}`, title=`Active Theme: <b>${darkTheme ? "Dark" : "Light"}</b><br/>Click to switch to <b>${darkTheme ? "Light" : "Dark"}</b>`, data-bs-toggle="tooltip", data-bs-html="true")
@@ -178,7 +178,7 @@ html(lang="en")
 									a.dropdown-item(href="./admin/stats") Stats
 							
 								
-					.col-6
+					.col-5
 						.text-end
 							span(style="font-size: 1.5rem;")
 								if (global.sourcecodeProjectMetadata)
