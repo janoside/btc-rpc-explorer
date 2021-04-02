@@ -50,7 +50,7 @@ block content
 
 					+funAlert(sbInfo.alertBodyHtml, sbInfo.summary, sbInfo.referenceUrl)
 				
-				
+
 				.clearfix
 					.float-end
 						if (`${userSettings["blockPageShowFeeSummary"]}` == "false")
@@ -189,7 +189,7 @@ block content
 						+summaryItem("Difficulty")
 							- var difficultyData = utils.formatLargeNumber(result.getblock.difficulty, 3);
 							
-							span(title=parseFloat(result.getblock.difficulty).toLocaleString(), data-bs-toggle="tooltip")
+							span.border-dotted(title=parseFloat(result.getblock.difficulty).toLocaleString(), data-bs-toggle="tooltip")
 								span #{difficultyData[0]}
 								span  x 10
 								sup #{difficultyData[1].exponent}

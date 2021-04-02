@@ -125,34 +125,35 @@ mixin txList(visibleTxs, txCount, limit, offset, inputsByTxid, options)
 
 
 					.float-end
-						if (options.mempoolDetailsByTxid && options.mempoolDetailsByTxid[tx.txid])
-							- var mempoolDetails = options.mempoolDetailsByTxid[tx.txid].entry;
-							- var feeRate = new Decimal(mempoolDetails.fee).times(coinConfig.baseCurrencyUnit.multiplier).dividedBy(mempoolDetails.vsize);
-							
-							span.badge.bg-dark.ms-2
-								| #{feeRate.toDP(0)}
-								span.fw-light.ms-1 sat/vB
+						.me-n2
+							if (options.mempoolDetailsByTxid && options.mempoolDetailsByTxid[tx.txid])
+								- var mempoolDetails = options.mempoolDetailsByTxid[tx.txid].entry;
+								- var feeRate = new Decimal(mempoolDetails.fee).times(coinConfig.baseCurrencyUnit.multiplier).dividedBy(mempoolDetails.vsize);
+								
+								+darkBadge
+									| #{feeRate.toDP(0)}
+									span.fw-light.ms-1 sat/vB
 
-						if (options.addrGainsByTxid && options.addrGainsByTxid[tx.txid])
-							- var currencyValue = options.addrGainsByTxid[tx.txid];
-							span.badge.bg-success.ms-2 +
-								include ./value-display.pug
+							if (options.addrGainsByTxid && options.addrGainsByTxid[tx.txid])
+								- var currencyValue = options.addrGainsByTxid[tx.txid];
+								span.badge.bg-success.me-2 +
+									include ./value-display.pug
 
-						if (options.addrLossesByTxid && options.addrLossesByTxid[tx.txid])
-							- var currencyValue = options.addrLossesByTxid[tx.txid];
-							span.badge.bg-danger.ms-2 -
-								include ./value-display.pug
+							if (options.addrLossesByTxid && options.addrLossesByTxid[tx.txid])
+								- var currencyValue = options.addrLossesByTxid[tx.txid];
+								span.badge.bg-danger.me-2 -
+									include ./value-display.pug
 
-						if (options.showDates)
-							span.badge.bg-dark.ms-2
-								i.far.fa-clock.me-1
+							if (options.showDates)
+								+darkBadge
+									i.far.fa-clock.me-1
 
-								if (tx.time)
-									+timeAgo(tx.time, true)
-									span.ms-1 ago
+									if (tx.time)
+										+timeAgo(tx.time, true)
+										span.ms-1 ago
 
-								else
-									| unconfirmed
+									else
+										| unconfirmed
 
 						
 			div
@@ -238,6 +239,18 @@ mixin timestamp(timestamp, includeAgo=true)
 			span  ago)
 
 
+mixin darkBadge(text)
+	span.badge.bg-dark.border.border-dark.me-2 #{text ? text : ""}
+		if (block)
+			block
+
+
+mixin primaryBadge(text, endMargin=true)
+	span.badge.bg-primary(class=(endMargin ? "me-2" : false)) #{text ? text : ""}
+		if (block)
+			block
+
+
 mixin funAlert(html, text, referenceUrl)
 	.alert.alert-primary.shadow-sm.pb-0(role="alert", style="padding-left: 4rem;")
 		i.fas.fa-flag.fa-2x.fontawesome-shadow.text-warning.d-inline-block(style="position: absolute; top: 0; left: 0; width: 40px; margin-left: 0.8rem; margin-top: 1.2rem;")
@@ -305,8 +318,8 @@ mixin copyTextButton(text)
 
 mixin dismissableInfoAlert(userSettingDismissedName, textToShowWhenClosed)
 	if (session.userSettings[userSettingDismissedName] != "true")
-		.alert.alert-primary.alert-dismissible.shadow-sm.mb-4(role="alert", style="padding-left: 4rem;")
-			i.fas.fa-info-circle.fa-2x.d-inline-block(style="position: absolute; top: 0; left: 0; width: 40px; margin-left: 0.8rem; margin-top: 1.2rem;")
+		.alert.alert-primary.alert-dismissible.shadow-sm.mb-4.ps-3.ps-md-7(role="alert")
+			i.d-none.d-md-inline.fas.fa-info-circle.fa-lg.d-inline-block(style="position: absolute; top: 0; left: 0; width: 36px; margin-left: 0.4rem; margin-top: 1.3rem;")
 
 			block
 

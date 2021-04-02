@@ -8,6 +8,8 @@ $spacers: (
 	5: $spacer * 2,
 	6: $spacer * 2.5,
 	7: $spacer * 3,
+	8: $spacer * 3.5,
+	9: $spacer * 4,
 	tiny: $spacer * 0.15
 ) !default;
 
@@ -60,6 +62,12 @@ $tooltip-padding-x: 0.8rem !default;
 $navbar-padding-y: 1rem;
 $navbar-padding-x: 1rem;
 $navbar-brand-font-size: 1.5rem;
+
+
+$btn-close-width: 0.75rem;
+
+$alert-padding-x: $spacer;
+$alert-dismissible-padding-r: $alert-padding-x * 2.5;
 
 
 code {
@@ -123,7 +131,7 @@ body {
 }
 
 hr {
-	margin: 5px 0 15px 0;
+	margin: 0.25rem 0 0.75rem 0 !important;
 }
 
 img.header-image {
@@ -179,10 +187,6 @@ pre {
 	white-space: -o-pre-wrap;
 	word-wrap: break-word;
 	margin-bottom: 0 !important;
-}
-
-dd {
-	margin-bottom: 1rem !important;
 }
 
 .word-wrap {

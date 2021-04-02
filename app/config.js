@@ -219,17 +219,7 @@ module.exports = {
 	/* 12 */	{name:"Difficulty History", url:"./difficulty-history", desc:"Graph of difficulty changes over time.", fontawesome:"fas fa-chart-line"},
 
 	/* 13 */	{name:"Whitepaper Extracter", url:"./bitcoin-whitepaper", desc:"Tool that extracts the Bitcoin whitepaper from data embedded in the blockchain.", fontawesome:"far fa-file-alt"},
-	],
-
-	donations:{
-		addresses:{
-			coins:["BTC"],
-			sites:{"BTC":"https://explorer.btc21.org"}
-		},
-		btcpayserver:{
-			host:"https://donate.btc21.org"
-		}
-	}
+	]
 };
 
 debugLog(`Config(final): privacyMode=${module.exports.privacyMode}`);

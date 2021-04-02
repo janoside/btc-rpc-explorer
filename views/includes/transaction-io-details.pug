@@ -56,8 +56,8 @@ div.row.font-monospace
 									else
 										div.word-wrap
 											if (vout.scriptPubKey)
-												span.badge.bg-dark.me-2
-													span(title=`Input Type: ${utils.outputTypeName(vout.scriptPubKey.type)}`, data-bs-toggle="tooltip") #{utils.outputTypeAbbreviation(vout.scriptPubKey.type)}
+												span(title=`Input Type: ${utils.outputTypeName(vout.scriptPubKey.type)}`, data-bs-toggle="tooltip")
+													+darkBadge(utils.outputTypeAbbreviation(vout.scriptPubKey.type))
 
 											if (vout.coinbaseSpend)
 												span.badge.bg-success.me-2
@@ -210,7 +210,7 @@ div.row.font-monospace
 									if (vout.scriptPubKey.addresses)
 										if (true)
 											div.mb-1
-												span.badge.bg-dark
+												+darkBadge
 													span(title=`Output Type: ${utils.outputTypeName(vout.scriptPubKey.type)}`, data-bs-toggle="tooltip") #{utils.outputTypeAbbreviation(vout.scriptPubKey.type)}
 
 										each addr in vout.scriptPubKey.addresses
@@ -232,9 +232,9 @@ div.row.font-monospace
 
 									else if (vout.scriptPubKey.hex && vout.scriptPubKey.hex.startsWith('6a24aa21a9ed'))
 										div.mb-2
-											span.badge.bg-primary.me-2 OP_RETURN
+											+primaryBadge("OP_RETURN")
 											
-											span.badge.bg-dark.me-2 SegWit commitment
+											+darkBadge("SegWit commitment")
 											a(href="https://github.com/bitcoin/bips/blob/master/bip-0141.mediawiki#commitment-structure", data-bs-toggle="tooltip", title="Read about the SegWit Commitment", target="_blank")
 												i.fas.fa-external-link-alt
 
@@ -244,15 +244,15 @@ div.row.font-monospace
 
 									else if (vout.scriptPubKey.asm && vout.scriptPubKey.asm.startsWith('OP_RETURN '))
 										div.mb-2
-											span.badge.bg-primary OP_RETURN
+											+primaryBadge("OP_RETURN")
 
 										+asciiHexDataDisplay("OP_RETURN data", `op_return-${tx.txid}-${vout.n}`, vout.scriptPubKey.asm.substring("OP_RETURN ".length))
 										
 
 									else
 										div.mb-tiny
-											span.badge.bg-dark
-												span(title=`Output Type: ${utils.outputTypeName(vout.scriptPubKey.type)}`, data-bs-toggle="tooltip") #{utils.outputTypeAbbreviation(vout.scriptPubKey.type)}
+											span(title=`Output Type: ${utils.outputTypeName(vout.scriptPubKey.type)}`, data-bs-toggle="tooltip")
+												+darkBadge(utils.outputTypeAbbreviation(vout.scriptPubKey.type))
 
 										+asciiHexDataDisplay("ASM data", `asm-${tx.txid}-${vout.n}`, vout.scriptPubKey.asm)
 

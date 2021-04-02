@@ -5,7 +5,7 @@ $main-bg: darken($body-bg, 6%);
 
 $text-muted: #b7bfc7;
 
-$dark: #3d454d;
+$dark: #1e2226;
 
 /*$theme-colors: (
 	"dark": #292e33
@@ -57,7 +57,7 @@ $dropdown-dark-link-hover-bg: #0ff;
 $dropdown-dark-link-active-bg: #f0f;
 $dropdown-link-active-color: lighten($dropdown-bg, 5%);
 
-$dropdown-header-color: $body-color;
+$dropdown-header-color: darken($body-color, 25%);
 
 $dropdown-box-shadow: 0 1.5rem 1rem rgba(#000, .35);
 
@@ -116,6 +116,10 @@ $input-color: #212529;
 
 .bg-gradient-body-to-main {
 	background: linear-gradient(0deg, $main-bg 0%, $body-bg 100%);
+}
+
+.border-dark {
+	border-color: lighten($dark, 8%) !important;
 }
 
 .card-highlight {

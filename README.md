@@ -132,7 +132,7 @@ See [instructions here](docs/nginx-reverse-proxy.md) for using nginx+certbot (le
 
 If you get value from this project, please consider supporting my continued work with a donation. Any and all donations are truly appreciated.
 
-* [https://donate.btc21.org](https://donate.btc21.org)
+* [https://explorer-support.btc21.org](https://explorer-support.btc21.org)
 
 
 [npm-ver-img]: https://img.shields.io/npm/v/btc-rpc-explorer.svg?style=flat

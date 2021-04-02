@@ -24,36 +24,48 @@ block content
 					h4.fw-light.mb-2 Welcome to Bitcoin Explorer!
 				.float-start
 					if (config.demoSite)
-						span.badge.bg-primary.mb-2.ms-3.mt-1 Public Demo
+						span.badge.bg-primary.mb-2.ms-0.ms-md-3.mt-1(title=`This is a public demo, but this tool is designed to be installed and run by all Bitcoiners...<br/><i>Don't Trust, Verify</i>!`, data-bs-toggle="tooltip", data-bs-html="true")
+							span.me-2 Public Demo
+							i.fas.fa-sticky-note
 			
 
-			.mb-1 A beautiful, easy-to-use, educational explorer whose <u>only dependency is your <b>Bitcoin Core</b> node</u>!
-			ul.mb-2
-				li Open-Source
-				li Easy to setup / configure
-				li Designed to work well on low-powered devices (e.g. Raspberry Pi)
-				li Available for self-installation, or via several readymade-node integrations
+			.mb-2 An easy-to-use, educational explorer whose <u>only dependency is your <b>Bitcoin Core</b> node</u>!
+			.mb-3
+				span.badge.bg-success.me-2(style="background-color: #fd9843 !importantx;")
+					span.me-2 Open-Source
+					i.fas.fa-check
+
+				span.badge.bg-success.me-2(style="background-color: #fd9843 !importantx;")
+					span.me-2 Easy Setup
+					i.fas.fa-check
+
+				span.badge.bg-success.me-2(style="background-color: #fd9843 !importantx;")
+					span.me-2 Low Hardware Requirements
+					i.fas.fa-check
+
+				span.badge.bg-success.me-2(style="background-color: #fd9843 !importantx;")
+					span.me-2 Fun!
+					i.fas.fa-check
 			
-			.mb-2 Check out the code, support development with a donation, and follow the project on Twitter below.
+			if (false)
+				ul.mb-2
+					li Open-Source
+					li Easy to setup
+					li Designed for low-powered hardware
 			
-			.mt-2
+			.mt-4.mb-2
 				if (global.sourcecodeProjectMetadata)
-					a.btn.btn-primary.text-white.me-2.mb-1(href="https://github.com/janoside/btc-rpc-explorer", title="View source code on Github", data-bs-toggle="tooltip")
-						i.fab.fa-github.fontawesome-shadow-dark.fa-lg.me-2
+					a.btn.btn-primary.mb-1.me-3(href="https://github.com/janoside/btc-rpc-explorer", title="View source code on Github", data-bs-toggle="tooltip", data-bs-placement="bottom")
+						i.fab.fa-github.fa-lg.me-2
 						| View Source
 
-				a.btn.btn-primary.me-2.mb-1(href="https://donate.btc21.org", target="_blank", title="Support this project with a donation", data-bs-toggle="tooltip")
-					i.fas.fa-heart.fontawesome-shadow-dark.text-danger.fa-lg.me-2
-					| Support Project
+				a.btn.btn-primary.mb-1.me-3(href="https://explorer-support.btc21.org", target="_blank", title="Support this project with a donation", data-bs-toggle="tooltip", data-bs-placement="bottom")
+					i.fas.fa-heart.text-danger.fa-lg.me-2
+					| Donate
 
-				a.btn.btn-primary.me-2.mb-1(href="https://twitter.com/BitcoinExplorer", target="_blank", title="Follow this project on Twitter", data-bs-toggle="tooltip")
-					i.fab.fa-twitter.text-twitter.fontawesome-shadow-dark.fa-lg.me-2
+				a.btn.btn-primary.mb-1(href="https://twitter.com/BitcoinExplorer", target="_blank", title="Follow @BitcoinExplorer on Twitter", data-bs-toggle="tooltip", data-bs-placement="bottom")
+					i.fab.fa-twitter.text-twitter.fa-lg.me-2
 					| @BitcoinExplorer
-
-			if (config.demoSite)
-				.mt-2
-					i.fas.fa-asterisk.fontawesome-shadow.text-warning.me-2
-					| This is a public demo, but this tool is designed to be run by <b>all</b> Bitcoiners... <i>Don't Trust, Verify</i>!
 					
 
 				
@@ -82,7 +94,7 @@ block content
 				include includes/blocks-list.pug
 
 				.text-center
-					.border.border-2.mt-2.mb-3
+					.border.border-2.mb-3(class=(blocks.length % 2 == 1 ? "mt-2" : false))
 
 					a(href="./blocks") Browse Blocks &raquo;
 							

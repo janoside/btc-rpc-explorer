@@ -123,10 +123,12 @@ block content
 							if (minerInfo)
 								+summaryItem("Miner")
 									if (minerInfo.identifiedBy)
-										small.badge.bg-primary(data-bs-toggle="tooltip", title=`Identified by: ${minerInfo.identifiedBy}`) #{minerInfo.name}
+										span(data-bs-toggle="tooltip", title=`Identified by: ${minerInfo.identifiedBy}`)
+											+primaryBadge(minerInfo.name, false)
 
 									else
-										small.badge.bg-primary #{minerInfo.name}
+										span
+											+primaryBadge(minerInfo.name, false)
 											
 
 							+summaryItem("Fees Collected", "The aggregate fees collected by the miner that created this coinbase transaction.")
@@ -286,13 +288,14 @@ block content
 										if (vin.scriptSig && vin.scriptSig.asm)
 											.mb-2
 												.mb-2
-													span.badge.bg-dark.me-2 scriptSig
+													+darkBadge("scriptSig")
 												span.font-data #{vin.scriptSig.asm}
 
 
 										if (vin.txinwitness && vin.txinwitness.length > 0)
 											.mb-2
-												span.badge.bg-dark.me-2 witness
+												+darkBadge("witness")
+
 											each witnessItem in vin.txinwitness
 												span.font-data.me-3 #{witnessItem}
 
@@ -319,7 +322,7 @@ block content
 											each chunk in chunks
 												span.me-2
 													if (chunk.startsWith("OP_"))
-														span.badge.bg-primary #{chunk}
+														+primaryBadge(chunk)
 													else
 														span.font-data #{chunk}
 

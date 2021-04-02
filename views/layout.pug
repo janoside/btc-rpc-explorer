@@ -11,10 +11,10 @@ html(lang="en")
 
 
 		if (userSettings.uiTheme == "light")
-			link(rel="stylesheet", href="./style/light.css", integrity="sha384-aUb+tfIBAXpVezvEdnu1PuRqntH8i/XMDZgw543c0vdV/1AjC8xV5JINblNI5GRA")
+			link(rel="stylesheet", href="./style/light.css", integrity="sha384-0HMhvK5rDBDNS0ANsUY5iBfRF7xMjvTSKQx2re9alLxtYOplwKvMOh3anoGoGty9")
 				
 		else
-			link(rel="stylesheet", href="./style/dark.css", integrity="sha384-Ow3YhdsFrBZOGX+Z8jwJQKTq1ezm/PS8Jt5ND+g4j9PQkAmTPw3NaiBOIeFU5eLF")
+			link(rel="stylesheet", href="./style/dark.css", integrity="sha384-stiEjQynSbhi0aquYv7o9mOgbKYOxFOQlVc5DXEJbC4zfH/cQsrJf7aAdsapxnHA")
 		
 
 		link(rel="icon", type="image/png", href=`./img/logo/${config.coin.toLowerCase()}.png`)
@@ -149,14 +149,60 @@ html(lang="en")
 				div(style="margin-bottom: 30px;")
 
 		footer.footer.border-top.border-primary.bg-header-footer.pt-3.pb-1.px-3.text-white(style="border-width: 5px !important;")
-			div.container
-				div.row
-					div.col-md-5
-						dl
-							dt Source
-							dd
-								a.footer-link(href="https://github.com/janoside/btc-rpc-explorer") github.com/janoside/btc-rpc-explorer
+			.container
+				.row.mb-7
+					.col-6
+						.text-start
+							- var darkTheme = (userSettings.uiTheme == "dark");
+							a.btn.fa-lg.bg-header-footer-highlight.me-2(href=`./changeSetting?name=uiTheme&value=${darkTheme ? "light" : "dark"}`, title=`Active Theme: <b>${darkTheme ? "Dark" : "Light"}</b><br/>Click to switch to <b>${darkTheme ? "Light" : "Dark"}</b>`, data-bs-toggle="tooltip", data-bs-html="true")
+
+								i.fas.fa-sun.text-warning.me-1
 								
+								span.me-1
+									if (darkTheme)
+										i.fas.fa-toggle-on.text-primary
+									else
+										i.fas.fa-toggle-on.fa-rotate-180.text-warning
+
+								i.fas.fa-moon.text-primary
+
+
+							.btn-group.dropup.me-2
+								button.btn.dropdown-toggle.bg-header-footer-highlight.text-white(type="button" data-bs-toggle="dropdown" aria-expanded="false")
+									i.fas.fa-shield-alt.me-1
+
+								ul.dropdown-menu.shadow(aria-label="Admin Tools Items")
+									span.dropdown-header Admin Tools
+
+									a.dropdown-item(href="./admin/dashboard") Dashboard
+									a.dropdown-item(href="./admin/stats") Stats
+							
+								
+					.col-6
+						.text-end
+							span(style="font-size: 1.5rem;")
+								if (global.sourcecodeProjectMetadata)
+									a.text-white.mb-1.me-3(href="https://github.com/janoside/btc-rpc-explorer", title="View source code on Github", data-bs-toggle="tooltip")
+										i.fab.fa-github
+
+								a.text-danger.mb-1.me-3(href="https://explorer-support.btc21.org", target="_blank", title="Support this project with a donation", data-bs-toggle="tooltip")
+									i.fas.fa-heart.text-danger
+
+								a.text-white.mb-1(href="https://twitter.com/BitcoinExplorer", target="_blank", title="Follow @BitcoinExplorer on Twitter", data-bs-toggle="tooltip")
+									i.fab.fa-twitter.text-twitter
+
+
+				hr
+
+				
+				.row.mt-4
+					.col-lg-4
+						.mb-4
+							h6 Project
+
+							.ms-2
+								a.footer-link(href="https://github.com/janoside/btc-rpc-explorer") github.com/janoside/btc-rpc-explorer
+									
 								if (global.sourcecodeProjectMetadata)
 									div.mt-2
 										a.btn.btn-primary.btn-sm.me-3.mb-1.text-decoration-none(href="https://github.com/janoside/btc-rpc-explorer")
@@ -167,10 +213,11 @@ html(lang="en")
 											i.fas.fa-code-branch.fontawesome-shadow.me-2
 											span.badge.bg-white.text-dark #{global.sourcecodeProjectMetadata.forks_count}
 
+					.col-lg-4
+						.mb-4
+							h6 App Details
 
-							
-							dt App Details
-							dd
+							.ms-2
 								span version: #{global.appVersion}
 								if (sourcecodeVersion)
 									br
@@ -183,9 +230,12 @@ html(lang="en")
 									a.footer-link(href="./changelog") changelog
 									span )
 
-							if (config.demoSite)
-								dt Public Demos
-								dd
+					.col-lg-4
+						if (config.demoSite)
+							.mb-4
+								h6 Public Demos
+
+								.ms-2
 									if (coinConfig.demoSiteUrlsByNetwork && coinConfig.demoSiteUrlsByNetwork.main)
 										a.footer-link(href=coinConfig.demoSiteUrlsByNetwork.main) #{coinConfig.demoSiteUrlsByNetwork.main}
 									else
@@ -197,46 +247,6 @@ html(lang="en")
 										each demoSite in demoSites
 											a.me-2(href=coinConfig.demoSiteUrlsByNetwork[demoSite], title=coinConfig.siteTitlesByNetwork[demoSite], data-bs-toggle="tooltip")
 												img(src=coinConfig.logoUrlsByNetwork[demoSite], alt=coinConfig.siteTitlesByNetwork[demoSite], style="width: 40px; height: 40px;")
-
-					div.col-md-7.text-md-end
-						dl
-							
-
-							
-							dd
-								.btn-group.dropup.me-2
-									button.btn.dropdown-toggle.bg-header-footer-highlight.text-white(type="button" data-bs-toggle="dropdown" aria-expanded="false")
-										i.fas.fa-shield-alt.me-1
-
-									ul.dropdown-menu.dropdown-menu-end.shadow(aria-label="Admin Tools Items")
-										span.dropdown-header Admin Tools
-
-										a.dropdown-item(href="./admin/dashboard") Dashboard
-										a.dropdown-item(href="./admin/stats") Stats
-
-
-								- var darkTheme = (userSettings.uiTheme == "dark");
-								a.btn.btn-lg.fa-lg.bg-header-footer-highlight(href=`./changeSetting?name=uiTheme&value=${darkTheme ? "light" : "dark"}`, title=`Active Theme: <b>${darkTheme ? "Dark" : "Light"}</b><br/>Click to switch to <b>${darkTheme ? "Light" : "Dark"}</b>`, data-bs-toggle="tooltip", data-bs-html="true")
-
-									i.fas.fa-sun.text-warning.me-1
-									
-									span.me-1
-										if (darkTheme)
-											i.fas.fa-toggle-on.text-primary
-										else
-											i.fas.fa-toggle-on.fa-rotate-180.text-warning
-
-									i.fas.fa-moon.text-primary
-
-							dd
-								
-
-							dd
-								a.btn.btn-primary(href="https://donate.btc21.org", title="Support this project with a donation", data-bs-toggle="tooltip")
-									i.fas.fa-heart.fontawesome-shadow-dark.text-danger
-
-								a.btn.btn-primary.ms-2(href=`https://twitter.com/BitcoinExplorer`, title="Follow this project on Twitter", data-bs-toggle="tooltip")
-									i.fab.fa-twitter.fontawesome-shadow-dark.text-twitter
 								
 								
 

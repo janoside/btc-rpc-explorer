@@ -65,7 +65,7 @@ if (exchangeRates)
 +contentSection
 	+summaryRow(1 + (hashrate7d ? 1 : 0) + (chainTxStats[7 * targetBlocksPerDay] ? 1 : 0) + (difficultyAdjustmentData ? 1 : 0))
 		if (hashrate7d)
-			+summaryItem("7d Hashrate")
+			+summaryItem("7d Hashrate", "The average hashrate of the global mining network over the last 7 days. A comparison to the 30-day average is included to help gauge the rate of change.")
 				- var hashrate7dayData = utils.formatLargeNumber(hashrate7d, 1);
 
 				span.me-2 #{hashrate7dayData[0]}
@@ -88,7 +88,7 @@ if (exchangeRates)
 						| )
 
 		if (chainTxStats[7 * targetBlocksPerDay])
-			+summaryItem("7d Transactions")
+			+summaryItem("7d Transactions", "The total number of transactions that have been confirmed in the blockchain over the last 7 days.")
 				| #{chainTxStats[7 * targetBlocksPerDay].window_tx_count.toLocaleString()}
 
 		if (difficultyAdjustmentData)
