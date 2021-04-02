@@ -131,7 +131,7 @@ mixin txList(visibleTxs, txCount, limit, offset, inputsByTxid, options)
 								- var feeRate = new Decimal(mempoolDetails.fee).times(coinConfig.baseCurrencyUnit.multiplier).dividedBy(mempoolDetails.vsize);
 								
 								+lightBadge
-									| #{feeRate.toDP(0)}
+									| #{parseInt(feeRate).toLocaleString()}
 									span.fw-light.ms-1 sat/vB
 
 							if (options.addrGainsByTxid && options.addrGainsByTxid[tx.txid])
