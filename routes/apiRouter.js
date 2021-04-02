@@ -97,6 +97,10 @@ const mempoolTxSummaryCache = {};
 
 router.get("/mempool-summary", asyncHandler(async (req, res, next) => {
 	try {
+		const ageBuckets = req.query.ageBuckets ? parseInt(req.query.ageBuckets) : 100;
+		const sizeBuckets = req.query.sizeBuckets ? parseInt(req.query.sizeBuckets) : 100;
+
+
 		const txids = await utils.timePromise("promises.mempool-summary.getAllMempoolTxids", coreApi.getAllMempoolTxids());
 
 		const promises = [];
@@ -118,7 +122,9 @@ router.get("/mempool-summary", asyncHandler(async (req, res, next) => {
 							sz: item.entry.vsize ? item.entry.vsize : item.entry.size,
 							af: item.entry.fees.ancestor,
 							df: item.entry.fees.descendant,
-							t: item.entry.time
+							dsz: item.entry.descendantsize,
+							t: item.entry.time,
+							w: item.entry.weight ? item.entry.weight : item.entry.size * 4
 						};
 
 						mempoolTxSummaryCache[key] = itemSummary;
@@ -204,18 +210,25 @@ router.get("/mempool-summary", asyncHandler(async (req, res, next) => {
 
 		satoshiPerByteBucketLabels[0] = ("[0 - " + satoshiPerByteBucketMaxima[0] + ")");
 		for (var i = 0; i < bucketCount; i++) {
-			satoshiPerByteBuckets[i] = {"count":0, "totalFees":0, "totalBytes":0};
+			satoshiPerByteBuckets[i] = {
+				count: 0,
+				totalFees: 0,
+				totalBytes: 0,
+				totalWeight: 0,
+				minFeeRate: satoshiPerByteBucketMaxima[i - 1],
+				maxFeeRate: satoshiPerByteBucketMaxima[i]
+			};
 
 			if (i > 0 && i < bucketCount - 1) {
 				satoshiPerByteBucketLabels[i] = ("[" + satoshiPerByteBucketMaxima[i - 1] + " - " + satoshiPerByteBucketMaxima[i] + ")");
 			}
 		}
 
-		var ageBucketCount = 150;
+		var ageBucketCount = ageBuckets;
 		var ageBucketTxCounts = [];
 		var ageBucketLabels = [];
 
-		var sizeBucketCount = 150;
+		var sizeBucketCount = sizeBuckets;
 		var sizeBucketTxCounts = [];
 		var sizeBucketLabels = [];
 
@@ -250,21 +263,23 @@ router.get("/mempool-summary", asyncHandler(async (req, res, next) => {
 		satoshiPerByteBucketLabels[bucketCount - 1] = (satoshiPerByteBucketMaxima[satoshiPerByteBucketMaxima.length - 1] + "+");
 
 		var summary = {
-			"count":0,
-			"totalFees":0,
-			"totalBytes":0,
-			"satoshiPerByteBuckets":satoshiPerByteBuckets,
-			"satoshiPerByteBucketLabels":satoshiPerByteBucketLabels,
-			"ageBucketTxCounts":ageBucketTxCounts,
-			"ageBucketLabels":ageBucketLabels,
-			"sizeBucketTxCounts":sizeBucketTxCounts,
-			"sizeBucketLabels":sizeBucketLabels
+			"count": 0,
+			"totalFees": 0,
+			"totalBytes": 0,
+			"totalWeight": 0,
+			"satoshiPerByteBuckets": satoshiPerByteBuckets,
+			"satoshiPerByteBucketLabels": satoshiPerByteBucketLabels,
+			"ageBucketTxCounts": ageBucketTxCounts,
+			"ageBucketLabels": ageBucketLabels,
+			"sizeBucketTxCounts": sizeBucketTxCounts,
+			"sizeBucketLabels": sizeBucketLabels
 		};
 
 		for (var x = 0; x < results.length; x++) {
 			var txMempoolInfo = results[x];
 			var fee = txMempoolInfo.f;
 			var size = txMempoolInfo.sz;
+			var weight = txMempoolInfo.w;
 			var feePerByte = txMempoolInfo.f / size;
 			var satoshiPerByte = feePerByte * 100000000; // TODO: magic number - replace with coinConfig.baseCurrencyUnit.multiplier
 			var age = Date.now() / 1000 - txMempoolInfo.t;
@@ -275,6 +290,7 @@ router.get("/mempool-summary", asyncHandler(async (req, res, next) => {
 					satoshiPerByteBuckets[i]["count"]++;
 					satoshiPerByteBuckets[i]["totalFees"] += fee;
 					satoshiPerByteBuckets[i]["totalBytes"] += size;
+					satoshiPerByteBuckets[i]["totalWeight"] += weight;
 
 					addedToBucket = true;
 
@@ -286,11 +302,13 @@ router.get("/mempool-summary", asyncHandler(async (req, res, next) => {
 				satoshiPerByteBuckets[bucketCount - 1]["count"]++;
 				satoshiPerByteBuckets[bucketCount - 1]["totalFees"] += fee;
 				satoshiPerByteBuckets[bucketCount - 1]["totalBytes"] += size;
+				satoshiPerByteBuckets[bucketCount - 1]["totalWeight"] += weight;
 			}
 
 			summary["count"]++;
 			summary["totalFees"] += fee;
 			summary["totalBytes"] += size;
+			summary["totalWeight"] += weight;
 
 			var ageBucketIndex = Math.min(ageBucketCount - 1, parseInt(age / (maxAge / ageBucketCount)));
 			var sizeBucketIndex = Math.min(sizeBucketCount - 1, parseInt(size / (maxSize / sizeBucketCount)));
@@ -347,7 +365,9 @@ router.get("/mempool-tx-summaries/:txids", asyncHandler(async (req, res, next) =
 							sz: item.entry.vsize ? item.entry.vsize : item.entry.size,
 							af: item.entry.fees.ancestor,
 							df: item.entry.fees.descendant,
-							t: item.entry.time
+							dsz: item.entry.descendantsize,
+							t: item.entry.time,
+							w: item.entry.weight ? item.entry.weight : item.entry.size * 4
 						};
 
 						mempoolTxSummaryCache[key] = itemSummary;

@@ -9,7 +9,7 @@ block content
 	
 	+dismissableInfoAlert("mempoolSummaryNoteDismissed", "About Mempool Summary...")
 		.mb-2 This tool summarizes data about the transactions in your node's <b>mempool</b> - the set of transactions that your node has received from the network but are not yet confirmed in a block.
-		.mb-2 The fee-rate summary data can be helpful for deciding what fee is necessary to get a transaction included in a future block, depending on its priority.
+		.mb-0 The fee-rate summary data can be helpful for deciding what fee is necessary to get a transaction included in a future block, depending on its priority.
 
 
 	div#progress-wrapper.mb-huge
@@ -18,69 +18,129 @@ block content
 				.d-flex.align-items-center
 					.spinner-border.text-primary.me-3(role="status")
 					span Loading Mempool...
-
-				if (false)
-					span Loading mempool transactions: 
-						span(id="progress-text")
-					div.progress.mt-2(id="progress-bar", style="height: 7px;")
-						div.progress-bar(id="data-progress", role="progressbar", aria-valuenow="0", aria-valuemin="0" ,aria-valuemax="100")
 	
 
 	div(id="main-content", style="display: none;")
-		+contentSection("Summary")
-			+summaryRow(5)
-				+summaryItem("Transactions")
-					span#tx-count
+		+pageTabs(["Details", "JSON"])
 
-				+summaryItem("Memory Usage")
-					span#mem-usage
 
-				+summaryItem("Total Fees")
-					span#total-fees
+		.tab-content
+			+pageTab("Details", true)
+				+contentSection("Summary")
+					+summaryRow(5)
+						+summaryItem("Transactions")
+							span#tx-count
 
-				+summaryItem("Avg Fee")
-					span#avg-fee
+						+summaryItem("Blocks", "The number of blocks needed to contain all current mempool transactions.")
+							span#block-count
 
-				+summaryItem("Avg Fee Rate", null, "sat/vB")
-					span#avg-fee-rate
+						+summaryItem("Total Fees")
+							span#total-fees
 
-		div#detail-charts-and-data
-			+contentSection("Fee Rate Distribution")
-				canvas.mb-3(id="mempoolBarChart", height="100")
+						+summaryItem("Avg Fee")
+							span#avg-fee
 
-				hr.mt-3
+						+summaryItem("Avg Fee Rate", null, "sat/vB")
+							span#avg-fee-rate
 
-				.table-responsive
-					table.table.table-striped.table-borderless.mb-3
-						thead
-							tr
-								th Fee Rate
-								th.text-end Tx Count
-								th.text-end Total Fees
-								th.text-end Avg Fee
-								th.text-end Avg Fee Rate
-									small.fw-normal.text-muted.ms-2 (sat/vB)
-						tbody(id="fee-rate-table-body")
-							tr(id="fee-rate-table-row-prototype", style="display: none;")
-								td.font-monospace.data-label
-								td.font-monospace.text-end.data-count
-								td.font-monospace.text-end.data-total-fees
-								td.font-monospace.text-end.data-avg-fee
-								td.font-monospace.text-end.data-fee-rate
+				+contentSection("Estimate Block Depth")
+					p If you already have a transaction in the mempool, you can enter its <b>TXID</b> to get an estimate for when it will be included in a block. Or, if you're planning to send a transaction, you can estimate confirmation time for different fee rates.
 
-							tr(id="empty-row-to-fix-striped-coloring", style="display: none;")
+					.clearfix
+						.float-start
+							.me-4.d-inline-block
+								h6 Fee Rate
+									small.fw-light.ms-1 (sat/vB)
+
+								- var feeRatesToEstimate = [1, 5, 15, 25, 50, 75, 100, 150];
+
+								div.btn-group
+									each feeRateToEstimate in feeRatesToEstimate
+										a.btn.btn-outline-primary.fee-rate-btn(href="javascript:void(0)", onclick=`estimateMempoolDepth(parseInt($(this).attr("data-fee-rate"))); return false;`, data-fee-rate=feeRateToEstimate) #{feeRateToEstimate}
+
+							.me-4.d-inline-block
+								h6 Transaction ID
+
+								form.form-inline(method="post", action="javascript:void(0)", onsubmit=`estimateTransactionMempoolDepth($("#mempoolquery").val()); return false;` style="width: 325px;")
+									.input-group.input-group
+										input.form-control.form-control(id="mempoolquery", type="text", name="mempoolquery", placeholder="txid", value=(mempoolquery))
+										
+										button.btn.btn-primary(type="submit")
+											i.fas.fa-search
+
+							.me-4.d-inline-block
+								h6 Custom Fee Rate
+									small.fw-light.ms-1 (sat/vB)
+
+								form.form-inline(method="post", action="javascript:void(0)", onsubmit=`estimateMempoolDepth($("#customFeeRate").val()); return false;` style="width: 200px;")
+									.input-group.input-group
+										input.form-control.form-control(id="customFeeRate", type="text", name="customFeeRate", placeholder="fee rate (sat/vB)", value=(customFeeRate))
+										
+										button.btn.btn-primary(type="submit")
+											i.fas.fa-search
+
+					hr.mt-3.mb-3
+
+					+summaryRow(3)
+						+summaryItem("Fee Rate", null, "sat/vB")
+							span#estimate-fee-rate
+
+						+summaryItem("Est. Block Depth")
+							span#estimate-mempooldepth
+
+						+summaryItem("Est. Confirmation Time")
+							span#estimate-conf-time
+
+
+
+				div#detail-charts-and-data
+					+contentSection("Fee Rate Distribution")
+						canvas.mb-3(id="mempoolBarChart", height="100")
+
+						hr.mt-3
+
+						.table-responsive
+							table.table.table-striped.table-borderless.mb-3
+								thead
+									tr
+										th Fee Rate
+										th.text-end N(tx)
+										th.text-end
+											span.border-dotted(title="The number of blocks worth of transactions that transactions in this fee-rate bucket comprise.", data-bs-toggle="tooltip") N(blocks)
+
+										th.text-end
+											span.border-dotted(title="The running total of the number of blocks needed to confirm this and higher fee-rate buckets.", data-bs-toggle="tooltip") Σ N(blocks)
+										th.text-end Total Fees
+										th.text-end Avg Fee
+										th.text-end Avg Fee Rate
+											small.fw-normal.text-muted.ms-2 (sat/vB)
+								tbody(id="fee-rate-table-body")
+									tr(id="fee-rate-table-row-prototype", style="display: none;")
+										td.font-monospace.data-label
+										td.font-monospace.text-end.data-count
+										td.font-monospace.text-end.data-block-count
+										td.font-monospace.text-end.data-sum-block-count
+										td.font-monospace.text-end.data-total-fees
+										td.font-monospace.text-end.data-avg-fee
+										td.font-monospace.text-end.data-fee-rate
+
+									tr(id="empty-row-to-fix-striped-coloring", style="display: none;")
 
 					
 
-			+contentSection("Size Distribution")
-				canvas.mb-3(id="txSizesBarChart", height="100")
+					+contentSection("Size Distribution")
+						canvas.mb-3(id="txSizesBarChart", height="100")
 
 					
 
-			+contentSection("Age Distribution")
-				canvas.mb-3(id="txAgesBarChart", height="100")
+					+contentSection("Age Distribution")
+						canvas.mb-3(id="txAgesBarChart", height="100")
 
-					
+
+			+pageTab("JSON")
+
+				pre
+					code.json#json-content
 		
 
 block endOfBody
@@ -90,14 +150,14 @@ block endOfBody
 	script(src='./js/decimal.js')
 
 	script.
-		
+		var satoshiPerByteBucketMaxima = !{JSON.stringify(satoshiPerByteBucketMaxima)};
+		var summary = null;
+
 		$(document).ready(function() {
 			loadMempool();
 		});
 
 		function loadMempool() {
-			var results = [];
-
 			var statusCallback = function(chunkIndexDone, chunkCount) {
 				//console.log("Done: " + Math.min(((chunkIndexDone + 1) * chunkSize), count) + " of " + count);
 
@@ -115,7 +175,7 @@ block endOfBody
 				//console.log(JSON.stringify(summary));
 
 				$("#tx-count").text(summary.count.toLocaleString());
-				$("#mem-usage").text(summary.totalBytes.toLocaleString());
+				$("#block-count").text(new Decimal(summary.totalWeight).dividedBy(4000000).toDP(1)); // TODO: magic number: block weight
 				$("#total-fees").text(summary.totalFees);
 				
 				if (summary.count == 0) {
@@ -250,15 +310,22 @@ block endOfBody
 
 
 				// fee rate table
-				for (var i = 0; i < summary.satoshiPerByteBuckets.length; i++) {
+				var sumBlockCount = new Decimal(0);
+
+				for (var i = (summary.satoshiPerByteBuckets.length - 1); i >= 0; i--) {
 					var item = summary.satoshiPerByteBuckets[i];
 
 					var row = $("#fee-rate-table-row-prototype").clone();
 					row.attr("id", null);
 					row.addClass("fee-rate-table-row");
 
+					var blockCount = new Decimal(item.totalWeight).dividedBy(4000000); // TODO: magic number: block weight
+					var sumBlockCount = sumBlockCount.plus(blockCount);
+
 					row.find(".data-label").text(summary.satoshiPerByteBucketLabels[i]);
 					row.find(".data-count").text(item.count.toLocaleString());
+					row.find(".data-block-count").text(blockCount.toDP(2));
+					row.find(".data-sum-block-count").text(sumBlockCount.toDP(2));
 					row.find(".data-total-fees").text(item.count > 0 ? item.totalFees : "-");
 					row.find(".data-avg-fee").text(item.count > 0 ? item.totalFees / item.count : "-");
 					row.find(".data-fee-rate").text("-");
@@ -283,10 +350,16 @@ block endOfBody
 			$.ajax({
 				url: `./api/mempool-summary`
 
-			}).done(function(result) {
-				console.log(JSON.stringify(result));
+			}).done(function(summaryResult) {
+				summary = summaryResult;
 
-				finishedCallback(result);
+				$("#json-content").text(JSON.stringify(summary, null, 4));
+
+				hljs.highlightAll();
+
+				//console.log(JSON.stringify(result));
+
+				finishedCallback(summaryResult);
 			});
 		}
 
@@ -356,177 +429,81 @@ block endOfBody
 			};
 		}
 
-		/*function summarizeData(rawdata) {
-			var summary = [];
+		function estimateTransactionMempoolDepth(txid) {
+			var avgTransactionsPerBlock = 3000;
+			var satsPerBitcoin = 100000000; // TODO: magic number - replace with coinConfig.baseCurrencyUnit.multiplier
+			
+			$.ajax({
+				url: `./api/mempool-tx-summaries/${txid}`
 
-			var maxFee = 0;
-			var maxFeePerByte = 0;
-			var maxAge = 0;
-			var maxSize = 0;
-			var ages = [];
-			var sizes = [];
+			}).done(function(resultList) {
 
-			for (var i = 0; i < rawdata.length; i++) {
-				var txMempoolInfo = rawdata[i];
+				var result = resultList[0];
 
-				var fee = txMempoolInfo.f;
-				var size = txMempoolInfo.sz;
-				var feePerByte = txMempoolInfo.f / size;
-				var age = Date.now() / 1000 - txMempoolInfo.t;
+				var feeRate = new Decimal(result.f).times(100000000).dividedBy(result.sz); // TODO: magic number, sat/BTC
 
-				if (fee > maxFee) {
-					maxFee = fee;
-				}
-
-				if (feePerByte > maxFeePerByte) {
-					maxFeePerByte = feePerByte;
-				}
-
-				ages.push({age:age, txid:"abc"});
-				sizes.push({size:size, txid:"abc"});
-
-				if (age > maxAge) {
-					maxAge = age;
-				}
-
-				if (size > maxSize) {
-					maxSize = size;
-				}
-			}
-
-			ages.sort(function(a, b) {
-				if (a.age != b.age) {
-					return b.age - a.age;
-
-				} else {
-					return a.txid.localeCompare(b.txid);
-				}
+				estimateMempoolDepth(feeRate);
 			});
+		}
 
-			sizes.sort(function(a, b) {
-				if (a.size != b.size) {
-					return b.size - a.size;
+		function estimateMempoolDepth(feeRate) {
+			feeRate = new Decimal(feeRate);
+			
+			if (feeRate > 1000) {
+				$("#estimate-fee-rate").text(parseInt(feeRate).toLocaleString());
 
-				} else {
-					return a.txid.localeCompare(b.txid);
-				}
-			});
-
-			maxSize = 2000;
-
-			var bucketCount = satoshiPerByteBucketMaxima.length + 1;
-
-			var satoshiPerByteBuckets = [];
-			var satoshiPerByteBucketLabels = [];
-
-			satoshiPerByteBucketLabels[0] = ("[0 - " + satoshiPerByteBucketMaxima[0] + ")");
-			for (var i = 0; i < bucketCount; i++) {
-				satoshiPerByteBuckets[i] = {"count":0, "totalFees":0, "totalBytes":0};
-
-				if (i > 0 && i < bucketCount - 1) {
-					satoshiPerByteBucketLabels[i] = ("[" + satoshiPerByteBucketMaxima[i - 1] + " - " + satoshiPerByteBucketMaxima[i] + ")");
-				}
+			} else {
+				$("#estimate-fee-rate").text(new Decimal(feeRate).toDP(1));
 			}
 
-			var ageBucketCount = 150;
-			var ageBucketTxCounts = [];
-			var ageBucketLabels = [];
+			var sumBlockCount = new Decimal(0);
 
-			var sizeBucketCount = 150;
-			var sizeBucketTxCounts = [];
-			var sizeBucketLabels = [];
+			for (var i = (summary.satoshiPerByteBuckets.length - 1); i >= 0; i--) {
+				var item = summary.satoshiPerByteBuckets[i];
 
-			for (var i = 0; i < ageBucketCount; i++) {
-				var rangeMin = i * maxAge / ageBucketCount;
-				var rangeMax = (i + 1) * maxAge / ageBucketCount;
+				var blockCount = new Decimal(item.totalWeight).dividedBy(4000000); // TODO: magic number: block weight
 
-				ageBucketTxCounts.push(0);
+				if (feeRate >= (item.minFeeRate || 1) && feeRate < (item.maxFeeRate || 10000000)) {
+					// in this bucket
+					var minBlocks = sumBlockCount;
+					var maxBlocks = sumBlockCount.plus(blockCount);
 
-				if (maxAge > 600) {
-					var rangeMinutesMin = new Decimal(rangeMin / 60).toFixed(1);
-					var rangeMinutesMax = new Decimal(rangeMax / 60).toFixed(1);
+					if (minBlocks < 1) {
+						minBlocks = new Decimal(1);
+					}
 
-					ageBucketLabels.push(rangeMinutesMin + " - " + rangeMinutesMax + " min");
+					if (maxBlocks < 1) {
+						maxBlocks = new Decimal(1);
+					}
 
-				} else {
-					ageBucketLabels.push(parseInt(rangeMin) + " - " + parseInt(rangeMax) + " sec");
-				}
-			}
+					if (`${minBlocks.toDP(1)}` == `${maxBlocks.toDP(1)}`) {
+						$("#estimate-mempooldepth").text(`~${minBlocks.toDP(1)}`);
 
-			for (var i = 0; i < sizeBucketCount; i++) {
-				sizeBucketTxCounts.push(0);
+					} else {
+						$("#estimate-mempooldepth").text(`${minBlocks.toDP(1)} - ${maxBlocks.toDP(1)}`);
+					}
+					
+					var minMinutes = minBlocks.times(10); // TODO: magic number: 10min
+					var maxMinutes = maxBlocks.times(10); // TODO: magic number: 10 min
 
-				if (i == sizeBucketCount - 1) {
-					sizeBucketLabels.push(parseInt(i * maxSize / sizeBucketCount) + "+");
+					if (maxMinutes < 60) {
+						if (`${minMinutes.toDP(1)}` == `${maxMinutes.toDP(1)}`) {
+							$("#estimate-conf-time").text(`~${minMinutes.toDP(0)} min`);
 
-				} else {
-					sizeBucketLabels.push(parseInt(i * maxSize / sizeBucketCount) + " - " + parseInt((i + 1) * maxSize / sizeBucketCount));
-				}
-			}
+						} else {
+							$("#estimate-conf-time").text(`${minMinutes.toDP(0)} - ${maxMinutes.toDP(0)} min`);
+						}
+					} else if (maxMinutes < 60 * 24) {
+						$("#estimate-conf-time").text(`${minMinutes.dividedBy(60).toDP(1)} - ${maxMinutes.dividedBy(60).toDP(1)} hr`);
 
-			satoshiPerByteBucketLabels[bucketCount - 1] = (satoshiPerByteBucketMaxima[satoshiPerByteBucketMaxima.length - 1] + "+");
+					} else if (minMinutes < 60 * 24) {
+						$("#estimate-conf-time").text(`${minMinutes.dividedBy(60).toDP(1)} hr - ${maxMinutes.dividedBy(60 * 24).toDP(1)} day`);
 
-			var summary = {
-				"count":0,
-				"totalFees":0,
-				"totalBytes":0,
-				"satoshiPerByteBuckets":satoshiPerByteBuckets,
-				"satoshiPerByteBucketLabels":satoshiPerByteBucketLabels,
-				"ageBucketTxCounts":ageBucketTxCounts,
-				"ageBucketLabels":ageBucketLabels,
-				"sizeBucketTxCounts":sizeBucketTxCounts,
-				"sizeBucketLabels":sizeBucketLabels
-			};
-
-			for (var x = 0; x < rawdata.length; x++) {
-				var txMempoolInfo = rawdata[x];
-				var fee = txMempoolInfo.f;
-				var size = txMempoolInfo.sz;
-				var feePerByte = txMempoolInfo.f / size;
-				var satoshiPerByte = feePerByte * 100000000; // TODO: magic number - replace with coinConfig.baseCurrencyUnit.multiplier
-				var age = Date.now() / 1000 - txMempoolInfo.t;
-
-				var addedToBucket = false;
-				for (var i = 0; i < satoshiPerByteBucketMaxima.length; i++) {
-					if (satoshiPerByteBucketMaxima[i] > satoshiPerByte) {
-						satoshiPerByteBuckets[i]["count"]++;
-						satoshiPerByteBuckets[i]["totalFees"] += fee;
-						satoshiPerByteBuckets[i]["totalBytes"] += size;
-
-						addedToBucket = true;
-
-						break;
+					} else {
+						$("#estimate-conf-time").text(`${minMinutes.dividedBy(60 * 24).toDP(1)} - ${maxMinutes.dividedBy(60 * 24).toDP(1)} day`);
 					}
 				}
 
-				if (!addedToBucket) {
-					satoshiPerByteBuckets[bucketCount - 1]["count"]++;
-					satoshiPerByteBuckets[bucketCount - 1]["totalFees"] += fee;
-					satoshiPerByteBuckets[bucketCount - 1]["totalBytes"] += size;
-				}
-
-				summary["count"]++;
-				summary["totalFees"] += fee;
-				summary["totalBytes"] += size;
-
-				var ageBucketIndex = Math.min(ageBucketCount - 1, parseInt(age / (maxAge / ageBucketCount)));
-				var sizeBucketIndex = Math.min(sizeBucketCount - 1, parseInt(size / (maxSize / sizeBucketCount)));
-
-				ageBucketTxCounts[ageBucketIndex]++;
-				sizeBucketTxCounts[sizeBucketIndex]++;
+				sumBlockCount = sumBlockCount.plus(blockCount);
 			}
-
-			summary["averageFee"] = summary["totalFees"] / summary["count"];
-			summary["averageFeePerByte"] = summary["totalFees"] / summary["totalBytes"];
-
-			summary["satoshiPerByteBucketMaxima"] = satoshiPerByteBucketMaxima;
-			summary["satoshiPerByteBucketCounts"] = [];
-			summary["satoshiPerByteBucketTotalFees"] = [];
-
-			for (var i = 0; i < bucketCount; i++) {
-				summary["satoshiPerByteBucketCounts"].push(summary["satoshiPerByteBuckets"][i]["count"]);
-				summary["satoshiPerByteBucketTotalFees"].push(summary["satoshiPerByteBuckets"][i]["totalFees"]);
-			}
-
-			return summary;
-		}*/
+		}

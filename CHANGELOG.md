@@ -6,6 +6,10 @@
 	* Redesigned Dark Mode (now the default)
 	* New app icon (this tools needs more of an identity of its own!)
 * Support for pruned nodes and nodes with disabled `txindex`! (HUGE Thanks to [@shesek](https://github.com/shesek))
+* Mempool Summary improvements
+	* Greatly improved performance for multiple loads via caching
+	* Added: "Blocks Count" column by fee-rate bucket
+	* Tool for estimating Block Depth of a transaction or a fee rate (Thanks [@pointbiz](https://github.com/pointbiz))
 * Upgraded to Bootstrap 5 (currently beta3...)
 * Fix for 404 pages hanging (Thanks [@shesek](https://github.com/shesek))
 * Add convenience redirect for baseUrl (Thanks [@shesek](https://github.com/shesek))
