@@ -83,10 +83,13 @@ block content
 					- var minerInfo = utils.getMinerFromCoinbaseTx(result.getrawtransaction);
 
 				+contentSection("Summary")
-					+summaryRow((isTxConfirmed ? 2 : 2) + (isCoinbaseTx ? 1 : 2) + (isCoinbaseTx && minerInfo ? 1 : 0))
+					+summaryRow((isTxConfirmed ? 2 : 3) + (isCoinbaseTx ? 1 : 2) + (isCoinbaseTx && minerInfo ? 1 : 0))
 						if (!isTxConfirmed)
 							+summaryItem("Status")
 								span.text-danger Unconfirmed
+
+							+summaryItem("First Seen", "The time when this transaction entered your node's mempool.")
+								+timestamp(mempoolDetails.entry.time)
 
 							+summaryItem("RBF", "Whether this unconfirmed transaction is replaceable using Replace-By-Fee.")
 								- var replaceable = false;
