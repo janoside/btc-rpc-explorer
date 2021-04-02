@@ -34,15 +34,15 @@ block content
 							thead
 								tr
 									th
-									th.data-header Version
-									th.data-header Count
+									th Version
+									th Count
 							tbody
 								each item, index in peerSummary.versionSummary
 									tr(class=(index >= 5 ? "versions-hidden-rows" : false))
-										td.data-cell.fw-bold #{index + 1}
+										td.small.text-muted #{index + 1}
 
-										td.data-cell.font-monospace #{item[0]}
-										td.data-cell.font-monospace #{item[1].toLocaleString()}
+										td #{item[0]}
+										td #{item[1].toLocaleString()}
 
 				div.col-md-6
 					+contentSection("Top Service Flags")
@@ -50,15 +50,15 @@ block content
 							thead
 								tr
 									th
-									th.data-header Services
-									th.data-header Count
+									th Services
+									th Count
 							tbody
 								each item, index in peerSummary.servicesSummary
 									tr(class=(index >= 5 ? "services-hidden-rows" : false))
-										td.data-cell.fw-bold #{index + 1}
+										td.small.text-muted #{index + 1}
 
-										td.data-cell.font-monospace #{item[0]}
-										td.data-cell.font-monospace #{item[1].toLocaleString()}
+										td -#{item[0].replace(/^0+/, '')}
+										td #{item[1].toLocaleString()}
 
 
 			div.row
@@ -69,15 +69,15 @@ block content
 								thead
 									tr
 										th
-										th.data-header Network Type
-										th.data-header Count
+										th Network Type
+										th Count
 								tbody
 									each item, index in peerSummary.networkTypeSummary
 										tr
-											td.data-cell.fw-bold #{index + 1}
+											td.small.text-muted #{index + 1}
 
-											td.data-cell.font-monospace #{item[0]}
-											td.data-cell.font-monospace #{item[1].toLocaleString()}
+											td #{item[0]}
+											td #{item[1].toLocaleString()}
 
 				if (peerSummary.connectionTypeSummary)
 					div.col-md-6
@@ -86,15 +86,15 @@ block content
 								thead
 									tr
 										th
-										th.data-header Connection Type
-										th.data-header Count
+										th Connection Type
+										th Count
 								tbody
 									each item, index in peerSummary.connectionTypeSummary
 										tr
-											td.data-cell.fw-bold #{index + 1}
+											td.small.text-muted #{index + 1}
 
-											td.data-cell.font-monospace #{item[0]}
-											td.data-cell.font-monospace #{item[1].toLocaleString()}
+											td #{item[0]}
+											td #{item[1].toLocaleString()}
 							
 
 			+contentSection(`${peerSummary.getpeerinfo.length.toLocaleString()} Peer${peerSummary.getpeerinfo.length == 1 ? "" : "s"}`)
@@ -102,14 +102,15 @@ block content
 					thead
 						tr
 							th
-							th.data-header Version
-							th.data-header Address
-							th.data-header Services
+							th Version
+							th Address
+							th Services
+							th Conn. Type
 
 							if (peerIpSummary && peerIpSummary.ips)
-								th.data-header Location
+								th Location
 
-							th.data-header Last Send / Receive
+							th Last Send / Receive
 
 					tbody
 						each item, index in peerSummary.getpeerinfo
@@ -117,14 +118,15 @@ block content
 							- var lastRecvAgo = moment.duration(moment.utc(new Date()).diff(moment.utc(new Date(parseInt(item.lastrecv) * 1000)))).format().replace("milliseconds", "ms");
 
 							tr
-								th.data-cell #{index + 1}
+								td.small.text-muted #{index + 1}
 
-								td.data-cell.font-monospace #{item.subver}
-								td.data-cell.font-monospace #{item.addr}
-								td.data-cell.font-monospace #{item.services}
+								td #{item.subver}
+								td #{item.addr}
+								td -#{item.services.replace(/^0+/, '')}
+								td #{item.connection_type}
 
 								if (peerIpSummary.ips)
-									td.data-cell.font-monospace
+									td
 										- var ipAddr = item.addr.substring(0, item.addr.lastIndexOf(":"));
 										if (peerIpSummary.ips && peerIpSummary.ips.includes(ipAddr))
 											- var ipDetails = peerIpSummary.detailsByIp[ipAddr];
@@ -140,7 +142,7 @@ block content
 
 										- var ipAddr = null;
 
-								td.data-cell.font-monospace #{lastSendAgo} / #{lastRecvAgo}
+								td #{lastSendAgo} / #{lastRecvAgo}
 			
 
 
