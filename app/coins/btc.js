@@ -735,6 +735,16 @@ module.exports = {
 			alertBodyHtml: "This transaction includes a 983-byte OP_RETURN output. Although the default max size for OP_RETURN data is often quoted as 80 bytes, the 80-byte limit is a non-consensus rule that can vary from node to node (and is only enforced at mempool-acceptance time).",
 			referenceUrl: "https://bitcoin.stackexchange.com/q/78572/3397"
 		},
+		{
+			type: "blockheight",
+			date: "2021-01-29",
+			chain: "main",
+			blockHeight: 668197,
+			blockHash: "000000000000000000023c31edf49adb2306d0db74e6f1f032ef76deaa7a464a",
+			summary: "In retrospect, it was inevitable",
+			alertBodyHtml: "Shortly before a $1B+ USD Tesla treasury investment into Bitcoin was announced, Elon Musk updated his Twitter profile to just say '#Bitcoin' and cryptically tweeted 'It was inevitable'. Miner 'yhc5t3p' with F2Pool immortalized the tweet soon after.",
+			referenceUrl: "https://twitter.com/elonmusk/status/1355068728128516101"
+		},
 
 
 
