@@ -61,6 +61,7 @@ router.get("/dashboard", function(req, res, next) {
 		rpcConcurrency: config.rpcConcurrency,
 		addressApi: config.addressApi,
 		ipStackComApiAccessKey: !!config.credentials.ipStackComApiAccessKey,
+		mapBoxComApiAccessKey: !!config.credentials.mapBoxComApiAccessKey,
 		redisCache: !!config.redisUrl,
 		noInmemoryRpcCache: config.noInmemoryRpcCache
 	};

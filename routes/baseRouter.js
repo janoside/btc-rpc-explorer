@@ -412,6 +412,7 @@ router.get("/peers", asyncHandler(async (req, res, next) => {
 
 		if (peerIps.length > 0) {
 			res.locals.peerIpSummary = await utils.timePromise("promises.peers.geoLocateIpAddresses", utils.geoLocateIpAddresses(peerIps));
+			res.locals.mapBoxComApiAccessKey = config.credentials.mapBoxComApiAccessKey;
 		}
 
 
