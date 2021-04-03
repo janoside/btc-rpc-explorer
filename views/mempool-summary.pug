@@ -19,6 +19,8 @@ block content
 					span(id="progress-text")
 				div.progress.mt-2(id="progress-bar", style="height: 7px;")
 					div.progress-bar(id="data-progress", role="progressbar", aria-valuenow="0", aria-valuemin="0" ,aria-valuemax="100")
+
+				div.loading-error
 	
 
 	div(id="main-content", style="display: none;")
@@ -174,8 +176,6 @@ block endOfBody
 			}, 1000);
 
 			var finishedCallback = function(summary) {
-				clearInterval(statusInterval);
-
 				var feeRateGraphData = buildFeeRateGraphData(summary);
 				var txSizeGraphData = buildTxSizeGraphData(summary);
 				var txAgeGraphData = buildTxAgeGraphData(summary);
@@ -368,6 +368,14 @@ block endOfBody
 				//console.log(JSON.stringify(result));
 
 				finishedCallback(summaryResult);
+
+			}).fail((jqXHR, textStatus, errorThrown) => {
+				$(".loading-error").html(`<h6 class='mt-4 text-danger'>Failed loading mempool:</h6><pre><code class='json'>${JSON.stringify(textStatus)}</code></pre><pre><code class='json'>${JSON.stringify(errorThrown)}</code></pre>`);
+
+				hljs.highlightAll();
+
+			}).always(() => {
+				clearInterval(statusInterval);
 			});
 		}
 
