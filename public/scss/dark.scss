@@ -67,6 +67,10 @@ $input-bg: darken(#fff, 0%);
 $input-color: #212529;
 
 
+$modal-content-bg: $body-bg;
+$modal-content-color: $body-color;
+
+
 
 @import "./main";
 @import "../../node_modules/bootstrap/scss/bootstrap";
