@@ -6,34 +6,34 @@
 				if (!hideBlockIndex)
 					th
 
-				th.data-header.text-end Height
+				th.text-end Height
 
 				if (!hideTimestampColumn)
-					th.data-header.text-end
+					th.text-end
 						span.border-dotted(title="UTC timestamp of the block.", data-bs-toggle="tooltip") Date
 
-				th.data-header.text-end Age
-				th.data-header.text-end
+				th.text-end Age
+				th.text-end
 					span.border-dotted(title="<b>Time To Mine</b><br/>The time it took to mine this block after the previous block. <span class='text-success'>Fast</span> blocks (< 5min) and <span class='text-danger'>Slow</span> blocks (> 15min) are highlighted.", data-bs-toggle="tooltip", data-bs-html="true") TTM
-				th.data-header.text-end Miner
-				th.data-header.text-end
+				th.text-end Miner
+				th.text-end
 					span.border-dotted(title="The number of transactions included in each block.", data-bs-toggle="tooltip") N(tx)
 
 				if (blockstatsByHeight)
-					th.data-header.text-end
+					th.text-end
 						span.border-dotted(title="The total output of all transactions in each block.", data-bs-toggle="tooltip") Volume
 
-				th.data-header.text-end
+				th.text-end
 					span.border-dotted(title="The average fee (sat/vB) for all block transactions.", data-bs-toggle="tooltip") Avg Fee
-				th.data-header.text-end Σ Fees
+				th.text-end Σ Fees
 				
-				//th.data-header.text-end Size (kB)
+				//th.text-end Size (kB)
 
 				if (blocks && blocks.length > 0 && blocks[0].weight)
-					th.data-header.text-end % Full
+					th.text-end % Full
 
 				else
-					th.data-header.text-end Size
+					th.text-end Size
 						small  (kB)
 		tbody
 
@@ -58,7 +58,7 @@
 								else
 									small.text-muted #{(blockIndex + offset).toLocaleString()}
 
-						td.data-cell.font-monospace.text-end
+						td.font-monospace.text-end
 							if (global.specialBlocks && global.specialBlocks[block.hash])
 								a(data-bs-toggle="tooltip", title=`<b>${coinConfig.name} Fun!</b><br/>There's something special about this block...<br/>Click to read more.`, data-bs-html="true")
 									span.me-2
@@ -80,11 +80,11 @@
 								- var timeDiff = moment.duration(moment.utc(new Date(parseInt(block.time) * 1000)).diff(moment.utc(new Date(parseInt(blocks[blockIndex + 1].time) * 1000))));
 
 						if (!hideTimestampColumn)
-							td.data-cell.font-monospace.text-end
+							td.font-monospace.text-end
 								+timestamp(block.time, false)
 							
 
-						td.data-cell.font-monospace.text-end
+						td.font-monospace.text-end
 							if (sort != "asc" && blockIndex == 0 && offset == 0 && timeAgoTime > (15 * 60 * 1000))
 								- var timeAgoTime = block.time;
 								span.text-danger.border-dotted(title="It's been > 15 min since this latest block.", data-bs-toggle="tooltip")
@@ -93,7 +93,7 @@
 								- var timeAgoTime = block.time;
 								include ./time-ago-text.pug
 
-						td.data-cell.font-monospace.text-end
+						td.font-monospace.text-end
 							if (timeDiff)
 								- var colorClass = "";
 								if (timeDiff < 300000)
@@ -119,7 +119,7 @@
 								else
 									span.fw-light.text-muted -
 						
-						td.data-cell.font-monospace.text-end
+						td.font-monospace.text-end
 							if (block.miner && block.miner.name)
 								span.badge.bg-primary(data-bs-toggle="tooltip", title=`Identified by: ${block.miner.identifiedBy}`) #{utils.ellipsize(block.miner.name, 14)}
 
@@ -131,10 +131,10 @@
 								span ?
 
 						
-						td.data-cell.font-monospace.text-end #{block.nTx.toLocaleString()}
+						td.font-monospace.text-end #{block.nTx.toLocaleString()}
 
 						if (blockstatsByHeight)
-							td.data-cell.font-monospace.text-end
+							td.font-monospace.text-end
 								if (blockstatsByHeight[block.height])
 									- var currencyValue = parseInt(new Decimal(blockstatsByHeight[block.height].total_out).plus(blockstatsByHeight[block.height].subsidy).plus(blockstatsByHeight[block.height].totalfee).dividedBy(coinConfig.baseCurrencyUnit.multiplier));
 									- var currencyValueDecimals = 0;
@@ -146,7 +146,7 @@
 								else
 									span 0
 
-						td.data-cell.font-monospace.text-end
+						td.font-monospace.text-end
 							if (block.totalFees && block.strippedsize)
 								- var currencyValue = new Decimal(block.totalFees).dividedBy(block.strippedsize).times(coinConfig.baseCurrencyUnit.multiplier).toDecimalPlaces(0);
 								if (currencyValue > 0)
@@ -163,7 +163,7 @@
 								- var feeEstimateVal = currencyValue.times(166).dividedBy(coinConfig.baseCurrencyUnit.multiplier);
 								span.border-dotted(title=`Value: ${feeEstimateVal}`, data-bs-toggle="tooltip") #{currencyValue}
 
-						td.data-cell.font-monospace.text-end
+						td.font-monospace.text-end
 							if block.totalFees
 								- var currencyValue = new Decimal(block.totalFees);
 								- var currencyValueDecimals = 3;
@@ -176,12 +176,12 @@
 							
 						
 						if (false)
-							td.data-cell.font-monospace.text-end
+							td.font-monospace.text-end
 								- var bSizeK = parseInt(block.size / 1000);
 								span #{bSizeK.toLocaleString()}
 
 						if (blocks && blocks.length > 0 && blocks[0].weight)
-							td.data-cell.font-monospace.text-end
+							td.font-monospace.text-end
 								if block.weight
 									if (true)
 										- var full = new Decimal(block.weight).dividedBy(coinConfig.maxBlockWeight).times(100);
@@ -212,7 +212,7 @@
 										i.fas.fa-backspace.text-danger
 
 						else if (block.size)
-							td.data-cell.font-monospace.text-end
+							td.font-monospace.text-end
 								- var bSizeK = parseInt(block.size / 1000);
 								- var fullPercent = new Decimal(100 * block.size / coinConfig.maxBlockSize).toDecimalPlaces(1);
 
@@ -223,7 +223,7 @@
 									div.progress-bar(role="progressbar", style=`width: ${fullPercent}%;`, aria-valuenow=parseInt(100 * block.size / coinConfig.maxBlockSize), aria-valuemin="0" ,aria-valuemax="100")
 
 						else
-							td.data-cell.font-monospace.text-end
+							td.font-monospace.text-end
 								span(title="This data is unavailable due to blockchain pruning", data-bs-toggle="tooltip")
 									i.fas.fa-backspace.text-danger
 

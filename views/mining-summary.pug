@@ -31,28 +31,28 @@ block content
 				table.table.table-borderless.table-striped.mb-0
 					thead
 						tr
-							th.data-header Miner
-							th.data-header.text-end Blocks
-							th.data-header.text-end Transactions
-							th.data-header.text-end Block Rewards
-							th.data-header.text-end Fees Collected
+							th Miner
+							th.text-end Blocks
+							th.text-end Transactions
+							th.text-end Block Rewards
+							th.text-end Fees Collected
 							
 					tbody(id="summary-table-body")
 						tr(id="miner-summary-prototype", style="display: none;")
-							td.data-cell.font-monospace
+							td.font-monospace
 								span.badge.bg-primary.miner-name
-							td.data-cell.font-monospace.text-end
+							td.font-monospace.text-end
 								span.miner-block-count
 								small.text-muted.miner-block-percent.ms-2
-							td.data-cell.font-monospace.text-end
+							td.font-monospace.text-end
 								span.miner-tx-count
 								small.text-muted.miner-tx-percent.ms-2
-							td.data-cell.font-monospace.text-end
+							td.font-monospace.text-end
 								span.miner-subsidy
 								small.text-muted.miner-subsidy-percent.ms-2
 								//- var currencyValue = new Decimal(summary.totalSubsidiesCollected);
 								//include ./includes/value-display.pug
-							td.data-cell.font-monospace.text-end
+							td.font-monospace.text-end
 								span.miner-fees
 								small.text-muted.miner-fees-percent
 								//- var currencyValue = new Decimal(summary.totalFeesCollected);
@@ -61,18 +61,18 @@ block content
 						tr(id="hidden-row-to-fix-stripe-pattern", style="display: none;")
 
 						tr(id="miner-summary-totals", style="display: none;")
-							th.data-cell.font-monospace.miner-name Total
-							th.data-cell.font-monospace.text-end
+							th.font-monospace.miner-name Total
+							th.font-monospace.text-end
 								span.miner-block-count
 								small.text-muted.miner-block-percent.ms-2 (100%)
-							th.data-cell.font-monospace.text-end
+							th.font-monospace.text-end
 								span.miner-tx-count
 								small.text-muted.miner-tx-percent.ms-2 (100%)
-							th.data-cell.font-monospace.text-end
+							th.font-monospace.text-end
 								span.miner-subsidy
 								//- var currencyValue = new Decimal(summary.totalSubsidiesCollected);
 								//include ./includes/value-display.pug
-							th.data-cell.font-monospace.text-end
+							th.font-monospace.text-end
 								span.miner-fees
 								//- var currencyValue = new Decimal(summary.totalFeesCollected);
 								//include ./includes/value-display.pug

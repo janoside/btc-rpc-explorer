@@ -22,17 +22,17 @@ block content
 			table.table.table-borderless.table-striped
 				thead
 					tr
-						th.data-header Date
-						th.data-header Item
-						th.data-header Reference
+						th Date
+						th Item
+						th Reference
 				tbody
 					each item, index in coinConfig.historicalData
 						if (item.chain == activeBlockchain)
 							tr
-								td.data-cell #{item.date}
+								td #{item.date}
 
 								if (true)
-									td.data-cell
+									td
 										if (item.type == "tx")
 											a(href=`./tx/${item.txid}@${item.blockHeight}`) #{item.summary}
 										else if (item.type == "block")
@@ -44,7 +44,7 @@ block content
 										else if (item.type == "link")
 											a(href=item.url) #{item.summary}
 								
-								td.data-cell
+								td
 									if (item.referenceUrl && item.referenceUrl.trim().length > 0)
 										- var matches = item.referenceUrl.match(/^https?\:\/\/([^\/:?#]+)(?:[\/:?#]|$)/i);
 
