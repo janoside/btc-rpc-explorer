@@ -92,26 +92,54 @@ router.get("/mempool-txs/:txids", function(req, res, next) {
 	});
 });
 
-const mempoolTxSummaryCache = {};
 
+
+const mempoolTxSummaryCache = {};
+const mempoolSummaryStatuses = {};
+
+router.get("/mempool-summary-status", asyncHandler(async (req, res, next) => {
+	const statusId = req.query.statusId;
+	if (statusId && mempoolSummaryStatuses[statusId]) {
+		res.json(mempoolSummaryStatuses[statusId]);
+
+	} else {
+		res.json({});
+	}
+}));
 
 router.get("/mempool-summary", asyncHandler(async (req, res, next) => {
 	try {
+		const statusId = req.query.statusId;
+		if (statusId) {
+			mempoolSummaryStatuses[statusId] = {};
+		}
+
 		const ageBuckets = req.query.ageBuckets ? parseInt(req.query.ageBuckets) : 100;
 		const sizeBuckets = req.query.sizeBuckets ? parseInt(req.query.sizeBuckets) : 100;
 
 
 		const txids = await utils.timePromise("promises.mempool-summary.getAllMempoolTxids", coreApi.getAllMempoolTxids());
 
+		if (statusId) {
+			mempoolSummaryStatuses[statusId].count = txids.length;
+			mempoolSummaryStatuses[statusId].done = 0;
+		}
+
 		const promises = [];
 		const results = [];
+		const txidKeysForCachePurge = {};
 
 		for (var i = 0; i < txids.length; i++) {
 			const txid = txids[i];
 			const key = txid.substring(0, 6);
+			txidKeysForCachePurge[key] = 1;
 
 			if (mempoolTxSummaryCache[key]) {
 				results.push(mempoolTxSummaryCache[key]);
+
+				if (statusId) {
+					mempoolSummaryStatuses[statusId].done++;
+				}
 
 			} else {
 				promises.push(new Promise(async (resolve, reject) => {
@@ -130,10 +158,18 @@ router.get("/mempool-summary", asyncHandler(async (req, res, next) => {
 						mempoolTxSummaryCache[key] = itemSummary;
 
 						results.push(mempoolTxSummaryCache[key]);
+
+						if (statusId) {
+							mempoolSummaryStatuses[statusId].done++;
+						}
 						
 						resolve();
 
 					} catch (e) {
+						if (statusId) {
+							mempoolSummaryStatuses[statusId].done++;
+						}
+
 						// don't care
 						resolve();
 					}
@@ -142,6 +178,22 @@ router.get("/mempool-summary", asyncHandler(async (req, res, next) => {
 		}
 
 		await Promise.all(promises);
+
+		// we're done, kill the status tracker
+		if (statusId) {
+			delete mempoolSummaryStatuses[statusId];
+		}
+
+
+		// purge items from cache that are no longer present in mempool
+		var keysToDelete = [];
+		for (var key in mempoolTxSummaryCache) {
+			if (!txidKeysForCachePurge[key]) {
+				keysToDelete.push(key);
+			}
+		}
+
+		keysToDelete.forEach(x => { delete mempoolTxSummaryCache[x] });
 
 
 		var summary = [];

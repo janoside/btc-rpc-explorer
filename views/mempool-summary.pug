@@ -15,9 +15,10 @@ block content
 	div#progress-wrapper.mb-huge
 		.card.shadow-sm.mb-3
 			.card-body
-				.d-flex.align-items-center
-					.spinner-border.text-primary.me-3(role="status")
-					span Loading Mempool...
+				span Loading data: 
+					span(id="progress-text")
+				div.progress.mt-2(id="progress-bar", style="height: 7px;")
+					div.progress-bar(id="data-progress", role="progressbar", aria-valuenow="0", aria-valuemin="0" ,aria-valuemax="100")
 	
 
 	div(id="main-content", style="display: none;")
@@ -31,7 +32,7 @@ block content
 						+summaryItem("Transactions")
 							span#tx-count
 
-						+summaryItem("Blocks", "The number of blocks needed to contain all current mempool transactions.")
+						+summaryItem("Blocks", "The number of blocks filled by all current mempool transactions.")
 							span#block-count
 
 						+summaryItem("Total Fees")
@@ -48,7 +49,7 @@ block content
 
 					.clearfix
 						.float-start
-							.me-4.d-inline-block
+							.me-4.d-inline-block.mb-3
 								h6 Fee Rate
 									small.fw-light.ms-1 (sat/vB)
 
@@ -58,7 +59,7 @@ block content
 									each feeRateToEstimate in feeRatesToEstimate
 										a.btn.btn-outline-primary.fee-rate-btn(href="javascript:void(0)", onclick=`estimateMempoolDepth(parseInt($(this).attr("data-fee-rate"))); return false;`, data-fee-rate=feeRateToEstimate) #{feeRateToEstimate}
 
-							.me-4.d-inline-block
+							.me-4.d-inline-block.mb-3
 								h6 Transaction ID
 
 								form.form-inline(method="post", action="javascript:void(0)", onsubmit=`estimateTransactionMempoolDepth($("#mempoolquery").val()); return false;` style="width: 325px;")
@@ -68,7 +69,7 @@ block content
 										button.btn.btn-primary(type="submit")
 											i.fas.fa-search
 
-							.me-4.d-inline-block
+							.me-4.d-inline-block.mb-3
 								h6 Custom Fee Rate
 									small.fw-light.ms-1 (sat/vB)
 
@@ -79,17 +80,17 @@ block content
 										button.btn.btn-primary(type="submit")
 											i.fas.fa-search
 
-					hr.mt-3.mb-3
+					hr.mt-1.mb-3
 
 					+summaryRow(3)
 						+summaryItem("Fee Rate", null, "sat/vB")
-							span#estimate-fee-rate
+							span#estimate-fee-rate -
 
 						+summaryItem("Est. Block Depth")
-							span#estimate-mempooldepth
+							span#estimate-mempooldepth -
 
 						+summaryItem("Est. Confirmation Time")
-							span#estimate-conf-time
+							span#estimate-conf-time -
 
 
 
@@ -158,16 +159,23 @@ block endOfBody
 		});
 
 		function loadMempool() {
-			var statusCallback = function(chunkIndexDone, chunkCount) {
-				//console.log("Done: " + Math.min(((chunkIndexDone + 1) * chunkSize), count) + " of " + count);
+			var statusId = Math.random().toString(36).substr(2, 5);
 
-				var wPercent = `${parseInt(100 * (chunkIndexDone + 1) / parseFloat(chunkCount))}%`;
-				
-				$("#data-progress").css("width", wPercent);
-				$("#progress-text").text(`${Math.min(((chunkIndexDone + 1) * chunkSize), count).toLocaleString()} of ${count.toLocaleString()} (${wPercent})`);
-			};
+			var statusInterval = setInterval(() => {
+				$.ajax({
+					url: `./api/mempool-summary-status?statusId=${statusId}`
+
+				}).done(function(res) {
+					var wPercent = `${parseInt(100 * res.done / parseFloat(res.count))}%`;
+
+					$("#data-progress").css("width", wPercent);
+					$("#progress-text").text(`${res.done.toLocaleString()} of ${res.count.toLocaleString()} (${wPercent})`);
+				});
+			}, 1000);
 
 			var finishedCallback = function(summary) {
+				clearInterval(statusInterval);
+
 				var feeRateGraphData = buildFeeRateGraphData(summary);
 				var txSizeGraphData = buildTxSizeGraphData(summary);
 				var txAgeGraphData = buildTxAgeGraphData(summary);
@@ -348,7 +356,7 @@ block endOfBody
 			};
 
 			$.ajax({
-				url: `./api/mempool-summary`
+				url: `./api/mempool-summary?statusId=${statusId}`
 
 			}).done(function(summaryResult) {
 				summary = summaryResult;
