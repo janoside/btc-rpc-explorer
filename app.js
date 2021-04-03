@@ -622,7 +622,7 @@ expressApp.use(function(req, res, next) {
 
 	// currency format type
 	if (!userSettings.currencyFormatType) {
-		userSettings.currencyFormatType = "";
+		userSettings.currencyFormatType = "btc";
 	}
 
 	// theme
