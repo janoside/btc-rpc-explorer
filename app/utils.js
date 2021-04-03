@@ -934,6 +934,12 @@ function objectProperties(obj) {
 	return props;
 }
 
+function iterateProperties(obj, action) {
+	for (const [key, value] of Object.entries(obj)) {
+		action([key, value]);
+	}
+}
+
 module.exports = {
 	reflectPromise: reflectPromise,
 	redirectToConnectPageIfNeeded: redirectToConnectPageIfNeeded,

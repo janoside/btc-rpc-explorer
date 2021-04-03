@@ -3,13 +3,13 @@
 const debug = require("debug");
 const debugLog = debug("btcexp:core");
 
-const LRU = require("lru-cache");
 const fs = require('fs');
 
 const utils = require("../utils.js");
+const redisCache = require("../redisCache.js");
+const cacheUtils = require("../cacheUtils.js");
 const config = require("../config.js");
 const coins = require("../coins.js");
-const redisCache = require("../redisCache.js");
 const Decimal = require("decimal.js");
 const md5 = require("md5");
 const statTracker = require("../statTracker.js");
@@ -33,59 +33,7 @@ const ONE_YR = 365 * ONE_DAY;
 
 
 
-function createMemoryLruCache(cacheObj, onCacheEvent) {
-	return {
-		get:function(key) {
-			return new Promise(function(resolve, reject) {
-				onCacheEvent("memory", "try", key);
 
-				var val = cacheObj.get(key);
-
-				if (val != null) {
-					onCacheEvent("memory", "hit", key);
-
-				} else {
-					onCacheEvent("memory", "miss", key);
-				}
-
-				resolve(cacheObj.get(key));
-			});
-		},
-		set:function(key, obj, maxAge) { cacheObj.set(key, obj, maxAge); }
-	}
-}
-
-function tryCache(cacheKey, cacheObjs, index, resolve, reject) {
-	if (index == cacheObjs.length) {
-		resolve(null);
-
-		return;
-	}
-
-	cacheObjs[index].get(cacheKey).then(function(result) {
-		if (result != null) {
-			resolve(result);
-
-		} else {
-			tryCache(cacheKey, cacheObjs, index + 1, resolve, reject);
-		}
-	});
-}
-
-function createTieredCache(cacheObjs) {
-	return {
-		get:function(key) {
-			return new Promise(function(resolve, reject) {
-				tryCache(key, cacheObjs, 0, resolve, reject);
-			});
-		},
-		set:function(key, obj, maxAge) {
-			for (var i = 0; i < cacheObjs.length; i++) {
-				cacheObjs[i].set(key, obj, maxAge);
-			}
-		}
-	}
-}
 
 
 
@@ -94,9 +42,9 @@ const miscCaches = [];
 const blockCaches = [];
 const txCaches = [];
 
-global.miscLruCache = new LRU(1000);
-global.blockLruCache = new LRU(1000);
-global.txLruCache = new LRU(1000);
+global.miscLruCache = cacheUtils.lruCache(1000);
+global.blockLruCache = cacheUtils.lruCache(1000);
+global.txLruCache = cacheUtils.lruCache(1000);
 
 global.lruCaches = [ global.miscLruCache, global.blockLruCache, global.txLruCache ];
 
@@ -143,9 +91,9 @@ if (!config.noInmemoryRpcCache) {
 		//debugLog(`cache.${cacheType}.${eventType}: ${cacheKey}`);
 	}
 
-	miscCaches.push(createMemoryLruCache(global.miscLruCache, onMemoryCacheEvent));
-	blockCaches.push(createMemoryLruCache(global.blockLruCache, onMemoryCacheEvent));
-	txCaches.push(createMemoryLruCache(global.txLruCache, onMemoryCacheEvent));
+	miscCaches.push(cacheUtils.createMemoryLruCache(global.miscLruCache, onMemoryCacheEvent));
+	blockCaches.push(cacheUtils.createMemoryLruCache(global.blockLruCache, onMemoryCacheEvent));
+	txCaches.push(cacheUtils.createMemoryLruCache(global.txLruCache, onMemoryCacheEvent));
 }
 
 if (redisCache.active) {
@@ -175,9 +123,9 @@ if (redisCache.active) {
 	txCaches.push(redisCacheObj);
 }
 
-const miscCache = createTieredCache(miscCaches);
-const blockCache = createTieredCache(blockCaches);
-const txCache = createTieredCache(txCaches);
+const miscCache = cacheUtils.createTieredCache(miscCaches);
+const blockCache = cacheUtils.createTieredCache(blockCaches);
+const txCache = cacheUtils.createTieredCache(txCaches);
 
 
 
