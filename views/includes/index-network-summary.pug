@@ -21,13 +21,13 @@ if (exchangeRates)
 
 			+summaryItem("Market Cap")
 				- var supply = utils.estimatedSupply(getblockchaininfo.blocks);
-				- var activeCurrency = global.currencyFormatType.length > 0 ? global.currencyFormatType : "usd";
+				- var activeCurrency = ["usd", "eur"].includes(global.currencyFormatType) ? global.currencyFormatType : "usd";
 				- var xxx = utils.formatLargeNumber(parseFloat(supply) * exchangeRates[activeCurrency], 3);
 
 				if (activeCurrency == "eur")
-					span €
+					span.me-1 €
 				else
-					span $
+					span.me-1 $
 
 				span #{xxx[0]}
 				if (xxx[1].textDesc)
