@@ -29,24 +29,71 @@ block content
 
 
 	div#main-content(style="display: none;")
-		div.row
-			div.col
-				+contentSection("Difficulty History")
-					canvas(id="graph-diff-hist")
+		+pageTabs(["Details", "Data"])
 
-						
+		.tab-content
+			+pageTab("Details", true)
+				.row
+					.col
+						+contentSection("Difficulty History")
+							canvas(id="graph-diff-hist")
 
-		div.row 
-			div.col
-				.clearfix
-					.float-start
-						+sectionTitle("Difficulty Δ")
-					.float-start
-						small.text-muted.ms-2
-							| (clamped to ±100%)
+								
 
-				+contentSection
-					canvas(id="graph-diff-change")
+				.row 
+					.col
+						.clearfix
+							.float-start
+								+sectionTitle("Difficulty Δ")
+							.float-start
+								small.text-muted.ms-2
+									| (clamped to ±100%)
+
+						+contentSection
+							canvas(id="graph-diff-change")
+
+
+			+pageTab("Data")
+				.row
+					.col
+						+contentSection("Difficulty")
+							.table-responsive
+								table.table.table-striped.table-borderless.mb-3
+									thead
+										tr
+											th Epoch
+											//th Date
+											//th.text-end Block Start
+											th.text-end Difficulty
+											
+									tbody(id="difficulty-table-body")
+										tr(id="difficulty-table-row-prototype", style="display: none;")
+											td.font-monospace.data-epoch
+											//td.font-monospace.data-date
+											//td.font-monospace.text-end.data-block-start
+											td.font-monospace.text-end.data-difficulty
+
+										tr(id="empty-row-to-fix-striped-coloring", style="display: none;")
+
+					.col
+						+contentSection("Difficulty Δ")
+							.table-responsive
+								table.table.table-striped.table-borderless.mb-3
+									thead
+										tr
+											th Epoch
+											//th Date
+											//th.text-end Block Start
+											th.text-end Difficulty Δ
+											
+									tbody(id="difficulty-delta-table-body")
+										tr(id="difficulty-delta-table-row-prototype", style="display: none;")
+											td.font-monospace.data-epoch
+											//td.font-monospace.data-date
+											//td.font-monospace.text-end.data-block-start
+											td.font-monospace.text-end.data-difficulty-delta
+
+										tr(id="empty-row-to-fix-striped-coloring", style="display: none;")
 	
 
 
@@ -108,6 +155,9 @@ block endOfBody
 			var finishedCallback = function() {
 				var summary = summarizeData(results);
 
+				fillDifficultyTable(summary);
+				fillDifficultyDeltaTable(summary);
+
 				createGraph("graph-diff-hist", [summary.graphData], "Difficulty");
 
 				createGraph("graph-diff-change", [summary.changeGraphData], "Difficulty Change %");
@@ -119,6 +169,64 @@ block endOfBody
 			};
 
 			getData(results, chunkStrs, 0, statusCallback, finishedCallback);
+		}
+
+		function fillDifficultyTable(summary) {
+			for (var i = 0; i < summary.difficultyData.length; i++) {
+				var item = summary.difficultyData[i];
+
+				var row = $("#difficulty-table-row-prototype").clone();
+				row.attr("id", null);
+				//row.addClass("fee-rate-table-row");
+
+				row.find(".data-epoch").text(item.epoch);
+				//row.find(".data-date").text(item.count.toLocaleString());
+				//row.find(".data-block-start").text(sumBlockCount.toDP(2));
+
+				if (item.difficulty >= 1000000) {
+					row.find(".data-difficulty").text(parseInt(item.difficulty).toLocaleString());
+
+				} else {
+					row.find(".data-difficulty").text(new Decimal(item.difficulty).toDP(3));
+				}
+				
+				
+
+				row.show();
+
+				$("#difficulty-table-body").append(row);
+			}
+		}
+
+		function fillDifficultyDeltaTable(summary) {
+			for (var i = 0; i < summary.difficultyDeltaData.length; i++) {
+				var item = summary.difficultyDeltaData[i];
+
+				var row = $("#difficulty-delta-table-row-prototype").clone();
+				row.attr("id", null);
+				//row.addClass("fee-rate-table-row");
+
+				row.find(".data-epoch").text(item.epoch);
+				//row.find(".data-date").text(item.count.toLocaleString());
+				//row.find(".data-block-start").text(sumBlockCount.toDP(2));
+				if (item.difficultyDelta) {
+					if (item.difficultyDelta > 0) {
+						row.find(".data-difficulty-delta").text("+" + (new Decimal(item.difficultyDelta).toDP(2)));
+						row.find(".data-difficulty-delta").addClass("text-success");
+
+					} else if (item.difficultyDelta < 0) {
+						row.find(".data-difficulty-delta").text(new Decimal(item.difficultyDelta).toDP(2));
+						row.find(".data-difficulty-delta").addClass("text-danger");
+					}
+				} else {
+					row.find(".data-difficulty-delta").text("-");
+				}
+				
+
+				row.show();
+
+				$("#difficulty-delta-table-body").append(row);
+			}
 		}
 
 		function createGraph(graphId, datas, yLabelStr) {
@@ -209,20 +317,30 @@ block endOfBody
 
 		function summarizeData(raw) {
 			var summary = {};
+			summary.difficultyData = [];
+			summary.difficultyDeltaData = [];
+
 			summary.graphData = [];
 			summary.changeGraphData = [];
 
 			for (var i = 0; i < raw.length; i++) {
+				summary.difficultyData.push({epoch:i, difficulty:raw[i].difficulty});
+
 				summary.graphData.push({x:i, y:raw[i].difficulty});
 
 				if (i == 0) {
 					summary.changeGraphData.push({x:i, y:raw[i].difficulty});
+
+					summary.difficultyDeltaData.push({epoch:i});
 
 				} else {
 					var d1 = raw[i].difficulty;
 					var d0 = raw[i - 1].difficulty
 
 					var deltaPercent = 100 * (d1 / d0 - 1);
+
+					summary.difficultyDeltaData.push({epoch:i, difficultyDelta:deltaPercent});
+
 					/*if (d1 > d0) {
 						// increase
 						deltaPercent = 
