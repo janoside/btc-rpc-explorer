@@ -68,8 +68,8 @@ if (exchangeRates)
 			+summaryItem("7d Hashrate", "The average hashrate of the global mining network over the last 7 days. A comparison to the 30-day average is included to help gauge the rate of change.")
 				- var hashrate7dayData = utils.formatLargeNumber(hashrate7d, 1);
 
-				span.me-2 #{hashrate7dayData[0]}
-				span.border-dotted.me-2(title=`${hashrate7dayData[1].abbreviation}H = ${hashrate7dayData[1].name}-hash (x10^${hashrate7dayData[1].exponent})` data-bs-toggle='tooltip') #{hashrate7dayData[1].abbreviation}H/s
+				span.me-1 #{hashrate7dayData[0]}
+				small.border-dotted.me-2(title=`${hashrate7dayData[1].abbreviation}H = ${hashrate7dayData[1].name}-hash (x10^${hashrate7dayData[1].exponent})` data-bs-toggle='tooltip') #{hashrate7dayData[1].abbreviation}H/s
 
 				if (hashrate30d)
 					- var ratio = hashrate7d / hashrate30d;
