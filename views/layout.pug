@@ -41,7 +41,7 @@ html(lang="en")
 						else
 							span.fw-light Bitcoin Explorer
 						
-				button.navbar-toggler.navbar-toggler-end(type="button", data-bs-toggle="collapse", data-target="#navbarNav", aria-label="collapse navigation")
+				button.navbar-toggler.navbar-toggler-end(type="button", data-bs-toggle="collapse", data-bs-target="#navbarNav", aria-label="collapse navigation")
 					span.navbar-toggler-icon
 					
 				.collapse.navbar-collapse(id="navbarNav")
@@ -132,7 +132,7 @@ html(lang="en")
 					div.alert.alert-danger
 						- var errorText = `This page encountered ${pageErrors.length.toLocaleString()} error${pageErrors.length == 1 ? "" : "s"}:`;
 						span.fw-bold #{errorText} 
-						a(href="javascript:void(0)", data-bs-toggle="modal", data-target="#pageErrorsModal") Error details
+						a(href="javascript:void(0)", data-bs-toggle="modal", data-bs-target="#pageErrorsModal") Error details
 
 				if (userMessageMarkdown)
 					div.alert(class=(userMessageType ? `alert-${userMessageType}` : "alert-warning"), role="alert")
