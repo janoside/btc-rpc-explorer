@@ -70,8 +70,7 @@ html(lang="en")
 											i.fas.fa-circle.text-white(data-fa-transform="shrink-2")
 											i.fab.fa-bitcoin(style=`color: ${coinConfig.coinColorsByNetwork[activeBlockchain]}`)
 
-
-									div.dropdown-menu.dropdown-menu-end.shadow(aria-label="Tools Items")
+									div.dropdown-menu.dropdown-menu-end.shadow(aria-label="Demo Sites")
 										span.dropdown-header Public Demo Sites
 
 										- var demoSites = ["main", "test", "signet"];
@@ -87,7 +86,8 @@ html(lang="en")
 							if (config.siteTools)
 								li.nav-item.dropdown.me-2
 									a.nav-link.rounded.bg-header-footer-highlight.dropdown-toggle(href="javascript:void(0)", role="button", data-bs-toggle="dropdown", aria-haspopup="true", aria-expanded="false")
-										i.fas.fa-tools.me-1
+										i.fas.fa-tools.me-2
+										| Tools
 									div.dropdown-menu.dropdown-menu-end.shadow(aria-label="Tools Items")
 										span.dropdown-header Tools
 
