@@ -136,7 +136,7 @@ block content
 
 							+summaryItem("Fees Collected", "The aggregate fees collected by the miner that created this coinbase transaction.")
 								- var currencyValue = new Decimal(totalOutputValue).minus(totalInputValue);
-								include includes/value-display.pug
+								+valueDisplay(currencyValue)
 
 						else
 							+summaryItem("Fee Rate", null, "sat/vB")
@@ -158,8 +158,7 @@ block content
 
 								else
 									- var feePaid = mempoolDetails ? new Decimal(mempoolDetails.entry.fees.base) : new Decimal(totalInputValue).minus(totalOutputValue);
-									- var currencyValue = feePaid;
-									include includes/value-display.pug
+									+valueDisplay(feePaid)
 										
 
 
@@ -195,7 +194,7 @@ block content
 							+summaryItem("Value Destroyed", "The miner of this transaction's block failed to collect this value. As a result, it is permanently lost.")
 								- var currencyValue = new Decimal(blockRewardMax).minus(totalOutputValue);
 								span.text-danger
-									include includes/value-display.pug
+									+valueDisplay(currencyValue)
 
 						if (tx.locktime > 0)
 							+summaryItem("Locktime")

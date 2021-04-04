@@ -11,10 +11,10 @@ html(lang="en")
 
 
 		if (userSettings.uiTheme == "light")
-			link(rel="stylesheet", href="./style/light.css", integrity="sha384-0HMhvK5rDBDNS0ANsUY5iBfRF7xMjvTSKQx2re9alLxtYOplwKvMOh3anoGoGty9")
+			link(rel="stylesheet", href="./style/light.css", integrity="sha384-9DIN3gGc9Z3sDFJ6h5VtrGrNwdQPposuzMjOxOyPTRQsTRKHPfVyeDDr3Zmd2N3t")
 				
 		else
-			link(rel="stylesheet", href="./style/dark.css", integrity="sha384-v5UpWLhdaBtBi2/2zEhWcICoskr5rv6y9V8l01yFnwVFtLqYXuoXGkKdY2VioqO7")
+			link(rel="stylesheet", href="./style/dark.css", integrity="sha384-zpNCUS1UwIhAXfQEbKJrdD5ru/NdNfhTQmOu/ajr5ypIJrHMKIY7CpqYNuWUeZED")
 		
 
 		link(rel="icon", type="image/png", href=`./img/logo/${config.coin.toLowerCase()}.png`)
@@ -66,9 +66,9 @@ html(lang="en")
 							if (config.demoSite && homepage)
 								li.nav-item.dropdown.me-2
 									a.nav-link.dropdown-toggle.bg-header-footer-highlight.rounded(href="javascript:void(0)", role="button", data-bs-toggle="dropdown", aria-haspopup="true", aria-expanded="false")
-										span.fa-layers.fa-fw.me-1
-											i.fas.fa-circle.text-white(data-fa-transform="shrink-2")
-											i.fab.fa-bitcoin(style=`color: ${coinConfig.coinColorsByNetwork[activeBlockchain]}`)
+										span.fa-layers.fa-fw.me-2.ms-1
+											i.fas.fa-circle.fa-lg.text-white(data-fa-transform="shrink-2")
+											i.fab.fa-bitcoin.fa-lg(style=`color: ${coinConfig.coinColorsByNetwork[activeBlockchain]}`)
 
 									div.dropdown-menu.dropdown-menu-end.shadow(aria-label="Demo Sites")
 										span.dropdown-header Public Demo Sites
@@ -85,8 +85,8 @@ html(lang="en")
 
 							if (config.siteTools)
 								li.nav-item.dropdown.me-2
-									a.nav-link.rounded.bg-header-footer-highlight.dropdown-toggle(href="javascript:void(0)", role="button", data-bs-toggle="dropdown", aria-haspopup="true", aria-expanded="false")
-										i.fas.fa-tools.me-2
+									a.nav-link.rounded.bg-header-footer-highlight.text-white.dropdown-toggle(href="javascript:void(0)", role="button", data-bs-toggle="dropdown", aria-haspopup="true", aria-expanded="false")
+										i.fas.fa-tools.me-2.ms-1
 										| Tools
 									div.dropdown-menu.dropdown-menu-end.shadow(aria-label="Tools Items")
 										span.dropdown-header Tools
@@ -99,18 +99,39 @@ html(lang="en")
 												span  #{item.name}
 
 							li.nav-item.dropdown.me-4
-								a.nav-link.rounded.bg-header-footer-highlight.dropdown-toggle(href="javascript:void(0)", id="navbarDropdown", role="button", data-bs-toggle="dropdown", aria-haspopup="true", aria-expanded="false") 
-									i.fas.fa-cog.me-1 
-								div.dropdown-menu.dropdown-menu-end.shadow(aria-labelledby="navbarDropdown")
-									if (coinConfig.currencyUnits)
-										span.dropdown-header Currency Units
-										each item in coinConfig.currencyUnits
-											if (item.type == "native" || (config.queryExchangeRates && !config.privacyMode))
-												a.dropdown-item(href=`./changeSetting?name=currencyFormatType&value=${item.values[0]}`)
-													each valueName in item.values
-														if (currencyFormatType == valueName)
+								a.nav-link.rounded.bg-header-footer-highlight.text-white.dropdown-toggle(href="javascript:void(0)", id="navbarDropdown", role="button", data-bs-toggle="dropdown", aria-haspopup="true", aria-expanded="false") 
+									i.fas.fa-cog.me-2.ms-1
+								
+								.dropdown-menu.dropdown-menu-end.shadow(aria-labelledby="navbarDropdown")
+									span.dropdown-header Display Currency
+
+									- var items = ["BTC", "sat"];
+									if (config.queryExchangeRates)
+										- items.push("local");
+
+									.btn-group.ms-3
+										each item in items
+											if (userSettings.displayCurrency == item.toLowerCase())
+												span.btn.btn-primary.btn-sm #{item}
+
+											else
+												a.btn.btn-outline-primary.btn-sm(href=`./changeSetting?name=displayCurrency&value=${item.toLowerCase()}`) #{item}
+
+									if (config.queryExchangeRates)
+										hr.dropdown-divider.mt-3.mb-1
+
+										span.dropdown-header Local Currency
+
+										- var items = ["USD", "EUR", "GBP"];
+
+										each item in items
+											a.dropdown-item(href=`./changeSetting?name=localCurrency&value=${item.toLowerCase()}`)
+												.clearfix
+													.float-start
+														span #{item}
+													.float-end
+														if (userSettings.localCurrency == item.toLowerCase())
 															i.fas.fa-check
-													span  #{item.name}
 
 							
 

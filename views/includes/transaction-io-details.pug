@@ -111,13 +111,12 @@ div.row.font-monospace
 
 										span(class=(tx.vin.length == 1 ? "fw-bold" : false))
 											- var currencyValue = coinConfig.blockRewardFunction(blockHeight, activeBlockchain);
-											include ./value-display.pug
+											+valueDisplay(currencyValue)
 
 									else
 										if (vout && vout.value)
-											- var currencyValue = vout.value;
 											span(class=(tx.vin.length == 1 ? "fw-bold" : "fw-light"))
-												include ./value-display.pug
+												+valueDisplay(vout.value)
 
 										else if (!global.txindexAvailable)
 											span(title="This data is unavailable. Your node must have its transaction index (txindex) setting enabled to view it.", data-bs-toggle="tooltip")
@@ -150,7 +149,7 @@ div.row.font-monospace
 
 							div.tx-io-value.mt-3.mt-md-0
 								- var currencyValue = new Decimal(totalIOValues.output).minus(new Decimal(totalIOValues.input));
-								include ./value-display.pug
+								+valueDisplay(currencyValue)
 				hr
 
 			if (totalIOValues.input && totalIOValues.input > 0 && tx.vin.length > 1)
@@ -160,9 +159,8 @@ div.row.font-monospace
 							if (totalIOValues.input > 0)
 								span.d-block.d-md-none Total Input:
 								
-								- var currencyValue = totalIOValues.input;
 								span.fw-bold
-									include ./value-display.pug
+									+valueDisplay(totalIOValues.input)
 			
 
 	div.d-lg-none
@@ -273,9 +271,8 @@ div.row.font-monospace
 										i.fas.fa-fire.text-danger.me-2
 
 								if (vout.value > 0)
-									- var currencyValue = vout.value;
 									span(class=(nonZeroVoutValueCount == 1 ? "fw-bold" : "fw-light"))
-										include ./value-display.pug
+										+valueDisplay(vout.value)
 
 
 				if (voutIndex < (tx.vout.length - 1) || nonZeroVoutValueCount > 1)
@@ -294,7 +291,6 @@ div.row.font-monospace
 						span.d-block.d-md-none Total Output:
 
 						span.fw-bold
-							- var currencyValue = totalIOValues.output;
-							include ./value-display.pug
+							+valueDisplay(totalIOValues.output)
 
 

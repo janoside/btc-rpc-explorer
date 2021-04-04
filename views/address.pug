@@ -96,7 +96,7 @@ block content
 									+summaryItem("Balance")
 										span(class=(addressDetails.balanceSat > 0 ? "text-success" : false))
 											- var currencyValue = new Decimal(addressDetails.balanceSat).dividedBy(coinConfig.baseCurrencyUnit.multiplier);
-											include includes/value-display.pug
+											+valueDisplay(currencyValue)
 
 								if (addressDetails && addressDetails.unconfirmedBalanceSat)
 									+summaryItem("Unconfirmed Balance")
@@ -107,24 +107,24 @@ block content
 												span -
 
 											- var currencyValue = new Decimal(Math.abs(addressDetails.unconfirmedBalanceSat)).dividedBy(coinConfig.baseCurrencyUnit.multiplier);
-											include includes/value-display.pug
+											+valueDisplay(currencyValue)
 
 								if (addressDetails && addressDetails.totalReceivedSat)
 									+summaryItem("Total Received / Sent")
 										span(class=(addressDetails.totalReceivedSat > 0 ? "text-success" : false))
 											if (addressDetails.totalReceivedSat)
-												span +
+												span.me-1 +
 
 											- var currencyValue = new Decimal(Math.abs(addressDetails.totalReceivedSat)).dividedBy(coinConfig.baseCurrencyUnit.multiplier);
-											include includes/value-display.pug
+											+valueDisplay(currencyValue)
 
 										br
 										span(class=(addressDetails.totalSentSat > 0 ? "text-danger" : false))
 											if (addressDetails.totalSentSat > 0)
-												span -
+												span.me-1 -
 
 											- var currencyValue = new Decimal(Math.abs(addressDetails.totalSentSat)).dividedBy(coinConfig.baseCurrencyUnit.multiplier);
-											include includes/value-display.pug
+											+valueDisplay(currencyValue)
 
 								if (flags.length > 0)
 									+summaryItem("Flags")

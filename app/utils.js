@@ -171,92 +171,76 @@ function getRandomString(length, chars) {
 	return result;
 }
 
-var formatCurrencyCache = {};
-
-function getCurrencyFormatInfo(formatType) {
-	if (formatCurrencyCache[formatType] == null) {
-		for (var x = 0; x < coins[config.coin].currencyUnits.length; x++) {
-			var currencyUnit = coins[config.coin].currencyUnits[x];
-
-			for (var y = 0; y < currencyUnit.values.length; y++) {
-				var currencyUnitValue = currencyUnit.values[y];
-
-				if (currencyUnitValue == formatType) {
-					formatCurrencyCache[formatType] = currencyUnit;
-				}
-			}
-		}
-	}
-
-	if (formatCurrencyCache[formatType] != null) {
-		return formatCurrencyCache[formatType];
-	}
-
-	return null;
-}
-
 function formatCurrencyAmountWithForcedDecimalPlaces(amount, formatType, forcedDecimalPlaces) {
-	var formatInfo = getCurrencyFormatInfo(formatType);
-	if (formatInfo != null) {
-		var dec = new Decimal(amount);
+	formatType = formatType.toLowerCase();
 
-		var decimalPlaces = formatInfo.decimalPlaces;
-		//if (decimalPlaces == 0 && dec < 1) {
-		//	decimalPlaces = 5;
-		//}
+	debugLog(`formatCurrencyAmountWithForcedDecimalPlaces(${amount}, ${formatType}, ${forcedDecimalPlaces})`);
+
+	var currencyType = global.currencyTypes[formatType];
+
+	if (currencyType == null) {
+		throw `Unknown currency type: ${formatType}`;
+	}
+
+	var dec = new Decimal(amount);
+
+	var decimalPlaces = currencyType.decimalPlaces;
+	//if (decimalPlaces == 0 && dec < 1) {
+	//	decimalPlaces = 5;
+	//}
+
+	if (forcedDecimalPlaces >= 0) {
+		decimalPlaces = forcedDecimalPlaces;
+	}
+
+	if (currencyType.type == "native") {
+		dec = dec.times(currencyType.multiplier);
 
 		if (forcedDecimalPlaces >= 0) {
-			decimalPlaces = forcedDecimalPlaces;
-		}
+			// toFixed will keep trailing zeroes
+			var baseStr = addThousandsSeparators(dec.toFixed(decimalPlaces));
 
-		if (formatInfo.type == "native") {
-			dec = dec.times(formatInfo.multiplier);
+			return {val:baseStr, currencyUnit:currencyType.name, simpleVal:baseStr, intVal:parseInt(dec)};
 
-			if (forcedDecimalPlaces >= 0) {
-				// toFixed will keep trailing zeroes
-				var baseStr = addThousandsSeparators(dec.toFixed(decimalPlaces));
+		} else {
+			// toDP will strip trailing zeroes
+			var baseStr = addThousandsSeparators(dec.toDP(decimalPlaces));
 
-				return {val:baseStr, currencyUnit:formatInfo.name, simpleVal:baseStr};
+			var returnVal = {currencyUnit:currencyType.name, simpleVal:baseStr, intVal:parseInt(dec)};
 
+			// max digits in "val"
+			var maxValDigits = config.site.valueDisplayMaxLargeDigits;
+
+			if (baseStr.indexOf(".") == -1) {
+				returnVal.val = baseStr;
+				
 			} else {
-				// toDP will strip trailing zeroes
-				var baseStr = addThousandsSeparators(dec.toDP(decimalPlaces));
+				if (baseStr.length - baseStr.indexOf(".") - 1 > maxValDigits) {
+					returnVal.val = baseStr.substring(0, baseStr.indexOf(".") + maxValDigits + 1);
+					returnVal.lessSignificantDigits = baseStr.substring(baseStr.indexOf(".") + maxValDigits + 1);
 
-				var returnVal = {currencyUnit:formatInfo.name, simpleVal:baseStr};
-
-				// max digits in "val"
-				var maxValDigits = config.site.valueDisplayMaxLargeDigits;
-
-				if (baseStr.indexOf(".") == -1) {
-					returnVal.val = baseStr;
-					
 				} else {
-					if (baseStr.length - baseStr.indexOf(".") - 1 > maxValDigits) {
-						returnVal.val = baseStr.substring(0, baseStr.indexOf(".") + maxValDigits + 1);
-						returnVal.lessSignificantDigits = baseStr.substring(baseStr.indexOf(".") + maxValDigits + 1);
-
-					} else {
-						returnVal.val = baseStr;
-					}
+					returnVal.val = baseStr;
 				}
-
-				return returnVal;
 			}
-		} else if (formatInfo.type == "exchanged") {
-			if (global.exchangeRates != null && global.exchangeRates[formatInfo.multiplier] != null) {
-				dec = dec.times(global.exchangeRates[formatInfo.multiplier]);
 
-				var baseStr = addThousandsSeparators(dec.toDecimalPlaces(decimalPlaces));
-
-				return {val:baseStr, currencyUnit:formatInfo.name, simpleVal:baseStr};
-
-			} else {
-				return formatCurrencyAmountWithForcedDecimalPlaces(amount, coinConfig.defaultCurrencyUnit.name, forcedDecimalPlaces);
-			}
+			return returnVal;
 		}
+	} else if (currencyType.type == "exchanged") {
+		//console.log(JSON.stringify(global.exchangeRates) + " - " + currencyType.name);
+		if (global.exchangeRates != null && global.exchangeRates[currencyType.id] != null) {
+			dec = dec.times(global.exchangeRates[currencyType.id]);
+
+			var baseStr = addThousandsSeparators(dec.toDecimalPlaces(decimalPlaces));
+
+			return {val:baseStr, currencyUnit:currencyType.name, simpleVal:baseStr, intVal:parseInt(dec)};
+
+		} else {
+			return formatCurrencyAmountWithForcedDecimalPlaces(amount, coinConfig.defaultCurrencyUnit.name, forcedDecimalPlaces);
+		}
+	} else {
+		throw `Unknown currency type: ${currencyType.type}`;
 	}
-	
-	return amount;
 }
 
 function formatCurrencyAmount(amount, formatType) {
@@ -275,32 +259,11 @@ function addThousandsSeparators(x) {
 	return parts.join(".");
 }
 
-function formatValueInActiveCurrency(amount) {
-	if (global.currencyFormatType && global.exchangeRates[global.currencyFormatType.toLowerCase()]) {
-		return formatExchangedCurrency(amount, global.currencyFormatType);
+function satoshisPerUnitOfLocalCurrency(localCurrency) {
+	if (global.exchangeRates != null) {
+		var exchangeType = localCurrency;
 
-	} else {
-		return formatExchangedCurrency(amount, "usd");
-	}
-}
-
-
-function formatValueInGoldOunces(amount) {
-	var currencyFormat = global.currencyFormatType.toLowerCase() || "usd";
-
-	if (global.exchangeRates[currencyFormat] && global.goldExchangeRates[currencyFormat]) {
-		return formatExchangedCurrency(amount, "au", false);
-
-	} else {
-		return formatExchangedCurrency(amount, "usd");
-	}
-}
-
-function satoshisPerUnitOfActiveCurrency() {
-	if (global.currencyFormatType != null && global.exchangeRates != null) {
-		var exchangeType = global.currencyFormatType.toLowerCase();
-
-		if (!global.exchangeRates[global.currencyFormatType.toLowerCase()]) {
+		if (!global.exchangeRates[localCurrency]) {
 			// if current display currency is a native unit, default to USD for exchange values
 			exchangeType = "usd";
 		}
@@ -313,43 +276,30 @@ function satoshisPerUnitOfActiveCurrency() {
 		dec = one.dividedBy(dec);
 
 		var unitName = coins[config.coin].baseCurrencyUnit.name;
-		var formatInfo = getCurrencyFormatInfo(unitName);
+		var satCurrencyType = global.currencyTypes["sat"];
+		var localCurrencyType = global.currencyTypes[localCurrency];
 
 		// BTC/USD -> sat/USD
-		dec = dec.times(formatInfo.multiplier);
+		dec = dec.times(satCurrencyType.multiplier);
 
 		var exchangedAmt = parseInt(dec);
 
-		if (exchangeType == "eur") {
-			return {amt:addThousandsSeparators(exchangedAmt), unit:`${unitName}/€`};
-
-		} else {
-			return {amt:addThousandsSeparators(exchangedAmt), unit:`${unitName}/$`};
-		}
-		
+		return {amt:addThousandsSeparators(exchangedAmt), unit:`sat/${localCurrencyType.symbol}`}
 	}
 
 	return null;
-
-	if (global.currencyFormatType) {
-		return formatExchangedCurrency(amount, global.currencyFormatType);
-
-	} else {
-		return formatExchangedCurrency(amount, "usd");
-	}
 }
 
-function formatExchangedCurrency(amount, exchangeType, includeUnit=true) {
+function getExchangedCurrencyFormatData(amount, exchangeType, includeUnit=true) {
 	if (global.exchangeRates != null && global.exchangeRates[exchangeType.toLowerCase()] != null) {
 		var dec = new Decimal(amount);
 		dec = dec.times(global.exchangeRates[exchangeType.toLowerCase()]);
 		var exchangedAmt = parseFloat(Math.round(dec * 100) / 100).toFixed(2);
 
-		if (exchangeType == "eur") {
-			return (includeUnit ? "€" : "") + addThousandsSeparators(exchangedAmt);
-
-		} else {
-			return (includeUnit ? "$" : "") + addThousandsSeparators(exchangedAmt);
+		return {
+			symbol: global.currencySymbols[exchangeType],
+			value: addThousandsSeparators(exchangedAmt),
+			unit: exchangeType
 		}
 		
 	} else if (exchangeType == "au") {
@@ -358,7 +308,39 @@ function formatExchangedCurrency(amount, exchangeType, includeUnit=true) {
 			dec = dec.times(global.exchangeRates.usd).dividedBy(global.goldExchangeRates.usd);
 			var exchangedAmt = parseFloat(Math.round(dec * 100) / 100).toFixed(2);
 
-			return addThousandsSeparators(exchangedAmt) + (includeUnit ? "oz" : "");
+			return {
+				symbol: "AU",
+				value: addThousandsSeparators(exchangedAmt),
+				unit: "oz"
+			}
+		}
+	}
+
+	return "";
+}
+
+function formatExchangedCurrency(amount, exchangeType) {
+	if (global.exchangeRates != null && global.exchangeRates[exchangeType.toLowerCase()] != null) {
+		var dec = new Decimal(amount);
+		dec = dec.times(global.exchangeRates[exchangeType.toLowerCase()]);
+		var exchangedAmt = parseFloat(Math.round(dec * 100) / 100).toFixed(2);
+
+		return {
+			val: addThousandsSeparators(exchangedAmt),
+			symbol: global.currencyTypes[exchangeType].symbol,
+			unit: exchangeType
+		};
+	} else if (exchangeType == "au") {
+		if (global.exchangeRates != null && global.goldExchangeRates != null) {
+			var dec = new Decimal(amount);
+			dec = dec.times(global.exchangeRates.usd).dividedBy(global.goldExchangeRates.usd);
+			var exchangedAmt = parseFloat(Math.round(dec * 100) / 100).toFixed(2);
+
+			return {
+				val: addThousandsSeparators(exchangedAmt),
+				unit: "oz",
+				symbol: "AU"
+			};
 		}
 	}
 
@@ -567,7 +549,7 @@ function estimatedSupply(height) {
 }
 
 function refreshExchangeRates() {
-	if (!config.queryExchangeRates || config.privacyMode) {
+	if (!config.queryExchangeRates) {
 		return;
 	}
 
@@ -593,24 +575,32 @@ function refreshExchangeRates() {
 	}
 
 	if (coins[config.coin].goldExchangeRateData) {
-		request(coins[config.coin].goldExchangeRateData.jsonUrl, function(error, response, body) {
-			if (error == null && response && response.statusCode && response.statusCode == 200) {
-				var responseBody = JSON.parse(body);
+		if (process.env.NODE_ENV == "local") {
+			global.goldExchangeRates = {usd: 1731.2};
+			global.goldExchangeRatesUpdateTime = new Date();
 
-				var exchangeRates = coins[config.coin].goldExchangeRateData.responseBodySelectorFunction(responseBody);
-				if (exchangeRates != null) {
-					global.goldExchangeRates = exchangeRates;
-					global.goldExchangeRatesUpdateTime = new Date();
+			debugLog("Using DEBUG gold exchange rates: " + JSON.stringify(global.goldExchangeRates) + " starting at " + global.goldExchangeRatesUpdateTime);
 
-					debugLog("Using gold exchange rates: " + JSON.stringify(global.goldExchangeRates) + " starting at " + global.goldExchangeRatesUpdateTime);
+		} else {
+			request(coins[config.coin].goldExchangeRateData.jsonUrl, function(error, response, body) {
+				if (error == null && response && response.statusCode && response.statusCode == 200) {
+					var responseBody = JSON.parse(body);
 
+					var exchangeRates = coins[config.coin].goldExchangeRateData.responseBodySelectorFunction(responseBody);
+					if (exchangeRates != null) {
+						global.goldExchangeRates = exchangeRates;
+						global.goldExchangeRatesUpdateTime = new Date();
+
+						debugLog("Using gold exchange rates: " + JSON.stringify(global.goldExchangeRates) + " starting at " + global.goldExchangeRatesUpdateTime);
+
+					} else {
+						debugLog("Unable to get gold exchange rate data");
+					}
 				} else {
-					debugLog("Unable to get gold exchange rate data");
+					logError("34082yt78yewewe", {error:error, response:response, body:body});
 				}
-			} else {
-				logError("34082yt78yewewe", {error:error, response:response, body:body});
-			}
-		});
+			});
+		}
 	}
 }
 
@@ -696,16 +686,43 @@ function parseExponentStringDouble(val) {
 }
 
 function formatLargeNumber(n, decimalPlaces) {
-	for (var i = 0; i < exponentScales.length; i++) {
-		var item = exponentScales[i];
+	try {
+		for (var i = 0; i < exponentScales.length; i++) {
+			var item = exponentScales[i];
 
-		var fraction = new Decimal(n / item.val);
-		if (fraction >= 1) {
-			return [fraction.toDecimalPlaces(decimalPlaces), item];
+			var fraction = new Decimal(n / item.val);
+			if (fraction >= 1) {
+				return [fraction.toDP(decimalPlaces), item];
+			}
 		}
-	}
 
-	return [new Decimal(n).toDecimalPlaces(decimalPlaces), {}];
+		return [new Decimal(n).toDP(decimalPlaces), {}];
+
+	} catch (err) {
+		logError("ru92huefhew", err, { n:n, decimalPlaces:decimalPlaces });
+
+		throw err;
+	}
+}
+
+function formatLargeNumberSignificant(n, significantDigits) {
+	try {
+		for (var i = 0; i < exponentScales.length; i++) {
+			var item = exponentScales[i];
+
+			var fraction = new Decimal(n / item.val);
+			if (fraction >= 1) {
+				return [fraction.toDP(Math.max(0, significantDigits - `${Math.floor(fraction)}`.length)), item];
+			}
+		}
+
+		return [new Decimal(n).toDP(significantDigits), {}];
+
+	} catch (err) {
+		logError("38fhcdugdeogwe", err, { n:n, significantDigits:significantDigits });
+
+		throw err;
+	}
 }
 
 function rgbToHsl(r, g, b) {
@@ -947,13 +964,11 @@ module.exports = {
 	splitArrayIntoChunks: splitArrayIntoChunks,
 	splitArrayIntoChunksByChunkCount: splitArrayIntoChunksByChunkCount,
 	getRandomString: getRandomString,
-	getCurrencyFormatInfo: getCurrencyFormatInfo,
 	formatCurrencyAmount: formatCurrencyAmount,
 	formatCurrencyAmountWithForcedDecimalPlaces: formatCurrencyAmountWithForcedDecimalPlaces,
 	formatExchangedCurrency: formatExchangedCurrency,
-	formatValueInActiveCurrency: formatValueInActiveCurrency,
-	formatValueInGoldOunces: formatValueInGoldOunces,
-	satoshisPerUnitOfActiveCurrency: satoshisPerUnitOfActiveCurrency,
+	getExchangedCurrencyFormatData: getExchangedCurrencyFormatData,
+	satoshisPerUnitOfLocalCurrency: satoshisPerUnitOfLocalCurrency,
 	addThousandsSeparators: addThousandsSeparators,
 	formatCurrencyAmountInSmallestUnits: formatCurrencyAmountInSmallestUnits,
 	seededRandom: seededRandom,
@@ -965,6 +980,7 @@ module.exports = {
 	refreshExchangeRates: refreshExchangeRates,
 	parseExponentStringDouble: parseExponentStringDouble,
 	formatLargeNumber: formatLargeNumber,
+	formatLargeNumberSignificant: formatLargeNumberSignificant,
 	geoLocateIpAddresses: geoLocateIpAddresses,
 	getTxTotalInputOutputValues: getTxTotalInputOutputValues,
 	rgbToHsl: rgbToHsl,

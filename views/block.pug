@@ -88,7 +88,8 @@ block content
 								if (result.blockstats.total_out)
 									- var currencyValue = new Decimal(result.blockstats.total_out).plus(new Decimal(result.blockstats.totalfee)).plus(new Decimal(result.blockstats.subsidy));
 									- currencyValue = currencyValue.dividedBy(coinConfig.baseCurrencyUnit.multiplier);
-									include ./includes/value-display.pug
+									+valueDisplay(currencyValue)
+
 								else
 									span 0
 
@@ -98,11 +99,11 @@ block content
 							+summaryItem("Total Fees")
 								if (result.blockstats.totalfee)
 									- var currencyValue = new Decimal(result.blockstats.totalfee).dividedBy(coinConfig.baseCurrencyUnit.multiplier);
-									include ./includes/value-display.pug
+									+valueDisplay(currencyValue)
 
 								else
 									- var currencyValue = new Decimal(result.getblock.totalFees);
-									include ./includes/value-display.pug
+									+valueDisplay(currencyValue)
 
 							if (result.blockstats.feerate_percentiles)
 								+summaryItem("Rate Percentiles", null, "sat/vB")
@@ -137,7 +138,8 @@ block content
 							+summaryItem("Min / Max Values")
 								if (result.blockstats.minfee)
 									- var currencyValue = new Decimal(result.blockstats.minfee).dividedBy(coinConfig.baseCurrencyUnit.multiplier);
-									include ./includes/value-display.pug
+									+valueDisplay(currencyValue)
+
 								else
 									span 0
 
@@ -145,7 +147,8 @@ block content
 
 								if (result.blockstats.maxfee)
 									- var currencyValue = new Decimal(result.blockstats.maxfee).dividedBy(coinConfig.baseCurrencyUnit.multiplier);
-									include ./includes/value-display.pug
+									+valueDisplay(currencyValue)
+
 								else
 									span 0
 

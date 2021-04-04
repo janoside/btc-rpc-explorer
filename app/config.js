@@ -93,7 +93,7 @@ module.exports = {
 	privacyMode: (process.env.BTCEXP_PRIVACY_MODE.toLowerCase() == "true"),
 	slowDeviceMode: slowDeviceMode,
 	demoSite: (process.env.BTCEXP_DEMO.toLowerCase() == "true"),
-	queryExchangeRates: (process.env.BTCEXP_NO_RATES.toLowerCase() != "true"),
+	queryExchangeRates: (process.env.BTCEXP_NO_RATES.toLowerCase() != "true" && process.env.BTCEXP_PRIVACY_MODE.toLowerCase() != "true"),
 	noInmemoryRpcCache: (process.env.BTCEXP_NO_INMEMORY_RPC_CACHE.toLowerCase() == "true"),
 	
 	rpcConcurrency: (process.env.BTCEXP_RPC_CONCURRENCY || 10),

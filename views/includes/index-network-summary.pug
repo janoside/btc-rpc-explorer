@@ -12,41 +12,45 @@ if (exchangeRates)
 		- var colCount = 3 + (networkVolume ? 1 : 0) + (goldExchangeRates ? 1 : 0);
 		+summaryRow(colCount)
 			+summaryItem("Exchange Rate", `Source: ${new URL(coinConfig.exchangeRateData.jsonUrl).hostname}`)
-				span.text-success #{utils.formatValueInActiveCurrency(1.0)}
+				- var formatData = utils.formatExchangedCurrency(1.0, userSettings.localCurrency);
+
+				span.text-success
+					span.me-1 #{formatData.symbol}
+					| #{formatData.val}
 
 			+summaryItem("Sats Rate")
-				- var satsRateData = utils.satoshisPerUnitOfActiveCurrency();
+				- var satsRateData = utils.satoshisPerUnitOfLocalCurrency(userSettings.localCurrency);
 				span #{satsRateData.amt}
 					small  #{satsRateData.unit}
 
 			+summaryItem("Market Cap")
 				- var supply = utils.estimatedSupply(getblockchaininfo.blocks);
-				- var activeCurrency = ["usd", "eur"].includes(global.currencyFormatType) ? global.currencyFormatType : "usd";
-				- var xxx = utils.formatLargeNumber(parseFloat(supply) * exchangeRates[activeCurrency], 3);
+				- var mcapData = utils.formatLargeNumber(parseFloat(supply) * global.exchangeRates[userSettings.localCurrency], 3);
 
-				if (activeCurrency == "eur")
-					span.me-1 €
-				else
-					span.me-1 $
-
-				span #{xxx[0]}
-				if (xxx[1].textDesc)
-					span  #{xxx[1].textDesc}
+				span.me-1 #{global.currencyTypes[userSettings.localCurrency].symbol}
+				
+				span #{mcapData[0]}
+				if (mcapData[1].textDesc)
+					span.ms-1 #{mcapData[1].textDesc}
 				else
 					span  x 10
-					sup #{xxx[1].exponent}
+					sup #{mcapData[1].exponent}
+
 				// ["154.9",{"val":1000000000,"name":"giga","abbreviation":"G","exponent":"9"}]
 
-			if (goldExchangeRates)
+			if (global.goldExchangeRates["usd"] && global.exchangeRates["usd"])
+				// usd is the only bridge for our data sources
 				+summaryItem("Gold Rate", `Source: ${new URL(coinConfig.goldExchangeRateData.jsonUrl).hostname}`)
-					span.text-warning #{utils.formatValueInGoldOunces(1.0)}
-					small.ms-1.text-muted oz
+					- var formatData = utils.formatExchangedCurrency(1.0, "au");
+
+					span.text-warning #{formatData.val}
+					small.ms-1.text-muted #{formatData.unit}
 
 			if (networkVolume)
 				+summaryItem("24hr Volume", `Total output of all transactions over the last 24hrs (blocks: [#${networkVolume.d1.endBlock.toLocaleString()} - #${networkVolume.d1.startBlock.toLocaleString()}]).`)
 					- var currencyValue = parseInt(networkVolume.d1.amt);
 					- var currencyValueDecimals = 0;
-					include ./value-display.pug
+					+valueDisplaySpecial(networkVolume.d1.amt, userSettings.displayCurrency == "local" ? 4 : 0, ["sat", "local"].includes(userSettings.displayCurrency))
 									
 
 

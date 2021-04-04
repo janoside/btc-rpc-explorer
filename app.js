@@ -51,6 +51,8 @@ const markdown = require("markdown-it")();
 const v8 = require("v8");
 const axios = require("axios");
 
+require("./app/currencies.js");
+
 const package_json = require('./package.json');
 global.appVersion = package_json.version;
 
@@ -620,9 +622,13 @@ expressApp.use(function(req, res, next) {
 	res.locals.userSettings = userSettings;
 
 
-	// currency format type
-	if (!userSettings.currencyFormatType) {
-		userSettings.currencyFormatType = "btc";
+
+	if (!userSettings.displayCurrency) {
+		userSettings.displayCurrency = "btc";
+	}
+
+	if (!userSettings.localCurrency) {
+		userSettings.localCurrency = "usd";
 	}
 
 	// theme
@@ -631,8 +637,8 @@ expressApp.use(function(req, res, next) {
 	}
 
 
-	res.locals.currencyFormatType = userSettings.currencyFormatType;
-	global.currencyFormatType = userSettings.currencyFormatType;
+	res.locals.displayCurrency = userSettings.displayCurrency;
+	res.locals.localCurrency = userSettings.localCurrency;
 
 
 	if (!["/", "/connect"].includes(req.originalUrl)) {
