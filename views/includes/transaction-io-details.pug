@@ -149,7 +149,7 @@ mixin asciiHexDataDisplay(dataName, uniqueId, hex)
 
 							.tx-io-value.mt-3.mt-md-0
 								- var currencyValue = new Decimal(totalIOValues.output).minus(new Decimal(totalIOValues.input));
-								span.border-dotted.me-1(title="The total amounts for other inputs are less than or equal to this value, depending on the mining fee paid.", data-bs-toggle="tooltip") ≤
+								span.border-dotted.me-1(title="The total amounts for other inputs are approximately equal to this value, plus the mining fee paid.", data-bs-toggle="tooltip") ~+
 								+valueDisplay(currencyValue)
 				hr
 
@@ -166,7 +166,7 @@ mixin asciiHexDataDisplay(dataName, uniqueId, hex)
 							else if (extraInputCount > 0)
 								span.d-block.d-md-none Total Input:
 								
-								span.border-dotted.me-1(title="The total input amount for this transaction is less than or equal to this value, depending on the mining fee paid.", data-bs-toggle="tooltip") ≤
+								span.border-dotted.me-1(title="The total input amount for this transaction is approximately equal to this value, plus the mining fee paid.", data-bs-toggle="tooltip") ~+
 								span.fw-bold
 									+valueDisplay(totalIOValues.output)
 		
