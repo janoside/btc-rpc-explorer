@@ -96,23 +96,52 @@ router.get("/mempool-txs/:txids", function(req, res, next) {
 
 const mempoolTxSummaryCache = {};
 const mempoolSummaryStatuses = {};
+const mempoolSummaries = {};
 
 router.get("/mempool-summary-status", asyncHandler(async (req, res, next) => {
 	const statusId = req.query.statusId;
 	if (statusId && mempoolSummaryStatuses[statusId]) {
 		res.json(mempoolSummaryStatuses[statusId]);
 
+		next();
+
 	} else {
 		res.json({});
+
+		next();
 	}
 }));
 
-router.get("/mempool-summary", asyncHandler(async (req, res, next) => {
+router.get("/get-mempool-summary", asyncHandler(async (req, res, next) => {
+	const statusId = req.query.statusId;
+
+	if (statusId && mempoolSummaries[statusId]) {
+		var summary = mempoolSummaries[statusId];
+		
+		res.json(summary);
+
+		next();
+
+		delete mempoolSummaries[statusId];
+		delete mempoolSummaryStatuses[statusId];
+
+	} else {
+		res.json({});
+
+		next();
+	}
+}));
+
+router.get("/build-mempool-summary", asyncHandler(async (req, res, next) => {
 	try {
 		const statusId = req.query.statusId;
 		if (statusId) {
 			mempoolSummaryStatuses[statusId] = {};
 		}
+
+		res.json({success:true, status:"started"});
+
+		next();
 
 		const ageBuckets = req.query.ageBuckets ? parseInt(req.query.ageBuckets) : 100;
 		const sizeBuckets = req.query.sizeBuckets ? parseInt(req.query.sizeBuckets) : 100;
@@ -179,12 +208,7 @@ router.get("/mempool-summary", asyncHandler(async (req, res, next) => {
 
 		await Promise.all(promises);
 
-		// we're done, kill the status tracker
-		if (statusId) {
-			delete mempoolSummaryStatuses[statusId];
-		}
-
-
+		
 		// purge items from cache that are no longer present in mempool
 		var keysToDelete = [];
 		for (var key in mempoolTxSummaryCache) {
@@ -381,16 +405,24 @@ router.get("/mempool-summary", asyncHandler(async (req, res, next) => {
 			summary["satoshiPerByteBucketTotalFees"].push(summary["satoshiPerByteBuckets"][i]["totalFees"]);
 		}
 
-		res.json(summary);
+		mempoolSummaries[statusId] = summary;
 
-		next();
+
+		// we're done, update tracker to final status, just in case
+		if (statusId) {
+			mempoolSummaryStatuses[statusId].done = mempoolSummaryStatuses[statusId].count;
+		}
+
+		//res.json(summary);
+
+		//next();
 
 	} catch (err) {
 		utils.logError("329r7whegee", err);
 
-		res.json({success:false, error:err});
-
-		next();
+		if (statusId) {
+			delete mempoolSummaryStatuses[statusId];
+		}
 	}
 }));
 
