@@ -106,7 +106,7 @@ html(lang="en")
 									span.dropdown-header Display Currency
 
 									- var items = ["BTC", "sat"];
-									if (config.queryExchangeRates)
+									if (config.queryExchangeRates && global.exchangeRates)
 										- items.push("local");
 
 									.btn-group.ms-3
@@ -117,7 +117,7 @@ html(lang="en")
 											else
 												a.btn.btn-outline-primary.btn-sm(href=`./changeSetting?name=displayCurrency&value=${item.toLowerCase()}`) #{item}
 
-									if (config.queryExchangeRates)
+									if (config.queryExchangeRates && global.exchangeRates)
 										hr.dropdown-divider.mt-3.mb-1
 
 										span.dropdown-header Local Currency
