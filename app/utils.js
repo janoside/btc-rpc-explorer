@@ -174,8 +174,6 @@ function getRandomString(length, chars) {
 function formatCurrencyAmountWithForcedDecimalPlaces(amount, formatType, forcedDecimalPlaces) {
 	formatType = formatType.toLowerCase();
 
-	debugLog(`formatCurrencyAmountWithForcedDecimalPlaces(${amount}, ${formatType}, ${forcedDecimalPlaces})`);
-
 	var currencyType = global.currencyTypes[formatType];
 
 	if (currencyType == null) {
@@ -485,7 +483,7 @@ function getTxTotalInputOutputValues(tx, txInputs, blockHeight) {
 					if (txInput) {
 						try {
 							var vout = txInput;
-							
+
 							if (vout.value) {
 								totalInputValue = totalInputValue.plus(new Decimal(vout.value));
 							}
