@@ -24,34 +24,20 @@ block content
 					h4.fw-light.mb-2 Welcome to Bitcoin Explorer!
 				.float-start
 					if (config.demoSite)
-						span.badge.bg-primary.mb-2.ms-0.ms-md-3.mt-1(title=`This is a public demo, but this tool is designed to be installed and run by all Bitcoiners...<br/><i>Don't Trust, Verify</i>!`, data-bs-toggle="tooltip", data-bs-html="true")
-							span.me-2 Public Demo
+						- var networkNameMap = {"main": "Mainnet", "test": "Testnet", "signet": "Signet"};
+						span.badge.bg-primary.mb-1.ms-0.ms-md-3.mt-1(title=`This is a public demo, but this tool is designed to be installed and run by all Bitcoiners...<br/><i>Don't Trust, Verify</i>!`, data-bs-toggle="tooltip", data-bs-html="true")
+							span.me-2 #{networkNameMap[global.activeBlockchain]} Demo
 							i.fas.fa-sticky-note
 			
 
 			.mb-2 An easy-to-use, educational explorer whose <u>only dependency is your <b>Bitcoin Core</b> node</u>!
 			.mb-3
-				span.badge.bg-success.me-2(style="background-color: #fd9843 !importantx;")
-					span.me-2 Open-Source
-					i.fas.fa-check
+				- var features = ["Open-Source", "Easy Setup", "Low Hardware Requirements", "Fun!"];
 
-				span.badge.bg-success.me-2(style="background-color: #fd9843 !importantx;")
-					span.me-2 Easy Setup
-					i.fas.fa-check
-
-				span.badge.bg-success.me-2(style="background-color: #fd9843 !importantx;")
-					span.me-2 Low Hardware Requirements
-					i.fas.fa-check
-
-				span.badge.bg-success.me-2(style="background-color: #fd9843 !importantx;")
-					span.me-2 Fun!
-					i.fas.fa-check
-			
-			if (false)
-				ul.mb-2
-					li Open-Source
-					li Easy to setup
-					li Designed for low-powered hardware
+				each feature in features
+					span.badge.bg-light.text-dark.border.me-2
+						span.me-2 #{feature}
+						i.fas.fa-check
 			
 			.mt-4.mb-2
 				if (global.sourcecodeProjectMetadata)
