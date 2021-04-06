@@ -27,7 +27,7 @@ html(lang="en")
 	include ./includes/shared-mixins.pug
 
 	body.bg-header-footer
-		nav.navbar.navbar-expand-lg.navbar-dark.bg-header-footer
+		nav.navbar.navbar-expand-md.navbar-dark.bg-header-footer
 			.container
 				a.navbar-brand(href="./")
 					span
@@ -64,7 +64,7 @@ html(lang="en")
 
 						ul.navbar-nav
 							if (config.demoSite && homepage)
-								li.nav-item.dropdown.me-2
+								li.nav-item.dropdown.me-0.me-md-2.mt-2.mt-md-0.text-center.text-md-start
 									a.nav-link.dropdown-toggle.bg-header-footer-highlight.rounded(href="javascript:void(0)", role="button", data-bs-toggle="dropdown", aria-haspopup="true", aria-expanded="false")
 										span.fa-layers.fa-fw.me-2.ms-1
 											i.fas.fa-circle.fa-lg.text-white(data-fa-transform="shrink-2")
@@ -84,15 +84,16 @@ html(lang="en")
 												| #{coinConfig.siteTitlesByNetwork[demoSite].replace("Explorer", "").replace("Bitcoin", "Mainnet")}
 
 							if (config.siteTools)
-								li.nav-item.dropdown.me-2
+								li.nav-item.dropdown.me-0.me-md-2.mt-2.mt-md-0.text-center.text-md-start
 									a.nav-link.rounded.bg-header-footer-highlight.text-white.dropdown-toggle(href="javascript:void(0)", role="button", data-bs-toggle="dropdown", aria-haspopup="true", aria-expanded="false")
 										i.fas.fa-tools.me-2.ms-1
-										| Tools
+										span.d-none.d-lg-inline Tools
+
 									div.dropdown-menu.dropdown-menu-end.shadow(aria-label="Tools Items")
 										each section, sectionIndex in config.site.toolSections
 											if (sectionIndex > 0)
 												hr.dropdown-divider.mt-3.mb-1
-													
+
 											span.dropdown-header #{section.name}
 
 											each itemIndex in section.items
@@ -102,7 +103,7 @@ html(lang="en")
 													i(class=item.fontawesome, style="width: 20px; margin-right: 10px;")
 													span  #{item.name}
 
-							li.nav-item.dropdown.me-4
+							li.nav-item.dropdown.me-0.me-md-3.mt-2.mt-md-0.text-center.text-md-start
 								a.nav-link.rounded.bg-header-footer-highlight.text-white.dropdown-toggle(href="javascript:void(0)", id="navbarDropdown", role="button", data-bs-toggle="dropdown", aria-haspopup="true", aria-expanded="false") 
 									i.fas.fa-cog.me-2.ms-1
 								
@@ -139,13 +140,21 @@ html(lang="en")
 
 							
 
-						form.form-inline(method="post", action="./search", style="width: 325px;")
-							input(type="hidden", name="_csrf", value=csrfToken)
-							.input-group.input-group
-								input.form-control.form-control(type="text", name="query", placeholder="block height/hash, txid, address", value=(query))
-								
-								button.btn.btn-primary(type="submit")
-									i.fas.fa-search
+				form.form-inline.d-none.d-lg-inline(method="post", action="./search", style="width: 325px;")
+					input(type="hidden", name="_csrf", value=csrfToken)
+					.input-group.input-group
+						input.form-control.form-control(type="text", name="query", placeholder="block height/hash, txid, address", value=(query))
+						
+						button.btn.btn-primary(type="submit")
+							i.fas.fa-search
+
+				form.form-inline.d-lg-none.w-100.mt-2.mt-md-0(method="post", action="./search")
+					input(type="hidden", name="_csrf", value=csrfToken)
+					.input-group.input-group
+						input.form-control.form-control(type="text", name="query", placeholder="height/hash/txid...", value=(query))
+						
+						button.btn.btn-primary(type="submit")
+							i.fas.fa-search
 		
 
 
