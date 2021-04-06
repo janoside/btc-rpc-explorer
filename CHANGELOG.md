@@ -10,6 +10,7 @@
 	* Greatly improved performance for multiple loads via caching
 	* Added: "Blocks Count" column by fee-rate bucket
 	* Tool for estimating Block Depth of a transaction or a fee rate (Thanks [@pointbiz](https://github.com/pointbiz))
+* Mining Summary: added doughnut chart for rev. breakdown, simplified table data
 * Upgraded to Bootstrap 5 (currently beta3...)
 * Fix for 404 pages hanging (Thanks [@shesek](https://github.com/shesek))
 * Add convenience redirect for baseUrl (Thanks [@shesek](https://github.com/shesek))
