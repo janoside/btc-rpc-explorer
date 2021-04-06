@@ -42,9 +42,9 @@ const miscCaches = [];
 const blockCaches = [];
 const txCaches = [];
 
-global.miscLruCache = cacheUtils.lruCache(1000);
-global.blockLruCache = cacheUtils.lruCache(1000);
-global.txLruCache = cacheUtils.lruCache(1000);
+global.miscLruCache = cacheUtils.lruCache(config.slowDeviceMode ? 200 : 1000);
+global.blockLruCache = cacheUtils.lruCache(config.slowDeviceMode ? 200 : 1000);
+global.txLruCache = cacheUtils.lruCache(config.slowDeviceMode ? 200 : 1000);
 
 global.lruCaches = [ global.miscLruCache, global.blockLruCache, global.txLruCache ];
 

@@ -96,7 +96,7 @@ module.exports = {
 	queryExchangeRates: (process.env.BTCEXP_NO_RATES.toLowerCase() != "true" && process.env.BTCEXP_PRIVACY_MODE.toLowerCase() != "true"),
 	noInmemoryRpcCache: (process.env.BTCEXP_NO_INMEMORY_RPC_CACHE.toLowerCase() == "true"),
 	
-	rpcConcurrency: (process.env.BTCEXP_RPC_CONCURRENCY || 10),
+	rpcConcurrency: (process.env.BTCEXP_RPC_CONCURRENCY || (slowDeviceMode ? 3 : 10)),
 
 	noTxIndexSearchDepth: (+process.env.BTCEXP_NOTXINDEX_SEARCH_DEPTH || 3),
 
