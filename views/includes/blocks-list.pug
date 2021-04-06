@@ -140,16 +140,12 @@
 									- var currencyValue = parseInt(satValue.dividedBy(coinConfig.baseCurrencyUnit.multiplier));
 									- var currencyValueDecimals = 0;
 
-									if (userSettings.displayCurrency == "local")
-										+valueDisplaySpecial(currencyValue, 3, false, 1000000)
-
-									else if (userSettings.displayCurrency == "sat")
-										+valueDisplaySpecial(currencyValue, satValue > 1000000 ? 3 : 0, false, 1000000)
-
-									else
+									if (userSettings.displayCurrency == "btc")
 										+valueDisplaySpecial(currencyValue, 0)
 
-									//+valueDisplaySpecial(currencyValue, 1, ["sat", "local"].includes(userSettings.displayCurrency))
+									else
+										+valueDisplay(currencyValue)
+										
 
 									if (block.totalFees == null)
 										- block.totalFees = Decimal(blockstatsByHeight[block.height].totalfee).dividedBy(coinConfig.baseCurrencyUnit.multiplier)
@@ -179,14 +175,11 @@
 								- var currencyValue = new Decimal(block.totalFees);
 								- var currencyValueDecimals = 3;
 
-								if (userSettings.displayCurrency == "local")
-									+valueDisplaySpecial(block.totalFees, 0, false, 1000000)
-
-								else if (userSettings.displayCurrency == "sat")
-									+valueDisplaySpecial(block.totalFees, 3, false, 1000000)
+								if (userSettings.displayCurrency == "btc")
+									+valueDisplaySpecial(block.totalFees, 4)
 
 								else
-									+valueDisplaySpecial(block.totalFees, 4)
+									+valueDisplay(block.totalFees)
 
 							else
 								span(title="This data is unavailable due to blockchain pruning", data-bs-toggle="tooltip")

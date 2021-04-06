@@ -200,34 +200,82 @@ mixin pageTab(name, defaultActive=false)
 
 mixin valueDisplay(val)
 	if (val > 0)
-		- var localCurrencyDisplay = userSettings.displayCurrency == "local";
+		if (userSettings.displayCurrency == "btc")
+			+_valueDisplayBtc(val)
 
-		- var parts = utils.formatCurrencyAmount(val, localCurrencyDisplay ? userSettings.localCurrency : userSettings.displayCurrency);
+		else if (userSettings.displayCurrency == "sat")
+			+_valueDisplaySat(val, 1000000)
 
-		//span #{JSON.stringify(parts)}
-		if (localCurrencyDisplay)
-			span.me-1 #{global.currencySymbols[userSettings.localCurrency]}
-			//| #{JSON.stringify(parts)}
-
-		span(class=(localCurrencyDisplay ? "border-dotted" : false), title=(localCurrencyDisplay ? `${utils.formatCurrencyAmount(val, coinConfig.defaultCurrencyUnit.name.toLowerCase()).simpleVal} BTC` : false), data-bs-toggle=(localCurrencyDisplay ? "tooltip" : false)) #{parts.val}
-			if (parts.lessSignificantDigits)
-				span.text-small.text-muted.ms-1 #{parts.lessSignificantDigits}
-
-		if (userSettings.displayCurrency != "local")
-			if (exchangeRates)
-				- var localCurFormatData = utils.getExchangedCurrencyFormatData(val, userSettings.localCurrency);
-
-				span.text-tiny.border-dotted.fw-light.ms-1(style="letter-spacing: -0.5px;", data-bs-toggle="tooltip", title=`<span class="me-tiny">${localCurFormatData.symbol}</span><span>${localCurFormatData.value}</span>`, data-bs-html="true") #{parts.currencyUnit}
-					
-			else
-				span.text-tiny.fw-light.ms-1(style="letter-spacing: -0.5px;") #{parts.currencyUnit}
-					
 		else if (userSettings.displayCurrency == "local")
+			+_valueDisplayLocal(val, 1000000)
 				
 	else
 		span.font-monospace 0
 
-mixin valueDisplaySpecial(val, maxDecimals=-1, summarizeAlways=false, summarizeMin=Infinity)
+
+mixin _valueDisplayBtc(val)
+	- var parts = utils.formatCurrencyAmount(val, userSettings.displayCurrency);
+
+	//span #{JSON.stringify(parts)}
+	
+	span #{parts.val}
+		if (parts.lessSignificantDigits)
+			span.text-small.text-muted.ms-1 #{parts.lessSignificantDigits}
+
+	if (exchangeRates)
+		- var localCurFormatData = utils.getExchangedCurrencyFormatData(val, userSettings.localCurrency);
+
+		span.text-tiny.border-dotted.fw-light.ms-1(style="letter-spacing: -0.5px;", data-bs-toggle="tooltip", title=`<span class="me-tiny">${localCurFormatData.symbol}</span><span>${localCurFormatData.value}</span>`, data-bs-html="true") #{parts.currencyUnit}
+			
+	else
+		span.text-tiny.fw-light.ms-1(style="letter-spacing: -0.5px;") #{parts.currencyUnit}
+
+
+mixin _valueDisplaySat(val, summarizeMin=Infinity, summarizeDecimals=3)
+	- var parts = utils.formatCurrencyAmount(val, localCurrencyDisplay ? userSettings.localCurrency : userSettings.displayCurrency);
+
+	//span #{JSON.stringify(parts)}
+	
+	if (parts.intVal >= summarizeMin)
+		//span #{JSON.stringify(parts)}
+		- var largeNumberData = utils.formatLargeNumberSignificant(parts.intVal, summarizeDecimals >= 0 ? summarizeDecimals : 3);
+		//span #{JSON.stringify(largeNumberData)} #{parts.intVal}
+		span(title=parts.intVal.toLocaleString(), data-bs-toggle="tooltip") #{largeNumberData[0]}
+		span.ms-1 #{largeNumberData[1].textDesc}
+		
+	else
+		span(class=(localCurrencyDisplay ? "border-dotted" : false), title=(localCurrencyDisplay ? `${utils.formatCurrencyAmount(val, coinConfig.defaultCurrencyUnit.name.toLowerCase()).simpleVal} BTC` : false), data-bs-toggle=(localCurrencyDisplay ? "tooltip" : false)) #{parts.intVal.toLocaleString()}
+
+
+	if (exchangeRates)
+		- var localCurFormatData = utils.getExchangedCurrencyFormatData(val, userSettings.localCurrency);
+
+		span.text-tiny.border-dotted.fw-light.ms-1(style="letter-spacing: -0.5px;", data-bs-toggle="tooltip", title=`<span class="me-tiny">${localCurFormatData.symbol}</span><span>${localCurFormatData.value}</span>`, data-bs-html="true") #{parts.currencyUnit}
+			
+	else
+		span.text-tiny.fw-light.ms-1(style="letter-spacing: -0.5px;") #{parts.currencyUnit}
+
+
+mixin _valueDisplayLocal(val, summarizeMin=Infinity, summarizeDecimals=3)
+	- var localCurrencyDisplay = userSettings.displayCurrency == "local";
+
+	- var parts = utils.formatCurrencyAmount(val, userSettings.localCurrency);
+
+	//span #{JSON.stringify(parts)}
+	span.me-1 #{global.currencySymbols[userSettings.localCurrency]}
+
+	if (parts.intVal >= summarizeMin)
+		- var largeNumberData = utils.formatLargeNumberSignificant(parts.intVal, summarizeDecimals >= 0 ? summarizeDecimals : 3);
+		//span #{JSON.stringify(largeNumberData)} #{parts.intVal}
+		span.border-dotted(title=`${global.currencySymbols[userSettings.localCurrency]}${parts.intVal.toLocaleString()}<br/>${utils.formatCurrencyAmount(val, coinConfig.defaultCurrencyUnit.name.toLowerCase()).simpleVal} BTC`, data-bs-toggle="tooltip", data-bs-html="true")
+			span #{largeNumberData[0]}
+			span.ms-1 #{largeNumberData[1].textDesc}
+
+	else
+		span.border-dotted(title=`${utils.formatCurrencyAmount(val, coinConfig.defaultCurrencyUnit.name.toLowerCase()).simpleVal} BTC`, data-bs-toggle="tooltip") #{parts.val}
+	
+
+mixin valueDisplaySpecial(val, maxDecimals=-1, summarizeAlways=false, summarizeMin=Infinity, summarizeDecimals=-1)
 	if (maxDecimals == -1 && summarizeAlways == false && summarizeMin == undefined)
 		+valueDisplay(val)
 
@@ -248,7 +296,7 @@ mixin valueDisplaySpecial(val, maxDecimals=-1, summarizeAlways=false, summarizeM
 
 			if (summarizeAlways || parts.intVal >= summarizeMin)
 				//span #{JSON.stringify(parts)}
-				- var largeNumberData = utils.formatLargeNumberSignificant(parts.intVal, maxDecimals >= 0 ? maxDecimals : 2);
+				- var largeNumberData = utils.formatLargeNumberSignificant(parts.intVal, summarizeDecimals >= 0 ? summarizeDecimals : 2);
 				//span #{JSON.stringify(largeNumberData)} #{parts.intVal}
 				span(class=(localCurrencyDisplay ? "border-dotted" : false), title=(localCurrencyDisplay ? `${utils.formatCurrencyAmount(val, coinConfig.defaultCurrencyUnit.name.toLowerCase()).simpleVal} BTC` : false), data-bs-toggle=(localCurrencyDisplay ? "tooltip" : false)) #{largeNumberData[0]} #{largeNumberData[1].textDesc}
 			

@@ -50,9 +50,14 @@ if (exchangeRates)
 				+summaryItem("24hr Volume", `Total output of all transactions over the last 24hrs (blocks: [#${networkVolume.d1.endBlock.toLocaleString()} - #${networkVolume.d1.startBlock.toLocaleString()}]).`)
 					- var currencyValue = parseInt(networkVolume.d1.amt);
 					- var currencyValueDecimals = 0;
-					+valueDisplaySpecial(networkVolume.d1.amt, userSettings.displayCurrency == "local" ? 4 : 0, ["sat", "local"].includes(userSettings.displayCurrency))
-									
 
+					if (userSettings.displayCurrency == "btc")
+						+valueDisplaySpecial(networkVolume.d1.amt, 0)
+
+					else
+						+valueDisplay(networkVolume.d1.amt)
+
+					
 
 .clearfix
 	.float-start
