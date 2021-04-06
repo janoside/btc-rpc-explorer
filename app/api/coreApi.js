@@ -13,6 +13,7 @@ const coins = require("../coins.js");
 const Decimal = require("decimal.js");
 const md5 = require("md5");
 const statTracker = require("../statTracker.js");
+const async = require("async");
 
 // choose one of the below: RPC to a node, or mock data while testing
 const rpcApi = require("./rpcApi.js");
@@ -41,24 +42,25 @@ const ONE_YR = 365 * ONE_DAY;
 const miscCaches = [];
 const blockCaches = [];
 const txCaches = [];
+const miningSummaryCaches = [];
 
 global.miscLruCache = cacheUtils.lruCache(config.slowDeviceMode ? 200 : 1000);
 global.blockLruCache = cacheUtils.lruCache(config.slowDeviceMode ? 200 : 1000);
 global.txLruCache = cacheUtils.lruCache(config.slowDeviceMode ? 200 : 1000);
+global.miningSummaryLruCache = cacheUtils.lruCache(config.slowDeviceMode ? 500 : 4500);
 
-global.lruCaches = [ global.miscLruCache, global.blockLruCache, global.txLruCache ];
+global.lruCaches = [ global.miscLruCache, global.blockLruCache, global.txLruCache, global.miningSummaryLruCache ];
 
 (function () {
 	let pruneCaches = function() {
 		let totalLengthBefore = 0;
 		global.lruCaches.forEach(x => (totalLengthBefore += x.length));
 
-		global.miscLruCache.prune();
-		global.blockLruCache.prune();
-		global.txLruCache.prune();
+		global.lruCaches.forEach(x => x.prune());
 
 		let totalLengthAfter = 0;
 		global.lruCaches.forEach(x => (totalLengthAfter += x.length));
+
 
 		statTracker.trackEvent("caches.pruned-items", (totalLengthBefore - totalLengthAfter));
 		
@@ -70,6 +72,9 @@ global.lruCaches = [ global.miscLruCache, global.blockLruCache, global.txLruCach
 
 		statTracker.trackValue("caches.tx.length", global.txLruCache.length);
 		statTracker.trackValue("caches.tx.itemCount", global.txLruCache.itemCount);
+
+		statTracker.trackValue("caches.mining.length", global.miningSummaryLruCache.length);
+		statTracker.trackValue("caches.mining.itemCount", global.miningSummaryLruCache.itemCount);
 
 
 		debugLog(`Pruned caches: ${totalLengthBefore.toLocaleString()} -> ${totalLengthAfter.toLocaleString()}`);
@@ -94,6 +99,7 @@ if (!config.noInmemoryRpcCache) {
 	miscCaches.push(cacheUtils.createMemoryLruCache(global.miscLruCache, onMemoryCacheEvent));
 	blockCaches.push(cacheUtils.createMemoryLruCache(global.blockLruCache, onMemoryCacheEvent));
 	txCaches.push(cacheUtils.createMemoryLruCache(global.txLruCache, onMemoryCacheEvent));
+	miningSummaryCaches.push(cacheUtils.createMemoryLruCache(global.miningSummaryLruCache, onMemoryCacheEvent));
 }
 
 if (redisCache.active) {
@@ -121,11 +127,13 @@ if (redisCache.active) {
 	miscCaches.push(redisCacheObj);
 	blockCaches.push(redisCacheObj);
 	txCaches.push(redisCacheObj);
+	miningSummaryCaches.push(redisCacheObj);
 }
 
 const miscCache = cacheUtils.createTieredCache(miscCaches);
 const blockCache = cacheUtils.createTieredCache(blockCaches);
 const txCache = cacheUtils.createTieredCache(txCaches);
+const miningSummaryCache = cacheUtils.createTieredCache(miningSummaryCaches);
 
 
 
@@ -953,6 +961,442 @@ function getBlockByHashWithTransactions(blockHash, txLimit, txOffset) {
 	});
 }
 
+
+
+
+let activeMiningQueueTasks = 0;
+const miningPromiseQueue = async.queue((task, callback) => {
+	activeMiningQueueTasks++;
+
+	task.run(() => {
+		callback();
+
+		activeMiningQueueTasks--;
+	});
+
+}, 30);
+
+function buildMiningSummary(statusId, startBlock, endBlock, statusFunc) {
+	return new Promise(async (resolve, reject) => {
+		try {
+			const blockCount = (endBlock - startBlock + 1);
+			let doneCount = 0;
+
+			const markItemsDone = (count) => {
+				doneCount += count;
+				statusFunc({count: 3 * blockCount + 1, done: doneCount});
+			};
+
+			const summariesByHeight = {};
+			
+
+			for (var i = startBlock; i <= endBlock; i++) {
+				const height = i;
+				const cacheKey = `${height}`;
+
+				let cachedSummary = await miningSummaryCache.get(cacheKey);
+				
+				if (cachedSummary) {
+					summariesByHeight[height] = cachedSummary;
+
+					markItemsDone(3);
+
+				} else {
+					miningPromiseQueue.push({run:async (callback) => {
+						let itemsDone = 0;
+
+						try {
+							const blockHash = await getBlockHashByHeight(height);
+
+							itemsDone++;
+							markItemsDone(1);
+
+							const block = await getBlockByHash(blockHash);
+
+							itemsDone++;
+							markItemsDone(1);
+
+
+							const coinbaseTx = await getRawTransaction(block.tx[0]);
+
+							const minerInfo = utils.getMinerFromCoinbaseTx(coinbaseTx);
+							const totalFees = utils.getBlockTotalFeesFromCoinbaseTxAndBlockHeight(coinbaseTx, height);
+							const subsidy = coinConfig.blockRewardFunction(height, global.activeBlockchain);
+
+							let heightSummary = {
+								mn: (minerInfo ? minerInfo.name : "Unknown"),
+								tx: block.tx.length,
+								f: totalFees,
+								s: subsidy,
+								w: block.weight
+							};
+							
+							miningSummaryCache.set(cacheKey, heightSummary);
+
+							summariesByHeight[height] = heightSummary;
+
+							itemsDone++;
+							markItemsDone(1);
+							
+							callback();
+
+						} catch (e) {
+							utils.logError("430835hre", e);
+
+
+							markItemsDone(3 - itemsDone);
+
+							// resolve anyway
+							callback();
+						}
+					}});
+				}
+			}
+
+
+			if (!miningPromiseQueue.idle()) {
+				await miningPromiseQueue.drain();
+			}
+			
+			
+			var summary = {
+				miners:{},
+				minerNamesSortedByBlockCount: [],
+				overall:{
+					blockCount: 0, totalFees: new Decimal(0), totalSubsidy: new Decimal(0), totalTransactions: 0, totalWeight: 0, subsidyCount: 0
+				}
+			};
+
+			for (var height = startBlock; height <= endBlock; height++) {
+				const blockSummary = summariesByHeight[height];
+				const miner = blockSummary.mn;
+
+				if (!summary.miners[miner]) {
+					summary.minerNamesSortedByBlockCount.push(miner);
+
+					summary.miners[miner] = {
+						name: miner, blocks: [], totalFees: new Decimal(0), totalSubsidy: new Decimal(0), totalTransactions: 0, totalWeight: 0, subsidyCount: 0
+					};
+				}
+
+				summary.miners[miner].blocks.push(height);
+				summary.miners[miner].totalFees = summary.miners[miner].totalFees.plus(blockSummary.f);
+				summary.miners[miner].totalSubsidy = summary.miners[miner].totalSubsidy.plus(blockSummary.s);
+				summary.miners[miner].totalTransactions += blockSummary.tx;
+				summary.miners[miner].totalWeight += blockSummary.w;
+				summary.miners[miner].subsidyCount++;
+
+				summary.overall.blockCount++;
+				summary.overall.totalFees = summary.overall.totalFees.plus(blockSummary.f);
+				summary.overall.totalSubsidy = summary.overall.totalSubsidy.plus(blockSummary.s);
+				summary.overall.totalTransactions += blockSummary.tx;
+				summary.overall.totalWeight += blockSummary.w;
+				summary.overall.subsidyCount++;
+			}
+
+			summary.minerNamesSortedByBlockCount.sort(function(a, b) {
+				return ((summary.miners[a].blocks.length > summary.miners[b].blocks.length) ? -1 : 1);
+			});
+
+
+			// we're done, send final status update
+			statusFunc({count: 3 * blockCount + 1, done: 3 * blockCount + 1});
+
+
+			resolve(summary);
+
+		} catch (err) {
+			utils.logError("208yrwregud9e3", err);
+
+			reject(err);
+		}
+	});
+}
+
+
+
+const mempoolTxSummaryCache = {};
+
+function buildMempoolSummary(statusId, ageBuckets, sizeBuckets, statusFunc) {
+	return new Promise(async (resolve, reject) => {
+		try {
+			const txids = await utils.timePromise("promises.mempool-summary.getAllMempoolTxids", getAllMempoolTxids());
+
+			const txidCount = txids.length;
+			var doneCount = 0;
+
+			const statusUpdate = () => { statusFunc({count: txidCount, done: doneCount}); };
+
+			const promises = [];
+			const results = [];
+			const txidKeysForCachePurge = {};
+
+			
+
+			for (var i = 0; i < txids.length; i++) {
+				const txid = txids[i];
+				const key = txid.substring(0, 6);
+				txidKeysForCachePurge[key] = 1;
+
+				if (mempoolTxSummaryCache[key]) {
+					results.push(mempoolTxSummaryCache[key]);
+
+					doneCount++;
+					statusUpdate();
+
+				} else {
+					promises.push(new Promise(async (resolve, reject) => {
+						try {
+							const item = await getMempoolTxDetails(txid, false);
+							const itemSummary = {
+								f: item.entry.fees.modified,
+								sz: item.entry.vsize ? item.entry.vsize : item.entry.size,
+								af: item.entry.fees.ancestor,
+								df: item.entry.fees.descendant,
+								dsz: item.entry.descendantsize,
+								t: item.entry.time,
+								w: item.entry.weight ? item.entry.weight : item.entry.size * 4
+							};
+
+							mempoolTxSummaryCache[key] = itemSummary;
+
+							results.push(mempoolTxSummaryCache[key]);
+
+							doneCount++;
+							statusUpdate();
+							
+							resolve();
+
+						} catch (e) {
+							utils.logError("31297rg34edwe", e);
+
+
+							doneCount++;
+							statusUpdate();
+
+							// resolve anyway
+							resolve();
+						}
+					}));
+				}
+			}
+
+
+			await Promise.all(promises);
+
+			
+			// purge items from cache that are no longer present in mempool
+			var keysToDelete = [];
+			for (var key in mempoolTxSummaryCache) {
+				if (!txidKeysForCachePurge[key]) {
+					keysToDelete.push(key);
+				}
+			}
+
+			keysToDelete.forEach(x => { delete mempoolTxSummaryCache[x] });
+
+
+			var summary = [];
+
+			var maxFee = 0;
+			var maxFeePerByte = 0;
+			var maxAge = 0;
+			var maxSize = 0;
+			var ages = [];
+			var sizes = [];
+
+			for (var i = 0; i < results.length; i++) {
+				var txMempoolInfo = results[i];
+
+				var fee = txMempoolInfo.f;
+				var size = txMempoolInfo.sz;
+				var feePerByte = txMempoolInfo.f / size;
+				var age = Date.now() / 1000 - txMempoolInfo.t;
+
+				if (fee > maxFee) {
+					maxFee = fee;
+				}
+
+				if (feePerByte > maxFeePerByte) {
+					maxFeePerByte = feePerByte;
+				}
+
+				ages.push({age:age, txid:"abc"});
+				sizes.push({size:size, txid:"abc"});
+
+				if (age > maxAge) {
+					maxAge = age;
+				}
+
+				if (size > maxSize) {
+					maxSize = size;
+				}
+			}
+
+			ages.sort(function(a, b) {
+				if (a.age != b.age) {
+					return b.age - a.age;
+
+				} else {
+					return a.txid.localeCompare(b.txid);
+				}
+			});
+
+			sizes.sort(function(a, b) {
+				if (a.size != b.size) {
+					return b.size - a.size;
+
+				} else {
+					return a.txid.localeCompare(b.txid);
+				}
+			});
+
+			maxSize = 2000;
+
+			const satoshiPerByteBucketMaxima = coinConfig.feeSatoshiPerByteBucketMaxima;
+
+			var bucketCount = satoshiPerByteBucketMaxima.length + 1;
+
+			var satoshiPerByteBuckets = [];
+			var satoshiPerByteBucketLabels = [];
+
+			satoshiPerByteBucketLabels[0] = ("[0 - " + satoshiPerByteBucketMaxima[0] + ")");
+			for (var i = 0; i < bucketCount; i++) {
+				satoshiPerByteBuckets[i] = {
+					count: 0,
+					totalFees: 0,
+					totalBytes: 0,
+					totalWeight: 0,
+					minFeeRate: satoshiPerByteBucketMaxima[i - 1],
+					maxFeeRate: satoshiPerByteBucketMaxima[i]
+				};
+
+				if (i > 0 && i < bucketCount - 1) {
+					satoshiPerByteBucketLabels[i] = ("[" + satoshiPerByteBucketMaxima[i - 1] + " - " + satoshiPerByteBucketMaxima[i] + ")");
+				}
+			}
+
+			var ageBucketCount = ageBuckets;
+			var ageBucketTxCounts = [];
+			var ageBucketLabels = [];
+
+			var sizeBucketCount = sizeBuckets;
+			var sizeBucketTxCounts = [];
+			var sizeBucketLabels = [];
+
+			for (var i = 0; i < ageBucketCount; i++) {
+				var rangeMin = i * maxAge / ageBucketCount;
+				var rangeMax = (i + 1) * maxAge / ageBucketCount;
+
+				ageBucketTxCounts.push(0);
+
+				if (maxAge > 600) {
+					var rangeMinutesMin = new Decimal(rangeMin / 60).toFixed(1);
+					var rangeMinutesMax = new Decimal(rangeMax / 60).toFixed(1);
+
+					ageBucketLabels.push(rangeMinutesMin + " - " + rangeMinutesMax + " min");
+
+				} else {
+					ageBucketLabels.push(parseInt(rangeMin) + " - " + parseInt(rangeMax) + " sec");
+				}
+			}
+
+			for (var i = 0; i < sizeBucketCount; i++) {
+				sizeBucketTxCounts.push(0);
+
+				if (i == sizeBucketCount - 1) {
+					sizeBucketLabels.push(parseInt(i * maxSize / sizeBucketCount) + "+");
+
+				} else {
+					sizeBucketLabels.push(parseInt(i * maxSize / sizeBucketCount) + " - " + parseInt((i + 1) * maxSize / sizeBucketCount));
+				}
+			}
+
+			satoshiPerByteBucketLabels[bucketCount - 1] = (satoshiPerByteBucketMaxima[satoshiPerByteBucketMaxima.length - 1] + "+");
+
+			var summary = {
+				"count": 0,
+				"totalFees": 0,
+				"totalBytes": 0,
+				"totalWeight": 0,
+				"satoshiPerByteBuckets": satoshiPerByteBuckets,
+				"satoshiPerByteBucketLabels": satoshiPerByteBucketLabels,
+				"ageBucketTxCounts": ageBucketTxCounts,
+				"ageBucketLabels": ageBucketLabels,
+				"sizeBucketTxCounts": sizeBucketTxCounts,
+				"sizeBucketLabels": sizeBucketLabels
+			};
+
+			for (var x = 0; x < results.length; x++) {
+				var txMempoolInfo = results[x];
+				var fee = txMempoolInfo.f;
+				var size = txMempoolInfo.sz;
+				var weight = txMempoolInfo.w;
+				var feePerByte = txMempoolInfo.f / size;
+				var satoshiPerByte = feePerByte * 100000000; // TODO: magic number - replace with coinConfig.baseCurrencyUnit.multiplier
+				var age = Date.now() / 1000 - txMempoolInfo.t;
+
+				var addedToBucket = false;
+				for (var i = 0; i < satoshiPerByteBucketMaxima.length; i++) {
+					if (satoshiPerByteBucketMaxima[i] > satoshiPerByte) {
+						satoshiPerByteBuckets[i]["count"]++;
+						satoshiPerByteBuckets[i]["totalFees"] += fee;
+						satoshiPerByteBuckets[i]["totalBytes"] += size;
+						satoshiPerByteBuckets[i]["totalWeight"] += weight;
+
+						addedToBucket = true;
+
+						break;
+					}
+				}
+
+				if (!addedToBucket) {
+					satoshiPerByteBuckets[bucketCount - 1]["count"]++;
+					satoshiPerByteBuckets[bucketCount - 1]["totalFees"] += fee;
+					satoshiPerByteBuckets[bucketCount - 1]["totalBytes"] += size;
+					satoshiPerByteBuckets[bucketCount - 1]["totalWeight"] += weight;
+				}
+
+				summary["count"]++;
+				summary["totalFees"] += fee;
+				summary["totalBytes"] += size;
+				summary["totalWeight"] += weight;
+
+				var ageBucketIndex = Math.min(ageBucketCount - 1, parseInt(age / (maxAge / ageBucketCount)));
+				var sizeBucketIndex = Math.min(sizeBucketCount - 1, parseInt(size / (maxSize / sizeBucketCount)));
+
+				ageBucketTxCounts[ageBucketIndex]++;
+				sizeBucketTxCounts[sizeBucketIndex]++;
+			}
+
+			summary["averageFee"] = summary["totalFees"] / summary["count"];
+			summary["averageFeePerByte"] = summary["totalFees"] / summary["totalBytes"];
+
+			summary["satoshiPerByteBucketMaxima"] = satoshiPerByteBucketMaxima;
+			summary["satoshiPerByteBucketCounts"] = [];
+			summary["satoshiPerByteBucketTotalFees"] = [];
+
+			for (var i = 0; i < bucketCount; i++) {
+				summary["satoshiPerByteBucketCounts"].push(summary["satoshiPerByteBuckets"][i]["count"]);
+				summary["satoshiPerByteBucketTotalFees"].push(summary["satoshiPerByteBuckets"][i]["totalFees"]);
+			}
+
+
+			// we're done, send final status update
+			doneCount = txidCount;
+			statusUpdate();
+
+
+			resolve(summary);
+
+		} catch (err) {
+			utils.logError("23947ryfuedge", err);
+
+			reject(err);
+		}
+	});
+}
+
 function getTxOut(txid, vout) {
 	return rpcApi.getTxOut(txid, vout)
 }
@@ -1120,5 +1564,7 @@ module.exports = {
 	buildBlockAnalysisData: buildBlockAnalysisData,
 	getBlockHeaderByHeight: getBlockHeaderByHeight,
 	getBlockHeadersByHeight: getBlockHeadersByHeight,
-	getTxOut: getTxOut
+	getTxOut: getTxOut,
+	buildMempoolSummary: buildMempoolSummary,
+	buildMiningSummary: buildMiningSummary
 };

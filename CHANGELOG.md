@@ -4,7 +4,7 @@
 * Major visual refresh!
 	* All new design (layout, fonts, colors, etc)
 	* Redesigned Dark Mode (now the default)
-	* New app icon (this tools needs more of an identity of its own!)
+	* New app icon
 * Support for pruned nodes and nodes with disabled `txindex`! (HUGE Thanks to [@shesek](https://github.com/shesek))
 * Mempool Summary improvements
 	* Greatly improved performance for multiple loads via caching
@@ -16,6 +16,7 @@
 * Make url in logs clickable (Thanks [@shesek](https://github.com/shesek))
 * Caching for static files (maxAge=1hr)
 * Frontend performance optimizations
+* Smarter performance/memory defaults for slow devices
 * Major refactoring, modernization, and code-reuse improvements
 * UX improvements and polish throughout
 * `/unconfirmed-tx` URL changed to `/mempool-tx`

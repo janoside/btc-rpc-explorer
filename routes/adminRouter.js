@@ -50,7 +50,11 @@ router.get("/dashboard", function(req, res, next) {
 		},
 		tx: {
 			length: global.txLruCache.length,
-			itemCount: global.blockLruCache.itemCount
+			itemCount: global.txLruCache.itemCount
+		},
+		mining: {
+			length: global.miningSummaryLruCache.length,
+			itemCount: global.miningSummaryLruCache.itemCount
 		}
 	};
 

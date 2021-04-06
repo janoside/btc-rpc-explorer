@@ -17,8 +17,8 @@ block content
 			.card-body
 				.d-flex.align-items-center
 					.spinner-border.spinner-border-sm.text-primary.me-2.ms-2
-					span.fw-bold.me-2 Status:
-					span.fw-light(id="progress-text") Loading...
+					span.fw-bold.me-2 Loading:
+					span.fw-light(id="progress-text") ...
 				
 				div.progress.mt-2(id="progress-bar", style="height: 7px;")
 					div.progress-bar(id="data-progress", role="progressbar", aria-valuenow="0", aria-valuemin="0" ,aria-valuemax="100")
@@ -27,124 +27,118 @@ block content
 	
 
 	div(id="main-content", style="display: none;")
-		+pageTabs(["Details", "JSON"])
+		+contentSection("Summary")
+			+summaryRow(5)
+				+summaryItem("Transactions")
+					span#tx-count
 
+				+summaryItem("Blocks", "The number of blocks filled by all current mempool transactions.")
+					span#block-count
 
-		.tab-content
-			+pageTab("Details", true)
-				+contentSection("Summary")
-					+summaryRow(5)
-						+summaryItem("Transactions")
-							span#tx-count
+				+summaryItem("Total Fees")
+					span#total-fees
 
-						+summaryItem("Blocks", "The number of blocks filled by all current mempool transactions.")
-							span#block-count
+				+summaryItem("Avg Fee")
+					span#avg-fee
 
-						+summaryItem("Total Fees")
-							span#total-fees
+				+summaryItem("Avg Fee Rate", null, "sat/vB")
+					span#avg-fee-rate
 
-						+summaryItem("Avg Fee")
-							span#avg-fee
+		+contentSection("Estimate Block Depth")
+			p If you already have a transaction in the mempool, you can enter its <b>TXID</b> to get an estimate for when it will be included in a block. Or, if you're planning to send a transaction, you can estimate confirmation time for different fee rates.
 
-						+summaryItem("Avg Fee Rate", null, "sat/vB")
-							span#avg-fee-rate
+			.clearfix
+				.float-start
+					.me-4.d-inline-block.mb-3
+						h6 Fee Rate
+							small.fw-light.ms-1 (sat/vB)
 
-				+contentSection("Estimate Block Depth")
-					p If you already have a transaction in the mempool, you can enter its <b>TXID</b> to get an estimate for when it will be included in a block. Or, if you're planning to send a transaction, you can estimate confirmation time for different fee rates.
+						- var feeRatesToEstimate = [1, 5, 15, 25, 50, 75, 100, 150];
 
-					.clearfix
-						.float-start
-							.me-4.d-inline-block.mb-3
-								h6 Fee Rate
-									small.fw-light.ms-1 (sat/vB)
+						div.btn-group
+							each feeRateToEstimate in feeRatesToEstimate
+								a.btn.btn-outline-primary.fee-rate-btn(href="javascript:void(0)", onclick=`estimateMempoolDepth(parseInt($(this).attr("data-fee-rate"))); return false;`, data-fee-rate=feeRateToEstimate) #{feeRateToEstimate}
 
-								- var feeRatesToEstimate = [1, 5, 15, 25, 50, 75, 100, 150];
+					.me-4.d-inline-block.mb-3
+						h6 Transaction ID
 
-								div.btn-group
-									each feeRateToEstimate in feeRatesToEstimate
-										a.btn.btn-outline-primary.fee-rate-btn(href="javascript:void(0)", onclick=`estimateMempoolDepth(parseInt($(this).attr("data-fee-rate"))); return false;`, data-fee-rate=feeRateToEstimate) #{feeRateToEstimate}
+						form.form-inline(method="post", action="javascript:void(0)", onsubmit=`estimateTransactionMempoolDepth($("#mempoolquery").val()); return false;` style="width: 325px;")
+							.input-group.input-group
+								input.form-control.form-control(id="mempoolquery", type="text", name="mempoolquery", placeholder="txid", value=(mempoolquery))
+								
+								button.btn.btn-primary(type="submit")
+									i.fas.fa-search
 
-							.me-4.d-inline-block.mb-3
-								h6 Transaction ID
+					.me-4.d-inline-block.mb-3
+						h6 Custom Fee Rate
+							small.fw-light.ms-1 (sat/vB)
 
-								form.form-inline(method="post", action="javascript:void(0)", onsubmit=`estimateTransactionMempoolDepth($("#mempoolquery").val()); return false;` style="width: 325px;")
-									.input-group.input-group
-										input.form-control.form-control(id="mempoolquery", type="text", name="mempoolquery", placeholder="txid", value=(mempoolquery))
-										
-										button.btn.btn-primary(type="submit")
-											i.fas.fa-search
+						form.form-inline(method="post", action="javascript:void(0)", onsubmit=`estimateMempoolDepth($("#customFeeRate").val()); return false;` style="width: 200px;")
+							.input-group.input-group
+								input.form-control.form-control(id="customFeeRate", type="text", name="customFeeRate", placeholder="sat/vB", value=(customFeeRate))
+								
+								button.btn.btn-primary(type="submit")
+									i.fas.fa-search
 
-							.me-4.d-inline-block.mb-3
-								h6 Custom Fee Rate
-									small.fw-light.ms-1 (sat/vB)
+			hr.mt-1.mb-3
 
-								form.form-inline(method="post", action="javascript:void(0)", onsubmit=`estimateMempoolDepth($("#customFeeRate").val()); return false;` style="width: 200px;")
-									.input-group.input-group
-										input.form-control.form-control(id="customFeeRate", type="text", name="customFeeRate", placeholder="sat/vB", value=(customFeeRate))
-										
-										button.btn.btn-primary(type="submit")
-											i.fas.fa-search
+			+summaryRow(3)
+				+summaryItem("Fee Rate", null, "sat/vB")
+					span#estimate-fee-rate -
 
-					hr.mt-1.mb-3
+				+summaryItem("Est. Block Depth")
+					span#estimate-mempooldepth -
 
-					+summaryRow(3)
-						+summaryItem("Fee Rate", null, "sat/vB")
-							span#estimate-fee-rate -
-
-						+summaryItem("Est. Block Depth")
-							span#estimate-mempooldepth -
-
-						+summaryItem("Est. Confirmation Time")
-							span#estimate-conf-time -
+				+summaryItem("Est. Confirmation Time")
+					span#estimate-conf-time -
 
 
 
-				div#detail-charts-and-data
-					+contentSection("Fee Rate Distribution")
-						canvas.mb-3(id="mempoolBarChart", height="100")
+		div#detail-charts-and-data
+			+contentSection("Fee Rate Distribution")
+				canvas.mb-3(id="mempoolBarChart", height="100")
 
-						hr.mt-3
+				hr.mt-3
 
-						.table-responsive
-							table.table.table-striped.table-borderless.mb-3
-								thead
-									tr
-										th Fee Rate
-										th.text-end N(tx)
-										th.text-end
-											span.border-dotted(title="The number of blocks worth of transactions that transactions in this fee-rate bucket comprise.", data-bs-toggle="tooltip") N(blocks)
+				.table-responsive
+					table.table.table-striped.table-borderless.mb-3
+						thead
+							tr
+								th Fee Rate
+								th.text-end N(tx)
+								th.text-end
+									span.border-dotted(title="The number of blocks worth of transactions that transactions in this fee-rate bucket comprise.", data-bs-toggle="tooltip") N(blocks)
 
-										th.text-end
-											span.border-dotted(title="The running total of the number of blocks needed to confirm this and higher fee-rate buckets.", data-bs-toggle="tooltip") Σ N(blocks)
-										th.text-end Total Fees
-										th.text-end Avg Fee
-										th.text-end Avg Fee Rate
-											small.fw-normal.text-muted.ms-2 (sat/vB)
-								tbody(id="fee-rate-table-body")
-									tr(id="fee-rate-table-row-prototype", style="display: none;")
-										td.font-monospace.data-label
-										td.font-monospace.text-end.data-count
-										td.font-monospace.text-end.data-block-count
-										td.font-monospace.text-end.data-sum-block-count
-										td.font-monospace.text-end.data-total-fees
-										td.font-monospace.text-end.data-avg-fee
-										td.font-monospace.text-end.data-fee-rate
+								th.text-end
+									span.border-dotted(title="The running total of the number of blocks needed to confirm this and higher fee-rate buckets.", data-bs-toggle="tooltip") Σ N(blocks)
+								th.text-end Total Fees
+								th.text-end Avg Fee
+								th.text-end Avg Fee Rate
+									small.fw-normal.text-muted.ms-2 (sat/vB)
+						tbody(id="fee-rate-table-body")
+							tr(id="fee-rate-table-row-prototype", style="display: none;")
+								td.font-monospace.data-label
+								td.font-monospace.text-end.data-count
+								td.font-monospace.text-end.data-block-count
+								td.font-monospace.text-end.data-sum-block-count
+								td.font-monospace.text-end.data-total-fees
+								td.font-monospace.text-end.data-avg-fee
+								td.font-monospace.text-end.data-fee-rate
 
-									tr(id="empty-row-to-fix-striped-coloring", style="display: none;")
+							tr(id="empty-row-to-fix-striped-coloring", style="display: none;")
 
-					
+			
 
-					+contentSection("Size Distribution")
-						canvas.mb-3(id="txSizesBarChart", height="100")
+			+contentSection("Size Distribution")
+				canvas.mb-3(id="txSizesBarChart", height="100")
 
-					
+			
 
-					+contentSection("Age Distribution")
-						canvas.mb-3(id="txAgesBarChart", height="100")
+			+contentSection("Age Distribution")
+				canvas.mb-3(id="txAgesBarChart", height="100")
 
 
-			+pageTab("JSON")
-
+			if (false)
 				pre
 					code.json#json-content
 		
@@ -162,14 +156,12 @@ block endOfBody
 		var statusInterval;
 
 		$(document).ready(function() {
-			statusInterval = setInterval(function() { updateStatus(); }, 1000);
+			statusInterval = setInterval(function() { updateStatus(); }, 125);
 
 			loadMempool();
 		});
 
 		function updateStatus() {
-			console.log("updateStatus");
-
 			$.ajax({
 				url: `./api/mempool-summary-status?statusId=${statusId}`
 
@@ -179,10 +171,10 @@ block endOfBody
 					return;
 				}
 
-				var wPercent = `${parseInt(100 * res.done / parseFloat(res.count))}%`;
+				var percent = new Decimal(res.done).dividedBy(res.count).times(100);
 
-				$("#data-progress").css("width", wPercent);
-				$("#progress-text").text(`${res.done.toLocaleString()} of ${res.count.toLocaleString()} (${wPercent})`);
+				$("#data-progress").css("width", `${percent.toDP(0)}%`);
+				$("#progress-text").html(`<span class='fw-bold d-inline-block' style="width: 55px;">${percent.toDP(1)}%</span><span class='small fw-light ms-3'>(${res.done.toLocaleString()} of ${res.count.toLocaleString()})</span>`);
 
 				if (res.done == res.count) {
 					clearInterval(statusInterval);
