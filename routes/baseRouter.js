@@ -291,37 +291,37 @@ router.get("/", asyncHandler(async (req, res, next) => {
 	}
 }));
 
-router.get("/node-status", asyncHandler(async (req, res, next) => {
+router.get("/node-details", asyncHandler(async (req, res, next) => {
 	try {
 		const promises = [];
 
 		promises.push(new Promise(async (resolve, reject) => {
-			res.locals.getblockchaininfo = await utils.timePromise("promises.node-status.getBlockchainInfo", coreApi.getBlockchainInfo());
+			res.locals.getblockchaininfo = await utils.timePromise("promises.node-details.getBlockchainInfo", coreApi.getBlockchainInfo());
 
 			resolve();
 		}));
 
 		promises.push(new Promise(async (resolve, reject) => {
-			res.locals.getnetworkinfo = await utils.timePromise("promises.node-status.getNetworkInfo", coreApi.getNetworkInfo());
+			res.locals.getnetworkinfo = await utils.timePromise("promises.node-details.getNetworkInfo", coreApi.getNetworkInfo());
 
 			resolve();
 		}));
 
 		promises.push(new Promise(async (resolve, reject) => {
-			res.locals.uptimeSeconds = await utils.timePromise("promises.node-status.getUptimeSeconds", coreApi.getUptimeSeconds());
+			res.locals.uptimeSeconds = await utils.timePromise("promises.node-details.getUptimeSeconds", coreApi.getUptimeSeconds());
 
 			resolve();
 		}));
 
 		promises.push(new Promise(async (resolve, reject) => {
-			res.locals.getnettotals = await utils.timePromise("promises.node-status.getNetTotals", coreApi.getNetTotals());
+			res.locals.getnettotals = await utils.timePromise("promises.node-details.getNetTotals", coreApi.getNetTotals());
 
 			resolve();
 		}));
 
 		await Promise.all(promises);
 
-		res.render("node-status");
+		res.render("node-details");
 
 		next();
 
@@ -330,7 +330,7 @@ router.get("/node-status", asyncHandler(async (req, res, next) => {
 					
 		res.locals.userMessage = "Error building page: " + err;
 
-		res.render("node-status");
+		res.render("node-details");
 
 		next();
 	}

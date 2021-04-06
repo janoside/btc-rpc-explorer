@@ -89,14 +89,18 @@ html(lang="en")
 										i.fas.fa-tools.me-2.ms-1
 										| Tools
 									div.dropdown-menu.dropdown-menu-end.shadow(aria-label="Tools Items")
-										span.dropdown-header Tools
+										each section, sectionIndex in config.site.toolSections
+											if (sectionIndex > 0)
+												hr.dropdown-divider.mt-3.mb-1
+													
+											span.dropdown-header #{section.name}
 
-										each itemIndex in config.site.prioritizedToolIdsList
-											- var item = config.siteTools[itemIndex];
+											each itemIndex in section.items
+												- var item = config.siteTools[itemIndex];
 
-											a.dropdown-item(href=item.url)
-												i(class=item.fontawesome, style="width: 20px; margin-right: 10px;")
-												span  #{item.name}
+												a.dropdown-item(href=item.url)
+													i(class=item.fontawesome, style="width: 20px; margin-right: 10px;")
+													span  #{item.name}
 
 							li.nav-item.dropdown.me-4
 								a.nav-link.rounded.bg-header-footer-highlight.text-white.dropdown-toggle(href="javascript:void(0)", id="navbarDropdown", role="button", data-bs-toggle="dropdown", aria-haspopup="true", aria-expanded="false") 

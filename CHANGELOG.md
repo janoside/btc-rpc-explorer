@@ -19,7 +19,9 @@
 * Smarter performance/memory defaults for slow devices
 * Major refactoring, modernization, and code-reuse improvements
 * UX improvements and polish throughout
-* `/unconfirmed-tx` URL changed to `/mempool-tx`
+* URL changes
+	* `/node-status` -> `/node-details`
+	* `/unconfirmed-tx` -> `/mempool-tx`
 * Updated dependencies
 	* jQuery: v3.4.1 -> v3.6.0
 	* highlight.js: v9.14.2 -> v10.7.1

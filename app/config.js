@@ -194,19 +194,26 @@ module.exports = {
 		},
 		valueDisplayMaxLargeDigits: 4,
 		prioritizedToolIdsList: [0, 10, 11, 9, 3, 4, 12, 2, 5, 1, 6, 7, 13, 8],
+		toolSections: [
+			{name: "Basics", items: [0, 2]},
+			{name: "Mempool", items: [5, 4]},
+			{name: "Analysis", items: [9, 10, 11, 12, 3]},
+			{name: "Technical", items: [6, 7]},
+			{name: "Misc", items: [8, 13]},
+		]
 	},
 
 	credentials: credentials,
 
 	siteTools:[
-	/* 0 */		{name:"Node Status", url:"./node-status", desc:"Summary of this node: version, network, uptime, etc.", fontawesome:"fas fa-broadcast-tower"},
+	/* 0 */		{name:"Node Details", url:"./node-details", desc:"Summary of this node: version, network, uptime, etc.", fontawesome:"fas fa-info-circle"},
 	/* 1 */		{name:"Peers", url:"./peers", desc:"Detailed info about the peers connected to this node.", fontawesome:"fas fa-sitemap"},
 
 	/* 2 */		{name:"Browse Blocks", url:"./blocks", desc:"Browse all blocks in the blockchain.", fontawesome:"fas fa-cubes"},
 	/* 3 */		{name:"Transaction Stats", url:"./tx-stats", desc:"See graphs of total transaction volume and transaction rates.", fontawesome:"fas fa-chart-bar"},
 
-	/* 4 */		{name:"Mempool Summary", url:"./mempool-summary", desc:"Detailed summary of the current mempool for this node.", fontawesome:"fas fa-receipt"},
-	/* 5 */		{name:"Browse Mempool", url:"./mempool-tx", desc:"Browse unconfirmed/pending transactions.", fontawesome:"fas fa-unlock"},
+	/* 4 */		{name:"Mempool Summary", url:"./mempool-summary", desc:"Detailed summary of the current mempool for this node.", fontawesome:"fas fa-hourglass-half"},
+	/* 5 */		{name:"Browse Mempool", url:"./mempool-tx", desc:"Browse unconfirmed/pending transactions.", fontawesome:"fas fa-book-open"},
 
 	/* 6 */		{name:"RPC Browser", url:"./rpc-browser", desc:"Browse the RPC functionality of this node. See docs and execute commands.", fontawesome:"fas fa-book"},
 	/* 7 */		{name:"RPC Terminal", url:"./rpc-terminal", desc:"Directly execute RPCs against this node.", fontawesome:"fas fa-terminal"},
