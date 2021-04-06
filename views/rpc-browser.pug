@@ -16,104 +16,95 @@ block content
 		div.row
 			div.col-md-9
 				if (methodhelp)
-					+contentSection(`Command: ${method}`)
+					.clearfix.mb-4
+						.float-start
+							+sectionTitle(`Command: ${method}`)
 
-					div.card.shadow-sm.mb-3
-						div.card-body
-							div.clearfix
-								div.float-start
-									h3.h6.mb-0
-										a.text-body(href=`./rpc-browser?method=${method}`)
-											span.fw-bold #{method}
-										span  Command
+						.float-start.ms-3
+							span.small.text-muted (
+								a(href=`https://developer.bitcoin.org/reference/rpc/${method}.html`, target="_blank") Developer Docs
+									i.fas.fa-external-link-alt.ms-2
+								| )
+							
 
-								div.float-end
-									a(href=`https://developer.bitcoin.org/reference/rpc/${method}.html`) Docs for #{method} &raquo;
-							hr
+					
+					- var tabs = ["Execute", "Help Content"];
+					if (methodhelp.args && methodhelp.args.length > 0)
+						- tabs.push("Argument Details")
 
-							ul.nav.nav-tabs.mb-3
-								li.nav-item
-									a.nav-link.active(data-bs-toggle="tab", href="#tab-execute", role="tab") Execute
-								li.nav-item
-									a.nav-link(data-bs-toggle="tab", href="#tab-help-content", role="tab") Help Content
+					+pageTabs(tabs)
 
-								if (methodhelp.args && methodhelp.args.length > 0)
-									li.nav-item
-										a.nav-link(data-bs-toggle="tab", href="#tab-parsed-args", role="tab") Arguments Details
+					.tab-content
+						+pageTab("Execute", true)
 
-							div.tab-content
-								div.tab-pane.active(id="tab-execute", role="tabpanel")
-									if (methodResult)
-										div.mt-4
-											div.mb-2
-												h3.h6.mt-3 Result
-
-											pre.border.mb-3
-												code.json(data-lang="json") #{JSON.stringify(methodResult, null, 4)}
-
-										hr
-
-									form(method="get")
-										input(type="hidden", name="_csrf", value=csrfToken)
-										input(type="hidden", name="method", value=method)
-
-										div.mb-3
-											h6 Arguments
-
-										if (false)
-											pre
-												code.json #{JSON.stringify(argValues, null, 4)}
-										
-										div.ms-3
-											each argX, index in methodhelp.args
-												.mb-3
-													label(for=("arg_" + argX.name))
-														div
-															span.font-monospace.fw-bold #{argX.name}
-															span.font-monospace : 
-																span  #{argX.properties.join(", ")}
-														if (argX.description)
-															span.text-muted Description: #{argX.description}
-														if (false && argX.detailsLines && argX.detailsLines.length > 0)
-															- var detailsLines = "";
-															each detailsLine in argX.detailsLines
-																- detailsLines = (detailsLines + "<br/>" + detailsLine);
-															i.fas.fa-info-circle(data-bs-toggle="tooltip", title=detailsLines)
-																
-
-
-													- var valX = false;
-													if (argValues != null)
-														if (argValues[index] != null)
-															if (("" + argValues[index]) != "NaN")
-																- valX = JSON.stringify(argValues[index]);
-																if (valX.substring(0, 1) == "\"")
-																	- valX = valX.substring(1);
-																if (valX.substring(valX.length - 1, valX.length) == "\"")
-																	- valX = valX.substring(0, valX.length - 1);
-
-													if (method == "verifymessage" && argX.name == "message")
-														- var newline = String.fromCharCode(13, 10);
-														textarea.form-control(id=`arg_${argX.name}`, name=`args[${index}]`, placeholder=argX.name, rows="8") #{(valX ? valX.split('\\n').join(newline) : "")}
-														
-													else
-														input.form-control(id=`arg_${argX.name}`, type="text", name=`args[${index}]`, placeholder=argX.name, value=(valX ? valX : ""))
-
-											if (!methodhelp.args || methodhelp.args.length == 0)
-												span.text-muted None
-
-										hr
-
-										input.btn.btn-primary.px-3(type="submit", name="execute", value="Execute")
-
-								div.tab-pane(id="tab-help-content", role="tabpanel")
+							if (methodResult)
+								+contentSection("Result")
 									pre
-										code.json(data-lang="txt") #{methodhelp.string}
+										code.json #{JSON.stringify(methodResult, null, 4)}
 
-								if (methodhelp.args && methodhelp.args.length > 0)
-									div.tab-pane(id="tab-parsed-args", role="tabpanel")
-										pre.border
-											code.json(data-lang="json") #{JSON.stringify(methodhelp.args, null, 4)}
+
+							+contentSection("Arguments")
+								form(method="get")
+									input(type="hidden", name="_csrf", value=csrfToken)
+									input(type="hidden", name="method", value=method)
+
+									if (false)
+										pre
+											code.json #{JSON.stringify(argValues, null, 4)}
+									
+									div
+										each argX, index in methodhelp.args
+											.mb-3
+												label(for=("arg_" + argX.name))
+													div
+														span.font-monospace.fw-bold #{argX.name}
+														span.font-monospace : 
+															span  #{argX.properties.join(", ")}
+													if (argX.description)
+														span.text-muted Description: #{argX.description}
+													if (false && argX.detailsLines && argX.detailsLines.length > 0)
+														- var detailsLines = "";
+														each detailsLine in argX.detailsLines
+															- detailsLines = (detailsLines + "<br/>" + detailsLine);
+														i.fas.fa-info-circle(data-bs-toggle="tooltip", title=detailsLines)
+															
+
+
+												- var valX = false;
+												if (argValues != null)
+													if (argValues[index] != null)
+														if (("" + argValues[index]) != "NaN")
+															- valX = JSON.stringify(argValues[index]);
+															if (valX.substring(0, 1) == "\"")
+																- valX = valX.substring(1);
+															if (valX.substring(valX.length - 1, valX.length) == "\"")
+																- valX = valX.substring(0, valX.length - 1);
+
+												if (method == "verifymessage" && argX.name == "message")
+													- var newline = String.fromCharCode(13, 10);
+													textarea.form-control(id=`arg_${argX.name}`, name=`args[${index}]`, placeholder=argX.name, rows="8") #{(valX ? valX.split('\\n').join(newline) : "")}
+													
+												else
+													input.form-control(id=`arg_${argX.name}`, type="text", name=`args[${index}]`, placeholder=argX.name, value=(valX ? valX : ""))
+
+										if (!methodhelp.args || methodhelp.args.length == 0)
+											span.text-muted None
+
+									hr
+
+									input.btn.btn-primary.px-3(type="submit", name="execute", value="Execute")
+
+						+pageTab("Help Content")
+							+contentSection("Help Content")
+								pre
+									code.json(data-lang="txt") #{methodhelp.string}
+
+						if (methodhelp.args && methodhelp.args.length > 0)
+							+pageTab("Argument Details")
+								each item in methodhelp.args
+									+contentSection(item.name)
+										pre
+											code.json #{JSON.stringify(item, null, 4)}
 
 					
 							
