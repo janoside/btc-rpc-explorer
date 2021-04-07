@@ -1,28 +1,27 @@
 extends layout
 
 block content
-	h1.h3 RPC Connect
-	hr
+	+pageTitle("RPC Connect")
 
 	form(method="post", action="./connect")
 		input(type="hidden", name="_csrf", value=csrfToken)
 
-		div.form-group
+		.mb-3
 			label(for="input-host") Host / IP
 			input.form-control(id="input-host", type="text", name="host", placeholder="Host / IP", value=host)
 
-		div.form-group
+		.mb-3
 			label(for="input-port") Port
 			input.form-control(id="input-port", type="text", name="port", placeholder="Port", value=port)
 
-		div.form-group
+		.mb-3
 			label(for="input-username") Username
 			input.form-control(id="input-username", type="text", name="username", placeholder="Username", value=username)
 
-		div.form-group
+		.mb-3
 			label(for="input-password") Password
 			input.form-control(id="input-password", type="password", name="password", placeholder="Password")
 
-		div.form-group
-			input.btn.btn-primary.btn-block(type="submit" value="Connect")
+		.mb-3
+			input.btn.btn-primary.w-100(type="submit" value="Connect")
 				

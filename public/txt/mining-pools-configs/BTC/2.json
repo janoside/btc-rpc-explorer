@@ -483,6 +483,10 @@
         "SBICrypto": {
             "name": "SBI Crypto",
             "link": "https://www.sbicrypto.com"
+	},
+        "/PureBTC.COM/" : {
+            "name": "PureBTC.COM",
+            "link": "https://purebtc.com"
         }
     },
     "payout_addresses" : {

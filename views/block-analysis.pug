@@ -4,16 +4,21 @@ block headContent
 	title Block Analysis ##{result.getblock.height.toLocaleString()}, #{result.getblock.hash}
 
 block content
-	h1.h3 Block Analysis 
-		small.text-monospace(style="width: 100%;") ##{result.getblock.height.toLocaleString()}
-		br
-		small.text-monospace.word-wrap(style="width: 100%;") #{result.getblock.hash}
+	
+
+	.mb-3
+		.clearfix
+			.float-start
+				if (result.getblock)
+					a.btn.btn-sm.btn-primary.ms-2(href=`./block/${result.getblock.hash}`) &laquo; Block Details
+
+			.float-end
+
 	hr
 
-	div.mb-2
-		if (result.getblock)
-			a.btn.btn-sm.btn-primary.mb-1(href=`./block/${result.getblock.hash}`) &laquo; Block Details: 
-				span.text-monospace ##{result.getblock.height.toLocaleString()}
+
+	+pageTitle("Block Analysis", result.getblock.hash, true)
+
 
 	if (block && (!block.tx || block.tx.length == 0) && global.prunedBlockchain)
 		div.alert.alert-warning.pb-0(role="alert")
@@ -22,263 +27,209 @@ block content
 			| !{markdown(msgMarkdown)}
 
 	else
-		div.row
-			- var sumTableLabelClass = (result.blockstats != null ? "summary-split-table-label" : "summary-table-label");
-			- var sumTableValueClass = (result.blockstats != null ? "summary-split-table-content" : "summary-table-content");
 
-			div.mb-3.col
-				div.card.shadow-sm(style="height: 100%;")
-					div.card-body.px-2.px-md-3
-						h3.h6.mb-0 Summary
-						hr
+		+contentSection("Summary")
+			+summaryRow(3 + (result.getblock.weight ? 1 : (result.getblock.size ? 1 : 0)))
+				+summaryItem("Date")
+					+timestamp(result.getblock.time, true)
 
-						div.clearfix
-							div.row
-								div.summary-table-label Date
-								div.summary-table-content.text-monospace
-									- var timestampHuman = result.getblock.time;
-									include includes/timestamp-human.pug
-									small.ml-1 utc
+				if (result.getblock.weight)
+					+summaryItem("Weight", null, "wu", "Weight Units")
+						| #{result.getblock.weight.toLocaleString()}
 
-									- var timeAgoTime = result.getblock.time;
-									span.text-muted.ml-2 (
-										include includes/time-ago-text.pug
-										span  ago)
-
-							if (result.getblock.weight)
-								div.row
-									div.summary-table-label Weight
-									div.summary-table-content.text-monospace
-										span #{result.getblock.weight.toLocaleString()} 
-											small wu 
-
-										span.text-muted  (#{new Decimal(100 * result.getblock.weight / coinConfig.maxBlockWeight).toDecimalPlaces(2)}% full)
-										
-							else if (result.getblock.size)
-								div.row
-									div.summary-table-label Size
-									div.summary-table-content.text-monospace #{result.getblock.size.toLocaleString()}
-										small B
-
-							div.row
-								div.summary-table-label Transactions
-								div.summary-table-content.text-monospace #{result.getblock.nTx.toLocaleString()}
-
-							div.row
-								div.summary-table-label Confirmations
-								div.summary-table-content.text-monospace
-									if (result.getblock.confirmations < 6)
-										span.font-weight-bold.text-warning #{result.getblock.confirmations.toLocaleString()} 
-											a(data-toggle="tooltip", title="Fewer than 6 confirmations is generally considered 'unsettled' for high-value transactions. The applicability of this guidance may vary.")
-												i.fas.fa-unlock-alt
-									else
-										span.font-weight-bold.text-success #{result.getblock.confirmations.toLocaleString()} 
-											a(data-toggle="tooltip", title="6 confirmations is generally considered 'settled'. High-value transactions may require more; low-value transactions may require less.")
-												i.fas.fa-lock
+				else if (result.getblock.size)
+					+summaryItem("Size", null, "B", "Bytes")
+						| #{result.getblock.size.toLocaleString()}
 
 
-		div#progress-wrapper.mb-huge
-			div.card.shadow-sm.mb-3
-				div.card-body
-					h4.h6 Loading transactions: 
+				+summaryItem("Transactions")
+					| #{result.getblock.nTx.toLocaleString()}
+
+				+summaryItem("Confirmations")
+					+confirmations(result.getblock.confirmations, false)
+
+		#progress-wrapper.mb-huge
+			.card.shadow-sm.mb-3
+				.card-body
+					span Loading transactions: 
 						span(id="progress-text")
-					div.progress.mt-2(id="progress-bar", style="height: 7px;")
-						div.progress-bar(id="data-progress", role="progressbar", aria-valuenow="0", aria-valuemin="0" ,aria-valuemax="100")
+					.progress.mt-2(id="progress-bar", style="height: 7px;")
+						.progress-bar(id="data-progress", role="progressbar", aria-valuenow="0", aria-valuemin="0" ,aria-valuemax="100")
 
 
-	div#main-content(style="display: none;")
-		div.row
-			div.col-xl-6
-				div.card.shadow-sm.mb-3
-					div.card-body
-						h3.h6.mb-0 Top Value Transactions
-						hr
+	#main-content(style="display: none;")
+		.row
+			.col-xl-6
+				+contentSection("Top Value Transactions")
+					.table-responsive
+						table.table.table-striped.table-borderless.mb-0
+							thead
+								tr
+									th Transaction
+									th.text-end Output Value
 
-						div.table-responsive
-							table.table.table-striped.mb-0
-								thead
-									tr
-										th.data-header Transaction
-										th.data-header.text-right Output Value
+							tbody(id="tbody-top-value-tx")
+								tr.font-monospace.row-prototype(style="display: none;")
+									td.data-tx-link
+									td.text-end.data-tx-value
 
-								tbody(id="tbody-top-value-tx")
-									tr.text-monospace.row-prototype(style="display: none;")
-										td.data-tx-link
-										td.text-right.data-tx-value
+								tr.hidden-row-to-fix-striping.d-none
 
-			div.col-xl-6
-				div.card.shadow-sm.mb-3
-					div.card-body
-						h3.h6.mb-0 Top Size Transactions
-						hr
+			.col-xl-6
+				+contentSection("Top Size Transactions")
+					.table-responsive
+						table.table.table-striped.table-borderless.mb-0
+							thead
+								tr
+									th Transaction
+									th.text-end Size
+										small.fw-normal.text-muted.ms-2 (vB)
 
-						div.table-responsive
-							table.table.table-striped.mb-0
-								thead
-									tr
-										th.data-header Transaction
-										th.data-header.text-right Size
+							tbody(id="tbody-top-size-tx")
+								tr.font-monospace.row-prototype(style="display: none;")
+									td.data-tx-link
+									td.text-end.data-tx-value
 
-								tbody(id="tbody-top-size-tx")
-									tr.text-monospace.row-prototype(style="display: none;")
-										td.data-tx-link
-										td.text-right.data-tx-value
+								tr.hidden-row-to-fix-striping.d-none
+
 
 			if (global.txindexAvailable)
-				div.col-xl-6
-					div.card.shadow-sm.mb-3
-						div.card-body
-							h3.h6.mb-0 Top Fee Transactions
-							hr
+				.col-xl-6
+					+contentSection("Top Fee Transactions")
+						.table-responsive
+							table.table.table-striped.table-borderless.mb-0
+								thead
+									tr
+										th Transaction
+										th.text-end Fee
 
-							div.table-responsive
-								table.table.table-striped.mb-0
-									thead
-										tr
-											th.data-header Transaction
-											th.data-header.text-right Fee
+								tbody(id="tbody-top-fee-tx")
+									tr.font-monospace.row-prototype(style="display: none;")
+										td.data-tx-link
+										td.text-end.data-tx-value
 
-									tbody(id="tbody-top-fee-tx")
-										tr.text-monospace.row-prototype(style="display: none;")
-											td.data-tx-link
-											td.text-right.data-tx-value
+									tr.hidden-row-to-fix-striping.d-none
 
-				div.col-xl-6
-					div.card.shadow-sm.mb-3
-						div.card-body
-							h3.h6.mb-0 Top Fee Rate Transactions
-							hr
 
-							div.table-responsive
-								table.table.table-striped.mb-0
-									thead
-										tr
-											th.data-header Transaction
-											th.data-header.text-right Fee Rate
+				.col-xl-6
+					+contentSection("Top Fee Rate Transactions")
+						.table-responsive
+							table.table.table-striped.table-borderless.mb-0
+								thead
+									tr
+										th Transaction
+										th.text-end Fee Rate
+											small.text-muted.fw-normal.ms-2 (sat/vB)
 
-									tbody(id="tbody-top-fee-rate-tx")
-										tr.text-monospace.row-prototype(style="display: none;")
-											td.data-tx-link
-											td.text-right.data-tx-value
+								tbody(id="tbody-top-fee-rate-tx")
+									tr.font-monospace.row-prototype(style="display: none;")
+										td.data-tx-link
+										td.text-end.data-tx-value
+
+									tr.hidden-row-to-fix-striping.d-none
+
 
 			if (global.txindexAvailable)
-				div.col-lg-6.mb-3
-					div.card.shadow-sm(style="height: 100%;")
+				.col-lg-6.mb-3
+					+sectionTitle("Input Types")
+					.card.shadow-sm
 						div.card-body
-							h3.h6.mb-0 Input Types
-							hr
-
-							table.table.table-striped.mb-0
+							span#no-input-types-data.text-muted(style="display: none;") No data
+							table.table.table-striped.table-borderless.mb-0
 								tbody(id="tbody-input-types")
-									tr.text-monospace.row-prototype(style="display: none;")
+									tr.font-monospace.row-prototype(style="display: none;")
 										td
-											small.data-tag.bg-dark.data-type
+											+darkBadge
+												span.data-type
 
 										td.data-count
-								
-			div.col-lg-6.mb-3(class=(!global.txindexAvailable ? "col-lg-12" : ""))
-				div.card.shadow-sm(style="height: 100%;")
-					div.card-body
-						h3.h6.mb-0 Output Types
-						hr
 
-						table.table.table-striped.mb-0
+									tr.hidden-row-to-fix-striping.d-none
+								
+			.col-lg-6.mb-3(class=(!global.txindexAvailable ? "col-lg-12" : ""))
+				+sectionTitle("Output Types")
+				.card.shadow-sm
+					.card-body
+						table.table.table-striped.table-borderless.mb-0
 							tbody(id="tbody-output-types")
-								tr.text-monospace.row-prototype(style="display: none;")
+								tr.font-monospace.row-prototype(style="display: none;")
 									td
-										small.data-tag.bg-dark.data-type
+										+darkBadge
+											span.data-type
 
 									td.data-count
 
-		div.row
-			div.col-lg-6
-				div.card.shadow-sm.mb-3
-					div.card-body
-						h3.h6.mb-0 Transaction Value
-						hr
+								tr.hidden-row-to-fix-striping.d-none
 
-						canvas(id="graph-tx-value")
+		.row
+			.col-lg-6
+				+contentSection("Transaction Value")
+					canvas(id="graph-tx-value")
 
-			div.col-lg-6
-				div.card.shadow-sm.mb-3
-					div.card-body
-						h3.h6.mb-0 Transaction Value Distribution
-						hr
+						
 
-						canvas(id="chart-tx-value-distribution")
+			.col-lg-6
+				+contentSection("Transaction Value Distribution")
+					canvas(id="chart-tx-value-distribution")
+						
 
 			if (global.txindexAvailable)
-				div.col-lg-6
-					div.card.shadow-sm.mb-3
-						div.card-body
-							h3.h6.mb-0 Transaction Fee
-							hr
+				.col-lg-6
+					+contentSection("Transaction Fee")
+						canvas(id="graph-tx-fee")
 
-							canvas(id="graph-tx-fee")
+							
 
-				div.col-lg-6
-					div.card.shadow-sm.mb-3
-						div.card-body
-							h3.h6.mb-0 Transaction Fee Distribution
-							hr
+				.col-lg-6
+					+contentSection("Transaction Fee Distribution")
+						canvas(id="chart-tx-fee-distribution")
 
-							canvas(id="chart-tx-fee-distribution")
+							
 
-				div.col-lg-6
-					div.card.shadow-sm.mb-3
-						div.card-body
-							h3.h6.mb-0 Transaction Fee Rate
-							hr
+				.col-lg-6
+					+contentSection("Transaction Fee Rate")
+						canvas(id="graph-tx-fee-rate")
+					
 
-							canvas(id="graph-tx-fee-rate")
+							
 
-				div.col-lg-6
-					div.card.shadow-sm.mb-3
-						div.card-body
-							h3.h6.mb-0 Transaction Fee Rate Distribution
-							hr
+				.col-lg-6
+					+contentSection("Transaction Fee Rate Distribution")
+						canvas(id="chart-tx-fee-rate-distribution")
 
-							canvas(id="chart-tx-fee-rate-distribution")
+							
 
-			div.col-lg-6
-				div.card.shadow-sm.mb-3
-					div.card-body
-						h3.h6.mb-0 Transaction Size
-						hr
+			.col-lg-6
+				+contentSection("Transaction Size")
+					canvas(id="graph-tx-size")
 
-						canvas(id="graph-tx-size")
+						
 
-			div.col-lg-6
-				div.card.shadow-sm.mb-3
-					div.card-body
-						h3.h6.mb-0 Transaction Size Distribution
-						hr
+			.col-lg-6
+				+contentSection("Transaction Size Distribution")
+					canvas(id="chart-tx-size-distribution")
 
-						canvas(id="chart-tx-size-distribution")
+						
 
-			div.col-lg-6
-				div.card.shadow-sm.mb-3
-					div.card-body
-						h3.h6.mb-0 Transaction Input Count
-						hr
+			.col-lg-6
+				+contentSection("Transaction Input Count")
+					canvas(id="graph-tx-inputs")
 
-						canvas(id="graph-tx-inputs")
 
-			div.col-lg-6
-				div.card.shadow-sm.mb-3
-					div.card-body
-						h3.h6.mb-0 Transaction Output Count
-						hr
-
-						canvas(id="graph-tx-outputs")
+			.col-lg-6
+				+contentSection("Transaction Output Count")
+					canvas(id="graph-tx-outputs")
 
 			
 
 block endOfBody
 	- var txidChunkSize = 10;
 
-	script(src="./js/chart.bundle.min.js", integrity="sha384-qgOtiGNaHh9fVWUnRjyHlV39rfbDcvPPkEzL1RHvsHKbuqUqM6uybNuVnghY2z4/")
+	+graphPageScriptSetup
+
 	script(src='./js/decimal.js')
+
+	
 	script.
 		var txidChunkSize = !{txidChunkSize};
 		var prunedBlock = !{(block && (!block.tx || block.tx.length == 0) && global.prunedBlockchain)};
@@ -288,7 +239,7 @@ block endOfBody
 		var blockHash = "!{result.getblock.hash}";
 		var satsMultiplier = !{coinConfig.baseCurrencyUnit.multiplier};
 		var vByteSizes = false;
-
+		
 		$(document).ready(function() {
 			if (!prunedBlock) {
 				loadTransactions(txidChunks, txidChunkSize, txidChunks.length * txidChunkSize);
@@ -375,7 +326,7 @@ block endOfBody
 
 				row.removeClass("row-prototype");
 
-				row.find(".data-tx-link").html(`<a href='./tx/${item.txid}'>${item.txid.substring(0, 32)}…</a>`);
+				row.find(".data-tx-link").html(`<a href='./tx/${item.txid}'>${item.txid.substring(0, 24)}…</a>`);
 				row.find(".data-tx-value").text(item.value);
 				
 				updateCurrencyValue(row.find(".data-tx-value"), item.value);
@@ -396,7 +347,7 @@ block endOfBody
 
 				row.removeClass("row-prototype");
 
-				row.find(".data-tx-link").html(`<a href='./tx/${item.txid}'>${item.txid.substring(0, 32)}…</a>`);
+				row.find(".data-tx-link").html(`<a href='./tx/${item.txid}'>${item.txid.substring(0, 24)}…</a>`);
 				row.find(".data-tx-value").text(item.value);
 				
 				updateCurrencyValue(row.find(".data-tx-value"), item.value);
@@ -417,8 +368,8 @@ block endOfBody
 
 				row.removeClass("row-prototype");
 
-				row.find(".data-tx-link").html(`<a href='./tx/${item.txid}'>${item.txid.substring(0, 32)}…</a>`);
-				row.find(".data-tx-value").html(`<span>${parseInt(item.value).toLocaleString()} <small>sat/${vByteSizes ? "v" : ""}B</small></span>`);
+				row.find(".data-tx-link").html(`<a href='./tx/${item.txid}'>${item.txid.substring(0, 24)}…</a>`);
+				row.find(".data-tx-value").html(`<span>${parseInt(item.value).toLocaleString()}</span>`);
 				
 				row.show();
 
@@ -436,8 +387,8 @@ block endOfBody
 
 				row.removeClass("row-prototype");
 
-				row.find(".data-tx-link").html(`<a href='./tx/${item.txid}'>${item.txid.substring(0, 32)}…</a>`);
-				row.find(".data-tx-value").html(`<span>${parseInt(item.value).toLocaleString()} <small>${vByteSizes ? "v" : ""}B</small></span>`);
+				row.find(".data-tx-link").html(`<a href='./tx/${item.txid}'>${item.txid.substring(0, 24)}…</a>`);
+				row.find(".data-tx-value").html(`<span>${parseInt(item.value).toLocaleString()}</span>`);
 
 				row.show();
 
@@ -468,6 +419,10 @@ block endOfBody
 				return b.count - a.count;
 			});
 
+			if (sortedInputs.length == 0) {
+				$("#no-input-types-data").show();
+			}
+
 			for (var i = 0; i < sortedInputs.length; i++) {
 				var item = sortedInputs[i];
 
@@ -479,8 +434,8 @@ block endOfBody
 					row.addClass("table-borderless");
 				}
 				
-				// span(title=`Output Type: ${utils.outputTypeName(inputTypeKey)}`, data-toggle="tooltip") #{utils.outputTypeAbbreviation(inputTypeKey)}
-				row.find(".data-type").html(`<span title='Type: ${item.type}' data-toggle='tooltip'>${item.type}</span>`);
+				// span(title=`Output Type: ${utils.outputTypeName(inputTypeKey)}`, data-bs-toggle="tooltip") #{utils.outputTypeAbbreviation(inputTypeKey)}
+				row.find(".data-type").html(`<span title='Type: ${item.type}' data-bs-toggle='tooltip'>${item.type}</span>`);
 				row.find(".data-count").text(item.count.toLocaleString());
 
 				row.show();
@@ -499,8 +454,8 @@ block endOfBody
 					row.addClass("table-borderless");
 				}
 				
-				// span(title=`Output Type: ${utils.outputTypeName(inputTypeKey)}`, data-toggle="tooltip") #{utils.outputTypeAbbreviation(inputTypeKey)}
-				row.find(".data-type").html(`<span title='Type: ${item.type}' data-toggle='tooltip'>${item.type}</span>`);
+				// span(title=`Output Type: ${utils.outputTypeName(inputTypeKey)}`, data-bs-toggle="tooltip") #{utils.outputTypeAbbreviation(inputTypeKey)}
+				row.find(".data-type").html(`<span title='Type: ${item.type}' data-bs-toggle='tooltip'>${item.type}</span>`);
 				row.find(".data-count").text(item.count.toLocaleString());
 
 				row.show();
@@ -532,6 +487,9 @@ block endOfBody
 								display: true,
 								labelString: 'Index in Block'
 							},
+							gridLines: {
+								color: gridLineColor
+							}
 							//ticks: {
 							//	stepSize: 100,
 							//}
@@ -539,7 +497,10 @@ block endOfBody
 						yAxes: [{
 							scaleLabel: {
 								display: true,
-								labelString: yLabelStr
+								labelString: yLabelStr,
+							},
+							gridLines: {
+								color: gridLineColor
 							}
 						}]
 					}
@@ -569,9 +530,17 @@ block endOfBody
 						display: false
 					},
 					scales: {
+						xAxes: [{
+							gridLines: {
+								color: gridLineColor
+							}
+						}],
 						yAxes: [{
 							ticks: {
 								beginAtZero:true
+							},
+							gridLines: {
+								color: gridLineColor
 							}
 						}]
 					}

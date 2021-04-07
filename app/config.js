@@ -19,6 +19,7 @@ const coins = require("./coins.js");
 const credentials = require("./credentials.js");
 
 const currentCoin = process.env.BTCEXP_COIN || "BTC";
+const defaultTheme = process.env.BTCEXP_UI_THEME || "dark";
 
 const rpcCred = credentials.rpc;
 
@@ -38,12 +39,12 @@ const cookieSecret = process.env.BTCEXP_COOKIE_SECRET
  || "0x000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f";
 
 
-const electrumXServerUriStrings = (process.env.BTCEXP_ELECTRUMX_SERVERS || "").split(',').filter(Boolean);
-const electrumXServers = [];
-for (let i = 0; i < electrumXServerUriStrings.length; i++) {
-	const uri = url.parse(electrumXServerUriStrings[i]);
+const electrumServerUriStrings = (process.env.BTCEXP_ELECTRUM_SERVERS || process.env.BTCEXP_ELECTRUMX_SERVERS || "").split(',').filter(Boolean);
+const electrumServers = [];
+for (let i = 0; i < electrumServerUriStrings.length; i++) {
+	const uri = url.parse(electrumServerUriStrings[i]);
 	
-	electrumXServers.push({protocol:uri.protocol.substring(0, uri.protocol.length - 1), host:uri.hostname, port:parseInt(uri.port)});
+	electrumServers.push({protocol:uri.protocol.substring(0, uri.protocol.length - 1), host:uri.hostname, port:parseInt(uri.port)});
 }
 
 // default=false env vars
@@ -66,7 +67,6 @@ for (let i = 0; i < electrumXServerUriStrings.length; i++) {
 // default=true env vars
 [
 	"BTCEXP_NO_RATES",
-	"BTCEXP_UI_SHOW_TOOLS_SUBHEADER",
 	"BTCEXP_SLOW_DEVICE_MODE"
 
 ].forEach(function(item) {
@@ -77,6 +77,8 @@ for (let i = 0; i < electrumXServerUriStrings.length; i++) {
 	}
 });
 
+const slowDeviceMode = (process.env.BTCEXP_SLOW_DEVICE_MODE.toLowerCase() == "true");
+
 module.exports = {
 	host: process.env.BTCEXP_HOST || "127.0.0.1",
 	port: process.env.PORT || process.env.BTCEXP_PORT || 3002,
@@ -84,16 +86,17 @@ module.exports = {
 	baseUrl: baseUrl,
 
 	coin: currentCoin,
+	defaultTheme: defaultTheme,
 
 	cookieSecret: cookieSecret,
 
 	privacyMode: (process.env.BTCEXP_PRIVACY_MODE.toLowerCase() == "true"),
-	slowDeviceMode: (process.env.BTCEXP_SLOW_DEVICE_MODE.toLowerCase() == "true"),
+	slowDeviceMode: slowDeviceMode,
 	demoSite: (process.env.BTCEXP_DEMO.toLowerCase() == "true"),
-	queryExchangeRates: (process.env.BTCEXP_NO_RATES.toLowerCase() != "true"),
+	queryExchangeRates: (process.env.BTCEXP_NO_RATES.toLowerCase() != "true" && process.env.BTCEXP_PRIVACY_MODE.toLowerCase() != "true"),
 	noInmemoryRpcCache: (process.env.BTCEXP_NO_INMEMORY_RPC_CACHE.toLowerCase() == "true"),
 	
-	rpcConcurrency: (process.env.BTCEXP_RPC_CONCURRENCY || 10),
+	rpcConcurrency: (process.env.BTCEXP_RPC_CONCURRENCY || (slowDeviceMode ? 3 : 10)),
 
 	noTxIndexSearchDepth: (+process.env.BTCEXP_NOTXINDEX_SEARCH_DEPTH || 3),
 
@@ -172,60 +175,51 @@ module.exports = {
 		"walletpassphrasechange",
 	],
 
-	addressApi:process.env.BTCEXP_ADDRESS_API,
-	electrumTxIndex:process.env.BTCEXP_ELECTRUM_TXINDEX != "false",
-	electrumXServers:electrumXServers,
+	addressApi: process.env.BTCEXP_ADDRESS_API,
+	electrumTxIndex: process.env.BTCEXP_ELECTRUM_TXINDEX != "false",
+	electrumServers: electrumServers,
 
 	redisUrl:process.env.BTCEXP_REDIS_URL,
 
 	site: {
 		homepage:{
-			recentBlocksCount:10
+			recentBlocksCount: (process.env.BTCEXP_UI_HOME_PAGE_LATEST_BLOCKS_COUNT || (slowDeviceMode ? 5 : 10))
 		},
-		blockTxPageSize:20,
-		addressTxPageSize:10,
-		txMaxInput:15,
-		browseBlocksPageSize:50,
+		blockTxPageSize: (slowDeviceMode ? 10 : 20),
+		addressTxPageSize: 10,
+		txMaxInput: (slowDeviceMode ? 3 : 15),
+		browseBlocksPageSize: (process.env.BTCEXP_UI_BLOCKS_PAGE_BLOCK_COUNT || (slowDeviceMode ? 10 : 50)),
+		browseMempoolTransactionsPageSize: (slowDeviceMode ? 10 : 50),
 		addressPage:{
 			txOutputMaxDefaultDisplay:10
 		},
 		valueDisplayMaxLargeDigits: 4,
-		header:{
-			showToolsSubheader:(process.env.BTCEXP_UI_SHOW_TOOLS_SUBHEADER == "true"),
-			dropdowns:[
-				{
-					title:"Related Sites",
-					links:[
-						{name: "Bitcoin Explorer", url:"https://explorer.btc21.org", imgUrl:"./img/logo/btc.svg"},
-						{name: "Testnet Explorer", url:"https://testnet.btc21.org", imgUrl:"./img/logo/tbtc.svg"},
-						{name: "Signet Explorer", url:"https://signet.btc21.org", imgUrl:"./img/logo/signet.svg"},
-						{name: "LND Admin", url:"https://lnd-admin.btc21.org", imgUrl:"./img/logo/lnd-admin.png"},
-						//{name: "Litecoin Explorer", url:"https://ltc.chaintools.io", imgUrl:"/img/logo/ltc.svg"},
-						//{name: "Lightning Explorer", url:"https://lightning.chaintools.io", imgUrl:"/img/logo/lightning.svg"},
-					]
-				}
-			]
-		},
-		subHeaderToolsList:[0, 10, 9, 4, 11, 6, 7], // indexes in "siteTools" below that are shown in the site "sub menu" (visible on all pages except homepage)
 		prioritizedToolIdsList: [0, 10, 11, 9, 3, 4, 12, 2, 5, 1, 6, 7, 13, 8],
+		toolSections: [
+			{name: "Basics", items: [0, 2]},
+			{name: "Mempool", items: [5, 4]},
+			{name: "Analysis", items: [9, 10, 11, 12, 3]},
+			{name: "Technical", items: [6, 7]},
+			{name: "Fun", items: [8, 13]},
+		]
 	},
 
 	credentials: credentials,
 
 	siteTools:[
-	/* 0 */		{name:"Node Status", url:"./node-status", desc:"Summary of this node: version, network, uptime, etc.", fontawesome:"fas fa-broadcast-tower"},
+	/* 0 */		{name:"Node Details", url:"./node-details", desc:"Summary of this node: version, network, uptime, etc.", fontawesome:"fas fa-info-circle"},
 	/* 1 */		{name:"Peers", url:"./peers", desc:"Detailed info about the peers connected to this node.", fontawesome:"fas fa-sitemap"},
 
 	/* 2 */		{name:"Browse Blocks", url:"./blocks", desc:"Browse all blocks in the blockchain.", fontawesome:"fas fa-cubes"},
 	/* 3 */		{name:"Transaction Stats", url:"./tx-stats", desc:"See graphs of total transaction volume and transaction rates.", fontawesome:"fas fa-chart-bar"},
 
-	/* 4 */		{name:"Mempool Summary", url:"./mempool-summary", desc:"Detailed summary of the current mempool for this node.", fontawesome:"fas fa-receipt"},
-	/* 5 */		{name:"Browse Pending Tx", url:"./unconfirmed-tx", desc:"Browse unconfirmed/pending transactions.", fontawesome:"fas fa-unlock"},
+	/* 4 */		{name:"Mempool Summary", url:"./mempool-summary", desc:"Detailed summary of the current mempool for this node.", fontawesome:"fas fa-hourglass-half"},
+	/* 5 */		{name:"Browse Mempool", url:"./mempool-transactions", desc:"Browse unconfirmed/pending transactions.", fontawesome:"fas fa-book-open"},
 
 	/* 6 */		{name:"RPC Browser", url:"./rpc-browser", desc:"Browse the RPC functionality of this node. See docs and execute commands.", fontawesome:"fas fa-book"},
 	/* 7 */		{name:"RPC Terminal", url:"./rpc-terminal", desc:"Directly execute RPCs against this node.", fontawesome:"fas fa-terminal"},
 
-	/* 8 */		{name:(coins[currentCoin].name + " Fun"), url:"./fun", desc:"See fun/interesting historical blockchain data.", fontawesome:"fas fa-certificate"},
+	/* 8 */		{name:(coins[currentCoin].name + " Fun"), url:"./fun", desc:"See fun/interesting historical blockchain data.", fontawesome:"fas fa-flag"},
 
 	/* 9 */		{name:"Mining Summary", url:"./mining-summary", desc:"Summary of recent data about miners.", fontawesome:"fas fa-chart-pie"},
 	/* 10 */	{name:"Block Stats", url:"./block-stats", desc:"Summary data for blocks in configurable range.", fontawesome:"fas fa-layer-group"},
@@ -233,17 +227,7 @@ module.exports = {
 	/* 12 */	{name:"Difficulty History", url:"./difficulty-history", desc:"Graph of difficulty changes over time.", fontawesome:"fas fa-chart-line"},
 
 	/* 13 */	{name:"Whitepaper Extracter", url:"./bitcoin-whitepaper", desc:"Tool that extracts the Bitcoin whitepaper from data embedded in the blockchain.", fontawesome:"far fa-file-alt"},
-	],
-
-	donations:{
-		addresses:{
-			coins:["BTC"],
-			sites:{"BTC":"https://explorer.btc21.org"}
-		},
-		btcpayserver:{
-			host:"https://donate.btc21.org"
-		}
-	}
+	]
 };
 
 debugLog(`Config(final): privacyMode=${module.exports.privacyMode}`);

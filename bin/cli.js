@@ -23,8 +23,8 @@ const args = require('meow')(`
 	  -u, --bitcoind-user <user>	 username for bitcoind rpc [default: none]
 	  -w, --bitcoind-pass <pass>	 password for bitcoind rpc [default: none]
 
-	  --address-api <option>		 api to use for address queries (options: electrumx, blockchain.com, blockchair.com, blockcypher.com) [default: none]
-	  -E, --electrumx-servers <..>   comma separated list of electrum servers to use for address queries; only used if --address-api=electrumx [default: none]
+	  --address-api <option>		 api to use for address queries (options: electrum, blockchain.com, blockchair.com, blockcypher.com) [default: none]
+	  -E, --electrum-servers <..>   comma separated list of electrum servers to use for address queries; only used if --address-api=electrum [default: none]
 
 	  --rpc-allowall				 allow all rpc commands [default: false]
 	  --rpc-blacklist <methods>	  comma separated list of rpc commands to block [default: see in config.js]
@@ -68,7 +68,7 @@ const args = require('meow')(`
 			bitcoindPass: {alias:'w'},
 			demo: {},
 			rpcAllowall: {},
-			electrumxServers: {alias:'E'},
+			electrumServers: {alias:'E'},
 			nodeEnv: {alias:'e', default:'production'},
 			privacyMode: {},
 			slowDeviceMode: {}

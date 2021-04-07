@@ -51,8 +51,12 @@ const markdown = require("markdown-it")();
 const v8 = require("v8");
 const axios = require("axios");
 
+require("./app/currencies.js");
+
 const package_json = require('./package.json');
 global.appVersion = package_json.version;
+
+global.btcNodeSemver = "0.0.0";
 
 
 const baseActionsRouter = require('./routes/baseRouter.js');
@@ -542,16 +546,16 @@ expressApp.continueStartup = function() {
 			utils.logError("32907ghsd0ge", `Unrecognized value for BTCEXP_ADDRESS_API: '${config.addressApi}'. Valid options are: ${supportedAddressApis}`);
 		}
 
-		if (config.addressApi == "electrumx") {
-			if (config.electrumXServers && config.electrumXServers.length > 0) {
+		if (config.addressApi == "electrum" || config.addressApi == "electrumx") {
+			if (config.electrumServers && config.electrumServers.length > 0) {
 				electrumAddressApi.connectToServers().then(function() {
 					global.electrumAddressApi = electrumAddressApi;
 					
 				}).catch(function(err) {
-					utils.logError("31207ugf4e0fed", err, {electrumXServers:config.electrumXServers});
+					utils.logError("31207ugf4e0fed", err, {electrumServers:config.electrumServers});
 				});
 			} else {
-				utils.logError("327hs0gde", "You must set the 'BTCEXP_ELECTRUMX_SERVERS' environment variable when BTCEXP_ADDRESS_API=electrumx.");
+				utils.logError("327hs0gde", "You must set the 'BTCEXP_ELECTRUM_SERVERS' environment variable when BTCEXP_ADDRESS_API=electrum.");
 			}
 		}
 	}
@@ -610,56 +614,31 @@ expressApp.use(function(req, res, next) {
 	res.locals.pageErrors = [];
 
 
-	// currency format type
-	if (!req.session.currencyFormatType) {
-		var cookieValue = req.cookies['user-setting-currencyFormatType'];
+	if (!req.session.userSettings) {
+		req.session.userSettings = JSON.parse(req.cookies["user-settings"] || "{}");
+	}
 
-		if (cookieValue) {
-			req.session.currencyFormatType = cookieValue;
+	const userSettings = req.session.userSettings;
+	res.locals.userSettings = userSettings;
 
-		} else {
-			req.session.currencyFormatType = "";
-		}
+
+
+	if (!userSettings.displayCurrency) {
+		userSettings.displayCurrency = "btc";
+	}
+
+	if (!userSettings.localCurrency) {
+		userSettings.localCurrency = "usd";
 	}
 
 	// theme
-	if (!req.session.uiTheme) {
-		var cookieValue = req.cookies['user-setting-uiTheme'];
-
-		if (cookieValue) {
-			req.session.uiTheme = cookieValue;
-
-		} else {
-			req.session.uiTheme = "";
-		}
+	if (!userSettings.uiTheme) {
+		userSettings.uiTheme = config.defaultTheme;
 	}
 
-	// blockPage.showTechSummary
-	if (!req.session.blockPageShowTechSummary) {
-		var cookieValue = req.cookies['user-setting-blockPageShowTechSummary'];
 
-		if (cookieValue) {
-			req.session.blockPageShowTechSummary = cookieValue;
-
-		} else {
-			req.session.blockPageShowTechSummary = "true";
-		}
-	}
-
-	// homepage banner
-	if (!req.session.hideHomepageBanner) {
-		var cookieValue = req.cookies['user-setting-hideHomepageBanner'];
-
-		if (cookieValue) {
-			req.session.hideHomepageBanner = cookieValue;
-
-		} else {
-			req.session.hideHomepageBanner = "false";
-		}
-	}
-
-	res.locals.currencyFormatType = req.session.currencyFormatType;
-	global.currencyFormatType = req.session.currencyFormatType;
+	res.locals.displayCurrency = userSettings.displayCurrency;
+	res.locals.localCurrency = userSettings.localCurrency;
 
 
 	if (!["/", "/connect"].includes(req.originalUrl)) {
@@ -727,7 +706,7 @@ expressApp.use(function(req, res, next) {
 
 // development error handler
 // will print stacktrace
-if (expressApp.get('env') === 'development') {
+if (expressApp.get("env") === "development" || expressApp.get("env") === "local") {
 	expressApp.use(function(err, req, res, next) {
 		if (err) {
 			utils.logError("3289023yege", err);

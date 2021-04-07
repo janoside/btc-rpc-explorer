@@ -1,0 +1,24 @@
+extends layout
+
+block headContent
+	title User Settings
+
+block content
+	+pageTitle("User Settings")
+
+	+contentSection("Display Options")
+		.row
+			.col.text-start
+				h6 Hide info notes
+				span.ps-3 Enabling this option hides all informational notes across the site.
+			.col.text-end.me-3
+				.d-inline-block.text-center
+					if (userSettings.hideInfoNotes && userSettings.hideInfoNotes == "true")
+						div Yes
+						a(href=`./changeSetting?name=hideInfoNotes&value=false`)
+							i.fas.fa-toggle-on.fa-2x
+
+					else
+						div No
+						a(href=`./changeSetting?name=hideInfoNotes&value=true`)
+							i.fas.fa-toggle-off.fa-2x

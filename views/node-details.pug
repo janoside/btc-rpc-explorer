@@ -1,0 +1,240 @@
+extends layout
+
+block headContent
+	title Node Details
+	
+block content
+	+pageTitle("Node Details")
+
+	if (getblockchaininfo)
+		if (false)
+			p Data from RPC commands 
+				a(href="./rpc-browser?method=getblockchaininfo") getblockchaininfo
+				span , 
+				a(href="./rpc-browser?method=getnetworkinfo") getnetworkinfo
+				span , and 
+				a(href="./rpc-browser?method=getnettotals") getnettotals
+
+		if (false)
+			pre
+				code.json #{JSON.stringify(getblockchaininfo, null, 4)}
+
+
+		+pageTabs(["Details", "JSON"])
+
+
+		div.tab-content
+			+pageTab("Details", true)
+
+				if (getblockchaininfo.warnings && getblockchaininfo.warnings.trim().length > 0)
+					+contentSection("Active Warnings")
+						if (getblockchaininfo.warnings && getblockchaininfo.warnings.trim().length > 0)
+							span.text-danger #{getblockchaininfo.warnings}
+						else
+							span.text-success None
+
+				+contentSection("Node Summary")
+					+summaryRow(4)
+						+summaryItem("Version")
+							| #{getnetworkinfo.version} (#{getnetworkinfo.subversion})
+
+						+summaryItem("Protocol Version")
+							| #{getnetworkinfo.protocolversion}
+
+						+summaryItem("Status")
+							if (getblockchaininfo.initialblockdownload || getblockchaininfo.headers > getblockchaininfo.blocks)
+								span Initial block download progress #{(100 * getblockchaininfo.verificationprogress).toLocaleString()}%
+							else
+								span.text-success Synchronized
+
+						+summaryItem("Uptime")
+							- var startTimeAgo = moment.duration(uptimeSeconds * 1000);
+							span #{startTimeAgo.format()}
+
+				+contentSection("Blockchain")
+					+summaryRow(4 + (getblockchaininfo.size_on_disk ? 1 : 0) + (getblockchaininfo.pruned ? 1 : 0))
+						+summaryItem("Chain")
+							if (getblockchaininfo.chain == "main")
+								span.text-success #{getblockchaininfo.chain}
+							else
+								span.text-warning #{getblockchaininfo.chain}
+
+						+summaryItem("Block Count")
+							| #{getblockchaininfo.blocks.toLocaleString()}
+							if (getblockchaininfo.headers != getblockchaininfo.blocks)
+								br
+								small.text-muted (headers: #{getblockchaininfo.headers.toLocaleString()})
+
+						+summaryItem("Difficulty")
+							- var difficultyData = utils.formatLargeNumber(getblockchaininfo.difficulty, 3);
+							span.border-dotted(title=parseFloat(getblockchaininfo.difficulty).toLocaleString(), data-bs-toggle="tooltip")
+								span #{difficultyData[0]}
+								span  x 10
+								sup #{difficultyData[1].exponent}
+
+						if (getblockchaininfo.size_on_disk)
+							+summaryItem("Data Size")
+								- var sizeData = utils.formatLargeNumber(getblockchaininfo.size_on_disk, 1);
+								| #{sizeData[0]} #{sizeData[1].abbreviation}B
+
+						if (getblockchaininfo.pruned)
+							+summaryItem("Pruned?", "Whether your node prunes the blockchain. With pruning active, your node will delete some data that is non-essential for future verification needs, in order to reduce disk usage.")
+								span.text-warning Yes
+								small.ms-2.text-muted
+									| (
+									span.border-dotted(title="This is the latest block for which your node has all block data; blocks older than this one have had some or all non-essential details deleted.", data-bs-toggle="tooltip")
+										| #{getblockchaininfo.pruneheight.toLocaleString()}+
+									| )
+								
+								if (false)
+									br
+
+									span.border-dotted(title="This is the approximate amount of non-essential blockchain data that your node will store.", data-bs-toggle="tooltip") Prune target size
+
+									span :&nbsp;
+										- var pruneTargetSize = utils.formatLargeNumber(getblockchaininfo.prune_target_size, 1);
+								
+										span #{pruneTargetSize[0]} #{pruneTargetSize[1].abbreviation}B
+
+						+summaryItem("Data Indexes")
+							ul.list-unstyled.mb-0
+								li
+									span.me-2 txindex
+									if (getindexinfo.txindex)
+										i.fas.fa-check.text-success
+									else
+										span.border-dotted(title="Your node's lack of a 'transaction index' means this explorer will be unable to show all blockchain data. See the project README for more details.", data-bs-toggle="tooltip")
+											i.fas.fa-times.text-danger
+
+								li
+									span.me-2 blockfilterindex
+									if (getindexinfo["basic block filter index"])
+										i.fas.fa-check.text-success
+									else
+										i.fas.fa-times.text-danger
+
+				if (getblockchaininfo.softforks)
+					- var forkUrls = {"bip34":"https://github.com/bitcoin/bips/blob/master/bip-0034.mediawiki", "bip65":"https://github.com/bitcoin/bips/blob/master/bip-0065.mediawiki", "bip66":"https://github.com/bitcoin/bips/blob/master/bip-0066.mediawiki", "csv":"https://github.com/bitcoin/bips/blob/master/bip-0112.mediawiki", "segwit":"https://github.com/bitcoin/bips/blob/master/bip-0141.mediawiki", "taproot":"https://github.com/bitcoin/bips/blob/master/bip-0341.mediawiki"};
+
+					+contentSection("Soft Forks")
+						+summaryRow(utils.objectProperties(getblockchaininfo.softforks).length)
+							each item, itemName in getblockchaininfo.softforks
+								+summaryItem(itemName)
+									if (item.active)
+										span.me-2
+											span.text-success active
+											small.text-muted.ms-2 (
+												a.border-dotted(href=`./block-height/${item.height}`, title=`${itemName} has been active since block ${item.height}`, data-bs-toggle="tooltip") #{item.height.toLocaleString()}
+												| +)
+
+									else if (item.type == "bip9")
+										span.me-2.ms-2 #{item.type} - #{JSON.stringify(item.bip9)}
+
+									
+									if (forkUrls[itemName])
+										small
+											a(href=forkUrls[itemName], title=`More info about ${itemName}`, data-bs-toggle="tooltip", target="_blank")
+												i.fas.fa-external-link-alt.small
+
+
+				+contentSection("Network")
+					+summaryRow(3 + (getnetworkinfo.networks ? 1 : 0))
+						+summaryItem("Host")
+							| #{global.rpcClient.host}
+							span.text-muted :#{global.rpcClient.port}
+
+						+summaryItem("Peers")
+							| #{getnetworkinfo.connections.toLocaleString()}
+
+							if (getnetworkinfo.connections_in)
+								br
+								span.text-muted (#{getnetworkinfo.connections_in.toLocaleString()} in; #{getnetworkinfo.connections_out.toLocaleString()} out)
+
+						+summaryItem("Traffic")
+							- var downData = utils.formatLargeNumber(getnettotals.totalbytesrecv, 1);
+							- var downRateData = utils.formatLargeNumber(getnettotals.totalbytesrecv / uptimeSeconds, 1);
+							- var upData = utils.formatLargeNumber(getnettotals.totalbytessent, 1);
+							- var upRateData = utils.formatLargeNumber(getnettotals.totalbytessent / uptimeSeconds, 1);
+
+							i.fas.fa-arrow-down.me-2
+							span.me-2 #{downData[0]} #{downData[1].abbreviation}B
+							small.text-muted (#{downRateData[0]} #{downRateData[1].abbreviation}B/s)
+							br
+							i.fas.fa-arrow-up.me-2
+							span.me-2 #{upData[0]} #{upData[1].abbreviation}B
+							small.text-muted (#{upRateData[0]} #{upRateData[1].abbreviation}B/s)
+
+						if (getnetworkinfo.networks)
+							+summaryItem("Interfaces")
+								each item, index in getnetworkinfo.networks
+									div
+										div.d-inline-block.text-end(style="width: 75px;")
+											span.me-2 #{item.name}
+
+										if (item.proxy)
+											small.text-muted.me-2 (#{item.proxy})
+											
+										if (item.reachable)
+											span.border-dotted(title="Reachable", data-bs-toggle="tooltip")
+												i.fas.fa-check.text-success
+
+										else
+											span.border-dotted(title="Unreachable", data-bs-toggle="tooltip")
+												i.fas.fa-times.text-danger
+
+
+					if (getnetworkinfo.localaddresses)
+						hr
+
+						.ms-3
+							+summaryTitle("Addresses")
+							.lead
+								ul
+									each item, index in getnetworkinfo.localaddresses
+										li
+											span.me-2 #{item.address}:#{item.port}
+											small.text-muted (score: #{item.score.toLocaleString()})
+
+									if (getnetworkinfo.localaddresses.length == 0)
+										li None
+								
+							
+							
+
+			+pageTab("JSON")
+
+				ul.nav.nav-pills.mb-3
+					li.nav-item
+						a.nav-link.active(data-bs-toggle="tab", href="#tab-getblockchaininfo", role="tab") getblockchaininfo
+					li.nav-item
+						a.nav-link(data-bs-toggle="tab", href="#tab-getnettotals", role="tab") getnettotals
+					li.nav-item
+						a.nav-link(data-bs-toggle="tab", href="#tab-getnetworkinfo", role="tab") getnetworkinfo
+					li.nav-item
+						a.nav-link(data-bs-toggle="tab", href="#tab-getindexinfo", role="tab") getindexinfo
+				
+				div.tab-content
+					div.tab-pane.active(id="tab-getblockchaininfo", role="tabpanel")
+						+contentSection("getblockchaininfo")
+							pre
+								code.json(data-lang="json") #{JSON.stringify(getblockchaininfo, null, 4)}
+									
+
+					div.tab-pane(id="tab-getnettotals", role="tabpanel")
+						+contentSection("getnettotals")
+							pre
+								code.json(data-lang="json") #{JSON.stringify(getnettotals, null, 4)}
+									
+
+					div.tab-pane(id="tab-getnetworkinfo", role="tabpanel")
+						+contentSection("getnetworkinfo")
+							pre
+								code.json(data-lang="json") #{JSON.stringify(getnetworkinfo, null, 4)}
+									
+
+					div.tab-pane(id="tab-getindexinfo", role="tabpanel")
+						+contentSection("getindexinfo")
+							pre
+								code.json(data-lang="json") #{JSON.stringify(global.getindexinfo, null, 4)}
+									
+										

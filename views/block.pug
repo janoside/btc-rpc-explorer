@@ -8,10 +8,281 @@ block headContent
 
 block content
 	if (result.getblock)
-		h1.h3 Block 
-			small.text-monospace(style="width: 100%;") ##{result.getblock.height.toLocaleString()}
-			br
-			small.text-monospace.word-wrap(style="width: 100%;") #{result.getblock.hash}
+
+		.mb-3
+			.clearfix
+				.float-start
+					if (result.getblock.previousblockhash)
+						a.btn.btn-sm.btn-primary.ms-2(href=`./block/${result.getblock.previousblockhash}`, title=`Block ${(result.getblock.height - 1).toLocaleString()}`, data-bs-toggle="tooltip") &laquo; Prev Block
+
+					else if (result.getblock.hash == genesisBlockHash)
+						span.btn.btn-sm.btn-success.ms-2 Genesis Block!
+
+					if (result.getblock.nextblockhash)
+						a.btn.btn-sm.btn-primary.ms-2(href=`./block/${result.getblock.nextblockhash}`, title=`Block ${(result.getblock.height + 1).toLocaleString()}`, data-bs-toggle="tooltip") Next Block
+							span.ms-1 &raquo;
+					else
+						span.btn.btn-sm.btn-success.ms-2 Latest Block!
+
+				.float-end
+					if (result.getblock.tx != null && result.getblock.tx.length > 0)
+						a.btn.btn-primary.btn-sm.me-2(href=`./block-analysis/${result.getblock.hash}`, title="See a summary analysis of all transactions in this block.", data-bs-toggle="tooltip")
+							i.fas.fa-angle-double-down.me-2
+							| Block Analysis
+
 		hr
 
-		include includes/block-content.pug
+		+pageTitle(`Block #${result.getblock.height.toLocaleString()}`, result.getblock.hash, true)
+		
+		
+
+		+pageTabs(["Details", "JSON"])
+
+		- var txCount = result.getblock.nTx;
+
+
+		.tab-content
+			+pageTab("Details", true)
+
+
+				if (global.specialBlocks && global.specialBlocks[result.getblock.hash])
+					- var sbInfo = global.specialBlocks[result.getblock.hash];
+
+					+funAlert(sbInfo.alertBodyHtml, sbInfo.summary, sbInfo.referenceUrl)
+				
+
+				.clearfix
+					.float-end
+						if (`${userSettings["blockPageShowFeeSummary"]}` == "false")
+							a.btn.btn-primary.btn-sm.me-2.mb-2(href=`./changeSetting?name=blockPageShowFeeSummary&value=true`, title="Display fee details for this block.", data-bs-toggle="tooltip")
+								i.far.fa-plus-square.me-2
+								| Fee Details
+
+						if (`${userSettings["blockPageShowTechSummary"]}` == "false")
+							a.btn.btn-primary.btn-sm.me-2.mb-2(href=`./changeSetting?name=blockPageShowTechSummary&value=true`, title="Display technical details for this block.", data-bs-toggle="tooltip")
+								i.far.fa-plus-square.me-2
+								| Technical Details
+
+				
+
+				+contentSection("Summary")
+					+summaryRow(2 + (result.getblock.miner ? 1 : 0) + (result.blockstats ? 1 : 0))
+						+summaryItem("Date")
+							+timestamp(result.getblock.time, true)
+							
+
+						+summaryItem("Confirmations")
+							+confirmations(result.getblock.confirmations, false)
+							
+
+						if (result.getblock.miner)
+							+summaryItem("Miner")
+								if (result.getblock.miner.identifiedBy)
+									span.badge.bg-primary(data-bs-toggle="tooltip", title=`Identified by: ${result.getblock.miner.identifiedBy}`) #{result.getblock.miner.name}
+
+								else
+									small.badge.bg-primary #{result.getblock.miner.name}
+
+						if (result.blockstats)
+							+summaryItem("Total Output", "Total value of all transaction outputs")
+								if (result.blockstats.total_out)
+									- var currencyValue = new Decimal(result.blockstats.total_out).plus(new Decimal(result.blockstats.totalfee)).plus(new Decimal(result.blockstats.subsidy));
+									- currencyValue = currencyValue.dividedBy(coinConfig.baseCurrencyUnit.multiplier);
+									+valueDisplay(currencyValue)
+
+								else
+									span 0
+
+				if (result.blockstats && result.blockstats.ins && result.blockstats.ins > 0)
+					+contentSection("Fee Details", true, "blockPageShowFeeSummary", true)
+						+summaryRow(3 + (result.blockstats.feerate_percentiles ? 1 : 0))
+							+summaryItem("Total Fees")
+								if (result.blockstats.totalfee)
+									- var currencyValue = new Decimal(result.blockstats.totalfee).dividedBy(coinConfig.baseCurrencyUnit.multiplier);
+									+valueDisplay(currencyValue)
+
+								else
+									- var currencyValue = new Decimal(result.getblock.totalFees);
+									+valueDisplay(currencyValue)
+
+							if (result.blockstats.feerate_percentiles)
+								+summaryItem("Rate Percentiles", null, "sat/vB")
+									- var percentiles = [[10, 0], [50, 2], [90, 4]];
+
+									if (true)
+										.d-flex.justify-content-start.justify-content-md-center
+											each item, itemIndex in percentiles
+												.text-start.text-md-center(style="width: 75px;")
+													span.text-muted #{item[0]}
+														sup th
+
+													br
+													| #{result.blockstats.feerate_percentiles[item[1]]}
+
+
+							+summaryItem("Min / Max Rates", null, "sat/vB")
+								if (result.blockstats.minfeerate || result.blockstats.minfeerate == 0)
+									span #{result.blockstats.minfeerate.toLocaleString()}
+									
+								else
+									span ?
+
+								span.mx-2 -
+
+								if (result.blockstats.maxfeerate)
+									span #{result.blockstats.maxfeerate.toLocaleString()}
+									
+								else
+									span ?
+
+							+summaryItem("Min / Max Values")
+								if (result.blockstats.minfee)
+									- var currencyValue = new Decimal(result.blockstats.minfee).dividedBy(coinConfig.baseCurrencyUnit.multiplier);
+									+valueDisplay(currencyValue)
+
+								else
+									span 0
+
+								br
+
+								if (result.blockstats.maxfee)
+									- var currencyValue = new Decimal(result.blockstats.maxfee).dividedBy(coinConfig.baseCurrencyUnit.multiplier);
+									+valueDisplay(currencyValue)
+
+								else
+									span 0
+
+				+contentSection("Technical Details", true, "blockPageShowTechSummary")
+					+summaryRow(6 + (result.getblock.weight ? 1 : 0) + (result.getblock.size ? 1 : 0) + (result.blockstats ? 1 : 0) + (result.blockstats && result.blockstats.utxo_increase ? 1 : 0) + (result.blockstats && result.blockstats.maxtxsize ? 1 : 0))
+						if (result.getblock.weight)
+							+summaryItem("Weight", null, "wu", "Weight Units")
+								span #{result.getblock.weight.toLocaleString()}
+
+								- var full = new Decimal(result.getblock.weight).dividedBy(coinConfig.maxBlockWeight).times(100);
+								- var full2 = full.toDP(0);
+
+								small.text-muted.ms-1
+									| (
+									span.border-dotted(title=`${full.toDP(2)}% full`, data-bs-toggle="tooltip")
+										if (full >= 99 || full2 == 99)
+											span.text-success 99+%
+
+										else
+											span.text-primary #{full2}%
+									| )
+
+						if (result.getblock.size)
+							+summaryItem("Size", null, "B", "Bytes")
+								| #{result.getblock.size.toLocaleString()}
+
+						if (result.blockstats)
+							+summaryItem("Inputs / Outputs", "Total inputs and outputs across all transactions in the block")
+								if (result.blockstats.ins)
+									| #{result.blockstats.ins.toLocaleString()}
+								else
+									| 0
+
+								span.text-muted.mx-1 /
+
+								if (result.blockstats.outs)
+									| #{result.blockstats.outs.toLocaleString()}
+								else
+									| 1
+
+						+summaryItem("Difficulty")
+							- var difficultyData = utils.formatLargeNumber(result.getblock.difficulty, 3);
+							
+							span.border-dotted(title=parseFloat(result.getblock.difficulty).toLocaleString(), data-bs-toggle="tooltip")
+								span #{difficultyData[0]}
+								span  x 10
+								sup #{difficultyData[1].exponent}
+
+						if (result.blockstats && result.blockstats.utxo_increase)
+							+summaryItem("UTXO Δ")
+								- var sizePlusMinus = (result.blockstats.utxo_size_inc > 0) ? "+" : "-";
+								- var sizeDeltaData = utils.formatLargeNumber(Math.abs(result.blockstats.utxo_size_inc), 1);
+								- var plusMinus = (result.blockstats.utxo_increase > 0) ? "+" : "";
+
+								span #{plusMinus}#{result.blockstats.utxo_increase.toLocaleString()}
+
+						if (result.blockstats && result.blockstats.maxtxsize)
+							+summaryItem("Min / Max Tx Size", null, "B", "Bytes")
+								if (result.blockstats.mintxsize)
+									span #{result.blockstats.mintxsize.toLocaleString()}
+								else
+									span 0
+
+								span.text-muted.mx-1 -
+
+								if (result.blockstats.maxtxsize)
+									span #{result.blockstats.maxtxsize.toLocaleString()} 
+								else
+									span 0
+
+						+summaryItem("Version")
+							| 0x#{result.getblock.versionHex}
+
+						+summaryItem("Nonce")
+							| #{result.getblock.nonce}
+
+						+summaryItem("Bits")
+							| #{result.getblock.bits}
+
+						+summaryItem("Merkle Root")
+							| #{utils.ellipsizeMiddle(result.getblock.merkleroot, 12)}
+							+copyTextButton(result.getblock.merkleroot)
+
+						+summaryItem("Chain Work", null, "hashes")
+							- var chainworkData = utils.formatLargeNumber(parseInt("0x" + result.getblock.chainwork), 2);
+
+							span #{chainworkData[0]}
+							span  x 10
+							sup #{chainworkData[1].exponent}
+											
+
+				if (!result.getblock.tx || result.getblock.tx.length == 0)
+					+contentSection(`${txCount.toLocaleString()} Transaction${txCount>1?'s':''}`)
+						span.me-2(title="This data is unavailable due to blockchain pruning", data-bs-toggle="tooltip")
+							i.fas.fa-backspace.text-danger
+						
+						| Transaction details unavailable due to blockchain pruning
+						
+				else
+					+contentSection(`${txCount.toLocaleString()} Transaction${txCount == 1 ? "" : "s"}`, false, "blockPageShowTxDetails", true, false)
+						+txList(result.transactions, txCount, limit, offset, result.txInputsByTransaction, {sharedBlockHeight: result.getblock.height})
+						
+									
+							
+			+pageTab("JSON")
+				- var blockDetails = JSON.parse(JSON.stringify(result.getblock));
+				- blockDetails.tx = "See 'Transaction IDs'";
+
+				- var pillTabs = ["Block Summary", "Transaction IDs"];
+				if (result.blockstats)
+					- pillTabs.push("Block Stats");
+
+				+pillTabs(pillTabs)
+
+
+				div.tab-content
+					+pageTab("Block Summary", true)
+						+contentSection("Block Summary")
+							div.highlight
+								pre
+									code.json #{JSON.stringify(blockDetails, null, 4)}
+
+								
+
+					+pageTab("Transaction IDs")
+						+contentSection("Transaction IDs")
+							div.highlight
+								pre
+									code.json #{JSON.stringify(result.getblock.tx, null, 4)}
+
+					if (result.blockstats)
+						+pageTab("Block Stats")
+							+contentSection("Block Stats")
+								div.highlight
+									pre
+										code.json #{JSON.stringify(result.blockstats, null, 4)}
+

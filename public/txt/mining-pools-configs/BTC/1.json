@@ -26,11 +26,11 @@
         },
         "/Huobi/": {
             "name": "Huobi.pool",
-            "link": "https://www.poolhb.com/"
+            "link": "https://www.hpt.com/"
         },
         "/HuoBi/": {
             "name": "Huobi.pool",
-            "link": "https://www.poolhb.com/"
+            "link": "https://www.hpt.com/"
         },
         "/E2M & BTC.TOP/": {
             "name": "WAYI.CN",
@@ -531,7 +531,11 @@
         "SBICrypto": {
             "name": "SBI Crypto",
             "link": "https://www.sbicrypto.com"
-       	}
+       	},
+        "/ArkPool/": {
+            "name": "ArkPool",
+            "link": "https://www.arkpool.com/"
+        }
     },
     "payout_addresses" : {
         "3Bmb9Jig8A5kHdDSxvDZ6eryj3AXd3swuJ": {
@@ -611,8 +615,20 @@
             "link" : "https://www.f2pool.com/"
         },
         "3HuobiNg2wHjdPU2mQczL9on8WF7hZmaGd" : {
-            "name" : "Huobi",
-            "link" : "http://www.huobi.com/"
+            "name" : "Huobi.pool",
+            "link" : "https://www.hpt.com/"
+        },
+        "18Zcyxqna6h7Z7bRjhKvGpr8HSfieQWXqj" : {
+            "name" : "Huobi.pool",
+            "link" : "https://www.hpt.com/"
+        },
+        "1EepjXgvWUoRyNvuLSAxjiqZ1QqKGDANLW" : {
+            "name" : "Huobi.pool",
+            "link" : "https://www.hpt.com/"
+        },
+        "1MvYASoHjqynMaMnP7SBmenyEWiLsTqoU6" : {
+            "name" : "Huobi.pool",
+            "link" : "https://www.hpt.com/"
         },
         "1ALA5v7h49QT7WYLcRsxcXqXUqEqaWmkvw" : {
             "name" : "CloudHashing",
@@ -918,10 +934,6 @@
             "name" : "Tangpool",
             "link" : "http://www.tangpool.com/"
         },
-        "1MvYASoHjqynMaMnP7SBmenyEWiLsTqoU6" : {
-            "name": "Huobi.pool",
-            "link": "https://www.poolhb.com/"
-        },
         "1M1Xw2rczxkF3p3wiNHaTmxvbpZZ7M6vaa" : {
             "name": "1M1X",
             "link": ""
@@ -1117,6 +1129,10 @@
         "1FFxkVijzvUPUeHgkFjBk2Qw8j3wQY2cDw" : {
             "name" : "Foundry USA",
             "link" : "https://foundrydigital.com/"
+        },
+        "1QEiAhdHdMhBgVbDM7zUXWGkNhgEEJ6uLd": {
+            "name": "ArkPool",
+            "link": "https://www.arkpool.com/"
         }
     }
 }

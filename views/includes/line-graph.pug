@@ -1,14 +1,6 @@
-script(src="./js/chart.bundle.min.js", integrity="sha384-qgOtiGNaHh9fVWUnRjyHlV39rfbDcvPPkEzL1RHvsHKbuqUqM6uybNuVnghY2z4/")
++graphPageScriptSetup
 
 canvas.mb-3(id=graphData.id)
-
-if (session.uiTheme && session.uiTheme == "dark")
-	script.
-		Chart.defaults.global.defaultFontColor='white';
-else
-	script.
-		Chart.defaults.global.defaultFontColor='black';
-
 
 script.
 	Chart.defaults.global.elements.point.radius = 1;
@@ -43,6 +35,9 @@ script.
 						display: true,
 						labelString: '#{graphData.xaxisTitle}'
 					},
+					gridLines: {
+						color: gridLineColor
+					},
 					ticks: {
 						stepSize: #{graphData.xaxisStep},
 						/*callback: function(value, index, values) {
@@ -62,6 +57,9 @@ script.
 					scaleLabel: {
 						display: true,
 						labelString: '#{graphData.yaxisTitle}'
+					},
+					gridLines: {
+						color: gridLineColor
 					},
 					ticks: {
 						callback: function(value, index, values) {

@@ -4,93 +4,82 @@ block headContent
 	title Stats
 
 block content
-	h1.h3 Stats
-	hr
+	+pageTitle("Admin Stats")
 
-	div.card.shadow-sm.mb-3
-		div.card-body
-			h3.h6 Performance Stats
-			hr
+	+contentSection("Performance Stats")
+		.table-responsive
+			table.table.table-borderless.table-striped
+				thead
+					tr
+						th Name
+						th.text-end Min
+						th.text-end Avg
+						th.text-end Max
+						th.text-end Sum
+						th.text-end Count
+						th.text-end First
+						th.text-end Latest
 
-			div.table-responsive
-				table.table.table-striped.table-hover
-					thead
-						tr
-							th Name
-							th.text-right Min
-							th.text-right Avg
-							th.text-right Max
-							th.text-right Sum
-							th.text-right Count
-							th.text-right First
-							th.text-right Latest
+				tbody
+					each item, itemIndex in performanceStats
+						tr.font-monospace
+							td #{item[0]}
+							td.text-end #{Math.round(item[1].min).toLocaleString()}
+							td.text-end #{Math.round(item[1].avg).toLocaleString()}
+							td.text-end #{Math.round(item[1].max).toLocaleString()}
+							td.text-end #{Math.round(item[1].sum).toLocaleString()}
+							td.text-end #{Math.round(item[1].count).toLocaleString()}
+							td.text-end
+								- var dt = moment.duration(new Date().getTime() - item[1].firstDate.getTime());
+								span #{dt.format()}
+							td.text-end
+								- var dt = moment.duration(new Date().getTime() - item[1].lastDate.getTime());
+								span #{dt.format()}
 
-					tbody
-						each item, itemIndex in performanceStats
-							tr.text-monospace
-								td #{item[0]}
-								td.text-right #{Math.round(item[1].min).toLocaleString()}
-								td.text-right #{Math.round(item[1].avg).toLocaleString()}
-								td.text-right #{Math.round(item[1].max).toLocaleString()}
-								td.text-right #{Math.round(item[1].sum).toLocaleString()}
-								td.text-right #{Math.round(item[1].count).toLocaleString()}
-								td.text-right
-									- var dt = moment.duration(new Date().getTime() - item[1].firstDate.getTime());
-									span #{dt.format()}
-								td.text-right
-									- var dt = moment.duration(new Date().getTime() - item[1].lastDate.getTime());
-									span #{dt.format()}
 
-	div.card.shadow-sm.mb-3
-		div.card-body
-			h3.h6 Event Stats
-			hr
+	+contentSection("Event Stats")
+		.table-responsive
+			table.table.table-borderless.table-striped
+				thead
+					tr
+						th Name
+						th.text-end Count
 
-			div.table-responsive
-				table.table.table-striped.table-hover
-					thead
-						tr
-							th Name
-							th.text-right Count
+				tbody
+					each item, itemIndex in eventStats
+						tr.font-monospace
+							td #{item[0]}
+							td.text-end #{item[1].toLocaleString()}
 
-					tbody
-						each item, itemIndex in eventStats
-							tr.text-monospace
-								td #{item[0]}
-								td.text-right #{item[1].toLocaleString()}
 
-	div.card.shadow-sm.mb-3
-		div.card-body
-			h3.h6 Value Stats
-			hr
+	+contentSection("Value Stats")
+		.table-responsive
+			table.table.table-borderless.table-striped
+				thead
+					tr
+						th Name
+						th.text-end Min
+						th.text-end Avg
+						th.text-end Max
+						th.text-end Sum
+						th.text-end Count
+						th.text-end First
+						th.text-end Latest
 
-			div.table-responsive
-				table.table.table-striped.table-hover
-					thead
-						tr
-							th Name
-							th.text-right Min
-							th.text-right Avg
-							th.text-right Max
-							th.text-right Sum
-							th.text-right Count
-							th.text-right First
-							th.text-right Latest
-
-					tbody
-						each item, itemIndex in valueStats
-							tr.text-monospace
-								td #{item[0]}
-								td.text-right #{Math.round(item[1].min).toLocaleString()}
-								td.text-right #{Math.round(item[1].avg).toLocaleString()}
-								td.text-right #{Math.round(item[1].max).toLocaleString()}
-								td.text-right #{Math.round(item[1].sum).toLocaleString()}
-								td.text-right #{Math.round(item[1].count).toLocaleString()}
-								td.text-right
-									- var dt = moment.duration(new Date().getTime() - item[1].firstDate.getTime());
-									span #{dt.format()}
-								td.text-right
-									- var dt = moment.duration(new Date().getTime() - item[1].lastDate.getTime());
-									span #{dt.format()}
+				tbody
+					each item, itemIndex in valueStats
+						tr.font-monospace
+							td #{item[0]}
+							td.text-end #{Math.round(item[1].min).toLocaleString()}
+							td.text-end #{Math.round(item[1].avg).toLocaleString()}
+							td.text-end #{Math.round(item[1].max).toLocaleString()}
+							td.text-end #{Math.round(item[1].sum).toLocaleString()}
+							td.text-end #{Math.round(item[1].count).toLocaleString()}
+							td.text-end
+								- var dt = moment.duration(new Date().getTime() - item[1].firstDate.getTime());
+								span #{dt.format()}
+							td.text-end
+								- var dt = moment.duration(new Date().getTime() - item[1].lastDate.getTime());
+								span #{dt.format()}
 
 

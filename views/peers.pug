@@ -3,7 +3,7 @@ extends layout
 block headContent
 	title Peers
 
-	link(rel="stylesheet", href="./css/dataTables.bootstrap4.min.css", integrity="sha384-EkHEUZ6lErauT712zSr0DZ2uuCmi3DoQj6ecNdHQXpMpFNGAQ48WjfXCE5n20W+R")
+	link(rel="stylesheet", href="./style/dataTables.bootstrap4.min.css", integrity="sha384-EkHEUZ6lErauT712zSr0DZ2uuCmi3DoQj6ecNdHQXpMpFNGAQ48WjfXCE5n20W+R")
 
 	link(rel="stylesheet", href="./leaflet/leaflet.css", integrity="sha384-6wKUKNzA6h/S6gZ1lWQppeGaVXvK1AUAsEznGBghzlEu1fNcxJGYVRiroSHr+OwU")
 
@@ -17,194 +17,155 @@ block headContent
 		#map { height: 700px; }
 
 block content
-	h1.h3 #{peerSummary.getpeerinfo.length} 
-		if (peerSummary.getpeerinfo.length == 1)
-			span Peer
-		else
-			span Peers
-	hr
+	+pageTitle(`${peerSummary.getpeerinfo.length} Peer${peerSummary.getpeerinfo.length == 1 ? "" : "s"}`)
+	
+	+pageTabs(["Details", "JSON"])
 
-	ul.nav.nav-tabs.mb-3
-		li.nav-item
-			a.nav-link.active(data-toggle="tab", href="#tab-summary", role="tab") Summary
-		li.nav-item
-			a.nav-link(data-toggle="tab", href="#tab-json", role="tab") JSON
-
-	div.tab-content
-		div.tab-pane.active(id="tab-summary", role="tabpanel")
+	.tab-content
+		+pageTab("Details", true)
 			
 			if (peerIpSummary && peerIpSummary.ips)
 				div.mb-3(id="map")
 
 			div.row
 				div.col-md-6
-					div.card.shadow-sm.mb-3
-						div.card-body
-							h3.h6.mb-0 Top Versions
-							hr
+					+contentSection("Top Versions")
+						table.table.table-borderless.table-striped.table-responsive-sm
+							thead
+								tr
+									th
+									th Version
+									th Count
+							tbody
+								each item, index in peerSummary.versionSummary
+									tr(class=(index >= 5 ? "versions-hidden-rows" : false))
+										td.small.text-muted #{index + 1}
 
-							table.table.table-striped.table-responsive-sm
-								thead
-									tr
-										th
-										th.data-header Version
-										th.data-header Count
-								tbody
-									each item, index in peerSummary.versionSummary
-										tr(class=(index >= 5 ? "versions-hidden-rows" : false))
-											td.data-cell.font-weight-bold #{index + 1}
-
-											td.data-cell.text-monospace #{item[0]}
-											td.data-cell.text-monospace #{item[1].toLocaleString()}
+										td #{item[0]}
+										td #{item[1].toLocaleString()}
 
 				div.col-md-6
-					div.card.shadow-sm.mb-3
-						div.card-body
-							h3.h6.mb-0 Top Service Flags
-							hr
+					+contentSection("Top Service Flags")
+						table.table.table-borderless.table-striped.table-responsive-sm
+							thead
+								tr
+									th
+									th Services
+									th Count
+							tbody
+								each item, index in peerSummary.servicesSummary
+									tr(class=(index >= 5 ? "services-hidden-rows" : false))
+										td.small.text-muted #{index + 1}
 
-							table.table.table-striped.table-responsive-sm
-								thead
-									tr
-										th
-										th.data-header Services
-										th.data-header Count
-								tbody
-									each item, index in peerSummary.servicesSummary
-										tr(class=(index >= 5 ? "services-hidden-rows" : false))
-											td.data-cell.font-weight-bold #{index + 1}
-
-											td.data-cell.text-monospace #{item[0]}
-											td.data-cell.text-monospace #{item[1].toLocaleString()}
+										td -#{item[0].replace(/^0+/, '')}
+										td #{item[1].toLocaleString()}
 
 
 			div.row
 				if (peerSummary.networkTypeSummary)
 					div.col-md-6
-						div.card.shadow-sm.mb-3
-							div.card-body
-								h3.h6.mb-0 Network Types
-								hr
-
-								table.table.table-striped.table-responsive-sm
-									thead
+						+contentSection("Network Types")
+							table.table.table-borderless.table-striped.table-responsive-sm
+								thead
+									tr
+										th
+										th Network Type
+										th Count
+								tbody
+									each item, index in peerSummary.networkTypeSummary
 										tr
-											th
-											th.data-header Network Type
-											th.data-header Count
-									tbody
-										each item, index in peerSummary.networkTypeSummary
-											tr
-												td.data-cell.font-weight-bold #{index + 1}
+											td.small.text-muted #{index + 1}
 
-												td.data-cell.text-monospace #{item[0]}
-												td.data-cell.text-monospace #{item[1].toLocaleString()}
+											td #{item[0]}
+											td #{item[1].toLocaleString()}
 
 				if (peerSummary.connectionTypeSummary)
 					div.col-md-6
-						div.card.shadow-sm.mb-3
-							div.card-body
-								h3.h6.mb-0 Connection Types
-								hr
-
-								table.table.table-striped.table-responsive-sm
-									thead
+						+contentSection("Connection Types")
+							table.table.table-borderless.table-striped.table-responsive-sm
+								thead
+									tr
+										th
+										th Connection Type
+										th Count
+								tbody
+									each item, index in peerSummary.connectionTypeSummary
 										tr
-											th
-											th.data-header Connection Type
-											th.data-header Count
-									tbody
-										each item, index in peerSummary.connectionTypeSummary
-											tr
-												td.data-cell.font-weight-bold #{index + 1}
+											td.small.text-muted #{index + 1}
 
-												td.data-cell.text-monospace #{item[0]}
-												td.data-cell.text-monospace #{item[1].toLocaleString()}
+											td #{item[0]}
+											td #{item[1].toLocaleString()}
 							
 
-			div.card.shadow-sm.mb-3
-				div.card-body
-					h3.h6.mb-0 #{peerSummary.getpeerinfo.length} 
-						if (peerSummary.getpeerinfo.length == 1)
-							span Peer
-						else
-							span Peers
+			+contentSection(`${peerSummary.getpeerinfo.length.toLocaleString()} Peer${peerSummary.getpeerinfo.length == 1 ? "" : "s"}`)
+				table.table.table-borderless.table-striped.table-responsive-sm.data-table.mt-4
+					thead
+						tr
+							th
+							th Version
+							th Address
+							th Services
+							th Conn. Type
 
-					hr
+							if (peerIpSummary && peerIpSummary.ips)
+								th Location
 
-					table.table.table-striped.table-responsive-sm.data-table.mt-4
-						thead
+							th Last Send / Receive
+
+					tbody
+						each item, index in peerSummary.getpeerinfo
+							- var lastSendAgo = moment.duration(moment.utc(new Date()).diff(moment.utc(new Date(parseInt(item.lastsend) * 1000)))).format().replace("milliseconds", "ms");
+							- var lastRecvAgo = moment.duration(moment.utc(new Date()).diff(moment.utc(new Date(parseInt(item.lastrecv) * 1000)))).format().replace("milliseconds", "ms");
+
 							tr
-								th
-								th.data-header Version
-								th.data-header Address
-								th.data-header Services
+								td.small.text-muted #{index + 1}
 
-								if (peerIpSummary && peerIpSummary.ips)
-									th.data-header Location
+								td #{item.subver}
+								td #{item.addr}
+								td -#{item.services.replace(/^0+/, '')}
+								td #{item.connection_type}
 
-								th.data-header Last Send / Receive
+								if (peerIpSummary.ips)
+									td
+										- var ipAddr = item.addr.substring(0, item.addr.lastIndexOf(":"));
+										if (peerIpSummary.ips && peerIpSummary.ips.includes(ipAddr))
+											- var ipDetails = peerIpSummary.detailsByIp[ipAddr];
+											if (ipDetails)
+												if (ipDetails.city)
+													span #{ipDetails.city}, 
+												if (ipDetails.region_name)
+													span #{ipDetails.region_name}, 
+												if (ipDetails.country_name)
+													span #{ipDetails.country_name}
+										else
+											span ?
 
-						tbody
-							each item, index in peerSummary.getpeerinfo
-								- var lastSendAgo = moment.duration(moment.utc(new Date()).diff(moment.utc(new Date(parseInt(item.lastsend) * 1000)))).format().replace("milliseconds", "ms");
-								- var lastRecvAgo = moment.duration(moment.utc(new Date()).diff(moment.utc(new Date(parseInt(item.lastrecv) * 1000)))).format().replace("milliseconds", "ms");
+										- var ipAddr = null;
 
-								tr
-									th.data-cell #{index + 1}
-
-									td.data-cell.text-monospace #{item.subver}
-									td.data-cell.text-monospace #{item.addr}
-									td.data-cell.text-monospace #{item.services}
-
-									if (peerIpSummary.ips)
-										td.data-cell.text-monospace
-											- var ipAddr = item.addr.substring(0, item.addr.lastIndexOf(":"));
-											if (peerIpSummary.ips && peerIpSummary.ips.includes(ipAddr))
-												- var ipDetails = peerIpSummary.detailsByIp[ipAddr];
-												if (ipDetails)
-													if (ipDetails.city)
-														span #{ipDetails.city}, 
-													if (ipDetails.region_name)
-														span #{ipDetails.region_name}, 
-													if (ipDetails.country_name)
-														span #{ipDetails.country_name}
-											else
-												span ?
-
-											- var ipAddr = null;
-
-									td.data-cell.text-monospace #{lastSendAgo} / #{lastRecvAgo}
+								td #{lastSendAgo} / #{lastRecvAgo}
 			
 
 
-		div.tab-pane(id="tab-json", role="tabpanel")
+		+pageTab("JSON")
 			each item, index in peerSummary.getpeerinfo
 				div.border-bottom.p-1
-					a(href="javascript:void(0)" onclick=("javascript:var peer = document.getElementById('peerinfo_" + index + "'); peer.style.display = peer.style.display === 'none' ? '' : 'none';"))
-						i.fas.fa-plus-circle 
+					a.me-2(href="javascript:void(0)" onclick=`$("#peerinfo_${index}").toggle(); $(this).find(".toggle-buttons").toggle();`)
+						i.far.fa-plus-square.text-muted.toggle-buttons
+						i.far.fa-minus-square.text-muted.toggle-buttons(style="display: none;")
 
-					span.text-monospace  #{item.addr}
+					span.font-monospace #{item.addr}
 
-				div.p-3(style="display: none;", id=`peerinfo_${index}`)
-					div.card.shadow-sm.mb-3
-						div.card-body
-							h6.mb-0 Peer Details
-							hr
-					
-							div.highlight
-								pre
-									code.json.bg-light #{JSON.stringify(item, null, 4)}
+				.p-3(style="display: none;", id=`peerinfo_${index}`)
+					+contentSection("Peer Details")
+						pre
+							code.json #{JSON.stringify(item, null, 4)}
+								
 
 					if (peerIpSummary && peerIpSummary.detailsByIp && peerIpSummary.detailsByIp[item.addr.substring(0, item.addr.lastIndexOf(":"))])
-						div.card.shadow-sm.mb-3
-							div.card-body
-								h6.mb-0 IP Geo-Location Info
-								hr
-
-								div.highlight
-									pre
-										code.json.bg-light #{JSON.stringify(peerIpSummary.detailsByIp[item.addr.substring(0, item.addr.lastIndexOf(":"))], null, 4)}
+						+contentSection("Location Info")
+							pre
+								code.json #{JSON.stringify(peerIpSummary.detailsByIp[item.addr.substring(0, item.addr.lastIndexOf(":"))], null, 4)}
+									
 
 	
 block endOfBody
@@ -216,16 +177,17 @@ block endOfBody
 			$(".data-table").DataTable();
 		});
 
-	if (peerIpSummary && peerIpSummary.ips)
+	if (peerIpSummary && peerIpSummary.ips && (mapBoxComApiAccessKey != undefined))
 		script.
 			var mymap = L.map('map').setView([21.505, -0.09], 3);
 
-			L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw', {
+			L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=!{mapBoxComApiAccessKey}', {
 				maxZoom: 18,
-				attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, ' +
-					'<a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
+				attribution: '© <a href="https://www.mapbox.com/about/maps/">Mapbox</a> ' +
+					'© <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> ' +
+					'<strong><a href="https://www.mapbox.com/map-feedback/" target="_blank">Improve this map</a></strong> ' +
 					'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
-				id: 'mapbox.streets'
+				id: 'mapbox/streets-v11'
 			}).addTo(mymap);
 
 			/*L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {

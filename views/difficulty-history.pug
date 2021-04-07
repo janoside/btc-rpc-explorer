@@ -4,54 +4,108 @@ block headContent
 	title Difficulty History
 
 block content
-	h1.h3 Difficulty History
-	hr
+	+pageTitle("Difficulty History")
+	
 
-	div.card.shadow-sm.mb-3
-		div.card-body
-			h3.h6.mb-0 Explanation
-			hr
+	+dismissableInfoAlert("diffHistPageNoteDismissed", "About the Difficulty Adjustment...")
+		h6.mb-2 About the Difficulty Adjustment
 
-			ul.mb-0
-				li Mining difficulty adjusts automatically every #{coinConfig.difficultyAdjustmentBlockCount.toLocaleString()} blocks.
-				li The adjustment aims to maintain an average block-mining time of #{coinConfig.targetBlockTimeMinutes} minutes.
-				li A growth in the difficulty indicates that the average block-mining time during the previous adjustment epoch was less than #{coinConfig.targetBlockTimeMinutes} minutes (due to more miners joining the network and searching for blocks).
-				li A drop in difficulty indicates miners have left the network so finding each block is adjusted to be easier for the smaller number remaining.
-				li The numeric Difficulty is a multiple of the difficulty of finding the easiest block (Block #0) - e.g. blocks in BTC mainnet epoch 308 are over 16 trillion times harder to mine than those in epoch 0. 
+		ul.mb-0.ms-n3
+			li Mining difficulty adjusts automatically every #{coinConfig.difficultyAdjustmentBlockCount.toLocaleString()} blocks.
+			li The adjustment aims to maintain an average block-mining time of #{coinConfig.targetBlockTimeMinutes} minutes.
+			li An increase in the difficulty indicates that the average block-mining time during the previous adjustment epoch was less than #{coinConfig.targetBlockTimeMinutes} minutes (due to more miners joining the network and searching for blocks).
+			li A decrease in difficulty indicates miners have left the network so finding each block is adjusted to be easier for the smaller number remaining.
+			li The numeric Difficulty is a multiple of the difficulty of finding the easiest block (Block #0) - e.g. blocks in BTC mainnet epoch 308 are over 16 trillion times harder to mine than those in epoch 0.
+
+			
 
 	div#progress-wrapper.mb-huge
 		div.card.shadow-sm.mb-3
 			div.card-body
-				h4.h6 Loading data: 
+				span Loading data: 
 					span(id="progress-text")
 				div.progress.mt-2(id="progress-bar", style="height: 7px;")
 					div.progress-bar(id="data-progress", role="progressbar", aria-valuenow="0", aria-valuemin="0" ,aria-valuemax="100")
 
 
 	div#main-content(style="display: none;")
-		div.row
-			div.col
-				div.card.shadow-sm.mb-3
-					div.card-body
-						h3.h6.mb-0 Difficulty History
-						hr
+		+pageTabs(["Details", "Data"])
 
-						canvas(id="graph-diff-hist")
+		.tab-content
+			+pageTab("Details", true)
+				.row
+					.col
+						+contentSection("Difficulty History")
+							canvas(id="graph-diff-hist")
 
-		div.row
-			div.col
-				div.card.shadow-sm.mb-3
-					div.card-body
-						h3.h6.mb-0 Difficulty Change (clamped to ±100%)
-						hr
+								
 
-						canvas(id="graph-diff-change")
+				.row 
+					.col
+						.clearfix
+							.float-start
+								+sectionTitle("Difficulty Δ")
+							.float-start
+								small.text-muted.ms-2
+									| (clamped to ±100%)
+
+						+contentSection
+							canvas(id="graph-diff-change")
+
+
+			+pageTab("Data")
+				.row
+					.col
+						+contentSection("Difficulty")
+							.table-responsive
+								table.table.table-striped.table-borderless.mb-3
+									thead
+										tr
+											th Epoch
+											//th Date
+											//th.text-end Block Start
+											th.text-end Difficulty
+											
+									tbody(id="difficulty-table-body")
+										tr(id="difficulty-table-row-prototype", style="display: none;")
+											td.font-monospace.data-epoch
+											//td.font-monospace.data-date
+											//td.font-monospace.text-end.data-block-start
+											td.font-monospace.text-end.data-difficulty
+
+										tr(id="empty-row-to-fix-striped-coloring", style="display: none;")
+
+					.col
+						+contentSection("Difficulty Δ")
+							.table-responsive
+								table.table.table-striped.table-borderless.mb-3
+									thead
+										tr
+											th Epoch
+											//th Date
+											//th.text-end Block Start
+											th.text-end Difficulty Δ
+											
+									tbody(id="difficulty-delta-table-body")
+										tr(id="difficulty-delta-table-row-prototype", style="display: none;")
+											td.font-monospace.data-epoch
+											//td.font-monospace.data-date
+											//td.font-monospace.text-end.data-block-start
+											td.font-monospace.text-end.data-difficulty-delta
+
+										tr(id="empty-row-to-fix-striped-coloring", style="display: none;")
 	
 
 
 block endOfBody
-	script(src="./js/chart.bundle.min.js", integrity="sha384-qgOtiGNaHh9fVWUnRjyHlV39rfbDcvPPkEzL1RHvsHKbuqUqM6uybNuVnghY2z4/")
+	+graphPageScriptSetup
+
 	script(src='./js/decimal.js')
+
+	script.
+		Chart.defaults.global.defaultFontSize = 14;
+
+	
 	script.
 		var blockCount = !{blockCount};
 		
@@ -101,6 +155,9 @@ block endOfBody
 			var finishedCallback = function() {
 				var summary = summarizeData(results);
 
+				fillDifficultyTable(summary);
+				fillDifficultyDeltaTable(summary);
+
 				createGraph("graph-diff-hist", [summary.graphData], "Difficulty");
 
 				createGraph("graph-diff-change", [summary.changeGraphData], "Difficulty Change %");
@@ -112,6 +169,64 @@ block endOfBody
 			};
 
 			getData(results, chunkStrs, 0, statusCallback, finishedCallback);
+		}
+
+		function fillDifficultyTable(summary) {
+			for (var i = 0; i < summary.difficultyData.length; i++) {
+				var item = summary.difficultyData[i];
+
+				var row = $("#difficulty-table-row-prototype").clone();
+				row.attr("id", null);
+				//row.addClass("fee-rate-table-row");
+
+				row.find(".data-epoch").text(item.epoch);
+				//row.find(".data-date").text(item.count.toLocaleString());
+				//row.find(".data-block-start").text(sumBlockCount.toDP(2));
+
+				if (item.difficulty >= 1000000) {
+					row.find(".data-difficulty").text(parseInt(item.difficulty).toLocaleString());
+
+				} else {
+					row.find(".data-difficulty").text(new Decimal(item.difficulty).toDP(3));
+				}
+				
+				
+
+				row.show();
+
+				$("#difficulty-table-body").append(row);
+			}
+		}
+
+		function fillDifficultyDeltaTable(summary) {
+			for (var i = 0; i < summary.difficultyDeltaData.length; i++) {
+				var item = summary.difficultyDeltaData[i];
+
+				var row = $("#difficulty-delta-table-row-prototype").clone();
+				row.attr("id", null);
+				//row.addClass("fee-rate-table-row");
+
+				row.find(".data-epoch").text(item.epoch);
+				//row.find(".data-date").text(item.count.toLocaleString());
+				//row.find(".data-block-start").text(sumBlockCount.toDP(2));
+				if (item.difficultyDelta) {
+					if (item.difficultyDelta > 0) {
+						row.find(".data-difficulty-delta").text("+" + (new Decimal(item.difficultyDelta).toDP(2)));
+						row.find(".data-difficulty-delta").addClass("text-success");
+
+					} else if (item.difficultyDelta < 0) {
+						row.find(".data-difficulty-delta").text(new Decimal(item.difficultyDelta).toDP(2));
+						row.find(".data-difficulty-delta").addClass("text-danger");
+					}
+				} else {
+					row.find(".data-difficulty-delta").text("-");
+				}
+				
+
+				row.show();
+
+				$("#difficulty-delta-table-body").append(row);
+			}
 		}
 
 		function createGraph(graphId, datas, yLabelStr) {
@@ -143,6 +258,9 @@ block endOfBody
 								display: true,
 								labelString: 'Difficulty Epoch'
 							},
+							gridLines: {
+								color: gridLineColor
+							}
 							//ticks: {
 							//	stepSize: 100,
 							//}
@@ -151,6 +269,20 @@ block endOfBody
 							scaleLabel: {
 								display: true,
 								labelString: yLabelStr
+							},
+							gridLines: {
+								color: gridLineColor
+							},
+							ticks: {
+								callback: function(value, index, values) {
+									if (value > 1000) {
+										var exp = Math.floor(Math.log10(value));
+										return (value / Math.pow(10, exp)).toLocaleString() + "e" + exp;
+
+									} else {
+										return value;
+									}
+								}
 							}
 						}]
 					}
@@ -185,20 +317,30 @@ block endOfBody
 
 		function summarizeData(raw) {
 			var summary = {};
+			summary.difficultyData = [];
+			summary.difficultyDeltaData = [];
+
 			summary.graphData = [];
 			summary.changeGraphData = [];
 
 			for (var i = 0; i < raw.length; i++) {
+				summary.difficultyData.push({epoch:i, difficulty:raw[i].difficulty});
+
 				summary.graphData.push({x:i, y:raw[i].difficulty});
 
 				if (i == 0) {
 					summary.changeGraphData.push({x:i, y:raw[i].difficulty});
+
+					summary.difficultyDeltaData.push({epoch:i});
 
 				} else {
 					var d1 = raw[i].difficulty;
 					var d0 = raw[i - 1].difficulty
 
 					var deltaPercent = 100 * (d1 / d0 - 1);
+
+					summary.difficultyDeltaData.push({epoch:i, difficultyDelta:deltaPercent});
+
 					/*if (d1 > d0) {
 						// increase
 						deltaPercent = 

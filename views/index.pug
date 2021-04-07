@@ -1,7 +1,7 @@
 extends layout
 
 block headContent
-	title Home
+	title Bitcoin Explorer
 	
 block content
 	if (getblockchaininfo == null)
@@ -10,173 +10,83 @@ block content
 			ul
 				li
 					p
-						strong If you just started your node, it may still be initializing.
+						b If you just started your node, it may still be initializing.
 						div At startup, bitcoind verifies its block index before making itself available to serve data. The amount of time the verification process takes depends largely on the speed of the machine bitcoind is running on. If you're running bitcoind on low powered, inexpensive hardware, don't be surprised if this process takes a long time.
 				li
 					p
-						strong If you believe your bitcoind node is already initialized...
+						b If you believe your bitcoind node is already initialized...
 						div Check your RPC connection info and/or check this application's error log for possible hints about the cause of this issue.
 	else
 
-		if (config.demoSite && session.hideHomepageBanner != "true")
-			div.alert.alert-primary.alert-dismissible.shadow-sm.mb-3(role="alert")
-				span
-					span.font-weight-bold #{coinConfig.siteTitlesByNetwork[activeBlockchain]}
-					span  is 
-					a(href="https://github.com/janoside/btc-rpc-explorer", target="_blank") open-source
-					span  and easy to set up. It can communicate with your 
-					a(href=coinConfig.nodeUrl, target="_blank") #{coinConfig.name} Full Node
-					span  via RPC. See the 
-					a(href="https://github.com/janoside/btc-rpc-explorer", target="_blank") project description
-					span  for a list of features and instructions for running.
+		+dismissableInfoAlert("homepageWelcomeBannerDismissed")
+			.clearfix
+				.float-start
+					h4.fw-light.mb-2 Welcome to Bitcoin Explorer!
+				.float-start
+					if (config.demoSite)
+						- var networkNameMap = {"main": "Mainnet", "test": "Testnet", "signet": "Signet"};
+						span.badge.bg-primary.mb-1.ms-0.ms-md-3.mt-1(title=`This is a public demo, but this tool is designed to be installed and run by all Bitcoiners...<br/><i>Don't Trust, Verify</i>!`, data-bs-toggle="tooltip", data-bs-html="true")
+							span.me-2 #{networkNameMap[global.activeBlockchain]} Demo
+							i.fas.fa-sticky-note
+			
 
+			.mb-2 An easy-to-use, educational explorer whose <u>only dependency is your <b>Bitcoin Core</b> node</u>!
+			.mb-3
+				- var features = ["Open-Source", "Easy Setup", "Low Hardware Requirements", "Fun!"];
+
+				each feature in features
+					span.badge.bg-light.text-dark.border.me-2
+						span.me-2 #{feature}
+						i.fas.fa-check
+			
+			.mt-4.mb-2
 				if (global.sourcecodeProjectMetadata)
-					div.mt-2
-						a.btn.btn-primary.btn-sm.mr-3.mb-1(href="https://github.com/janoside/btc-rpc-explorer")
-							i.fas.fa-star.mr-2
-							span.mr-2 Star 
-							span.badge.bg-white.text-dark #{global.sourcecodeProjectMetadata.stargazers_count}
+					a.btn.btn-primary.mb-2.mb-md-1.me-3(href="https://github.com/janoside/btc-rpc-explorer", title="View source code on Github", data-bs-toggle="tooltip", data-bs-placement="bottom")
+						i.fab.fa-github.fa-lg.me-2
+						| View Source
 
-						a.btn.btn-primary.btn-sm.mr-3.mb-1(href="https://github.com/janoside/btc-rpc-explorer/fork")
-							i.fas.fa-code-branch.mr-2
-							span.mr-2 Fork 
-							span.badge.bg-white.text-dark #{global.sourcecodeProjectMetadata.forks_count}
-						
-						if (!crawlerBot)
-							button.btn.btn-primary.btn-sm.mb-1(type="button", data-toggle="modal", data-target="#exampleModalCenter")
-								i.fas.fa-heart.mr-2
-								span Support Project
+				a.btn.btn-primary.mb-2.mb-md-1.me-3(href="https://explorer-support.btc21.org", target="_blank", title="Support this project with a donation", data-bs-toggle="tooltip", data-bs-placement="bottom")
+					i.fas.fa-heart.text-danger.fa-lg.me-2
+					| Donate
 
-				if (false)
-					div.mt-2
-						a.mr-2(href="https://www.npmjs.com/package/btc-rpc-explorer" rel="nofollow" target="_blank")
-							img(src="https://camo.githubusercontent.com/a2a28dff9062102df7988314d014e68d4612bd83/68747470733a2f2f696d672e736869656c64732e696f2f6e706d2f762f6274632d7270632d6578706c6f7265722e7376673f7374796c653d666c6174" alt="npm version" data-canonical-src="https://img.shields.io/npm/v/btc-rpc-explorer.svg?style=flat" style="max-width:100%;")
-
-						a(href="https://npmcharts.com/compare/btc-rpc-explorer?minimal=true" rel="nofollow" target="_blank")
-							img(src="https://camo.githubusercontent.com/07914c9a0c2f22f7493952dc969c57164bb14f77/687474703a2f2f696d672e736869656c64732e696f2f6e706d2f646d2f6274632d7270632d6578706c6f7265722e7376673f7374796c653d666c6174" alt="NPM downloads" data-canonical-src="http://img.shields.io/npm/dm/btc-rpc-explorer.svg?style=flat" style="max-width:100%;")
-
+				a.btn.btn-primary.mb-2.mb-md-1(href="https://twitter.com/BitcoinExplorer", target="_blank", title="Follow @BitcoinExplorer on Twitter", data-bs-toggle="tooltip", data-bs-placement="bottom")
+					i.fab.fa-twitter.text-twitter.fa-lg.me-2
+					| @BitcoinExplorer
 					
 
-				a.close(href="./changeSetting?name=hideHomepageBanner&value=true", aria-label="Close", style="text-decoration: none;")
-					span(aria-hidden="true") &times;
+				
 
 		if (getblockchaininfo.initialblockdownload && !["regtest", "signet"].includes(global.activeBlockchain))
 			div.alert.alert-warning.shadow-sm.border.mb-3
-				div.font-weight-bold.mb-1 Initial Block Download (IBD) - In Progress...
+				div.fw-bold.mb-1 Initial Block Download (IBD) - In Progress...
 
 				div.mb-1 Your node is currently downloading and verifying blockchain data. Until the process is finished, some features of this tool will be unusable and/or unreliable.
 
-				span.font-weight-bold Progress: 
-				span.text-monospace #{new Decimal(getblockchaininfo.verificationprogress).times(100).toDP(3)}%
+				span.fw-bold Progress: 
+				span.font-monospace #{new Decimal(getblockchaininfo.verificationprogress).times(100).toDP(3)}%
 
 
-		div.row
-			- var summaryColCount = 8;
-			if (exchangeRates)
-				- summaryColCount = 9;
-
-			div.mb-3(class=`col-xxl-${summaryColCount}`)
-				div.card.shadow-sm(style="height: 100%;")
-					div.card-body.px-2.px-sm-3
-						h3.h6.mb-0 Network Summary
-						hr
-
-						include includes/index-network-summary.pug
-
-			div.mb-3(class=`col-xxl-${12 - summaryColCount}`)
-				div.card.shadow-sm(style="height: 100%;")
-					div.card-body.px-2.px-sm-3
-						div.row
-							div.col
-								h3.h6.mb-0 Tools
-								
-							div.col.text-right
-								a(href="./tools") More info &raquo;
-						hr
-
-						include includes/tools-card.pug
+		
+		include includes/index-network-summary.pug
+		
 		
 		
 		if (latestBlocks)
-			div.row.mb-3
-				div.col
-					div.card.shadow-sm
-						div.card-body.px-2.px-sm-3
-							div.row
-								div.col
-									h3.h6.mb-0 Latest Blocks
-									
-								div.col.text-right
-									a(href="./blocks") See more &raquo;
+			+contentSection("Latest Blocks")
+				- var blocks = latestBlocks;
+				- var blockOffset = 0;
+				- var hideBlockIndex = true;
 
-							hr
+				include includes/blocks-list.pug
 
-							- var blocks = latestBlocks;
-							- var blockOffset = 0;
-
-							include includes/blocks-list.pug
+				.text-center.pt-3
+					a.btn.btn-primary.btn-sm(href="./blocks")
+						i.fas.fa-cubes.me-2
+						| Browse Blocks &raquo;
 							
-							if (false)
-								div.card.shadow-sm.mb-3
-									div.card-header
-										div.row
-											div.col
-												h3.h6.mb-0 Latest Blocks
-													if (getblockchaininfo.initialblockdownload)
-														small  (#{(getblockchaininfo.headers - getblockchaininfo.blocks).toLocaleString()} behind)
 
-											div.col
-												span(style="float: right;")
-													a(href="./blocks")
-														span  Browse Blocks &raquo;
+		+contentSection("Tools")
+			include includes/tools-card.pug
+				
 
-									div.card-body
-
-										- var blocks = latestBlocks;
-										- var blockOffset = 0;
-
-										include includes/blocks-list.pug
-
-
-		if (txStats)
-			div.row.mb-3
-				div.col
-					div.card.shadow-sm
-						div.card-body.px-2.px-sm-3
-							div.row
-								div.col
-									h3.h6.mb-0 Transaction Stats
-									
-								div.col.text-right
-									a(href="./tx-stats") See more &raquo;
-
-							hr
-
-							div.row
-								div.col-lg-6
-									div.table-responsive
-										table.table.text-right.mb-3.mb-lg-0
-											thead
-												tr
-													th Period
-													th Transactions
-													th Transactions Per Sec
-											tbody
-												each item, index in chainTxStatsIntervals
-													tr.text-monospace
-														td #{item[1]}
-														td #{chainTxStats[item[0]].window_tx_count.toLocaleString()}
-														td #{new Decimal(chainTxStats[item[0]].txrate).toDecimalPlaces(4)}
-
-
-								div.col-lg-6
-									h4.h6.text-center Tx Rate, 24hr
-									
-									script var txRateDataDay = [];
-									each item, index in txStats.txCountStats.txRates
-										script txRateDataDay.push({x:#{item.x}, y:#{item.y}});
-
-									- var graphData = {id:"graphRateDay", dataVar:"txRateDataDay", labels:txStats.txCountStats.txLabels, title:"Tx Rate, 24hr", xaxisTitle:"Block", xaxisStep:5, yaxisTitle:"Tx Per Sec"};
-									include ./includes/line-graph.pug
-						
-											
+		

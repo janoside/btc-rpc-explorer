@@ -14,6 +14,7 @@ const bitcoinjs = require('bitcoinjs-lib');
 const sha256 = require("crypto-js/sha256");
 const hexEnc = require("crypto-js/enc-hex");
 const Decimal = require("decimal.js");
+const asyncHandler = require("express-async-handler");
 
 const utils = require('./../app/utils.js');
 const coins = require("./../app/coins.js");
@@ -90,6 +91,207 @@ router.get("/mempool-txs/:txids", function(req, res, next) {
 		next();
 	});
 });
+
+
+
+const mempoolSummaryStatuses = {};
+const mempoolSummaries = {};
+
+router.get("/mempool-summary-status", asyncHandler(async (req, res, next) => {
+	const statusId = req.query.statusId;
+	if (statusId && mempoolSummaryStatuses[statusId]) {
+		res.json(mempoolSummaryStatuses[statusId]);
+
+		next();
+
+	} else {
+		res.json({});
+
+		next();
+	}
+}));
+
+router.get("/get-mempool-summary", asyncHandler(async (req, res, next) => {
+	const statusId = req.query.statusId;
+
+	if (statusId && mempoolSummaries[statusId]) {
+		var summary = mempoolSummaries[statusId];
+		
+		res.json(summary);
+
+		next();
+
+		delete mempoolSummaries[statusId];
+		delete mempoolSummaryStatuses[statusId];
+
+	} else {
+		res.json({});
+
+		next();
+	}
+}));
+
+router.get("/build-mempool-summary", asyncHandler(async (req, res, next) => {
+	try {
+		// long timeout
+		res.connection.setTimeout(600000);
+
+
+		const statusId = req.query.statusId;
+		if (statusId) {
+			mempoolSummaryStatuses[statusId] = {};
+		}
+
+		res.json({success:true, status:"started"});
+
+		next();
+
+
+		const ageBuckets = req.query.ageBuckets ? parseInt(req.query.ageBuckets) : 100;
+		const sizeBuckets = req.query.sizeBuckets ? parseInt(req.query.sizeBuckets) : 100;
+
+
+		var summary = await coreApi.buildMempoolSummary(statusId, ageBuckets, sizeBuckets, (update) => {
+			mempoolSummaryStatuses[statusId] = update;
+		});
+
+		// store summary until it's retrieved via /api/get-mempool-summary
+		mempoolSummaries[statusId] = summary;
+
+	} catch (err) {
+		utils.logError("329r7whegee", err);
+	}
+}));
+
+
+
+
+const miningSummaryStatuses = {};
+const miningSummaries = {};
+
+router.get("/mining-summary-status", asyncHandler(async (req, res, next) => {
+	const statusId = req.query.statusId;
+	if (statusId && miningSummaryStatuses[statusId]) {
+		res.json(miningSummaryStatuses[statusId]);
+
+		next();
+
+	} else {
+		res.json({});
+
+		next();
+	}
+}));
+
+router.get("/get-mining-summary", asyncHandler(async (req, res, next) => {
+	const statusId = req.query.statusId;
+
+	if (statusId && miningSummaries[statusId]) {
+		var summary = miningSummaries[statusId];
+		
+		res.json(summary);
+
+		next();
+
+		delete miningSummaries[statusId];
+		delete miningSummaryStatuses[statusId];
+
+	} else {
+		res.json({});
+
+		next();
+	}
+}));
+
+router.get("/build-mining-summary/:startBlock/:endBlock", asyncHandler(async (req, res, next) => {
+	try {
+		// long timeout
+		res.connection.setTimeout(600000);
+
+
+		var startBlock = parseInt(req.params.startBlock);
+		var endBlock = parseInt(req.params.endBlock);
+
+
+		const statusId = req.query.statusId;
+		if (statusId) {
+			miningSummaryStatuses[statusId] = {};
+		}
+
+		res.json({success:true, status:"started"});
+
+		next();
+		
+
+
+		var summary = await coreApi.buildMiningSummary(statusId, startBlock, endBlock, (update) => {
+			miningSummaryStatuses[statusId] = update;
+		});
+
+		// store summary until it's retrieved via /api/get-mining-summary
+		miningSummaries[statusId] = summary;
+
+	} catch (err) {
+		utils.logError("4328943ryh44", err);
+	}
+}));
+
+
+
+
+
+
+router.get("/mempool-tx-summaries/:txids", asyncHandler(async (req, res, next) => {
+	try {
+		const txids = req.params.txids.split(",").map(utils.asHash);
+
+		const promises = [];
+		const results = [];
+
+		for (var i = 0; i < txids.length; i++) {
+			const txid = txids[i];
+			const key = txid.substring(0, 6);
+
+			promises.push(new Promise(async (resolve, reject) => {
+				try {
+					const item = await coreApi.getMempoolTxDetails(txid, false);
+					const itemSummary = {
+						f: item.entry.fees.modified,
+						sz: item.entry.vsize ? item.entry.vsize : item.entry.size,
+						af: item.entry.fees.ancestor,
+						df: item.entry.fees.descendant,
+						dsz: item.entry.descendantsize,
+						t: item.entry.time,
+						w: item.entry.weight ? item.entry.weight : item.entry.size * 4
+					};
+
+					mempoolTxSummaryCache[key] = itemSummary;
+
+					results.push(mempoolTxSummaryCache[key]);
+					
+					resolve();
+
+				} catch (e) {
+					utils.logError("38yereghee", e);
+
+					// resolve anyway
+					resolve();
+				}
+			}));
+		}
+
+		await Promise.all(promises);
+
+		res.json(results);
+
+		next();
+
+	} catch (err) {
+		res.json({success:false, error:err});
+
+		next();
+	}
+}));
 
 router.get("/raw-tx-with-inputs/:txid", function(req, res, next) {
 	var txid = utils.asHash(req.params.txid);

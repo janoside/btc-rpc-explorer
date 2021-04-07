@@ -1,6 +1,6 @@
 # BTC RPC Explorer
 
-![homepage](https://github.com/janoside/btc-rpc-explorer/blob/master/public/img/screenshots/homepage.png?raw=true)
+![homepage](./public/img/screenshots/homepage-v3.png)
 
 [![npm version][npm-ver-img]][npm-ver-url] [![NPM downloads][npm-dl-img]][npm-dl-url]
 
@@ -25,7 +25,7 @@ Live demos available at:
 * Analysis tools for viewing stats on blocks, transactions, and miner activity
 * See raw JSON content from bitcoind used to generate most pages
 * Search by transaction ID, block hash/height, and address
-* Optional transaction history for addresses by querying from ElectrumX, blockchain.com, blockchair.com, or blockcypher.com
+* Optional transaction history for addresses by querying from Electrum-protocol servers (e.g. Electrs, ElectrumX), blockchain.com, blockchair.com, or blockcypher.com
 * Mempool summary, with fee, size, and age breakdowns
 * RPC command browser and terminal
 
@@ -132,7 +132,7 @@ See [instructions here](docs/nginx-reverse-proxy.md) for using nginx+certbot (le
 
 If you get value from this project, please consider supporting my continued work with a donation. Any and all donations are truly appreciated.
 
-* [https://donate.btc21.org](https://donate.btc21.org)
+* [https://explorer-support.btc21.org](https://explorer-support.btc21.org)
 
 
 [npm-ver-img]: https://img.shields.io/npm/v/btc-rpc-explorer.svg?style=flat

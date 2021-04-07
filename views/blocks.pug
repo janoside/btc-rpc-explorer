@@ -4,8 +4,7 @@ block headContent
 	title Blocks
 
 block content
-	h1.h3 Blocks
-	hr
+	+pageTitle("Blocks")
 
 	if (blocks)
 		nav(aria-label="Page navigation")
@@ -19,21 +18,15 @@ block content
 					a.page-link(href=(sort == "asc" ? "javascript:void(0)" : `./blocks?limit=${limit}&offset=0&sort=asc`))
 						span(aria-hidden="true") Oldest blocks first
 
-		div.card.shadow-sm.mb-3
-			div.card-body
-				include includes/blocks-list.pug
+		
+		+contentSection
+			include includes/blocks-list.pug
 
-				if (blockCount > limit)
-					- var pageNumber = offset / limit + 1;
-					- var pageCount = Math.floor(blockCount / limit);
-					- if (pageCount * limit < blockCount) {
-						- pageCount++;
-					- }
-					- var paginationUrlFunction = function(x) {
-						- return paginationBaseUrl + "?limit=" + limit + "&offset=" + ((x - 1) * limit + "&sort=" + sort);
-					- }
-					
-					div.pt-5
-						include includes/pagination.pug
+			if (blockCount > limit)
+				.border.border-2.mt-4
+
+				.mt-4
+					+pagination(limit, offset, sort, blockCount, paginationBaseUrl, "center", true)
+
 	else
 		p No blocks found

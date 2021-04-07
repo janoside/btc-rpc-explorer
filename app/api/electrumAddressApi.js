@@ -1,7 +1,7 @@
 "use strict";
 
 const debug = require("debug");
-const debugLog = debug("btcexp:electrumx");
+const debugLog = debug("btcexp:electrum");
 
 const config = require("./../config.js");
 const coins = require("../coins.js");
@@ -28,15 +28,15 @@ global.electrumStats = {
 	rpc: {}
 };
 
-const noConnectionsErrorText = "No ElectrumX connection available. This could mean that the connection was lost or that ElectrumX is processing transactions and therefore not accepting requests. This tool will try to reconnect. If you manage your own ElectrumX server you may want to check your ElectrumX logs.";
+const noConnectionsErrorText = "No Electrum connection available. This could mean that the connection was lost or that the Electrum server is processing transactions and therefore not accepting requests. This tool will try to reconnect. If you manage your own Electrum server you may want to check your server's logs.";
 
 
 function connectToServers() {
 	return new Promise(function(resolve, reject) {
 		var promises = [];
 
-		for (var i = 0; i < config.electrumXServers.length; i++) {
-			var { host, port, protocol } = config.electrumXServers[i];
+		for (var i = 0; i < config.electrumServers.length; i++) {
+			var { host, port, protocol } = config.electrumServers[i];
 
 			promises.push(connectToServer(host, port, protocol));
 		}
@@ -54,14 +54,14 @@ function connectToServers() {
 
 function connectToServer(host, port, protocol) {
 	return new Promise(function(resolve, reject) {
-		// default protocol is 'tcp' if port is 50001, which is the default unencrypted port for electrumx
+		// default protocol is 'tcp' if port is 50001, which is the default unencrypted port for electrum
 		var defaultProtocol = port === 50001 ? 'tcp' : 'tls';
 
 		var electrumConfig = { client:"btc-rpc-explorer-v2", version:"1.4" };
 		var electrumPersistencePolicy = { retryPeriod: 10000, maxRetry: 1000, callback: null };
 
 		var onConnect = function(client, versionInfo) {
-			debugLog(`Connected to ElectrumX @ ${host}:${port} (${JSON.stringify(versionInfo)})`);
+			debugLog(`Connected to Electrum Server @ ${host}:${port} (${JSON.stringify(versionInfo)})`);
 
 			global.electrumStats.base.connect.count++;
 			global.electrumStats.base.connect.lastSeenAt = new Date();
@@ -70,7 +70,7 @@ function connectToServer(host, port, protocol) {
 				global.electrumStats.base.connect.firstSeenAt = new Date();
 			}
 
-			statTracker.trackEvent("electrumx.connected");
+			statTracker.trackEvent("electrum.connected");
 
 			electrumClients.push(client);
 
@@ -78,7 +78,7 @@ function connectToServer(host, port, protocol) {
 		};
 
 		var onClose = function(client) {
-			debugLog(`Disconnected from ElectrumX @ ${host}:${port}`);
+			debugLog(`Disconnected from Electrum Server @ ${host}:${port}`);
 
 			global.electrumStats.base.disconnect.count++;
 			global.electrumStats.base.disconnect.lastSeenAt = new Date();
@@ -87,7 +87,7 @@ function connectToServer(host, port, protocol) {
 				global.electrumStats.base.disconnect.firstSeenAt = new Date();
 			}
 
-			statTracker.trackEvent("electrumx.disconnected");
+			statTracker.trackEvent("electrum.disconnected");
 
 			var index = electrumClients.indexOf(client);
 
@@ -106,7 +106,7 @@ function connectToServer(host, port, protocol) {
 				global.electrumStats.base.error.firstSeenAt = new Date();
 			}
 
-			statTracker.trackEvent("electrumx.connection-error");
+			statTracker.trackEvent("electrum.connection-error");
 
 			utils.logError("937gf47dsyde", err, {host:host, port:port, protocol:protocol});
 		};
@@ -128,7 +128,7 @@ function connectToServer(host, port, protocol) {
 			// success handled by onConnect callback
 
 		}).catch(function(err) {
-			debugLog(`Error connecting to ElectrumX @ ${host}:${port}`);
+			debugLog(`Error connecting to Electrum Server @ ${host}:${port}`);
 
 			reject(err);
 		});
@@ -168,7 +168,7 @@ function runOnAllServers(f) {
 function getAddressDetails(address, scriptPubkey, sort, limit, offset) {
 	return new Promise(function(resolve, reject) {
 		if (electrumClients.length == 0) {
-			reject({error: "No ElectrumX Connection", userText: noConnectionsErrorText});
+			reject({error: "No Electrum Server Connection", userText: noConnectionsErrorText});
 
 			return;
 		}
@@ -336,7 +336,7 @@ function getAddressBalance(addrScripthash) {
 // https://github.com/romanz/electrs/commit/a0a3d4f9392e21f9e92fdc274c88fed6d0634794
 function lookupTxBlockHash(txid) {
 	if (electrumClients.length == 0) {
-		return Promise.reject({ error: "No ElectrumX Connection", userText: noConnectionsErrorText });
+		return Promise.reject({ error: "No Electrum Server Connection", userText: noConnectionsErrorText });
 	}
 
 	return runOnAllServers(function(electrumClient) {
@@ -359,18 +359,18 @@ function logStats(cmd, dt, success) {
 	global.electrumStats.rpc[cmd].count++;
 	global.electrumStats.rpc[cmd].time += dt;
 
-	statTracker.trackPerformance(`electrumx.${cmd}`, dt);
-	statTracker.trackPerformance(`electrumx.*`, dt);
+	statTracker.trackPerformance(`electrum.${cmd}`, dt);
+	statTracker.trackPerformance(`electrum.*`, dt);
 
 	if (success) {
 		global.electrumStats.rpc[cmd].successes++;
-		statTracker.trackEvent(`electrumx-result.${cmd}.success`);
-		statTracker.trackEvent(`electrumx-result.*.success`);
+		statTracker.trackEvent(`electrum-result.${cmd}.success`);
+		statTracker.trackEvent(`electrum-result.*.success`);
 
 	} else {
 		global.electrumStats.rpc[cmd].failures++;
-		statTracker.trackEvent(`electrumx-result.${cmd}.failure`);
-		statTracker.trackEvent(`electrumx-result.*.failure`);
+		statTracker.trackEvent(`electrum-result.${cmd}.failure`);
+		statTracker.trackEvent(`electrum-result.*.failure`);
 	}
 }
 

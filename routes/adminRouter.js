@@ -50,7 +50,11 @@ router.get("/dashboard", function(req, res, next) {
 		},
 		tx: {
 			length: global.txLruCache.length,
-			itemCount: global.blockLruCache.itemCount
+			itemCount: global.txLruCache.itemCount
+		},
+		mining: {
+			length: global.miningSummaryLruCache.length,
+			itemCount: global.miningSummaryLruCache.itemCount
 		}
 	};
 
@@ -61,6 +65,7 @@ router.get("/dashboard", function(req, res, next) {
 		rpcConcurrency: config.rpcConcurrency,
 		addressApi: config.addressApi,
 		ipStackComApiAccessKey: !!config.credentials.ipStackComApiAccessKey,
+		mapBoxComApiAccessKey: !!config.credentials.mapBoxComApiAccessKey,
 		redisCache: !!config.redisUrl,
 		noInmemoryRpcCache: config.noInmemoryRpcCache
 	};
@@ -106,6 +111,17 @@ router.get("/stats", function(req, res, next) {
 	res.render("admin/stats");
 
 	next();
+});
+
+
+router.get('/resetUserSettings', (req, res) => {
+	req.session.userSettings = {};
+
+	var userSettings = {};
+
+	res.cookie("user-settings", JSON.stringify(userSettings));
+
+	res.redirect(req.headers.referer);
 });
 
 

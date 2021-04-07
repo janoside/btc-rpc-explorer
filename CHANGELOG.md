@@ -1,11 +1,36 @@
-##### Unreleased
+##### v3.0
+###### Unreleased
 
+* Major visual refresh!
+	* All new design (layout, fonts, colors, etc)
+	* Redesigned Dark Mode (now the default)
+	* New app icon
 * Support for pruned nodes and nodes with disabled `txindex`! (HUGE Thanks to [@shesek](https://github.com/shesek))
+* Mempool Summary improvements
+	* Greatly improved performance for multiple loads via caching
+	* Added: "Blocks Count" column by fee-rate bucket
+	* Tool for estimating Block Depth of a transaction or a fee rate (Thanks [@pointbiz](https://github.com/pointbiz))
+* Mining Summary: added doughnut chart for rev. breakdown, simplified table data
+* Upgraded to Bootstrap 5 (currently beta3...)
 * Fix for 404 pages hanging (Thanks [@shesek](https://github.com/shesek))
 * Add convenience redirect for baseUrl (Thanks [@shesek](https://github.com/shesek))
 * Make url in logs clickable (Thanks [@shesek](https://github.com/shesek))
 * Caching for static files (maxAge=1hr)
-* Major code refactoring/modernization
+* Frontend performance optimizations
+* Smarter performance/memory defaults for slow devices
+* Major refactoring, modernization, and code-reuse improvements
+* UX improvements and polish throughout
+* URL changes
+	* `/node-status` -> `/node-details`
+	* `/unconfirmed-tx` -> `/mempool-transactions`
+* Environment variable changes
+	* The below changes were made to more clearly acknowledge that multiple Electrum-protocol implementations (e.g. ElectrumX, Electrs) can be used for address queries:
+	* `BTCEXP_ADDRESS_API` value `electrumx` -> `electrum` (`electrumx` should still works)
+	* `BTCEXP_ELECTRUMX_SERVERS` -> `BTCEXP_ELECTRUM_SERVERS` (`BTCEXP_ELECTRUMX_SERVERS` should still work)
+* Updated dependencies
+	* jQuery: v3.4.1 -> v3.6.0
+	* highlight.js: v9.14.2 -> v10.7.1
+	* fontawesome: v5.7.1 -> v5.15.3
 
 ##### v2.2.0
 ###### 2021-01-22
@@ -171,7 +196,7 @@
 * Show mempool ancestor/descendant txs on tx detail pages
 * Blacklist 'createwallet' by default
 * Show RBF status for unconfirmed txs
-* Faster, more reliable display of `/mempool-summary` and `/unconfirmed-tx` pages
+* Faster, more reliable display of `/mempool-summary` and `/mempool-transactions` pages
 * Fix for persisting arg values in UI on `/rpc-browser`
 * Misc minor fixes and ux tweaks
 
