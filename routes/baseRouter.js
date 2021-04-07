@@ -1572,9 +1572,9 @@ router.post("/terminal", function(req, res, next) {
 	}
 });
 
-router.get("/mempool-tx", asyncHandler(async (req, res, next) => {
+router.get("/mempool-transactions", asyncHandler(async (req, res, next) => {
 	try {
-		var limit = config.site.browseBlocksPageSize;
+		var limit = config.site.browseMempoolTransactionsPageSize;
 		var offset = 0;
 		var sort = "desc";
 
@@ -1593,7 +1593,7 @@ router.get("/mempool-tx", asyncHandler(async (req, res, next) => {
 		res.locals.limit = limit;
 		res.locals.offset = offset;
 		res.locals.sort = sort;
-		res.locals.paginationBaseUrl = "./mempool-tx";
+		res.locals.paginationBaseUrl = "./mempool-transactions";
 
 		const mempoolData = await utils.timePromise("promises.mempool-tx.getMempoolTxids", coreApi.getMempoolTxids(limit, offset));
 
@@ -1604,7 +1604,7 @@ router.get("/mempool-tx", asyncHandler(async (req, res, next) => {
 		const promises = [];
 
 		promises.push(new Promise(async (resolve, reject) => {
-			const transactionData = await utils.timePromise("promises.mempool-tx.getRawTransactionsWithInputs", coreApi.getRawTransactionsWithInputs(txids, 5));
+			const transactionData = await utils.timePromise("promises.mempool-tx.getRawTransactionsWithInputs", coreApi.getRawTransactionsWithInputs(txids, config.slowDeviceMode ? 3 : 5));
 
 			res.locals.transactions = transactionData.transactions;
 			res.locals.txInputsByTransaction = transactionData.txInputsByTransaction;
@@ -1628,7 +1628,7 @@ router.get("/mempool-tx", asyncHandler(async (req, res, next) => {
 		await Promise.all(promises);
 
 
-		res.render("mempool-tx");
+		res.render("mempool-transactions");
 
 		next();
 
@@ -1637,7 +1637,7 @@ router.get("/mempool-tx", asyncHandler(async (req, res, next) => {
 					
 		res.locals.userMessage = "Error building page: " + err;
 
-		res.render("mempool-tx");
+		res.render("mempool-transactions");
 
 		next();
 	}

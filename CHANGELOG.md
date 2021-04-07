@@ -22,7 +22,7 @@
 * UX improvements and polish throughout
 * URL changes
 	* `/node-status` -> `/node-details`
-	* `/unconfirmed-tx` -> `/mempool-tx`
+	* `/unconfirmed-tx` -> `/mempool-transactions`
 * Updated dependencies
 	* jQuery: v3.4.1 -> v3.6.0
 	* highlight.js: v9.14.2 -> v10.7.1
@@ -192,7 +192,7 @@
 * Show mempool ancestor/descendant txs on tx detail pages
 * Blacklist 'createwallet' by default
 * Show RBF status for unconfirmed txs
-* Faster, more reliable display of `/mempool-summary` and `/mempool-tx` pages
+* Faster, more reliable display of `/mempool-summary` and `/mempool-transactions` pages
 * Fix for persisting arg values in UI on `/rpc-browser`
 * Misc minor fixes and ux tweaks
 

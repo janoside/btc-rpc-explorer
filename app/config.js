@@ -189,6 +189,7 @@ module.exports = {
 		addressTxPageSize: 10,
 		txMaxInput: (slowDeviceMode ? 3 : 15),
 		browseBlocksPageSize: (process.env.BTCEXP_UI_BLOCKS_PAGE_BLOCK_COUNT || (slowDeviceMode ? 10 : 50)),
+		browseMempoolTransactionsPageSize: (slowDeviceMode ? 10 : 50),
 		addressPage:{
 			txOutputMaxDefaultDisplay:10
 		},
@@ -213,7 +214,7 @@ module.exports = {
 	/* 3 */		{name:"Transaction Stats", url:"./tx-stats", desc:"See graphs of total transaction volume and transaction rates.", fontawesome:"fas fa-chart-bar"},
 
 	/* 4 */		{name:"Mempool Summary", url:"./mempool-summary", desc:"Detailed summary of the current mempool for this node.", fontawesome:"fas fa-hourglass-half"},
-	/* 5 */		{name:"Browse Mempool", url:"./mempool-tx", desc:"Browse unconfirmed/pending transactions.", fontawesome:"fas fa-book-open"},
+	/* 5 */		{name:"Browse Mempool", url:"./mempool-transactions", desc:"Browse unconfirmed/pending transactions.", fontawesome:"fas fa-book-open"},
 
 	/* 6 */		{name:"RPC Browser", url:"./rpc-browser", desc:"Browse the RPC functionality of this node. See docs and execute commands.", fontawesome:"fas fa-book"},
 	/* 7 */		{name:"RPC Terminal", url:"./rpc-terminal", desc:"Directly execute RPCs against this node.", fontawesome:"fas fa-terminal"},
