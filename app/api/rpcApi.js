@@ -277,10 +277,12 @@ function getRawTransaction(txid, blockhash) {
 async function noTxIndexTransactionLookup(txid, walletOnly) {
 	// Try looking up with an external Electrum server, using 'get_confirmed_blockhash'.
 	// This is only available in Electrs and requires enabling BTCEXP_ELECTRUM_TXINDEX.
-	if (!walletOnly && config.addressApi == "electrumx" && config.electrumTxIndex) {
+	if (!walletOnly && (config.addressApi == "electrum" || config.addressApi == "electrumx") && config.electrumTxIndex) {
 		try {
 			var blockhash = await electrumAddressApi.lookupTxBlockHash(txid);
+
 			return await getRawTransaction(txid, blockhash);
+			
 		} catch (err) {
 			debugLog(`Electrs blockhash lookup failed for ${txid}:`, err);
 		}
