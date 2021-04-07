@@ -23,6 +23,10 @@
 * URL changes
 	* `/node-status` -> `/node-details`
 	* `/unconfirmed-tx` -> `/mempool-transactions`
+* Environment variable changes
+	* The below changes were made to more clearly acknowledge that multiple Electrum-protocol implementations (e.g. ElectrumX, Electrs) can be used for address queries:
+	* `BTCEXP_ADDRESS_API` value `electrumx` -> `electrum` (`electrumx` should still works)
+	* `BTCEXP_ELECTRUMX_SERVERS` -> `BTCEXP_ELECTRUM_SERVERS` (`BTCEXP_ELECTRUMX_SERVERS` should still work)
 * Updated dependencies
 	* jQuery: v3.4.1 -> v3.6.0
 	* highlight.js: v9.14.2 -> v10.7.1

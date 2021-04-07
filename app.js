@@ -546,16 +546,16 @@ expressApp.continueStartup = function() {
 			utils.logError("32907ghsd0ge", `Unrecognized value for BTCEXP_ADDRESS_API: '${config.addressApi}'. Valid options are: ${supportedAddressApis}`);
 		}
 
-		if (config.addressApi == "electrumx") {
-			if (config.electrumXServers && config.electrumXServers.length > 0) {
+		if (config.addressApi == "electrum" || config.addressApi == "electrumx") {
+			if (config.electrumServers && config.electrumServers.length > 0) {
 				electrumAddressApi.connectToServers().then(function() {
 					global.electrumAddressApi = electrumAddressApi;
 					
 				}).catch(function(err) {
-					utils.logError("31207ugf4e0fed", err, {electrumXServers:config.electrumXServers});
+					utils.logError("31207ugf4e0fed", err, {electrumServers:config.electrumServers});
 				});
 			} else {
-				utils.logError("327hs0gde", "You must set the 'BTCEXP_ELECTRUMX_SERVERS' environment variable when BTCEXP_ADDRESS_API=electrumx.");
+				utils.logError("327hs0gde", "You must set the 'BTCEXP_ELECTRUM_SERVERS' environment variable when BTCEXP_ADDRESS_API=electrum.");
 			}
 		}
 	}

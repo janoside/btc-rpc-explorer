@@ -39,12 +39,12 @@ const cookieSecret = process.env.BTCEXP_COOKIE_SECRET
  || "0x000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f";
 
 
-const electrumXServerUriStrings = (process.env.BTCEXP_ELECTRUMX_SERVERS || "").split(',').filter(Boolean);
-const electrumXServers = [];
-for (let i = 0; i < electrumXServerUriStrings.length; i++) {
-	const uri = url.parse(electrumXServerUriStrings[i]);
+const electrumServerUriStrings = (process.env.BTCEXP_ELECTRUM_SERVERS || process.env.BTCEXP_ELECTRUMX_SERVERS || "").split(',').filter(Boolean);
+const electrumServers = [];
+for (let i = 0; i < electrumServerUriStrings.length; i++) {
+	const uri = url.parse(electrumServerUriStrings[i]);
 	
-	electrumXServers.push({protocol:uri.protocol.substring(0, uri.protocol.length - 1), host:uri.hostname, port:parseInt(uri.port)});
+	electrumServers.push({protocol:uri.protocol.substring(0, uri.protocol.length - 1), host:uri.hostname, port:parseInt(uri.port)});
 }
 
 // default=false env vars
@@ -175,9 +175,9 @@ module.exports = {
 		"walletpassphrasechange",
 	],
 
-	addressApi:process.env.BTCEXP_ADDRESS_API,
-	electrumTxIndex:process.env.BTCEXP_ELECTRUM_TXINDEX != "false",
-	electrumXServers:electrumXServers,
+	addressApi: process.env.BTCEXP_ADDRESS_API,
+	electrumTxIndex: process.env.BTCEXP_ELECTRUM_TXINDEX != "false",
+	electrumServers: electrumServers,
 
 	redisUrl:process.env.BTCEXP_REDIS_URL,
 
