@@ -1120,7 +1120,10 @@ const mempoolTxSummaryCache = {};
 function buildMempoolSummary(statusId, ageBuckets, sizeBuckets, statusFunc) {
 	return new Promise(async (resolve, reject) => {
 		try {
-			const txids = await utils.timePromise("promises.mempool-summary.getAllMempoolTxids", getAllMempoolTxids());
+			const allTxids = await utils.timePromise("promises.mempool-summary.getAllMempoolTxids", getAllMempoolTxids());
+			
+			//const txids = allTxids.slice(0, 50); // for debugging
+			const txids = allTxids;
 
 			const txidCount = txids.length;
 			var doneCount = 0;
@@ -1139,7 +1142,10 @@ function buildMempoolSummary(statusId, ageBuckets, sizeBuckets, statusFunc) {
 				txidKeysForCachePurge[key] = 1;
 
 				if (mempoolTxSummaryCache[key]) {
-					results.push(mempoolTxSummaryCache[key]);
+					const itemSummary = Object.assign({}, mempoolTxSummaryCache[key]);
+					itemSummary.key = key;
+
+					results.push(itemSummary);
 
 					doneCount++;
 					statusUpdate();
@@ -1160,7 +1166,10 @@ function buildMempoolSummary(statusId, ageBuckets, sizeBuckets, statusFunc) {
 
 							mempoolTxSummaryCache[key] = itemSummary;
 
-							results.push(mempoolTxSummaryCache[key]);
+							const itemSummaryWithKey = Object.assign({}, itemSummary);
+							itemSummaryWithKey.key = key;
+
+							results.push(itemSummaryWithKey);
 
 							doneCount++;
 							statusUpdate();
@@ -1206,12 +1215,12 @@ function buildMempoolSummary(statusId, ageBuckets, sizeBuckets, statusFunc) {
 			var sizes = [];
 
 			for (var i = 0; i < results.length; i++) {
-				var txMempoolInfo = results[i];
+				var summary = results[i];
 
-				var fee = txMempoolInfo.f;
-				var size = txMempoolInfo.sz;
-				var feePerByte = txMempoolInfo.f / size;
-				var age = Date.now() / 1000 - txMempoolInfo.t;
+				var fee = summary.f;
+				var size = summary.sz;
+				var feePerByte = summary.f / size;
+				var age = Date.now() / 1000 - summary.t;
 
 				if (fee > maxFee) {
 					maxFee = fee;
@@ -1221,8 +1230,8 @@ function buildMempoolSummary(statusId, ageBuckets, sizeBuckets, statusFunc) {
 					maxFeePerByte = feePerByte;
 				}
 
-				ages.push({age:age, txid:"abc"});
-				sizes.push({size:size, txid:"abc"});
+				ages.push({age:age, txidKey:summary.key});
+				sizes.push({size:size, txidKey:summary.key});
 
 				if (age > maxAge) {
 					maxAge = age;
@@ -1238,7 +1247,7 @@ function buildMempoolSummary(statusId, ageBuckets, sizeBuckets, statusFunc) {
 					return b.age - a.age;
 
 				} else {
-					return a.txid.localeCompare(b.txid);
+					return a.txidKey.localeCompare(b.txidKey);
 				}
 			});
 
@@ -1247,7 +1256,7 @@ function buildMempoolSummary(statusId, ageBuckets, sizeBuckets, statusFunc) {
 					return b.size - a.size;
 
 				} else {
-					return a.txid.localeCompare(b.txid);
+					return a.txidKey.localeCompare(b.txidKey);
 				}
 			});
 
@@ -1314,6 +1323,8 @@ function buildMempoolSummary(statusId, ageBuckets, sizeBuckets, statusFunc) {
 
 			satoshiPerByteBucketLabels[bucketCount - 1] = (satoshiPerByteBucketMaxima[satoshiPerByteBucketMaxima.length - 1] + "+");
 
+			const oldestLargestCount = 20;
+
 			var summary = {
 				"count": 0,
 				"totalFees": 0,
@@ -1324,8 +1335,32 @@ function buildMempoolSummary(statusId, ageBuckets, sizeBuckets, statusFunc) {
 				"ageBucketTxCounts": ageBucketTxCounts,
 				"ageBucketLabels": ageBucketLabels,
 				"sizeBucketTxCounts": sizeBucketTxCounts,
-				"sizeBucketLabels": sizeBucketLabels
+				"sizeBucketLabels": sizeBucketLabels,
+				"oldestTxs": ages.slice(0, oldestLargestCount),
+				"largestTxs": sizes.slice(0, oldestLargestCount)
 			};
+
+
+			for (var i = 0; i < oldestLargestCount; i++) {
+				let oldTx = summary.oldestTxs[i];
+				let largeTx = summary.largestTxs[i];
+
+				for (var j = 0; j < txids.length; j++) {
+					if (txids[j].startsWith(oldTx.txidKey)) {
+						oldTx.txid = txids[j];
+
+						break;
+					}
+				}
+
+				for (var j = 0; j < txids.length; j++) {
+					if (txids[j].startsWith(largeTx.txidKey)) {
+						largeTx.txid = txids[j];
+
+						break;
+					}
+				}
+			}
 
 			for (var x = 0; x < results.length; x++) {
 				var txMempoolInfo = results[x];

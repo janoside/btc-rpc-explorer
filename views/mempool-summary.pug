@@ -137,6 +137,43 @@ block content
 			+contentSection("Age Distribution")
 				canvas.mb-3(id="txAgesBarChart", height="100")
 
+			.row
+				.col
+					+contentSection("Oldest Transactions")
+						.table-responsive
+							table.table.table-striped.table-borderless.mb-3
+								thead
+									tr
+										th Txid
+										th.text-end
+											span.border-dotted(title="How long ago this transaction was first seen by your node.", data-bs-toggle="tooltip")
+												| Age
+
+								tbody(id="oldest-tx-table-body")
+									tr(id="oldest-tx-table-row-prototype", style="display: none;")
+										td.font-monospace.data-txid
+										td.font-monospace.text-end.data-age
+
+									tr(id="empty-row-to-fix-striped-coloring", style="display: none;")
+
+				.col
+					+contentSection("Largest Transactions")
+						.table-responsive
+							table.table.table-striped.table-borderless.mb-3
+								thead
+									tr
+										th Txid
+										th.text-end
+											span.border-dotted(title="How long ago this transaction was first seen by your node.", data-bs-toggle="tooltip")
+												| Age
+
+								tbody(id="largest-tx-table-body")
+									tr(id="largest-tx-table-row-prototype", style="display: none;")
+										td.font-monospace.data-txid
+										td.font-monospace.text-end.data-size
+
+									tr(id="empty-row-to-fix-striped-coloring", style="display: none;")
+
 
 			if (false)
 				pre
@@ -223,6 +260,9 @@ block endOfBody
 			var feeRateGraphData = buildFeeRateGraphData(summary);
 			var txSizeGraphData = buildTxSizeGraphData(summary);
 			var txAgeGraphData = buildTxAgeGraphData(summary);
+
+			fillOldestTxTable(summary);
+			fillLargestTxTable(summary);
 
 			//console.log(JSON.stringify(summary));
 
@@ -397,6 +437,53 @@ block endOfBody
 
 			$("#main-content").show();
 			$("#progress-wrapper").hide();
+		}
+
+		function fillOldestTxTable(summary) {
+			for (var i = 0; i < summary.oldestTxs.length; i++) {
+				var oldTx = summary.oldestTxs[i];
+
+				var row = $("#oldest-tx-table-row-prototype").clone();
+				row.attr("id", null);
+				row.addClass("oldest-tx-table-row");
+
+				row.find(".data-txid").html(`<a href="./tx/${oldTx.txid}">${oldTx.txid.substring(0, 16)}...</a>`);
+
+				var days = new Decimal(oldTx.age).dividedBy(1).dividedBy(60 * 60 * 24);
+
+				if (days > 30) {
+					var months = days.dividedBy(30);
+
+					row.find(".data-age").text(months.toDP(2) + " mo");
+
+				} else {
+					row.find(".data-age").text(days.toDP(2) + " d");
+				}
+
+				row.show();
+
+				$("#oldest-tx-table-body").append(row);
+			}
+		}
+
+		function fillLargestTxTable(summary) {
+			for (var i = 0; i < summary.largestTxs.length; i++) {
+				var largeTx = summary.largestTxs[i];
+
+				var row = $("#largest-tx-table-row-prototype").clone();
+				row.attr("id", null);
+				row.addClass("largest-tx-table-row");
+
+				row.find(".data-txid").html(`<a href="./tx/${largeTx.txid}">${largeTx.txid.substring(0, 16)}...</a>`);
+
+				var kb = new Decimal(largeTx.size).dividedBy(1000);
+
+				row.find(".data-size").text(kb.toDP(2) + " kvB");
+
+				row.show();
+
+				$("#largest-tx-table-body").append(row);
+			}
 		}
 
 		function buildFeeRateGraphData(summary) {
