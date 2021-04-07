@@ -3,8 +3,14 @@
     # update and install packages
     apt update
     apt upgrade
-    apt install git nginx gcc g++ make npm certbot python3-certbot-nginx
-    npm install -g npm
+    apt install git nginx gcc g++ make certbot python3-certbot-nginx
+    
+    # install NVM from https://github.com/nvm-sh/nvm
+    nvm ls-remote
+    
+    # install latest node from output of ls-remote above, e.g.:
+    nvm install 15.13.0 
+    
     npm install -g pm2
     
     # add user for btc-related stuff
