@@ -188,7 +188,7 @@ module.exports = {
 		blockTxPageSize: (slowDeviceMode ? 10 : 20),
 		addressTxPageSize: 10,
 		txMaxInput: (slowDeviceMode ? 3 : 15),
-		browseBlocksPageSize: (process.env.BTCEXP_UI_BLOCKS_PAGE_BLOCK_COUNT || (slowDeviceMode ? 10 : 0)),
+		browseBlocksPageSize: (process.env.BTCEXP_UI_BLOCKS_PAGE_BLOCK_COUNT || (slowDeviceMode ? 10 : 50)),
 		addressPage:{
 			txOutputMaxDefaultDisplay:10
 		},
