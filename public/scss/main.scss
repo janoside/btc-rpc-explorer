@@ -85,6 +85,14 @@ code {
 	filter: drop-shadow(1px 1px 1px #262626);
 }
 
+.text-darken {
+	filter: brightness(80%);
+}
+
+.text-lighten {
+	filter: brightness(120%);
+}
+
 
 .text-twitter {
 	color: #1d9bf0;
