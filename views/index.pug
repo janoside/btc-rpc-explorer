@@ -79,10 +79,10 @@ block content
 
 				include includes/blocks-list.pug
 
-				.text-center
-					.border.border-2.mb-3(class=(blocks.length % 2 == 1 ? "mt-2" : false))
-
-					a(href="./blocks") Browse Blocks &raquo;
+				.text-center.pt-3
+					a.btn.btn-primary.btn-sm(href="./blocks")
+						i.fas.fa-cubes.me-2
+						| Browse Blocks &raquo;
 							
 
 		+contentSection("Tools")

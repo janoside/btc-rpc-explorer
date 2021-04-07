@@ -92,7 +92,7 @@ html(lang="en")
 									div.dropdown-menu.dropdown-menu-end.shadow(aria-label="Tools Items")
 										each section, sectionIndex in config.site.toolSections
 											if (sectionIndex > 0)
-												hr.dropdown-divider.mt-3.mb-1
+												hr.dropdown-divider.mt-2.mb-1
 
 											span.dropdown-header #{section.name}
 
@@ -137,6 +137,11 @@ html(lang="en")
 													.float-end
 														if (userSettings.localCurrency == item.toLowerCase())
 															i.fas.fa-check
+
+									hr.dropdown-divider.mt-2.mb-2
+
+									a.dropdown-item(href=`./user-settings`) More settings...
+
 
 							
 

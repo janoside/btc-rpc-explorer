@@ -200,7 +200,7 @@ module.exports = {
 			{name: "Mempool", items: [5, 4]},
 			{name: "Analysis", items: [9, 10, 11, 12, 3]},
 			{name: "Technical", items: [6, 7]},
-			{name: "Misc", items: [8, 13]},
+			{name: "Fun", items: [8, 13]},
 		]
 	},
 

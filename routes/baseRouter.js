@@ -499,6 +499,12 @@ router.get("/changeSetting", function(req, res, next) {
 	res.redirect(req.headers.referer);
 });
 
+router.get("/user-settings", function(req, res, next) {
+	res.render("user-settings");
+
+	next();
+});
+
 router.get("/blocks", asyncHandler(async (req, res, next) => {
 	try {
 		var limit = config.site.browseBlocksPageSize;
