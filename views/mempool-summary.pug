@@ -151,9 +151,9 @@ block endOfBody
 
 	script.
 		var satoshiPerByteBucketMaxima = !{JSON.stringify(satoshiPerByteBucketMaxima)};
-		var summary = null;
 		var statusId = Math.random().toString(36).substr(2, 5);
 		var statusInterval;
+		var summary = null;
 
 		$(document).ready(function() {
 			statusInterval = setInterval(function() { updateStatus(); }, 125);
@@ -179,21 +179,24 @@ block endOfBody
 				if (res.done == res.count) {
 					clearInterval(statusInterval);
 
-					$.ajax({
-						url: `./api/get-mempool-summary?statusId=${statusId}`
+					if (summary == null) {
+						$.ajax({
+							url: `./api/get-mempool-summary?statusId=${statusId}`
 
-					}).done((summaryResult) => {
-						summary = summaryResult;
+						}).done((summaryResult) => {
+							if (summaryResult.count) {
+								summary = summaryResult;
+							
+								$("#json-content").text(JSON.stringify(summaryResult, null, 4));
 
-						$("#json-content").text(JSON.stringify(summary, null, 4));
+								hljs.highlightAll();
 
-						hljs.highlightAll();
-
-						displaySummaryData(summary);
-
-					}).always(() => {
-						// nothing
-					});
+								displaySummaryData(summaryResult);
+							}
+						}).always(() => {
+							// nothing
+						});
+					}
 				}
 			}).fail((a, b, c) => {
 			}).always(() => {
