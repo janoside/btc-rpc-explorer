@@ -45,7 +45,8 @@ See [CHANGELOG.md](/CHANGELOG.md).
 
 ### Note about pruning and indexing configurations
 
-This tool is designed to work best with full transaction indexing enabled (`txindex=1`) and pruning **disabled**. Running Bitcoin Core *without* `txindex` enabled and/or *with* `pruning` enabled works, but some data will be incomplete or missing. Also note that such Bitcoin Core configurations receive less thorough testing.
+This tool is designed to work best with full transaction indexing enabled (`txindex=1`) and pruning **disabled**. 
+However, if you're running Bitcoin Core v0.21+ you can run *without* `txindex` enabled and/or *with* `pruning` enabled and this tool will continue to function, but some data will be incomplete or missing. Also note that such Bitcoin Core configurations receive less thorough testing.
 
 In particular, with `pruning` enabled and/or `txindex` disabled, the following functionality is altered:
 

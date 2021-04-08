@@ -276,6 +276,11 @@ function onRpcConnectionVerified(getnetworkinfo, getblockchaininfo, getindexinfo
 
 	if (getindexinfo.txindex) {
 		global.txindexAvailable = true;
+
+	} else if (getindexinfo.minRpcVersionNeeded) {
+		// here we ASSUME that txindex is available because we're targeting pre-v0.21
+		// and docs specify that txindex is necessary for pre-v0.21 nodes
+		global.txindexAvailable = true;
 	}
 
 	if (getblockchaininfo.pruned) {

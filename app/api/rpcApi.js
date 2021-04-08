@@ -26,7 +26,10 @@ const rpcQueue = async.queue(function(task, callback) {
 
 }, config.rpcConcurrency);
 
-const minRpcVersions = {getblockstats:"0.17.0"};
+const minRpcVersions = {
+	getblockstats: "0.17.0",
+	getindexinfo: "0.21.0"
+};
 
 global.rpcStats = {};
 
@@ -64,7 +67,13 @@ function getMiningInfo() {
 }
 
 function getIndexInfo() {
-	return getRpcData("getindexinfo");
+	if (semver.gte(global.btcNodeSemver, minRpcVersions.getindexinfo)) {
+		return getRpcData("getindexinfo");
+
+	} else {
+		// unsupported
+		return unsupportedPromise(minRpcVersions.getindexinfo);
+	}
 }
 
 function getUptimeSeconds() {
@@ -282,7 +291,7 @@ async function noTxIndexTransactionLookup(txid, walletOnly) {
 			var blockhash = await electrumAddressApi.lookupTxBlockHash(txid);
 
 			return await getRawTransaction(txid, blockhash);
-			
+
 		} catch (err) {
 			debugLog(`Electrs blockhash lookup failed for ${txid}:`, err);
 		}
