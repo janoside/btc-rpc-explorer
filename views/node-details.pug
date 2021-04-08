@@ -114,27 +114,51 @@ block content
 										i.fas.fa-times.text-danger
 
 				if (getblockchaininfo.softforks)
-					- var forkUrls = {"bip34":"https://github.com/bitcoin/bips/blob/master/bip-0034.mediawiki", "bip65":"https://github.com/bitcoin/bips/blob/master/bip-0065.mediawiki", "bip66":"https://github.com/bitcoin/bips/blob/master/bip-0066.mediawiki", "csv":"https://github.com/bitcoin/bips/blob/master/bip-0112.mediawiki", "segwit":"https://github.com/bitcoin/bips/blob/master/bip-0141.mediawiki", "taproot":"https://github.com/bitcoin/bips/blob/master/bip-0341.mediawiki"};
+					if (getblockchaininfo.bip9_softforks)
+						// old format: ~ v0.18.0
+						- var softforks = [];
+						each item in getblockchaininfo.softforks
+							- softforks.push(item);
 
-					+contentSection("Soft Forks")
-						+summaryRow(utils.objectProperties(getblockchaininfo.softforks).length)
-							each item, itemName in getblockchaininfo.softforks
-								+summaryItem(itemName)
-									if (item.active)
-										span.me-2
-											span.text-success active
-											small.text-muted.ms-2 (
-												a.border-dotted(href=`./block-height/${item.height}`, title=`${itemName} has been active since block ${item.height}`, data-bs-toggle="tooltip") #{item.height.toLocaleString()}
-												| +)
+						each item, itemName in getblockchaininfo.bip9_softforks
+							- item.id = itemName
+							- softforks.push(item);
 
-									else if (item.type == "bip9")
-										span.me-2.ms-2 #{item.type} - #{JSON.stringify(item.bip9)}
+						+contentSection("Soft Forks")
+							+summaryRow(softforks.length)
+								each item in softforks
+									+summaryItem(item.id)
+										each propVal, propName in item
+											if (propName == "reject")
+												div reject: #{propVal.status}
 
-									
-									if (forkUrls[itemName])
-										small
-											a(href=forkUrls[itemName], title=`More info about ${itemName}`, data-bs-toggle="tooltip", target="_blank")
-												i.fas.fa-external-link-alt.small
+											else if (propName == "id")
+											else if (propName != "id")
+												div #{propName}: #{propVal}
+
+					else
+						// more modern format
+						- var forkUrls = {"bip34":"https://github.com/bitcoin/bips/blob/master/bip-0034.mediawiki", "bip65":"https://github.com/bitcoin/bips/blob/master/bip-0065.mediawiki", "bip66":"https://github.com/bitcoin/bips/blob/master/bip-0066.mediawiki", "csv":"https://github.com/bitcoin/bips/blob/master/bip-0112.mediawiki", "segwit":"https://github.com/bitcoin/bips/blob/master/bip-0141.mediawiki", "taproot":"https://github.com/bitcoin/bips/blob/master/bip-0341.mediawiki"};
+
+						+contentSection("Soft Forks")
+							+summaryRow(utils.objectProperties(getblockchaininfo.softforks).length)
+								each item, itemName in getblockchaininfo.softforks
+									+summaryItem(itemName)
+										if (item.active)
+											span.me-2
+												span.text-success active
+												small.text-muted.ms-2 (
+													a.border-dotted(href=`./block-height/${item.height}`, title=`${itemName} has been active since block ${item.height}`, data-bs-toggle="tooltip") #{item.height.toLocaleString()}
+													| +)
+
+										else if (item.type == "bip9")
+											span.me-2.ms-2 #{item.type} - #{JSON.stringify(item.bip9)}
+
+										
+										if (forkUrls[itemName])
+											small
+												a(href=forkUrls[itemName], title=`More info about ${itemName}`, data-bs-toggle="tooltip", target="_blank")
+													i.fas.fa-external-link-alt.small
 
 
 				+contentSection("Network")
