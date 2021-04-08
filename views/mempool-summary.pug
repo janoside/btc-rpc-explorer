@@ -64,7 +64,7 @@ block content
 
 						form.form-inline(method="post", action="javascript:void(0)", onsubmit=`estimateTransactionMempoolDepth($("#mempoolquery").val()); return false;` style="width: 325px;")
 							.input-group.input-group
-								input.form-control.form-control(id="mempoolquery", type="text", name="mempoolquery", placeholder="txid", value=(mempoolquery))
+								input.form-control.form-control(id="mempoolquery", type="text", name="mempoolquery", placeholder="txid", value=(mempoolquery), title="<span class='text-warning'>Transaction not found</span>", data-bs-trigger="manual", data-bs-html="true", data-bs-placement="bottom")
 								
 								button.btn.btn-primary(type="submit")
 									i.fas.fa-search
@@ -550,6 +550,9 @@ block endOfBody
 			};
 		}
 
+		var notfoundEl = document.getElementById("mempoolquery");
+		var notfoundTooltip = new bootstrap.Tooltip(notfoundEl);
+
 		function estimateTransactionMempoolDepth(txid) {
 			var avgTransactionsPerBlock = 3000;
 			var satsPerBitcoin = 100000000; // TODO: magic number - replace with coinConfig.baseCurrencyUnit.multiplier
@@ -558,12 +561,17 @@ block endOfBody
 				url: `./api/mempool-tx-summaries/${txid}`
 
 			}).done(function(resultList) {
+				if (resultList && resultList.length > 0) {
+					var result = resultList[0];
 
-				var result = resultList[0];
+					var feeRate = new Decimal(result.f).times(100000000).dividedBy(result.sz); // TODO: magic number, sat/BTC
 
-				var feeRate = new Decimal(result.f).times(100000000).dividedBy(result.sz); // TODO: magic number, sat/BTC
+					estimateMempoolDepth(feeRate);
 
-				estimateMempoolDepth(feeRate);
+				} else {
+					notfoundTooltip.show();
+					setTimeout(() => { notfoundTooltip.hide(); }, 2000);
+				}
 			});
 		}
 
@@ -601,7 +609,7 @@ block endOfBody
 						$("#estimate-mempooldepth").text(`~${minBlocks.toDP(1)}`);
 
 					} else {
-						$("#estimate-mempooldepth").text(`${minBlocks.toDP(1)} - ${maxBlocks.toDP(1)}`);
+						$("#estimate-mempooldepth").text(`${Math.floor(minBlocks)} - ${Math.ceil(maxBlocks)}`);
 					}
 					
 					var minMinutes = minBlocks.times(10); // TODO: magic number: 10min

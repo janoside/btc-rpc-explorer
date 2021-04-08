@@ -265,9 +265,7 @@ router.get("/mempool-tx-summaries/:txids", asyncHandler(async (req, res, next) =
 						w: item.entry.weight ? item.entry.weight : item.entry.size * 4
 					};
 
-					mempoolTxSummaryCache[key] = itemSummary;
-
-					results.push(mempoolTxSummaryCache[key]);
+					results.push(itemSummary);
 					
 					resolve();
 
