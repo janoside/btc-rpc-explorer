@@ -15,4 +15,10 @@ block content
 			a(href="./bitcoin.pdf") /bitcoin.pdf
 			|.
 
-	iframe(src="./bitcoin.pdf", style="width: 100%;", height="800")
+	if (global.activeBlockchain == "main")
+		iframe(src="./bitcoin.pdf", style="width: 100%;", height="800")
+
+	else
+		+warningAlert
+			.mb-2 Whoops! The Bitcoin Whitepaper is embedded in a particular transaction in the mainnet blockchain. It looks like this node is configured for a different network, so the data is not available to be extracted.
+			| Try running a mainnet node to use this tool.
