@@ -1,5 +1,5 @@
 ##### v3.0
-###### Unreleased
+###### 2021-04-08
 
 * Major visual refresh!
 	* All new design (layout, fonts, colors, etc)
