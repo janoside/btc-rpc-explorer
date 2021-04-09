@@ -347,17 +347,54 @@ async function onRpcConnectionVerified(getnetworkinfo, getblockchaininfo) {
 	setInterval(refreshNetworkVolumes, 30 * 60 * 1000);
 
 
-	// try to run getindexinfo to check for txindex
-	// TODO: change this for issue #300
+	assessTxindexAvailability();
+}
+
+async function assessTxindexAvailability() {
+	// Here we try to call getindexinfo to assess availability of txindex
+	// However, getindexinfo RPC is only available in v0.21+, so the call
+	// may return an "unsupported" error. If/when it does, we will fall back
+	// to assessing txindex availability by querying a known txid
+	debugLog("txindex check: trying getindexinfo");
 	global.getindexinfo = await coreApi.getIndexInfo();
 
+	debugLog(`txindex check: getindexinfo=${JSON.stringify(global.getindexinfo)}`);
+
 	if (global.getindexinfo.txindex) {
+		// getindexinfo was available, and txindex is also available...easy street
+		
 		global.txindexAvailable = true;
 
+		debugLog("txindex check: available!");
+
 	} else if (global.getindexinfo.minRpcVersionNeeded) {
-		// here we ASSUME that txindex is available because we're targeting pre-v0.21
-		// and docs specify that txindex is necessary for pre-v0.21 nodes
-		global.txindexAvailable = true;
+		// here we find out that getindexinfo is unavailable on our node because
+		// we're running pre-v0.21, so we fall back to querying a known txid
+		// to assess txindex availability
+
+		debugLog("txindex check: getindexinfo unavailable, trying txid lookup");
+
+		try {
+			// lookup a known TXID as a test for whether txindex is available
+			let knownTx = await coreApi.getRawTransaction(coinConfig.knownTransactionsByNetwork[global.activeBlockchain]);
+
+			// if we get here without an error being thrown, we know we're able to look up by txid
+			// thus, txindex is available
+			global.txindexAvailable = true;
+
+			debugLog("txindex check: available! (pre-v0.21)");
+
+		} catch (e) {
+			// here we were unable to query by txid, so we believe txindex is unavailable
+			global.txindexAvailable = false;
+
+			debugLog("txindex check: unavailable");
+		}
+	} else {
+		// here getindexinfo is available (i.e. we're on v0.21+), but txindex is NOT available
+		global.txindexAvailable = false;
+
+		debugLog("txindex check: unavailable");
 	}
 }
 
