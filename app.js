@@ -50,6 +50,7 @@ const sso = require('./app/sso.js');
 const markdown = require("markdown-it")();
 const v8 = require("v8");
 const axios = require("axios");
+var compression = require("compression");
 
 require("./app/currencies.js");
 
@@ -147,6 +148,8 @@ expressApp.use(session({
 	resave: false,
 	saveUninitialized: false
 }));
+
+expressApp.use(compression());
 
 expressApp.use(config.baseUrl, express.static(path.join(__dirname, 'public'), {
 	maxAge: 60 * 60 * 1000
