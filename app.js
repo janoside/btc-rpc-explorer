@@ -253,35 +253,25 @@ function verifyRpcConnection() {
 		Promise.all([
 			coreApi.getNetworkInfo(),
 			coreApi.getBlockchainInfo(),
-			coreApi.getIndexInfo(),
-		]).then(([ getnetworkinfo, getblockchaininfo, getindexinfo ]) => {
+		]).then(([ getnetworkinfo, getblockchaininfo ]) => {
 			global.activeBlockchain = getblockchaininfo.chain;
 
 			// we've verified rpc connection, no need to keep trying
 			clearInterval(global.verifyRpcConnectionIntervalId);
 
-			onRpcConnectionVerified(getnetworkinfo, getblockchaininfo, getindexinfo);
+			onRpcConnectionVerified(getnetworkinfo, getblockchaininfo);
+
 		}).catch(function(err) {
 			utils.logError("32ugegdfsde", err);
 		});
 	}
 }
 
-function onRpcConnectionVerified(getnetworkinfo, getblockchaininfo, getindexinfo) {
+async function onRpcConnectionVerified(getnetworkinfo, getblockchaininfo) {
 	// localservicenames introduced in 0.19
 	var services = getnetworkinfo.localservicesnames ? ("[" + getnetworkinfo.localservicesnames.join(", ") + "]") : getnetworkinfo.localservices;
 
 	global.getnetworkinfo = getnetworkinfo;
-	global.getindexinfo = getindexinfo;
-
-	if (getindexinfo.txindex) {
-		global.txindexAvailable = true;
-
-	} else if (getindexinfo.minRpcVersionNeeded) {
-		// here we ASSUME that txindex is available because we're targeting pre-v0.21
-		// and docs specify that txindex is necessary for pre-v0.21 nodes
-		global.txindexAvailable = true;
-	}
 
 	if (getblockchaininfo.pruned) {
 		global.prunedBlockchain = true;
@@ -331,6 +321,7 @@ function onRpcConnectionVerified(getnetworkinfo, getblockchaininfo, getindexinfo
 	
 	debugLog(`RPC Connected: version=${getnetworkinfo.version} subversion=${getnetworkinfo.subversion}, parsedVersion(used for RPC versioning)=${global.btcNodeSemver}, protocolversion=${getnetworkinfo.protocolversion}, chain=${getblockchaininfo.chain}, services=${services}`);
 
+	
 	// load historical/fun items for this chain
 	loadHistoricalDataForChain(global.activeBlockchain);
 
@@ -351,6 +342,20 @@ function onRpcConnectionVerified(getnetworkinfo, getblockchaininfo, getindexinfo
 	// 1d / 7d volume
 	refreshNetworkVolumes();
 	setInterval(refreshNetworkVolumes, 30 * 60 * 1000);
+
+
+	// try to run getindexinfo to check for txindex
+	// TODO: change this for issue #300
+	global.getindexinfo = await coreApi.getIndexInfo();
+
+	if (global.getindexinfo.txindex) {
+		global.txindexAvailable = true;
+
+	} else if (global.getindexinfo.minRpcVersionNeeded) {
+		// here we ASSUME that txindex is available because we're targeting pre-v0.21
+		// and docs specify that txindex is necessary for pre-v0.21 nodes
+		global.txindexAvailable = true;
+	}
 }
 
 function refreshUtxoSetSummary() {
