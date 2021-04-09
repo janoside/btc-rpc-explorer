@@ -1,4 +1,17 @@
-##### v3.0
+##### v3.1.0
+###### Unreleased
+
+* Improvements to no-`txindex` support: now available for all versions of Bitcoin Core
+* Add back the `/peers` tool in the "Tools" menu
+	* Note: The map on the peers tool now requires users set their own `BTCEXP_MAPBOX_APIKEY` in `.env`
+* Response compression
+* Remove reference to unused `fonts.css`
+* Increased static-files cache: 1hr -> 1mo
+* Clearer UX around RPC connection failures (show the fact clearly, instead of flooding the log with cryptic errors)
+* Fixed changelog for v3.0.0 release (added/clarified some issues)
+
+
+##### v3.0.0
 ###### 2021-04-08
 
 * Major visual refresh!
@@ -6,12 +19,15 @@
 	* Redesigned Dark Mode (now the default)
 	* New app icon
 * Support for pruned nodes and nodes with disabled `txindex`! (HUGE Thanks to [@shesek](https://github.com/shesek))
+	* Note: Currently only Bitcoin Core versions 0.21+ are able to support this feature (a future improvement is planned to make it available to all versions)
 * Mempool Summary improvements
 	* Greatly improved performance for multiple loads via caching
 	* Added: "Blocks Count" column by fee-rate bucket
 	* Tool for estimating Block Depth of a transaction or a fee rate (Thanks [@pointbiz](https://github.com/pointbiz))
 * Mining Summary: added doughnut chart for rev. breakdown, simplified table data
 * Upgraded to Bootstrap 5 (currently beta3...)
+* Update mapbox API (Thanks [@shesek](https://github.com/tyzbit))
+	* Note: The map on the `/peers` page now requires that users set the env var `BTCEXP_MAPBOX_APIKEY` to their own API key
 * Fix for 404 pages hanging (Thanks [@shesek](https://github.com/shesek))
 * Add convenience redirect for baseUrl (Thanks [@shesek](https://github.com/shesek))
 * Make url in logs clickable (Thanks [@shesek](https://github.com/shesek))
