@@ -2,18 +2,20 @@ const os = require("os");
 const v8 = require("v8");
 const pidusage = require("pidusage");
 const statTracker = require("./statTracker.js");
-const debug = require("debug")("systemMonitor");
+const debugLog = require("debug")("systemMonitor");
 
-try { var eventLoopStats = require("event-loop-stats"); }
-catch (err) {
-	debug("Failed loading event-loop-stats, skipping system monitor");
-	return;
+try {
+	var eventLoopStats = require("event-loop-stats");
+
+} catch (err) {
+	debugLog("Failed loading event-loop-stats, skipping system monitor");
 }
 
 const systemMonitorInterval = setInterval(() => {
 	pidusage(process.pid, (err, stat) => {
 		if (err) {
-			debug(err);
+			debugLog(err);
+			
 			return;
 		}
 
@@ -39,12 +41,14 @@ const systemMonitorInterval = setInterval(() => {
 		statTracker.trackValue("mem.malloced", heapStats.malloced_memory / 1024 / 1024);
 		statTracker.trackValue("mem.malloced-peak", heapStats.peak_malloced_memory / 1024 / 1024);
 
-		let loopStats = eventLoopStats.sense();
+		if (eventLoopStats) {
+			let loopStats = eventLoopStats.sense();
 
-		statTracker.trackValue("eventloop.min", loopStats.min);
-		statTracker.trackValue("eventloop.max", loopStats.max);
-		statTracker.trackValue("eventloop.sum", loopStats.sum);
-		statTracker.trackValue("eventloop.num", loopStats.num);
+			statTracker.trackValue("eventloop.min", loopStats.min);
+			statTracker.trackValue("eventloop.max", loopStats.max);
+			statTracker.trackValue("eventloop.sum", loopStats.sum);
+			statTracker.trackValue("eventloop.num", loopStats.num);
+		}
 	});
 }, process.env.SYSTEM_MONITOR_INTERVAL || 60 * 60 * 1000);
 
