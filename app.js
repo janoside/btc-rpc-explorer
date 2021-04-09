@@ -46,6 +46,7 @@ const request = require("request");
 const qrcode = require("qrcode");
 const addressApi = require("./app/api/addressApi.js");
 const electrumAddressApi = require("./app/api/electrumAddressApi.js");
+const appStats = require("./app/appStats.js");
 const auth = require('./app/auth.js');
 const sso = require('./app/sso.js');
 const markdown = require("markdown-it")();
@@ -72,6 +73,8 @@ const expressApp = express();
 const statTracker = require("./app/statTracker.js");
 
 const statsProcessFunction = (name, stats) => {
+	appStats.trackAppStats(name, stats);
+	
 	if (process.env.STATS_API_URL) {
 		const data = Object.assign({}, stats);
 		data.name = name;

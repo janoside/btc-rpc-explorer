@@ -6,80 +6,202 @@ block headContent
 block content
 	+pageTitle("Admin Stats")
 
-	+contentSection("Performance Stats")
-		.table-responsive
-			table.table.table-borderless.table-striped
-				thead
-					tr
-						th Name
-						th.text-end Min
-						th.text-end Avg
-						th.text-end Max
-						th.text-end Sum
-						th.text-end Count
-						th.text-end First
-						th.text-end Latest
+	+pageTabs(["Graphs", "Data"])
 
-				tbody
-					each item, itemIndex in performanceStats
-						tr.font-monospace
-							td #{item[0]}
-							td.text-end #{Math.round(item[1].min).toLocaleString()}
-							td.text-end #{Math.round(item[1].avg).toLocaleString()}
-							td.text-end #{Math.round(item[1].max).toLocaleString()}
-							td.text-end #{Math.round(item[1].sum).toLocaleString()}
-							td.text-end #{Math.round(item[1].count).toLocaleString()}
-							td.text-end
-								- var dt = moment.duration(new Date().getTime() - item[1].firstDate.getTime());
-								span #{dt.format()}
-							td.text-end
-								- var dt = moment.duration(new Date().getTime() - item[1].lastDate.getTime());
-								span #{dt.format()}
+	.tab-content
+		+pageTab("Graphs", true)
+			.clearfix
+				.row
+					each itemName in appStatNames
+						.col-lg-6.float-start
+							+contentSection(itemName)
+								canvas(id=`canvas-${itemName}`)
 
+		+pageTab("Data")
+			+contentSection("Performance Stats")
+				.table-responsive
+					table.table.table-borderless.table-striped
+						thead
+							tr
+								th Name
+								th.text-end Min
+								th.text-end Avg
+								th.text-end Max
+								th.text-end Sum
+								th.text-end Count
+								th.text-end First
+								th.text-end Latest
 
-	+contentSection("Event Stats")
-		.table-responsive
-			table.table.table-borderless.table-striped
-				thead
-					tr
-						th Name
-						th.text-end Count
-
-				tbody
-					each item, itemIndex in eventStats
-						tr.font-monospace
-							td #{item[0]}
-							td.text-end #{item[1].toLocaleString()}
+						tbody
+							each item, itemIndex in performanceStats
+								tr.font-monospace
+									td #{item[0]}
+									td.text-end #{Math.round(item[1].min).toLocaleString()}
+									td.text-end #{Math.round(item[1].avg).toLocaleString()}
+									td.text-end #{Math.round(item[1].max).toLocaleString()}
+									td.text-end #{Math.round(item[1].sum).toLocaleString()}
+									td.text-end #{Math.round(item[1].count).toLocaleString()}
+									td.text-end
+										- var dt = moment.duration(new Date().getTime() - item[1].firstDate.getTime());
+										span #{dt.format()}
+									td.text-end
+										- var dt = moment.duration(new Date().getTime() - item[1].lastDate.getTime());
+										span #{dt.format()}
 
 
-	+contentSection("Value Stats")
-		.table-responsive
-			table.table.table-borderless.table-striped
-				thead
-					tr
-						th Name
-						th.text-end Min
-						th.text-end Avg
-						th.text-end Max
-						th.text-end Sum
-						th.text-end Count
-						th.text-end First
-						th.text-end Latest
+			+contentSection("Event Stats")
+				.table-responsive
+					table.table.table-borderless.table-striped
+						thead
+							tr
+								th Name
+								th.text-end Count
 
-				tbody
-					each item, itemIndex in valueStats
-						tr.font-monospace
-							td #{item[0]}
-							td.text-end #{Math.round(item[1].min).toLocaleString()}
-							td.text-end #{Math.round(item[1].avg).toLocaleString()}
-							td.text-end #{Math.round(item[1].max).toLocaleString()}
-							td.text-end #{Math.round(item[1].sum).toLocaleString()}
-							td.text-end #{Math.round(item[1].count).toLocaleString()}
-							td.text-end
-								- var dt = moment.duration(new Date().getTime() - item[1].firstDate.getTime());
-								span #{dt.format()}
-							td.text-end
-								- var dt = moment.duration(new Date().getTime() - item[1].lastDate.getTime());
-								span #{dt.format()}
+						tbody
+							each item, itemIndex in eventStats
+								tr.font-monospace
+									td #{item[0]}
+									td.text-end #{item[1].toLocaleString()}
 
 
+			+contentSection("Value Stats")
+				.table-responsive
+					table.table.table-borderless.table-striped
+						thead
+							tr
+								th Name
+								th.text-end Min
+								th.text-end Avg
+								th.text-end Max
+								th.text-end Sum
+								th.text-end Count
+								th.text-end First
+								th.text-end Latest
+
+						tbody
+							each item, itemIndex in valueStats
+								tr.font-monospace
+									td #{item[0]}
+									td.text-end #{Math.round(item[1].min).toLocaleString()}
+									td.text-end #{Math.round(item[1].avg).toLocaleString()}
+									td.text-end #{Math.round(item[1].max).toLocaleString()}
+									td.text-end #{Math.round(item[1].sum).toLocaleString()}
+									td.text-end #{Math.round(item[1].count).toLocaleString()}
+									td.text-end
+										- var dt = moment.duration(new Date().getTime() - item[1].firstDate.getTime());
+										span #{dt.format()}
+									td.text-end
+										- var dt = moment.duration(new Date().getTime() - item[1].lastDate.getTime());
+										span #{dt.format()}
+
+
+block endOfBody
+
+	+graphPageScriptSetup
+	
+	script(src='./js/decimal.js')
+
+	script.
+		var appStatNames = !{JSON.stringify(appStatNames)};
+		var appStats = !{JSON.stringify(appStats)};
+
+		var graphsById = {};
+
+		$(document).ready(function() {
+			var blue = "#007bff";
+
+			for (var n = 0; n < appStatNames.length; n++) {
+				var propName = appStatNames[n];
+
+				var data = [];
+				for (var i = 0; i < appStats[propName].length; i++) {
+					var item = appStats[propName][i];
+
+					data.push({t:new Date(item.time), y:item.value});
+				}
+
+				console.log(propName + " - " + JSON.stringify(data));
+
+				createGraph(`canvas-${propName}`, [propName], [data], [blue]);
+			}
+		});
+
+		function createGraph(chartid, names, datas, colors) {
+			var datasets = [];
+			var yaxes = [];
+
+			for (var i = 0; i < names.length; i++) {
+				datasets.push({
+					label: names[i],
+					data: datas[i],
+					borderWidth: 2,
+					borderColor: colors[i],
+					backgroundColor: 'rgba(0, 0, 0, 0)',
+					pointRadius: 1
+				});
+
+				yaxes.push({
+					scaleLabel: {
+						display: false,
+						//labelString: names[i]
+					},
+					gridLines: {
+						color: gridLineColor
+					}
+				});
+			}
+
+			// update data in graph if we already created, otherwise create anew
+			if (graphsById[chartid]) {
+				graph = graphsById[chartid];
+				graph.data = { datasets: datasets };
+				graph.update();
+
+			} else {
+				var ctx = document.getElementById(chartid).getContext('2d');
+				var graph = new Chart(ctx, {
+					type: 'line',
+					data: {
+						datasets: datasets
+					},
+					options: {
+						// disable all animations
+						animation: { duration: 0 },
+						hover: { animationDuration: 0 },
+						responsiveAnimationDuration: 0,
+
+						legend: {
+							display: (datasets.length > 1)
+						},
+						scales: {
+							xAxes: [{
+								type: 'time',
+								position: 'bottom',
+								time: {
+									unit: 'hour'
+								},
+								scaleLabel: {
+									display: true,
+									labelString: 'Time'
+								},
+								gridLines: {
+									color: gridLineColor
+								}
+							}],
+							yAxes: [{
+								type: 'linear',
+								position: 'left',
+								scaleLabel: {
+									display: false,
+								},
+								gridLines: {
+									color: gridLineColor
+								}
+							}],
+						}
+					}
+				});
+
+				graphsById[chartid] = graph;
+			}
+		}

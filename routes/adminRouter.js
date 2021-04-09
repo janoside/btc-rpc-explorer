@@ -18,13 +18,16 @@ const sha256 = require("crypto-js/sha256");
 const hexEnc = require("crypto-js/enc-hex");
 const Decimal = require("decimal.js");
 
+
 const utils = require('./../app/utils.js');
 const coins = require("./../app/coins.js");
 const config = require("./../app/config.js");
 const coreApi = require("./../app/api/coreApi.js");
 const addressApi = require("./../app/api/addressApi.js");
 
+
 const statTracker = require("./../app/statTracker.js");
+const appStats = require("./../app/appStats.js");
 
 const forceCsrf = csurf({ ignoreMethods: [] });
 
@@ -77,6 +80,8 @@ router.get("/dashboard", function(req, res, next) {
 
 router.get("/stats", function(req, res, next) {
 	res.locals.stats = statTracker.currentStats();
+	res.locals.appStats = appStats.appStats;
+	res.locals.appStatNames = appStats.statNames;
 
 	res.locals.performanceStats = [];
 	for (const [key, value] of Object.entries(res.locals.stats.performance)) {
