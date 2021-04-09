@@ -40,6 +40,7 @@ const bitcoinCore = require("bitcoin-core");
 const pug = require("pug");
 const momentDurationFormat = require("moment-duration-format");
 const coreApi = require("./app/api/coreApi.js");
+const rpcApi = require("./app/api/rpcApi.js");
 const coins = require("./app/coins.js");
 const request = require("request");
 const qrcode = require("qrcode");
@@ -253,9 +254,14 @@ function verifyRpcConnection() {
 	if (!global.activeBlockchain) {
 		debugLog(`Verifying RPC connection...`);
 
+		// normally in application code we target coreApi, but here we're trying to
+		// verify the RPC connection so we target rpcApi directly and include
+		// the second parameter "verifyingConnection=true", to bypass a
+		// fail-if-were-not-connected check
+
 		Promise.all([
-			coreApi.getNetworkInfo(),
-			coreApi.getBlockchainInfo(),
+			rpcApi.getRpcData("getnetworkinfo", true),
+			rpcApi.getRpcData("getblockchaininfo", true),
 		]).then(([ getnetworkinfo, getblockchaininfo ]) => {
 			global.activeBlockchain = getblockchaininfo.chain;
 
@@ -274,6 +280,7 @@ async function onRpcConnectionVerified(getnetworkinfo, getblockchaininfo) {
 	// localservicenames introduced in 0.19
 	var services = getnetworkinfo.localservicesnames ? ("[" + getnetworkinfo.localservicesnames.join(", ") + "]") : getnetworkinfo.localservices;
 
+	global.rpcConnected = true;
 	global.getnetworkinfo = getnetworkinfo;
 
 	if (getblockchaininfo.pruned) {
@@ -578,7 +585,7 @@ expressApp.continueStartup = function() {
 
 	global.rpcClientNoTimeout = new bitcoinCore(rpcClientNoTimeoutProperties);
 
-	// default values - after we connect via RPC, we update this
+	// default values - after we connect via RPC, we update these
 	global.txindexAvailable = false;
 	global.prunedBlockchain = false;
 	global.pruneHeight = -1;
@@ -716,6 +723,17 @@ expressApp.use(function(req, res, next) {
 
 		req.session.query = null;
 	}
+
+
+	if (!global.rpcConnected) {
+		res.status(500);
+		res.render('error', {
+			errorType: "noRpcConnection"
+		});
+
+		return;
+	}
+	
 
 	// make some var available to all request
 	// ex: req.cheeseStr = "cheese";

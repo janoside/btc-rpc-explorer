@@ -417,8 +417,12 @@ function getRpcMethodHelp(methodName) {
 
 
 
-function getRpcData(cmd) {
+function getRpcData(cmd, verifyingConnection=false) {
 	var startTime = new Date().getTime();
+
+	if (!verifyingConnection && !global.rpcConnected) {
+		return Promise.reject(new Error("No RPC connection available. Check your connection/authentication parameters."));
+	}
 
 	return new Promise(function(resolve, reject) {
 		debugLog(`RPC: ${cmd}`);
@@ -472,8 +476,12 @@ function getRpcData(cmd) {
 	});
 }
 
-function getRpcDataWithParams(request) {
+function getRpcDataWithParams(request, verifyingConnection=false) {
 	var startTime = new Date().getTime();
+
+	if (!verifyingConnection && !global.rpcConnected) {
+		return Promise.reject(new Error("No RPC connection available. Check your connection/authentication parameters."));
+	}
 
 	return new Promise(function(resolve, reject) {
 		debugLog(`RPC: ${JSON.stringify(request)}`);
@@ -560,6 +568,9 @@ function logStats(cmd, hasParams, dt, success) {
 
 
 module.exports = {
+	getRpcData: getRpcData,
+	getRpcDataWithParams: getRpcDataWithParams,
+
 	getBlockchainInfo: getBlockchainInfo,
 	getNetworkInfo: getNetworkInfo,
 	getNetTotals: getNetTotals,
