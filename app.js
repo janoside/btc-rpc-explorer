@@ -152,7 +152,7 @@ expressApp.use(session({
 expressApp.use(compression());
 
 expressApp.use(config.baseUrl, express.static(path.join(__dirname, 'public'), {
-	maxAge: 60 * 60 * 1000
+	maxAge: 30 * 24 * 60 * 60 * 1000
 }));
 
 
