@@ -80,7 +80,7 @@ router.get("/dashboard", function(req, res, next) {
 
 router.get("/stats", function(req, res, next) {
 	res.locals.stats = statTracker.currentStats();
-	res.locals.appStats = appStats.appStats;
+	res.locals.appStats = appStats.getAllAppStats();
 	res.locals.appStatNames = appStats.statNames;
 
 	res.locals.performanceStats = [];
