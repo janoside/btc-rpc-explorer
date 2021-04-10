@@ -9,6 +9,7 @@
 * Increased static-files cache: 1hr -> 1mo
 * Clearer UX around RPC connection failures (show the fact clearly, instead of flooding the log with cryptic errors)
 * Fixed changelog for v3.0.0 release (added/clarified some issues)
+* Updated favicons (Thanks [realfavicongenerator.net](https://realfavicongenerator.net))
 
 
 ##### v3.0.0
