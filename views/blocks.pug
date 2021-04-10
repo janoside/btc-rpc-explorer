@@ -4,26 +4,31 @@ block headContent
 	title Blocks
 
 block content
-	+pageTitle("Blocks")
+	.clearfix
+		.float-start
+			+pageTitle("Blocks")
+		.float-end
+			if (blocks)
+				nav(aria-label="Page navigation")
+					ul.pagination.justify-content-center.mt-3
+						
+						li.page-item(class=(sort == "desc" ? "active" : false))
+							a.page-link(href=(sort == "desc" ? "javascript:void(0)" : `./blocks?limit=${limit}&offset=0&sort=desc`))
+								span(aria-hidden="true") Newest blocks first
+
+						li.page-item(class=(sort == "asc" ? "active" : false))
+							a.page-link(href=(sort == "asc" ? "javascript:void(0)" : `./blocks?limit=${limit}&offset=0&sort=asc`))
+								span(aria-hidden="true") Oldest blocks first
 
 	if (blocks)
-		nav(aria-label="Page navigation")
-			ul.pagination.justify-content-center
-				
-				li.page-item(class=(sort == "desc" ? "active" : false))
-					a.page-link(href=(sort == "desc" ? "javascript:void(0)" : `./blocks?limit=${limit}&offset=0&sort=desc`))
-						span(aria-hidden="true") Newest blocks first
-
-				li.page-item(class=(sort == "asc" ? "active" : false))
-					a.page-link(href=(sort == "asc" ? "javascript:void(0)" : `./blocks?limit=${limit}&offset=0&sort=asc`))
-						span(aria-hidden="true") Oldest blocks first
-
-		
 		+contentSection
 			include includes/blocks-list.pug
 
 			if (blockCount > limit)
-				.border.border-2.mt-4
+				if (blocks.length % 2 == 1)
+					hr.mt-4
+				else
+					.mb-2
 
 				.mt-4
 					+pagination(limit, offset, sort, blockCount, paginationBaseUrl, "center", true)
