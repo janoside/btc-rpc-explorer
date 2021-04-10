@@ -6,7 +6,8 @@ html(lang="en")
 		meta(name="csrf-token", content=csrfToken)
 		meta(name="viewport", content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0, shrink-to-fit=no")
 		
-		link(rel="stylesheet", href="./style/highlight.min.css", integrity="sha384-s4RLYRjGGbVqKOyMGGwfxUTMOO6D7r2eom7hWZQ6BjK2Df4ZyfzLXEkonSm0KLIQ")
+		if (!homepage)
+			link(rel="stylesheet", href="./style/highlight.min.css", integrity="sha384-s4RLYRjGGbVqKOyMGGwfxUTMOO6D7r2eom7hWZQ6BjK2Df4ZyfzLXEkonSm0KLIQ")
 
 
 		if (userSettings.uiTheme == "light")
@@ -293,7 +294,8 @@ html(lang="en")
 		script(src="./js/bootstrap.bundle.min.js", integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf")
 		script(defer, src="./js/fontawesome.min.js", integrity="sha384-haqrlim99xjfMxRP6EWtafs0sB1WKcMdynwZleuUSwJR0mDeRYbhtY+KPMr+JL6f")
 
-		script(src="./js/highlight.pack.js", integrity="sha384-OGoFdvlhYqw3L+BFpHxdz5136RO9tUlt7OZ2qQZ0N6Z9Qqx0rCQBsg9ko7X4vC64")
+		if (!homepage)
+			script(src="./js/highlight.pack.js", integrity="sha384-OGoFdvlhYqw3L+BFpHxdz5136RO9tUlt7OZ2qQZ0N6Z9Qqx0rCQBsg9ko7X4vC64")
 
 		script(src="./js/site.js", integrity="sha384-lRJsCA6PqJsSsdIfU9CtmBxuoCI2nZMQSphToDThRdHsK/unylcL0y41P/kRd49S")
 		
