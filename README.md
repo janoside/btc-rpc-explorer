@@ -13,9 +13,9 @@ Whatever reasons one may have for running a full node (trustlessness, technical 
 
 Live demos available at:
 
-* Mainnet - [https://explorer.btc21.org](https://explorer.btc21.org)
-* Testnet - [https://testnet.btc21.org](https://testnet.btc21.org)
-* Signet - [https://signet.btc21.org](https://signet.btc21.org)
+* Mainnet - [BitcoinExplorer.org](https://bitcoinexplorer.org)
+* Testnet - [testnet.BitcoinExplorer.org](https://testnet.bitcoinexplorer.org)
+* Signet - [signet.BitcoinExplorer.org](https://signet.bitcoinexplorer.org)
 
 
 # Features
@@ -101,11 +101,15 @@ btc-rpc-explorer --port 8080 --bitcoind-port 18443 --bitcoind-cookie ~/.bitcoin/
 
 #### Demo site settings
 
-To match the features visible on the demo site at [https://explorer.btc21.org](https://explorer.btc21.org) you'll need to set the following non-default configuration values:
+To match the features visible on the demo site at [BitcoinExplorer.org](https://bitcoinexplorer.org) you'll need to set the following non-default configuration values:
 
     BTCEXP_DEMO=true 		# enables some demo/informational aspects of the site
     BTCEXP_NO_RATES=false		# enables querying of exchange rate data
     BTCEXP_SLOW_DEVICE_MODE=false	# enables resource-intensive tasks (UTXO set query, 24hr volume querying) that are inappropriate for "slow" devices
+    BTCEXP_ADDRESS_API=electrum 	# use electrum-protocol servers for address lookups
+    BTCEXP_ELECTRUM_SERVERS=tcp://your-electrum-protocol-server-host:50001		# address(es) for my electrum-protocol server(s)
+    BTCEXP_IPSTACK_APIKEY=your-api-key		# enable peer ip geo-location
+    BTCEXP_MAPBOX_APIKEY=your-api-key		# enable map of peer locations
 
 #### SSO authentication
 
@@ -133,7 +137,7 @@ See [instructions here](docs/nginx-reverse-proxy.md) for using nginx+certbot (le
 
 If you get value from this project, please consider supporting my continued work with a donation. Any and all donations are truly appreciated.
 
-* [https://explorer-support.btc21.org](https://explorer-support.btc21.org)
+* [https://donate.bitcoinexplorer.org](https://donate.bitcoinexplorer.org)
 
 
 [npm-ver-img]: https://img.shields.io/npm/v/btc-rpc-explorer.svg?style=flat

@@ -80,9 +80,9 @@ module.exports = {
 		"signet":"Signet Explorer",
 	},
 	demoSiteUrlsByNetwork: {
-		"main": "https://explorer.btc21.org",
-		"test": "https://testnet.btc21.org",
-		"signet": "https://signet.btc21.org",
+		"main": "https://bitcoinexplorer.org",
+		"test": "https://testnet.bitcoinexplorer.org",
+		"signet": "https://signet.bitcoinexplorer.org",
 	},
 	knownTransactionsByNetwork: {
 		main: "f4184fc596403b9d638783cf57adfe4c75c605f6356fbc91338530e9831e9e16",
