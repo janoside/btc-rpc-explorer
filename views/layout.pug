@@ -304,9 +304,6 @@ html(lang="en")
 		script(src="./js/bootstrap.bundle.min.js", integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf")
 		script(defer, src="./js/fontawesome.min.js", integrity="sha384-haqrlim99xjfMxRP6EWtafs0sB1WKcMdynwZleuUSwJR0mDeRYbhtY+KPMr+JL6f")
 
-		if (!homepage)
-			script(src="./js/highlight.pack.js", integrity="sha384-OGoFdvlhYqw3L+BFpHxdz5136RO9tUlt7OZ2qQZ0N6Z9Qqx0rCQBsg9ko7X4vC64")
-
 		script(src="./js/site.js", integrity="sha384-lRJsCA6PqJsSsdIfU9CtmBxuoCI2nZMQSphToDThRdHsK/unylcL0y41P/kRd49S")
 		
 		script.
@@ -322,9 +319,14 @@ html(lang="en")
 				var popoverList = popoverTriggerList.map(function (popoverTriggerEl) {
 					return new bootstrap.Popover(popoverTriggerEl);
 				});
-
-				hljs.highlightAll();
 			});
+
+		if (!homepage)
+			script(src="./js/highlight.pack.js", integrity="sha384-OGoFdvlhYqw3L+BFpHxdz5136RO9tUlt7OZ2qQZ0N6Z9Qqx0rCQBsg9ko7X4vC64")
+			script.
+				document.addEventListener("DOMContentLoaded", function(event) {
+					hljs.highlightAll();
+				});
 
 			
 
