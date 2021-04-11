@@ -2,6 +2,7 @@
 ###### Unreleased
 
 * Improvements to no-`txindex` support: now available for all versions of Bitcoin Core
+* Move public sites to [BitcoinExplorer.org](https://bitcoinexplorer.org) (BIG thanks [@SatoshisDomains](https://twitter.com/SatoshisDomains))
 * Add back the `/peers` tool in the "Tools" menu
 	* Note: The map on the peers tool now requires users set their own `BTCEXP_MAPBOX_APIKEY` in `.env`
 * Response compression
