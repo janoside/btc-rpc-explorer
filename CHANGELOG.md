@@ -10,6 +10,7 @@
 * Clearer UX around RPC connection failures (show the fact clearly, instead of flooding the log with cryptic errors)
 * Fixed changelog for v3.0.0 release (added/clarified some issues)
 * Updated favicons (Thanks [realfavicongenerator.net](https://realfavicongenerator.net))
+* Fix for homepage error after failure to get AU exchange rate
 
 
 ##### v3.0.0

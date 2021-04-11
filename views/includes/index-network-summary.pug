@@ -38,7 +38,7 @@ if (exchangeRates)
 
 				// ["154.9",{"val":1000000000,"name":"giga","abbreviation":"G","exponent":"9"}]
 
-			if (global.goldExchangeRates["usd"] && global.exchangeRates["usd"])
+			if (global.goldExchangeRates && global.goldExchangeRates["usd"] && global.exchangeRates && global.exchangeRates["usd"])
 				// usd is the only bridge for our data sources
 				+summaryItem("Gold Rate", `Source: ${new URL(coinConfig.goldExchangeRateData.jsonUrl).hostname}`)
 					- var formatData = utils.formatExchangedCurrency(1.0, "au");
