@@ -36,7 +36,7 @@ module.exports = {
 			chain: "main",
 			address:"37k7toV1Nv4DfmQbmZ8KuZDQCYK9x5KpzP",
 			summary:"SHA1 collision bounty",
-			alertBodyHtml:"On September 13, 2013 a P2SH address was setup which allowed anyone who found a SHA1 collision to construct a transaction that could spend from this address.",
+			alertBodyHtml:"This address corresponds to a Bitcoin Script (<span class='font-data'>6e879169a77ca787</span>) that allows anyone who can demonstrate a SHA1 collision to spend from it. On September 13, 2013 this address was funded as a SHA1-collision bounty and it continued to accumulate 'bounty donations' for over 2 years when, on February 23, 2017 a total of 1.62 BTC were spent from this address in <a href='./tx/8d31992805518fd62daa3bdd2a5c4fd2cd3054c9b3dca1d78055e9528cff6adc'>8d31992805...</a>.",
 			referenceUrl:"https://bitcointalk.org/index.php?topic=293382.0"
 		},
 		{
@@ -45,7 +45,7 @@ module.exports = {
 			chain: "main",
 			address:"35Snmmy3uhaer2gTboc81ayCip4m9DT4ko",
 			summary:"SHA256 collision bounty",
-			alertBodyHtml:"On September 13, 2013 a P2SH address was setup which allowed anyone who found a SHA256 collision to construct a transaction that could spend from this address.",
+			alertBodyHtml:"This address corresponds to a Bitcoin Script (<span class='font-data'>6e879169a87ca887</span>) that allows anyone who can demonstrate a SHA256 collision to spend from it. On September 13, 2013 this address was funded as a SHA256-collision bounty. It has continued to accumulate 'bounty donations' for 7+ years and, as of this writing (April 2021), the bounty remains uncollected.",
 			referenceUrl:"https://bitcointalk.org/index.php?topic=293382.0"
 		},
 		{
@@ -54,7 +54,7 @@ module.exports = {
 			chain: "main",
 			address:"3KyiQEGqqdb4nqfhUzGKN6KPhXmQsLNpay",
 			summary:"RIPEMD160 collision bounty",
-			alertBodyHtml:"On September 13, 2013 a P2SH address was setup which allowed anyone who found a RIPEMD160 collision to construct a transaction that could spend from this address.",
+			alertBodyHtml:"This address corresponds to a Bitcoin Script (<span class='font-data'>6e879169a67ca687</span>) that allows anyone who can demonstrate a RIPEMD160 collision to spend from it. On September 13, 2013 this address was funded as a RIPEMD160-collision bounty. It has continued to accumulate 'bounty donations' for 7+ years and, as of this writing (April 2021), the bounty remains uncollected.",
 			referenceUrl:"https://bitcointalk.org/index.php?topic=293382.0"
 		},
 		{
@@ -63,7 +63,7 @@ module.exports = {
 			chain: "main",
 			address:"39VXyuoc6SXYKp9TcAhoiN1mb4ns6z3Yu6",
 			summary:"RIPEMD160(SHA256()) collision bounty",
-			alertBodyHtml:"On September 13, 2013 a P2SH address was setup which allowed anyone who found a RIPEMD160(SHA256()) collision to construct a transaction that could spend from this address.",
+			alertBodyHtml:"This address corresponds to a Bitcoin Script (<span class='font-data'>6e879169a97ca987</span>) that allows anyone who can demonstrate a RIPEMD160(SHA256()) collision to spend from it. On September 13, 2013 this address was funded as a RIPEMD160(SHA256())-collision bounty. It has continued to accumulate 'bounty donations' for 7+ years and, as of this writing (April 2021), the bounty remains uncollected.",
 			referenceUrl:"https://bitcointalk.org/index.php?topic=293382.0"
 		},
 		{
@@ -72,7 +72,7 @@ module.exports = {
 			chain: "main",
 			address:"3DUQQvz4t57Jy7jxE86kyFcNpKtURNf1VW",
 			summary:"SHA256(SHA256()) collision bounty",
-			alertBodyHtml:"On September 13, 2013 a P2SH address was setup which allowed anyone who found a SHA256(SHA256()) collision to construct a transaction that could spend from this address.",
+			alertBodyHtml:"This address corresponds to a Bitcoin Script (<span class='font-data'>6e879169aa7caa87</span>) that allows anyone who can demonstrate a SHA256(SHA256()) collision to spend from it. On September 13, 2013 this address was funded as a SHA256(SHA256())-collision bounty. It has continued to accumulate 'bounty donations' for 7+ years and, as of this writing (April 2021), the bounty remains uncollected.",
 			referenceUrl:"https://bitcointalk.org/index.php?topic=293382.0"
 		},
 		{
@@ -164,7 +164,8 @@ module.exports = {
 			chain: "main",
 			txid: "5d80a29be1609db91658b401f85921a86ab4755969729b65257651bb9fd2c10d",
 			blockHeight: 124724,
-			summary: "Destroyed bitcoin.",
+			summary: "Midnightmagic's 'Missing Satoshi' (provably lost/destroyed bitcoin)",
+			alertBodyHtml: "The miner of block <a href='./block-height/124724'>124,724</a> (<a href='https://bitcointalk.org/index.php?action=profile;u=2759'>midnightmagic on BitcoinTalk</a>) deliberately underpaid themselves 1 satoshi from the block subsidy (in addition to deliberately ignoring the fees for transactions included in that block). The 'missing satoshi' (to use midnight magic's words), was a tribute to Satoshi's disappearance.",
 			referenceUrl: "https://bitcointalk.org/index.php?topic=7253.msg184414#msg184414",
 			referenceUrl2: "https://www.reddit.com/r/Bitcoin/comments/7mhoks/til_in_2011_a_user_running_a_modified_mining/"
 		},
