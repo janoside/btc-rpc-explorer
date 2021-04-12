@@ -145,12 +145,16 @@ mixin txList(visibleTxs, txCount, limit, offset, inputsByTxid, options)
 									+valueDisplay(options.addrLossesByTxid[tx.txid])
 
 							if (options.showDates)
+								- var utcMoment = moment.utc(new Date(parseInt(tx.time) * 1000));
+								- var titleStr = `${utcMoment.format("Y-MM-DD HH:mm:ss")} utc`;
+
 								+darkBadge
 									i.far.fa-clock.me-1
 
 									if (tx.time)
-										+timeAgo(tx.time, true)
-										span.ms-1 ago
+										span(title=titleStr, data-bs-toggle="tooltip")
+											+timeAgo(tx.time, true)
+											span.ms-1 ago
 
 									else
 										| unconfirmed
