@@ -407,17 +407,30 @@ function getPeerSummary() {
 				}
 			});
 
-
+			let serviceNamesAvailable = false;
 
 			var servicesSummaryMap = {};
 			for (var i = 0; i < getpeerinfo.length; i++) {
 				var x = getpeerinfo[i];
 
-				if (servicesSummaryMap[x.services] == null) {
-					servicesSummaryMap[x.services] = 0;
-				}
+				if (x.servicesnames) {
+					serviceNamesAvailable = true;
 
-				servicesSummaryMap[x.services]++;
+					x.servicesnames.forEach(name => {
+						if (servicesSummaryMap[name] == null) {
+							servicesSummaryMap[name] = 0;
+						}
+
+						servicesSummaryMap[name]++;
+					});
+
+				} else {
+					if (servicesSummaryMap[x.services] == null) {
+						servicesSummaryMap[x.services] = 0;
+					}
+
+					servicesSummaryMap[x.services]++;
+				}
 			}
 
 			var servicesSummary = [];
@@ -511,10 +524,9 @@ function getPeerSummary() {
 			}
 			
 
-
-
 			result.versionSummary = versionSummary;
 			result.servicesSummary = servicesSummary;
+			result.serviceNamesAvailable = serviceNamesAvailable;
 
 			resolve(result);
 
