@@ -100,7 +100,7 @@ block content
 							ul.list-unstyled.mb-0
 								li
 									span.me-2 txindex
-									if (getindexinfo.txindex)
+									if (global.txindexAvailable)
 										i.fas.fa-check.text-success
 									else
 										span.border-dotted(title="Your node's lack of a 'transaction index' means this explorer will be unable to show all blockchain data. See the project README for more details.", data-bs-toggle="tooltip")
