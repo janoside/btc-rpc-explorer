@@ -75,7 +75,8 @@ block content
 					- if (x.ismine) { flags.push(["Mine", "This address is owned by your node."]); }
 					- if (x.iswatchonly) { flags.push(["Watch-Only"]); }
 
-					if (addressDetails || flags.length > 0)
+					- var summaryRowItemCount = (addressDetails ? ((addressDetails.txCount != null ? 1 : 0) + (addressDetails.balanceSat ? 1 : 0) + (addressDetails.unconfirmedBalanceSat ? 1 : 0) + (addressDetails.totalReceivedSat ? 1 : 0)) : 0) + (flags.length > 0 ? 1 : 0);
+					if (summaryRowItemCount > 0)
 						.clearfix
 							.float-start
 								+sectionTitle("Summary")
@@ -84,10 +85,7 @@ block content
 									small.text-muted.border-dotted.ms-2(title=`Some details for this address were queried from ${config.addressApi}` data-bs-toggle="tooltip") Trust Note
 						
 						+contentSection
-							
-							
-
-							+summaryRow((addressDetails ? ((addressDetails.txCount != null ? 1 : 0) + (addressDetails.balanceSat ? 1 : 0) + (addressDetails.unconfirmedBalanceSat ? 1 : 0) + (addressDetails.totalReceivedSat ? 1 : 0)) : 0) + (flags.length > 0 ? 1 : 0))
+							+summaryRow(summaryRowItemCount)
 								if (addressDetails && addressDetails.txCount != null)
 									+summaryItem("Transactions")
 										| #{addressDetails.txCount.toLocaleString()}
