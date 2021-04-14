@@ -1,5 +1,5 @@
 ##### v3.1.0
-###### Unreleased
+###### 2021-04-14
 
 * Improvements to no-`txindex` support: now available for all versions of Bitcoin Core
 * Move public sites to [BitcoinExplorer.org](https://bitcoinexplorer.org) (BIG thanks [@SatoshisDomains](https://twitter.com/SatoshisDomains))
@@ -12,6 +12,10 @@
 * Fixed changelog for v3.0.0 release (added/clarified some issues)
 * Updated favicons (Thanks [realfavicongenerator.net](https://realfavicongenerator.net))
 * Fix for homepage error after failure to get AU exchange rate
+* UX improvements on `/peers` page
+* Graphs for top items in `/admin/stats`
+* Optional support for plausible.io analytics
+* Fix to avoid displaying empty "Summary" section when we fail to get address txid list
 
 
 ##### v3.0.0
