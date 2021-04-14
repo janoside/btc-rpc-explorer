@@ -332,6 +332,16 @@ module.exports = {
 			alertBodyHtml: "Shortly before a $1B+ USD Tesla treasury investment into Bitcoin was announced, Elon Musk updated his Twitter profile to just say '#Bitcoin' and cryptically tweeted 'It was inevitable'. Miner 'yhc5t3p' with F2Pool immortalized the tweet soon after.",
 			referenceUrl: "https://twitter.com/elonmusk/status/1355068728128516101"
 		},
+		{
+			type: "blockheight",
+			date: "2021-04-14",
+			chain: "main",
+			blockHeight: 679187,
+			blockHash: "000000000000000000003b1e8108e0d85ad0f698ded94360b27e0ca766682b4f",
+			summary: "NYTimes 10/Mar/2021 House Gives Final Approval to Biden's $1.9T Pandemic Relief",
+			alertBodyHtml: "In celebration of their public listing and in homage to Satoshi's <a href='./block-height/0'>Genesis Block</a>, @Coinbase asked F2Pool to embed a message in the blockchain: 'NYTimes 10/Mar/2021 House Gives Final Approval to Biden's $1.9T Pandemic Relief'.",
+			referenceUrl: "https://twitter.com/coinbase/status/1382338154053607429?s=20"
+		},
 
 
 
