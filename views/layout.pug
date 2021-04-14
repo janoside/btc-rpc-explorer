@@ -328,6 +328,9 @@ html(lang="en")
 					hljs.highlightAll();
 				});
 
+		if (process.env.BTCEXP_PLAUSIBLE_ANALYTICS_DOMAIN && process.env.BTCEXP_PLAUSIBLE_ANALYTICS_SCRIPT_URL)
+			script(async defer data-domain=process.env.BTCEXP_PLAUSIBLE_ANALYTICS_DOMAIN src=process.env.BTCEXP_PLAUSIBLE_ANALYTICS_SCRIPT_URL)
+
 			
 
 		if (config.credentials.sentryUrl && config.credentials.sentryUrl.length > 0)
