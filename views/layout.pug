@@ -5,6 +5,8 @@ html(lang="en")
 		base(href=config.baseUrl)
 		meta(name="csrf-token", content=csrfToken)
 		meta(name="viewport", content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0, shrink-to-fit=no")
+
+		meta(name="description" content="Open-source, easy-to-use, educational Bitcoin explorer whose only dependency is your Bitcoin Core node.")
 		
 		if (!homepage)
 			link(rel="stylesheet", href="./style/highlight.min.css", integrity="sha384-s4RLYRjGGbVqKOyMGGwfxUTMOO6D7r2eom7hWZQ6BjK2Df4ZyfzLXEkonSm0KLIQ")
@@ -16,6 +18,20 @@ html(lang="en")
 		else
 			link(rel="stylesheet", href="./style/dark.css", integrity="sha384-5meIojgtHsKcN1/vHzmKGr1HHALm97tDcZe+iHvsOAN4qo9rlVBfpzhepzFwv798")
 		
+
+		link(id="canonical" rel="canonical" href="https://bitcoinexplorer.org")
+
+		meta(property="og:title" content="BitcoinExplorer.org - Open-Source Bitcoin Explorer")
+		meta(property="og:description" content="Open-source, easy-to-use, educational Bitcoin explorer whose only dependency is your Bitcoin Core node.")
+		meta(property="og:image" content="./img/preview.png")
+
+		meta(property="twitter:card" content="summary")
+		meta(property="twitter:site" content="@BitcoinExplorer")
+		meta(property="twitter:creator" content="@BitcoinExplorer")
+		meta(property="twitter:title" content="BitcoinExplorer.org")
+		meta(property="twitter:description" content="Open-source, easy-to-use, educational Bitcoin explorer whose only dependency is your Bitcoin Core node.")
+		meta(property="twitter:image:src" content="./img/preview.png")
+		meta(property="twitter:domain" content="bitcoinexplorer.org")
 
 		link(rel="apple-touch-icon", sizes="180x180", href="./img/logo/apple-touch-icon.png")
 		link(rel="icon", type="image/png", sizes="32x32", href="./img/logo/favicon-32x32.png")
