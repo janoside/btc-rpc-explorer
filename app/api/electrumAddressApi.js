@@ -239,9 +239,11 @@ function getAddressDetails(address, scriptPubkey, sort, limit, offset) {
 			}
 
 			var errors = [];
+			var errorStrs = [];
 			results.forEach(function(x) {
-				if (x.status == "rejected") {
+				if (x.status == "rejected" && !errorStrs.includes(JSON.stringify(x))) {
 					errors.push(x);
+					errorStrs.push(JSON.stringify(x));
 				}
  			});
 

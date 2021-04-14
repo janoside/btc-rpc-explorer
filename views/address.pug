@@ -223,10 +223,14 @@ block content
 											a(href="https://github.com/janoside/btc-rpc-explorer/issues/67") Issue #67
 											span  for more information.
 										
-										else if (err.e && err.e.error && err.e.error == "failed to get confirmed status") 
-											span Failed to retrieve transaction history from Electrum Rust Server. See
+										else if (err.e && err.e.message && err.e.message == "failed to get confirmed status") 
+											span Failed to retrieve transaction history from Electrum Rust Server (electrs). See&nbsp;
 											a(href="https://github.com/janoside/btc-rpc-explorer/issues/67") Issue #67
-											span  for more information. As a workaround, consider starting Electrum Rust Server with a custom --txid-limit argument, to support longer transaction histories.
+											span  for more information.
+											.mt-2
+												| As a workaround, consider starting electrs with a custom&nbsp;
+												span.font-plaintext --txid-limit
+												span  argument, to support longer transaction histories.
 											
 										else if (err == "No address API configured")
 											.mb-2 No address API is configured.

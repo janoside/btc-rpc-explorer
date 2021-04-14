@@ -16,6 +16,7 @@
 * Graphs for top items in `/admin/stats`
 * Optional support for plausible.io analytics
 * Fix to avoid displaying empty "Summary" section when we fail to get address txid list
+* UX improvement around electrs too-many-txs-for-address errors
 
 
 ##### v3.0.0
