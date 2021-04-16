@@ -12,6 +12,7 @@
 
 const crypto = require('crypto');
 const fs = require('fs');
+const utils = require("./utils.js");
 
 const authCookieName = "btcexp_auth";
 
@@ -52,11 +53,22 @@ module.exports = (tokenFile, loginRedirect) => {
 			return next();
 		}
 
-		// We have to use timingSafeEqual to avoid timing attacks
-		if (crypto.timingSafeEqual(Buffer.from(req.query.token, "utf8"), Buffer.from(token, "utf8"))) {
+		
+		let matchingToken = false;
+		if (req.query.token) {
+			try {
+				// We use timingSafeEqual to avoid timing attacks
+				matchingToken = crypto.timingSafeEqual(Buffer.from(req.query.token, "utf8"), Buffer.from(token, "utf8"));
+
+			} catch (e) {
+				utils.logError("23rheuweesaa", e);
+			}
+		}
+
+		if (matchingToken) {
 			req.authenticated = true;
 			token = updateToken(tokenFile);
-			cookie = generateToken();
+			let cookie = generateToken();
 			cookies.add(cookie);
 			res.cookie(authCookieName, cookie);
 
