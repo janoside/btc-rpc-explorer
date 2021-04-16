@@ -122,7 +122,8 @@ module.exports = {
 	coinSupplyCheckpointsByNetwork: {
 		"main": [ 675046, new Decimal(18656332.38) ],
 		"test": [ 1940614, new Decimal(20963051.112) ],
-		"signet": [ 29472, new Decimal(1473600) ]
+		"signet": [ 29472, new Decimal(1473600) ],
+		"regtest": [ 0, new Decimal(0) ]
 	},
 	
 	genesisBlockHashesByNetwork:{
