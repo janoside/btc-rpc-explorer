@@ -10,13 +10,18 @@ mixin pageTitle(text, subtext, copyableSubtext=false)
 	//hr.mb-3
 
 
-mixin sectionTitle(text, toggle=false, toggleUniqueClass, toggleUserSettingName, toggleOpen)
+mixin sectionTitle(text, toggle=false, toggleUniqueClass, toggleUserSettingName, toggleOpen, tooltipText)
 	if (false)
 		pre
 			code.json #{JSON.stringify(session.userSettings)}
 
 	h3.h5.mb-1.fw-light(class=(toggle && !toggleOpen ? "mb-section" : false), class=(!toggle || toggleOpen ? "d-block" : "d-none"))
-		| #{text}
+		if (tooltipText)
+			span.border-dotted(title=tooltipText, data-bs-toggle="tooltip")
+				| #{text}
+
+		else
+			| #{text}
 
 		if (toggle)
 			small(title=`Toggle ${text}`, data-bs-toggle="tooltip")
