@@ -1,3 +1,10 @@
+##### v3.1.1
+###### 2021-04-16
+
+* Fix SSO flow broken by v3.0.0 update
+* Fix for regtest network errors on homepage
+
+
 ##### v3.1.0
 ###### 2021-04-14
 

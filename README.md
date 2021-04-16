@@ -118,9 +118,9 @@ To enable it, make sure `BTCEXP_BASIC_AUTH_PASSWORD` is **not** set and set `BTC
 Then to access btc-rpc-explorer, your SSO provider needs to read the token from this file and set it in URL parameter `token`.
 For security reasons the token changes with each login, so the SSO provider needs to read it each time!
 
-After successfull access with the token a cookie is used for authentication, so you don't have to worry about it anymore.
+After successful access with the token, a cookie is set for authentication, so you don't need to worry about it anymore.
 To improve user experience you can set `BTCEXP_SSO_LOGIN_REDIRECT_URL` to the URL of your SSO provider.
-This causes the users to be redirected to login page if not logged in.
+This will cause users to be redirected to your login page if needed.
 
 ## Run via Docker
 
