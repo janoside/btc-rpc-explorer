@@ -171,18 +171,18 @@ html(lang="en")
 
 							
 
-				form.form-inline.d-none.d-lg-inline(method="post", action="./search", style="width: 325px;")
+				form.form-inline.d-none.d-lg-inline(method="post", action="./search", style="width: 325px;" onsubmit="return handleQuery()")
 					input(type="hidden", name="_csrf", value=csrfToken)
 					.input-group.input-group
-						input.form-control.form-control(type="text", name="query", placeholder="block height/hash, txid, address", value=(query))
+						input.form-control.form-control(type="text", name="query", id="query1", placeholder="block height/hash, txid, address", value=(query))
 						
 						button.btn.btn-primary(type="submit")
 							i.fas.fa-search
 
-				form.form-inline.d-lg-none.w-100.mt-2.mt-md-0(method="post", action="./search")
+				form.form-inline.d-lg-none.w-100.mt-2.mt-md-0(method="post", action="./search" onsubmit="return handleQuery()")
 					input(type="hidden", name="_csrf", value=csrfToken)
 					.input-group.input-group
-						input.form-control.form-control(type="text", name="query", placeholder="height/hash/txid...", value=(query))
+						input.form-control.form-control(type="text", name="query", id="query2", placeholder="height/hash/txid...", value=(query))
 						
 						button.btn.btn-primary(type="submit")
 							i.fas.fa-search
@@ -337,6 +337,46 @@ html(lang="en")
 				});
 			});
 
+			function handleQuery(){
+				var query1 = $("#query1").val();
+				var query2 = $("#query2").val();
+				var searchQuery = (query1)? query1 : query2;
+				var doSearch = true;
+
+				searchQuery = searchQuery.trim();
+				// check if WIF private key or xprv then block search
+				if (isWalletImportFormat(searchQuery) || isCompressedWalletImportFormat(searchQuery) || isXprv(searchQuery)) doSearch = false;
+
+				// split searchQuery on " " and if 12,15,18,21,24 items in array then block search
+				var searchItems = searchQuery.split(" ");
+				if(searchItems.length == 12 || searchItems.length == 15 || searchItems.length == 18 || searchItems.length == 21 || searchItems.length == 24) doSearch = false;
+
+				if (!doSearch) {
+					alert("Looks like you pasted a private key or wallet backup phrase.\nYou should not search a block explorer with that private data.");
+					$("#query1").val("");
+					$("#query2").val("");
+				}
+				return doSearch;
+			}
+
+			// 51 characters base58, always starts with a '5'
+			function isWalletImportFormat(key) {
+				key = key.toString();
+				return (/^5[123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz]{50}$/.test(key));
+			}
+
+			// 52 characters base58
+			function isCompressedWalletImportFormat (key) {
+				key = key.toString();
+				return (/^[LK][123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz]{51}$/.test(key));
+			}
+
+			function isXprv (key) {
+				key = key.toString();
+				return (key.startsWith("xprv") || key.startsWith("yprv") || key.startsWith("zprv"));
+			}
+
+
 		if (!homepage)
 			script(src="./js/highlight.pack.js", integrity="sha384-OGoFdvlhYqw3L+BFpHxdz5136RO9tUlt7OZ2qQZ0N6Z9Qqx0rCQBsg9ko7X4vC64")
 			script.
@@ -346,8 +386,6 @@ html(lang="en")
 
 		if (process.env.BTCEXP_PLAUSIBLE_ANALYTICS_DOMAIN && process.env.BTCEXP_PLAUSIBLE_ANALYTICS_SCRIPT_URL)
 			script(async defer data-domain=process.env.BTCEXP_PLAUSIBLE_ANALYTICS_DOMAIN src=process.env.BTCEXP_PLAUSIBLE_ANALYTICS_SCRIPT_URL)
-
-			
 
 		if (config.credentials.sentryUrl && config.credentials.sentryUrl.length > 0)
 			script(src="./js/sentry.min.js", integrity="sha384-da/Bo2Ah6Uw3mlhl6VINMblg2SyGbSnULKrukse3P5D9PTJi4np9HoKvR19D7zOL", crossorigin="anonymous")
