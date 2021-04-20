@@ -3,6 +3,7 @@
 
 * Fix SSO flow broken by v3.0.0 update
 * Fix for regtest network errors on homepage
+* Fix for server errors in Docker-based installs
 
 
 ##### v3.1.0
