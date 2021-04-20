@@ -1358,7 +1358,7 @@ function buildMempoolSummary(statusId, ageBuckets, sizeBuckets, statusFunc) {
 				let largeTx = summary.largestTxs[i];
 
 				for (var j = 0; j < txids.length; j++) {
-					if (txids[j].startsWith(oldTx.txidKey)) {
+					if (oldTx && txids[j].startsWith(oldTx.txidKey)) {
 						oldTx.txid = txids[j];
 
 						break;
@@ -1366,7 +1366,7 @@ function buildMempoolSummary(statusId, ageBuckets, sizeBuckets, statusFunc) {
 				}
 
 				for (var j = 0; j < txids.length; j++) {
-					if (txids[j].startsWith(largeTx.txidKey)) {
+					if (largeTx && txids[j].startsWith(largeTx.txidKey)) {
 						largeTx.txid = txids[j];
 
 						break;
