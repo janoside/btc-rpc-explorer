@@ -7,29 +7,53 @@ const path = require('path');
 const dotenv = require("dotenv");
 const fs = require('fs');
 
-const configPaths = [ path.join(os.homedir(), '.config', 'btc-rpc-explorer.env'), path.join(process.cwd(), '.env') ];
-console.log("Searching for config files...");
-configPaths.forEach(path => {
-	if (fs.existsSync(path)) {
-		console.log(`Config file found at ${path}, loading...`);
-
-		dotenv.config({ path });
-
-	} else {
-		console.log(`Config file not found at ${path}, continuing...`);
-	}
-});
-
-global.cacheStats = {};
-
-// debug module is already loaded by the time we do dotenv.config
-// so refresh the status of DEBUG env var
 const debug = require("debug");
-debug.enable(process.env.DEBUG || "btcexp:app,btcexp:error");
+
+// start with this, we will update after loading any .env files
+const debugDefaultCategories = "btcexp:app,btcexp:error";
+debug.enable(debugDefaultCategories);
 
 const debugLog = debug("btcexp:app");
 const debugErrorLog = debug("btcexp:error");
 const debugPerfLog = debug("btcexp:actionPerformace");
+
+const configPaths = [
+	path.join(os.homedir(), ".config", "btc-rpc-explorer.env"),
+	path.join("etc", "btc-rpc-explorer", ".env"),
+	path.join(process.cwd(), ".env"),
+];
+
+debugLog("Searching for config files...");
+let configFileLoaded = false;
+configPaths.forEach(path => {
+	if (fs.existsSync(path)) {
+		debugLog(`Config file found at ${path}, loading...`);
+
+		dotenv.config({ path });
+
+		configFileLoaded = true;
+
+	} else {
+		debugLog(`Config file not found at ${path}, continuing...`);
+	}
+});
+
+if (!configFileLoaded) {
+	debugLog("No config files found. Using all defaults.");
+
+	if (!process.env.NODE_ENV) {
+		process.env.NODE_ENV = "production";
+	}
+}
+
+// debug module is already loaded by the time we do dotenv.config
+// so refresh the status of DEBUG env var
+debug.enable(process.env.DEBUG || debugDefaultCategories);
+
+
+global.cacheStats = {};
+
+
 
 const express = require('express');
 const favicon = require('serve-favicon');
