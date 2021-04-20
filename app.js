@@ -19,7 +19,7 @@ const debugPerfLog = debug("btcexp:actionPerformace");
 
 const configPaths = [
 	path.join(os.homedir(), ".config", "btc-rpc-explorer.env"),
-	path.join("etc", "btc-rpc-explorer", ".env"),
+	path.join("/etc", "btc-rpc-explorer", ".env"),
 	path.join(process.cwd(), ".env"),
 ];
 
