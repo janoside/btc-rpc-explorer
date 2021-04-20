@@ -8,9 +8,16 @@ const dotenv = require("dotenv");
 const fs = require('fs');
 
 const configPaths = [ path.join(os.homedir(), '.config', 'btc-rpc-explorer.env'), path.join(process.cwd(), '.env') ];
-configPaths.filter(fs.existsSync).forEach(path => {
-	console.log('Loading env file:', path);
-	dotenv.config({ path });
+console.log("Searching for config files...");
+configPaths.forEach(path => {
+	if (fs.existsSync(path)) {
+		console.log(`Config file found at ${path}, loading...`);
+
+		dotenv.config({ path });
+
+	} else {
+		console.log(`Config file not found at ${path}, continuing...`);
+	}
 });
 
 global.cacheStats = {};
