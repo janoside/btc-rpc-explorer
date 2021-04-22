@@ -1447,6 +1447,15 @@ router.get("/tx/:transactionId", asyncHandler(async (req, res, next) => {
 		} else {
 			promises.push(utils.timePromise("tx.getblockheader", async () => {
 				res.locals.result.getblock = await global.rpcClient.command('getblockheader', tx.blockhash);
+				var blockHeader = res.locals.result.getblock;
+				// fix confirmations for cached transactions
+				if (!config.noInmemoryRpcCache && blockHeader && blockHeader.height) {
+					rpcApi.getBlockCount().then(function(blockcount){
+						var confs = blockcount - blockHeader.height + 1;
+						res.locals.tx.confirmations = confs;
+						res.locals.result.getrawtransaction.confirmations = confs;
+					});
+				}
 			}, perfResults));
 		}
 
