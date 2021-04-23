@@ -151,8 +151,14 @@ block content
 													a.border-dotted(href=`./block-height/${item.height}`, title=`${itemName} has been active since block ${item.height}`, data-bs-toggle="tooltip") #{item.height.toLocaleString()}
 													| +)
 
-										else if (item.type == "bip9")
-											span.me-2.ms-2 #{item.type} - #{JSON.stringify(item.bip9)}
+										else if (item.type == "bip8") || (item.type == "bip9")
+											- var bip = item.type;
+											- var bip_status = item[bip].status
+											span.me-2
+												span.text-warning #{bip_status.toUpperCase()}
+												small.text-muted.ms-2 (
+													a.border-dotted(title=`${itemName.toUpperCase()} ${bip_status.replace("_", " ")} since block ${item[bip].since} with LockinOnTimeout set to ${item[bip].lockinontimeout} and BIP${bip.charAt(3)}`, data-bs-toggle="tooltip") #{item[bip].since}
+													| +)
 
 										
 										if (forkUrls[itemName])
