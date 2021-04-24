@@ -535,6 +535,10 @@
         "/ArkPool/": {
             "name": "ArkPool",
             "link": "https://www.arkpool.com/"
+        },
+        "/PureBTC.COM/": {
+            "name": "PureBTC.COM",
+            "link": "https://purebtc.com"
         }
     },
     "payout_addresses" : {
@@ -1133,6 +1137,30 @@
         "1QEiAhdHdMhBgVbDM7zUXWGkNhgEEJ6uLd": {
             "name": "ArkPool",
             "link": "https://www.arkpool.com/"
+        },
+        "147SwRQdpCfj5p8PnfsXV2SsVVpVcz3aPq": {
+            "name": "1THash",
+            "link": "https://www.1thash.top"
+        },
+        "15vgygQ7ZsWdvZpctmTZK4673QBHsos6Sh": {
+            "name": "1THash",
+            "link": "https://www.1thash.top"
+        },
+        "bc1qnnl503n04cqacpwvhr89qr70metxr79ht3n380": {
+            "name": "Rawpool",
+            "link": "https://www.rawpool.com"
+        },
+        "bc1qwlrsvgtn99rqp3fgaxq6f6jkgms80rnej0a8tc": {
+            "name": "Rawpool",
+            "link": "https://www.rawpool.com"
+        },
+        "bc1q8ej2g5uxdsg0jwl0mpl606qfjxgkyv3p29yf37": {
+            "name": "Rawpool",
+            "link": "https://www.rawpool.com"
+        },
+        "bc1qru8mtv3e3u7ms6ecjmwgeakdakclemvhnw00q9": {
+            "name": "Rawpool",
+            "link": "https://www.rawpool.com"
         }
     }
 }
