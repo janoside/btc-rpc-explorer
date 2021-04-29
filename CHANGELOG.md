@@ -1,3 +1,8 @@
+##### Unreleased
+
+* Better support for BIP9 soft forks shown on `/node-details` (e.g. Taproot ST in 0.21.1) (Thanks [@Pantamis](https://github.com/Pantamis))
+
+
 ##### v3.1.1
 ###### 2021-04-20
 
