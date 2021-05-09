@@ -1,6 +1,7 @@
 ##### Unreleased
 
 * Better support for BIP9 soft forks shown on `/node-details` (e.g. Taproot ST in 0.21.1) (Thanks [@Pantamis](https://github.com/Pantamis))
+* Fix for incorrect homepage block count when using `BTCEXP_UI_HOME_PAGE_LATEST_BLOCKS_COUNT`
 * Update bootstrap: v5.0.0-beta3 -> v5.0.0
 
 

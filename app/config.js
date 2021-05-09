@@ -183,12 +183,12 @@ module.exports = {
 
 	site: {
 		homepage:{
-			recentBlocksCount: (process.env.BTCEXP_UI_HOME_PAGE_LATEST_BLOCKS_COUNT || (slowDeviceMode ? 5 : 10))
+			recentBlocksCount: parseInt(process.env.BTCEXP_UI_HOME_PAGE_LATEST_BLOCKS_COUNT || (slowDeviceMode ? 5 : 10))
 		},
 		blockTxPageSize: (slowDeviceMode ? 10 : 20),
 		addressTxPageSize: 10,
 		txMaxInput: (slowDeviceMode ? 3 : 15),
-		browseBlocksPageSize: (process.env.BTCEXP_UI_BLOCKS_PAGE_BLOCK_COUNT || (slowDeviceMode ? 10 : 25)),
+		browseBlocksPageSize: parseInt(process.env.BTCEXP_UI_BLOCKS_PAGE_BLOCK_COUNT || (slowDeviceMode ? 10 : 25)),
 		browseMempoolTransactionsPageSize: (slowDeviceMode ? 10 : 25),
 		addressPage:{
 			txOutputMaxDefaultDisplay:10
