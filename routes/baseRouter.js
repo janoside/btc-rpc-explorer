@@ -11,6 +11,8 @@ const moment = require('moment');
 const bitcoinCore = require("bitcoin-core");
 const qrcode = require('qrcode');
 const bitcoinjs = require('bitcoinjs-lib');
+const bip32 = require('bip32');
+const b58 = require('bs58check')
 const sha256 = require("crypto-js/sha256");
 const hexEnc = require("crypto-js/enc-hex");
 const Decimal = require("decimal.js");
@@ -671,7 +673,40 @@ router.post("/search", function(req, res, next) {
 	var rawCaseQuery = req.body.query.trim();
 
 	req.session.query = req.body.query;
-
+	
+	
+	// if xpub/ypub/zpub convert to address under path m/0/0
+	if(rawCaseQuery.startsWith("xpub")){
+		var bip32object = bip32.fromBase58(rawCaseQuery);
+		var bip32Child = bip32object.derive(0).derive(0);
+		var publicKey = bip32Child.publicKey;
+		var generatedAddress = bitcoinjs.payments.p2pkh({ pubkey: publicKey }).address;
+		rawCaseQuery = generatedAddress; 
+	}
+	else if (rawCaseQuery.startsWith("ypub")) {
+		var data = b58.decode(rawCaseQuery)
+    	data = data.slice(4)
+   	data = Buffer.concat([Buffer.from('0488b21e','hex'), data])
+   	rawCaseQuery = b58.encode(data);
+		var bip32object = bip32.fromBase58(rawCaseQuery);
+		var bip32Child = bip32object.derive(0).derive(0);
+		var publicKey = bip32Child.publicKey;
+		var generatedAddress = bitcoinjs.payments.p2sh({ redeem: bitcoinjs.payments.p2wpkh({ pubkey: publicKey })}).address;
+		rawCaseQuery = generatedAddress; 
+	}
+	else if (rawCaseQuery.startsWith("zpub")) {
+		var data = b58.decode(rawCaseQuery)
+    	data = data.slice(4)
+   	data = Buffer.concat([Buffer.from('0488b21e','hex'), data])
+   	rawCaseQuery = b58.encode(data);
+		var bip32object = bip32.fromBase58(rawCaseQuery);
+		var bip32Child = bip32object.derive(0).derive(0);
+		var publicKey = bip32Child.publicKey;
+		var generatedAddress = bitcoinjs.payments.p2wpkh({ pubkey: publicKey }).address;
+		rawCaseQuery = generatedAddress;
+	}
+	
+	
 	// Support txid@height lookups
 	if (/^[a-f0-9]{64}@\d+$/.test(query)) {
 		return res.redirect("./tx/" + query);
