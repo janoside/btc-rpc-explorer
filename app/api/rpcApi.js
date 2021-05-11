@@ -50,6 +50,10 @@ function getBlockchainInfo() {
 	
 }
 
+function getBlockCount() {
+	return getRpcData("getblockcount");
+}
+
 function getNetworkInfo() {
 	return getRpcData("getnetworkinfo");
 }
@@ -572,6 +576,7 @@ module.exports = {
 	getRpcDataWithParams: getRpcDataWithParams,
 
 	getBlockchainInfo: getBlockchainInfo,
+	getBlockCount: getBlockCount,
 	getNetworkInfo: getNetworkInfo,
 	getNetTotals: getNetTotals,
 	getMempoolInfo: getMempoolInfo,

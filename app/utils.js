@@ -282,7 +282,7 @@ function satoshisPerUnitOfLocalCurrency(localCurrency) {
 
 		var exchangedAmt = parseInt(dec);
 
-		return {amt:addThousandsSeparators(exchangedAmt), unit:`sat/${localCurrencyType.symbol}`}
+		return {amt:addThousandsSeparators(exchangedAmt),amtRaw:exchangedAmt, unit:`sat/${localCurrencyType.symbol}`}
 	}
 
 	return null;
@@ -326,7 +326,8 @@ function formatExchangedCurrency(amount, exchangeType) {
 		return {
 			val: addThousandsSeparators(exchangedAmt),
 			symbol: global.currencyTypes[exchangeType].symbol,
-			unit: exchangeType
+			unit: exchangeType,
+			valRaw: exchangedAmt
 		};
 	} else if (exchangeType == "au") {
 		if (global.exchangeRates != null && global.goldExchangeRates != null) {
@@ -337,7 +338,8 @@ function formatExchangedCurrency(amount, exchangeType) {
 			return {
 				val: addThousandsSeparators(exchangedAmt),
 				unit: "oz",
-				symbol: "AU"
+				symbol: "AU",
+				valRaw: exchangedAmt
 			};
 		}
 	}
