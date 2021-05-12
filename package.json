@@ -6,7 +6,7 @@
 	"bin": "bin/cli.js",
 	"scripts": {
 		"start": "node ./bin/www",
-		"refresh-mining-pool-configs": "node ./bin/refresh-mining-pool-configs.js",
+		"miners": "node ./bin/refresh-mining-pool-configs.js",
 		"css-light-debug": "node-sass --output-style expanded --source-map scss --precision 6 ./public/scss/light.scss ./public/style/light.css",
 		"css-dark-debug": "node-sass --output-style expanded --source-map scss --precision 6 ./public/scss/dark.scss ./public/style/dark.css",
 		"css-debug": "npm-run-all css-light-debug css-dark-debug",
