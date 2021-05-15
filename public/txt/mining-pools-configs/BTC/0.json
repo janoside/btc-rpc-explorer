@@ -567,7 +567,11 @@
 		"/PureBTC.COM/": {
 			"name": "PureBTC.COM",
 			"link": "https://purebtc.com"
-		}
+		},
+		"/E2M/": {
+            "name": "WAYI.CN",
+            "link": "http://www.easy2mine.com/"
+        }
 	},
 	"payout_addresses" : {
 		"1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa": {
