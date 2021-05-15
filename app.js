@@ -9,9 +9,11 @@ const fs = require('fs');
 
 const debug = require("debug");
 
+
 // start with this, we will update after loading any .env files
-const debugDefaultCategories = "btcexp:app,btcexp:error";
+const debugDefaultCategories = "btcexp:app,btcexp:error,btcexp:errorVerbose";
 debug.enable(debugDefaultCategories);
+
 
 const debugLog = debug("btcexp:app");
 const debugErrorLog = debug("btcexp:error");
@@ -29,7 +31,15 @@ configPaths.forEach(path => {
 	if (fs.existsSync(path)) {
 		debugLog(`Config file found at ${path}, loading...`);
 
+		// this does not override any existing env vars
 		dotenv.config({ path });
+
+		// we manually set env.DEBUG above (so that app-launch log output is good),
+		// so if it's defined in the .env file, we need to manually override
+		const config = dotenv.parse(fs.readFileSync(path));
+		if (config.DEBUG) {
+			process.env.DEBUG = config.DEBUG;
+		}
 
 		configFileLoaded = true;
 
