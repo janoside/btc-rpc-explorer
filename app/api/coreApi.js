@@ -1183,7 +1183,7 @@ function getCachedMempoolTxSummaries() {
 	});
 }
 
-const mempoolTxSummaryFile = "./mempool-tx-summaries.json";
+const mempoolTxSummaryFile = `${config.filesystemCacheDir}/mempool-tx-summaries.json`;
 
 function getMempoolTxSummaries(allTxids, statusId, statusFunc) {
 	return new Promise(async (resolve, reject) => {
@@ -1279,6 +1279,10 @@ function getMempoolTxSummaries(allTxids, statusId, statusFunc) {
 			mempoolTxSummaryCache.lastUpdated = new Date();
 
 			try {
+				if (!fs.existsSync(config.filesystemCacheDir)){
+					fs.mkdirSync(config.filesystemCacheDir);
+				}
+
 				fs.writeFileSync(mempoolTxSummaryFile, JSON.stringify(mempoolTxSummaryCache));
 
 			} catch (e) {

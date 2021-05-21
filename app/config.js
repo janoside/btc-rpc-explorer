@@ -6,6 +6,7 @@ const debugLog = debug("btcexp:config");
 const fs = require('fs');
 const crypto = require('crypto');
 const url = require('url');
+const path = require('path');
 
 let baseUrl = (process.env.BTCEXP_BASEURL || "/").trim();
 if (!baseUrl.startsWith("/")) {
@@ -97,6 +98,8 @@ module.exports = {
 	noInmemoryRpcCache: (process.env.BTCEXP_NO_INMEMORY_RPC_CACHE.toLowerCase() == "true"),
 	
 	rpcConcurrency: (process.env.BTCEXP_RPC_CONCURRENCY || (slowDeviceMode ? 3 : 10)),
+
+	filesystemCacheDir: (process.env.BTCEXP_FILESYSTEM_CACHE_DIR || path.join(process.cwd(),"./cache")),
 
 	noTxIndexSearchDepth: (+process.env.BTCEXP_NOTXINDEX_SEARCH_DEPTH || 3),
 
