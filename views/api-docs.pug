@@ -26,15 +26,18 @@ block content
 
 				.row.p-2
 					.col-md-3
-						span.me-2 GET
+						small.text-muted.me-2 GET
 						a(href=(item.testUrl ? `.${item.testUrl}` : `.${item.url}`), target="_blank") #{item.url}
-						br
-						span.text-muted (#{item.returnType})
 
-					.col-md-9
+					.col-md-1
+						span(title=`Return type: ${item.returnType}`, data-bs-toggle="tooltip")
+							+darkBadge(item.returnType)
+
+					.col-md-8
+						
 						| #{item.desc}
 
-						if (item.example)
+						if (false && item.example)
 							.mt-3
 								span.text-muted Example output:
 								pre

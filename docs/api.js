@@ -97,7 +97,7 @@ module.exports = {
 			"category":"price",
 			"url":"/api/price",
 			"desc":"Returns the price of 1 BTC, in USD, EUR, GBP, and XAU",
-			"returnType":"number"
+			"returnType":"json"
 		},
 
 		{
