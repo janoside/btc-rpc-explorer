@@ -104,6 +104,7 @@ global.btcNodeSemver = "0.0.0";
 
 
 const baseActionsRouter = require('./routes/baseRouter.js');
+const internalApiActionsRouter = require('./routes/internalApiRouter.js');
 const apiActionsRouter = require('./routes/apiRouter.js');
 const snippetActionsRouter = require('./routes/snippetRouter.js');
 const adminActionsRouter = require('./routes/adminRouter.js');
@@ -792,6 +793,7 @@ expressApp.use(csurf(), (req, res, next) => {
 });
 
 expressApp.use(config.baseUrl, baseActionsRouter);
+expressApp.use(config.baseUrl + 'internal-api/', internalApiActionsRouter);
 expressApp.use(config.baseUrl + 'api/', apiActionsRouter);
 expressApp.use(config.baseUrl + 'snippet/', snippetActionsRouter);
 expressApp.use(config.baseUrl + 'admin/', adminActionsRouter);

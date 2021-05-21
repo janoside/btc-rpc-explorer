@@ -104,7 +104,7 @@ block endOfBody
 
 		function updateStatus() {
 			$.ajax({
-				url: `./api/mining-summary-status?statusId=${statusId}`
+				url: `./internal-api/mining-summary-status?statusId=${statusId}`
 
 			}).done((res) => {
 				if (!res.count) {
@@ -121,7 +121,7 @@ block endOfBody
 					clearInterval(statusInterval);
 
 					$.ajax({
-						url: `./api/get-mining-summary?statusId=${statusId}`
+						url: `./internal-api/get-mining-summary?statusId=${statusId}`
 
 					}).done((summaryResult) => {
 						summary = summaryResult;
@@ -147,7 +147,7 @@ block endOfBody
 			statusInterval = setInterval(function() { updateStatus(); }, 125);
 
 			$.ajax({
-				url: `./api/build-mining-summary/${startBlock}/${endBlock}?statusId=${statusId}`
+				url: `./internal-api/build-mining-summary/${startBlock}/${endBlock}?statusId=${statusId}`
 
 			}).done((buildResult) => {
 				// we update status elsewhere, this call just kicks off the build

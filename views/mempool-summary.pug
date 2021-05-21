@@ -198,7 +198,7 @@ block endOfBody
 
 		function updateStatus() {
 			$.ajax({
-				url: `./api/mempool-summary-status?statusId=${statusId}`
+				url: `./internal-api/mempool-summary-status?statusId=${statusId}`
 
 			}).done((res) => {
 				if (!res.count) {
@@ -216,7 +216,7 @@ block endOfBody
 
 					if (summary == null) {
 						$.ajax({
-							url: `./api/get-mempool-summary?statusId=${statusId}`
+							url: `./internal-api/get-mempool-summary?statusId=${statusId}`
 
 						}).done((summaryResult) => {
 							if (summaryResult.count) {
@@ -240,7 +240,7 @@ block endOfBody
 
 		function loadMempool() {
 			$.ajax({
-				url: `./api/build-mempool-summary?statusId=${statusId}`
+				url: `./internal-api/build-mempool-summary?statusId=${statusId}`
 
 			}).done((buildResult) => {
 				// we update status elsewhere, this call just kicks off the build
@@ -284,7 +284,7 @@ block endOfBody
 			$("#avg-fee-rate").text(summary.averageFeePerByte);
 
 			$.ajax({
-				url: `./api/utils/formatLargeNumber/${summary.totalBytes},1`
+				url: `./internal-api/utils/formatLargeNumber/${summary.totalBytes},1`
 
 			}).done(function(result) {
 				$("#mem-usage").html(`<span>${result[0]} <small>${result[1].abbreviation}B</small></span>`);
@@ -642,7 +642,7 @@ block endOfBody
 			var satsPerBitcoin = 100000000; // TODO: magic number - replace with coinConfig.baseCurrencyUnit.multiplier
 			
 			$.ajax({
-				url: `./api/mempool-tx-summaries/${txid}`
+				url: `./internal-api/mempool-tx-summaries/${txid}`
 
 			}).done(function(resultList) {
 				if (resultList && resultList.length > 0) {

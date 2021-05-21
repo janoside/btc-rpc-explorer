@@ -17,7 +17,7 @@ function updateUserSetting(name, val) {
 
 function updateFeeRateValue(element, val, digits, showUnit=true) {
 	$.ajax({
-		url: `./api/utils/formatCurrencyAmountInSmallestUnits/${val},${digits}`
+		url: `./internal-api/utils/formatCurrencyAmountInSmallestUnits/${val},${digits}`
 
 	}).done(function(result) {
 		element.html(`<span>${result.val}${showUnit ? ("<small class='ms-2'>" + result.currencyUnit + "/vB</small>") : ""}</span>`);
