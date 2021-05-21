@@ -252,9 +252,11 @@ block endOfBody
 				graph = new Chart(ctx, {
 					type: 'doughnut',
 					options: {
-						legend: {
-							position: "left"
-						},
+						plugins: {
+							legend: {
+								position: "left"
+							},
+						}
 					},
 					data: {
 						datasets: pieChartData.datasets,

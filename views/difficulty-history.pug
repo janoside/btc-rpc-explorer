@@ -47,7 +47,7 @@ block content
 								+sectionTitle("Difficulty Δ")
 							.float-start
 								small.text-muted.ms-2
-									| (clamped to ±100%)
+									| (%, clamped to ±100%)
 
 						+contentSection
 							canvas(id="graph-diff-change")
@@ -103,7 +103,7 @@ block endOfBody
 	script(src='./js/decimal.js')
 
 	script.
-		Chart.defaults.global.defaultFontSize = 14;
+		Chart.defaults.defaultFontSize = 14;
 
 	
 	script.
@@ -158,9 +158,9 @@ block endOfBody
 				fillDifficultyTable(summary);
 				fillDifficultyDeltaTable(summary);
 
-				createGraph("graph-diff-hist", [summary.graphData], "Difficulty");
+				createGraph("graph-diff-hist", [summary.graphData], "Difficulty", true);
 
-				createGraph("graph-diff-change", [summary.changeGraphData], "Difficulty Change %");
+				createGraph("graph-diff-change", [summary.changeGraphData], "Difficulty Change %", false);
 
 				//createGraph("graph-diff-hist-2", summary.epochChunks, "Difficulty 2");
 				
@@ -229,7 +229,7 @@ block endOfBody
 			}
 		}
 
-		function createGraph(graphId, datas, yLabelStr) {
+		function createGraph(graphId, datas, yLabelStr, logY) {
 			var datasets = [];
 
 			for (var i = 0; i < datas.length; i++) {
@@ -238,7 +238,7 @@ block endOfBody
 					borderWidth: 2,
 					backgroundColor: 'rgba(0,0,0,0)',
 					data: datas[i],
-					pointRadius: 1
+					pointRadius: 0
 				});
 			}
 
@@ -249,28 +249,35 @@ block endOfBody
 					datasets: datasets
 				},
 				options: {
-					legend: { display: false },
+					interaction: {
+						intersect: false,
+						mode: 'index',
+					},
+					plugins: {
+						legend: { display: false },
+					},
 					scales: {
-						xAxes: [{
+						x: {
 							type: 'linear',
 							position: 'bottom',
 							scaleLabel: {
 								display: true,
 								labelString: 'Difficulty Epoch'
 							},
-							gridLines: {
+							grid: {
 								color: gridLineColor
-							}
+							},
 							//ticks: {
 							//	stepSize: 100,
 							//}
-						}],
-						yAxes: [{
+						},
+						y: {
+							type: logY ? "logarithmic" : "linear",
 							scaleLabel: {
 								display: true,
 								labelString: yLabelStr
 							},
-							gridLines: {
+							grid: {
 								color: gridLineColor
 							},
 							ticks: {
@@ -284,7 +291,7 @@ block endOfBody
 									}
 								}
 							}
-						}]
+						}
 					}
 				}
 			});

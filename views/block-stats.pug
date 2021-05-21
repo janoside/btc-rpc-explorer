@@ -222,13 +222,13 @@ block endOfBody
 
 				createGraph("sw-txs", ["swtxs"], [summary.swtxs], [blue]);
 
-				createGraph("subsidy", ["subsidy"], [summary.subsidy], [blue]);
+				createGraph("subsidy", ["subsidy"], [summary.subsidy], [blue], false);
 
-				createGraph("mediantime", ["mediantime"], [summary.mediantime], [blue]);
+				createGraph("mediantime", ["mediantime"], [summary.mediantime], [blue], false);
 
 				createGraph("txs", ["txs"], [summary.txs], [blue]);
 
-				createGraph("utxo_increase", ["utxo_increase"], [summary.utxo_increase], [blue]);
+				createGraph("utxo_increase", ["utxo_increase"], [summary.utxo_increase], [blue], false);
 
 				
 
@@ -344,7 +344,7 @@ block endOfBody
 		}
 
 		var graphsById = {};
-		function createGraph(chartid, names, datas, colors) {
+		function createGraph(chartid, names, datas, colors, logYAxis=true) {
 			var datasets = [];
 			var yaxes = [];
 
@@ -355,7 +355,8 @@ block endOfBody
 					borderWidth: 2,
 					borderColor: colors[i],
 					backgroundColor: 'rgba(0, 0, 0, 0)',
-					pointRadius: 1
+					pointRadius: 1,
+					borderJoinStyle: "round"
 				});
 
 				yaxes.push({
@@ -363,9 +364,9 @@ block endOfBody
 						display: false,
 						//labelString: names[i]
 					},
-					gridLines: {
+					grid: {
 						color: gridLineColor
-					}
+					},
 				});
 			}
 
@@ -384,35 +385,40 @@ block endOfBody
 					},
 					options: {
 						// disable all animations
-						animation: { duration: 0 },
-						hover: { animationDuration: 0 },
-						responsiveAnimationDuration: 0,
+						animation: false,
 
-						legend: {
-							display: (datasets.length > 1)
+						interaction: {
+							intersect: false,
+							mode: 'index',
+						},
+
+						plugins: {
+							legend: {
+								display: (datasets.length > 1)
+							},
 						},
 						scales: {
-							xAxes: [{
+							x: {
 								type: 'linear',
 								position: 'bottom',
 								scaleLabel: {
 									display: true,
 									labelString: 'Block'
 								},
-								gridLines: {
+								grid: {
 									color: gridLineColor
-								}
-							}],
-							yAxes: [{
-								type: 'linear',
+								},
+							},
+							y: {
+								type: logYAxis ? "logarithmic" : "linear",
 								position: 'left',
 								scaleLabel: {
 									display: false,
 								},
-								gridLines: {
+								grid: {
 									color: gridLineColor
-								}
-							}],
+								},
+							},
 						}
 					}
 				});

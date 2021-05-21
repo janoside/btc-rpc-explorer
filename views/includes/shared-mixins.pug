@@ -576,13 +576,13 @@ mixin pagination(limit, offset, sort, itemCount, baseUrl, justification="start",
 
 
 mixin graphPageScriptSetup
-	script(src="./js/chart.bundle.min.js", integrity="sha384-qgOtiGNaHh9fVWUnRjyHlV39rfbDcvPPkEzL1RHvsHKbuqUqM6uybNuVnghY2z4/")
+	script(src="./js/chart.min.js", integrity="sha384-GjRWJoCOQprcDc7Q66qkuxVD04BCqkLyMxPifcy0xRk4JjK+KHgjYw1tphyoDlkC")
 	
 	if (userSettings.uiTheme && userSettings.uiTheme == "dark")
 		script.
-			Chart.defaults.global.defaultFontColor='white';
+			Chart.defaults.color='white';
 			var gridLineColor = "#1a4280";
 	else
 		script.
-			Chart.defaults.global.defaultFontColor='black';
+			Chart.defaults.color='black';
 			var gridLineColor = "#dddddd";

@@ -474,35 +474,43 @@ block endOfBody
 						borderWidth: 2,
 						backgroundColor: 'rgba(0,0,0,0)',
 						data: data,
-						pointRadius: 1
+						pointRadius: 0,
+						borderJoinStyle: "round"
 					}]
 				},
 				options: {
-					legend: { display: false },
+					interaction: {
+						intersect: false,
+						mode: 'index',
+					},
+					plugins: {
+						legend: { display: false },
+					},
 					scales: {
-						xAxes: [{
+						x: {
 							type: 'linear',
 							position: 'bottom',
 							scaleLabel: {
 								display: true,
 								labelString: 'Index in Block'
 							},
-							gridLines: {
+							grid: {
 								color: gridLineColor
-							}
+							},
 							//ticks: {
 							//	stepSize: 100,
 							//}
-						}],
-						yAxes: [{
+						},
+						y: {
+							type: "logarithmic",
 							scaleLabel: {
 								display: true,
 								labelString: yLabelStr,
 							},
-							gridLines: {
+							grid: {
 								color: gridLineColor
-							}
-						}]
+							},
+						}
 					}
 				}
 			});
@@ -526,23 +534,26 @@ block endOfBody
 					}]
 				},
 				options: {
-					legend: {
-						display: false
+					plugins: {
+						legend: {
+							display: false
+						},
 					},
 					scales: {
-						xAxes: [{
-							gridLines: {
+						x: {
+							grid: {
 								color: gridLineColor
-							}
-						}],
-						yAxes: [{
+							},
+						},
+						y: {
+							type: "logarithmic",
 							ticks: {
 								beginAtZero:true
 							},
-							gridLines: {
+							grid: {
 								color: gridLineColor
-							}
-						}]
+							},
+						}
 					}
 				}
 			});
