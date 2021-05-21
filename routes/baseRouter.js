@@ -246,15 +246,18 @@ router.get("/", asyncHandler(async (req, res, next) => {
 		var duaDP1 = daysUntilAdjustment.toDP(1);
 		var daysUntilAdjustmentStr = daysUntilAdjustment > 1 ? `~${duaDP1} day${duaDP1 == "1" ? "" : "s"}` : "< 1 day";
 		var hoursUntilAdjustmentStr = hoursUntilAdjustment > 1 ? `~${hoursUntilAdjustment.toDP(0)} hr${hoursUntilAdjustment.toDP(1) == "1" ? "" : "s"}` : "< 1 hr";
+		var nowTime = new Date().getTime() / 1000;
+		var dt = nowTime - firstBlockHeader.time;
+		var timePerBlock2 = dt / heightDiff;
 
-		if (timePerBlock > 600) {
-			var diffAdjPercent = new Decimal(timeDiff / heightDiff / 600).times(100).minus(100);
+		if (timePerBlock2 > 600) {
+			var diffAdjPercent = new Decimal(dt / heightDiff / 600).times(100).minus(100);
 			var diffAdjText = `Blocks during the current difficulty epoch have taken this long, on average, to be mined. If this pace continues, then in ${res.locals.blocksUntilDifficultyAdjustment.toLocaleString()} block${res.locals.blocksUntilDifficultyAdjustment == 1 ? "" : "s"} (${daysUntilAdjustmentStr}) the difficulty will adjust downward: -${diffAdjPercent.toDP(1)}%`;
 			var diffAdjSign = "-";
 			var textColorClass = "text-danger";
 
 		} else {
-			var diffAdjPercent = new Decimal(100).minus(new Decimal(timeDiff / heightDiff / 600).times(100));
+			var diffAdjPercent = new Decimal(100).minus(new Decimal(dt / heightDiff / 600).times(100));
 			var diffAdjText = `Blocks during the current difficulty epoch have taken this long, on average, to be mined. If this pace continues, then in ${res.locals.blocksUntilDifficultyAdjustment.toLocaleString()} block${res.locals.blocksUntilDifficultyAdjustment == 1 ? "" : "s"} (${daysUntilAdjustmentStr}) the difficulty will adjust upward: +${diffAdjPercent.toDP(1)}%`;
 			var diffAdjSign = "+";
 			var textColorClass = "text-success";
@@ -270,7 +273,12 @@ router.get("/", asyncHandler(async (req, res, next) => {
 			currentEpoch: res.locals.difficultyPeriod,
 
 			delta: diffAdjPercent,
-			sign: diffAdjSign
+			sign: diffAdjSign,
+
+			timePerBlock: timePerBlock,
+			firstBlockTime: firstBlockHeader.time,
+			nowTime: nowTime,
+			dt: dt,
 
 			//nameDesc: `Estimate for the difficulty adjustment that will occur in ${res.locals.blocksUntilDifficultyAdjustment.toLocaleString()} block${res.locals.blocksUntilDifficultyAdjustment == 1 ? "" : "s"} (${daysUntilAdjustmentStr}). This is calculated using the average block time over the last ${heightDiff} block(s). This estimate becomes more reliable as the difficulty epoch nears its end.`,
 		};
