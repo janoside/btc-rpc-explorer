@@ -51,6 +51,7 @@ block content
 								tr(id="miner-summary-prototype", style="display: none;")
 									td.font-monospace
 										span.badge.bg-primary.miner-name
+										span.badge.bg-secondary.miner-name-unknown
 									
 									td.font-monospace.text-end
 										span.miner-block-count
@@ -192,7 +193,12 @@ block endOfBody
 				}
 				blockHeightsHtml = `<ol>${blockHeightsHtml}</ol>`
 				
-				row.find(".miner-name").text(minerName);
+				if (minerName == "Unknown") {
+					row.find(".miner-name-unknown").text(minerName);
+
+				} else {
+					row.find(".miner-name").text(minerName);
+				}
 
 				row.find(".miner-block-count").html(`<a href='javascript:void(0);' onclick="javascipt:$('#miner-block-heights-${i}').toggle();" title="Click to show ${minerSummary.blocks.length.toLocaleString()} block height(s)" data-bs-toggle="tooltip">${minerSummary.blocks.length.toLocaleString()}</a><br/><small id='miner-block-heights-${i}' style='display: none;'>${blockHeightsHtml}</small>`);
 				row.find(".miner-block-percent").text(`(${new Decimal(minerSummary.blocks.length).dividedBy(summary.overall.blockCount).times(100).toDecimalPlaces(1)}%)`);
