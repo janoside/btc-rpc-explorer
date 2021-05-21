@@ -11,7 +11,6 @@ const csurf = require('csurf');
 const router = express.Router();
 const util = require('util');
 const moment = require('moment');
-const bitcoinCore = require("bitcoin-core");
 const qrcode = require('qrcode');
 const bitcoinjs = require('bitcoinjs-lib');
 const sha256 = require("crypto-js/sha256");
