@@ -53,7 +53,7 @@ block content
 						h6 Fee Rate
 							small.fw-light.ms-1 (sat/vB)
 
-						- var feeRatesToEstimate = [1, 5, 15, 25, 50, 75, 100, 150];
+						- var feeRatesToEstimate = [1, 2, 3, 4, 5, 15, 25, 50, 75, 100, 150];
 
 						div.btn-group
 							each feeRateToEstimate in feeRatesToEstimate
@@ -107,11 +107,11 @@ block content
 								th Fee Rate
 								th.text-end N(tx)
 								th.text-end
-									span.border-dotted(title="The number of blocks worth of transactions that transactions in this fee-rate bucket comprise.", data-bs-toggle="tooltip") N(blocks)
+									span.border-dotted(title="The number of blocks filled by all transactions in this fee-rate bucket.", data-bs-toggle="tooltip") N(blocks)
 
 								th.text-end
-									span.border-dotted(title="The running total of the number of blocks needed to confirm this and higher fee-rate buckets.", data-bs-toggle="tooltip") Σ N(blocks)
-								th.text-end Total Fees
+									span.border-dotted(title="The running total of the number of blocks filled by transactions at this fee-rate and higher.", data-bs-toggle="tooltip") Σ N(blocks)
+								th.text-end Σ Fees
 								th.text-end Avg Fee
 								th.text-end Avg Fee Rate
 									small.fw-normal.text-muted.ms-2 (sat/vB)
@@ -212,8 +212,6 @@ block endOfBody
 				$("#progress-text").html(`<span class='fw-bold d-inline-block' style="width: 55px;">${percent.toDP(1)}%</span><span class='small fw-light ms-3'>(${res.done.toLocaleString()} of ${res.count.toLocaleString()})</span>`);
 
 				if (res.done == res.count) {
-					clearInterval(statusInterval);
-
 					if (summary == null) {
 						$.ajax({
 							url: `./internal-api/get-mempool-summary?statusId=${statusId}`
@@ -227,6 +225,8 @@ block endOfBody
 								hljs.highlightAll();
 
 								displaySummaryData(summaryResult);
+
+								clearInterval(statusInterval);
 							}
 						}).always(() => {
 							// nothing

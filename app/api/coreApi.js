@@ -1127,13 +1127,73 @@ function buildMiningSummary(statusId, startBlock, endBlock, statusFunc) {
 
 
 
-const mempoolTxSummaryCache = {};
+let mempoolTxSummaryCache = {};
 
-function buildMempoolSummary(statusId, ageBuckets, sizeBuckets, statusFunc) {
+function getCachedMempoolTxSummaries() {
 	return new Promise(async (resolve, reject) => {
 		try {
 			const allTxids = await utils.timePromise("promises.mempool-summary.getAllMempoolTxids", getAllMempoolTxids());
 			
+			//const txids = allTxids.slice(0, 50); // for debugging
+			const txids = allTxids;
+
+			const txidCount = txids.length;
+			
+			const results = [];
+			const txidKeysForCachePurge = {};
+
+			for (var i = 0; i < txids.length; i++) {
+				const txid = txids[i];
+				const key = txid.substring(0, 6);
+				txidKeysForCachePurge[key] = 1;
+
+				if (mempoolTxSummaryCache[key]) {
+					const itemSummary = Object.assign({}, mempoolTxSummaryCache[key]);
+					itemSummary.key = key;
+
+					results.push(itemSummary);
+
+				} else {
+					// nothing
+				}
+			}
+
+
+			// cleanup cache, but we don't need to wait for it to finish before resolving
+			new Promise((resolve, reject) => {
+				// purge items from cache that are no longer present in mempool
+				var keysToDelete = [];
+				for (var key in mempoolTxSummaryCache) {
+					if (!txidKeysForCachePurge[key]) {
+						keysToDelete.push(key);
+					}
+				}
+
+				keysToDelete.forEach(x => { delete mempoolTxSummaryCache[x] });
+			});
+			
+
+			resolve(results);
+
+		} catch (err) {
+			utils.logError("asodfuhou33", err);
+
+			reject(err);
+		}
+	});
+}
+
+const mempoolTxSummaryFile = "./mempool-tx-summaries.json";
+
+function getMempoolTxSummaries(allTxids, statusId, statusFunc) {
+	return new Promise(async (resolve, reject) => {
+		try {
+			if (fs.existsSync(mempoolTxSummaryFile)) {
+				let rawData = fs.readFileSync(mempoolTxSummaryFile);
+
+				mempoolTxSummaryCache = JSON.parse(rawData);
+			}
+
 			//const txids = allTxids.slice(0, 50); // for debugging
 			const txids = allTxids;
 
@@ -1145,8 +1205,6 @@ function buildMempoolSummary(statusId, ageBuckets, sizeBuckets, statusFunc) {
 			const promises = [];
 			const results = [];
 			const txidKeysForCachePurge = {};
-
-			
 
 			for (var i = 0; i < txids.length; i++) {
 				const txid = txids[i];
@@ -1168,12 +1226,14 @@ function buildMempoolSummary(statusId, ageBuckets, sizeBuckets, statusFunc) {
 							const item = await getMempoolTxDetails(txid, false);
 							const itemSummary = {
 								f: item.entry.fees.modified,
-								sz: item.entry.vsize ? item.entry.vsize : item.entry.size,
+								
 								af: item.entry.fees.ancestor,
-								df: item.entry.fees.descendant,
-								dsz: item.entry.descendantsize,
+								asz: item.entry.ancestorsize,
+
+								a: item.entry.depends.map(x => x.substring(0, 6)),
+
 								t: item.entry.time,
-								w: item.entry.weight ? item.entry.weight : item.entry.size * 4
+								w: item.entry.weight ? item.entry.weight : item.entry.size * 4,
 							};
 
 							mempoolTxSummaryCache[key] = itemSummary;
@@ -1216,7 +1276,35 @@ function buildMempoolSummary(statusId, ageBuckets, sizeBuckets, statusFunc) {
 
 			keysToDelete.forEach(x => { delete mempoolTxSummaryCache[x] });
 
+			mempoolTxSummaryCache.lastUpdated = new Date();
 
+			try {
+				fs.writeFileSync(mempoolTxSummaryFile, JSON.stringify(mempoolTxSummaryCache));
+
+			} catch (e) {
+				utils.logError("h32uheifehues", e);
+			}
+
+			resolve(results);
+
+		} catch (err) {
+			utils.logError("asodfuhou33", err);
+
+			reject(err);
+		}
+	});
+}
+
+function buildMempoolSummary(statusId, ageBuckets, sizeBuckets, statusFunc) {
+	return new Promise(async (resolve, reject) => {
+		try {
+			const allTxids = await utils.timePromise("promises.mempool-summary.getAllMempoolTxids", getAllMempoolTxids());
+
+			const txSummaries = await getMempoolTxSummaries(allTxids, statusId, statusFunc);
+
+			const txids = allTxids;
+
+			
 			var summary = [];
 
 			var maxFee = 0;
@@ -1226,12 +1314,12 @@ function buildMempoolSummary(statusId, ageBuckets, sizeBuckets, statusFunc) {
 			var ages = [];
 			var sizes = [];
 
-			for (var i = 0; i < results.length; i++) {
-				var summary = results[i];
+			for (var i = 0; i < txSummaries.length; i++) {
+				var summary = txSummaries[i];
 
 				var fee = summary.f;
-				var size = summary.sz;
-				var feePerByte = summary.f / size;
+				var size = summary.w / 4; // TOOD: hack
+				var feePerByte = summary.f / summary.w;
 				var age = Date.now() / 1000 - summary.t;
 
 				if (fee > maxFee) {
@@ -1274,26 +1362,32 @@ function buildMempoolSummary(statusId, ageBuckets, sizeBuckets, statusFunc) {
 
 			maxSize = 2000;
 
-			const satoshiPerByteBucketMaxima = coinConfig.feeSatoshiPerByteBucketMaxima;
+			const feeBucketMaxCount = 250;
+			const feeSatoshiBuckets = [];
+			for (let i = 0; i < feeBucketMaxCount; i++) {
+				feeSatoshiBuckets.push(i);
+			}
+
+			let satoshiPerByteBucketMaxima = feeSatoshiBuckets;
 
 			var bucketCount = satoshiPerByteBucketMaxima.length + 1;
 
 			var satoshiPerByteBuckets = [];
 			var satoshiPerByteBucketLabels = [];
 
-			satoshiPerByteBucketLabels[0] = ("[0 - " + satoshiPerByteBucketMaxima[0] + ")");
-			for (var i = 0; i < bucketCount; i++) {
-				satoshiPerByteBuckets[i] = {
+			//satoshiPerByteBucketLabels[0] = ("[0 - " + satoshiPerByteBucketMaxima[0] + ")");
+			for (var i = 1; i < bucketCount; i++) {
+				satoshiPerByteBuckets.push({
 					count: 0,
 					totalFees: 0,
 					totalBytes: 0,
 					totalWeight: 0,
 					minFeeRate: satoshiPerByteBucketMaxima[i - 1],
 					maxFeeRate: satoshiPerByteBucketMaxima[i]
-				};
+				});
 
 				if (i > 0 && i < bucketCount - 1) {
-					satoshiPerByteBucketLabels[i] = ("[" + satoshiPerByteBucketMaxima[i - 1] + " - " + satoshiPerByteBucketMaxima[i] + ")");
+					satoshiPerByteBucketLabels.push("[" + satoshiPerByteBucketMaxima[i - 1] + " - " + satoshiPerByteBucketMaxima[i] + ")");
 				}
 			}
 
@@ -1311,14 +1405,26 @@ function buildMempoolSummary(statusId, ageBuckets, sizeBuckets, statusFunc) {
 
 				ageBucketTxCounts.push(0);
 
-				if (maxAge > 600) {
+				if (maxAge > 60 * 60 * 24) {
+					var rangeMinutesMin = new Decimal(rangeMin / 60 / 60 / 24).toFixed(1);
+					var rangeMinutesMax = new Decimal(rangeMax / 60 / 60 / 24).toFixed(1);
+
+					ageBucketLabels.push(rangeMinutesMax + "d");
+
+				} else if (maxAge > 60 * 60) {
+					var rangeMinutesMin = new Decimal(rangeMin / 60 / 60).toFixed(1);
+					var rangeMinutesMax = new Decimal(rangeMax / 60 / 60).toFixed(1);
+
+					ageBucketLabels.push(rangeMinutesMax + "m");
+
+				} else if (maxAge > 60 * 10) {
 					var rangeMinutesMin = new Decimal(rangeMin / 60).toFixed(1);
 					var rangeMinutesMax = new Decimal(rangeMax / 60).toFixed(1);
 
-					ageBucketLabels.push(rangeMinutesMin + " - " + rangeMinutesMax + " min");
+					ageBucketLabels.push(rangeMinutesMax + "m");
 
 				} else {
-					ageBucketLabels.push(parseInt(rangeMin) + " - " + parseInt(rangeMax) + " sec");
+					ageBucketLabels.push(parseInt(rangeMax) + "s");
 				}
 			}
 
@@ -1328,8 +1434,11 @@ function buildMempoolSummary(statusId, ageBuckets, sizeBuckets, statusFunc) {
 				if (i == sizeBucketCount - 1) {
 					sizeBucketLabels.push(parseInt(i * maxSize / sizeBucketCount) + "+");
 
-				} else {
+				} else if (i == 0) {
 					sizeBucketLabels.push(parseInt(i * maxSize / sizeBucketCount) + " - " + parseInt((i + 1) * maxSize / sizeBucketCount));
+
+				} else {
+					sizeBucketLabels.push(parseInt((i + 1) * maxSize / sizeBucketCount));
 				}
 			}
 
@@ -1357,7 +1466,7 @@ function buildMempoolSummary(statusId, ageBuckets, sizeBuckets, statusFunc) {
 				let oldTx = summary.oldestTxs[i];
 				let largeTx = summary.largestTxs[i];
 
-				for (var j = 0; j < txids.length; j++) {
+				for (var j = 0; j < txSummaries.length; j++) {
 					if (oldTx && txids[j].startsWith(oldTx.txidKey)) {
 						oldTx.txid = txids[j];
 
@@ -1374,18 +1483,18 @@ function buildMempoolSummary(statusId, ageBuckets, sizeBuckets, statusFunc) {
 				}
 			}
 
-			for (var x = 0; x < results.length; x++) {
-				var txMempoolInfo = results[x];
+			for (var x = 0; x < txSummaries.length; x++) {
+				var txMempoolInfo = txSummaries[x];
 				var fee = txMempoolInfo.f;
-				var size = txMempoolInfo.sz;
+				var size = txMempoolInfo.w / 4;
 				var weight = txMempoolInfo.w;
-				var feePerByte = txMempoolInfo.f / size;
+				var feePerByte = txMempoolInfo.f / weight;
 				var satoshiPerByte = feePerByte * 100000000; // TODO: magic number - replace with coinConfig.baseCurrencyUnit.multiplier
 				var age = Date.now() / 1000 - txMempoolInfo.t;
 
 				var addedToBucket = false;
-				for (var i = 0; i < satoshiPerByteBucketMaxima.length; i++) {
-					if (satoshiPerByteBucketMaxima[i] > satoshiPerByte) {
+				for (var i = 0; i < satoshiPerByteBuckets.length; i++) {
+					if (satoshiPerByteBuckets[i].maxFeeRate > satoshiPerByte) {
 						satoshiPerByteBuckets[i]["count"]++;
 						satoshiPerByteBuckets[i]["totalFees"] += fee;
 						satoshiPerByteBuckets[i]["totalBytes"] += size;
@@ -1398,10 +1507,10 @@ function buildMempoolSummary(statusId, ageBuckets, sizeBuckets, statusFunc) {
 				}
 
 				if (!addedToBucket) {
-					satoshiPerByteBuckets[bucketCount - 1]["count"]++;
-					satoshiPerByteBuckets[bucketCount - 1]["totalFees"] += fee;
-					satoshiPerByteBuckets[bucketCount - 1]["totalBytes"] += size;
-					satoshiPerByteBuckets[bucketCount - 1]["totalWeight"] += weight;
+					satoshiPerByteBuckets[bucketCount - 2]["count"]++;
+					satoshiPerByteBuckets[bucketCount - 2]["totalFees"] += fee;
+					satoshiPerByteBuckets[bucketCount - 2]["totalBytes"] += size;
+					satoshiPerByteBuckets[bucketCount - 2]["totalWeight"] += weight;
 				}
 
 				summary["count"]++;
@@ -1416,22 +1525,58 @@ function buildMempoolSummary(statusId, ageBuckets, sizeBuckets, statusFunc) {
 				sizeBucketTxCounts[sizeBucketIndex]++;
 			}
 
+			var topTargetPercent = 0.25;
+			var totWeight = 0;
+			var topIndex = -1;
+			for (var i = satoshiPerByteBuckets.length - 1; i >= 0; i--) {
+				totWeight += satoshiPerByteBuckets[i].totalWeight;
+
+				if (totWeight / summary.totalWeight * 100 > topTargetPercent) {
+					topIndex = i;
+
+					break;
+				}
+			}
+
+			summary.satoshiPerByteBucketLabels = summary.satoshiPerByteBucketLabels.slice(0, topIndex);
+
+			if (topIndex < feeBucketMaxCount) {
+				summary.satoshiPerByteBucketLabels.push(topIndex + "+");
+			}
+
+			
+			if (topIndex < satoshiPerByteBuckets.length) {
+				satoshiPerByteBuckets[topIndex].buckets = 0;
+
+				// merge the top buckets into one
+				for (var i = topIndex + 1; i < satoshiPerByteBuckets.length; i++) {
+					satoshiPerByteBuckets[topIndex].count += satoshiPerByteBuckets[i].count;
+					satoshiPerByteBuckets[topIndex].totalFees += satoshiPerByteBuckets[i].totalFees;
+					satoshiPerByteBuckets[topIndex].totalBytes += satoshiPerByteBuckets[i].totalBytes;
+					satoshiPerByteBuckets[topIndex].totalWeight += satoshiPerByteBuckets[i].totalWeight;
+					satoshiPerByteBuckets[topIndex].buckets++;
+				}
+
+				satoshiPerByteBuckets = satoshiPerByteBuckets.slice(0, topIndex + 1);
+				satoshiPerByteBucketMaxima = satoshiPerByteBucketMaxima.slice(0, topIndex + 1);
+			}
+
 			summary["averageFee"] = summary["totalFees"] / summary["count"];
 			summary["averageFeePerByte"] = summary["totalFees"] / summary["totalBytes"];
 
 			summary["satoshiPerByteBucketMaxima"] = satoshiPerByteBucketMaxima;
+			summary.satoshiPerByteBuckets = satoshiPerByteBuckets;
 			summary["satoshiPerByteBucketCounts"] = [];
 			summary["satoshiPerByteBucketTotalFees"] = [];
 
-			for (var i = 0; i < bucketCount; i++) {
+			for (var i = 0; i < satoshiPerByteBuckets.length; i++) {
 				summary["satoshiPerByteBucketCounts"].push(summary["satoshiPerByteBuckets"][i]["count"]);
 				summary["satoshiPerByteBucketTotalFees"].push(summary["satoshiPerByteBuckets"][i]["totalFees"]);
 			}
 
 
-			// we're done, send final status update
-			doneCount = txidCount;
-			statusUpdate();
+			// we're done, make sure statusFunc knows it
+			statusFunc({count: txSummaries.length, done: txSummaries.length});
 
 
 			resolve(summary);
@@ -1613,5 +1758,7 @@ module.exports = {
 	getBlockHeadersByHeight: getBlockHeadersByHeight,
 	getTxOut: getTxOut,
 	buildMempoolSummary: buildMempoolSummary,
-	buildMiningSummary: buildMiningSummary
+	buildMiningSummary: buildMiningSummary,
+	getCachedMempoolTxSummaries: getCachedMempoolTxSummaries,
+	getMempoolTxSummaries: getMempoolTxSummaries
 };
