@@ -139,6 +139,22 @@ block content
 
 			.row
 				.col
+					+contentSection("Highest Fee Rate Transactions")
+						.table-responsive
+							table.table.table-striped.table-borderless.mb-3
+								thead
+									tr
+										th Txid
+										th.text-end Fee Rate (sat/vB)
+
+								tbody(id="topfee-tx-table-body")
+									tr(id="topfee-tx-table-row-prototype", style="display: none;")
+										td.font-monospace.data-txid
+										td.font-monospace.text-end.data-feerate
+
+									tr(id="empty-row-to-fix-striped-coloring", style="display: none;")
+
+				.col
 					+contentSection("Oldest Transactions")
 						.table-responsive
 							table.table.table-striped.table-borderless.mb-3
@@ -259,6 +275,7 @@ block endOfBody
 			var txSizeGraphData = buildTxSizeGraphData(summary);
 			var txAgeGraphData = buildTxAgeGraphData(summary);
 
+			fillTopfeeTxTable(summary);
 			fillOldestTxTable(summary);
 			fillLargestTxTable(summary);
 
@@ -503,6 +520,24 @@ block endOfBody
 
 			$("#main-content").show();
 			$("#progress-wrapper").hide();
+		}
+
+		function fillTopfeeTxTable(summary) {
+			for (var i = 0; i < summary.highestFeeTxs.length; i++) {
+				var topfeeTx = summary.highestFeeTxs[i];
+
+				var row = $("#topfee-tx-table-row-prototype").clone();
+				row.attr("id", null);
+				row.addClass("topfee-tx-table-row");
+
+				row.find(".data-txid").html(`<a href="./tx/${topfeeTx.txid}">${topfeeTx.txid.substring(0, 16)}...</a>`);
+
+				row.find(".data-feerate").text(new Decimal(topfeeTx.feePerByte).times(100000000).times(4).toDP(1));
+
+				row.show();
+
+				$("#topfee-tx-table-body").append(row);
+			}
 		}
 
 		function fillOldestTxTable(summary) {

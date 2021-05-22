@@ -348,36 +348,6 @@ router.get("/mempool-summary", asyncHandler(async (req, res, next) => {
 	try {
 		res.locals.satoshiPerByteBucketMaxima = coinConfig.feeSatoshiPerByteBucketMaxima;
 
-		const promises = [];
-
-		promises.push(new Promise(async (resolve, reject) => {
-			res.locals.mempoolinfo = await utils.timePromise("promises.mempool-summary.getMempoolInfo", coreApi.getMempoolInfo());
-
-			resolve();
-		}));
-
-		promises.push(new Promise(async (resolve, reject) => {
-			const mempooltxids = await utils.timePromise("promises.mempool-summary.getAllMempoolTxids", coreApi.getAllMempoolTxids());
-
-			var debugMaxCount = 0;
-
-			if (debugMaxCount > 0) {
-				var debugtxids = [];
-				for (var i = 0; i < Math.min(debugMaxCount, mempooltxids.length); i++) {
-					debugtxids.push(mempooltxids[i]);
-				}
-
-				res.locals.mempooltxidChunks = utils.splitArrayIntoChunks(debugtxids, 25);
-
-			} else {
-				res.locals.mempooltxidChunks = utils.splitArrayIntoChunks(mempooltxids, 25);
-			}
-
-			resolve();
-		}));
-
-		await Promise.all(promises);
-
 		res.render("mempool-summary");
 
 		next();

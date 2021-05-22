@@ -1317,6 +1317,7 @@ function buildMempoolSummary(statusId, ageBuckets, sizeBuckets, statusFunc) {
 			var maxSize = 0;
 			var ages = [];
 			var sizes = [];
+			var topfees = [];
 
 			for (var i = 0; i < txSummaries.length; i++) {
 				var summary = txSummaries[i];
@@ -1334,9 +1335,6 @@ function buildMempoolSummary(statusId, ageBuckets, sizeBuckets, statusFunc) {
 					maxFeePerByte = feePerByte;
 				}
 
-				ages.push({age:age, txidKey:summary.key});
-				sizes.push({size:size, txidKey:summary.key});
-
 				if (age > maxAge) {
 					maxAge = age;
 				}
@@ -1344,6 +1342,10 @@ function buildMempoolSummary(statusId, ageBuckets, sizeBuckets, statusFunc) {
 				if (size > maxSize) {
 					maxSize = size;
 				}
+
+				ages.push({age:age, txidKey:summary.key});
+				sizes.push({size:size, txidKey:summary.key});
+				topfees.push({feePerByte:feePerByte, txidKey:summary.key});
 			}
 
 			ages.sort(function(a, b) {
@@ -1358,6 +1360,15 @@ function buildMempoolSummary(statusId, ageBuckets, sizeBuckets, statusFunc) {
 			sizes.sort(function(a, b) {
 				if (a.size != b.size) {
 					return b.size - a.size;
+
+				} else {
+					return a.txidKey.localeCompare(b.txidKey);
+				}
+			});
+
+			topfees.sort(function(a, b) {
+				if (a.feePerByte != b.feePerByte) {
+					return b.feePerByte - a.feePerByte;
 
 				} else {
 					return a.txidKey.localeCompare(b.txidKey);
@@ -1395,13 +1406,17 @@ function buildMempoolSummary(statusId, ageBuckets, sizeBuckets, statusFunc) {
 				}
 			}
 
-			var ageBucketCount = ageBuckets;
+			var ageBucketCount = sizeBuckets;
 			var ageBucketTxCounts = [];
 			var ageBucketLabels = [];
 
 			var sizeBucketCount = sizeBuckets;
 			var sizeBucketTxCounts = [];
 			var sizeBucketLabels = [];
+
+			var topfeeBucketCount = sizeBuckets;
+			var topfeeBucketTxCounts = [];
+			var topfeeBucketLabels = [];
 
 			for (var i = 0; i < ageBucketCount; i++) {
 				var rangeMin = i * maxAge / ageBucketCount;
@@ -1462,13 +1477,15 @@ function buildMempoolSummary(statusId, ageBuckets, sizeBuckets, statusFunc) {
 				"sizeBucketTxCounts": sizeBucketTxCounts,
 				"sizeBucketLabels": sizeBucketLabels,
 				"oldestTxs": ages.slice(0, oldestLargestCount),
-				"largestTxs": sizes.slice(0, oldestLargestCount)
+				"largestTxs": sizes.slice(0, oldestLargestCount),
+				"highestFeeTxs": topfees.slice(0, oldestLargestCount)
 			};
 
 
 			for (var i = 0; i < oldestLargestCount; i++) {
 				let oldTx = summary.oldestTxs[i];
 				let largeTx = summary.largestTxs[i];
+				let topfeeTx = summary.highestFeeTxs[i];
 
 				for (var j = 0; j < txSummaries.length; j++) {
 					if (oldTx && txids[j].startsWith(oldTx.txidKey)) {
@@ -1481,6 +1498,14 @@ function buildMempoolSummary(statusId, ageBuckets, sizeBuckets, statusFunc) {
 				for (var j = 0; j < txids.length; j++) {
 					if (largeTx && txids[j].startsWith(largeTx.txidKey)) {
 						largeTx.txid = txids[j];
+
+						break;
+					}
+				}
+
+				for (var j = 0; j < txSummaries.length; j++) {
+					if (topfeeTx && txids[j].startsWith(topfeeTx.txidKey)) {
+						topfeeTx.txid = txids[j];
 
 						break;
 					}
