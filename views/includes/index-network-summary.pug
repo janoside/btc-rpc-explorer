@@ -105,7 +105,7 @@ if (exchangeRates)
 			
 			+summaryItem("Difficulty Δ", difficultyAdjustmentData.estimateAvailable ? desc : null)
 				if (difficultyAdjustmentData.estimateAvailable)
-					span.me-2(class=(difficultyAdjustmentData.sign == "+" ? "text-success" : "text-danger")) #{difficultyAdjustmentData.sign}#{difficultyAdjustmentData.delta.toDP(2)}
+					span.me-2(class=(difficultyAdjustmentData.delta >= 0 ? "text-success" : "text-danger")) #{difficultyAdjustmentData.delta.toDP(2)}
 						small.ms-1 %
 					small.text-muted
 						| (

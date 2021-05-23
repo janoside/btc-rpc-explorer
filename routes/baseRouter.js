@@ -238,6 +238,7 @@ router.get("/", asyncHandler(async (req, res, next) => {
 		var firstBlockHeader = res.locals.difficultyPeriodFirstBlockHeader;
 		var currentBlock = res.locals.latestBlocks[0];
 		var heightDiff = currentBlock.height - firstBlockHeader.height;
+		var blockCount = heightDiff + 1;
 		var timeDiff = currentBlock.mediantime - firstBlockHeader.mediantime;
 		var timePerBlock = timeDiff / heightDiff;
 		var timePerBlockDuration = moment.duration(timePerBlock * 1000);
@@ -249,15 +250,16 @@ router.get("/", asyncHandler(async (req, res, next) => {
 		var nowTime = new Date().getTime() / 1000;
 		var dt = nowTime - firstBlockHeader.time;
 		var timePerBlock2 = dt / heightDiff;
+		var predictedBlockCount = dt / coinConfig.targetBlockTimeSeconds;
 
 		if (timePerBlock2 > 600) {
-			var diffAdjPercent = new Decimal(dt / heightDiff / 600).times(100).minus(100);
+			var diffAdjPercent = new Decimal(100).minus(new Decimal(blockCount / predictedBlockCount).times(100)).times(-1);
 			var diffAdjText = `Blocks during the current difficulty epoch have taken this long, on average, to be mined. If this pace continues, then in ${res.locals.blocksUntilDifficultyAdjustment.toLocaleString()} block${res.locals.blocksUntilDifficultyAdjustment == 1 ? "" : "s"} (${daysUntilAdjustmentStr}) the difficulty will adjust downward: -${diffAdjPercent.toDP(1)}%`;
 			var diffAdjSign = "-";
 			var textColorClass = "text-danger";
 
 		} else {
-			var diffAdjPercent = new Decimal(100).minus(new Decimal(dt / heightDiff / 600).times(100));
+			var diffAdjPercent = new Decimal(100).minus(new Decimal(blockCount / predictedBlockCount).times(100));
 			var diffAdjText = `Blocks during the current difficulty epoch have taken this long, on average, to be mined. If this pace continues, then in ${res.locals.blocksUntilDifficultyAdjustment.toLocaleString()} block${res.locals.blocksUntilDifficultyAdjustment == 1 ? "" : "s"} (${daysUntilAdjustmentStr}) the difficulty will adjust upward: +${diffAdjPercent.toDP(1)}%`;
 			var diffAdjSign = "+";
 			var textColorClass = "text-success";
@@ -266,6 +268,7 @@ router.get("/", asyncHandler(async (req, res, next) => {
 		res.locals.difficultyAdjustmentData = {
 			estimateAvailable: !isNaN(diffAdjPercent),
 
+			blockCount: blockCount,
 			blocksLeft: res.locals.blocksUntilDifficultyAdjustment,
 			daysLeftStr: daysUntilAdjustmentStr,
 			timeLeftStr: (daysUntilAdjustment < 1 ? hoursUntilAdjustmentStr : daysUntilAdjustmentStr),
@@ -279,6 +282,7 @@ router.get("/", asyncHandler(async (req, res, next) => {
 			firstBlockTime: firstBlockHeader.time,
 			nowTime: nowTime,
 			dt: dt,
+			predictedBlockCount: predictedBlockCount,
 
 			//nameDesc: `Estimate for the difficulty adjustment that will occur in ${res.locals.blocksUntilDifficultyAdjustment.toLocaleString()} block${res.locals.blocksUntilDifficultyAdjustment == 1 ? "" : "s"} (${daysUntilAdjustmentStr}). This is calculated using the average block time over the last ${heightDiff} block(s). This estimate becomes more reliable as the difficulty epoch nears its end.`,
 		};

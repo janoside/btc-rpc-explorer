@@ -195,17 +195,19 @@ router.get("/mining/diff-adj-estimate", asyncHandler(async (req, res, next) => {
 	
 	var firstBlockHeader = difficultyPeriodFirstBlockHeader;
 	var heightDiff = currentBlock.height - firstBlockHeader.height;
+	var blockCount = heightDiff + 1;
 	var timeDiff = currentBlock.mediantime - firstBlockHeader.mediantime;
 	var timePerBlock = timeDiff / heightDiff;
-	var dt = new Date().getTime() / 1000 - firstBlockHeader.time;	
+	var dt = new Date().getTime() / 1000 - firstBlockHeader.time;
+	var predictedBlockCount = dt / coinConfig.targetBlockTimeSeconds;
 	var timePerBlock2 = dt / heightDiff;
 		
 	if (timePerBlock2 > 600) {
-		var diffAdjPercent = new Decimal(dt / heightDiff / 600).times(100).minus(100);
-		diffAdjPercent = diffAdjPercent * -1;
+		var diffAdjPercent = new Decimal(100).minus(new Decimal(blockCount / predictedBlockCount).times(100)).times(-1);
+		//diffAdjPercent = diffAdjPercent * -1;
 
 	} else {
-		var diffAdjPercent = new Decimal(100).minus(new Decimal(dt / heightDiff / 600).times(100));
+		var diffAdjPercent = new Decimal(100).minus(new Decimal(blockCount / predictedBlockCount).times(100));
 	}	
 	
 	res.send(diffAdjPercent.toFixed(2).toString());
