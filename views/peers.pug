@@ -125,7 +125,13 @@ block content
 								td.small.text-muted #{index + 1}
 
 								td #{item.subver}
-								td #{item.addr}
+								td
+									if (item.addr.length > 20)
+										span.border-dotted(title=item.addr, data-bs-toggle="tooltip")
+											| #{utils.ellipsizeMiddle(item.addr, 20)}
+									else
+										| #{item.addr}
+
 								td
 									if (item.servicesnames)
 										- var serviceItems = item.servicesnames;
