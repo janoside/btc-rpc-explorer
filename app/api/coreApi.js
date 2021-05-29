@@ -1618,6 +1618,230 @@ function buildMempoolSummary(statusId, ageBuckets, sizeBuckets, statusFunc) {
 	});
 }
 
+function buildPredictedBlocks(statusId, statusFunc) {
+	return new Promise(async (resolve, reject) => {
+		try {
+			const allTxids = await utils.timePromise("promises.mempool-summary.getAllMempoolTxids", getAllMempoolTxids());
+
+			const txSummaries = await getMempoolTxSummaries(allTxids, statusId, statusFunc);
+
+			const blockTemplate = {
+				weight: 0,
+				totalFees: new Decimal(0),
+				vB: 0,
+				txCount:0,
+				minFeeRate: 1000000,
+				maxFeeRate: -1,
+				feeRates: [],
+				weightByFeeRate: {},
+				txids: []
+			};
+
+			const blocks = [];
+			
+			txSummaries.sort((a, b) => {
+				let aFeeRate = (a.af) / (a.asz * 4);
+				let bFeeRate = (b.af) / (b.asz * 4);
+
+				if (aFeeRate > bFeeRate) {
+					return -1;
+
+				} else if (aFeeRate < bFeeRate) {
+					return 1;
+
+				} else {
+					return a.key.localeCompare(b.key);
+				}
+			});
+
+			const txSummariesByKey = {};
+
+			for (let i = 0; i < txSummaries.length; i++) {
+				let tx = txSummaries[i];
+				let feeRate = 4 * 100000000 * (tx.f + tx.af) / (tx.w + tx.asz * 4);
+				//console.log("fr: " + feeRate);
+
+				txSummariesByKey[tx.key] = tx;
+			}
+
+			//res.locals.topTxs = txSummaries.slice(0, 20);
+
+			let loopCounter = 0;
+
+			const unAddedTxIndexes = [];
+			const addedTxids = {};
+			
+			for (let i = 0; i < txSummaries.length; i++) {
+				unAddedTxIndexes.push(i);
+			}
+			
+			while (unAddedTxIndexes.length > 0 && blocks.length < 20) {
+				//console.log("txids: " + addedTxids.length);
+
+				var currentBlock = {
+					weight: 0,
+					totalFees: new Decimal(0),
+					vB: 0,
+					txCount:0,
+					minFeeRate: 1000000,
+					maxFeeRate: -1,
+					feeRates: [],
+					weightByFeeRate: {},
+					txids: new Set(),
+					txs: []
+				};
+
+				let indexesToRemove = [];
+
+				for (let i = 0; i < unAddedTxIndexes.length; i++) {
+					loopCounter++;
+					if (loopCounter % 1000 == 0) {
+						console.log("lop: " + loopCounter);
+					}
+
+					const tx = txSummaries[unAddedTxIndexes[i]];
+
+					// this tx has already been added somewhere, possibly by a descendant with a
+					// higher fee so we flag for removal and move on
+					if (addedTxids[tx.key]) {
+						indexesToRemove.push(i);
+
+						continue;
+					}
+
+					let weightWithAncestors = (tx.asz * 4);
+					
+					// TODO?? check if any of our ancestors have already been added to a block
+					// and if so, exclude their data from being included along with us
+					
+
+					tx.frw = (tx.af) / tx.asz; // ancestor fee and size include current tx
+					
+					if (currentBlock.weight + coinConfig.minTxWeight > coinConfig.maxBlockWeight) {
+						// no more transactions can possibly be added, break to save time
+						break;
+					}
+
+					if ((currentBlock.weight + weightWithAncestors) <= coinConfig.maxBlockWeight) {
+						//console.log("adding tx: " + JSON.stringify(tx));
+
+						let startSize = currentBlock.txids.size;
+						
+						currentBlock.txids.add(tx.key);
+						tx.a.forEach(ancesTxidKey => currentBlock.txids.add(ancesTxidKey));
+
+						let sizeChange = currentBlock.txids.size - startSize;
+						if (sizeChange != (1 + tx.a.length)) {
+							console.log("DUPLICATEEEE");
+						}
+
+						currentBlock.weight += weightWithAncestors;
+						currentBlock.totalFees = currentBlock.totalFees.plus(new Decimal(tx.f)).plus(new Decimal(tx.af));
+						currentBlock.vB += weightWithAncestors / 4;
+
+						let feeRate = tx.frw * 100000000;
+
+						if (feeRate > currentBlock.maxFeeRate) {
+							currentBlock.maxFeeRate = feeRate;
+							currentBlock.maxFeeRateTx = tx.key;
+						}
+
+						if (feeRate < currentBlock.minFeeRate) {
+							currentBlock.minFeeRate = feeRate;
+							currentBlock.minFeeRateTx = tx.key;
+						}
+
+						let feeRateGroup = feeRate;
+						
+						if (feeRateGroup > 100) {
+							feeRateGroup = Math.floor(feeRateGroup / 20) * 20;
+						}
+						
+						if (feeRateGroup > 20) {
+							feeRateGroup = Math.floor(feeRateGroup / 10) * 10;
+						}
+
+						if (feeRateGroup > 5) {
+							feeRateGroup = Math.floor(feeRateGroup / 5) * 5;
+
+						} else {
+							console.log(JSON.stringify(tx));
+						}
+
+						feeRateGroup = Math.floor(feeRateGroup);
+						
+						if (!currentBlock.feeRates.includes(feeRateGroup)) {
+							currentBlock.feeRates.push(feeRateGroup);
+							currentBlock.weightByFeeRate[feeRateGroup] = 0;
+						}
+
+						currentBlock.weightByFeeRate[feeRateGroup] += weightWithAncestors;
+
+						addedTxids[tx.key] = true;
+						tx.a.forEach(ancesTxidKey => addedTxids[ancesTxidKey] = true);
+
+						//currentBlock.txids.push(tx.key);
+
+						indexesToRemove.push(i);
+
+
+
+						if (currentBlock.txs.length < 100) {
+							currentBlock.txs.push({txid:tx.key, feeRate:feeRate});
+
+							tx.a.forEach(ancesTxidKey => {
+								let ancesTx = txSummariesByKey[ancesTxidKey];
+
+								if (ancesTx) {
+									ancesTx.childOf = tx.key;
+									currentBlock.txs.push({txid:ancesTx.key, childOf:tx.key});
+
+								} else {
+									console.log("WTF");
+								}
+
+								
+							});
+						}
+					}
+				}
+
+				for (let i = indexesToRemove.length - 1; i >= 0; i--) {
+					unAddedTxIndexes.splice(indexesToRemove[i], 1);
+				}
+
+				// we went through all txs and no more fit in the current block
+				// so let's finish this one up and add it to the list
+				currentBlock.txCount = currentBlock.txids.size;
+				currentBlock.avgFee = currentBlock.totalFees.dividedBy(currentBlock.txCount).toDP(8);
+				currentBlock.avgFeeRate = currentBlock.totalFees.dividedBy(currentBlock.vB).times(100000000).toDP(1);
+
+				blocks.push(currentBlock);
+
+				// ...and start a new block
+				//currentBlock = Object.assign({}, blockTemplate);
+				
+				console.log("block finished: " + JSON.stringify(currentBlock));
+			}
+
+			console.log("loops: " + loopCounter);
+
+			//console.log("all blocks: " + JSON.stringify(blocks, null, 4));
+			
+			// we're done, make sure statusFunc knows it
+			statusFunc({count: txSummaries.length, done: txSummaries.length});
+
+
+			resolve(blocks);
+
+		} catch (err) {
+			utils.logError("23947ryfuedge", err);
+
+			reject(err);
+		}
+	});
+}
+
 function getTxOut(txid, vout) {
 	return rpcApi.getTxOut(txid, vout)
 }
@@ -1787,6 +2011,7 @@ module.exports = {
 	getBlockHeadersByHeight: getBlockHeadersByHeight,
 	getTxOut: getTxOut,
 	buildMempoolSummary: buildMempoolSummary,
+	buildPredictedBlocks: buildPredictedBlocks,
 	buildMiningSummary: buildMiningSummary,
 	getCachedMempoolTxSummaries: getCachedMempoolTxSummaries,
 	getMempoolTxSummaries: getMempoolTxSummaries

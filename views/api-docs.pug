@@ -26,12 +26,12 @@ block content
 
 				.row.p-2
 					.col-md-3
-						small.text-muted.me-2 GET
+						small.me-2 GET
 						a(href=(item.testUrl ? `.${item.testUrl}` : `.${item.url}`), target="_blank") #{item.url}
 
 					.col-md-1
 						span(title=`Return type: ${item.returnType}`, data-bs-toggle="tooltip")
-							+darkBadge(item.returnType)
+							+lightBadge(item.returnType)
 
 					.col-md-8
 						

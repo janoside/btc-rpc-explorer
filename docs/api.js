@@ -120,11 +120,11 @@ module.exports = {
 
 		{
 			"category":"price",
-			"url":"/api/price/:currency/moscowtime",
+			"url":"/api/price/:currency/sats",
 			"desc":"Returns the price of 1 unit in 'currency' (e.g. $1) in satoshis",
 			"params":[{name: "currency", "options": ["usd", "eur", "gbp", "xau"]}],
 			"returnType":"number",
-			"testUrl": "/api/price/usd/moscowtime"
+			"testUrl": "/api/price/usd/sats"
 		},
 
 	]

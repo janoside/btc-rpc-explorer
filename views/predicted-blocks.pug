@@ -1,0 +1,216 @@
+extends layout
+
+block headContent
+	title Predicted Blocks
+
+block content
+	+pageTitle("Predicted Blocks")
+
+	
+	+dismissableInfoAlert("mempoolSummaryNoteDismissed", "About Mempool Summary...")
+		.mb-2 This tool displays predicted future blocks based on the current mempool.
+		.mb-0 Note that the predicted blocks simply select the highest fee transactions. Actual miners will often take other outside criteria into account, so actual blocks will not match the predictions, but are likely to be a good reflection of basic fee selections.
+
+
+	div#progress-wrapper.mb-huge
+		.card.shadow-sm.mb-3
+			.card-body
+				.d-flex.align-items-center
+					.spinner-border.spinner-border-sm.text-primary.me-2.ms-2
+					span.fw-bold.me-2 Loading:
+					span.fw-light(id="progress-text") ...
+				
+				div.progress.mt-2(id="progress-bar", style="height: 7px;")
+					div.progress-bar(id="data-progress", role="progressbar", aria-valuenow="0", aria-valuemin="0" ,aria-valuemax="100")
+
+				div.loading-error
+	
+
+	div(id="main-content", style="display: none;")
+		+contentSection
+			.table-responsive
+				table.table.table-striped.table-borderless.mb-3
+					thead
+						tr
+							th Block
+							th.text-end N(tx)
+							th.text-end Σ Fees
+							th.text-end Fee Rate
+								small.text-muted.fw-light.ms-1 (sat/vB)
+							th.text-end % Full
+
+					tbody(id="block-table-body")
+						tr(id="block-table-row-prototype", style="display: none;")
+							td.font-monospace
+								small.text-muted.data-label
+							td.font-monospace.text-end.data-tx-count
+							td.font-monospace.text-end.data-sum-fees
+							td.font-monospace.text-end.data-fee-rate
+							td.font-monospace.text-end
+								span.text-success.data-full-99
+								span.text-primary.data-full-less
+
+						tr(class="empty-row-to-fix-striped-coloring", style="display: none;")
+
+						tr(id="block-table-progress-row-prototype", style="display: none;")
+							td.data-progress(colspan="100%")
+
+						tr(class="empty-row-to-fix-striped-coloring", style="display: none;")
+
+						tr(id="block-table-x-row-prototype", style="display: none;")
+							td.data-x(colspan="100%")
+
+						tr(class="empty-row-to-fix-striped-coloring", style="display: none;")
+		if (true)
+			pre
+				code.json#json-content
+		
+
+block endOfBody
+
+	+graphPageScriptSetup
+	
+	script(src='./js/decimal.js')
+
+	script.
+		var satoshiPerByteBucketMaxima = !{JSON.stringify(satoshiPerByteBucketMaxima)};
+		var statusId = Math.random().toString(36).substr(2, 5);
+		var statusInterval;
+		var blocks = null;
+
+		$(document).ready(function() {
+			statusInterval = setInterval(function() { updateStatus(); }, 125);
+
+			loadMempool();
+		});
+
+		function updateStatus() {
+			$.ajax({
+				url: `./internal-api/predicted-blocks-status?statusId=${statusId}`
+
+			}).done((res) => {
+				if (!res.count) {
+					// not started yet
+					return;
+				}
+
+				var percent = new Decimal(res.done).dividedBy(res.count).times(100);
+
+				$("#data-progress").css("width", `${percent.toDP(0)}%`);
+				$("#progress-text").html(`<span class='fw-bold d-inline-block' style="width: 55px;">${percent.toDP(1)}%</span><span class='small fw-light ms-3'>(${res.done.toLocaleString()} of ${res.count.toLocaleString()})</span>`);
+
+				if (res.done == res.count) {
+					if (blocks == null) {
+						$.ajax({
+							url: `./internal-api/get-predicted-blocks?statusId=${statusId}`
+
+						}).done((blocksResult) => {
+							if (Array.isArray(blocksResult)) {
+								blocks = blocksResult;
+
+								$("#json-content").text(JSON.stringify(blocks, null, 4));
+
+								hljs.highlightAll();
+
+								displayData(blocks);
+
+								clearInterval(statusInterval);
+							}
+						}).always(() => {
+							// nothing
+						});
+					}
+				}
+			}).fail((a, b, c) => {
+			}).always(() => {
+			});
+		}
+
+		function loadMempool() {
+			$.ajax({
+				url: `./internal-api/build-predicted-blocks?statusId=${statusId}`
+
+			}).done((buildResult) => {
+				// we update status elsewhere, this call just kicks off the build
+
+			}).fail((jqXHR, textStatus, errorThrown) => {
+				$(".loading-error").html(`<h6 class='mt-4 text-danger'>Failed loading mempool:</h6><pre><code class='json'>${JSON.stringify(textStatus)}</code></pre><pre><code class='json'>${JSON.stringify(errorThrown)}</code></pre>`);
+
+				hljs.highlightAll();
+
+			}).always(() => {
+			});
+		}
+
+		function displayData(blocks) {
+			fillTable(blocks);
+
+			$("#main-content").show();
+			$("#progress-wrapper").hide();
+		}
+
+		function fillTable(blocks) {
+			console.log("blocks: " + blocks.length);
+
+			for (var i = 0; i < blocks.length; i++) {
+				var block = blocks[i];
+
+				var row = $("#block-table-row-prototype").clone();
+				var row2 = $("#block-table-progress-row-prototype").clone();
+				var row3 = $("#block-table-x-row-prototype").clone();
+				
+				row.attr("id", null);
+				row.addClass("block-table-row");
+
+				row.find(".data-label").text(`+${(i + 1).toLocaleString()}`);
+
+				row.find(".data-tx-count").text(block.txCount.toLocaleString());
+				row.find(".data-sum-fees").text(block.totalFees);
+				row.find(".data-fee-rate").text(block.minFeeRate == block.maxFeeRate ? new Decimal(block.minFeeRate).toDP(2) : `${new Decimal(block.minFeeRate).toDP(2)} - ${new Decimal(block.maxFeeRate).toDP(2)}`);
+				
+				var fullness = new Decimal(block.weight).dividedBy(4000000).times(100);
+
+				if (fullness > 99) {
+					row.find(".data-full-99").text(`99+`);
+
+				} else {
+					row.find(".data-full-less").text(`${fullness.toDP(1)}`);
+				}
+				
+
+				row.show();
+				$("#block-table-body").append(row);
+
+
+				var progressHtml = "<div class='progress'>";
+				for (var j = 0; j < block.feeRates.length; j++) {
+					var percent = 100 * block.weightByFeeRate[block.feeRates[j]] / block.weight;
+					var percentInt = parseInt(percent);
+					if (percentInt == 0) {
+						percentInt = 1;
+					}
+
+					var color = `hsl(${(333 * (j % 2 == 0 ? (j / block.feeRates.length) : (1 - j / block.feeRates.length)))}, 100%, 50%)`;
+
+					progressHtml += `<div class="progress-bar" role="progressbar" style="width: ${percentInt}%; background-color: ${color};">${block.feeRates[j]}</div>`;
+				}
+				progressHtml += "</div>";
+
+
+				row2.find(".data-progress").html(progressHtml);
+				row2.show();
+				$("#block-table-body").append(row2);
+
+
+				if (i == 0) {
+					var txsHtml = "";
+					for (var j = 0; j < block.txs.length; j++) {
+						txsHtml += `<div><pre><code class='json'>${JSON.stringify(block.txs[j])}</code></pre></div>`;
+					}
+
+					row3.find(".data-x").html(txsHtml);
+					row3.show();
+					$("#block-table-body").append(row3);
+				}
+			}
+		}

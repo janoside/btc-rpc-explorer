@@ -257,7 +257,7 @@ router.get("/mempool/fees", function(req, res, next) {
 
 /// PRICE
 
-router.get("/price/:currency/moscowtime", function(req, res, next) {
+router.get("/price/:currency/sats", function(req, res, next) {
 	var result = 0;
 	var amount = 1.0;
 	var currency = req.params.currency.toLowerCase();

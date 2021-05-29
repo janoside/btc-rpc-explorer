@@ -71,6 +71,48 @@ block content
 		
 		
 		
+		if (nextBlockTemplate)
+			if (false)
+				pre
+					code.json #{JSON.stringify(nextBlockFeeRateGroups, null, 4)}
+
+			.clearfix
+				.float-start
+					- var desc = "Prediction for the next block, based on the output of the getblocktemplate command";
+					+sectionTitle("Predicted Next Block", false, null, null, null, desc)
+
+				.float-start
+					a.ms-2(href="./mining-template") See details
+			
+			+contentSection
+				+summaryRow(3)
+					+summaryItem("Transactions")
+						| #{nextBlockTemplate.transactions.length.toLocaleString()}
+
+					+summaryItem("Fee Rates", "Minimum and maximum fee rates for transactions that are predicted to be included in the next block.", "sat/vB")
+						| #{new Decimal(nextBlockMinFeeRate).toDP(2)} - #{new Decimal(nextBlockMaxFeeRate).toDP(2)}
+
+					+summaryItem("Total Fees", "Sum of fees for all transactions that are predicted to be included in the next block.")
+						+valueDisplay(nextBlockTotalFees)
+
+				if (false)
+					.mt-4
+						.text-center
+							+summaryTitle("Fee Rate Breakdown")
+
+						.progress.mt-2
+							each group, groupIndex in nextBlockFeeRateGroups
+								if (group.totalWeight > 0)
+									- var intPercent = parseInt(100 * group.weightRatio);
+									if (intPercent < 10)
+										- intPercent = 10;
+									- var color = `hsl(${(333 * (groupIndex / nextBlockFeeRateGroups.length))}, 100%, 35%)`;
+									
+									.progress-bar(role="progressbar", style=`width: ${intPercent}%; background-color: ${color};`, aria-valuenow=`${intPercent}`, aria-valuemin="0", aria-valuemax="100")
+										| #{new Decimal(group.minFeeRate).toDP(1)}
+						
+
+
 		if (latestBlocks)
 			+contentSection("Latest Blocks")
 				- var blocks = latestBlocks;

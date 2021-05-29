@@ -2,12 +2,15 @@
 
 * Public API! See the docs at `/api/docs`
 * Mempool Summary: add top-fee transactions table
+* Homepage: add "Predicted Next Block" section
+* New "Mining Template" tool, showing structured output of `getblocktemplate` command
 * Various improvements to charts and graphs throughout the tool
 * Better support for BIP9 soft forks shown on `/node-details` (e.g. Taproot ST in 0.21.1) (Thanks [@Pantamis](https://github.com/Pantamis))
 * Fix for incorrect homepage block count when using `BTCEXP_UI_HOME_PAGE_LATEST_BLOCKS_COUNT`
 * Fix for inaccurate difficulty adjustment estimates
 * Link to Tor v3 Hidden Service in footer
 * Fix for `DEBUG` environment variable being ignored
+* Misc UI/UX tweaks
 * Update bootstrap: v5.0.0-beta3 -> v5.0.0
 * Update chart.js: v2.9.3 -> v3.2.1
 

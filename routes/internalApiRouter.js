@@ -93,6 +93,73 @@ router.get("/mempool-txs/:txids", function(req, res, next) {
 
 
 
+const predictedBlocksStatuses = {};
+const predictedBlocksOutputs = {};
+
+router.get("/predicted-blocks-status", asyncHandler(async (req, res, next) => {
+	const statusId = req.query.statusId;
+	if (statusId && predictedBlocksStatuses[statusId]) {
+		res.json(predictedBlocksStatuses[statusId]);
+
+		next();
+
+	} else {
+		res.json({});
+
+		next();
+	}
+}));
+
+router.get("/get-predicted-blocks", asyncHandler(async (req, res, next) => {
+	const statusId = req.query.statusId;
+
+	if (statusId && predictedBlocksOutputs[statusId]) {
+		var output = predictedBlocksOutputs[statusId];
+		
+		res.json(output);
+
+		next();
+
+		delete predictedBlocksOutputs[statusId];
+		delete predictedBlocksStatuses[statusId];
+
+	} else {
+		res.json({});
+
+		next();
+	}
+}));
+
+router.get("/build-predicted-blocks", asyncHandler(async (req, res, next) => {
+	try {
+		// long timeout
+		res.connection.setTimeout(600000);
+
+
+		const statusId = req.query.statusId;
+		if (statusId) {
+			predictedBlocksStatuses[statusId] = {};
+		}
+
+		res.json({success:true, status:"started"});
+
+		next();
+
+
+		var output = await coreApi.buildPredictedBlocks(statusId, (update) => {
+			predictedBlocksStatuses[statusId] = update;
+		});
+
+		// store summary until it's retrieved via /api/get-mempool-summary
+		predictedBlocksOutputs[statusId] = output;
+
+	} catch (err) {
+		utils.logError("329r7whegee", err);
+	}
+}));
+
+
+
 const mempoolSummaryStatuses = {};
 const mempoolSummaries = {};
 

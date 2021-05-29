@@ -195,22 +195,45 @@ router.get("/", asyncHandler(async (req, res, next) => {
 			}));
 		}
 
-		/*promises.push(new Promise(async (resolve, reject) => {
-			global.rpcClient.command('getblocktemplate', {"rules": ["segwit"]}, function(err, result, resHeaders) {
-				if (err) {
-					return reject(err);
+		promises.push(new Promise(async (resolve, reject) => {
+			let blockTemplate = await global.rpcClient.command('getblocktemplate', {"rules": ["segwit"]});
+
+			res.locals.nextBlockTemplate = blockTemplate;
+			
+			var minFeeRate = 1000000;
+			var maxFeeRate = 0;
+			var minFeeTxid = null;
+			var maxFeeTxid = null;
+
+			var parentTxIndexes = new Set();
+			blockTemplate.transactions.forEach(tx => {
+				if (tx.depends && tx.depends.length > 0) {
+					tx.depends.forEach(index => {
+						parentTxIndexes.add(index);
+					});
+				}
+			});
+
+			var txIndex = 1;
+			blockTemplate.transactions.forEach(tx => {
+				var feeRate = tx.fee / tx.weight * 4;
+				if (tx.depends && tx.depends.length > 0) {
+					var totalFee = tx.fee;
+					var totalWeight = tx.weight;
+
+					tx.depends.forEach(index => {
+						totalFee += blockTemplate.transactions[index - 1].fee;
+						totalWeight += blockTemplate.transactions[index - 1].weight;
+					});
+
+					tx.avgFeeRate = totalFee / totalWeight * 4;
 				}
 
-				res.locals.nextBlockTemplate = result;
-
-				var minFeeRate = 1000000;
-				var maxFeeRate = 0;
-				var minFeeTxid = null;
-				var maxFeeTxid = null;
-
-				result.transactions.forEach(tx => {
-					var feeRate = tx.fee / tx.weight * 4;
-					
+				// txs that are ancestors should not be included in min/max
+				// calculations since their native fee rate is different than
+				// their effective fee rate (which takes descendant fee rates
+				// into account)
+				if (!parentTxIndexes.has(txIndex) && (!tx.depends || tx.depends.length == 0)) {
 					if (feeRate < minFeeRate) {
 						minFeeRate = feeRate;
 						minFeeTxid = tx.txid;
@@ -220,16 +243,60 @@ router.get("/", asyncHandler(async (req, res, next) => {
 						maxFeeRate = feeRate;
 						maxFeeTxid = tx.txid;
 					}
-				});
+				}
 
-				res.locals.nextBlockMinFeeRate = minFeeRate;
-				res.locals.nextBlockMaxFeeRate = maxFeeRate;
-				res.locals.nextBlockMinFeeTxid = minFeeTxid;
-				res.locals.nextBlockMaxFeeTxid = maxFeeTxid;
-
-				resolve();
+				txIndex++;
 			});
-		}));*/
+
+			res.locals.nextBlockFeeRateGroups = [];
+			var groupCount = 10;
+			for (var i = 0; i < groupCount; i++) {
+				res.locals.nextBlockFeeRateGroups.push({
+					minFeeRate: minFeeRate + i * (maxFeeRate - minFeeRate) / groupCount,
+					maxFeeRate: minFeeRate + (i + 1) * (maxFeeRate - minFeeRate) / groupCount,
+					totalWeight: 0,
+					txidCount: 0,
+					//txids: []
+				});
+			}
+
+			var txIncluded = 0;
+			blockTemplate.transactions.forEach(tx => {
+				var feeRate = tx.avgFeeRate ? tx.avgFeeRate : (tx.fee / tx.weight * 4);
+
+				for (var i = 0; i < res.locals.nextBlockFeeRateGroups.length; i++) {
+					if (feeRate >= res.locals.nextBlockFeeRateGroups[i].minFeeRate) {
+						if (feeRate < res.locals.nextBlockFeeRateGroups[i].maxFeeRate) {
+							res.locals.nextBlockFeeRateGroups[i].totalWeight += tx.weight;
+							res.locals.nextBlockFeeRateGroups[i].txidCount++;
+							
+							//res.locals.nextBlockFeeRateGroups[i].txids.push(tx.txid);
+
+							txIncluded++;
+
+							break;
+						}
+					}
+				}
+			});
+
+			res.locals.nextBlockFeeRateGroups.forEach(group => {
+				group.weightRatio = group.totalWeight / blockTemplate.weightlimit;
+			});
+
+
+
+			res.locals.nextBlockMinFeeRate = minFeeRate;
+			res.locals.nextBlockMaxFeeRate = maxFeeRate;
+			res.locals.nextBlockMinFeeTxid = minFeeTxid;
+			res.locals.nextBlockMaxFeeTxid = maxFeeTxid;
+
+			var subsidy = coinConfig.blockRewardFunction(blockTemplate.height, global.activeBlockchain);
+
+			res.locals.nextBlockTotalFees = new Decimal(blockTemplate.coinbasevalue).dividedBy(coinConfig.baseCurrencyUnit.multiplier).minus(new Decimal(subsidy));
+
+			resolve();
+		}));
 
 
 		await Promise.all(promises);
@@ -634,6 +701,61 @@ router.get("/block-stats", function(req, res, next) {
 	});
 });
 
+router.get("/mining-template", asyncHandler(async (req, res, next) => {
+	const blockTemplate = await global.rpcClient.command('getblocktemplate', {"rules": ["segwit"]});
+
+	res.locals.minFeeRate = 1000000;
+	res.locals.maxFeeRate = -1;
+
+	const parentTxIndexes = new Set();
+	blockTemplate.transactions.forEach(tx => {
+		if (tx.depends && tx.depends.length > 0) {
+			tx.depends.forEach(index => {
+				parentTxIndexes.add(index);
+			});
+		}
+	});
+
+	var txIndex = 1;
+	blockTemplate.transactions.forEach(tx => {
+		let feeRate = tx.fee / tx.weight * 4;
+
+		if (tx.depends && tx.depends.length > 0) {
+			var totalFee = tx.fee;
+			var totalWeight = tx.weight;
+
+			tx.depends.forEach(index => {
+				totalFee += blockTemplate.transactions[index - 1].fee;
+				totalWeight += blockTemplate.transactions[index - 1].weight;
+			});
+
+			tx.avgFeeRate = totalFee / totalWeight * 4;
+		}
+
+		// txs that are ancestors should not be included in min/max
+		// calculations since their native fee rate is different than
+		// their effective fee rate (which takes descendant fee rates
+		// into account)
+		if (!parentTxIndexes.has(txIndex) && (!tx.depends || tx.depends.length == 0)) {
+			if (feeRate > res.locals.maxFeeRate) {
+				res.locals.maxFeeRate = feeRate;
+			}
+
+			if (feeRate < res.locals.minFeeRate) {
+				res.locals.minFeeRate = feeRate;
+			}
+		}
+
+		txIndex++;
+	});
+
+	res.locals.blockTemplate = blockTemplate;
+
+	res.render("mining-template");
+
+	next();
+}));
+
 router.get("/search", function(req, res, next) {
 	res.render("search");
 
@@ -887,6 +1009,93 @@ router.get("/block/:blockHash", asyncHandler(async (req, res, next) => {
 		res.locals.pageErrors.push(utils.logError("32824yhr2973t3d", err));
 
 		res.render("block");
+
+		next();
+	}
+}));
+
+router.get("/predicted-blocks", asyncHandler(async (req, res, next) => {
+	try {
+		res.locals.satoshiPerByteBucketMaxima = coinConfig.feeSatoshiPerByteBucketMaxima;
+
+		res.render("predicted-blocks");
+
+		next();
+
+	} catch (err) {
+		utils.logError("2083ryw0efghsu", err);
+					
+		res.locals.userMessage = "Error building page: " + err;
+
+		res.render("predicted-blocks");
+
+		next();
+	}
+}));
+
+router.get("/predicted-blocks-old", asyncHandler(async (req, res, next) => {
+	try {
+		const mempoolTxids = await utils.timePromise("promises.predicted-blocks.getAllMempoolTxids", coreApi.getAllMempoolTxids());
+		let mempoolTxSummaries = await coreApi.getMempoolTxSummaries(mempoolTxids, Math.random().toString(36).substr(2, 5), (x) => {});
+
+		const blockTemplate = {weight: 0, totalFees: new Decimal(0), vB: 0, txCount:0, txids: []};
+		const blocks = [];
+		
+		mempoolTxSummaries.sort((a, b) => {
+			let aFeeRate = (a.f + a.af) / (a.w + a.asz * 4);
+			let bFeeRate = (b.f + b.af) / (b.w + b.asz * 4);
+
+			if (aFeeRate > bFeeRate) {
+				return -1;
+
+			} else if (aFeeRate < bFeeRate) {
+				return 1;
+
+			} else {
+				return a.key.localeCompare(b.key);
+			}
+		});
+
+		res.locals.topTxs = mempoolTxSummaries.slice(0, 20);
+
+		let currentBlock = Object.assign({}, blockTemplate);
+
+		for (var i = 0; i < mempoolTxSummaries.length; i++) {
+			const tx = mempoolTxSummaries[i];
+
+			tx.frw = tx.f / tx.w;
+			tx.fr = tx.f / tx.sz;
+
+			if ((currentBlock.weight + tx.w) > coinConfig.maxBlockWeight) {
+				// this tx doesn't fit in the current block we're building
+				// so let's finish this one up and add it to the list
+				currentBlock.avgFee = currentBlock.totalFees.dividedBy(currentBlock.txCount);
+				currentBlock.avgFeeRate = currentBlock.totalFees.dividedBy(currentBlock.vB);
+
+				blocks.push(currentBlock);
+
+				// ...and start a new block
+				currentBlock = Object.assign({}, blockTemplate);
+				console.log(JSON.stringify(currentBlock));
+			}
+
+			currentBlock.txCount++;
+			currentBlock.weight += tx.w;
+			currentBlock.totalFees = currentBlock.totalFees.plus(new Decimal(tx.f));
+			currentBlock.vB += tx.sz;
+			//currentBlock.txids.push(tx.key);
+		}
+
+		res.locals.projectedBlocks = blocks;
+
+		res.render("predicted-blocks");
+
+		next();
+
+	} catch (err) {
+		res.locals.pageErrors.push(utils.logError("234efuewgew", err));
+
+		res.render("predicted-blocks");
 
 		next();
 	}
