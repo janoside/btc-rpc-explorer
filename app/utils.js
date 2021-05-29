@@ -357,6 +357,10 @@ function seededRandomIntBetween(seed, min, max) {
 	return (min + (max - min) * rand);
 }
 
+function randomInt(min, max) {
+	return min + Math.floor(Math.random() * max);
+}
+
 function ellipsize(str, length, ending="…") {
 	if (str.length <= length) {
 		return str;
@@ -979,6 +983,7 @@ module.exports = {
 	formatCurrencyAmountInSmallestUnits: formatCurrencyAmountInSmallestUnits,
 	seededRandom: seededRandom,
 	seededRandomIntBetween: seededRandomIntBetween,
+	randomInt: randomInt,
 	logMemoryUsage: logMemoryUsage,
 	getMinerFromCoinbaseTx: getMinerFromCoinbaseTx,
 	getBlockTotalFeesFromCoinbaseTxAndBlockHeight: getBlockTotalFeesFromCoinbaseTxAndBlockHeight,

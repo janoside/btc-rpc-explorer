@@ -127,5 +127,23 @@ module.exports = {
 			"testUrl": "/api/price/usd/sats"
 		},
 
+
+
+
+		// fun
+		{
+			"category":"fun",
+			"url":"/api/fun/quote",
+			"desc":"Returns a random Bitcoin quote from a curated list.",
+			"returnType":"json"
+		},
+
+		{
+			"category":"fun",
+			"url":"/api/fun/allquotes",
+			"desc":"Returns a curated list of Bitcoin quotes.",
+			"returnType":"json"
+		},
+
 	]
 }

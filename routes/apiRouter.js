@@ -22,6 +22,7 @@ const coreApi = require("./../app/api/coreApi.js");
 const addressApi = require("./../app/api/addressApi.js");
 const rpcApi = require("./../app/api/rpcApi.js");
 const apiDocs = require("./../docs/api.js");
+const btcQuotes = require("./../app/coins/btcQuotes.js");
 
 const forceCsrf = csurf({ ignoreMethods: [] });
 
@@ -346,6 +347,25 @@ router.get("/price", function(req, res, next) {
 	
 	
 	res.json(result);
+
+	next();
+});
+
+
+
+
+/// FUN
+
+router.get("/fun/quote", function(req, res, next) {
+	var index = utils.randomInt(0, btcQuotes.items.length);
+	
+	res.json(btcQuotes.items[index]);
+
+	next();
+});
+
+router.get("/fun/allquotes", function(req, res, next) {
+	res.json(btcQuotes.items);
 
 	next();
 });
