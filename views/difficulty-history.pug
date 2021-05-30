@@ -56,41 +56,29 @@ block content
 			+pageTab("Data")
 				.row
 					.col
-						+contentSection("Difficulty")
+						+contentSection("Raw Data")
 							.table-responsive
 								table.table.table-striped.table-borderless.mb-3
 									thead
 										tr
 											th Epoch
+											th.text-end Start Block
+											th.text-end Start Date
+												small.text-muted.ms-1.fw-light (utc)
 											//th Date
 											//th.text-end Block Start
 											th.text-end Difficulty
+											th.text-end Difficulty Δ
+												small.text-muted.ms-1.fw-light (%)
 											
 									tbody(id="difficulty-table-body")
 										tr(id="difficulty-table-row-prototype", style="display: none;")
 											td.font-monospace.data-epoch
+											td.font-monospace.text-end.data-start-block
+											td.font-monospace.text-end.data-start-date
 											//td.font-monospace.data-date
 											//td.font-monospace.text-end.data-block-start
 											td.font-monospace.text-end.data-difficulty
-
-										tr(id="empty-row-to-fix-striped-coloring", style="display: none;")
-
-					.col
-						+contentSection("Difficulty Δ")
-							.table-responsive
-								table.table.table-striped.table-borderless.mb-3
-									thead
-										tr
-											th Epoch
-											//th Date
-											//th.text-end Block Start
-											th.text-end Difficulty Δ
-											
-									tbody(id="difficulty-delta-table-body")
-										tr(id="difficulty-delta-table-row-prototype", style="display: none;")
-											td.font-monospace.data-epoch
-											//td.font-monospace.data-date
-											//td.font-monospace.text-end.data-block-start
 											td.font-monospace.text-end.data-difficulty-delta
 
 										tr(id="empty-row-to-fix-striped-coloring", style="display: none;")
@@ -156,7 +144,6 @@ block endOfBody
 				var summary = summarizeData(results);
 
 				fillDifficultyTable(summary);
-				fillDifficultyDeltaTable(summary);
 
 				createGraph("graph-diff-hist", [summary.graphData], "Difficulty", true);
 
@@ -174,12 +161,17 @@ block endOfBody
 		function fillDifficultyTable(summary) {
 			for (var i = 0; i < summary.difficultyData.length; i++) {
 				var item = summary.difficultyData[i];
+				var deltaItem = summary.difficultyDeltaData[i];
 
 				var row = $("#difficulty-table-row-prototype").clone();
 				row.attr("id", null);
 				//row.addClass("fee-rate-table-row");
 
+				var startBlock = 2016 * i;
+
 				row.find(".data-epoch").text(item.epoch);
+				row.find(".data-start-block").html(`<a href="./block-height/${startBlock}">${startBlock.toLocaleString()}</a>`);
+				row.find(".data-start-date").text(new Date(item.date * 1000).toISOString().slice(0, 10));
 				//row.find(".data-date").text(item.count.toLocaleString());
 				//row.find(".data-block-start").text(sumBlockCount.toDP(2));
 
@@ -188,6 +180,19 @@ block endOfBody
 
 				} else {
 					row.find(".data-difficulty").text(new Decimal(item.difficulty).toDP(3));
+				}
+
+				if (deltaItem.difficultyDelta) {
+					if (deltaItem.difficultyDelta > 0) {
+						row.find(".data-difficulty-delta").text("+" + (new Decimal(deltaItem.difficultyDelta).toDP(2)));
+						row.find(".data-difficulty-delta").addClass("text-success");
+
+					} else if (deltaItem.difficultyDelta < 0) {
+						row.find(".data-difficulty-delta").text(new Decimal(deltaItem.difficultyDelta).toDP(2));
+						row.find(".data-difficulty-delta").addClass("text-danger");
+					}
+				} else {
+					row.find(".data-difficulty-delta").text("-");
 				}
 				
 				
@@ -331,7 +336,7 @@ block endOfBody
 			summary.changeGraphData = [];
 
 			for (var i = 0; i < raw.length; i++) {
-				summary.difficultyData.push({epoch:i, difficulty:raw[i].difficulty});
+				summary.difficultyData.push({epoch:i, date:raw[i].time, difficulty:raw[i].difficulty});
 
 				summary.graphData.push({x:i, y:raw[i].difficulty});
 
