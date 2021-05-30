@@ -88,6 +88,7 @@ const qrcode = require("qrcode");
 const addressApi = require("./app/api/addressApi.js");
 const electrumAddressApi = require("./app/api/electrumAddressApi.js");
 const appStats = require("./app/appStats.js");
+const btcQuotes = require("./app/coins/btcQuotes.js");
 const auth = require('./app/auth.js');
 const sso = require('./app/sso.js');
 const markdown = require("markdown-it")();
@@ -271,6 +272,18 @@ function loadChangelog() {
 
 		} else {
 			global.changelogMarkdown = data;
+		}
+	});
+
+
+	var filename = "CHANGELOG-API.md";
+	
+	fs.readFile(path.join(__dirname, filename), 'utf8', function(err, data) {
+		if (err) {
+			utils.logError("ouqhuwey723", err);
+
+		} else {
+			global.apiChangelogMarkdown = data;
 		}
 	});
 }
@@ -761,6 +774,10 @@ expressApp.use(function(req, res, next) {
 
 		req.session.userMessage = null;
 		req.session.userMessageType = null;
+	}
+
+	if (btcQuotes) {
+		res.locals.footerQuote = btcQuotes.items[utils.randomInt(0, btcQuotes.items.length)];
 	}
 
 	if (req.session.query) {

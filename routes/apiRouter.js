@@ -14,6 +14,7 @@ const sha256 = require("crypto-js/sha256");
 const hexEnc = require("crypto-js/enc-hex");
 const Decimal = require("decimal.js");
 const asyncHandler = require("express-async-handler");
+const markdown = require("markdown-it")();
 
 const utils = require('./../app/utils.js');
 const coins = require("./../app/coins.js");
@@ -45,6 +46,20 @@ router.get("/docs", function(req, res, next) {
 	});
 
 	res.render("api-docs");
+
+	next();
+});
+
+router.get("/changelog", function(req, res, next) {
+	res.locals.changelogHtml = markdown.render(global.apiChangelogMarkdown);
+
+	res.render("api-changelog");
+
+	next();
+});
+
+router.get("/version", function(req, res, next) {
+	res.send(apiDocs.version);
 
 	next();
 });
@@ -356,7 +371,7 @@ router.get("/price", function(req, res, next) {
 
 /// FUN
 
-router.get("/fun/quote", function(req, res, next) {
+router.get("/quotes/random", function(req, res, next) {
 	var index = utils.randomInt(0, btcQuotes.items.length);
 	
 	res.json(btcQuotes.items[index]);
@@ -364,7 +379,7 @@ router.get("/fun/quote", function(req, res, next) {
 	next();
 });
 
-router.get("/fun/allquotes", function(req, res, next) {
+router.get("/quotes/all", function(req, res, next) {
 	res.json(btcQuotes.items);
 
 	next();

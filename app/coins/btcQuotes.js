@@ -8,7 +8,7 @@ module.exports = {
 		{
 			text: "The Times 03/Jan/2009 Chancellor on brink of second bailout for banks.",
 			speaker: "Satoshi",
-			url: "https://bitcoinexplorer.org/block-height/0"
+			url: "./block-height/0"
 		},
 		{
 			text: "The root problem with conventional currency is all the trust that's required to make it work.",

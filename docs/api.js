@@ -1,4 +1,5 @@
 module.exports = {
+	"version": "1.0.0",
 	"routes":[
 		// blocks
 		{
@@ -133,16 +134,27 @@ module.exports = {
 		// fun
 		{
 			"category":"fun",
-			"url":"/api/fun/quote",
+			"url":"/api/quotes/random",
 			"desc":"Returns a random Bitcoin quote from a curated list.",
 			"returnType":"json"
 		},
 
 		{
 			"category":"fun",
-			"url":"/api/fun/allquotes",
-			"desc":"Returns a curated list of Bitcoin quotes.",
+			"url":"/api/quotes/all",
+			"desc":"Returns the full curated list of Bitcoin quotes.",
 			"returnType":"json"
+		},
+
+
+
+
+		// admin
+		{
+			"category":"admin",
+			"url":"/api/version",
+			"desc":"Returns the semantic version of the public API, which is maintained separate from the app version.",
+			"returnType":"string",
 		},
 
 	]

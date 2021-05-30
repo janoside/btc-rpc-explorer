@@ -13,10 +13,10 @@ html(lang="en")
 
 
 		if (userSettings.uiTheme == "light")
-			link(rel="stylesheet", href="./style/light.css", integrity="sha384-31hCEFeOBWOgSut359DhHoDqY8CuLfQno1kJuduAm9EEK+2oGD8rhh4fdX+QgOgX")
+			link(rel="stylesheet", href="./style/light.css", integrity="sha384-T3HxWj4Mh3XfsGHkCTHtHKb0ZCpGqxfFgNrA8Es6XXaq9ycIQfwon2OZh5HWh0Dd")
 				
 		else
-			link(rel="stylesheet", href="./style/dark.css", integrity="sha384-jFf5Pe2l1z3l7R5z4rUnm6tjciWoF3xLROStDj4C5AU9HK2ATaasERyxgDF3hfLM")
+			link(rel="stylesheet", href="./style/dark.css", integrity="sha384-Pd6pPOjlRYdMWthDLGOivIiwQzC2sPcm3oVwzTbXtytknGxPFiWdEyg/x5VwYKxI")
 		
 
 		link(id="canonical" rel="canonical" href="https://bitcoinexplorer.org")
@@ -255,6 +255,26 @@ html(lang="en")
 
 								a.text-white.mb-1(href="https://twitter.com/BitcoinExplorer", target="_blank", title="Follow @BitcoinExplorer on Twitter", data-bs-toggle="tooltip")
 									i.fab.fa-twitter.text-twitter
+
+
+				
+				if (footerQuote)
+					.text-center.mt-3.mb-4
+						span.fs-4.font-serif "
+						span.fs-5.font-serif #{footerQuote.text}
+						span.fs-4.font-serif "
+						br
+						.ms-8
+							if (footerQuote.speaker.indexOf("https://twitter.com") >= 0)
+								- var account = footerQuote.speaker.substring("https://twitter.com/".length);
+								| — 
+								a.fs-5(href=footerQuote.speaker, target="_blank") @#{account}
+
+							else
+								span.fs-5 — #{footerQuote.speaker}
+							small.text-muted.ms-2 (
+								a(href=footerQuote.url) link
+								| )
 
 
 				hr

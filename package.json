@@ -7,6 +7,7 @@
 	"scripts": {
 		"start": "node ./bin/www",
 		"miners": "node ./bin/refresh-mining-pool-configs.js",
+		"integrity": "node ./bin/frontend-resource-integrity.js",
 		"css-light-debug": "node-sass --output-style expanded --source-map scss --precision 6 ./public/scss/light.scss ./public/style/light.css",
 		"css-dark-debug": "node-sass --output-style expanded --source-map scss --precision 6 ./public/scss/dark.scss ./public/style/dark.css",
 		"css-debug": "npm-run-all css-light-debug css-dark-debug",
@@ -33,7 +34,7 @@
 		"bitcoinjs-lib": "^5.2.0",
 		"bluebird": "^3.7.2",
 		"body-parser": "^1.19.0",
-		"bootstrap": "5.0.0",
+		"bootstrap": "5.0.1",
 		"compression": "1.7.4",
 		"cookie-parser": "^1.4.5",
 		"crypto-js": "^4.0.0",

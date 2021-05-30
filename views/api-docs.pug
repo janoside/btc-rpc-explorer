@@ -5,6 +5,11 @@ block headContent
 
 block content
 	+pageTitle("API Docs")
+	div.fs-4.mt-n3.mb-3 Current Version:
+		a.ms-2(href="./api/version") v#{apiDocs.version}
+		small.ms-2 (
+			a(href="./api/changelog") changelog
+			| )
 
 	if (false)
 		pre

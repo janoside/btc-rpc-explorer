@@ -11,7 +11,7 @@
 * Link to Tor v3 Hidden Service in footer
 * Fix for `DEBUG` environment variable being ignored
 * Misc UI/UX tweaks
-* Update bootstrap: v5.0.0-beta3 -> v5.0.0
+* Update bootstrap: v5.0.0-beta3 -> v5.0.1
 * Update chart.js: v2.9.3 -> v3.2.1
 
 
