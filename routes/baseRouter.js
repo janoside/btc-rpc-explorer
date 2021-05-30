@@ -548,6 +548,37 @@ router.get("/changeSetting", function(req, res, next) {
 	res.redirect(req.headers.referer);
 });
 
+router.get("/session-data", function(req, res, next) {
+	if (req.query.action && req.query.data) {
+		let action = req.query.action;
+		let data = req.query.data;
+
+		if (action == "add-rpc-favorite") {
+			if (!req.session.favoriteRpcCommands) {
+				req.session.favoriteRpcCommands = [];
+			}
+
+			if (!req.session.favoriteRpcCommands.includes(data)) {
+				req.session.favoriteRpcCommands.push(data);
+			}
+
+			req.session.favoriteRpcCommands.sort();
+		}
+
+		if (action == "remove-rpc-favorite") {
+			if (!req.session.favoriteRpcCommands) {
+				req.session.favoriteRpcCommands = [];
+			}
+
+			if (req.session.favoriteRpcCommands.includes(data)) {
+				req.session.favoriteRpcCommands.splice(req.session.favoriteRpcCommands.indexOf(data), 1);
+			}
+		}
+	}
+
+	res.redirect(req.headers.referer);
+});
+
 router.get("/user-settings", function(req, res, next) {
 	res.render("user-settings");
 
@@ -1653,6 +1684,18 @@ router.get("/rpc-browser", function(req, res, next) {
 		res.locals.gethelp = result;
 
 		if (req.query.method) {
+			if (!req.session.recentRpcCommands) {
+				req.session.recentRpcCommands = [];
+			}
+
+			if (!req.session.recentRpcCommands.includes(req.query.method)) {
+				req.session.recentRpcCommands.unshift(req.query.method);
+				
+				while (req.session.recentRpcCommands.length > 5) {
+					req.session.recentRpcCommands.pop();
+				}
+			}
+
 			res.locals.method = req.query.method;
 
 			coreApi.getRpcMethodHelp(req.query.method.trim()).then(function(result2) {
