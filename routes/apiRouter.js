@@ -197,14 +197,14 @@ router.get("/mining/diff-adj-estimate", asyncHandler(async (req, res, next) => {
 	var difficultyPeriodFirstBlockHeader;
 	
 	promises.push(new Promise(async (resolve, reject) => {
-			currentBlock = await utils.timePromise("promises.api.getBlockHeaderByHeight", coreApi.getBlockHeaderByHeight(getblockchaininfo.blocks));
-			resolve();
+		currentBlock = await utils.timePromise("promises.api.getBlockHeaderByHeight", coreApi.getBlockHeaderByHeight(getblockchaininfo.blocks));
+		resolve();
 	}));
 	
 	promises.push(new Promise(async (resolve, reject) => {
-			let h = coinConfig.difficultyAdjustmentBlockCount * difficultyPeriod;
-			difficultyPeriodFirstBlockHeader = await utils.timePromise("promises.api.getBlockHeaderByHeight", coreApi.getBlockHeaderByHeight(h));
-			resolve();
+		let h = coinConfig.difficultyAdjustmentBlockCount * difficultyPeriod;
+		difficultyPeriodFirstBlockHeader = await utils.timePromise("promises.api.getBlockHeaderByHeight", coreApi.getBlockHeaderByHeight(h));
+		resolve();
 	}));
 	
 	await Promise.all(promises);
@@ -218,12 +218,12 @@ router.get("/mining/diff-adj-estimate", asyncHandler(async (req, res, next) => {
 	var predictedBlockCount = dt / coinConfig.targetBlockTimeSeconds;
 	var timePerBlock2 = dt / heightDiff;
 		
-	if (timePerBlock2 > 600) {
+	if (predictedBlockCount > blockCount) {
 		var diffAdjPercent = new Decimal(100).minus(new Decimal(blockCount / predictedBlockCount).times(100)).times(-1);
 		//diffAdjPercent = diffAdjPercent * -1;
 
 	} else {
-		var diffAdjPercent = new Decimal(100).minus(new Decimal(blockCount / predictedBlockCount).times(100));
+		var diffAdjPercent = new Decimal(100).minus(new Decimal(predictedBlockCount / blockCount).times(100));
 	}	
 	
 	res.send(diffAdjPercent.toFixed(2).toString());
