@@ -6,7 +6,7 @@ block headContent
 block content
 	+pageTitle("API Docs")
 	div.fs-4.mt-n3.mb-3 Current Version:
-		a.ms-2(href="./api/version") v#{apiDocs.version}
+		a.ms-2(href="./api/version", title="View version API call: /api/version", data-bs-toggle="tooltip", target="_blank") v#{apiDocs.version}
 		small.ms-2 (
 			a(href="./api/changelog") changelog
 			| )
