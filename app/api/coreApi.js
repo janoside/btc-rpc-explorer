@@ -715,7 +715,7 @@ function getUtxo(txid, outputIndex) {
 
 		}).then(function(result) {
 			// to avoid cache misses, rpcApi.getUtxo returns "0" instead of null
-			if (result == "0") {
+			if (typeof result == "string" && result == "0") {
 				resolve(null);
 
 				return;

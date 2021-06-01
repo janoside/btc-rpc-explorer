@@ -13,6 +13,7 @@
 * Misc UI/UX tweaks
 * Update bootstrap: v5.0.0-beta3 -> v5.0.1
 * Update chart.js: v2.9.3 -> v3.2.1
+* Updated dependencies
 
 
 ##### v3.1.1

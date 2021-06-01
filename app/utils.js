@@ -961,6 +961,10 @@ function objectProperties(obj) {
 	return props;
 }
 
+function objHasProperty(obj, name) {
+	return Object.prototype.hasOwnProperty.call(obj, name);
+}
+
 function iterateProperties(obj, action) {
 	for (const [key, value] of Object.entries(obj)) {
 		action([key, value]);
@@ -1012,5 +1016,6 @@ module.exports = {
 	timePromise: timePromise,
 	startTimeNanos: startTimeNanos,
 	dtMillis: dtMillis,
-	objectProperties: objectProperties
+	objectProperties: objectProperties,
+	objHasProperty: objHasProperty
 };
