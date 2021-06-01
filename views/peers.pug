@@ -128,7 +128,7 @@ block content
 								td
 									if (item.addr.length > 20)
 										span.border-dotted(title=item.addr, data-bs-toggle="tooltip")
-											| #{utils.ellipsizeMiddle(item.addr, 20)}
+											| #{utils.ellipsizeMiddle(item.addr, 21)}
 									else
 										| #{item.addr}
 
