@@ -148,6 +148,71 @@ module.exports = {
 			text: "By attaching energy to a block, we give it 'form', allowing it to have real weight & consequences in the physical world.",
 			speaker: "https://twitter.com/hugohanoi",
 			url: "https://twitter.com/BTCSTREETART/status/1396368574772568064"
+		},
+		{
+			text: "The project needs to grow gradually so the software can be strengthened along the way.",
+			speaker: "Satoshi",
+			url: "https://twitter.com/DocumentingBTC/status/1399424449754042368"
+		},
+		{
+			text: "#bitcoin blockchain is the new wonder of the world, more work and human ingenuity, than went into the great pyramids of Egypt. The biggest computation ever done, a digital monument, a verifable artefact of digital gold - the foundation of a new digital age",
+			speaker: "Adam Back",
+			url: "https://twitter.com/adam3us/status/1268492893414711297"
+		},
+		{
+			text: "In this sense, it’s more typical of a precious metal. Instead of the supply changing to keep the value the same, the supply is predetermined and the value changes.",
+			speaker: "Satoshi",
+			url: "http://p2pfoundation.ning.com/xn/detail/2003008:Comment:9562"
+		},
+		{
+			text: "The steady addition of a constant of amount of new coins is analogous to gold miners expending resources to add gold to circulation. In our case, it is CPU time and electricity that is expended.",
+			speaker: "Satoshi",
+			url: "https://bitcoin.org/bitcoin.pdf"
+		},
+		{
+			text: "It might make sense just to get some in case it catches on. If enough people think the same way, that becomes a self fulfilling prophecy.",
+			speaker: "Satoshi",
+			url: "https://www.metzdowd.com/pipermail/cryptography/2009-January/015014.html"
+		},
+		{
+			text: "I'm sure that in 20 years there will either be very large transaction volume or no volume.",
+			speaker: "Satoshi",
+			url: "https://bitcointalk.org/index.php?topic=48.msg329#msg329"
+		},
+		{
+			text: "In a few decades when the reward gets too small, the transaction fee will become the main compensation for nodes.",
+			speaker: "Satoshi",
+			url: "https://bitcointalk.org/index.php?topic=48.msg329#msg329"
+		},
+		{
+			text: "Lost coins only make everyone else's coins worth slightly more. Think of it as a donation to everyone.",
+			speaker: "Satoshi",
+			url: "https://bitcointalk.org/index.php?topic=198.msg1647#msg1647"
+		},
+		{
+			text: "The utility of the exchanges made possible by Bitcoin will far exceed the cost of electricity used. Therefore, not having Bitcoin would be the net waste.",
+			speaker: "Satoshi",
+			url: "https://bitcointalk.org/index.php?topic=721.msg8114#msg8114"
+		},
+		{
+			text: "The whole point of doing ICOs is to get other people's bitcoins.",
+			speaker: "Pierre Rochard",
+			url: "https://twitter.com/btc_quotes/status/1396194347419308035"
+		},
+		{
+			text: "If nuclear war destroyed half of our planet, [Bitcoin] would continue to live, uncorrupted.",
+			speaker: "Ralph Merkle",
+			url: "https://merkle.com/papers/DAOdemocracyDraft.pdf"
+		},
+		{
+			text: "[Bitcoin is] sort of like this peaceful Manhatten project.",
+			speaker: "Alex Gladstein",
+			url: "https://twitter.com/btc_quotes/status/1392751587668418566"
+		},
+		{
+			text: "No one has found the bottom of the Bitcoin rabbit hole.",
+			speaker: "Jameson Lopp",
+			url: "https://twitter.com/lopp/status/1061415918616698881"
 		}
 	]
 };
