@@ -90,8 +90,11 @@ block content
 						| #{nextBlockTemplate.transactions.length.toLocaleString()}
 
 					+summaryItem("Fee Rates", "Minimum and maximum fee rates for transactions that are predicted to be included in the next block.", "sat/vB")
-						| #{new Decimal(nextBlockMinFeeRate).toDP(2)} - #{new Decimal(nextBlockMaxFeeRate).toDP(2)}
+						+numWithMutedDecimals(new Decimal(nextBlockMinFeeRate).toDP(2).toString())
+						span.mx-2 -
+						+numWithMutedDecimals(new Decimal(nextBlockMaxFeeRate).toDP(2).toString())
 
+						
 					+summaryItem("Total Fees", "Sum of fees for all transactions that are predicted to be included in the next block.")
 						+valueDisplay(nextBlockTotalFees)
 

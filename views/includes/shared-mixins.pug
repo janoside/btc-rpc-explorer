@@ -498,6 +498,18 @@ mixin warningAlert
 		i.d-none.d-md-inline.fas.fa-exclamation-triangle.fa-lg.d-inline-block(style="position: absolute; top: 0; left: 0; width: 36px; margin-left: 0.4rem; margin-top: 1.3rem;")
 
 		block
+
+
+mixin numWithMutedDecimals(numString)
+	if (numString.indexOf(".") >= 0)
+		- var n = numString.substring(0, numString.indexOf("."));
+		- var dec = numString.substring(numString.indexOf("."));
+
+		span #{n}
+		small.text-muted #{dec}
+
+	else
+		span #{numString}
 				
 
 mixin blockRangeFilters
