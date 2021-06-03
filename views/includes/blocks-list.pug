@@ -23,8 +23,14 @@
 					th.text-end
 						span.border-dotted(title="The total output of all transactions in each block.", data-bs-toggle="tooltip") Volume
 
-				th.text-end
-					span.border-dotted(title="The average fee (sat/vB) for all block transactions.", data-bs-toggle="tooltip") Avg Fee
+				if (blockstatsByHeight)
+					th.text-end
+						span.border-dotted(title="The min/avg/max fee rates (sat/vB) for transactions in this block.", data-bs-toggle="tooltip") Fee Rates
+				else
+					th.text-end
+						span.border-dotted(title="The average fee (sat/vB) for all block transactions.", data-bs-toggle="tooltip") Avg Fee
+
+
 				th.text-end Σ Fees
 				
 				//th.text-end Size (kB)
@@ -158,7 +164,12 @@
 									span 0
 
 						td.font-monospace.text-end
-							if (block.totalFees && block.strippedsize)
+							if (blockstatsByHeight && blockstatsByHeight[block.height])
+								span.me-1 #{blockstatsByHeight[block.height].minfeerate},
+								span.me-1 #{blockstatsByHeight[block.height].avgfeerate},
+								span #{blockstatsByHeight[block.height].maxfeerate}
+
+							else if (block.totalFees && block.strippedsize)
 								- var currencyValue = new Decimal(block.totalFees).dividedBy(block.strippedsize).times(coinConfig.baseCurrencyUnit.multiplier).toDecimalPlaces(0);
 								if (currencyValue > 0)
 									span #{currencyValue}
