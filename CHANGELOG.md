@@ -6,6 +6,7 @@
 * New [/mining-template](./mining-template) tool, showing structured output of `getblocktemplate` command
 * Various improvements to charts and graphs throughout the tool
 * Better support for BIP9 soft forks shown on [/node-details](./node-details) (e.g. Taproot ST in 0.21.1) (Thanks [@Pantamis](https://github.com/Pantamis))
+* New "Recent" and "Favorites" sections on [/rpc-browser](./rpc-browser)
 * Fix for incorrect homepage block count when using `BTCEXP_UI_HOME_PAGE_LATEST_BLOCKS_COUNT`
 * Fix for inaccurate difficulty adjustment estimates
 * Link to Tor v3 Hidden Service in footer
