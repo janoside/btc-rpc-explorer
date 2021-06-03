@@ -130,7 +130,7 @@ block content
 											span.badge.bg-primary(class=(flagIndex > 0 ? "ms-1" : false), title=(flagItem.length > 1 ? flagItem[1] : false), data-bs-toggle=(flagItem.length > 1 ? "tooltip" : false)) #{flagItem[0]}
 
 					+contentSection("Technical Details", true, "addressPageShowTechDetails")
-						+summaryRow(1 + (addressObj.hash ? 1 : 0) + (addressObj.hasOwnProperty("version") ? 1 : 0) + (result.validateaddress.hasOwnProperty("witness_version") ? 1 : 0) + (result.validateaddress.witness_program ? 1 : 0) + (electrumScripthash ? 1 : 0))
+						+summaryRow(1 + (addressObj.hash ? 1 : 0) + (utils.objHasProperty(addressObj, "version") ? 1 : 0) + (utils.objHasProperty(result.validateaddress, "witness_version") ? 1 : 0) + (result.validateaddress.witness_program ? 1 : 0) + (electrumScripthash ? 1 : 0))
 							if (addressObj.hasOwnProperty("version"))
 								+summaryItem("Version")
 									| #{addressObj.version}
@@ -144,7 +144,7 @@ block content
 								| #{utils.ellipsizeMiddle(result.validateaddress.scriptPubKey, 12)}
 								+copyTextButton(result.validateaddress.scriptPubKey)
 
-							if (result.validateaddress.hasOwnProperty("witness_version"))
+							if (utils.objHasProperty(result.validateaddress, "witness_version"))
 								+summaryItem("Witness Version")
 									| #{result.validateaddress.witness_version}
 

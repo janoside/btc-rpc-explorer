@@ -18,7 +18,9 @@ block content
 				if (methodhelp)
 					.clearfix.mb-4
 						.float-start
-							+sectionTitle(`Command: ${method}`)
+							+sectionTitleBlock
+								span.me-2 Command:
+								a(href=`./rpc-browser?method=${method}`) #{method}
 
 						.float-start.ms-2
 							if (session.favoriteRpcCommands && session.favoriteRpcCommands.includes(method))
@@ -45,7 +47,12 @@ block content
 						+pageTab("Execute", true)
 
 							if (methodResult)
-								+contentSection("Result")
+								+sectionTitleBlock
+									span.me-2 Result
+									if (executionMillis)
+										small.text-muted (#{executionMillis.toLocaleString()} ms)
+
+								+contentSection
 									pre
 										code.json #{JSON.stringify(methodResult, null, 4)}
 
@@ -151,7 +158,7 @@ block content
 						ol.mb-0.ps-4
 							each methodX, methodIndex in section.methods
 								li
-									a(href=`./rpc-browser?method=${methodX.name}`, style=(methodX.name == method ? "font-weight: bold; font-style: italic;" : false)) #{methodX.name}
+									a(href=`./rpc-browser?method=${methodX.name}`, class=(methodX.name == method ? "text-info" : false), style=(methodX.name == method ? "font-weight: bold; font-style: italic;" : false)) #{methodX.name}
 							
 							
 

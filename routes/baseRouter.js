@@ -8,7 +8,7 @@ const csurf = require('csurf');
 const router = express.Router();
 const util = require('util');
 const moment = require('moment');
-const bitcoinCore = require("bitcoin-core");
+const bitcoinCore = require("btc-rpc-client");
 const qrcode = require('qrcode');
 const bitcoinjs = require('bitcoinjs-lib');
 const sha256 = require("crypto-js/sha256");
@@ -196,106 +196,113 @@ router.get("/", asyncHandler(async (req, res, next) => {
 		}
 
 		promises.push(new Promise(async (resolve, reject) => {
-			let blockTemplate = await global.rpcClient.command('getblocktemplate', {"rules": ["segwit"]});
+			try {
+				let blockTemplate = await global.rpcClient.command('getblocktemplate', {"rules": ["segwit"]});
 
-			res.locals.nextBlockTemplate = blockTemplate;
-			
-			var minFeeRate = 1000000;
-			var maxFeeRate = 0;
-			var minFeeTxid = null;
-			var maxFeeTxid = null;
+				res.locals.nextBlockTemplate = blockTemplate;
+				
+				var minFeeRate = 1000000;
+				var maxFeeRate = 0;
+				var minFeeTxid = null;
+				var maxFeeTxid = null;
 
-			var parentTxIndexes = new Set();
-			blockTemplate.transactions.forEach(tx => {
-				if (tx.depends && tx.depends.length > 0) {
-					tx.depends.forEach(index => {
-						parentTxIndexes.add(index);
-					});
-				}
-			});
-
-			var txIndex = 1;
-			blockTemplate.transactions.forEach(tx => {
-				var feeRate = tx.fee / tx.weight * 4;
-				if (tx.depends && tx.depends.length > 0) {
-					var totalFee = tx.fee;
-					var totalWeight = tx.weight;
-
-					tx.depends.forEach(index => {
-						totalFee += blockTemplate.transactions[index - 1].fee;
-						totalWeight += blockTemplate.transactions[index - 1].weight;
-					});
-
-					tx.avgFeeRate = totalFee / totalWeight * 4;
-				}
-
-				// txs that are ancestors should not be included in min/max
-				// calculations since their native fee rate is different than
-				// their effective fee rate (which takes descendant fee rates
-				// into account)
-				if (!parentTxIndexes.has(txIndex) && (!tx.depends || tx.depends.length == 0)) {
-					if (feeRate < minFeeRate) {
-						minFeeRate = feeRate;
-						minFeeTxid = tx.txid;
+				var parentTxIndexes = new Set();
+				blockTemplate.transactions.forEach(tx => {
+					if (tx.depends && tx.depends.length > 0) {
+						tx.depends.forEach(index => {
+							parentTxIndexes.add(index);
+						});
 					}
-
-					if (feeRate > maxFeeRate) {
-						maxFeeRate = feeRate;
-						maxFeeTxid = tx.txid;
-					}
-				}
-
-				txIndex++;
-			});
-
-			res.locals.nextBlockFeeRateGroups = [];
-			var groupCount = 10;
-			for (var i = 0; i < groupCount; i++) {
-				res.locals.nextBlockFeeRateGroups.push({
-					minFeeRate: minFeeRate + i * (maxFeeRate - minFeeRate) / groupCount,
-					maxFeeRate: minFeeRate + (i + 1) * (maxFeeRate - minFeeRate) / groupCount,
-					totalWeight: 0,
-					txidCount: 0,
-					//txids: []
 				});
-			}
 
-			var txIncluded = 0;
-			blockTemplate.transactions.forEach(tx => {
-				var feeRate = tx.avgFeeRate ? tx.avgFeeRate : (tx.fee / tx.weight * 4);
+				var txIndex = 1;
+				blockTemplate.transactions.forEach(tx => {
+					var feeRate = tx.fee / tx.weight * 4;
+					if (tx.depends && tx.depends.length > 0) {
+						var totalFee = tx.fee;
+						var totalWeight = tx.weight;
 
-				for (var i = 0; i < res.locals.nextBlockFeeRateGroups.length; i++) {
-					if (feeRate >= res.locals.nextBlockFeeRateGroups[i].minFeeRate) {
-						if (feeRate < res.locals.nextBlockFeeRateGroups[i].maxFeeRate) {
-							res.locals.nextBlockFeeRateGroups[i].totalWeight += tx.weight;
-							res.locals.nextBlockFeeRateGroups[i].txidCount++;
-							
-							//res.locals.nextBlockFeeRateGroups[i].txids.push(tx.txid);
+						tx.depends.forEach(index => {
+							totalFee += blockTemplate.transactions[index - 1].fee;
+							totalWeight += blockTemplate.transactions[index - 1].weight;
+						});
 
-							txIncluded++;
+						tx.avgFeeRate = totalFee / totalWeight * 4;
+					}
 
-							break;
+					// txs that are ancestors should not be included in min/max
+					// calculations since their native fee rate is different than
+					// their effective fee rate (which takes descendant fee rates
+					// into account)
+					if (!parentTxIndexes.has(txIndex) && (!tx.depends || tx.depends.length == 0)) {
+						if (feeRate < minFeeRate) {
+							minFeeRate = feeRate;
+							minFeeTxid = tx.txid;
+						}
+
+						if (feeRate > maxFeeRate) {
+							maxFeeRate = feeRate;
+							maxFeeTxid = tx.txid;
 						}
 					}
+
+					txIndex++;
+				});
+
+				res.locals.nextBlockFeeRateGroups = [];
+				var groupCount = 10;
+				for (var i = 0; i < groupCount; i++) {
+					res.locals.nextBlockFeeRateGroups.push({
+						minFeeRate: minFeeRate + i * (maxFeeRate - minFeeRate) / groupCount,
+						maxFeeRate: minFeeRate + (i + 1) * (maxFeeRate - minFeeRate) / groupCount,
+						totalWeight: 0,
+						txidCount: 0,
+						//txids: []
+					});
 				}
-			});
 
-			res.locals.nextBlockFeeRateGroups.forEach(group => {
-				group.weightRatio = group.totalWeight / blockTemplate.weightlimit;
-			});
+				var txIncluded = 0;
+				blockTemplate.transactions.forEach(tx => {
+					var feeRate = tx.avgFeeRate ? tx.avgFeeRate : (tx.fee / tx.weight * 4);
+
+					for (var i = 0; i < res.locals.nextBlockFeeRateGroups.length; i++) {
+						if (feeRate >= res.locals.nextBlockFeeRateGroups[i].minFeeRate) {
+							if (feeRate < res.locals.nextBlockFeeRateGroups[i].maxFeeRate) {
+								res.locals.nextBlockFeeRateGroups[i].totalWeight += tx.weight;
+								res.locals.nextBlockFeeRateGroups[i].txidCount++;
+								
+								//res.locals.nextBlockFeeRateGroups[i].txids.push(tx.txid);
+
+								txIncluded++;
+
+								break;
+							}
+						}
+					}
+				});
+
+				res.locals.nextBlockFeeRateGroups.forEach(group => {
+					group.weightRatio = group.totalWeight / blockTemplate.weightlimit;
+				});
 
 
 
-			res.locals.nextBlockMinFeeRate = minFeeRate;
-			res.locals.nextBlockMaxFeeRate = maxFeeRate;
-			res.locals.nextBlockMinFeeTxid = minFeeTxid;
-			res.locals.nextBlockMaxFeeTxid = maxFeeTxid;
+				res.locals.nextBlockMinFeeRate = minFeeRate;
+				res.locals.nextBlockMaxFeeRate = maxFeeRate;
+				res.locals.nextBlockMinFeeTxid = minFeeTxid;
+				res.locals.nextBlockMaxFeeTxid = maxFeeTxid;
 
-			var subsidy = coinConfig.blockRewardFunction(blockTemplate.height, global.activeBlockchain);
+				var subsidy = coinConfig.blockRewardFunction(blockTemplate.height, global.activeBlockchain);
 
-			res.locals.nextBlockTotalFees = new Decimal(blockTemplate.coinbasevalue).dividedBy(coinConfig.baseCurrencyUnit.multiplier).minus(new Decimal(subsidy));
+				res.locals.nextBlockTotalFees = new Decimal(blockTemplate.coinbasevalue).dividedBy(coinConfig.baseCurrencyUnit.multiplier).minus(new Decimal(subsidy));
 
-			resolve();
+				resolve();
+
+			} catch (err) {
+				utils.logError("3r8weyhfugehe", err);
+
+				resolve();
+			}
 		}));
 
 
@@ -1246,12 +1253,18 @@ router.get("/tx/:transactionId", asyncHandler(async (req, res, next) => {
 			}));
 		} else {
 			promises.push(new Promise(async (resolve, reject) => {
-				global.rpcClient.command('getblockheader', tx.blockhash, function(err3, result3, resHeaders3) {
-					if (err3) return reject(err3);
-					res.locals.result.getblock = result3;
+				try {
+					const blockHeader = await global.rpcClient.command('getblockheader', tx.blockhash);
+
+					res.locals.result.getblock = blockHeader;
 
 					resolve();
-				});
+
+				} catch (err) {
+					utils.logError("239rge0uwhse", err);
+
+					resolve();
+				}
 			}));
 		}
 
@@ -1608,7 +1621,7 @@ router.get("/rpc-terminal", function(req, res, next) {
 	next();
 });
 
-router.post("/rpc-terminal", function(req, res, next) {
+router.post("/rpc-terminal", asyncHandler(async (req, res, next) => {
 	if (!config.demoSite && !req.authenticated) {
 		res.send("RPC Terminal / Browser require authentication. Set an authentication password via the 'BTCEXP_BASIC_AUTH_PASSWORD' environment variable (see .env-sample file for more info).");
 
@@ -1621,11 +1634,12 @@ router.post("/rpc-terminal", function(req, res, next) {
 	var cmd = params.shift();
 	var parsedParams = [];
 
-	params.forEach(function(param, i) {
-		if (!isNaN(param)) {
-			parsedParams.push(parseInt(param));
+	params.forEach((param, i) => {
+		try {
+			parsedParams.push(JSON.parse(param));
 
-		} else {
+		} catch (e) {
+			// add as string
 			parsedParams.push(param);
 		}
 	});
@@ -1640,38 +1654,33 @@ router.post("/rpc-terminal", function(req, res, next) {
 		return;
 	}
 
-	global.rpcClientNoTimeout.command([{method:cmd, parameters:parsedParams}], function(err, result, resHeaders) {
-		debugLog("Result[1]: " + JSON.stringify(result, null, 4));
-		debugLog("Error[2]: " + JSON.stringify(err, null, 4));
-		debugLog("Headers[3]: " + JSON.stringify(resHeaders, null, 4));
+	try {
+		const result = await global.rpcClientNoTimeout.command([{method:cmd, parameters:parsedParams}]);//, function(err, result, resHeaders) {
+		
+		if (result) {
+			debugLog("Result[1]: " + JSON.stringify(result, null, 4));
 
-		if (err) {
-			debugLog(JSON.stringify(err, null, 4));
-
-			res.write(JSON.stringify(err, null, 4), function() {
-				res.end();
-			});
-
-			next();
-
-		} else if (result) {
 			res.write(JSON.stringify(result, null, 4), function() {
 				res.end();
 			});
-
-			next();
 
 		} else {
 			res.write(JSON.stringify({"Error":"No response from node"}, null, 4), function() {
 				res.end();
 			});
-
-			next();
 		}
-	});
-});
+	} catch (err) {
+		debugLog(JSON.stringify(err, null, 4));
 
-router.get("/rpc-browser", function(req, res, next) {
+		res.write(JSON.stringify(err, null, 4), function() {
+			res.end();
+		});
+	}
+
+	next();
+}));
+
+router.get("/rpc-browser", asyncHandler(async (req, res, next) => {
 	if (!config.demoSite && !req.authenticated) {
 		res.send("RPC Terminal / Browser require authentication. Set an authentication password via the 'BTCEXP_BASIC_AUTH_PASSWORD' environment variable (see .env-sample file for more info).");
 
@@ -1680,16 +1689,21 @@ router.get("/rpc-browser", function(req, res, next) {
 		return;
 	}
 
-	coreApi.getHelp().then(function(result) {
-		res.locals.gethelp = result;
+	try {
+		const helpContent = await coreApi.getHelp();
+		res.locals.gethelp = helpContent;
 
+		var method = "unknown";
+		var argValues = [];
 		if (req.query.method) {
+			method = req.query.method;
+
 			if (!req.session.recentRpcCommands) {
 				req.session.recentRpcCommands = [];
 			}
 
-			if (!req.session.recentRpcCommands.includes(req.query.method)) {
-				req.session.recentRpcCommands.unshift(req.query.method);
+			if (!req.session.recentRpcCommands.includes(method)) {
+				req.session.recentRpcCommands.unshift(method);
 				
 				while (req.session.recentRpcCommands.length > 5) {
 					req.session.recentRpcCommands.pop();
@@ -1698,126 +1712,141 @@ router.get("/rpc-browser", function(req, res, next) {
 
 			res.locals.method = req.query.method;
 
-			coreApi.getRpcMethodHelp(req.query.method.trim()).then(function(result2) {
-				res.locals.methodhelp = result2;
+			const methodHelp = await coreApi.getRpcMethodHelp(req.query.method.trim());
+			res.locals.methodhelp = methodHelp;
 
-				if (req.query.execute) {
-					var argDetails = result2.args;
-					var argValues = [];
+			if (req.query.execute) {
+				var argDetails = methodHelp.args;
+				
+				if (req.query.args) {
+					debugLog("ARGS: " + JSON.stringify(req.query.args));
 
-					if (req.query.args) {
-						for (var i = 0; i < req.query.args.length; i++) {
-							var argProperties = argDetails[i].properties;
+					for (var i = 0; i < req.query.args.length; i++) {
+						var argProperties = argDetails[i].properties;
+						debugLog(`ARG_PROPS[${i}]: ` + JSON.stringify(argProperties));
 
-							for (var j = 0; j < argProperties.length; j++) {
-								if (argProperties[j] === "numeric") {
-									if (req.query.args[i] == null || req.query.args[i] == "") {
-										argValues.push(null);
-
-									} else {
-										argValues.push(parseInt(req.query.args[i]));
-									}
-
-									break;
-
-								} else if (argProperties[j] === "boolean") {
-									if (req.query.args[i]) {
-										argValues.push(req.query.args[i] == "true");
-									}
-
-									break;
-
-								} else if (argProperties[j] === "string" || argProperties[j] === "numeric or string" || argProperties[j] === "string or numeric") {
-									if (req.query.args[i]) {
-										argValues.push(req.query.args[i].replace(/[\r]/g, ''));
-									}
-
-									break;
-
-								} else if (argProperties[j] === "array") {
-									if (req.query.args[i]) {
-										argValues.push(JSON.parse(req.query.args[i]));
-									}
-									
-									break;
+						for (var j = 0; j < argProperties.length; j++) {
+							if (argProperties[j] === "numeric") {
+								if (req.query.args[i] == null || req.query.args[i] == "") {
+									argValues.push(null);
 
 								} else {
-									debugLog(`Unknown argument property: ${argProperties[j]}`);
+									argValues.push(parseInt(req.query.args[i]));
 								}
-							}
-						}
-					}
 
-					res.locals.argValues = argValues;
+								break;
 
-					if (config.rpcBlacklist.includes(req.query.method.toLowerCase())) {
-						res.locals.methodResult = "Sorry, that RPC command is blacklisted. If this is your server, you may allow this command by removing it from the 'rpcBlacklist' setting in config.js.";
-
-						res.render("rpc-browser");
-
-						next();
-
-						return;
-					}
-
-					forceCsrf(req, res, err => {
-						if (err) {
-							return next(err);
-						}
-
-						debugLog("Executing RPC '" + req.query.method + "' with params: " + JSON.stringify(argValues));
-
-						global.rpcClientNoTimeout.command([{method:req.query.method, parameters:argValues}], function(err3, result3, resHeaders3) {
-							debugLog("RPC Response: err=" + err3 + ", headers=" + resHeaders3 + ", result=" + JSON.stringify(result3));
-
-							if (err3) {
-								res.locals.pageErrors.push(utils.logError("23roewuhfdghe", err3, {method:req.query.method, params:argValues, result:result3, headers:resHeaders3}));
-
-								if (result3) {
-									res.locals.methodResult = {error:("" + err3), result:result3};
-
-								} else {
-									res.locals.methodResult = {error:("" + err3)};
+							} else if (argProperties[j] === "boolean") {
+								if (req.query.args[i]) {
+									argValues.push(req.query.args[i] == "true");
 								}
-							} else if (result3) {
-								res.locals.methodResult = result3;
+
+								break;
+
+							} else if (argProperties[j] === "string" || argProperties[j] === "numeric or string" || argProperties[j] === "string or numeric") {
+								if (req.query.args[i]) {
+									argValues.push(req.query.args[i].replace(/[\r]/g, ''));
+								}
+
+								break;
+
+							} else if (argProperties[j] === "array" || argProperties[j] === "json array") {
+								if (req.query.args[i]) {
+									argValues.push(JSON.parse(req.query.args[i]));
+								}
+								
+								break;
+
+							} else if (argProperties[j] === "json object") {
+								if (req.query.args[i]) {
+									argValues.push(JSON.parse(req.query.args[i]));
+								}
+								
+								break;
 
 							} else {
-								res.locals.methodResult = {"Error":"No response from node."};
+								debugLog(`Unknown argument property: ${argProperties[j]}`);
 							}
+						}
+					}
+				}
 
-							res.render("rpc-browser");
+				res.locals.argValues = argValues;
 
-							next();
-						});
-					});
-				} else {
+				if (config.rpcBlacklist.includes(req.query.method.toLowerCase())) {
+					res.locals.methodResult = "Sorry, that RPC command is blacklisted. If this is your server, you may allow this command by removing it from the 'rpcBlacklist' setting in config.js.";
+
 					res.render("rpc-browser");
 
 					next();
+
+					return;
 				}
-			}).catch(function(err) {
-				res.locals.userMessage = "Error loading help content for method " + req.query.method + ": " + err;
 
-				res.render("rpc-browser");
+				//var csurfPromise = 
 
-				next();
-			});
+				await new Promise((resolve, reject) => {
+					forceCsrf(req, res, async (err) => {
+						if (err) {
+							reject(err);
 
-		} else {
-			res.render("rpc-browser");
+						} else {
+							resolve();
+						}
+					});
+				});
 
-			next();
+				debugLog("Executing RPC '" + req.query.method + "' with params: " + JSON.stringify(argValues));
+
+				try {
+					const startTimeNanos = utils.startTimeNanos();
+					const result = await global.rpcClientNoTimeout.command([{method:req.query.method, parameters:argValues}]);//, function(err3, result3, resHeaders3) {
+					const dtMillis = utils.dtMillis(startTimeNanos);
+
+					res.locals.executionMillis = dtMillis;
+
+					debugLog("RPC Response: result=" + JSON.stringify(result));
+
+					if (result) {
+						res.locals.methodResult = result;
+
+					} else {
+						res.locals.methodResult = {"Error":"No response from node."};
+					}
+
+					//res.render("rpc-browser");
+
+					//next();
+
+				} catch (err) {
+					res.locals.pageErrors.push(utils.logError("23roewuhfdghe", err, {method:req.query.method, params:argValues}));
+
+					res.locals.methodResult = {error:("" + err)};
+
+					//res.render("rpc-browser");
+
+					//next();
+				}
+
+				/*forceCsrf(req, res, async (err) => {
+					if (err) {
+						return next(err);
+					}
+
+					
+				});*/
+			}
 		}
-
-	}).catch(function(err) {
+	} catch (err) {
+		res.locals.pageErrors.push(utils.logError("23ewyf0weee", err, {method:method, params:argValues}));
+		
 		res.locals.userMessage = "Error loading help content: " + err;
+	}
 
-		res.render("rpc-browser");
+	res.render("rpc-browser");
 
-		next();
-	});
-});
+	next();
+}));
 
 router.get("/terminal", function(req, res, next) {
 	res.render("terminal");

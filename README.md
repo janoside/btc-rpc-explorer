@@ -5,11 +5,11 @@
 [![npm version][npm-ver-img]][npm-ver-url] [![NPM downloads][npm-dl-img]][npm-dl-url]
 
 
-Simple, database-free Bitcoin blockchain explorer, via RPC to [Bitcoin Core](https://github.com/bitcoin/bitcoin).
+Self-Hosted Bitcoin explorer for anyone running [Bitcoin Core](https://github.com/bitcoin/bitcoin).
 
-This is a simple, self-hosted explorer for the Bitcoin blockchain, driven by RPC calls to your own [Bitcoin](https://github.com/bitcoin/bitcoin) node. It is easy to run and can be connected to other tools (like [ElectrumX](https://github.com/spesmilo/electrumx)) to achieve a full-featured explorer.
+This is a self-hosted explorer for the Bitcoin blockchain, driven by RPC calls to your own [Bitcoin](https://github.com/bitcoin/bitcoin) node. It is easy to run and can be connected to other tools (like Electrum servers) to achieve a full-featured explorer.
 
-Whatever reasons one may have for running a full node (trustlessness, technical curiosity, supporting the network, etc) it's helpful to appreciate the "fullness" of your node. With this explorer, you can explore not just the blockchain database, but also explore the functional capabilities of your own node.
+Whatever reasons you may have for running a full node (trustlessness, technical curiosity, supporting the network, etc) it's valuable to appreciate the *fullness* of your node. With this explorer, you can explore not just the blockchain database, but also explore all of the functional capabilities of your own node.
 
 Live demos available at:
 
@@ -23,6 +23,7 @@ Live demos available at:
 * Network Summary dashboard
 * View details of blocks, transactions, and addresses
 * Analysis tools for viewing stats on blocks, transactions, and miner activity
+* JSON REST API
 * See raw JSON content from bitcoind used to generate most pages
 * Search by transaction ID, block hash/height, and address
 * Optional transaction history for addresses by querying from Electrum-protocol servers (e.g. Electrs, ElectrumX), blockchain.com, blockchair.com, or blockcypher.com
@@ -39,9 +40,9 @@ See [CHANGELOG.md](/CHANGELOG.md).
 
 ## Prerequisites
 
-1. Install and run a full, archiving node - [instructions](https://bitcoin.org/en/full-node). Ensure that your bitcoin node has its RPC server enabled (`server=1`).
-2. Synchronize your node with the Bitcoin network (you *can* use this tool while your node is still sychronizing, but some pages may fail).
-3. Install a "recent" version of Node.js (8+ recommended).
+1. Install `Bitcoin Core` - [instructions](https://bitcoin.org/en/full-node). Ensure that `Bitcoin Core`'s' RPC server is enabled (`server=1`).
+2. Allow `Bitcoin Core` to synchronize with the Bitcoin network (you *can* use this tool while sychronizing, but some pages may fail).
+3. Install Node.js (14+ recommended).
 
 ### Note about pruning and indexing configurations
 

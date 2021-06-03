@@ -1,18 +1,20 @@
 ##### Unreleased
 
-* Public API! See the docs at `/api/docs`
+* Public API! See the docs at [/api/docs](./api/docs)
 * Mempool Summary: add top-fee transactions table
 * Homepage: add "Predicted Next Block" section
-* New "Mining Template" tool, showing structured output of `getblocktemplate` command
+* New [/mining-template](./mining-template) tool, showing structured output of `getblocktemplate` command
 * Various improvements to charts and graphs throughout the tool
-* Better support for BIP9 soft forks shown on `/node-details` (e.g. Taproot ST in 0.21.1) (Thanks [@Pantamis](https://github.com/Pantamis))
+* Better support for BIP9 soft forks shown on [/node-details](./node-details) (e.g. Taproot ST in 0.21.1) (Thanks [@Pantamis](https://github.com/Pantamis))
 * Fix for incorrect homepage block count when using `BTCEXP_UI_HOME_PAGE_LATEST_BLOCKS_COUNT`
 * Fix for inaccurate difficulty adjustment estimates
 * Link to Tor v3 Hidden Service in footer
 * Fix for `DEBUG` environment variable being ignored
+* Fix for [/rpc-terminal](./rpc-terminal) not parsing non-int parameters properly
 * Misc UI/UX tweaks
 * Update bootstrap: v5.0.0-beta3 -> v5.0.1
 * Update chart.js: v2.9.3 -> v3.2.1
+* Updated dependencies
 
 
 ##### v3.1.1
@@ -28,7 +30,7 @@
 
 * Improvements to no-`txindex` support: now available for all versions of Bitcoin Core
 * Move public sites to [BitcoinExplorer.org](https://bitcoinexplorer.org) (BIG thanks [@SatoshisDomains](https://twitter.com/SatoshisDomains))
-* Add back the `/peers` tool in the "Tools" menu
+* Add back the [/peers](./peers) tool in the "Tools" menu
 	* Note: The map on the peers tool now requires users set their own `BTCEXP_MAPBOX_APIKEY` in `.env`
 * Response compression
 * Remove reference to unused `fonts.css`
@@ -37,8 +39,8 @@
 * Fixed changelog for v3.0.0 release (added/clarified some issues)
 * Updated favicons (Thanks [realfavicongenerator.net](https://realfavicongenerator.net))
 * Fix for homepage error after failure to get AU exchange rate
-* UX improvements on `/peers` page
-* Graphs for top items in `/admin/stats`
+* UX improvements on [/peers](./peers) page
+* Graphs for top items in [/admin/stats](./admin/stats)
 * Optional support for plausible.io analytics
 * Fix to avoid displaying empty "Summary" section when we fail to get address txid list
 * UX improvement around electrs too-many-txs-for-address errors
@@ -60,7 +62,7 @@
 * Mining Summary: added doughnut chart for rev. breakdown, simplified table data
 * Upgraded to Bootstrap 5 (currently beta3...)
 * Update mapbox API (Thanks [@shesek](https://github.com/tyzbit))
-	* Note: The map on the `/peers` page now requires that users set the env var `BTCEXP_MAPBOX_APIKEY` to their own API key
+	* Note: The map on the [/peers](./peers) page now requires that users set the env var `BTCEXP_MAPBOX_APIKEY` to their own API key
 * Fix for 404 pages hanging (Thanks [@shesek](https://github.com/shesek))
 * Add convenience redirect for baseUrl (Thanks [@shesek](https://github.com/shesek))
 * Make url in logs clickable (Thanks [@shesek](https://github.com/shesek))
@@ -81,6 +83,7 @@
 	* highlight.js: v9.14.2 -> v10.7.1
 	* fontawesome: v5.7.1 -> v5.15.3
 
+
 ##### v2.2.0
 ###### 2021-01-22
 
@@ -89,8 +92,9 @@
 * New minor misc peer data available in Bitcoin Core RPC v0.21+
 * New gold exchange rate on homepage
 * Fix for SSO token generation URL encoding (Thanks [@shesek](https://github.com/shesek) and [@Kixunil](https://github.com/Kixunil))
-* Fix for `/peers` map
+* Fix for [/peers](./peers) map
 * Fix for README `git clone` instructions (Thanks [@jonasschnelli](https://github.com/jonasschnelli))
+
 
 #### v2.1.0
 ##### 2020-12-15
@@ -105,22 +109,24 @@
 * Fix for low severity lodash dependency vulnerability (Thanks [@abhiShandy](https://github.com/abhiShandy))
 * Fix for zero block reward (eventually on mainnet, now on regtest) (Thanks [@MyNameIsOka](https://github.com/MyNameIsOka))
 * Fix for cryptic error when running regtest with no blocks
-* Fix for pagination errors on `/blocks` (not displaying genesis block on the last page; error on last page when sort=asc)
+* Fix for pagination errors on [/blocks](./blocks) (not displaying genesis block on the last page; error on last page when sort=asc)
 * Electrum connect/disconnect stats on `/admin`
 * Add P2SH bounty address `/fun` items (Thanks [@cd2357](https://github.com/cd2357))
 * Misc cleanup (Thanks [@AaronDewes](https://github.com/AaronDewes))
 * Add "Thanks" notes to changelog
+
 
 #### v2.0.2
 ##### 2020-07-03
 
 * Lots of improvements to connect/disconnect/error management with configured Electrum servers
 * Include pending balance for addresses queried via ElectrumX, when available
-* Include basic stats for ElectrumX queries on `/admin`
+* Include basic stats for Electrum queries on `/admin`
 * Bug fixes
 	* Fix for erroneous defaults for boolean env vars in some scenarios (slow device mode)
 * Updated dependences and mining pools
 * Misc cleanup (Thanks [@JosephGoulden](https://github.com/JosephGoulden))
+
 
 #### v2.0.1
 ##### 2020-05-28
@@ -135,6 +141,7 @@
 	* Fix "failure to render homepage when fee estimates are unavailable"
 * Minor additions to "fun" data
 * Updated dependences
+
 
 #### v2.0.0
 ##### 2020-03-25
@@ -174,10 +181,10 @@
 	* Inputs: when available, show "input address" below tx outpoint
 	* Coinbase and OP_RETURN items: show ascii data inline with link to show hex data
 * New tool `/block-stats` for viewing summarized block data from recent blocks
-* New tool `/mining-summary` for viewing summarized mining data from recent blocks
+* New tool [/mining-summary](./mining-summary) for viewing summarized mining data from recent blocks
 * New tool `/block-analysis` for analyzing the details of transactions in a block.
 	* **IMPORTANT**: Use of `/block-analysis` can put heavy memory pressure on this app, depending on the details of the block being analyzed. If your app is crashing, consider setting a higher memory ceiling: `node --max_old_space_size=XXX bin/www` (where `XXX` is measured in MB).
-* New tool `/difficulty-history` showing a graph of the history of all difficulty adjustments
+* New tool [/difficulty-history](./difficulty-history) showing a graph of the history of all difficulty adjustments
 * Change `/mempool-summary` to load data via ajax (UX improvement to give feedback while loading large data sets)
 * Zero-indexing for tx index-in-block values
 * Reduced memory usage
@@ -191,6 +198,7 @@
 * Updated miner configs
 * Lots of minor bug fixes
 
+
 #### v1.1.9
 ##### 2020-02-23
 
@@ -200,11 +208,13 @@
 * Disable stacktrace log output by default (#170)
 * Updated miner configs
 
+
 #### v1.1.8
 ##### 2020-01-09
 
 * Fix for missing changelog file when installed via npm
 * Updated miner configs
+
 
 #### v1.1.5
 ##### 2019-12-22
@@ -212,6 +222,7 @@
 * Fix startup issues when connecting to a node that's not ready to serve data (e.g. verifying blocks)
 * Homepage header: show exchange rate in selected currency (rather than hardcoded USD)
 * Homepage header: show sat/USD or sat/EUR
+
 
 #### v1.1.4
 ###### 2019-12-04
