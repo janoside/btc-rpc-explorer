@@ -1241,6 +1241,10 @@
 		"1EKFdxiNJ37LFu7Ambf8TETeBUFKN2SeUh": {
 			"name": "BTCPool",
 			"link": ""
+		},
+		"bc1qf274x7penhcd8hsv3jcmwa5xxzjl2a6pa9pxwm": {
+			"name": "F2Pool",
+			"link" : "https://www.f2pool.com/"
 		}
 	},
 	"block_hashes" : {
