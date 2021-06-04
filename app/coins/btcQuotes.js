@@ -92,7 +92,8 @@ module.exports = {
 		},
 		{
 			text: "You can't isolate yourself from the consequences of others holding harder money than you.",
-			speaker: "Saifedean Ammous"
+			speaker: "Saifedean Ammous",
+			url: "https://twitter.com/saifedean/status/1292937937743753216"
 		},
 		{
 			text: "The network is robust in its unstructured simplicity.",
