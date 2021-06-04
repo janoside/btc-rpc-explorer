@@ -720,6 +720,103 @@ router.get("/mining-summary", asyncHandler(async (req, res, next) => {
 	}
 }));
 
+router.get("/xpub/:extendedPubkey", asyncHandler(async (req, res, next) => {
+	try {
+		const extendedPubkey = req.params.extendedPubkey;
+		res.locals.extendedPubkey = extendedPubkey;
+
+		let derivationPath = null;
+		if (req.query.derivationPath) {
+			derivationPath = req.query.derivationPath;
+		}
+		
+		let limit = 20;
+		if (req.query.limit) {
+			limit = parseInt(req.query.limit);
+		}
+		res.locals.limit = limit;
+
+		let offset = 0;
+		if (req.query.offset) {
+			offset = parseInt(req.query.offset);
+		}
+		res.locals.offset = offset;
+
+		const addresses = [];
+
+		// if xpub/ypub/zpub convert to address under path m/0/0
+		if (extendedPubkey.startsWith("xpub")) {
+			if (derivationPath == null) {
+				derivationPath = "44";
+			}
+
+			var bip32object = bip32.fromBase58(extendedPubkey);
+
+			for (var i = 0; i < limit; i++) {
+				var bip32Child = bip32object.derive(0).derive(offset + i);
+				var publicKey = bip32Child.publicKey;
+				var generatedAddress = bitcoinjs.payments.p2pkh({ pubkey: publicKey }).address;
+
+				addresses.push(generatedAddress);
+			}
+			
+		} else if (extendedPubkey.startsWith("ypub")) {
+			if (derivationPath == null) {
+				derivationPath = "49";
+			}
+
+			var data = b58.decode(extendedPubkey)
+			data = data.slice(4)
+			data = Buffer.concat([Buffer.from('0488b21e','hex'), data])
+			extendedPubkey = b58.encode(data);
+			var bip32object = bip32.fromBase58(rawCaseQuery);
+
+			for (var i = 0; i < limit; i++) {
+				var bip32Child = bip32object.derive(0).derive(offset + i);
+				var publicKey = bip32Child.publicKey;
+				var generatedAddress = bitcoinjs.payments.p2sh({ redeem: bitcoinjs.payments.p2wpkh({ pubkey: publicKey })}).address;
+
+				addresses.push(generatedAddress);
+			}
+
+		} else if (extendedPubkey.startsWith("zpub")) {
+			if (derivationPath == null) {
+				derivationPath = "84";
+			}
+
+			var data = b58.decode(extendedPubkey)
+			data = data.slice(4)
+			data = Buffer.concat([Buffer.from('0488b21e','hex'), data])
+			rawCaseQuery = b58.encode(data);
+			var bip32object = bip32.fromBase58(rawCaseQuery);
+
+			for (var i = 0; i < limit; i++) {
+				var bip32Child = bip32object.derive(0).derive(offset + i);
+				var publicKey = bip32Child.publicKey;
+				var generatedAddress = bitcoinjs.payments.p2wpkh({ pubkey: publicKey }).address;
+
+				addresses.push(generatedAddress);
+			}
+		}
+
+		res.locals.addresses = addresses;
+		res.locals.derivationPath = derivationPath;
+
+		res.render("extended-public-key");
+
+		next();
+
+	} catch (err) {
+		res.locals.pageErrors.push(utils.logError("23r08uyhe7ege", err));
+
+		res.locals.userMessage = "Error: " + err;
+
+		res.render("extended-public-key");
+
+		next();
+	}
+}));
+
 router.get("/block-stats", function(req, res, next) {
 	if (semver.lt(global.btcNodeSemver, rpcApi.minRpcVersions.getblockstats)) {
 		res.locals.rpcApiUnsupportedError = {rpc:"getblockstats", version:rpcApi.minRpcVersions.getblockstats};
@@ -816,36 +913,11 @@ router.post("/search", function(req, res, next) {
 
 	req.session.query = req.body.query;
 	
-	
-	// if xpub/ypub/zpub convert to address under path m/0/0
-	if(rawCaseQuery.startsWith("xpub")){
-		var bip32object = bip32.fromBase58(rawCaseQuery);
-		var bip32Child = bip32object.derive(0).derive(0);
-		var publicKey = bip32Child.publicKey;
-		var generatedAddress = bitcoinjs.payments.p2pkh({ pubkey: publicKey }).address;
-		rawCaseQuery = generatedAddress; 
-	}
-	else if (rawCaseQuery.startsWith("ypub")) {
-		var data = b58.decode(rawCaseQuery)
-    	data = data.slice(4)
-   	data = Buffer.concat([Buffer.from('0488b21e','hex'), data])
-   	rawCaseQuery = b58.encode(data);
-		var bip32object = bip32.fromBase58(rawCaseQuery);
-		var bip32Child = bip32object.derive(0).derive(0);
-		var publicKey = bip32Child.publicKey;
-		var generatedAddress = bitcoinjs.payments.p2sh({ redeem: bitcoinjs.payments.p2wpkh({ pubkey: publicKey })}).address;
-		rawCaseQuery = generatedAddress; 
-	}
-	else if (rawCaseQuery.startsWith("zpub")) {
-		var data = b58.decode(rawCaseQuery)
-    	data = data.slice(4)
-   	data = Buffer.concat([Buffer.from('0488b21e','hex'), data])
-   	rawCaseQuery = b58.encode(data);
-		var bip32object = bip32.fromBase58(rawCaseQuery);
-		var bip32Child = bip32object.derive(0).derive(0);
-		var publicKey = bip32Child.publicKey;
-		var generatedAddress = bitcoinjs.payments.p2wpkh({ pubkey: publicKey }).address;
-		rawCaseQuery = generatedAddress;
+	// xpub/ypub/zpub -> redirect: /xpub/XXX
+	if (rawCaseQuery.match(/^(xpub|ypub|zpub|Ypub|Zpub).*$/)) {
+		res.redirect(`./xpub/${rawCaseQuery}`);
+		
+		return;
 	}
 	
 	

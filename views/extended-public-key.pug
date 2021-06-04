@@ -1,0 +1,12 @@
+extends layout
+
+block headContent
+	title Extended Public Key
+
+block content
+	+pageTitle("Extended Public Key", extendedPubkey, true)
+
+	ol(start=offset)
+		each address, addressIndex in addresses
+			li
+				a(href=`./address/${address}`) #{address}
