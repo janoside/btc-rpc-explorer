@@ -214,6 +214,36 @@ module.exports = {
 			text: "No one has found the bottom of the Bitcoin rabbit hole.",
 			speaker: "Jameson Lopp",
 			url: "https://twitter.com/lopp/status/1061415918616698881"
+		},
+		{
+			text: "I don't think there is anything more important in my lifetime to work on.",
+			speaker: "Jack Dorsey",
+			url: "https://twitter.com/michael_saylor/status/1400940883529375752"
+		},
+		{
+			text: "For the first time in history, we can grant property rights to 8 billion people.",
+			speaker: "Michael Saylor",
+			url: "https://twitter.com/mtcbtc/status/1400936732267253760"
+		},
+		{
+			text: "We don't need the banks anymore.",
+			speaker: "Jack Dorsey",
+			url: "https://twitter.com/Xentagz/status/1400954169582829569"
+		},
+		{
+			text: "#Bitcoin is the one thing that can't be shutdown. A beacon of freedom in a benighted world.",
+			speaker: "Vijay Boyapati",
+			url: "https://twitter.com/real_vijay/status/1401145456361607172"
+		},
+		{
+			text: "There is nothing else that compares to #Bitcoin",
+			speaker: "Jack Dorsey",
+			url: "https://twitter.com/DocumentingBTC/status/1401145331966959627"
+		},
+		{
+			text: "I AM HODLING",
+			speaker: "GameKyuubi",
+			url: "https://bitcointalk.org/index.php?topic=375643.0"
 		}
 	]
 };
