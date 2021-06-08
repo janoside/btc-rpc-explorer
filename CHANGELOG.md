@@ -1,6 +1,7 @@
 ##### Unreleased
 
-* Public API! See the docs at [/api/docs](./api/docs)
+* Public API! See the docs at [/api/docs](./api/docs) (thanks [@pointbiz](https://github.com/pointbiz))
+* XPUB pages: search for any xpub (ypub, zpub, etc) and see summary details and a list of associated addresses (thanks [@pointbiz](https://github.com/pointbiz))
 * Mempool Summary: add top-fee transactions table
 * Homepage: add "Predicted Next Block" section
 * New [/mining-template](./mining-template) tool, showing structured output of `getblocktemplate` command
