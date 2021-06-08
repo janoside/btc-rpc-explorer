@@ -1,0 +1,87 @@
+extends layout
+
+block headContent
+	title Extended Public Key
+
+block content
+	+pageTitle("Extended Public Key", extendedPubkey, true)
+
+	+dismissableInfoAlert("xpubPageNoteDismissed", "About Extended Public Keys...")
+		.mb-3 !{markdown("**Extended Public Keys** (aka \"XPUBs\") are **parent** public keys from which many **children** public keys can be mathematically *derived* using the [BIP32](https://github.com/bitcoin/bips/blob/master/bip-0032.mediawiki) standard. Each **child** key represents a Bitcoin address. Therefore, an XPUB represents a unique set of Bitcoin addresses.")}
+		.mb-n3 !{markdown("Wallet software often presents users with an XPUB. Exposure of your XPUB, although it doesn't risk theft of your bitcoin, **harms your privacy** by allowing anyone with access to your XPUB to know all of your addresses and the details of all transactions sent to and from them. This page is meant to demonstrate that fact - search for any XPUB (xpub, ypub, zpub, Ypub, Zpub) and this tool will display all of the addresses derived from that key.")}
+
+	+contentSection("Summary")
+		+summaryRow(2 + (balance ? 1 : 0) + (changeBalance ? 1 : 0) + (xpub ? 1 : 0))
+			+summaryItem("Type", "There are a few types of Extended Public Keys and each generates a different set of addresses.")
+				if (pubkeyTypeDesc)
+					span.border-dotted(title=pubkeyTypeDesc, data-bs-toggle="tooltip") #{pubkeyType}
+				else
+					| #{pubkeyType}
+
+			+summaryItem("BIP32 Path", "BIP32 defines a standard for deriving child keys from an extended parent key. This 'path', also known as the 'derivation path' comes from that standard and instructs software how to generate child keys.")
+				| #{derivationPath}
+
+			if (balance)
+				+summaryItem("Balance")
+
+			if (changeBalance)
+				+summaryItem("Change Balance")
+
+			if (xpub)
+				+summaryItem("XPUB", "The 'xpub...' corresponding to this extended public key.")
+					| #{utils.ellipsizeMiddle(xpub, 16)}
+					+copyTextButton(xpub)
+
+	.row
+		.col
+			+contentSection("Receive Addresses")
+				.table-responsive
+					table.table.table-borderless.table-striped.mb-0
+						thead
+							tr
+								th.text-end Index
+								th Address
+								//th N(tx)
+								//th Balance
+						tbody
+							each address, addressIndex in receiveAddresses
+								tr
+									td.text-end
+										.text-muted ##{(offset + addressIndex).toLocaleString()}
+
+									td
+										a(href=`./address/${address}`) #{utils.ellipsizeMiddle(address, 24)}
+										+copyTextButton(address)
+
+									//td -
+									//td -
+
+
+		.col
+			+contentSection("Change Addresses")
+				.table-responsive
+					table.table.table-borderless.table-striped.mb-0
+						thead
+							tr
+								th.text-end Index
+								th Address
+								//th N(tx)
+								//th Balance
+						tbody
+							each address, addressIndex in changeAddresses
+								tr
+									td.text-end
+										.text-muted ##{(offset + addressIndex).toLocaleString()}
+									td
+										a(href=`./address/${address}`) #{utils.ellipsizeMiddle(address, 24)}
+										+copyTextButton(address)
+
+									//td -
+									//td -
+
+
+	.mt-4
+		.text-center.mb-2 Browse more addresses...
+		+pagination(limit, offset, null, 1000, paginationBaseUrl, "center", true)
+
+

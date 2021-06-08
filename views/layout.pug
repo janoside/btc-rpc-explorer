@@ -272,9 +272,11 @@ html(lang="en")
 
 							else
 								span.fs-5 — #{footerQuote.speaker}
-							small.text-muted.ms-2 (
-								a(href=footerQuote.url) link
-								| )
+
+							if (footerQuote.url)
+								small.text-muted.ms-2 (
+									a(href=footerQuote.url) link
+									| )
 
 
 				hr

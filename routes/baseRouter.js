@@ -11,6 +11,8 @@ const moment = require('moment');
 const bitcoinCore = require("btc-rpc-client");
 const qrcode = require('qrcode');
 const bitcoinjs = require('bitcoinjs-lib');
+const bip32 = require('bip32');
+const b58 = require('bs58check');
 const sha256 = require("crypto-js/sha256");
 const hexEnc = require("crypto-js/enc-hex");
 const Decimal = require("decimal.js");
@@ -718,6 +720,149 @@ router.get("/mining-summary", asyncHandler(async (req, res, next) => {
 	}
 }));
 
+router.get("/xpub/:extendedPubkey", asyncHandler(async (req, res, next) => {
+	try {
+		const extendedPubkey = req.params.extendedPubkey;
+		res.locals.extendedPubkey = extendedPubkey;
+
+		
+		let limit = 20;
+		if (req.query.limit) {
+			limit = parseInt(req.query.limit);
+		}
+		res.locals.limit = limit;
+
+		let offset = 0;
+		if (req.query.offset) {
+			offset = parseInt(req.query.offset);
+		}
+		res.locals.offset = offset;
+
+		
+		res.locals.paginationBaseUrl = `./xpub/${extendedPubkey}`;
+
+
+		const receiveAddresses = [];
+		const changeAddresses = [];
+
+		res.locals.pubkeyType = "Unknown";
+		res.locals.derivationPath = "Unknown";
+		res.locals.pubkeyTypeDesc = null;
+
+		// if xpub/ypub/zpub convert to address under path m/0/0
+		if (extendedPubkey.startsWith("xpub")) {
+			res.locals.pubkeyType = "P2PKH / P2SH";
+			res.locals.pubkeyTypeDesc = "Pay to Public Key Hash (P2PKH) or Pay to Script Hash (P2SH)";
+			res.locals.derivationPath = "m/44'/0'";
+			
+			var bip32object = bip32.fromBase58(extendedPubkey);
+
+			for (var i = 0; i < limit; i++) {
+				var bip32Child = bip32object.derive(0).derive(offset + i);
+				var publicKey = bip32Child.publicKey;
+				var generatedAddress = bitcoinjs.payments.p2pkh({ pubkey: publicKey }).address;
+
+				receiveAddresses.push(generatedAddress);
+			}
+
+			for (var i = 0; i < limit; i++) {
+				var bip32Child = bip32object.derive(1).derive(offset + i);
+				var publicKey = bip32Child.publicKey;
+				var generatedAddress = bitcoinjs.payments.p2pkh({ pubkey: publicKey }).address;
+
+				changeAddresses.push(generatedAddress);
+			}
+		} else if (extendedPubkey.startsWith("ypub")) {
+			res.locals.pubkeyType = "P2WPKH in P2SH";
+			res.locals.pubkeyTypeDesc = "Pay to Witness Public Key Hash (P2WPKH) wrapped inside Pay to Script Hash (P2SH) - aka Wrapped Segwit";
+			res.locals.derivationPath = "m/49'/0'";
+
+			var data = b58.decode(extendedPubkey)
+			data = data.slice(4)
+			data = Buffer.concat([Buffer.from('0488b21e','hex'), data])
+			
+			var bip32object = bip32.fromBase58(b58.encode(data));
+
+			for (var i = 0; i < limit; i++) {
+				var bip32Child = bip32object.derive(0).derive(offset + i);
+				var publicKey = bip32Child.publicKey;
+				var generatedAddress = bitcoinjs.payments.p2sh({ redeem: bitcoinjs.payments.p2wpkh({ pubkey: publicKey })}).address;
+
+				receiveAddresses.push(generatedAddress);
+			}
+
+			for (var i = 0; i < limit; i++) {
+				var bip32Child = bip32object.derive(1).derive(offset + i);
+				var publicKey = bip32Child.publicKey;
+				var generatedAddress = bitcoinjs.payments.p2sh({ redeem: bitcoinjs.payments.p2wpkh({ pubkey: publicKey })}).address;
+
+				changeAddresses.push(generatedAddress);
+			}
+		} else if (extendedPubkey.startsWith("zpub")) {
+			res.locals.pubkeyType = "P2WPKH";
+			res.locals.pubkeyTypeDesc = "Pay to Witness Public Key Hash (P2WPKH) - aka Native Segwit";
+			res.locals.derivationPath = "m/84'/0'";
+
+			var data = b58.decode(extendedPubkey);
+			data = data.slice(4)
+			data = Buffer.concat([Buffer.from('0488b21e','hex'), data])
+			
+			var bip32object = bip32.fromBase58(b58.encode(data));
+
+			for (var i = 0; i < limit; i++) {
+				var bip32Child = bip32object.derive(0).derive(offset + i);
+				var publicKey = bip32Child.publicKey;
+				var generatedAddress = bitcoinjs.payments.p2wpkh({ pubkey: publicKey }).address;
+
+				receiveAddresses.push(generatedAddress);
+			}
+
+			for (var i = 0; i < limit; i++) {
+				var bip32Child = bip32object.derive(1).derive(offset + i);
+				var publicKey = bip32Child.publicKey;
+				var generatedAddress = bitcoinjs.payments.p2wpkh({ pubkey: publicKey }).address;
+
+				changeAddresses.push(generatedAddress);
+			}
+		} else if (extendedPubkey.startsWith("Ypub")) {
+			res.locals.pubkeyType = "Multi-Sig P2WSH in P2SH";
+			res.locals.derivationPath = "-";
+
+		} else if (extendedPubkey.startsWith("Zpub")) {
+			res.locals.pubkeyType = "Multi-Sig P2WSH";
+			res.locals.derivationPath = "-";
+		}
+
+		if (!extendedPubkey.startsWith("xpub")) {
+			res.locals.xpub = anypubToXpub(extendedPubkey);
+		}
+
+		res.locals.receiveAddresses = receiveAddresses;
+		res.locals.changeAddresses = changeAddresses;
+
+		res.render("extended-public-key");
+
+		next();
+
+	} catch (err) {
+		res.locals.pageErrors.push(utils.logError("23r08uyhe7ege", err));
+
+		res.locals.userMessage = "Error: " + err;
+
+		res.render("extended-public-key");
+
+		next();
+	}
+}));
+
+function anypubToXpub(xyzpub) {
+	let data = b58.decode(xyzpub);
+	data = data.slice(4);
+	data = Buffer.concat([Buffer.from('0488b21e','hex'), data]);
+
+	return b58.encode(data);
+}
+
 router.get("/block-stats", function(req, res, next) {
 	if (semver.lt(global.btcNodeSemver, rpcApi.minRpcVersions.getblockstats)) {
 		res.locals.rpcApiUnsupportedError = {rpc:"getblockstats", version:rpcApi.minRpcVersions.getblockstats};
@@ -813,7 +958,15 @@ router.post("/search", function(req, res, next) {
 	var rawCaseQuery = req.body.query.trim();
 
 	req.session.query = req.body.query;
-
+	
+	// xpub/ypub/zpub -> redirect: /xpub/XXX
+	if (rawCaseQuery.match(/^(xpub|ypub|zpub|Ypub|Zpub).*$/)) {
+		res.redirect(`./xpub/${rawCaseQuery}`);
+		
+		return;
+	}
+	
+	
 	// Support txid@height lookups
 	if (/^[a-f0-9]{64}@\d+$/.test(query)) {
 		return res.redirect("./tx/" + query);
