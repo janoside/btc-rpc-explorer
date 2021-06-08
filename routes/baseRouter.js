@@ -720,7 +720,7 @@ router.get("/mining-summary", asyncHandler(async (req, res, next) => {
 	}
 }));
 
-router.get("/xpub/:extendedPubkey", asyncHandler(async (req, res, next) => {
+router.get("/xyzpub/:extendedPubkey", asyncHandler(async (req, res, next) => {
 	try {
 		const extendedPubkey = req.params.extendedPubkey;
 		res.locals.extendedPubkey = extendedPubkey;
@@ -739,7 +739,7 @@ router.get("/xpub/:extendedPubkey", asyncHandler(async (req, res, next) => {
 		res.locals.offset = offset;
 
 		
-		res.locals.paginationBaseUrl = `./xpub/${extendedPubkey}`;
+		res.locals.paginationBaseUrl = `./xyzpub/${extendedPubkey}`;
 
 
 		const receiveAddresses = [];
@@ -961,7 +961,7 @@ router.post("/search", function(req, res, next) {
 	
 	// xpub/ypub/zpub -> redirect: /xpub/XXX
 	if (rawCaseQuery.match(/^(xpub|ypub|zpub|Ypub|Zpub).*$/)) {
-		res.redirect(`./xpub/${rawCaseQuery}`);
+		res.redirect(`./xyzpub/${rawCaseQuery}`);
 		
 		return;
 	}
