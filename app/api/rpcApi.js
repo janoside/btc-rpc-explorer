@@ -460,9 +460,9 @@ function getRpcData(cmd, verifyingConnection=false) {
 				callback();
 
 			} catch (err) {
-				err.userData = {error:err, request:cmd};
+				err.userData = {request:cmd};
 
-				utils.logError("9u4278t5h7rfhgf", err, {error:err, request:cmd});
+				utils.logError("9u4278t5h7rfhgf", err, {request:cmd});
 
 				logStats(cmd, false, new Date().getTime() - startTime, false);
 
@@ -513,9 +513,9 @@ function getRpcDataWithParams(request, verifyingConnection=false) {
 				callback();
 
 			} catch (err) {
-				err.userData = {error:err, request:request};
+				err.userData = {request:request};
 
-				utils.logError("283h7ewsede", err, {error:err, request:request});
+				utils.logError("283h7ewsede", err, {request:request});
 
 				logStats(request.method, true, new Date().getTime() - startTime, false);
 
