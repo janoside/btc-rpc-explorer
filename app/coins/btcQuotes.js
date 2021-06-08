@@ -92,7 +92,8 @@ module.exports = {
 		},
 		{
 			text: "You can't isolate yourself from the consequences of others holding harder money than you.",
-			speaker: "Saifedean Ammous"
+			speaker: "Saifedean Ammous",
+			url: "https://twitter.com/saifedean/status/1292937937743753216"
 		},
 		{
 			text: "The network is robust in its unstructured simplicity.",
@@ -213,6 +214,56 @@ module.exports = {
 			text: "No one has found the bottom of the Bitcoin rabbit hole.",
 			speaker: "Jameson Lopp",
 			url: "https://twitter.com/lopp/status/1061415918616698881"
+		},
+		{
+			text: "I don't think there is anything more important in my lifetime to work on.",
+			speaker: "Jack Dorsey",
+			url: "https://twitter.com/michael_saylor/status/1400940883529375752"
+		},
+		{
+			text: "For the first time in history, we can grant property rights to 8 billion people.",
+			speaker: "Michael Saylor",
+			url: "https://twitter.com/mtcbtc/status/1400936732267253760"
+		},
+		{
+			text: "We don't need the banks anymore.",
+			speaker: "Jack Dorsey",
+			url: "https://twitter.com/Xentagz/status/1400954169582829569"
+		},
+		{
+			text: "#Bitcoin is the one thing that can't be shutdown. A beacon of freedom in a benighted world.",
+			speaker: "Vijay Boyapati",
+			url: "https://twitter.com/real_vijay/status/1401145456361607172"
+		},
+		{
+			text: "There is nothing else that compares to #Bitcoin",
+			speaker: "Jack Dorsey",
+			url: "https://twitter.com/DocumentingBTC/status/1401145331966959627"
+		},
+		{
+			text: "I AM HODLING",
+			speaker: "GameKyuubi",
+			url: "https://bitcointalk.org/index.php?topic=375643.0"
+		},
+		{
+			text: "Bitcoin endures because the engineers that build it expect the unexpected. Money is a dangerous game, and any weaknesses, no matter how small, will be exploited.",
+			speaker: "Neil Woodfine",
+			url: "https://twitter.com/btc_quotes/status/1401267872429711360"
+		},
+		{
+			text: "I had to write all the code before I could convince myself that I could solve every problem, then I wrote the paper.",
+			speaker: "Satoshi",
+			url: "https://www.metzdowd.com/pipermail/cryptography/2008-November/014832.html"
+		},
+		{
+			text: "Bitcoin is a game where everyone watches everyone else to make sure nobody cheats.",
+			speaker: "Jameson Lopp",
+			url: "https://twitter.com/Bitcoin_Sam/status/1401545443100663823"
+		},
+		{
+			text: "Bitcoin is radically changing the world by being unchangeable.",
+			speaker: "Robert Breedlove",
+			url: "https://twitter.com/Breedlove22/status/1263520680944910337"
 		}
 	]
 };
