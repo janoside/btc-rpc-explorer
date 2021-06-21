@@ -1,9 +1,9 @@
 "use strict";
 
-const btc = require("./coins/btc.js");
+const wcn = require("./coins/wcn.js");
 
 module.exports = {
-	"BTC": btc,
+	"WCN": wcn,
 
-	"coins":["BTC"]
+	"coins":["WCN"]
 };

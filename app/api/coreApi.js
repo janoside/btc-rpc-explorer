@@ -117,7 +117,7 @@ if (redisCache.active) {
 	}
 
 	// md5 of the active RPC credentials serves as part of the key; this enables
-	// multiple instances of btc-rpc-explorer (eg mainnet + testnet) to share
+	// multiple instances of wcn-rpc-explorer (eg mainnet + testnet) to share
 	// a single redis instance peacefully
 	var rpcHostPort = `${config.credentials.rpc.host}:${config.credentials.rpc.port}`;
 	var rpcCredKeyComponent = md5(JSON.stringify(config.credentials.rpc)).substring(0, 8);
@@ -805,9 +805,10 @@ function summarizeBlockAnalysisData(blockHeight, tx, inputs) {
 
 	if (txSummary.coinbase) {
 		var subsidy = global.coinConfig.blockRewardFunction(blockHeight, global.activeBlockchain);
-
+		//subsidy = 10;
+		//console.log('subsidyapi='+subsidy);
 		txSummary.totalInput = txSummary.totalInput.plus(new Decimal(subsidy));
-
+		//console.log('txSummary.totalInput='+txSummary.totalInput);
 		txSummary.vin.push({
 			coinbase: true,
 			value: subsidy
@@ -1036,7 +1037,7 @@ function buildMiningSummary(statusId, startBlock, endBlock, statusFunc) {
 							const subsidy = coinConfig.blockRewardFunction(height, global.activeBlockchain);
 
 							let heightSummary = {
-								mn: (minerInfo ? minerInfo.name : "Unknown"),
+								mn: (minerInfo ? minerInfo.name : "TBC"),
 								tx: block.tx.length,
 								f: totalFees,
 								s: subsidy,
@@ -1358,7 +1359,8 @@ function buildMempoolSummary(statusId, ageBuckets, sizeBuckets, statusFunc) {
 				let largeTx = summary.largestTxs[i];
 
 				for (var j = 0; j < txids.length; j++) {
-					if (txids[j].startsWith(oldTx.txidKey)) {
+					if (oldTx && txids[j].startsWith(oldTx.txidKey)) {
+					//if (txids[j].startsWith(oldTx.txidKey)) {
 						oldTx.txid = txids[j];
 
 						break;
@@ -1366,7 +1368,8 @@ function buildMempoolSummary(statusId, ageBuckets, sizeBuckets, statusFunc) {
 				}
 
 				for (var j = 0; j < txids.length; j++) {
-					if (txids[j].startsWith(largeTx.txidKey)) {
+					if (largeTx && txids[j].startsWith(largeTx.txidKey)) {
+					//if (txids[j].startsWith(largeTx.txidKey)) {
 						largeTx.txid = txids[j];
 
 						break;

@@ -1,5 +1,5 @@
 {
-	"name": "btc-rpc-explorer",
+	"name": "wcn-rpc-explorer",
 	"version": "3.1.0",
 	"description": "Open-source, self-hosted Bitcoin explorer",
 	"private": false,
@@ -16,14 +16,14 @@
 	},
 	"keywords": [
 		"bitcoin",
-		"btc",
+		"wcn",
 		"blockchain"
 	],
 	"author": "Dan Janosik <dan@47.io>",
 	"license": "MIT",
 	"repository": {
 		"type": "git",
-		"url": "git+https://github.com/janoside/btc-rpc-explorer.git"
+		"url": "git+https://github.com/david/wcn-rpc-explorer.git"
 	},
 	"dependencies": {
 		"async": "^3.2.0",
@@ -41,7 +41,7 @@
 		"debug": "^4.3.1",
 		"decimal.js": "^10.2.1",
 		"dotenv": "^8.2.0",
-		"electrum-client": "github:janoside/electrum-client",
+		"electrum-client": "github:david/electrum-client",
 		"express": "^4.17.1",
 		"express-async-handler": "^1.1.4",
 		"express-session": "^1.17.1",

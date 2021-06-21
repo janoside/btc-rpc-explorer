@@ -1,7 +1,7 @@
 ##### v3.1.0
 ###### 2021-04-14
 
-* Improvements to no-`txindex` support: now available for all versions of Bitcoin Core
+* Improvements to no-`txindex` support: now available for all versions ofWidecoin Core
 * Move public sites to [BitcoinExplorer.org](https://bitcoinexplorer.org) (BIG thanks [@SatoshisDomains](https://twitter.com/SatoshisDomains))
 * Add back the `/peers` tool in the "Tools" menu
 	* Note: The map on the peers tool now requires users set their own `BTCEXP_MAPBOX_APIKEY` in `.env`
@@ -27,7 +27,7 @@
 	* Redesigned Dark Mode (now the default)
 	* New app icon
 * Support for pruned nodes and nodes with disabled `txindex`! (HUGE Thanks to [@shesek](https://github.com/shesek))
-	* Note: Currently only Bitcoin Core versions 0.21+ are able to support this feature (a future improvement is planned to make it available to all versions)
+	* Note: Currently onlyWidecoin Core versions 0.21+ are able to support this feature (a future improvement is planned to make it available to all versions)
 * Mempool Summary improvements
 	* Greatly improved performance for multiple loads via caching
 	* Added: "Blocks Count" column by fee-rate bucket
@@ -61,7 +61,7 @@
 
 * New "Fun" item for the tx containing the whitepaper and new tool to extract the whitepaper and display it
 * New fee rate data on `/block-analysis` pages
-* New minor misc peer data available in Bitcoin Core RPC v0.21+
+* New minor misc peer data available inWidecoin Core RPC v0.21+
 * New gold exchange rate on homepage
 * Fix for SSO token generation URL encoding (Thanks [@shesek](https://github.com/shesek) and [@Kixunil](https://github.com/Kixunil))
 * Fix for `/peers` map
@@ -161,7 +161,7 @@
 * Start of RPC API versioning support
 * Tweaked styling across site
 * Homepage UI tweaks
-	* Remove "Bitcoin Explorer" H1 (it's redundant)
+	* Remove "Widecoin Explorer" H1 (it's redundant)
 	* Hide the "Date" (timestamp) column for recent blocks (the Age+TTM is more valuable)
 * Updated miner configs
 * Lots of minor bug fixes

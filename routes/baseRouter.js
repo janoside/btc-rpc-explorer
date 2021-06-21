@@ -709,7 +709,7 @@ router.post("/search", function(req, res, next) {
 		coreApi.getAddress(rawCaseQuery).then(function(validateaddress) {
 			if (validateaddress && validateaddress.isvalid) {
 				res.redirect("./address/" + rawCaseQuery);
-
+				//console.log("testing123:"+ rawCaseQuery);
 				return;
 			}
 
@@ -1106,9 +1106,9 @@ router.get("/address/:address", function(req, res, next) {
 
 	if (global.miningPoolsConfigs) {
 		for (var i = 0; i < global.miningPoolsConfigs.length; i++) {
-			if (global.miningPoolsConfigs[i].payout_addresses[address]) {
-				res.locals.payoutAddressForMiner = global.miningPoolsConfigs[i].payout_addresses[address];
-			}
+			//if (global.miningPoolsConfigs[i].payout_addresses[address]) {
+			//	res.locals.payoutAddressForMiner = global.miningPoolsConfigs[i].payout_addresses[address];
+			//}
 		}
 	}
 

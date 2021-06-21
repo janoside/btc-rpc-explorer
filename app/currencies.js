@@ -1,8 +1,8 @@
 global.currencyTypes = {
-	"btc": {
-		id: "btc",
+	"wcn": {
+		id: "wcn",
 		type:"native",
-		name:"BTC",
+		name:"WCN",
 		multiplier:1,
 		default:true,
 		decimalPlaces:8
@@ -41,7 +41,7 @@ global.currencyTypes = {
 };
 
 global.currencySymbols = {
-	"btc": "₿",
+	"wcn": "w",
 	"usd": "$",
 	"eur": "€",
 	"gbp": "£"

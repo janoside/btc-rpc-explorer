@@ -128,7 +128,7 @@
 									i.fas.fa-backspace.text-danger
 										
 							else
-								span ?
+								span TBC
 
 						
 						td.font-monospace.text-end #{block.nTx.toLocaleString()}
@@ -140,7 +140,7 @@
 									- var currencyValue = parseInt(satValue.dividedBy(coinConfig.baseCurrencyUnit.multiplier));
 									- var currencyValueDecimals = 0;
 
-									if (userSettings.displayCurrency == "btc")
+									if (userSettings.displayCurrency == "wcn")
 										+valueDisplaySpecial(currencyValue, 0)
 
 									else
@@ -175,7 +175,7 @@
 								- var currencyValue = new Decimal(block.totalFees);
 								- var currencyValueDecimals = 3;
 
-								if (userSettings.displayCurrency == "btc")
+								if (userSettings.displayCurrency == "wcn")
 									+valueDisplaySpecial(block.totalFees, 4)
 
 								else

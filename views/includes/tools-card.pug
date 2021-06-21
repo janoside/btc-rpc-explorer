@@ -4,7 +4,8 @@ if (false)
 			h2.h6.mb-0 Tools
 		div.card-body
 			div.row
-				each item, index in [[0, 1, 2], [4, 3, 5], [6, 7, 8]]
+				//each item, index in [[0, 1, 2], [4, 3, 5], [6, 7, 8]]
+				each item, index in [[0, 1, 2], [4, 3, 5], [8]]
 					div.col-md-4
 						ul.ps-0(style="list-style-type: none;")
 							each toolIndex, toolIndexIndex in item
@@ -21,7 +22,8 @@ if (false)
 
 if (false)
 	div.row
-		each list, listIndex in [[0, 1], [2, 3], [4, 9], [5, 6], [7, 8]]
+		//each list, listIndex in [[0, 1], [2, 3], [4, 9], [5, 6], [7, 8]]
+		each list, listIndex in [[0, 1], [2, 3], [4, 9], [5], [8]]
 			div.col
 				ul.list-unstyled
 					each listItem in list
@@ -34,7 +36,8 @@ if (false)
 
 if (false)
 	div.row
-		each list, listIndex in [[0, 1, 2, 3, 4], [9, 5, 6, 7, 8]]
+		//each list, listIndex in [[0, 1, 2, 3, 4], [9, 5, 6, 7, 8]]
+		each list, listIndex in [[0, 1, 2, 3, 4], [9, 5, 8]]
 			div.col
 				ul.list-unstyled
 					each listItem in list
@@ -91,7 +94,7 @@ if (true)
 
 									div(style="padding-left: 39px;")
 										p #{item.desc}
-
+			// tools card
 			// xl, xxl
 			div.d-none.d-xl-block(id="tools-3-col")
 				div.row

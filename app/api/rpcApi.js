@@ -240,6 +240,7 @@ function getBlockByHash(blockHash) {
 }
 
 function getAddress(address) {
+	//console.log("add11: "+ address);
 	return getRpcDataWithParams({method:"validateaddress", parameters:[address]});
 }
 

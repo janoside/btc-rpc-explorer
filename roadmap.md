@@ -18,7 +18,7 @@
 
 #### Misc / Minor
 
-* cleanup trailing whitespace: https://github.com/janoside/btc-rpc-explorer/commit/abccbcced24a3299b559166f8c4b58a33f9008d0#comments
+* cleanup trailing whitespace: https://github.com/david/wcn-rpc-explorer/commit/abccbcced24a3299b559166f8c4b58a33f9008d0#comments
 
 
 * "utils.js" accessible from frontend JS code (to avoid some of /snippet?)

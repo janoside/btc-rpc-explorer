@@ -51,7 +51,7 @@ if (exchangeRates)
 					- var currencyValue = parseInt(networkVolume.d1.amt);
 					- var currencyValueDecimals = 0;
 
-					if (userSettings.displayCurrency == "btc")
+					if (userSettings.displayCurrency == "wcn")
 						+valueDisplaySpecial(networkVolume.d1.amt, 0)
 
 					else
@@ -114,18 +114,26 @@ if (exchangeRates)
 
 				else
 					small.border-dotted.text-muted(title="Estimate unavailable<br/>A difficulty epoch just ended. The first block of the new epoch must be mined before an estimate can be calculated.", data-bs-toggle="tooltip", data-bs-html="true") next block needed…
-
-		+summaryItem("Coins", utxoSetSummary ? null : `This value is estimated.`)
+		
+		//-+summaryItem("Coins", utxoSetSummary ? null : `This value is estimated.`)
+		+summaryItem("Coins", utxoSetSummary ? null : `Coin Supply.`)
 			- var maxSupply = coinConfig.maxSupplyByNetwork[activeBlockchain];
-
-			if (utxoSetSummary)
+				- var rscurrentSupply = utils.getcurrentsupply();
+				- var rscurrentSupplyPercentage = ((utils.getcurrentsupply()/35000000)*100);
+				- var rscurrentSupplyPercentageRound = parseFloat(rscurrentSupplyPercentage).toFixed(2);
+				span #{parseFloat(rscurrentSupply).toLocaleString()}
+				small.ms-2.text-muted
+					| (
+					span.border-dotted(title=`${parseFloat(rscurrentSupplyPercentageRound).toLocaleString()}% have been mined into circulation`, data-bs-toggle="tooltip") #{parseFloat(rscurrentSupplyPercentageRound).toLocaleString()}%
+					| )
+			//-if (utxoSetSummary)
 				span #{parseFloat(utxoSetSummary.total_amount).toLocaleString()}
 				small.ms-2.text-muted
 					| (
 					span.border-dotted(title=`${new Decimal(utxoSetSummary.total_amount).dividedBy(maxSupply).times(100).toDP(4)}% have been mined into circulation`, data-bs-toggle="tooltip") #{new Decimal(utxoSetSummary.total_amount).dividedBy(maxSupply).times(100).toDP(1)}%
 					| )
 
-			else
+			//-else
 				- var estimatedSupply = utils.estimatedSupply(getblockchaininfo.blocks);
 
 				span #{parseInt(estimatedSupply).toLocaleString()}

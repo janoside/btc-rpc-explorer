@@ -8,7 +8,7 @@ block content
 
 
 	+dismissableInfoAlert("miningSummaryPageNoteDismissed", "About Mining Summary...")
-		| !{markdown("The **Mining Summary** tool queries a range of blocks from Bitcoin Core and tries to identify the miner for each block. The identification of a mining entity is an imperfect process, relying on optional flagging by anonymous entities (though, in practice, it tends to work well).")}
+		| !{markdown("The **Mining Summary** tool queries a range of blocks from Widecoin Core and tries to identify the miner for each block. The identification of a mining entity is an imperfect process, relying on optional flagging by anonymous entities (though, in practice, it tends to work well).")}
 		| Use the <b>Filters</b> section below to select the range of blocks to analyze.
 
 
@@ -51,7 +51,8 @@ block content
 								tr(id="miner-summary-prototype", style="display: none;")
 									td.font-monospace
 										span.badge.bg-primary.miner-name
-									
+										span.badge.bg-secondary.miner-name-unknown
+
 									td.font-monospace.text-end
 										span.miner-block-count
 									
@@ -192,7 +193,12 @@ block endOfBody
 				}
 				blockHeightsHtml = `<ol>${blockHeightsHtml}</ol>`
 				
-				row.find(".miner-name").text(minerName);
+				if (minerName == "Unknown") {
+					row.find(".miner-name-unknown").text(minerName);
+
+				} else {
+					row.find(".miner-name").text(minerName);
+				}
 
 				row.find(".miner-block-count").html(`<a href='javascript:void(0);' onclick="javascipt:$('#miner-block-heights-${i}').toggle();" title="Click to show ${minerSummary.blocks.length.toLocaleString()} block height(s)" data-bs-toggle="tooltip">${minerSummary.blocks.length.toLocaleString()}</a><br/><small id='miner-block-heights-${i}' style='display: none;'>${blockHeightsHtml}</small>`);
 				row.find(".miner-block-percent").text(`(${new Decimal(minerSummary.blocks.length).dividedBy(summary.overall.blockCount).times(100).toDecimalPlaces(1)}%)`);

@@ -18,7 +18,7 @@ if (!baseUrl.endsWith("/")) {
 const coins = require("./coins.js");
 const credentials = require("./credentials.js");
 
-const currentCoin = process.env.BTCEXP_COIN || "BTC";
+const currentCoin = process.env.BTCEXP_COIN || "WCN";
 const defaultTheme = process.env.BTCEXP_UI_THEME || "dark";
 
 const rpcCred = credentials.rpc;
@@ -35,7 +35,7 @@ if (rpcCred.cookie && !rpcCred.username && !rpcCred.password && fs.existsSync(rp
 
 const cookieSecret = process.env.BTCEXP_COOKIE_SECRET
  || (rpcCred.password && crypto.createHmac('sha256', JSON.stringify(rpcCred))
-                               .update('btc-rpc-explorer-cookie-secret').digest('hex'))
+                               .update('wcn-rpc-explorer-cookie-secret').digest('hex'))
  || "0x000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f";
 
 
@@ -198,9 +198,14 @@ module.exports = {
 		toolSections: [
 			{name: "Basics", items: [0, 2]},
 			{name: "Mempool", items: [5, 4]},
-			{name: "Analysis", items: [9, 10, 11, 12, 3]},
-			{name: "Technical", items: [6, 7, 1]},
-			{name: "Fun", items: [8, 13]},
+			//{name: "Mempool", items: [5,]},
+			//{name: "Analysis", items: [9, 10, 11, 12, 3]},
+			{name: "Analysis", items: [9, 10, 11, 12]},
+			{name: "Technical", items: [1]},
+			// Disable RPC Browser 6 ,7 
+			//{name: "Technical", items: [6, 7, 1]},
+			// Disable Widecoin fun and whitepaper
+			//{name: "Fun", items: [8, 13]},
 		]
 	},
 
@@ -226,7 +231,7 @@ module.exports = {
 	/* 11 */	{name:"Block Analysis", url:"./block-analysis", desc:"Summary analysis for all transactions in a block.", fontawesome:"fas fa-angle-double-down"},
 	/* 12 */	{name:"Difficulty History", url:"./difficulty-history", desc:"Graph of difficulty changes over time.", fontawesome:"fas fa-chart-line"},
 
-	/* 13 */	{name:"Whitepaper Extracter", url:"./bitcoin-whitepaper", desc:"Tool that extracts the Bitcoin whitepaper from data embedded in the blockchain.", fontawesome:"far fa-file-alt"},
+	/* 13 */	{name:"Whitepaper Extracter", url:"./widecoin-whitepaper", desc:"Tool that extracts the Bitcoin whitepaper from data embedded in the blockchain.", fontawesome:"far fa-file-alt"},
 	]
 };
 

@@ -1,0 +1,32 @@
+{
+  "coinbase_tags": {
+    "/nodeStratum/": {
+      "name": "Miningp01",
+      "link": "http://miningp01.widecoin.org:8181"
+    },
+    "/MiningCore/": {
+      "name": "Kriptokyng",
+      "link": "https://kriptokyng.com"
+    },
+     "pool.rplant.xyz": {
+      "name": "Rplant",
+      "link": "https://pool.rplant.xyz"
+    },
+    "/AlphaxCore/": {
+      "name": "Zwembad",
+      "link": "zwembad.xyz"
+    },
+    "thepool.life": {
+      "name": "Myminingpool",
+      "link": "myminingpool.uk"
+    },
+    "PoolMine.xyz": {
+      "name": "PoolMine",
+      "link": "PoolMine.xyz"
+    },
+    "MCpool": {
+      "name": "Mc1",
+      "link": "mc1.xyz"
+    }
+  }
+}

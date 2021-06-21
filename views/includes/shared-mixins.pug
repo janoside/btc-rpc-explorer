@@ -204,7 +204,7 @@ mixin pageTab(name, defaultActive=false)
 
 mixin valueDisplay(val)
 	if (val > 0)
-		if (userSettings.displayCurrency == "btc")
+		if (userSettings.displayCurrency == "wcn")
 			+_valueDisplayBtc(val)
 
 		else if (userSettings.displayCurrency == "sat")
@@ -565,7 +565,7 @@ mixin pagination(limit, offset, sort, itemCount, baseUrl, justification="start",
 
 
 mixin graphPageScriptSetup
-	script(src="./js/chart.bundle.min.js", integrity="sha384-qgOtiGNaHh9fVWUnRjyHlV39rfbDcvPPkEzL1RHvsHKbuqUqM6uybNuVnghY2z4/")
+	script(src="./js/chart.bundle.min.js", integrity="")
 	
 	if (userSettings.uiTheme && userSettings.uiTheme == "dark")
 		script.
