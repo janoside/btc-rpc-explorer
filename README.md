@@ -1,10 +1,5 @@
 # WCN RPC Explorer
 
-![homepage](./public/img/screenshots/homepage-v3.png)
-
-[![npm version][npm-ver-img]][npm-ver-url] [![NPM downloads][npm-dl-img]][npm-dl-url]
-
-
 Simple, database-free Widecoin blockchain explorer, via RPC to [Widecoin Core](https://github.com/widecoin-project/widecoin).
 
 This is a simple, self-hosted explorer for the Bitcoin blockchain, driven by RPC calls to your own [Widecoin](https://github.com/widecoin-project/widecoin) node. It is easy to run and can be connected to other tools (like [ElectrumX](https://github.com/spesmilo/electrumx)) to achieve a full-featured explorer.
@@ -13,7 +8,7 @@ Whatever reasons one may have for running a full node (trustlessness, technical 
 
 Live available at:
 
-* Mainnet - [WidecoinExplorer.org](http://explorer.widecoin.org:5000/)
+* Mainnet - [explorer.widecoin.org:5000](http://explorer.widecoin.org:5000/)
 
 # Features
 
@@ -72,7 +67,7 @@ wcn-rpc-explorer
 4. `npm start`
 
 
-Using either method (`npm install` or run from source), after startup open [http://127.0.0.1:3002/](http://127.0.0.1:3002/)
+Using either method (`npm install` or run from source), after startup open [http://127.0.0.1:5000/](http://127.0.0.1:5000/)
 
 
 ## Configuration
@@ -98,7 +93,7 @@ wcn-rpc-explorer --port 8080 --widecoind-port 18443 --widecoind-cookie ~/.wideco
 
 #### Demo site settings
 
-To match the features visible on the demo site at [WidecoinExplorer.org](http://explorer.widecoin.org:5000/) you'll need to set the following non-default configuration values:
+To match the features visible on the demo site at [explorer.widecoin.org](http://explorer.widecoin.org:5000/) you'll need to set the following non-default configuration values:
 
     BTCEXP_DEMO=true 		# enables some demo/informational aspects of the site
     BTCEXP_NO_RATES=false		# enables querying of exchange rate data
