@@ -5,4 +5,3 @@ MAIN
 -/mempool-summary: more granular fee rate bar chart; add line graph on top of bar chart for cumulative blocks
 -projected blocks (on homepage, and own tool)
 -incoming tx page (live)
--electron: https://gist.github.com/maximilian-lindsey/a446a7ee87838a62099d

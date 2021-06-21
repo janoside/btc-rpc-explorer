@@ -3,11 +3,11 @@ extends layout
 block headContent
 	title Peers
 
-	link(rel="stylesheet", href="./style/dataTables.bootstrap4.min.css", integrity="sha384-EkHEUZ6lErauT712zSr0DZ2uuCmi3DoQj6ecNdHQXpMpFNGAQ48WjfXCE5n20W+R")
+	link(rel="stylesheet", href="./style/dataTables.bootstrap4.min.css", integrity="")
 
-	link(rel="stylesheet", href="./leaflet/leaflet.css", integrity="sha384-6wKUKNzA6h/S6gZ1lWQppeGaVXvK1AUAsEznGBghzlEu1fNcxJGYVRiroSHr+OwU")
+	link(rel="stylesheet", href="./leaflet/leaflet.css", integrity="")
 
-	script(src="./leaflet/leaflet.js", integrity="sha384-RFZC58YeKApoNsIbBxf4z6JJXmh+geBSgkCQXFyh+4tiFSJmJBt+2FbjxW7Ar16M")
+	script(src="./leaflet/leaflet.js", integrity="")
 
 	style.
 		.versions-hidden-rows, .services-hidden-rows {
@@ -125,13 +125,7 @@ block content
 								td.small.text-muted #{index + 1}
 
 								td #{item.subver}
-								td
-									if (item.addr.length > 20)
-										span.border-dotted(title=item.addr, data-bs-toggle="tooltip")
-											| #{utils.ellipsizeMiddle(item.addr, 21)}
-									else
-										| #{item.addr}
-
+								td #{item.addr}
 								td
 									if (item.servicesnames)
 										- var serviceItems = item.servicesnames;
@@ -193,8 +187,8 @@ block content
 
 	
 block endOfBody
-	script(src="./js/jquery.dataTables.min.js", integrity="sha384-rgWRqC0OFPisxlUvl332tiM/qmaNxnlY46eksSZD84t+s2vZlqGeHrncwIRX7CGp")
-	script(src="./js/dataTables.bootstrap4.min.js", integrity="sha384-uiSTMvD1kcI19sAHJDVf68medP9HA2E2PzGis9Efmfsdb8p9+mvbQNgFhzii1MEX")
+	script(src="./js/jquery.dataTables.min.js", integrity="")
+	script(src="./js/dataTables.bootstrap4.min.js", integrity="")
 
 	script.
 		$(document).ready(function() {

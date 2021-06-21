@@ -528,12 +528,8 @@
 			"name" : "EMCDPool",
 			"link" : "https://pool.emcd.io"
 		},
-		"BTCPool" : {
+		"/BTCPool/" : {
 			"name" : "BTCPool",
-			"link" : ""
-		},
-		"MARA Pool" : {
-			"name" : "MARA Pool",
 			"link" : ""
 		},
 		"Mining-Dutch" : {
@@ -563,15 +559,7 @@
 		"/ArkPool/" : {
 			"name" : "ArkPool",
 			"link" : ""
-		},
-		"/PureBTC.COM/": {
-			"name": "PureBTC.COM",
-			"link": "https://purebtc.com"
-		},
-		"/E2M/": {
-            "name": "WAYI.CN",
-            "link": "http://www.easy2mine.com/"
-        }
+		}
 	},
 	"payout_addresses" : {
 		"1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa": {
@@ -1167,7 +1155,7 @@
 			"link" : "https://foundrydigital.com/"
 		},
 		"32p7WS5Yr8phj2AKdf8QGpDZvQutf3zR3D" : {
-			"name" : "Payout …tf3zR3D",
+			"name" : "Unknown 32p7-zR3D",
 			"link" : ""
 		},
 		"1Ca1KNQQo8akbrwTjjXuk8aikvC2pwodU2" : {
@@ -1201,50 +1189,6 @@
 		"1QEiAhdHdMhBgVbDM7zUXWGkNhgEEJ6uLd" : {
 			"name" : "ArkPool",
 			"link" : ""
-		},
-		"147SwRQdpCfj5p8PnfsXV2SsVVpVcz3aPq": {
-			"name": "1THash",
-			"link": "https://www.1thash.top"
-		},
-		"15vgygQ7ZsWdvZpctmTZK4673QBHsos6Sh": {
-			"name": "1THash",
-			"link": "https://www.1thash.top"
-		},
-		"bc1qnnl503n04cqacpwvhr89qr70metxr79ht3n380": {
-			"name": "Rawpool",
-			"link": "https://www.rawpool.com"
-		},
-		"bc1qwlrsvgtn99rqp3fgaxq6f6jkgms80rnej0a8tc": {
-			"name": "Rawpool",
-			"link": "https://www.rawpool.com"
-		},
-		"bc1q8ej2g5uxdsg0jwl0mpl606qfjxgkyv3p29yf37": {
-			"name": "Rawpool",
-			"link": "https://www.rawpool.com"
-		},
-		"bc1qru8mtv3e3u7ms6ecjmwgeakdakclemvhnw00q9": {
-			"name": "Rawpool",
-			"link": "https://www.rawpool.com"
-		},
-		"3QYvfQoG9Gs9Vfvbpw6947muSqhoGagvF6": {
-			"name": "Rawpool",
-			"link": "https://www.rawpool.com"
-		},
-		"35y82tEPDa2wm6tzkEacMG8GPPW7zbMj83": {
-			"name": "Rawpool",
-			"link": "https://www.rawpool.com"
-		},
-		"3CLigLYNkrtoNgNcUwTaKoUSHCwr9W851W": {
-			"name": "Rawpool",
-			"link": "https://www.rawpool.com"
-		},
-		"1EKFdxiNJ37LFu7Ambf8TETeBUFKN2SeUh": {
-			"name": "BTCPool",
-			"link": ""
-		},
-		"bc1qf274x7penhcd8hsv3jcmwa5xxzjl2a6pa9pxwm": {
-			"name": "F2Pool",
-			"link" : "https://www.f2pool.com/"
 		}
 	},
 	"block_hashes" : {

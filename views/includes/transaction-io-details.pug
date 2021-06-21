@@ -2,7 +2,7 @@
 
 mixin asciiHexDataDisplay(dataName, uniqueId, hex)
 	div
-		.d-inline-block.small.border.rounded.p-1.px-2.card-highlight.word-wrap(style="max-width: 90%;")
+		.d-inline-block.small.border.rounded.p-1.px-2.card-highlight(style="max-width: 90%;")
 			span.fw-bold.border-dotted.me-2(title=`ASCII-encoded ${dataName}`, data-bs-toggle="tooltip") Ascii
 			span.font-plaintext #{utils.hex2ascii(hex)}
 

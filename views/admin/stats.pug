@@ -146,9 +146,9 @@ block endOfBody
 						display: false,
 						//labelString: names[i]
 					},
-					grid: {
+					gridLines: {
 						color: gridLineColor
-					},
+					}
 				});
 			}
 
@@ -175,7 +175,7 @@ block endOfBody
 							display: (datasets.length > 1)
 						},
 						scales: {
-							x: {
+							xAxes: [{
 								type: 'time',
 								position: 'bottom',
 								time: {
@@ -185,20 +185,20 @@ block endOfBody
 									display: true,
 									labelString: 'Time'
 								},
-								grid: {
+								gridLines: {
 									color: gridLineColor
-								},
-							},
-							y: {
+								}
+							}],
+							yAxes: [{
 								type: 'linear',
 								position: 'left',
 								scaleLabel: {
 									display: false,
 								},
-								grid: {
+								gridLines: {
 									color: gridLineColor
-								},
-							},
+								}
+							}],
 						}
 					}
 				});

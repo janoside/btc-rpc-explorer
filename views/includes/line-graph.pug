@@ -3,7 +3,7 @@
 canvas.mb-3(id=graphData.id)
 
 script.
-	Chart.defaults.elements.point.radius = 1;
+	Chart.defaults.global.elements.point.radius = 1;
 	var ctx = document.getElementById("#{graphData.id}").getContext('2d');
 	var graph = new Chart(ctx, {
 		type: 'line',
@@ -24,20 +24,18 @@ script.
 				display: false,
 				text: '#{graphData.title}'
 			},
-			plugins: {
-				legend: {
-					display: false
-				},
+			legend: {
+				display: false
 			},
 			scales: {
-				x: {
+				xAxes: [{
 					type: 'linear',
 					position: 'bottom',
 					scaleLabel: {
 						display: true,
 						labelString: '#{graphData.xaxisTitle}'
 					},
-					grid: {
+					gridLines: {
 						color: gridLineColor
 					},
 					ticks: {
@@ -54,13 +52,13 @@ script.
 							}
 						}*/
 					}
-				},
-				y: {
+				}],
+				yAxes: [{
 					scaleLabel: {
 						display: true,
 						labelString: '#{graphData.yaxisTitle}'
 					},
-					grid: {
+					gridLines: {
 						color: gridLineColor
 					},
 					ticks: {
@@ -73,7 +71,7 @@ script.
 							}
 						}
 					}
-				}
+				}]
 			}
 		}
 	});

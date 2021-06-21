@@ -130,7 +130,7 @@ block content
 											span.badge.bg-primary(class=(flagIndex > 0 ? "ms-1" : false), title=(flagItem.length > 1 ? flagItem[1] : false), data-bs-toggle=(flagItem.length > 1 ? "tooltip" : false)) #{flagItem[0]}
 
 					+contentSection("Technical Details", true, "addressPageShowTechDetails")
-						+summaryRow(1 + (addressObj.hash ? 1 : 0) + (utils.objHasProperty(addressObj, "version") ? 1 : 0) + (utils.objHasProperty(result.validateaddress, "witness_version") ? 1 : 0) + (result.validateaddress.witness_program ? 1 : 0) + (electrumScripthash ? 1 : 0))
+						+summaryRow(1 + (addressObj.hash ? 1 : 0) + (addressObj.hasOwnProperty("version") ? 1 : 0) + (result.validateaddress.hasOwnProperty("witness_version") ? 1 : 0) + (result.validateaddress.witness_program ? 1 : 0) + (electrumScripthash ? 1 : 0))
 							if (addressObj.hasOwnProperty("version"))
 								+summaryItem("Version")
 									| #{addressObj.version}
@@ -144,7 +144,7 @@ block content
 								| #{utils.ellipsizeMiddle(result.validateaddress.scriptPubKey, 12)}
 								+copyTextButton(result.validateaddress.scriptPubKey)
 
-							if (utils.objHasProperty(result.validateaddress, "witness_version"))
+							if (result.validateaddress.hasOwnProperty("witness_version"))
 								+summaryItem("Witness Version")
 									| #{result.validateaddress.witness_version}
 
@@ -207,7 +207,7 @@ block content
 						if (true)
 							if (addressApiError && addressApiError.error && addressApiError.error.code && addressApiError.error.code == -32600)
 								span Failed to retrieve transaction history from Electrum. See 
-								a(href="https://github.com/janoside/btc-rpc-explorer/issues/67") Issue #67
+								a(href="https://github.com/david/wcn-rpc-explorer/issues/67") Issue #67
 								span  for more information.
 
 
@@ -220,12 +220,12 @@ block content
 									each err, errIndex in addressDetailsErrors
 										if (err.e && err.e && err.e.message == "history too large")
 											span Failed to retrieve transaction history from ElectrumX because this address is involved in too many transactions (more than ElectrumX currently supports retrieving). See 
-											a(href="https://github.com/janoside/btc-rpc-explorer/issues/67") Issue #67
+											a(href="https://github.com/david/wcn-rpc-explorer/issues/67") Issue #67
 											span  for more information.
 										
 										else if (err.e && err.e.message && err.e.message == "failed to get confirmed status") 
 											span Failed to retrieve transaction history from Electrum Rust Server (electrs). See&nbsp;
-											a(href="https://github.com/janoside/btc-rpc-explorer/issues/67") Issue #67
+											a(href="https://github.com/david/wcn-rpc-explorer/issues/67") Issue #67
 											span  for more information.
 											.mt-2
 												| As a workaround, consider starting electrs with a custom&nbsp;
@@ -235,7 +235,7 @@ block content
 										else if (err == "No address API configured")
 											.mb-2 No address API is configured.
 											.mb-0 See 
-												| <a href="https://github.com/janoside/btc-rpc-explorer/blob/master/.env-sample">the example configuration file</a>
+												| <a href="https://github.com/david/wcn-rpc-explorer/blob/master/.env-sample">the example configuration file</a>
 												|  for help setting up an address API.
 
 										else

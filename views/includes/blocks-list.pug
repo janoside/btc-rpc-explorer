@@ -23,14 +23,8 @@
 					th.text-end
 						span.border-dotted(title="The total output of all transactions in each block.", data-bs-toggle="tooltip") Volume
 
-				if (blockstatsByHeight)
-					th.text-end
-						span.border-dotted(title="The min/avg/max fee rates (sat/vB) for transactions in this block.", data-bs-toggle="tooltip") Fee Rates
-				else
-					th.text-end
-						span.border-dotted(title="The average fee (sat/vB) for all block transactions.", data-bs-toggle="tooltip") Avg Fee
-
-
+				th.text-end
+					span.border-dotted(title="The average fee (sat/vB) for all block transactions.", data-bs-toggle="tooltip") Avg Fee
 				th.text-end Σ Fees
 				
 				//th.text-end Size (kB)
@@ -69,10 +63,6 @@
 								a(data-bs-toggle="tooltip", title=`<b>${coinConfig.name} Fun!</b><br/>There's something special about this block...<br/>Click to read more.`, data-bs-html="true")
 									span.me-2
 										+funItemIcon
-
-							if (block.height % 2016 == 0)
-								span.me-1(title=`This is the first block of difficulty era #${(block.height / 2016).toLocaleString()}`, data-bs-toggle="tooltip")
-									i.fas.fa-info-circle
 
 							a(href=`./block-height/${block.height}`) #{block.height.toLocaleString()}
 						
@@ -138,7 +128,7 @@
 									i.fas.fa-backspace.text-danger
 										
 							else
-								span ?
+								span TBC
 
 						
 						td.font-monospace.text-end #{block.nTx.toLocaleString()}
@@ -150,7 +140,7 @@
 									- var currencyValue = parseInt(satValue.dividedBy(coinConfig.baseCurrencyUnit.multiplier));
 									- var currencyValueDecimals = 0;
 
-									if (userSettings.displayCurrency == "btc")
+									if (userSettings.displayCurrency == "wcn")
 										+valueDisplaySpecial(currencyValue, 0)
 
 									else
@@ -164,12 +154,7 @@
 									span 0
 
 						td.font-monospace.text-end
-							if (blockstatsByHeight && blockstatsByHeight[block.height])
-								span.me-1 #{blockstatsByHeight[block.height].minfeerate},
-								span.me-1 #{blockstatsByHeight[block.height].avgfeerate},
-								span #{blockstatsByHeight[block.height].maxfeerate}
-
-							else if (block.totalFees && block.strippedsize)
+							if (block.totalFees && block.strippedsize)
 								- var currencyValue = new Decimal(block.totalFees).dividedBy(block.strippedsize).times(coinConfig.baseCurrencyUnit.multiplier).toDecimalPlaces(0);
 								if (currencyValue > 0)
 									span #{currencyValue}
@@ -190,7 +175,7 @@
 								- var currencyValue = new Decimal(block.totalFees);
 								- var currencyValueDecimals = 3;
 
-								if (userSettings.displayCurrency == "btc")
+								if (userSettings.displayCurrency == "wcn")
 									+valueDisplaySpecial(block.totalFees, 4)
 
 								else

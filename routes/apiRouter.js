@@ -8,127 +8,80 @@ const csurf = require('csurf');
 const router = express.Router();
 const util = require('util');
 const moment = require('moment');
+const bitcoinCore = require("bitcoin-core");
 const qrcode = require('qrcode');
 const bitcoinjs = require('bitcoinjs-lib');
 const sha256 = require("crypto-js/sha256");
 const hexEnc = require("crypto-js/enc-hex");
 const Decimal = require("decimal.js");
 const asyncHandler = require("express-async-handler");
-const markdown = require("markdown-it")();
 
 const utils = require('./../app/utils.js');
 const coins = require("./../app/coins.js");
 const config = require("./../app/config.js");
 const coreApi = require("./../app/api/coreApi.js");
 const addressApi = require("./../app/api/addressApi.js");
-const rpcApi = require("./../app/api/rpcApi.js");
-const apiDocs = require("./../docs/api.js");
-const btcQuotes = require("./../app/coins/btcQuotes.js");
 
 const forceCsrf = csurf({ ignoreMethods: [] });
 
 
 
 
-router.get("/docs", function(req, res, next) {
-	res.locals.apiDocs = apiDocs;
-	res.locals.route = req.query.route;
 
-	res.locals.categories = [];
-	apiDocs.routes.forEach(x => {
-		let category = x.category;
-
-		if (!res.locals.categories.find(y => (y.name == category))) {
-			res.locals.categories.push({name:category, items:[]});
-		}
-
-		res.locals.categories.find(x => (x.name == category)).items.push(x);
-	});
-
-	res.render("api-docs");
-
-	next();
-});
-
-router.get("/changelog", function(req, res, next) {
-	res.locals.changelogHtml = markdown.render(global.apiChangelogMarkdown);
-
-	res.render("api-changelog");
-
-	next();
-});
-
-router.get("/version", function(req, res, next) {
-	res.send(apiDocs.version);
-
-	next();
-});
-
-
-
-
-
-
-/// BLOCKS
-
-router.get("/blocks/tip/height", asyncHandler(async (req, res, next) => {
-	try {
-		const blockcount = await rpcApi.getBlockCount();
-
-		res.send(blockcount.toString());
-
-	} catch (e) {
-		utils.logError("a39gfoeuew", e);
-
-		res.json({success: false});
+router.get("/blocks-by-height/:blockHeights", function(req, res, next) {
+	var blockHeightStrs = req.params.blockHeights.split(",");
+	
+	var blockHeights = [];
+	for (var i = 0; i < blockHeightStrs.length; i++) {
+		blockHeights.push(parseInt(blockHeightStrs[i]));
 	}
 
-	next();
-}));
-
-router.get("/blocks/tip/hash", function(req, res, next) {
-	coreApi.getBlockchainInfo().then(function(getblockchaininfo){
-		res.send(getblockchaininfo.bestblockhash.toString());
+	coreApi.getBlocksByHeight(blockHeights).then(function(result) {
+		res.json(result);
 	}).catch(next);
 });
 
-router.get("/block/:hashOrHeight", asyncHandler(async (req, res, next) => {
-	const hashOrHeight = req.params.hashOrHeight;
-	let hash = (hashOrHeight.length == 64 ? hashOrHeight : null);
-
-	try {
-
-		if (hash == null) {
-			hash = await coreApi.getBlockHashByHeight(parseInt(hashOrHeight));
-		}
-
-		const block = await coreApi.getBlockByHash(hash);
-
-		res.json(block);
-
-	} catch (e) {
-		utils.logError("w9fgeddsuos", e);
-
-		res.json({success: false});
+router.get("/block-headers-by-height/:blockHeights", function(req, res, next) {
+	var blockHeightStrs = req.params.blockHeights.split(",");
+	
+	var blockHeights = [];
+	for (var i = 0; i < blockHeightStrs.length; i++) {
+		blockHeights.push(parseInt(blockHeightStrs[i]));
 	}
 
-	next();
-}));
+	coreApi.getBlockHeadersByHeight(blockHeights).then(function(result) {
+		res.json(result);
 
+		next();
+	});
+});
 
+router.get("/block-stats-by-height/:blockHeights", function(req, res, next) {
+	var blockHeightStrs = req.params.blockHeights.split(",");
+	
+	var blockHeights = [];
+	for (var i = 0; i < blockHeightStrs.length; i++) {
+		blockHeights.push(parseInt(blockHeightStrs[i]));
+	}
 
+	coreApi.getBlocksStatsByHeight(blockHeights).then(function(result) {
+		res.json(result);
 
-/// TRANSACTIONS
+		next();
+	});
+});
 
-router.get("/tx/:txid", function(req, res, next) {
-	var txid = utils.asHash(req.params.txid);
+router.get("/mempool-txs/:txids", function(req, res, next) {
+	var txids = req.params.txids.split(",").map(utils.asHash);
 
 	var promises = [];
 
-	promises.push(coreApi.getRawTransactionsWithInputs([txid]));
+	for (var i = 0; i < txids.length; i++) {
+		promises.push(coreApi.getMempoolTxDetails(txids[i], false));
+	}
 
 	Promise.all(promises).then(function(results) {
-		res.json(results[0].transactions[0]);
+		res.json(results);
 
 		next();
 
@@ -141,249 +94,276 @@ router.get("/tx/:txid", function(req, res, next) {
 
 
 
+const mempoolSummaryStatuses = {};
+const mempoolSummaries = {};
 
-/// BLOCKCHAIN
-
-router.get("/blockchain/coins", function(req, res, next) {	
-	if (global.utxoSetSummary) {
-		var supply = parseFloat(global.utxoSetSummary.total_amount).toString();
-
-		res.send(supply.toString());
+router.get("/mempool-summary-status", asyncHandler(async (req, res, next) => {
+	const statusId = req.query.statusId;
+	if (statusId && mempoolSummaryStatuses[statusId]) {
+		res.json(mempoolSummaryStatuses[statusId]);
 
 		next();
 
 	} else {
-		// estimated supply
-		coreApi.getBlockchainInfo().then(function(getblockchaininfo){
-			var estimatedSupply = utils.estimatedSupply(getblockchaininfo.blocks);
-			res.send(estimatedSupply.toString());
-		}).catch(next);
+		res.json({});
+
+		next();
 	}
-});
+}));
 
+router.get("/get-mempool-summary", asyncHandler(async (req, res, next) => {
+	const statusId = req.query.statusId;
 
-
-
-/// MINING
-
-router.get("/mining/hashrate", function(req, res, next) {
-	var blocksPerDay = 144;
-	var rates = [];
-	var timePeriods = [(1*blocksPerDay), (7*blocksPerDay), (30* blocksPerDay)];
-	
-	coreApi.getNetworkHashrate(timePeriods[0]).then(function(info0){
-		var hashRateData = utils.formatLargeNumber(info0, 1)
-		rates[0] = hashRateData[0];
+	if (statusId && mempoolSummaries[statusId]) {
+		var summary = mempoolSummaries[statusId];
 		
-		coreApi.getNetworkHashrate(timePeriods[1]).then(function(info1){
-			var hashRateData = utils.formatLargeNumber(info1, 1)
-			rates[1] = hashRateData[0];
-			
-			coreApi.getNetworkHashrate(timePeriods[2]).then(function(info2){
-				var hashRateData = utils.formatLargeNumber(info2, 1)
-				rates[2] = hashRateData[0];
-		
-				res.json({"1Day": rates[0]*1, "7Day": rates[1]*1, "30Day": rates[2]*1});
-			});
-		});
-	}).catch(next);
-});
+		res.json(summary);
 
-router.get("/mining/diff-adj-estimate", asyncHandler(async (req, res, next) => {
-	var promises = [];
-	const getblockchaininfo = await utils.timePromise("promises.api.getBlockchainInfo", coreApi.getBlockchainInfo());
-	var currentBlock;
-	var difficultyPeriod = parseInt(Math.floor(getblockchaininfo.blocks / coinConfig.difficultyAdjustmentBlockCount));
-	var difficultyPeriodFirstBlockHeader;
-	
-	promises.push(new Promise(async (resolve, reject) => {
-		currentBlock = await utils.timePromise("promises.api.getBlockHeaderByHeight", coreApi.getBlockHeaderByHeight(getblockchaininfo.blocks));
-		resolve();
-	}));
-	
-	promises.push(new Promise(async (resolve, reject) => {
-		let h = coinConfig.difficultyAdjustmentBlockCount * difficultyPeriod;
-		difficultyPeriodFirstBlockHeader = await utils.timePromise("promises.api.getBlockHeaderByHeight", coreApi.getBlockHeaderByHeight(h));
-		resolve();
-	}));
-	
-	await Promise.all(promises);
-	
-	var firstBlockHeader = difficultyPeriodFirstBlockHeader;
-	var heightDiff = currentBlock.height - firstBlockHeader.height;
-	var blockCount = heightDiff + 1;
-	var timeDiff = currentBlock.mediantime - firstBlockHeader.mediantime;
-	var timePerBlock = timeDiff / heightDiff;
-	var dt = new Date().getTime() / 1000 - firstBlockHeader.time;
-	var predictedBlockCount = dt / coinConfig.targetBlockTimeSeconds;
-	var timePerBlock2 = dt / heightDiff;
-		
-	if (predictedBlockCount > blockCount) {
-		var diffAdjPercent = new Decimal(100).minus(new Decimal(blockCount / predictedBlockCount).times(100)).times(-1);
-		//diffAdjPercent = diffAdjPercent * -1;
+		next();
+
+		delete mempoolSummaries[statusId];
+		delete mempoolSummaryStatuses[statusId];
 
 	} else {
-		var diffAdjPercent = new Decimal(100).minus(new Decimal(predictedBlockCount / blockCount).times(100));
-	}	
-	
-	res.send(diffAdjPercent.toFixed(2).toString());
+		res.json({});
+
+		next();
+	}
+}));
+
+router.get("/build-mempool-summary", asyncHandler(async (req, res, next) => {
+	try {
+		// long timeout
+		res.connection.setTimeout(600000);
+
+
+		const statusId = req.query.statusId;
+		if (statusId) {
+			mempoolSummaryStatuses[statusId] = {};
+		}
+
+		res.json({success:true, status:"started"});
+
+		next();
+
+
+		const ageBuckets = req.query.ageBuckets ? parseInt(req.query.ageBuckets) : 100;
+		const sizeBuckets = req.query.sizeBuckets ? parseInt(req.query.sizeBuckets) : 100;
+
+
+		var summary = await coreApi.buildMempoolSummary(statusId, ageBuckets, sizeBuckets, (update) => {
+			mempoolSummaryStatuses[statusId] = update;
+		});
+
+		// store summary until it's retrieved via /api/get-mempool-summary
+		mempoolSummaries[statusId] = summary;
+
+	} catch (err) {
+		utils.logError("329r7whegee", err);
+	}
 }));
 
 
 
 
-/// MEMPOOL
+const miningSummaryStatuses = {};
+const miningSummaries = {};
 
-router.get("/mempool/count", function(req, res, next) {
-	coreApi.getMempoolInfo().then(function(info){
-		res.send(info.size.toString());
-	}).catch(next);
-});
+router.get("/mining-summary-status", asyncHandler(async (req, res, next) => {
+	const statusId = req.query.statusId;
+	if (statusId && miningSummaryStatuses[statusId]) {
+		res.json(miningSummaryStatuses[statusId]);
 
-router.get("/mempool/fees", function(req, res, next) {
-	var feeConfTargets = [1, 3, 6, 144];
-	coreApi.getSmartFeeEstimates("CONSERVATIVE", feeConfTargets).then(function(rawSmartFeeEstimates){
-		var smartFeeEstimates = {};
+		next();
+
+	} else {
+		res.json({});
+
+		next();
+	}
+}));
+
+router.get("/get-mining-summary", asyncHandler(async (req, res, next) => {
+	const statusId = req.query.statusId;
+
+	if (statusId && miningSummaries[statusId]) {
+		var summary = miningSummaries[statusId];
 		
-		for (var i = 0; i < feeConfTargets.length; i++) {
-			var rawSmartFeeEstimate = rawSmartFeeEstimates[i];
-			if (rawSmartFeeEstimate.errors) {
-				smartFeeEstimates[feeConfTargets[i]] = "?";
+		res.json(summary);
 
-			} else {
-				smartFeeEstimates[feeConfTargets[i]] = parseInt(new Decimal(rawSmartFeeEstimate.feerate).times(coinConfig.baseCurrencyUnit.multiplier).dividedBy(1000));
-			}
-		}		
+		next();
+
+		delete miningSummaries[statusId];
+		delete miningSummaryStatuses[statusId];
+
+	} else {
+		res.json({});
+
+		next();
+	}
+}));
+
+router.get("/build-mining-summary/:startBlock/:endBlock", asyncHandler(async (req, res, next) => {
+	try {
+		// long timeout
+		res.connection.setTimeout(600000);
+
+
+		var startBlock = parseInt(req.params.startBlock);
+		var endBlock = parseInt(req.params.endBlock);
+
+
+		const statusId = req.query.statusId;
+		if (statusId) {
+			miningSummaryStatuses[statusId] = {};
+		}
+
+		res.json({success:true, status:"started"});
+
+		next();
 		
-		var results = {
-			"nextBlock":smartFeeEstimates[1],
-			"30min":smartFeeEstimates[3],
-			"60min":smartFeeEstimates[6],
-			"1day":smartFeeEstimates[144]
-		};
+
+
+		var summary = await coreApi.buildMiningSummary(statusId, startBlock, endBlock, (update) => {
+			miningSummaryStatuses[statusId] = update;
+		});
+
+		// store summary until it's retrieved via /api/get-mining-summary
+		miningSummaries[statusId] = summary;
+
+	} catch (err) {
+		utils.logError("4328943ryh44", err);
+	}
+}));
+
+
+
+
+
+
+router.get("/mempool-tx-summaries/:txids", asyncHandler(async (req, res, next) => {
+	try {
+		const txids = req.params.txids.split(",").map(utils.asHash);
+
+		const promises = [];
+		const results = [];
+
+		for (var i = 0; i < txids.length; i++) {
+			const txid = txids[i];
+			const key = txid.substring(0, 6);
+
+			promises.push(new Promise(async (resolve, reject) => {
+				try {
+					const item = await coreApi.getMempoolTxDetails(txid, false);
+					const itemSummary = {
+						f: item.entry.fees.modified,
+						sz: item.entry.vsize ? item.entry.vsize : item.entry.size,
+						af: item.entry.fees.ancestor,
+						df: item.entry.fees.descendant,
+						dsz: item.entry.descendantsize,
+						t: item.entry.time,
+						w: item.entry.weight ? item.entry.weight : item.entry.size * 4
+					};
+
+					results.push(itemSummary);
+					
+					resolve();
+
+				} catch (e) {
+					utils.logError("38yereghee", e);
+
+					// resolve anyway
+					resolve();
+				}
+			}));
+		}
+
+		await Promise.all(promises);
 
 		res.json(results);
 
-	}).catch(next);
-});
-
-
-
-
-
-/// PRICE
-
-router.get("/price/:currency/sats", function(req, res, next) {
-	var result = 0;
-	var amount = 1.0;
-	var currency = req.params.currency.toLowerCase();
-	if (global.exchangeRates != null && global.exchangeRates[currency] != null) {
-		var satsRateData = utils.satoshisPerUnitOfLocalCurrency(currency);
-		result = satsRateData.amtRaw;
-	}
-	else if (currency == "xau" && global.exchangeRates != null && global.goldExchangeRates != null) {
-		var dec = new Decimal(amount);
-		dec = dec.times(global.exchangeRates.usd).dividedBy(global.goldExchangeRates.usd);
-		var satCurrencyType = global.currencyTypes["sat"];
-		var one = new Decimal(1);
-		dec = one.dividedBy(dec);
-		dec = dec.times(satCurrencyType.multiplier);
-		
-		result = dec.toFixed(0);
-	}
-	
-	res.send(result.toString());
-	next();
-});
-
-router.get("/price/:currency/marketcap", function(req, res, next) {
-	var result = 0;
-	
-	coreApi.getBlockchainInfo().then(function(getblockchaininfo){
-		var estimatedSupply = utils.estimatedSupply(getblockchaininfo.blocks);
-		var price = 0;
-
-		var amount = 1.0;
-		var currency = req.params.currency.toLowerCase();
-		if (global.exchangeRates != null && global.exchangeRates[currency] != null) {
-			var formatData = utils.formatExchangedCurrency(amount, currency);
-			price = parseFloat(formatData.valRaw).toFixed(2);
-		}
-		else if (currency == "xau" && global.exchangeRates != null && global.goldExchangeRates != null) {
-			var dec = new Decimal(amount);
-			dec = dec.times(global.exchangeRates.usd).dividedBy(global.goldExchangeRates.usd);
-			var exchangedAmt = parseFloat(Math.round(dec * 100) / 100).toFixed(2);
-			price = exchangedAmt;
-		}
-	
-		result = estimatedSupply * price;
-		res.send(result.toFixed(2).toString());
 		next();
 
-	}).catch(next);
-});
+	} catch (err) {
+		res.json({success:false, error:err});
 
-router.get("/price/:currency", function(req, res, next) {
-	var result = 0;
-	var amount = 1.0;
-	var currency = req.params.currency.toLowerCase();
-
-	if (global.exchangeRates != null && global.exchangeRates[currency] != null) {
-		var formatData = utils.formatExchangedCurrency(amount, currency);
-		result = formatData.val;
-	} else if (currency == "xau" && global.exchangeRates != null && global.goldExchangeRates != null) {
-		var dec = new Decimal(amount);
-		dec = dec.times(global.exchangeRates.usd).dividedBy(global.goldExchangeRates.usd);
-		var exchangedAmt = parseFloat(Math.round(dec * 100) / 100).toFixed(2);
-		result = utils.addThousandsSeparators(exchangedAmt);
+		next();
 	}
-	
-	res.send(result.toString());
+}));
 
-	next();
-});
+router.get("/raw-tx-with-inputs/:txid", function(req, res, next) {
+	var txid = utils.asHash(req.params.txid);
 
-router.get("/price", function(req, res, next) {
-	var amount = 1.0;
-	var result = {};
+	var promises = [];
 
-	["usd", "eur", "gbp", "xau"].forEach(currency => {
-		if (global.exchangeRates != null && global.exchangeRates[currency] != null) {
-			var formatData = utils.formatExchangedCurrency(amount, currency);
-			result[currency] = formatData.val;
+	promises.push(coreApi.getRawTransactionsWithInputs([txid]));
 
-		} else if (currency == "xau" && global.exchangeRates != null && global.goldExchangeRates != null) {
-			var dec = new Decimal(amount);
-			dec = dec.times(global.exchangeRates.usd).dividedBy(global.goldExchangeRates.usd);
-			var exchangedAmt = parseFloat(Math.round(dec * 100) / 100).toFixed(2);
-			result[currency] = utils.addThousandsSeparators(exchangedAmt);
-		}
+	Promise.all(promises).then(function(results) {
+		res.json(results);
+
+		next();
+
+	}).catch(function(err) {
+		res.json({success:false, error:err});
+
+		next();
 	});
-	
-	
-	res.json(result);
+});
+
+router.get("/block-tx-summaries/:blockHash/:blockHeight/:txids", function(req, res, next) {
+	var blockHash = req.params.blockHash;
+	var blockHeight = parseInt(req.params.blockHeight);
+	var txids = req.params.txids.split(",").map(utils.asHash);
+
+	var promises = [];
+
+	var results = [];
+
+	promises.push(new Promise(function(resolve, reject) {
+		coreApi.buildBlockAnalysisData(blockHeight, blockHash, txids, 0, results, resolve);
+	}));
+
+	Promise.all(promises).then(function() {
+		res.json(results);
+
+		next();
+
+	}).catch(function(err) {
+		res.json({success:false, error:err});
+
+		next();
+	});
+});
+
+router.get("/utils/:func/:params", function(req, res, next) {
+	var func = req.params.func;
+	var params = req.params.params;
+
+	var data = null;
+
+	if (func == "formatLargeNumber") {
+		if (params.indexOf(",") > -1) {
+			var parts = params.split(",");
+
+			data = utils.formatLargeNumber(parseInt(parts[0]), parseInt(parts[1]));
+
+		} else {
+			data = utils.formatLargeNumber(parseInt(params));
+		}
+	} else if (func == "formatCurrencyAmountInSmallestUnits") {
+		var parts = params.split(",");
+
+		data = utils.formatCurrencyAmountInSmallestUnits(new Decimal(parts[0]), parseInt(parts[1]));
+
+	} else {
+		data = {success:false, error:`Unknown function: ${func}`};
+	}
+
+	res.json(data);
 
 	next();
 });
 
-
-
-
-/// FUN
-
-router.get("/quotes/random", function(req, res, next) {
-	var index = utils.randomInt(0, btcQuotes.items.length);
-	
-	res.json(btcQuotes.items[index]);
-
-	next();
-});
-
-router.get("/quotes/all", function(req, res, next) {
-	res.json(btcQuotes.items);
-
-	next();
-});
 
 
 module.exports = router;

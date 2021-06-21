@@ -91,7 +91,37 @@ const ipCache = {
 	}
 };
 
+// Updated Current Supply for WCN
+function getcurrentsupply() {
+	var currentsupply = 7795829;
+	var totalcurrentsupply = 0;
+	//-----
+	var fs = require('fs');
 
+	var request = require('request');
+	request('http://api.widecoin.org:1123/supply', function (error, response, body) {
+	  if (!error && response.statusCode == 200) {
+		 var getjson = JSON.parse(body);
+		 console.log(getjson.result.supply);
+		 //-----------
+		 fs.writeFile('supply.log', getjson.result.supply, function (err) {
+			if (err) return console.log(err);
+			console.log('Override Total Supply!');
+		 });
+	  }
+	});
+	//----------
+	try {  
+		var data = fs.readFileSync('/root/explorer/supply.log', 'utf8');
+		//console.log("Read Total Supply:"+ data.toString());
+		totalcurrentsupply = (data/100000000);
+	} catch(e) {
+		console.log('Error:', e.stack);
+	}
+
+	currentsupply = totalcurrentsupply; 
+	return currentsupply;
+ } 
 
 function redirectToConnectPageIfNeeded(req, res) {
 	if (!req.session.host) {
@@ -282,7 +312,7 @@ function satoshisPerUnitOfLocalCurrency(localCurrency) {
 
 		var exchangedAmt = parseInt(dec);
 
-		return {amt:addThousandsSeparators(exchangedAmt),amtRaw:exchangedAmt, unit:`sat/${localCurrencyType.symbol}`}
+		return {amt:addThousandsSeparators(exchangedAmt), unit:`sat/${localCurrencyType.symbol}`}
 	}
 
 	return null;
@@ -326,8 +356,7 @@ function formatExchangedCurrency(amount, exchangeType) {
 		return {
 			val: addThousandsSeparators(exchangedAmt),
 			symbol: global.currencyTypes[exchangeType].symbol,
-			unit: exchangeType,
-			valRaw: exchangedAmt
+			unit: exchangeType
 		};
 	} else if (exchangeType == "au") {
 		if (global.exchangeRates != null && global.goldExchangeRates != null) {
@@ -338,8 +367,7 @@ function formatExchangedCurrency(amount, exchangeType) {
 			return {
 				val: addThousandsSeparators(exchangedAmt),
 				unit: "oz",
-				symbol: "AU",
-				valRaw: exchangedAmt
+				symbol: "AU"
 			};
 		}
 	}
@@ -355,10 +383,6 @@ function seededRandom(seed) {
 function seededRandomIntBetween(seed, min, max) {
 	var rand = seededRandom(seed);
 	return (min + (max - min) * rand);
-}
-
-function randomInt(min, max) {
-	return min + Math.floor(Math.random() * max);
 }
 
 function ellipsize(str, length, ending="…") {
@@ -535,14 +559,8 @@ function getBlockTotalFeesFromCoinbaseTxAndBlockHeight(coinbaseTx, blockHeight) 
 		return totalOutput.minus(new Decimal(blockReward));
 	}
 }
-
-function estimatedSupply(height) {
+/*function estimatedSupply(height) {
 	var checkpointData = coinConfig.coinSupplyCheckpointsByNetwork[global.activeBlockchain];
-	
-	if (!checkpointData) {
-		return new Decimal(0);
-	}
-
 	var checkpointHeight = checkpointData[0];
 	var checkpointSupply = checkpointData[1];
 
@@ -555,6 +573,25 @@ function estimatedSupply(height) {
 		i++;
 	}
 	
+	return supply;
+}*/
+function estimatedSupply(height) {
+	var checkpointData = coinConfig.coinSupplyCheckpointsByNetwork[global.activeBlockchain];
+	var checkpointHeight = checkpointData[0];
+	var checkpointSupply = checkpointData[1];
+
+	var supply = checkpointSupply;
+	
+	var i = checkpointHeight;
+	while (i < height) {
+		supply = supply.plus(new Decimal(coinConfig.blockRewardFunction(i, global.activeBlockchain)));
+
+		i++;
+	}
+	//console.log('supply11='+supply);
+	//var sub_total_supply = 8695250;
+	//var sub_total_supply = supply.plus(new Decimal(8695250));
+	//console.log('sub_total_supply='+supply);
 	return supply;
 }
 
@@ -961,10 +998,6 @@ function objectProperties(obj) {
 	return props;
 }
 
-function objHasProperty(obj, name) {
-	return Object.prototype.hasOwnProperty.call(obj, name);
-}
-
 function iterateProperties(obj, action) {
 	for (const [key, value] of Object.entries(obj)) {
 		action([key, value]);
@@ -972,6 +1005,8 @@ function iterateProperties(obj, action) {
 }
 
 module.exports = {
+	// Update Current Supply for WCN
+	getcurrentsupply: getcurrentsupply,
 	reflectPromise: reflectPromise,
 	redirectToConnectPageIfNeeded: redirectToConnectPageIfNeeded,
 	hex2ascii: hex2ascii,
@@ -987,7 +1022,6 @@ module.exports = {
 	formatCurrencyAmountInSmallestUnits: formatCurrencyAmountInSmallestUnits,
 	seededRandom: seededRandom,
 	seededRandomIntBetween: seededRandomIntBetween,
-	randomInt: randomInt,
 	logMemoryUsage: logMemoryUsage,
 	getMinerFromCoinbaseTx: getMinerFromCoinbaseTx,
 	getBlockTotalFeesFromCoinbaseTxAndBlockHeight: getBlockTotalFeesFromCoinbaseTxAndBlockHeight,
@@ -1016,6 +1050,5 @@ module.exports = {
 	timePromise: timePromise,
 	startTimeNanos: startTimeNanos,
 	dtMillis: dtMillis,
-	objectProperties: objectProperties,
-	objHasProperty: objHasProperty
+	objectProperties: objectProperties
 };

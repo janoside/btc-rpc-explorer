@@ -1,7 +1,7 @@
 extends layout
 
 block headContent
-	title Block Stats
+	title Block Block
 
 block content
 	+pageTitle("Block Stats")
@@ -17,7 +17,7 @@ block content
 	else
 
 		+dismissableInfoAlert("blockStatsPageNoteDismissed", "About Block Stats...")
-			| !{markdown("The **Block Stats** tool queries a range of blocks from Bitcoin Core and summarizes the data via graphs. These graphs sometimes expose interesting trends and sometimes show boring, steady-state operation of the network.")}
+			| !{markdown("The **Block Stats** tool queries a range of blocks from Widecoin Core and summarizes the data via graphs. These graphs sometimes expose interesting trends and sometimes show boring, steady-state operation of the network.")}
 			| Use the <b>Filters</b> section below to select the range of blocks to analyze and select the subset of graphs displayed.
 
 				
@@ -222,13 +222,13 @@ block endOfBody
 
 				createGraph("sw-txs", ["swtxs"], [summary.swtxs], [blue]);
 
-				createGraph("subsidy", ["subsidy"], [summary.subsidy], [blue], false);
+				createGraph("subsidy", ["subsidy"], [summary.subsidy], [blue]);
 
-				createGraph("mediantime", ["mediantime"], [summary.mediantime], [blue], false);
+				createGraph("mediantime", ["mediantime"], [summary.mediantime], [blue]);
 
 				createGraph("txs", ["txs"], [summary.txs], [blue]);
 
-				createGraph("utxo_increase", ["utxo_increase"], [summary.utxo_increase], [blue], false);
+				createGraph("utxo_increase", ["utxo_increase"], [summary.utxo_increase], [blue]);
 
 				
 
@@ -247,7 +247,7 @@ block endOfBody
 				return;
 			}
 
-			var url = `./internal-api/block-stats-by-height/${chunks[chunkIndex]}`;
+			var url = `./api/block-stats-by-height/${chunks[chunkIndex]}`;
 			
 			//console.log(url);
 
@@ -344,7 +344,7 @@ block endOfBody
 		}
 
 		var graphsById = {};
-		function createGraph(chartid, names, datas, colors, logYAxis=true) {
+		function createGraph(chartid, names, datas, colors) {
 			var datasets = [];
 			var yaxes = [];
 
@@ -355,8 +355,7 @@ block endOfBody
 					borderWidth: 2,
 					borderColor: colors[i],
 					backgroundColor: 'rgba(0, 0, 0, 0)',
-					pointRadius: 1,
-					borderJoinStyle: "round"
+					pointRadius: 1
 				});
 
 				yaxes.push({
@@ -364,9 +363,9 @@ block endOfBody
 						display: false,
 						//labelString: names[i]
 					},
-					grid: {
+					gridLines: {
 						color: gridLineColor
-					},
+					}
 				});
 			}
 
@@ -385,40 +384,35 @@ block endOfBody
 					},
 					options: {
 						// disable all animations
-						animation: false,
+						animation: { duration: 0 },
+						hover: { animationDuration: 0 },
+						responsiveAnimationDuration: 0,
 
-						interaction: {
-							intersect: false,
-							mode: 'index',
-						},
-
-						plugins: {
-							legend: {
-								display: (datasets.length > 1)
-							},
+						legend: {
+							display: (datasets.length > 1)
 						},
 						scales: {
-							x: {
+							xAxes: [{
 								type: 'linear',
 								position: 'bottom',
 								scaleLabel: {
 									display: true,
 									labelString: 'Block'
 								},
-								grid: {
+								gridLines: {
 									color: gridLineColor
-								},
-							},
-							y: {
-								type: logYAxis ? "logarithmic" : "linear",
+								}
+							}],
+							yAxes: [{
+								type: 'linear',
 								position: 'left',
 								scaleLabel: {
 									display: false,
 								},
-								grid: {
+								gridLines: {
 									color: gridLineColor
-								},
-							},
+								}
+							}],
 						}
 					}
 				});

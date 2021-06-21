@@ -474,43 +474,35 @@ block endOfBody
 						borderWidth: 2,
 						backgroundColor: 'rgba(0,0,0,0)',
 						data: data,
-						pointRadius: 0,
-						borderJoinStyle: "round"
+						pointRadius: 1
 					}]
 				},
 				options: {
-					interaction: {
-						intersect: false,
-						mode: 'index',
-					},
-					plugins: {
-						legend: { display: false },
-					},
+					legend: { display: false },
 					scales: {
-						x: {
+						xAxes: [{
 							type: 'linear',
 							position: 'bottom',
 							scaleLabel: {
 								display: true,
 								labelString: 'Index in Block'
 							},
-							grid: {
+							gridLines: {
 								color: gridLineColor
-							},
+							}
 							//ticks: {
 							//	stepSize: 100,
 							//}
-						},
-						y: {
-							type: "logarithmic",
+						}],
+						yAxes: [{
 							scaleLabel: {
 								display: true,
 								labelString: yLabelStr,
 							},
-							grid: {
+							gridLines: {
 								color: gridLineColor
-							},
-						}
+							}
+						}]
 					}
 				}
 			});
@@ -534,26 +526,23 @@ block endOfBody
 					}]
 				},
 				options: {
-					plugins: {
-						legend: {
-							display: false
-						},
+					legend: {
+						display: false
 					},
 					scales: {
-						x: {
-							grid: {
+						xAxes: [{
+							gridLines: {
 								color: gridLineColor
-							},
-						},
-						y: {
-							type: "logarithmic",
+							}
+						}],
+						yAxes: [{
 							ticks: {
 								beginAtZero:true
 							},
-							grid: {
+							gridLines: {
 								color: gridLineColor
-							},
-						}
+							}
+						}]
 					}
 				}
 			});
@@ -566,7 +555,7 @@ block endOfBody
 				return;
 			}
 
-			var url = `./internal-api/block-tx-summaries/${blockHash}/${blockHeight}/${chunks[chunkIndex]}`;
+			var url = `./api/block-tx-summaries/${blockHash}/${blockHeight}/${chunks[chunkIndex]}`;
 			
 			//console.log(url);
 

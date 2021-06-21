@@ -8,7 +8,7 @@ block content
 
 
 	+dismissableInfoAlert("miningSummaryPageNoteDismissed", "About Mining Summary...")
-		| !{markdown("The **Mining Summary** tool queries a range of blocks from Bitcoin Core and tries to identify the miner for each block. The identification of a mining entity is an imperfect process, relying on optional flagging by anonymous entities (though, in practice, it tends to work well).")}
+		| !{markdown("The **Mining Summary** tool queries a range of blocks from Widecoin Core and tries to identify the miner for each block. The identification of a mining entity is an imperfect process, relying on optional flagging by anonymous entities (though, in practice, it tends to work well).")}
 		| Use the <b>Filters</b> section below to select the range of blocks to analyze.
 
 
@@ -52,7 +52,7 @@ block content
 									td.font-monospace
 										span.badge.bg-primary.miner-name
 										span.badge.bg-secondary.miner-name-unknown
-									
+
 									td.font-monospace.text-end
 										span.miner-block-count
 									
@@ -105,7 +105,7 @@ block endOfBody
 
 		function updateStatus() {
 			$.ajax({
-				url: `./internal-api/mining-summary-status?statusId=${statusId}`
+				url: `./api/mining-summary-status?statusId=${statusId}`
 
 			}).done((res) => {
 				if (!res.count) {
@@ -122,7 +122,7 @@ block endOfBody
 					clearInterval(statusInterval);
 
 					$.ajax({
-						url: `./internal-api/get-mining-summary?statusId=${statusId}`
+						url: `./api/get-mining-summary?statusId=${statusId}`
 
 					}).done((summaryResult) => {
 						summary = summaryResult;
@@ -148,7 +148,7 @@ block endOfBody
 			statusInterval = setInterval(function() { updateStatus(); }, 125);
 
 			$.ajax({
-				url: `./internal-api/build-mining-summary/${startBlock}/${endBlock}?statusId=${statusId}`
+				url: `./api/build-mining-summary/${startBlock}/${endBlock}?statusId=${statusId}`
 
 			}).done((buildResult) => {
 				// we update status elsewhere, this call just kicks off the build
@@ -258,11 +258,9 @@ block endOfBody
 				graph = new Chart(ctx, {
 					type: 'doughnut',
 					options: {
-						plugins: {
-							legend: {
-								position: "left"
-							},
-						}
+						legend: {
+							position: "left"
+						},
 					},
 					data: {
 						datasets: pieChartData.datasets,

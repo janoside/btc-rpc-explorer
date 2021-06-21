@@ -7,63 +7,22 @@ const path = require('path');
 const dotenv = require("dotenv");
 const fs = require('fs');
 
+const configPaths = [ path.join(os.homedir(), '.config', 'wcn-rpc-explorer.env'), path.join(process.cwd(), '.env') ];
+configPaths.filter(fs.existsSync).forEach(path => {
+	console.log('Loading env file:', path);
+	dotenv.config({ path });
+});
+
+global.cacheStats = {};
+
+// debug module is already loaded by the time we do dotenv.config
+// so refresh the status of DEBUG env var
 const debug = require("debug");
-
-
-// start with this, we will update after loading any .env files
-const debugDefaultCategories = "btcexp:app,btcexp:error,btcexp:errorVerbose";
-debug.enable(debugDefaultCategories);
-
+debug.enable(process.env.DEBUG || "btcexp:app,btcexp:error");
 
 const debugLog = debug("btcexp:app");
 const debugErrorLog = debug("btcexp:error");
 const debugPerfLog = debug("btcexp:actionPerformace");
-
-const configPaths = [
-	path.join(os.homedir(), ".config", "btc-rpc-explorer.env"),
-	path.join("/etc", "btc-rpc-explorer", ".env"),
-	path.join(process.cwd(), ".env"),
-];
-
-debugLog("Searching for config files...");
-let configFileLoaded = false;
-configPaths.forEach(path => {
-	if (fs.existsSync(path)) {
-		debugLog(`Config file found at ${path}, loading...`);
-
-		// this does not override any existing env vars
-		dotenv.config({ path });
-
-		// we manually set env.DEBUG above (so that app-launch log output is good),
-		// so if it's defined in the .env file, we need to manually override
-		const config = dotenv.parse(fs.readFileSync(path));
-		if (config.DEBUG) {
-			process.env.DEBUG = config.DEBUG;
-		}
-
-		configFileLoaded = true;
-
-	} else {
-		debugLog(`Config file not found at ${path}, continuing...`);
-	}
-});
-
-if (!configFileLoaded) {
-	debugLog("No config files found. Using all defaults.");
-
-	if (!process.env.NODE_ENV) {
-		process.env.NODE_ENV = "production";
-	}
-}
-
-// debug module is already loaded by the time we do dotenv.config
-// so refresh the status of DEBUG env var
-debug.enable(process.env.DEBUG || debugDefaultCategories);
-
-
-global.cacheStats = {};
-
-
 
 const express = require('express');
 const favicon = require('serve-favicon');
@@ -77,7 +36,7 @@ const simpleGit = require('simple-git');
 const utils = require("./app/utils.js");
 const moment = require("moment");
 const Decimal = require('decimal.js');
-const bitcoinCore = require("btc-rpc-client");
+const bitcoinCore = require("bitcoin-core");
 const pug = require("pug");
 const momentDurationFormat = require("moment-duration-format");
 const coreApi = require("./app/api/coreApi.js");
@@ -88,7 +47,6 @@ const qrcode = require("qrcode");
 const addressApi = require("./app/api/addressApi.js");
 const electrumAddressApi = require("./app/api/electrumAddressApi.js");
 const appStats = require("./app/appStats.js");
-const btcQuotes = require("./app/coins/btcQuotes.js");
 const auth = require('./app/auth.js');
 const sso = require('./app/sso.js');
 const markdown = require("markdown-it")();
@@ -105,7 +63,6 @@ global.btcNodeSemver = "0.0.0";
 
 
 const baseActionsRouter = require('./routes/baseRouter.js');
-const internalApiActionsRouter = require('./routes/internalApiRouter.js');
 const apiActionsRouter = require('./routes/apiRouter.js');
 const snippetActionsRouter = require('./routes/snippetRouter.js');
 const adminActionsRouter = require('./routes/adminRouter.js');
@@ -245,7 +202,7 @@ function loadMiningPoolConfigs() {
 
 function getSourcecodeProjectMetadata() {
 	var options = {
-		url: "https://api.github.com/repos/janoside/btc-rpc-explorer",
+		url: "https://api.github.com/repos/david/wcn-rpc-explorer",
 		headers: {
 			'User-Agent': 'request'
 		}
@@ -272,18 +229,6 @@ function loadChangelog() {
 
 		} else {
 			global.changelogMarkdown = data;
-		}
-	});
-
-
-	var filename = "CHANGELOG-API.md";
-	
-	fs.readFile(path.join(__dirname, filename), 'utf8', function(err, data) {
-		if (err) {
-			utils.logError("ouqhuwey723", err);
-
-		} else {
-			global.apiChangelogMarkdown = data;
 		}
 	});
 }
@@ -346,7 +291,8 @@ async function onRpcConnectionVerified(getnetworkinfo, getblockchaininfo) {
 		global.pruneHeight = getblockchaininfo.pruneheight;
 	}
 
-	var bitcoinCoreVersionRegex = /^.*\/Satoshi\:(.*)\/.*$/;
+	//var bitcoinCoreVersionRegex = /^.*\/Satoshi\:(.*)\/.*$/;
+	var bitcoinCoreVersionRegex = /^.*\/WidecoinCore\:(.*)\/.*$/;
 
 	var match = bitcoinCoreVersionRegex.exec(getnetworkinfo.subversion);
 	if (match) {
@@ -384,7 +330,7 @@ async function onRpcConnectionVerified(getnetworkinfo, getblockchaininfo) {
 		// short-circuit: force all RPC calls to pass their version checks - this will likely lead to errors / instability / unexpected results
 		global.btcNodeSemver = "1000.1000.0"
 
-		debugErrorLog(`Unable to parse node version string: ${getnetworkinfo.subversion} - RPC versioning will likely be unreliable. Is your node a version of Bitcoin Core?`);
+		debugErrorLog(`Unable to parse node version string: ${getnetworkinfo.subversion} - RPC versioning will likely be unreliable. Is your node a version ofWidecoin Core?`);
 	}
 	
 	debugLog(`RPC Connected: version=${getnetworkinfo.version} subversion=${getnetworkinfo.subversion}, parsedVersion(used for RPC versioning)=${global.btcNodeSemver}, protocolversion=${getnetworkinfo.protocolversion}, chain=${getblockchaininfo.chain}, services=${services}`);
@@ -739,7 +685,7 @@ expressApp.use(function(req, res, next) {
 
 
 	if (!userSettings.displayCurrency) {
-		userSettings.displayCurrency = "btc";
+		userSettings.displayCurrency = "wcn";
 	}
 
 	if (!userSettings.localCurrency) {
@@ -776,10 +722,6 @@ expressApp.use(function(req, res, next) {
 		req.session.userMessageType = null;
 	}
 
-	if (btcQuotes) {
-		res.locals.footerQuote = btcQuotes.items[utils.randomInt(0, btcQuotes.items.length)];
-	}
-
 	if (req.session.query) {
 		res.locals.query = req.session.query;
 
@@ -810,7 +752,6 @@ expressApp.use(csurf(), (req, res, next) => {
 });
 
 expressApp.use(config.baseUrl, baseActionsRouter);
-expressApp.use(config.baseUrl + 'internal-api/', internalApiActionsRouter);
 expressApp.use(config.baseUrl + 'api/', apiActionsRouter);
 expressApp.use(config.baseUrl + 'snippet/', snippetActionsRouter);
 expressApp.use(config.baseUrl + 'admin/', adminActionsRouter);

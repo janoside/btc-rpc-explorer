@@ -57,7 +57,7 @@ function connectToServer(host, port, protocol) {
 		// default protocol is 'tcp' if port is 50001, which is the default unencrypted port for electrum
 		var defaultProtocol = port === 50001 ? 'tcp' : 'tls';
 
-		var electrumConfig = { client:"btc-rpc-explorer-v2", version:"1.4" };
+		var electrumConfig = { client:"wcn-rpc-explorer-v2", version:"1.4" };
 		var electrumPersistencePolicy = { retryPeriod: 10000, maxRetry: 1000, callback: null };
 
 		var onConnect = function(client, versionInfo) {

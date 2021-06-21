@@ -10,23 +10,13 @@ mixin pageTitle(text, subtext, copyableSubtext=false)
 	//hr.mb-3
 
 
-mixin sectionTitleBlock
-	h3.h5.mb-1.fw-light
-		block
-
-			
-mixin sectionTitle(text, toggle=false, toggleUniqueClass, toggleUserSettingName, toggleOpen, tooltipText)
+mixin sectionTitle(text, toggle=false, toggleUniqueClass, toggleUserSettingName, toggleOpen)
 	if (false)
 		pre
 			code.json #{JSON.stringify(session.userSettings)}
 
 	h3.h5.mb-1.fw-light(class=(toggle && !toggleOpen ? "mb-section" : false), class=(!toggle || toggleOpen ? "d-block" : "d-none"))
-		if (tooltipText)
-			span.border-dotted(title=tooltipText, data-bs-toggle="tooltip")
-				| #{text}
-
-		else
-			| #{text}
+		| #{text}
 
 		if (toggle)
 			small(title=`Toggle ${text}`, data-bs-toggle="tooltip")
@@ -214,7 +204,7 @@ mixin pageTab(name, defaultActive=false)
 
 mixin valueDisplay(val)
 	if (val > 0)
-		if (userSettings.displayCurrency == "btc")
+		if (userSettings.displayCurrency == "wcn")
 			+_valueDisplayBtc(val)
 
 		else if (userSettings.displayCurrency == "sat")
@@ -350,7 +340,7 @@ mixin confirmations(confirmations, abbreviated=true)
 			i.fas.fa-check.ms-1
 
 
-mixin timestamp(timestamp, includeAgo=true, formatString)
+mixin timestamp(timestamp, includeAgo=true)
 	- var utcMoment = moment.utc(new Date(parseInt(timestamp) * 1000));
 
 	- var yearStr = utcMoment.format("Y");
@@ -361,13 +351,7 @@ mixin timestamp(timestamp, includeAgo=true, formatString)
 
 	- var titleStr = `${utcMoment.format("Y-MM-DD HH:mm:ss")} utc`;
 
-	if (formatString)
-		span.border-dotted(title=titleStr, data-bs-toggle="tooltip")
-			| #{utcMoment.format(formatString)}
-			if (["H", "m", "s"].some(str => formatString.includes(str)))
-				small.text-muted.ms-1 utc
-
-	else if (dateStr == nowDateStr)
+	if (dateStr == nowDateStr)
 		span.border-dotted(title=titleStr, data-bs-toggle="tooltip")
 			| #{utcMoment.format("HH:mm")}
 			small.text-muted.ms-1 utc
@@ -498,18 +482,6 @@ mixin warningAlert
 		i.d-none.d-md-inline.fas.fa-exclamation-triangle.fa-lg.d-inline-block(style="position: absolute; top: 0; left: 0; width: 36px; margin-left: 0.4rem; margin-top: 1.3rem;")
 
 		block
-
-
-mixin numWithMutedDecimals(numString)
-	if (numString.indexOf(".") >= 0)
-		- var n = numString.substring(0, numString.indexOf("."));
-		- var dec = numString.substring(numString.indexOf("."));
-
-		span #{n}
-		small.text-muted #{dec}
-
-	else
-		span #{numString}
 				
 
 mixin blockRangeFilters
@@ -593,13 +565,13 @@ mixin pagination(limit, offset, sort, itemCount, baseUrl, justification="start",
 
 
 mixin graphPageScriptSetup
-	script(src="./js/chart.min.js", integrity="sha384-GjRWJoCOQprcDc7Q66qkuxVD04BCqkLyMxPifcy0xRk4JjK+KHgjYw1tphyoDlkC")
+	script(src="./js/chart.bundle.min.js", integrity="")
 	
 	if (userSettings.uiTheme && userSettings.uiTheme == "dark")
 		script.
-			Chart.defaults.color='white';
+			Chart.defaults.global.defaultFontColor='white';
 			var gridLineColor = "#1a4280";
 	else
 		script.
-			Chart.defaults.color='black';
+			Chart.defaults.global.defaultFontColor='black';
 			var gridLineColor = "#dddddd";

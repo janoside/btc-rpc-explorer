@@ -51,7 +51,7 @@ if (exchangeRates)
 					- var currencyValue = parseInt(networkVolume.d1.amt);
 					- var currencyValueDecimals = 0;
 
-					if (userSettings.displayCurrency == "btc")
+					if (userSettings.displayCurrency == "wcn")
 						+valueDisplaySpecial(networkVolume.d1.amt, 0)
 
 					else
@@ -72,7 +72,7 @@ if (exchangeRates)
 				i.fas.fa-server.text-muted
 
 +contentSection
-	+summaryRow(1 + (hashrate7d ? 1 : 0) + (chainTxStats && chainTxStats[7 * targetBlocksPerDay] ? 1 : 0) + (difficultyAdjustmentData ? 1 : 0))
+	+summaryRow(1 + (hashrate7d ? 1 : 0) + (chainTxStats[7 * targetBlocksPerDay] ? 1 : 0) + (difficultyAdjustmentData ? 1 : 0))
 		if (hashrate7d)
 			+summaryItem("7d Hashrate", "The average hashrate of the global mining network over the last 7 days. A comparison to the 30-day average is included to help gauge the rate of change.")
 				- var hashrate7dayData = utils.formatLargeNumber(hashrate7d, 1);
@@ -96,24 +96,16 @@ if (exchangeRates)
 
 						| )
 
-		if (chainTxStats && chainTxStats[7 * targetBlocksPerDay])
+		if (chainTxStats[7 * targetBlocksPerDay])
 			+summaryItem("7d Transactions", "The total number of transactions that have been confirmed in the blockchain over the last 7 days.")
 				| #{chainTxStats[7 * targetBlocksPerDay].window_tx_count.toLocaleString()}
 
 		if (difficultyAdjustmentData)
 			- var desc = `Estimate for the difficulty adjustment that will occur in ${difficultyAdjustmentData.blocksLeft.toLocaleString()} block${difficultyAdjustmentData.blocksLeft == 1 ? "" : "s"} (${difficultyAdjustmentData.timeLeftStr}). This is calculated using the average block time during the current difficulty epoch (currently, the last ${difficultyAdjustmentData.calculationBlockCount.toLocaleString()} block${difficultyAdjustmentData.calculationBlockCount == 1 ? "" : "s"}). Note: This estimate becomes more reliable as the difficulty epoch nears its end.`;
 			
-			if (false)
-				pre
-					code.json #{JSON.stringify(difficultyAdjustmentData, null, 4)}
-
 			+summaryItem("Difficulty Δ", difficultyAdjustmentData.estimateAvailable ? desc : null)
 				if (difficultyAdjustmentData.estimateAvailable)
-					span.me-2(class=(difficultyAdjustmentData.delta >= 0 ? "text-success" : "text-danger"))
-						if (difficultyAdjustmentData.sign == "+")
-							| +
-
-						| #{difficultyAdjustmentData.delta.toDP(2)}
+					span.me-2(class=(difficultyAdjustmentData.sign == "+" ? "text-success" : "text-danger")) #{difficultyAdjustmentData.sign}#{difficultyAdjustmentData.delta.toDP(2)}
 						small.ms-1 %
 					small.text-muted
 						| (
@@ -122,18 +114,26 @@ if (exchangeRates)
 
 				else
 					small.border-dotted.text-muted(title="Estimate unavailable<br/>A difficulty epoch just ended. The first block of the new epoch must be mined before an estimate can be calculated.", data-bs-toggle="tooltip", data-bs-html="true") next block needed…
-
-		+summaryItem("Coins", utxoSetSummary ? null : `This value is estimated.`)
+		
+		//-+summaryItem("Coins", utxoSetSummary ? null : `This value is estimated.`)
+		+summaryItem("Coins", utxoSetSummary ? null : `Coin Supply.`)
 			- var maxSupply = coinConfig.maxSupplyByNetwork[activeBlockchain];
-
-			if (utxoSetSummary)
+				- var rscurrentSupply = utils.getcurrentsupply();
+				- var rscurrentSupplyPercentage = ((utils.getcurrentsupply()/35000000)*100);
+				- var rscurrentSupplyPercentageRound = parseFloat(rscurrentSupplyPercentage).toFixed(2);
+				span #{parseFloat(rscurrentSupply).toLocaleString()}
+				small.ms-2.text-muted
+					| (
+					span.border-dotted(title=`${parseFloat(rscurrentSupplyPercentageRound).toLocaleString()}% have been mined into circulation`, data-bs-toggle="tooltip") #{parseFloat(rscurrentSupplyPercentageRound).toLocaleString()}%
+					| )
+			//-if (utxoSetSummary)
 				span #{parseFloat(utxoSetSummary.total_amount).toLocaleString()}
 				small.ms-2.text-muted
 					| (
 					span.border-dotted(title=`${new Decimal(utxoSetSummary.total_amount).dividedBy(maxSupply).times(100).toDP(4)}% have been mined into circulation`, data-bs-toggle="tooltip") #{new Decimal(utxoSetSummary.total_amount).dividedBy(maxSupply).times(100).toDP(1)}%
 					| )
 
-			else
+			//-else
 				- var estimatedSupply = utils.estimatedSupply(getblockchaininfo.blocks);
 
 				span #{parseInt(estimatedSupply).toLocaleString()}

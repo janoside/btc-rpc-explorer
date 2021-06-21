@@ -1,7 +1,7 @@
 extends layout
 
 block headContent
-	title Bitcoin Explorer
+	title Widecoin Explorer
 	
 block content
 	if (getblockchaininfo == null)
@@ -21,7 +21,17 @@ block content
 		+dismissableInfoAlert("homepageWelcomeBannerDismissed")
 			.clearfix
 				.float-start
-					h4.fw-light.mb-2 Welcome to Bitcoin Explorer!
+					h4.fw-light.mb-2 Welcome to Widecoin Explorer!
+					h6.fw-light.mb-2 Join community link below to get latest update from Widecoin
+					h6.fw-light.mb-2 <a href="https://web.facebook.com/widecoin1">Facebook</a> | <a href="https://twitter.com/widecoin1">Twitter</a> | <a href="https://t.me/joinchat/oJ1_N7xtcAtlZGU1">Telegram</a> | <a href="https://discord.gg/GnNaAHra7Q">Discord</a>
+					//h6.fw-light.mb-2 <a href="https://t.me/joinchat/oJ1_N7xtcAtlZGU1">Telegram |</a><a href="https://twitter.com/widecoin1"> Twitter |</a> <a href="https://web.facebook.com/widecoin1">Facebook</a>
+					//.mt-4.mb-2
+						a.footer-link(href="https://t.me/joinchat/oJ1_N7xtcAtlZGU1") Telegram |
+						a.footer-link(href="https://twitter.com/widecoin1") Twitter |
+						a.footer-link(href="https://web.facebook.com/widecoin1") Facebook
+
+					//h6.fw-light.mb-2 Twitter: https://twitter.com/widecoin1
+					//h6.fw-light.mb-2 Facebook: https://web.facebook.com/widecoin1
 				.float-start
 					if (config.demoSite)
 						- var networkNameMap = {"main": "Mainnet", "test": "Testnet", "signet": "Signet"};
@@ -30,8 +40,8 @@ block content
 							i.fas.fa-sticky-note
 			
 
-			.mb-2 An easy-to-use, educational explorer whose <u>only dependency is your <b>Bitcoin Core</b> node</u>!
-			.mb-3
+			//-.mb-2 An easy-to-use, educational explorer whose <u>only dependency is your <b>Bitcoin Core</b> node</u>!
+			//-.mb-3
 				- var features = ["Open-Source", "Easy Setup", "Low Hardware Requirements", "Fun!"];
 
 				each feature in features
@@ -39,9 +49,9 @@ block content
 						span.me-2 #{feature}
 						i.fas.fa-check
 			
-			.mt-4.mb-2
+			//-.mt-4.mb-2
 				if (global.sourcecodeProjectMetadata)
-					a.btn.btn-primary.mb-2.mb-md-1.me-3(href="https://github.com/janoside/btc-rpc-explorer", title="View source code on Github", data-bs-toggle="tooltip", data-bs-placement="bottom")
+					a.btn.btn-primary.mb-2.mb-md-1.me-3(href="https://github.com/david/wcn-rpc-explorer", title="View source code on Github", data-bs-toggle="tooltip", data-bs-placement="bottom")
 						i.fab.fa-github.fa-lg.me-2
 						| View Source
 
@@ -71,51 +81,6 @@ block content
 		
 		
 		
-		if (nextBlockTemplate)
-			if (false)
-				pre
-					code.json #{JSON.stringify(nextBlockFeeRateGroups, null, 4)}
-
-			.clearfix
-				.float-start
-					- var desc = "Prediction for the next block, based on the output of the getblocktemplate command";
-					+sectionTitle("Predicted Next Block", false, null, null, null, desc)
-
-				.float-start
-					a.ms-2(href="./mining-template") See details
-			
-			+contentSection
-				+summaryRow(3)
-					+summaryItem("Transactions")
-						| #{nextBlockTemplate.transactions.length.toLocaleString()}
-
-					+summaryItem("Fee Rates", "Minimum and maximum fee rates for transactions that are predicted to be included in the next block.", "sat/vB")
-						+numWithMutedDecimals(new Decimal(nextBlockMinFeeRate).toDP(2).toString())
-						span.mx-2 -
-						+numWithMutedDecimals(new Decimal(nextBlockMaxFeeRate).toDP(2).toString())
-
-						
-					+summaryItem("Total Fees", "Sum of fees for all transactions that are predicted to be included in the next block.")
-						+valueDisplay(nextBlockTotalFees)
-
-				if (false)
-					.mt-4
-						.text-center
-							+summaryTitle("Fee Rate Breakdown")
-
-						.progress.mt-2
-							each group, groupIndex in nextBlockFeeRateGroups
-								if (group.totalWeight > 0)
-									- var intPercent = parseInt(100 * group.weightRatio);
-									if (intPercent < 10)
-										- intPercent = 10;
-									- var color = `hsl(${(333 * (groupIndex / nextBlockFeeRateGroups.length))}, 100%, 35%)`;
-									
-									.progress-bar(role="progressbar", style=`width: ${intPercent}%; background-color: ${color};`, aria-valuenow=`${intPercent}`, aria-valuemin="0", aria-valuemax="100")
-										| #{new Decimal(group.minFeeRate).toDP(1)}
-						
-
-
 		if (latestBlocks)
 			+contentSection("Latest Blocks")
 				- var blocks = latestBlocks;
@@ -134,8 +99,8 @@ block content
 						i.fas.fa-cubes.me-2
 						| Browse Blocks &raquo;
 							
-
-		+contentSection("Tools")
+		// Tool Card
+		//-+contentSection("Tools")
 			include includes/tools-card.pug
 				
 
