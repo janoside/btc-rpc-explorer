@@ -1,5 +1,9 @@
 # WCN RPC Explorer
 
+![homepage](./public/img/screenshots/homepage-v3.png)
+
+[![npm version][npm-ver-img]][npm-ver-url] [![NPM downloads][npm-dl-img]][npm-dl-url]
+
 Simple, database-free Widecoin blockchain explorer, via RPC to [Widecoin Core](https://github.com/widecoin-project/widecoin).
 
 This is a simple, self-hosted explorer for the Bitcoin blockchain, driven by RPC calls to your own [Widecoin](https://github.com/widecoin-project/widecoin) node. It is easy to run and can be connected to other tools (like [ElectrumX](https://github.com/spesmilo/electrumx)) to achieve a full-featured explorer.
