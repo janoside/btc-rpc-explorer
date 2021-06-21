@@ -1,7 +1,7 @@
 ##### v3.1.0
 ###### 2021-04-14
 
-* Improvements to no-`txindex` support: now available for all versions ofWidecoin Core
+* Improvements to no-`txindex` support: now available for all versions of Widecoin Core
 * Move public sites to [BitcoinExplorer.org](https://bitcoinexplorer.org) (BIG thanks [@SatoshisDomains](https://twitter.com/SatoshisDomains))
 * Add back the `/peers` tool in the "Tools" menu
 	* Note: The map on the peers tool now requires users set their own `BTCEXP_MAPBOX_APIKEY` in `.env`
@@ -27,7 +27,7 @@
 	* Redesigned Dark Mode (now the default)
 	* New app icon
 * Support for pruned nodes and nodes with disabled `txindex`! (HUGE Thanks to [@shesek](https://github.com/shesek))
-	* Note: Currently onlyWidecoin Core versions 0.21+ are able to support this feature (a future improvement is planned to make it available to all versions)
+	* Note: Currently only Widecoin Core versions 0.21+ are able to support this feature (a future improvement is planned to make it available to all versions)
 * Mempool Summary improvements
 	* Greatly improved performance for multiple loads via caching
 	* Added: "Blocks Count" column by fee-rate bucket
@@ -61,7 +61,7 @@
 
 * New "Fun" item for the tx containing the whitepaper and new tool to extract the whitepaper and display it
 * New fee rate data on `/block-analysis` pages
-* New minor misc peer data available inWidecoin Core RPC v0.21+
+* New minor misc peer data available in Widecoin Core RPC v0.21+
 * New gold exchange rate on homepage
 * Fix for SSO token generation URL encoding (Thanks [@shesek](https://github.com/shesek) and [@Kixunil](https://github.com/Kixunil))
 * Fix for `/peers` map
