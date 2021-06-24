@@ -192,10 +192,14 @@ block content
 						+summaryItem("Difficulty")
 							- var difficultyData = utils.formatLargeNumber(result.getblock.difficulty, 3);
 							
-							span.border-dotted(title=parseFloat(result.getblock.difficulty).toLocaleString(), data-bs-toggle="tooltip")
-								span #{difficultyData[0]}
-								span  x 10
-								sup #{difficultyData[1].exponent}
+							if (result.getblock.difficulty > 1000)
+								span.border-dotted(title=parseFloat(result.getblock.difficulty).toLocaleString(), data-bs-toggle="tooltip")
+									span #{difficultyData[0]}
+									span  x 10
+									sup #{difficultyData[1].exponent}
+
+							else
+								span #{new Decimal(result.getblock.difficulty).toDP(3)}
 
 						if (result.blockstats && result.blockstats.utxo_increase)
 							+summaryItem("UTXO Δ")
