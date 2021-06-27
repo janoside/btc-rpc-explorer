@@ -110,7 +110,8 @@ mixin asciiHexDataDisplay(dataName, uniqueId, hex)
 											i.fas.fa-asterisk.text-success
 
 										span(class=(tx.vin.length == 1 ? "fw-bold" : false))
-											- var currencyValue = coinConfig.blockRewardFunction(blockHeight, activeBlockchain);
+											- var currencyValue = coinConfig.blockRewardFunction2(blockHeight, activeBlockchain);
+											//- var currencyValue = 10;
 											+valueDisplay(currencyValue)
 
 									else

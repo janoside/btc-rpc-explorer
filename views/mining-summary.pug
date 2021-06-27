@@ -170,7 +170,7 @@ block endOfBody
 			$("#block-selections-buttons .dropdown-item").removeClass("disabled");
 
 			//console.log(JSON.stringify(results));
-
+			//var totalSubsidyPlusFees = 0;
 			var totalSubsidyPlusFees = new Decimal(summary.overall.totalSubsidy).plus(new Decimal(summary.overall.totalFees));
 
 			var pieChartData = {labels:[], datasets:[{data:[], backgroundColor:[]}]};
