@@ -80,7 +80,7 @@ module.exports = {
 		"signet":"Signet Explorer",
 	},
 	demoSiteUrlsByNetwork: {
-		"main": "http://explorer.widecoin.org:5000/",
+		"main": "https://explorer.widecoin.org/",
 		//"test": "https://testnet.bitcoinexplorer.org",
 		//"signet": "https://signet.bitcoinexplorer.org",
 	},

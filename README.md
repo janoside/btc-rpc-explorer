@@ -8,7 +8,7 @@ Whatever reasons one may have for running a full node (trustlessness, technical 
 
 Live available at:
 
-* Mainnet - [explorer.widecoin.org:5000](http://explorer.widecoin.org:5000/)
+* Mainnet - [explorer.widecoin.org:5000](https://explorer.widecoin.org/)
 
 # Features
 
@@ -93,7 +93,7 @@ wcn-rpc-explorer --port 8080 --widecoind-port 18443 --widecoind-cookie ~/.wideco
 
 #### Demo site settings
 
-To match the features visible on the demo site at [explorer.widecoin.org](http://explorer.widecoin.org:5000/) you'll need to set the following non-default configuration values:
+To match the features visible on the demo site at [explorer.widecoin.org](https://explorer.widecoin.org/) you'll need to set the following non-default configuration values:
 
     BTCEXP_DEMO=true 		# enables some demo/informational aspects of the site
     BTCEXP_NO_RATES=false		# enables querying of exchange rate data
