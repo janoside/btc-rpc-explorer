@@ -8,7 +8,7 @@ Whatever reasons one may have for running a full node (trustlessness, technical 
 
 Live available at:
 
-* Mainnet - [explorer.widecoin.org:5000](https://explorer.widecoin.org/)
+* Mainnet - [explorer.widecoin.org](https://explorer.widecoin.org/)
 
 # Features
 
