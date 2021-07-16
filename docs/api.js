@@ -61,9 +61,8 @@ module.exports = {
 		{
 			"category":"mining",
 			"url":"/api/mining/hashrate",
-			"desc":"Returns the network hash rate, estimated over the last 1, 7, and 30 days.",
-			"returnType":"json",
-			"example": {"1Day":174.1,"7Day":165.9,"30Day":158.5, "unit":"exa"}
+			"desc":"Returns the network hash rate, estimated over the last 1, 7, 30, 90, and 365 days.",
+			"returnType":"json"
 		},
 
 		{

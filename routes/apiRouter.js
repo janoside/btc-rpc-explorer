@@ -166,28 +166,79 @@ router.get("/blockchain/coins", function(req, res, next) {
 
 /// MINING
 
-router.get("/mining/hashrate", function(req, res, next) {
-	var blocksPerDay = 144;
-	var rates = [];
-	var timePeriods = [(1*blocksPerDay), (7*blocksPerDay), (30* blocksPerDay)];
-	
-	coreApi.getNetworkHashrate(timePeriods[0]).then(function(info0){
-		var hashRateData = utils.formatLargeNumber(info0, 1)
-		rates[0] = hashRateData[0];
-		
-		coreApi.getNetworkHashrate(timePeriods[1]).then(function(info1){
-			var hashRateData = utils.formatLargeNumber(info1, 1)
-			rates[1] = hashRateData[0];
-			
-			coreApi.getNetworkHashrate(timePeriods[2]).then(function(info2){
-				var hashRateData = utils.formatLargeNumber(info2, 1)
-				rates[2] = hashRateData[0];
-		
-				res.json({"1Day": rates[0]*1, "7Day": rates[1]*1, "30Day": rates[2]*1});
-			});
+router.get("/mining/hashrate", asyncHandler(async (req, res, next) => {
+	try {
+		var decimals = 3;
+
+		if (req.query.decimals) {
+			decimals = parseInt(req.query.decimals);
+		}
+
+		var blocksPerDay = 24 * 60 * 60 / coinConfig.targetBlockTimeSeconds;
+		var rates = [];
+
+		var timePeriods = [
+			1 * blocksPerDay,
+			7 * blocksPerDay,
+			30 * blocksPerDay,
+			90 * blocksPerDay,
+			365 * blocksPerDay,
+		];
+
+		var promises = [];
+
+		for (var i = 0; i < timePeriods.length; i++) {
+			const index = i;
+			const x = timePeriods[i];
+
+			promises.push(new Promise(async (resolve, reject) => {
+				try {
+					const hashrate = await coreApi.getNetworkHashrate(x);
+					var summary = utils.formatLargeNumber(hashrate, decimals);
+					
+					rates[index] = {
+						val: parseFloat(summary[0]),
+
+						unit: `${summary[1].name}hash`,
+						unitAbbreviation: `${summary[1].abbreviation}H`,
+						unitExponent: summary[1].exponent,
+						unitMultiplier: summary[1].val,
+
+						raw: summary[0] * summary[1].val,
+						
+						string1: `${summary[0]}x10^${summary[1].exponent}`,
+						string2: `${summary[0]}e${summary[1].exponent}`,
+						string3: `${(summary[0] * summary[1].val).toLocaleString()}`
+					};
+
+					resolve();
+
+				} catch (ex) {
+					utils.logError("8ehfwe8ehe", ex);
+
+					resolve();
+				}
+			}));
+		}
+
+		await Promise.all(promises);
+
+		res.json({
+			"1Day": rates[0],
+			"7Day": rates[1],
+			"30Day": rates[2],
+			"90day": rates[3],
+			"365Day": rates[4]
 		});
-	}).catch(next);
-});
+
+	} catch (e) {
+		utils.logError("23reuhd8uw92D", e);
+
+		res.json({
+			error: typeof(e) == "string" ? e : utils.stringifySimple(e)
+		});
+	}
+}));
 
 router.get("/mining/diff-adj-estimate", asyncHandler(async (req, res, next) => {
 	var promises = [];
