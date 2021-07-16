@@ -534,7 +534,7 @@
 		},
 		"MARA Pool" : {
 			"name" : "MARA Pool",
-			"link" : ""
+			"link" : "https://marathondh.com"
 		},
 		"Mining-Dutch" : {
 			"name" : "Mining-Dutch",
@@ -542,6 +542,10 @@
 		},
 		"/TMSPOOL/" : {
 			"name" : "TMSPool",
+			"link" : "https://btc.tmspool.top"
+		},
+		"/AAOPOOL/" : {
+			"name" : "AAO Pool",
 			"link" : "https://btc.tmspool.top"
 		},
 		"/Foundry USA Pool #dropgold/" : {
@@ -642,7 +646,7 @@
 			"name" : "BitMinter",
 			"link" : "http://bitminter.com/"
 		},
-		"15xiShqUqerfjFdyfgBH1K7Gwp6cbYmsTW " : {
+		"15xiShqUqerfjFdyfgBH1K7Gwp6cbYmsTW" : {
 			"name" : "EclipseMC",
 			"link" : "https://eclipsemc.com/"
 		},
@@ -1167,7 +1171,7 @@
 			"link" : "https://foundrydigital.com/"
 		},
 		"32p7WS5Yr8phj2AKdf8QGpDZvQutf3zR3D" : {
-			"name" : "Payout …tf3zR3D",
+			"name" : "unknown-vQutf3zR3D",
 			"link" : ""
 		},
 		"1Ca1KNQQo8akbrwTjjXuk8aikvC2pwodU2" : {
@@ -1245,6 +1249,30 @@
 		"bc1qf274x7penhcd8hsv3jcmwa5xxzjl2a6pa9pxwm": {
 			"name": "F2Pool",
 			"link" : "https://www.f2pool.com/"
+		},
+		"1Njed3fFC752Di6JQVu3qSNTTKBVh5XdXz": {
+			"name": "CP",
+			"link": ""
+		},
+		"3LC8dDKyBsrWPfzhXyt7aAyjXxGYkfDdHu": {
+			"name": "MARA Pool",
+			"link": "https://marathondh.com"
+		},
+		"1BDbsWi3Mrcjp1wdop3PWFNCNZtu4R7Hjy": {
+			"name" : "EMCDPool",
+			"link" : "https://pool.emcd.io"
+		},
+		"12QVFmJH2b4455YUHkMpEnWLeRY3eJ4Jb5": {
+			"name" : "AAO Pool",
+			"link" : "https://btc.tmspool.top "
+		},
+		"33SAB6pzbhEGPbfY6NVgRDV7jVfspZ3A3Z": {
+			"name" : "carbon-negative-pool",
+			"link" : ""
+		},
+		"bc1q7wedv4zdu5smt3shljpu5mgns48jn299mukymc": {
+			"name" : "unknown-n299mukymc",
+			"link" : ""
 		}
 	},
 	"block_hashes" : {
