@@ -415,51 +415,65 @@ async function onRpcConnectionVerified(getnetworkinfo, getblockchaininfo) {
 	assessTxindexAvailability();
 }
 
+var txindexCheckCount = 0;
 async function assessTxindexAvailability() {
 	// Here we try to call getindexinfo to assess availability of txindex
 	// However, getindexinfo RPC is only available in v0.21+, so the call
 	// may return an "unsupported" error. If/when it does, we will fall back
 	// to assessing txindex availability by querying a known txid
 	debugLog("txindex check: trying getindexinfo");
-	global.getindexinfo = await coreApi.getIndexInfo();
 
-	debugLog(`txindex check: getindexinfo=${JSON.stringify(global.getindexinfo)}`);
+	try {
+		global.getindexinfo = await coreApi.getIndexInfo();
 
-	if (global.getindexinfo.txindex) {
-		// getindexinfo was available, and txindex is also available...easy street
-		
-		global.txindexAvailable = true;
+		debugLog(`txindex check: getindexinfo=${JSON.stringify(global.getindexinfo)}`);
 
-		debugLog("txindex check: available!");
-
-	} else if (global.getindexinfo.minRpcVersionNeeded) {
-		// here we find out that getindexinfo is unavailable on our node because
-		// we're running pre-v0.21, so we fall back to querying a known txid
-		// to assess txindex availability
-
-		debugLog("txindex check: getindexinfo unavailable, trying txid lookup");
-
-		try {
-			// lookup a known TXID as a test for whether txindex is available
-			let knownTx = await coreApi.getRawTransaction(coinConfig.knownTransactionsByNetwork[global.activeBlockchain]);
-
-			// if we get here without an error being thrown, we know we're able to look up by txid
-			// thus, txindex is available
+		if (global.getindexinfo.txindex) {
+			// getindexinfo was available, and txindex is also available...easy street
+			
 			global.txindexAvailable = true;
 
-			debugLog("txindex check: available! (pre-v0.21)");
+			debugLog("txindex check: available!");
 
-		} catch (e) {
-			// here we were unable to query by txid, so we believe txindex is unavailable
+		} else if (global.getindexinfo.minRpcVersionNeeded) {
+			// here we find out that getindexinfo is unavailable on our node because
+			// we're running pre-v0.21, so we fall back to querying a known txid
+			// to assess txindex availability
+
+			debugLog("txindex check: getindexinfo unavailable, trying txid lookup");
+
+			try {
+				// lookup a known TXID as a test for whether txindex is available
+				let knownTx = await coreApi.getRawTransaction(coinConfig.knownTransactionsByNetwork[global.activeBlockchain]);
+
+				// if we get here without an error being thrown, we know we're able to look up by txid
+				// thus, txindex is available
+				global.txindexAvailable = true;
+
+				debugLog("txindex check: available! (pre-v0.21)");
+
+			} catch (e) {
+				// here we were unable to query by txid, so we believe txindex is unavailable
+				global.txindexAvailable = false;
+
+				debugLog("txindex check: unavailable");
+			}
+		} else {
+			// here getindexinfo is available (i.e. we're on v0.21+), but txindex is NOT available
 			global.txindexAvailable = false;
 
 			debugLog("txindex check: unavailable");
 		}
-	} else {
-		// here getindexinfo is available (i.e. we're on v0.21+), but txindex is NOT available
-		global.txindexAvailable = false;
+	} catch (e) {
+		utils.logError("o2328ryw8wsde", e);
 
-		debugLog("txindex check: unavailable");
+		var retryTime = parseInt(Math.min(15 * 60 * 1000, 1000 * 10 * Math.pow(2, txindexCheckCount)));
+		txindexCheckCount++;
+
+		debugLog(`txindex check: error in rpc getindexinfo; will try again in ${retryTime}ms`);
+
+		// try again in 5 mins
+		setTimeout(assessTxindexAvailability, retryTime);
 	}
 }
 
