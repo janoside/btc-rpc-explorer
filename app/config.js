@@ -203,7 +203,7 @@ module.exports = {
 			{name: "Mempool", items: [4, 16, 5]},
 			{name: "Analysis", items: [9, 10, 11, 12, 3]},
 			{name: "Technical", items: [15, 6, 7, 1]},
-			{name: "Fun", items: [8, 13]},
+			{name: "Fun", items: [8, 17, 13]},
 		]
 	},
 
@@ -236,6 +236,7 @@ module.exports = {
 	/* 15 */	{name:"API", url:"./api/docs", desc:"View docs for the public API.", fontawesome:"fas fa-toolbox"},
 
 	/* 16 */	{name:"Mining Template", url:"./mining-template", desc:"View a template for the the next block based on the current mempool.", fontawesome:"fas fa-filter"},
+	/* 17 */	{name:"Quotes", url:"./quotes", desc:"Curated list of Bitcoin-related quotes.", fontawesome:"fas fa-comment-dots"},
 	]
 };
 

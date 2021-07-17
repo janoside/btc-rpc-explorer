@@ -26,6 +26,7 @@ const config = require("./../app/config.js");
 const coreApi = require("./../app/api/coreApi.js");
 const addressApi = require("./../app/api/addressApi.js");
 const rpcApi = require("./../app/api/rpcApi.js");
+const btcQuotes = require("./../app/coins/btcQuotes.js");
 
 const forceCsrf = csurf({ ignoreMethods: [] });
 
@@ -2202,6 +2203,23 @@ router.get("/fun", function(req, res, next) {
 	res.locals.historicalData = sortedList;
 	
 	res.render("fun");
+
+	next();
+});
+
+router.get("/quotes", function(req, res, next) {
+	res.locals.btcQuotes = btcQuotes.items;
+
+	res.render("quotes");
+
+	next();
+});
+
+router.get("/quote/:quoteIndex", function(req, res, next) {
+	res.locals.quoteIndex = parseInt(req.params.quoteIndex);
+	res.locals.btcQuotes = btcQuotes.items;
+
+	res.render("quote");
 
 	next();
 });

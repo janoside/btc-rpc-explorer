@@ -260,23 +260,7 @@ html(lang="en")
 				
 				if (footerQuote && !crawlerBot)
 					.text-center.mt-3.mb-4
-						span.fs-4.font-serif "
-						span.fs-5.font-serif #{footerQuote.text}
-						span.fs-4.font-serif "
-						br
-						.ms-8
-							if (footerQuote.speaker.indexOf("https://twitter.com") >= 0)
-								- var account = footerQuote.speaker.substring("https://twitter.com/".length);
-								| — 
-								a.fs-5(href=footerQuote.speaker, target="_blank") @#{account}
-
-							else
-								span.fs-5 — #{footerQuote.speaker}
-
-							if (footerQuote.url)
-								small.text-muted.ms-2 (
-									a(href=footerQuote.url) link
-									| )
+						+quote(footerQuote)
 
 
 				hr

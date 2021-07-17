@@ -1,0 +1,19 @@
+extends layout
+
+block headContent
+	title #{coinConfig.name} Quotes
+
+block content
+	+pageTitle(`${coinConfig.name} Quotes`)
+
+
+	+dismissableInfoAlert("quotesNoteDismissed", "About Bitcoin Quotes...")
+		h6.mb-2 About Bitcoin Quotes
+
+		| This is a curated list of quotes that highlight key ideas in Bitcoin and related areas. Suggestions are welcome via an issue or PR on <a href='https://github.com/janoside/btc-rpc-explorer' target='_blank'>GitHub</a>.
+
+
+
+	each quote, quoteIndex in btcQuotes
+		.mt-3.mb-4
+			+quote(quote, quoteIndex)
