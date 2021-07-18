@@ -215,7 +215,7 @@ html(lang="en")
 
 		footer.footer.border-top.border-primary.bg-header-footer.pt-3.pb-1.px-3.text-white(style="border-width: 5px !important;")
 			.container
-				.row.mb-7
+				.row.mb-5
 					.col-7
 						.text-start
 							- var darkTheme = (userSettings.uiTheme == "dark");
@@ -258,10 +258,9 @@ html(lang="en")
 
 
 				
-				if (footerQuote && !crawlerBot)
-					.text-center.mt-3.mb-4
-						+quote(footerQuote)
-
+				if (!crawlerBot)
+					.mb-4
+						iframe(id="quoteIframe", src="./snippet/quote/random", onload="iframeLoaded('quoteIframe');", scrolling="no", height="0", style="width: 100%;")
 
 				hr
 
@@ -332,7 +331,7 @@ html(lang="en")
 		script(src="./js/bootstrap.bundle.min.js", integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf")
 		script(defer, src="./js/fontawesome.min.js", integrity="sha384-haqrlim99xjfMxRP6EWtafs0sB1WKcMdynwZleuUSwJR0mDeRYbhtY+KPMr+JL6f")
 
-		script(src="./js/site.js", integrity="sha384-TXXIdJrESOEzST0SpP/wCosO/fLqaSAHzYEI1E8FmWaAinjJavL/3YuAvoC8+pCa")
+		script(src="./js/site.js", integrity="sha384-vm5VVZ5fSWCFr7otUJ12yWkTUm/K5stVNlqyPnievY00QK3UB72Dl19nS1oyKGeU")
 		
 		script.
 			document.addEventListener("DOMContentLoaded", function(event) {

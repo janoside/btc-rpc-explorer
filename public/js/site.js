@@ -38,3 +38,11 @@ function copyTextToClipboard(text) {
 		console.error('Error copying text: ', err);
 	});
 }
+
+function iframeLoaded(iframeId) {
+	var iframeElement = document.getElementById(iframeId);
+
+	if (iframeElement) {
+		iframeElement.height = iframeElement.contentWindow.document.body.scrollHeight + "px";
+	}
+}

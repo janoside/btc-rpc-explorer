@@ -5,3 +5,4 @@ Disallow: /tx-stats
 Disallow: /peers
 Disallow: /mempool-transactions
 Disallow: /block-analysis/
+Disallow: /snippet/
