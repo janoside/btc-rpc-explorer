@@ -1412,12 +1412,21 @@ router.get("/tx/:transactionId", asyncHandler(async (req, res, next) => {
 
 					res.locals.result.getblock = blockHeader;
 
-					resolve();
+					resolve(blockHeader);
 
 				} catch (err) {
 					utils.logError("239rge0uwhse", err);
 
 					resolve();
+				}
+			}).then(function(blockHeader) {
+				// fix confirmations for cached transactions
+				if (!config.noInmemoryRpcCache && blockHeader && blockHeader.height) {
+					rpcApi.getBlockCount().then(function(blockcount){
+						var confs = blockcount - blockHeader.height + 1;
+						res.locals.tx.confirmations = confs;
+						res.locals.result.getrawtransaction.confirmations = confs;
+					});
 				}
 			}));
 		}
