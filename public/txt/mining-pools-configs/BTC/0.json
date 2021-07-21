@@ -484,6 +484,10 @@
 			"name" : "Binance Pool",
 			"link" : "https://pool.binance.com/"
 		},
+		"binance/": {
+            "name" : "Binance Pool",
+            "link" : "https://pool.binance.com/"
+        },
 		"/Minerium.com/" : {
 			"name" : "Minerium",
 			"link" : "https://www.minerium.com/"
@@ -554,7 +558,7 @@
 		},
 		"TogetherPool" : {
 			"name" : "TogetherPool",
-			"link" : ""
+			"link" : "https://www.togetherpool.com"
 		},
 		"/CODEBLACK/" : {
 			"name" : "CODEBLACK",
@@ -575,6 +579,10 @@
 		"/E2M/": {
             "name": "WAYI.CN",
             "link": "http://www.easy2mine.com/"
+        },
+        "Bitdeer": {
+            "name": "Bitdeer",
+            "link": "https://www.bitdeer.com/"
         }
 	},
 	"payout_addresses" : {
@@ -971,8 +979,8 @@
 			"link": "https://www.poolhb.com/"
 		},
 		"1M1Xw2rczxkF3p3wiNHaTmxvbpZZ7M6vaa" : {
-			"name": "1M1X",
-			"link": ""
+			"name": "Poolin",
+			"link": "https://www.poolin.com"
 		},
 		"39m5Wvn9ZqyhYmCYpsyHuGMt5YYw4Vmh1Z" : {
 			"name": "BytePool",
@@ -1188,7 +1196,7 @@
 		},
 		"bc1qwlrsvgtn99rqp3fgaxq6f6jkgms80rnej0a8tc" : {
 			"name" : "TogetherPool",
-			"link" : ""
+			"link" : "https://www.togetherpool.com"
 		},
 		"1AdbRdfLqxekeTjkybHc84iPQW11t4sGqM" : {
 			"name" : "CODEBLACK",

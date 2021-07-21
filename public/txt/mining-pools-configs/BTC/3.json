@@ -567,6 +567,10 @@
         "TogetherPool": {
             "name": "TogetherPool",
             "link": "https://www.togetherpool.com"
+        },
+        "Bitdeer": {
+            "name": "Bitdeer",
+            "link": "https://www.bitdeer.com/"
         }
     },
     "payout_addresses" : {
