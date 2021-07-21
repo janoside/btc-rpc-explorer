@@ -1,9 +1,14 @@
 extends ../layout
 
+include ./admin-mixins.pug
+
 block headContent
 	title Admin Dashboard
 
 block content
+	+adminNav
+
+	
 	+pageTitle("Admin Dashboard")
 
 	+pageTabs(["Details", "JSON"])

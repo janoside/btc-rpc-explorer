@@ -77,7 +77,7 @@ router.get("/dashboard", function(req, res, next) {
 	next();
 });
 
-router.get("/stats", function(req, res, next) {
+router.get("/os-stats", function(req, res, next) {
 	res.locals.stats = statTracker.currentStats();
 	res.locals.appStats = appStats.getAllAppStats();
 	res.locals.appStatNames = appStats.statNames;
@@ -112,7 +112,48 @@ router.get("/stats", function(req, res, next) {
 	});
 	
 
-	res.render("admin/stats");
+	res.render("admin/os-stats");
+
+	next();
+});
+
+
+router.get("/app-stats", function(req, res, next) {
+	res.locals.stats = statTracker.currentStats();
+	res.locals.appStats = appStats.getAllAppStats();
+	res.locals.appStatNames = appStats.statNames;
+
+	res.locals.performanceStats = [];
+	for (const [key, value] of Object.entries(res.locals.stats.performance)) {
+		res.locals.performanceStats.push([key, value]);
+	}
+
+	res.locals.performanceStats.sort((a, b) => {
+		return a[0].localeCompare(b[0]);
+	});
+
+
+	res.locals.eventStats = [];
+	for (const [key, value] of Object.entries(res.locals.stats.event)) {
+		res.locals.eventStats.push([key, value]);
+	}
+
+	res.locals.eventStats.sort((a, b) => {
+		return a[0].localeCompare(b[0]);
+	});
+
+
+	res.locals.valueStats = [];
+	for (const [key, value] of Object.entries(res.locals.stats.value)) {
+		res.locals.valueStats.push([key, value]);
+	}
+
+	res.locals.valueStats.sort((a, b) => {
+		return a[0].localeCompare(b[0]);
+	});
+	
+
+	res.render("admin/app-stats");
 
 	next();
 });
