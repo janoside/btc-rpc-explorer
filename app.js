@@ -168,6 +168,7 @@ expressApp.set('view engine', 'pug');
 if (process.env.NODE_ENV != "local") {
 	// enable view cache regardless of env (development/production)
 	// ref: https://pugjs.org/api/express.html
+	debugLog("Enabling view caching (performance will be improved but template edits will not be reflected)")
 	expressApp.enable('view cache');
 }
 
