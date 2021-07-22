@@ -33,7 +33,7 @@
 		"bitcoinjs-lib": "^5.2.0",
 		"bluebird": "^3.7.2",
 		"body-parser": "^1.19.0",
-		"bootstrap": "5.0.1",
+		"bootstrap": "^5.0.2",
 		"btc-rpc-client": "github:btc21/btc-rpc-client",
 		"compression": "1.7.4",
 		"cookie-parser": "^1.4.5",
