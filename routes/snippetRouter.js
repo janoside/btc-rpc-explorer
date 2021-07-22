@@ -36,7 +36,8 @@ router.get("/formatCurrencyAmount/:amt", function(req, res, next) {
 });
 
 router.get("/quote/random", function(req, res, next) {
-	res.locals.quote = btcQuotes.items[utils.randomInt(0, btcQuotes.items.length)];
+	res.locals.quoteIndex = utils.randomInt(0, btcQuotes.items.length);
+	res.locals.quote = btcQuotes.items[res.locals.quoteIndex];
 
 	res.render("snippets/quote");
 

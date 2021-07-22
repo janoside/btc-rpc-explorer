@@ -791,10 +791,6 @@ expressApp.use(function(req, res, next) {
 		req.session.userMessageType = null;
 	}
 
-	if (btcQuotes) {
-		res.locals.footerQuote = btcQuotes.items[utils.randomInt(0, btcQuotes.items.length)];
-	}
-
 	if (req.session.query) {
 		res.locals.query = req.session.query;
 
