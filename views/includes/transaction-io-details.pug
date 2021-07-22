@@ -101,7 +101,7 @@ mixin asciiHexDataDisplay(dataName, uniqueId, hex)
 													a(href=`./tx/${txInput.txid}#output-${txVin.vout}`) #{utils.ellipsize(txInput.txid, 20)}[#{txVin.vout}]
 
 										else
-											
+											0
 
 
 								.tx-io-value.mt-3.mt-md-0
@@ -195,6 +195,10 @@ mixin asciiHexDataDisplay(dataName, uniqueId, hex)
 				- hiddenRow = true;
 				- hiddenRowCount++;
 
+			- var spent = false;
+			if (false && config.electrumServers && config.electrumServers.length > 0)
+				- spent = electrumAddressApi.lookupOutpointTx(vout, voutIndex)
+
 			div(data-txid=tx.txid, class=(hiddenRow ? "d-none" : ""))
 				.clearfix
 					.tx-io-label
@@ -220,9 +224,17 @@ mixin asciiHexDataDisplay(dataName, uniqueId, hex)
 												+darkBadge
 													span(title=`Output Type: ${utils.outputTypeName(vout.scriptPubKey.type)}`, data-bs-toggle="tooltip") #{utils.outputTypeAbbreviation(vout.scriptPubKey.type)}
 
+										if (spent)
+											.word-wrap
+												a(href=`./tx/${spent[0]}#output-${voutIndex}`) #{utils.ellipsizeMiddle(spent[0], 22)}
+												span ##{voutIndex}
 										each addr in vout.scriptPubKey.addresses
-											a(id=`output-${voutIndex}`, href=`./address/${addr}`)
-												span.font-monospace.word-wrap(class=(highlightRow ? "text-info" : null)) #{addr}
+											if (spent)
+												span.me-1 (addr:
+													a(id=`output-${voutIndex}`, href=`./address/${addr}`) #{addr})
+											else
+												a(id=`output-${voutIndex}`, href=`./address/${addr}`)
+													span.font-monospace.word-wrap(class=(highlightRow ? "text-info" : null)) #{addr}
 
 											if (highlightRow)
 												span(title="Current address", data-bs-toggle="tooltip")

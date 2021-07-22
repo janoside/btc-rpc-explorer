@@ -353,6 +353,25 @@ function lookupTxBlockHash(txid) {
 	});
 }
 
+// Lookup the spending transaction and height of a given transaction output. Only works with Electrum 1.5 protocol
+
+function lookupOutpointTx(txid, txout_idx) {
+	if (electrumClients.length == 0) {
+		return Promise.reject({ error: "No Electrum Server Connection", userText: noConnectionsErrorText });
+	}
+
+	return runOnAllServers(function(electrumClient) {
+		return electrumClient.request('blockchain.outpoint.subscribe', [txid, txout_idx]);
+	}).then(function(results) {
+		if (results.length <= 2) {
+			return electrumClient.request('blockchain.outpoint.unsubscribe', [txid, txout_idx]);
+		} else {
+			return results[1].slice(1)
+		}
+	});
+}
+
+
 function logStats(cmd, dt, success) {
 	if (!global.electrumStats.rpc[cmd]) {
 		global.electrumStats.rpc[cmd] = {count:0, time:0, successes:0, failures:0};
