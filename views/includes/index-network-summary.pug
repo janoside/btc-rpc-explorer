@@ -146,9 +146,10 @@ if (exchangeRates)
 
 	hr.mt-3.mb-3
 
-	+summaryRow(4)
-		+summaryItem("Mempool")
-			span(class=(mempoolInfo.size > 11000) ? "text-danger" : (mempoolInfo.size > 7000 ? "text-warning" : "text-success")) #{mempoolInfo.size.toLocaleString()}
+	+summaryRow((mempoolInfo == undefined ? 0 : 1) + (smartFeeEstimates ? ((smartFeeEstimates[1] ? 1 : 0) + (smartFeeEstimates[6] ? 1 : 0) + (smartFeeEstimates[144] ? 1 : 0)) : 0))
+		if (mempoolInfo)
+			+summaryItem("Mempool")
+				span(class=(mempoolInfo.size > 11000) ? "text-danger" : (mempoolInfo.size > 7000 ? "text-warning" : "text-success")) #{mempoolInfo.size.toLocaleString()}
 
 		if (false)
 			+summaryItem("Next Block (est.)")
@@ -160,17 +161,20 @@ if (exchangeRates)
 					i.fas.fa-circle
 				small.ms-2.text-muted sat/vB
 
-		+summaryItem("Smart Fee (1 block)")
-			| #{smartFeeEstimates[1]}
-			small.ms-2.text-muted sat/vB
+		if (smartFeeEstimates && smartFeeEstimates[1])
+			+summaryItem("Smart Fee (1 block)")
+				| #{smartFeeEstimates[1]}
+				small.ms-2.text-muted sat/vB
 
-		+summaryItem("Smart Fee (1 hr)")
-			| #{smartFeeEstimates[6]}
-			small.ms-2.text-muted sat/vB
+		if (smartFeeEstimates && smartFeeEstimates[6])
+			+summaryItem("Smart Fee (1 hr)")
+				| #{smartFeeEstimates[6]}
+				small.ms-2.text-muted sat/vB
 
-		+summaryItem("Smart Fee (1 day)")
-			| #{smartFeeEstimates[144]}
-			small.ms-2.text-muted sat/vB
+		if (smartFeeEstimates && smartFeeEstimates[144])
+			+summaryItem("Smart Fee (1 day)")
+				| #{smartFeeEstimates[144]}
+				small.ms-2.text-muted sat/vB
 
 	if (userSettings.homepageShowTechDetails == "true")
 		hr.mt-3.mb-3

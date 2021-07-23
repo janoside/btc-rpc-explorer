@@ -69,21 +69,16 @@ router.get("/", asyncHandler(async (req, res, next) => {
 
 		var promises = [];
 
-		// promiseResults[0]
-		promises.push(new Promise(async (resolve, reject) => {
-			res.locals.mempoolInfo = await utils.timePromise("promises.index.getMempoolInfo", coreApi.getMempoolInfo());
-			
-			resolve();
+		promises.push(utils.safePromise("homepage_getMempoolInfo", async () => {
+			res.locals.mempoolInfo = await coreApi.getMempoolInfo();
 		}));
 
-		promises.push(new Promise(async (resolve, reject) => {
-			res.locals.miningInfo = await utils.timePromise("promises.index.getMiningInfo", coreApi.getMiningInfo());
-
-			resolve();
+		promises.push(utils.safePromise("homepage_getMiningInfo", async () => {
+			res.locals.miningInfo = await coreApi.getMiningInfo();
 		}));
 
-		promises.push(new Promise(async (resolve, reject) => {
-			const rawSmartFeeEstimates = await utils.timePromise("promises.index.getSmartFeeEstimates", coreApi.getSmartFeeEstimates("CONSERVATIVE", feeConfTargets));
+		promises.push(utils.safePromise("homepage_getSmartFeeEstimates", async () => {
+			const rawSmartFeeEstimates = await coreApi.getSmartFeeEstimates("CONSERVATIVE", feeConfTargets);
 
 			var smartFeeEstimates = {};
 
@@ -99,24 +94,19 @@ router.get("/", asyncHandler(async (req, res, next) => {
 			}
 
 			res.locals.smartFeeEstimates = smartFeeEstimates;
-
-			resolve();
 		}));
 
-		promises.push(new Promise(async (resolve, reject) => {
-			res.locals.hashrate7d = await utils.timePromise("promises.index.getNetworkHashrate-1008", coreApi.getNetworkHashrate(1008));
-
-			resolve();
+		promises.push(utils.safePromise("homepage_getNetworkHashrate", async () => {
+			res.locals.hashrate7d = await coreApi.getNetworkHashrate(1008);
 		}));
 
-		promises.push(new Promise(async (resolve, reject) => {
-			res.locals.hashrate30d = await utils.timePromise("promises.index.getNetworkHashrate-4320", coreApi.getNetworkHashrate(4320));
-
-			resolve();
+		promises.push(utils.safePromise("homepage_getNetworkHashrate", async () => {
+			res.locals.hashrate30d = await coreApi.getNetworkHashrate(4320);
 		}));
 
+		
 
-		const getblockchaininfo = await utils.timePromise("promises.index.getBlockchainInfo", coreApi.getBlockchainInfo());
+		const getblockchaininfo = await utils.timePromise("homepage_getBlockchainInfo", coreApi.getBlockchainInfo());
 		res.locals.getblockchaininfo = getblockchaininfo;
 
 		res.locals.difficultyPeriod = parseInt(Math.floor(getblockchaininfo.blocks / coinConfig.difficultyAdjustmentBlockCount));
@@ -134,8 +124,8 @@ router.get("/", asyncHandler(async (req, res, next) => {
 			blockHeights.push(0);
 		}
 
-		promises.push(new Promise(async (resolve, reject) => {
-			const rawblockstats = await utils.timePromise("promises.index.getBlocksStatsByHeight", coreApi.getBlocksStatsByHeight(blockHeights));
+		promises.push(utils.safePromise("homepage_getBlocksStatsByHeight", async () => {
+			const rawblockstats = await coreApi.getBlocksStatsByHeight(blockHeights);
 
 			if (rawblockstats && rawblockstats.length > 0 && rawblockstats[0] != null) {
 				res.locals.blockstatsByHeight = {};
@@ -146,26 +136,21 @@ router.get("/", asyncHandler(async (req, res, next) => {
 					res.locals.blockstatsByHeight[blockstats.height] = blockstats;
 				}
 			}
-
-			resolve();
 		}));
 
-		promises.push(new Promise(async (resolve, reject) => {
+		promises.push(utils.safePromise("homepage_getBlockHeaderByHeight", async () => {
 			let h = coinConfig.difficultyAdjustmentBlockCount * res.locals.difficultyPeriod;
-			res.locals.difficultyPeriodFirstBlockHeader = await utils.timePromise("promises.index.getBlockHeaderByHeight", coreApi.getBlockHeaderByHeight(h));
-			
-			resolve();
+			res.locals.difficultyPeriodFirstBlockHeader = await coreApi.getBlockHeaderByHeight(h);
 		}));
 
-		promises.push(new Promise(async (resolve, reject) => {
-			const latestBlocks = await utils.timePromise(`promises.index.getBlocksByHeight`, coreApi.getBlocksByHeight(blockHeights));
-
+		promises.push(utils.safePromise("homepage_getBlocksByHeight", async () => {
+			const latestBlocks = await coreApi.getBlocksByHeight(blockHeights);
+			
 			res.locals.latestBlocks = latestBlocks;
 			res.locals.blocksUntilDifficultyAdjustment = ((res.locals.difficultyPeriod + 1) * coinConfig.difficultyAdjustmentBlockCount) - latestBlocks[0].height;
-			
-			resolve();
 		}));
 
+		
 		var targetBlocksPerDay = 24 * 60 * 60 / global.coinConfig.targetBlockTimeSeconds;
 		res.locals.targetBlocksPerDay = targetBlocksPerDay;
 
@@ -181,131 +166,118 @@ router.get("/", asyncHandler(async (req, res, next) => {
 
 			res.locals.chainTxStats = {};
 			for (var i = 0; i < chainTxStatsIntervals.length; i++) {
-				promises.push(new Promise(async (resolve, reject) => {
-					res.locals.chainTxStats[chainTxStatsIntervals[i][0]] = await utils.timePromise(`promises.index.getChainTxStats-${chainTxStatsIntervals[i][0]}`, coreApi.getChainTxStats(chainTxStatsIntervals[i][0]));
-					
-					resolve();
+				promises.push(utils.safePromise(`homepage_getChainTxStats_${chainTxStatsIntervals[i][0]}`, async () => {
+					res.locals.chainTxStats[chainTxStatsIntervals[i][0]] = await coreApi.getChainTxStats(chainTxStatsIntervals[i][0]);
 				}));
 			}
 
 			chainTxStatsIntervals.push([-1, "All time"]);
 			res.locals.chainTxStatsIntervals = chainTxStatsIntervals;
 
-			promises.push(new Promise(async (resolve, reject) => {
-				res.locals.chainTxStats[-1] = await utils.timePromise(`promises.index.getChainTxStats-allTime`, coreApi.getChainTxStats(getblockchaininfo.blocks - 1));
-				
-				resolve();
+			promises.push(utils.safePromise("homepage_getChainTxStats_allTime", async () => {
+				res.locals.chainTxStats[-1] = await coreApi.getChainTxStats(getblockchaininfo.blocks - 1);
 			}));
 		}
 
-		promises.push(new Promise(async (resolve, reject) => {
-			try {
-				let blockTemplate = await global.rpcClient.command('getblocktemplate', {"rules": ["segwit"]});
+		promises.push(utils.safePromise("homepage_getblocktemplate", async () => {
+			let blockTemplate = await global.rpcClient.command('getblocktemplate', {"rules": ["segwit"]});
 
-				res.locals.nextBlockTemplate = blockTemplate;
-				
-				var minFeeRate = 1000000;
-				var maxFeeRate = 0;
-				var minFeeTxid = null;
-				var maxFeeTxid = null;
+			res.locals.nextBlockTemplate = blockTemplate;
+			
+			var minFeeRate = 1000000;
+			var maxFeeRate = 0;
+			var minFeeTxid = null;
+			var maxFeeTxid = null;
 
-				var parentTxIndexes = new Set();
-				blockTemplate.transactions.forEach(tx => {
-					if (tx.depends && tx.depends.length > 0) {
-						tx.depends.forEach(index => {
-							parentTxIndexes.add(index);
-						});
-					}
-				});
-
-				var txIndex = 1;
-				blockTemplate.transactions.forEach(tx => {
-					var feeRate = tx.fee / tx.weight * 4;
-					if (tx.depends && tx.depends.length > 0) {
-						var totalFee = tx.fee;
-						var totalWeight = tx.weight;
-
-						tx.depends.forEach(index => {
-							totalFee += blockTemplate.transactions[index - 1].fee;
-							totalWeight += blockTemplate.transactions[index - 1].weight;
-						});
-
-						tx.avgFeeRate = totalFee / totalWeight * 4;
-					}
-
-					// txs that are ancestors should not be included in min/max
-					// calculations since their native fee rate is different than
-					// their effective fee rate (which takes descendant fee rates
-					// into account)
-					if (!parentTxIndexes.has(txIndex) && (!tx.depends || tx.depends.length == 0)) {
-						if (feeRate < minFeeRate) {
-							minFeeRate = feeRate;
-							minFeeTxid = tx.txid;
-						}
-
-						if (feeRate > maxFeeRate) {
-							maxFeeRate = feeRate;
-							maxFeeTxid = tx.txid;
-						}
-					}
-
-					txIndex++;
-				});
-
-				res.locals.nextBlockFeeRateGroups = [];
-				var groupCount = 10;
-				for (var i = 0; i < groupCount; i++) {
-					res.locals.nextBlockFeeRateGroups.push({
-						minFeeRate: minFeeRate + i * (maxFeeRate - minFeeRate) / groupCount,
-						maxFeeRate: minFeeRate + (i + 1) * (maxFeeRate - minFeeRate) / groupCount,
-						totalWeight: 0,
-						txidCount: 0,
-						//txids: []
+			var parentTxIndexes = new Set();
+			blockTemplate.transactions.forEach(tx => {
+				if (tx.depends && tx.depends.length > 0) {
+					tx.depends.forEach(index => {
+						parentTxIndexes.add(index);
 					});
 				}
+			});
 
-				var txIncluded = 0;
-				blockTemplate.transactions.forEach(tx => {
-					var feeRate = tx.avgFeeRate ? tx.avgFeeRate : (tx.fee / tx.weight * 4);
+			var txIndex = 1;
+			blockTemplate.transactions.forEach(tx => {
+				var feeRate = tx.fee / tx.weight * 4;
+				if (tx.depends && tx.depends.length > 0) {
+					var totalFee = tx.fee;
+					var totalWeight = tx.weight;
 
-					for (var i = 0; i < res.locals.nextBlockFeeRateGroups.length; i++) {
-						if (feeRate >= res.locals.nextBlockFeeRateGroups[i].minFeeRate) {
-							if (feeRate < res.locals.nextBlockFeeRateGroups[i].maxFeeRate) {
-								res.locals.nextBlockFeeRateGroups[i].totalWeight += tx.weight;
-								res.locals.nextBlockFeeRateGroups[i].txidCount++;
-								
-								//res.locals.nextBlockFeeRateGroups[i].txids.push(tx.txid);
+					tx.depends.forEach(index => {
+						totalFee += blockTemplate.transactions[index - 1].fee;
+						totalWeight += blockTemplate.transactions[index - 1].weight;
+					});
 
-								txIncluded++;
+					tx.avgFeeRate = totalFee / totalWeight * 4;
+				}
 
-								break;
-							}
+				// txs that are ancestors should not be included in min/max
+				// calculations since their native fee rate is different than
+				// their effective fee rate (which takes descendant fee rates
+				// into account)
+				if (!parentTxIndexes.has(txIndex) && (!tx.depends || tx.depends.length == 0)) {
+					if (feeRate < minFeeRate) {
+						minFeeRate = feeRate;
+						minFeeTxid = tx.txid;
+					}
+
+					if (feeRate > maxFeeRate) {
+						maxFeeRate = feeRate;
+						maxFeeTxid = tx.txid;
+					}
+				}
+
+				txIndex++;
+			});
+
+			res.locals.nextBlockFeeRateGroups = [];
+			var groupCount = 10;
+			for (var i = 0; i < groupCount; i++) {
+				res.locals.nextBlockFeeRateGroups.push({
+					minFeeRate: minFeeRate + i * (maxFeeRate - minFeeRate) / groupCount,
+					maxFeeRate: minFeeRate + (i + 1) * (maxFeeRate - minFeeRate) / groupCount,
+					totalWeight: 0,
+					txidCount: 0,
+					//txids: []
+				});
+			}
+
+			var txIncluded = 0;
+			blockTemplate.transactions.forEach(tx => {
+				var feeRate = tx.avgFeeRate ? tx.avgFeeRate : (tx.fee / tx.weight * 4);
+
+				for (var i = 0; i < res.locals.nextBlockFeeRateGroups.length; i++) {
+					if (feeRate >= res.locals.nextBlockFeeRateGroups[i].minFeeRate) {
+						if (feeRate < res.locals.nextBlockFeeRateGroups[i].maxFeeRate) {
+							res.locals.nextBlockFeeRateGroups[i].totalWeight += tx.weight;
+							res.locals.nextBlockFeeRateGroups[i].txidCount++;
+							
+							//res.locals.nextBlockFeeRateGroups[i].txids.push(tx.txid);
+
+							txIncluded++;
+
+							break;
 						}
 					}
-				});
+				}
+			});
 
-				res.locals.nextBlockFeeRateGroups.forEach(group => {
-					group.weightRatio = group.totalWeight / blockTemplate.weightlimit;
-				});
+			res.locals.nextBlockFeeRateGroups.forEach(group => {
+				group.weightRatio = group.totalWeight / blockTemplate.weightlimit;
+			});
 
 
 
-				res.locals.nextBlockMinFeeRate = minFeeRate;
-				res.locals.nextBlockMaxFeeRate = maxFeeRate;
-				res.locals.nextBlockMinFeeTxid = minFeeTxid;
-				res.locals.nextBlockMaxFeeTxid = maxFeeTxid;
+			res.locals.nextBlockMinFeeRate = minFeeRate;
+			res.locals.nextBlockMaxFeeRate = maxFeeRate;
+			res.locals.nextBlockMinFeeTxid = minFeeTxid;
+			res.locals.nextBlockMaxFeeTxid = maxFeeTxid;
 
-				var subsidy = coinConfig.blockRewardFunction(blockTemplate.height, global.activeBlockchain);
+			var subsidy = coinConfig.blockRewardFunction(blockTemplate.height, global.activeBlockchain);
 
-				res.locals.nextBlockTotalFees = new Decimal(blockTemplate.coinbasevalue).dividedBy(coinConfig.baseCurrencyUnit.multiplier).minus(new Decimal(subsidy));
-
-				resolve();
-
-			} catch (err) {
-				utils.logError("3r8weyhfugehe", err);
-
-				resolve();
-			}
+			res.locals.nextBlockTotalFees = new Decimal(blockTemplate.coinbasevalue).dividedBy(coinConfig.baseCurrencyUnit.multiplier).minus(new Decimal(subsidy));
 		}));
 
 
@@ -365,7 +337,7 @@ router.get("/", asyncHandler(async (req, res, next) => {
 		};
 
 
-		res.render("index");
+		utils.timeFunction("homepage_render", () => { res.render("index") });
 
 		next();
 
@@ -374,7 +346,7 @@ router.get("/", asyncHandler(async (req, res, next) => {
 					
 		res.locals.userMessage = "Error building page: " + err;
 
-		res.render("index");
+		utils.timeFunction("homepage_render", () => { res.render("index") });
 
 		next();
 	}
@@ -384,28 +356,20 @@ router.get("/node-details", asyncHandler(async (req, res, next) => {
 	try {
 		const promises = [];
 
-		promises.push(new Promise(async (resolve, reject) => {
-			res.locals.getblockchaininfo = await utils.timePromise("promises.node-details.getBlockchainInfo", coreApi.getBlockchainInfo());
-
-			resolve();
+		promises.push(utils.safePromise("node_details_getBlockchainInfo", async () => {
+			res.locals.getblockchaininfo = await coreApi.getBlockchainInfo();
 		}));
 
-		promises.push(new Promise(async (resolve, reject) => {
-			res.locals.getnetworkinfo = await utils.timePromise("promises.node-details.getNetworkInfo", coreApi.getNetworkInfo());
-
-			resolve();
+		promises.push(utils.safePromise("node_details_getNetworkInfo", async () => {
+			res.locals.getnetworkinfo = await coreApi.getNetworkInfo();
 		}));
 
-		promises.push(new Promise(async (resolve, reject) => {
-			res.locals.uptimeSeconds = await utils.timePromise("promises.node-details.getUptimeSeconds", coreApi.getUptimeSeconds());
-
-			resolve();
+		promises.push(utils.safePromise("node_details_getUptimeSeconds", async () => {
+			res.locals.uptimeSeconds = await coreApi.getUptimeSeconds();
 		}));
 
-		promises.push(new Promise(async (resolve, reject) => {
-			res.locals.getnettotals = await utils.timePromise("promises.node-details.getNetTotals", coreApi.getNetTotals());
-
-			resolve();
+		promises.push(utils.safePromise("node_details_getNetTotals", async () => {
+			res.locals.getnettotals = await coreApi.getNetTotals();
 		}));
 
 		await Promise.all(promises);
@@ -448,12 +412,11 @@ router.get("/peers", asyncHandler(async (req, res, next) => {
 	try {
 		const promises = [];
 
-		promises.push(new Promise(async (resolve, reject) => {
-			res.locals.peerSummary = await utils.timePromise("promises.peers.getPeerSummary", coreApi.getPeerSummary());
-
-			resolve();
+		promises.push(utils.safePromise("peers_getPeerSummary", async () => {
+			res.locals.peerSummary = await coreApi.getPeerSummary();
 		}));
 
+		
 		await Promise.all(promises);
 
 		var peerSummary = res.locals.peerSummary;
@@ -470,7 +433,7 @@ router.get("/peers", asyncHandler(async (req, res, next) => {
 		}
 
 		if (peerIps.length > 0) {
-			res.locals.peerIpSummary = await utils.timePromise("promises.peers.geoLocateIpAddresses", utils.geoLocateIpAddresses(peerIps));
+			res.locals.peerIpSummary = await utils.timePromise("peers_geoLocateIpAddresses", utils.geoLocateIpAddresses(peerIps));
 			res.locals.mapBoxComApiAccessKey = config.credentials.mapBoxComApiAccessKey;
 		}
 
@@ -621,7 +584,7 @@ router.get("/blocks", asyncHandler(async (req, res, next) => {
 		// if pruning is active, global.pruneHeight is used when displaying this page
 		// global.pruneHeight is updated whenever we send a getblockchaininfo RPC to the node
 
-		var getblockchaininfo = await utils.timePromise("promises.blocks.geoLocateIpAddresses", coreApi.getBlockchainInfo());
+		var getblockchaininfo = await utils.timePromise("blocks_geoLocateIpAddresses", coreApi.getBlockchainInfo());
 
 		res.locals.blockCount = getblockchaininfo.blocks;
 		res.locals.blockOffset = offset;
@@ -648,15 +611,14 @@ router.get("/blocks", asyncHandler(async (req, res, next) => {
 
 		var promises = [];
 
-		promises.push(new Promise(async (resolve, reject) => {
-			res.locals.blocks = await utils.timePromise("promises.blocks.getBlocksByHeight", coreApi.getBlocksByHeight(blockHeights));
-
-			resolve();
+		promises.push(utils.safePromise("blocks_getBlocksByHeight", async () => {
+			res.locals.blocks = await coreApi.getBlocksByHeight(blockHeights);
 		}));
 
-		promises.push(new Promise(async (resolve, reject) => {
+		
+		promises.push(utils.safePromise("blocks_getBlocksByHeight", async () => {
 			try {
-				var rawblockstats = await utils.timePromise("promises.blocks.getBlocksStatsByHeight", coreApi.getBlocksStatsByHeight(blockHeights));
+				var rawblockstats = await coreApi.getBlocksStatsByHeight(blockHeights);
 
 				if (rawblockstats != null && rawblockstats.length > 0 && rawblockstats[0] != null) {
 					res.locals.blockstatsByHeight = {};
@@ -702,7 +664,7 @@ router.get("/blocks", asyncHandler(async (req, res, next) => {
 
 router.get("/mining-summary", asyncHandler(async (req, res, next) => {
 	try {
-		var getblockchaininfo = await utils.timePromise("promises.mining-summary.getBlockchainInfo", coreApi.getBlockchainInfo());
+		var getblockchaininfo = await utils.timePromise("mining_summary_getBlockchainInfo", coreApi.getBlockchainInfo());
 
 		res.locals.currentBlockHeight = getblockchaininfo.blocks;
 
@@ -1046,36 +1008,30 @@ router.get("/block-height/:blockHeight", asyncHandler(async (req, res, next) => 
 		res.locals.offset = offset;
 		res.locals.paginationBaseUrl = "./block-height/" + blockHeight;
 
-		const result = await utils.timePromise("promises.block-height.getBlockByHeight", coreApi.getBlockByHeight(blockHeight));
+		const result = await utils.timePromise("block_height_getBlockByHeight", coreApi.getBlockByHeight(blockHeight));
 		res.locals.result.getblockbyheight = result;
 
 		var promises = [];
 
-		promises.push(new Promise(async (resolve, reject) => {
-			const blockWithTransactions = await utils.timePromise("promises.block-height.getBlockByHashWithTransactions", coreApi.getBlockByHashWithTransactions(result.hash, limit, offset));
+		promises.push(utils.safePromise("block_height_getBlockByHashWithTransactions", async () => {
+			const blockWithTransactions = await coreApi.getBlockByHashWithTransactions(result.hash, limit, offset);
 
 			res.locals.result.getblock = blockWithTransactions.getblock;
 			res.locals.result.transactions = blockWithTransactions.transactions;
 			res.locals.result.txInputsByTransaction = blockWithTransactions.txInputsByTransaction;
-
-			resolve();
 		}));
 
-		promises.push(new Promise(async (resolve, reject) => {
+		promises.push(utils.safePromise("block_height_getBlockStats", async () => {
 			try {
-				const blockStats = await utils.timePromise("promises.block-height.getBlockStats", coreApi.getBlockStats(result.hash));
+				const blockStats = await coreApi.getBlockStats(result.hash);
 				
 				res.locals.result.blockstats = blockStats;
-
-				resolve();
 
 			} catch (err) {
 				if (global.prunedBlockchain) {
 					// unavailable, likely due to pruning
 					debugLog('Failed loading block stats', err);
 					res.locals.result.blockstats = null;
-
-					resolve();
 
 				} else {
 					throw err;
@@ -1145,33 +1101,27 @@ router.get("/block/:blockHash", asyncHandler(async (req, res, next) => {
 
 		var promises = [];
 
-		promises.push(new Promise(async (resolve, reject) => {
-			const blockWithTransactions = await utils.timePromise("promises.block-hash.getBlockByHashWithTransactions", coreApi.getBlockByHashWithTransactions(blockHash, limit, offset));
-			
+		promises.push(utils.safePromise("block_getBlockByHashWithTransactions", async () => {
+			const blockWithTransactions = await coreApi.getBlockByHashWithTransactions(blockHash, limit, offset);
+
 			res.locals.result.getblock = blockWithTransactions.getblock;
 			res.locals.result.transactions = blockWithTransactions.transactions;
 			res.locals.result.txInputsByTransaction = blockWithTransactions.txInputsByTransaction;
-
-			resolve();
 		}));
 
-		promises.push(new Promise(async (resolve, reject) => {
+		promises.push(utils.safePromise("block_getBlockStats", async () => {
 			try {
-				const blockStats = await utils.timePromise("promises.block-hash.getBlockStats", coreApi.getBlockStats(blockHash));
+				const blockStats = await coreApi.getBlockStats(blockHash);
 				
 				res.locals.result.blockstats = blockStats;
-
-				resolve();
 
 			} catch (err) {
 				if (global.prunedBlockchain) {
 					// unavailable, likely due to pruning
 					debugLog('Failed loading block stats, likely due to pruning', err);
 
-					resolve();
-
 				} else {
-					reject(err);
+					throw err;
 				}
 			}
 		}));
@@ -1227,7 +1177,7 @@ router.get("/predicted-blocks", asyncHandler(async (req, res, next) => {
 
 router.get("/predicted-blocks-old", asyncHandler(async (req, res, next) => {
 	try {
-		const mempoolTxids = await utils.timePromise("promises.predicted-blocks.getAllMempoolTxids", coreApi.getAllMempoolTxids());
+		const mempoolTxids = await utils.timePromise("predicted_blocks_getAllMempoolTxids", coreApi.getAllMempoolTxids());
 		let mempoolTxSummaries = await coreApi.getMempoolTxSummaries(mempoolTxids, Math.random().toString(36).substr(2, 5), (x) => {});
 
 		const blockTemplate = {weight: 0, totalFees: new Decimal(0), vB: 0, txCount:0, txids: []};
@@ -1376,7 +1326,7 @@ router.get("/tx/:transactionId", asyncHandler(async (req, res, next) => {
 				})
 				: coreApi.getRawTransactionsWithInputs([txid], -1);
 
-		const rawTxResult = await utils.timePromise("promises.tx.getRawTransactionsWithInputs", txPromise);
+		const rawTxResult = await utils.timePromise("tx_getRawTransactionsWithInputs", txPromise);
 
 		var tx = rawTxResult.transactions[0];
 
@@ -1389,35 +1339,28 @@ router.get("/tx/:transactionId", asyncHandler(async (req, res, next) => {
 
 		var promises = [];
 
-		promises.push(new Promise(async (resolve, reject) => {
-			const utxos = await utils.timePromise("promises.tx.getTxUtxos", coreApi.getTxUtxos(tx));
+		promises.push(utils.safePromise("tx_getTxUtxos", async () => {
+			const utxos = await coreApi.getTxUtxos(tx);
 			
 			res.locals.utxos = utxos;
-				
-			resolve();
 		}));
 
 		if (tx.confirmations == null) {
-			promises.push(new Promise(async (resolve, reject) => {
-				const mempoolDetails = await utils.timePromise("promises.tx.getMempoolTxDetails", coreApi.getMempoolTxDetails(txid, true));
+			promises.push(utils.safePromise("tx_getMempoolTxDetails", async () => {
+				const mempoolDetails = await coreApi.getMempoolTxDetails(txid, true);
 
 				res.locals.mempoolDetails = mempoolDetails;
-					
-				resolve();
 			}));
+			
 		} else {
-			promises.push(new Promise(async (resolve, reject) => {
+			promises.push(utils.safePromise("tx_getblockheader", async () => {
 				try {
 					const blockHeader = await global.rpcClient.command('getblockheader', tx.blockhash);
 
 					res.locals.result.getblock = blockHeader;
 
-					resolve();
-
 				} catch (err) {
 					utils.logError("239rge0uwhse", err);
-
-					resolve();
 				}
 			}));
 		}
@@ -1548,7 +1491,7 @@ router.get("/address/:address", function(req, res, next) {
 
 			res.locals.electrumScripthash = addrScripthash;
 
-			promises.push(new Promise(function(resolve, reject) {
+			promises.push(utils.safePromise("address_getAddressDetails", async () => {
 				addressApi.getAddressDetails(address, validateaddressResult.scriptPubKey, sort, limit, offset).then(function(addressDetailsResult) {
 					var addressDetails = addressDetailsResult.addressDetails;
 
@@ -1614,7 +1557,7 @@ router.get("/address/:address", function(req, res, next) {
 								var blockHeightsPromises = [];
 								if (coinbaseTxs.length > 0) {
 									// we need to query some blockHeights by hash for some coinbase txs
-									blockHeightsPromises.push(new Promise(function(resolve2, reject2) {
+									blockHeightsPromises.push(utils.safePromise("address_getBlocksByHash", async () => {
 										coreApi.getBlocksByHash(coinbaseTxBlockHashes).then(function(blocksByHashResult) {
 											for (var txid in blockHashesByTxid) {
 												if (blockHashesByTxid.hasOwnProperty(txid)) {
@@ -1711,7 +1654,7 @@ router.get("/address/:address", function(req, res, next) {
 				});
 			}));
 
-			promises.push(new Promise(function(resolve, reject) {
+			promises.push(utils.safePromise("address_getBlockchainInfo", async () => {
 				coreApi.getBlockchainInfo().then(function(getblockchaininfo) {
 					res.locals.getblockchaininfo = getblockchaininfo;
 
@@ -1725,7 +1668,7 @@ router.get("/address/:address", function(req, res, next) {
 			}));
 		}
 
-		promises.push(new Promise(function(resolve, reject) {
+		promises.push(utils.safePromise("address_qrcode_toDataURL", async () => {
 			qrcode.toDataURL(address, function(err, url) {
 				if (err) {
 					res.locals.pageErrors.push(utils.logError("93ygfew0ygf2gf2", err));
@@ -2055,7 +1998,7 @@ router.get("/mempool-transactions", asyncHandler(async (req, res, next) => {
 		res.locals.sort = sort;
 		res.locals.paginationBaseUrl = "./mempool-transactions";
 
-		const mempoolData = await utils.timePromise("promises.mempool-tx.getMempoolTxids", coreApi.getMempoolTxids(limit, offset));
+		const mempoolData = await utils.timePromise("mempool_tx_getMempoolTxids", coreApi.getMempoolTxids(limit, offset));
 
 		const txids = mempoolData.txids;
 		res.locals.txCount = mempoolData.txCount;
@@ -2063,24 +2006,20 @@ router.get("/mempool-transactions", asyncHandler(async (req, res, next) => {
 		
 		const promises = [];
 
-		promises.push(new Promise(async (resolve, reject) => {
-			const transactionData = await utils.timePromise("promises.mempool-tx.getRawTransactionsWithInputs", coreApi.getRawTransactionsWithInputs(txids, config.slowDeviceMode ? 3 : 5));
+		promises.push(utils.safePromise("mempool_tx_getRawTransactionsWithInputs", async () => {
+			const transactionData = await coreApi.getRawTransactionsWithInputs(txids, config.slowDeviceMode ? 3 : 5);
 
 			res.locals.transactions = transactionData.transactions;
 			res.locals.txInputsByTransaction = transactionData.txInputsByTransaction;
-			
-			resolve();
 		}));
 
 		res.locals.mempoolDetailsByTxid = {};
 
 		txids.forEach(txid => {
-			promises.push(new Promise(async (resolve, reject) => {
-				const mempoolTxidDetails = await utils.timePromise("promises.mempool-tx.getMempoolTxDetails", coreApi.getMempoolTxDetails(txid, false));
+			promises.push(utils.safePromise("mempool_tx_getRawTransactionsWithInputs", async () => {
+				const mempoolTxidDetails = await coreApi.getMempoolTxDetails(txid, false);
 
 				res.locals.mempoolDetailsByTxid[txid] = mempoolTxidDetails;
-
-				resolve();
 			}));
 		});
 

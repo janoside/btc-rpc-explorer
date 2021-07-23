@@ -781,6 +781,31 @@ function colorHexToHsl(hex) {
 const reflectPromise = p => p.then(v => ({v, status: "resolved" }),
 							e => ({e, status: "rejected" }));
 
+const safePromise = (uid, f) => {
+	return new Promise(async (resolve, reject) => {
+		const startTime = startTimeNanos();
+
+		try {
+			await f();
+
+			const responseTimeMillis = dtMillis(startTime);
+			
+			statTracker.trackPerformance(uid, responseTimeMillis);
+
+			resolve();
+
+		} catch (e) {
+			logError(uid, e);
+
+			const responseTimeMillis = dtMillis(startTime);
+
+			statTracker.trackPerformance(`${uid}_error`, responseTimeMillis);
+			
+			resolve(e);
+		}
+	});
+};
+
 global.errorStats = {};
 
 function logError(errorId, err, optionalUserData = null) {
@@ -929,15 +954,32 @@ const getCrawlerFromUserAgentString = userAgentString => {
 };
 
 const timePromise = async (name, promise) => {
+	try {
+		const startTime = startTimeNanos();
+
+		const response = await promise;
+
+		const responseTimeMillis = dtMillis(startTime);
+
+		statTracker.trackPerformance(name, responseTimeMillis);
+
+		return response;
+
+	} catch (e) {
+		logError("238rhgdeaaz-" + name, e);
+
+		throw e;
+	}
+};
+
+const timeFunction = (uid, f) => {
 	const startTime = startTimeNanos();
 
-	const response = await promise;
+	f();
 
 	const responseTimeMillis = dtMillis(startTime);
 
-	statTracker.trackPerformance(name, responseTimeMillis);
-
-	return response;
+	statTracker.trackPerformance(uid, responseTimeMillis);
 };
 
 const startTimeNanos = () => {
@@ -969,6 +1011,27 @@ function iterateProperties(obj, action) {
 	for (const [key, value] of Object.entries(obj)) {
 		action([key, value]);
 	}
+}
+
+function stringifySimple(object) {
+    var simpleObject = {};
+    for (var prop in object) {
+        if (!object.hasOwnProperty(prop)) {
+            continue;
+        }
+
+        if (typeof(object[prop]) == 'object') {
+            continue;
+        }
+
+        if (typeof(object[prop]) == 'function') {
+            continue;
+        }
+
+        simpleObject[prop] = object[prop];
+    }
+
+    return JSON.stringify(simpleObject); // returns cleaned up JSON
 }
 
 module.exports = {
@@ -1014,8 +1077,11 @@ module.exports = {
 	arrayFromHexString: arrayFromHexString,
 	getCrawlerFromUserAgentString: getCrawlerFromUserAgentString,
 	timePromise: timePromise,
+	timeFunction: timeFunction,
 	startTimeNanos: startTimeNanos,
 	dtMillis: dtMillis,
 	objectProperties: objectProperties,
-	objHasProperty: objHasProperty
+	objHasProperty: objHasProperty,
+	stringifySimple: stringifySimple,
+	safePromise: safePromise
 };
