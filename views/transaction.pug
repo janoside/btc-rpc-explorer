@@ -323,7 +323,7 @@ block content
 						
 
 			+pageTab("JSON")
-				- var pillTabs = ["Transaction", "UTXOs"];
+				- var pillTabs = ["Transaction", "Block Header", "UTXOs"];
 				if (mempoolDetails)
 					- pillTabs.push("Mempool Details");
 
@@ -334,6 +334,12 @@ block content
 						+contentSection("Transaction")
 							pre
 								code.text-json.json.bg-body(data-lang="json") #{JSON.stringify(result.getrawtransaction, null, 4)}
+
+
+					+pageTab("Block Header")
+						+contentSection("Block Header")
+							pre
+								code.text-json.json.bg-body(data-lang="json") #{JSON.stringify(result.getblock, null, 4)}
 
 					
 					+pageTab("UTXOs")
