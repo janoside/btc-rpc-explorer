@@ -430,6 +430,14 @@ router.get("/quotes/random", function(req, res, next) {
 	next();
 });
 
+router.get("/quotes/:quoteIndex", function(req, res, next) {
+	var index = parseInt(req.params.quoteIndex);
+	
+	res.json(btcQuotes.items[index]);
+
+	next();
+});
+
 router.get("/quotes/all", function(req, res, next) {
 	res.json(btcQuotes.items);
 

@@ -133,15 +133,23 @@ module.exports = {
 		// fun
 		{
 			"category":"fun",
-			"url":"/api/quotes/random",
-			"desc":"Returns a random Bitcoin quote from a curated list.",
+			"url":"/api/quotes/all",
+			"desc":"Returns the full curated list of Bitcoin quotes.",
 			"returnType":"json"
 		},
 
 		{
 			"category":"fun",
-			"url":"/api/quotes/all",
-			"desc":"Returns the full curated list of Bitcoin quotes.",
+			"url":"/api/quotes/:index",
+			"desc":"Returns the Bitcoin quote with the given index from the curated list.",
+			"returnType":"json",
+			"testUrl": "/api/quotes/0"
+		},
+
+		{
+			"category":"fun",
+			"url":"/api/quotes/random",
+			"desc":"Returns a random Bitcoin quote from the curated list.",
 			"returnType":"json"
 		},
 
