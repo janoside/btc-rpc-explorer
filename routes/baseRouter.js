@@ -629,17 +629,13 @@ router.get("/blocks", asyncHandler(async (req, res, next) => {
 						res.locals.blockstatsByHeight[blockstats.height] = blockstats;
 					}
 				}
-
-				resolve();
-
 			} catch (err) {
 				if (!global.prunedBlockchain) {
-					reject(err);
+					throw err;
 
 				} else {
 					// failure may be due to pruning, let it pass
-					// TODO: be more discerning here
-					resolve();
+					// TODO: be more discerning here...consider throwing something
 				}
 			}
 		}));
@@ -1407,81 +1403,84 @@ router.get("/tx/:transactionId", asyncHandler(async (req, res, next) => {
 	}
 }));
 
-router.get("/address/:address", function(req, res, next) {
-	var limit = config.site.addressTxPageSize;
-	var offset = 0;
-	var sort = "desc";
-
-	
-	if (req.query.limit) {
-		limit = parseInt(req.query.limit);
-
-		// for demo sites, limit page sizes
-		if (config.demoSite && limit > config.site.addressTxPageSize) {
-			limit = config.site.addressTxPageSize;
-
-			res.locals.userMessage = "Transaction page size limited to " + config.site.addressTxPageSize + ". If this is your site, you can change or disable this limit in the site config.";
-		}
-	}
-
-	if (req.query.offset) {
-		offset = parseInt(req.query.offset);
-	}
-
-	if (req.query.sort) {
-		sort = req.query.sort;
-	}
-
-
-	var address = utils.asAddress(req.params.address);
-
-	res.locals.address = address;
-	res.locals.limit = limit;
-	res.locals.offset = offset;
-	res.locals.sort = sort;
-	res.locals.paginationBaseUrl = `./address/${address}?sort=${sort}`;
-	res.locals.transactions = [];
-	res.locals.addressApiSupport = addressApi.getCurrentAddressApiFeatureSupport();
-	
-	res.locals.result = {};
-
-	var parseAddressErrors = [];
-
+router.get("/address/:address", asyncHandler(async (req, res, next) => {
 	try {
-		res.locals.addressObj = bitcoinjs.address.fromBase58Check(address);
-
-	} catch (err) {
-		if (!err.toString().startsWith("Error: Non-base58 character")) {
-			parseAddressErrors.push(utils.logError("u3gr02gwef", err));
-		}
-	}
-
-	try {
-		res.locals.addressObj = bitcoinjs.address.fromBech32(address);
-
-	} catch (err2) {
-		if (!err2.toString().startsWith("Error: Mixed-case string " + address)) {
-			parseAddressErrors.push(utils.logError("u02qg02yqge", err2));
-		}
+		var limit = config.site.addressTxPageSize;
+		var offset = 0;
+		var sort = "desc";
 
 		
-	}
+		if (req.query.limit) {
+			limit = parseInt(req.query.limit);
 
-	if (res.locals.addressObj == null) {
-		parseAddressErrors.forEach(function(x) {
-			res.locals.pageErrors.push(x);
-		});
-	}
+			// for demo sites, limit page sizes
+			if (config.demoSite && limit > config.site.addressTxPageSize) {
+				limit = config.site.addressTxPageSize;
 
-	if (global.miningPoolsConfigs) {
-		for (var i = 0; i < global.miningPoolsConfigs.length; i++) {
-			if (global.miningPoolsConfigs[i].payout_addresses[address]) {
-				res.locals.payoutAddressForMiner = global.miningPoolsConfigs[i].payout_addresses[address];
+				res.locals.userMessage = "Transaction page size limited to " + config.site.addressTxPageSize + ". If this is your site, you can change or disable this limit in the site config.";
 			}
 		}
-	}
 
-	coreApi.getAddress(address).then(function(validateaddressResult) {
+		if (req.query.offset) {
+			offset = parseInt(req.query.offset);
+		}
+
+		if (req.query.sort) {
+			sort = req.query.sort;
+		}
+
+
+		var address = utils.asAddress(req.params.address);
+
+		res.locals.address = address;
+		res.locals.limit = limit;
+		res.locals.offset = offset;
+		res.locals.sort = sort;
+		res.locals.paginationBaseUrl = `./address/${address}?sort=${sort}`;
+		res.locals.transactions = [];
+		res.locals.addressApiSupport = addressApi.getCurrentAddressApiFeatureSupport();
+		
+		res.locals.result = {};
+
+		var parseAddressErrors = [];
+
+		try {
+			res.locals.addressObj = bitcoinjs.address.fromBase58Check(address);
+
+		} catch (err) {
+			if (!err.toString().startsWith("Error: Non-base58 character")) {
+				parseAddressErrors.push(utils.logError("u3gr02gwef", err));
+			}
+		}
+
+		try {
+			res.locals.addressObj = bitcoinjs.address.fromBech32(address);
+
+		} catch (err2) {
+			if (!err2.toString().startsWith("Error: Mixed-case string " + address)) {
+				parseAddressErrors.push(utils.logError("u02qg02yqge", err2));
+			}
+
+			
+		}
+
+		if (res.locals.addressObj == null) {
+			parseAddressErrors.forEach(function(x) {
+				res.locals.pageErrors.push(x);
+			});
+		}
+
+		if (global.miningPoolsConfigs) {
+			for (var i = 0; i < global.miningPoolsConfigs.length; i++) {
+				if (global.miningPoolsConfigs[i].payout_addresses[address]) {
+					res.locals.payoutAddressForMiner = global.miningPoolsConfigs[i].payout_addresses[address];
+				}
+			}
+		}
+
+
+
+		const validateaddressResult = await coreApi.getAddress(address);
 		res.locals.result.validateaddress = validateaddressResult;
 
 		var promises = [];
@@ -1492,179 +1491,144 @@ router.get("/address/:address", function(req, res, next) {
 			res.locals.electrumScripthash = addrScripthash;
 
 			promises.push(utils.safePromise("address_getAddressDetails", async () => {
-				addressApi.getAddressDetails(address, validateaddressResult.scriptPubKey, sort, limit, offset).then(function(addressDetailsResult) {
-					var addressDetails = addressDetailsResult.addressDetails;
+				const addressDetailsResult = await addressApi.getAddressDetails(address, validateaddressResult.scriptPubKey, sort, limit, offset);
+				var addressDetails = addressDetailsResult.addressDetails;
 
-					if (addressDetailsResult.errors) {
-						res.locals.addressDetailsErrors = addressDetailsResult.errors;
+				if (addressDetailsResult.errors) {
+					res.locals.addressDetailsErrors = addressDetailsResult.errors;
+				}
+
+				if (addressDetails) {
+					res.locals.addressDetails = addressDetails;
+
+					if (addressDetails.balanceSat == 0) {
+						// make sure zero balances pass the falsey check in the UI
+						addressDetails.balanceSat = "0";
 					}
 
-					if (addressDetails) {
-						res.locals.addressDetails = addressDetails;
+					if (addressDetails.txCount == 0) {
+						// make sure txCount=0 pass the falsey check in the UI
+						addressDetails.txCount = "0";
+					}
 
-						if (addressDetails.balanceSat == 0) {
-							// make sure zero balances pass the falsey check in the UI
-							addressDetails.balanceSat = "0";
+					if (addressDetails.txids) {
+						var txids = addressDetails.txids;
+
+						// if the active addressApi gives us blockHeightsByTxid, it saves us work, so try to use it
+						var blockHeightsByTxid = {};
+						if (addressDetails.blockHeightsByTxid) {
+							blockHeightsByTxid = addressDetails.blockHeightsByTxid;
 						}
 
-						if (addressDetails.txCount == 0) {
-							// make sure txCount=0 pass the falsey check in the UI
-							addressDetails.txCount = "0";
-						}
+						res.locals.txids = txids;
 
-						if (addressDetails.txids) {
-							var txids = addressDetails.txids;
+						(global.txindexAvailable
+							? coreApi.getRawTransactionsWithInputs(txids, 5)
+							: coreApi.getRawTransactionsByHeights(txids, blockHeightsByTxid)
+								.then(transactions => ({ transactions, txInputsByTransaction: {} }))
+						).then(function(rawTxResult) {
+							res.locals.transactions = rawTxResult.transactions;
+							res.locals.txInputsByTransaction = rawTxResult.txInputsByTransaction;
 
-							// if the active addressApi gives us blockHeightsByTxid, it saves us work, so try to use it
-							var blockHeightsByTxid = {};
-							if (addressDetails.blockHeightsByTxid) {
-								blockHeightsByTxid = addressDetails.blockHeightsByTxid;
+							// for coinbase txs, we need the block height in order to calculate subsidy to display
+							var coinbaseTxs = [];
+							for (var i = 0; i < rawTxResult.transactions.length; i++) {
+								var tx = rawTxResult.transactions[i];
+
+								for (var j = 0; j < tx.vin.length; j++) {
+									if (tx.vin[j].coinbase) {
+										// addressApi sometimes has blockHeightByTxid already available, otherwise we need to query for it
+										if (!blockHeightsByTxid[tx.txid]) {
+											coinbaseTxs.push(tx);
+										}
+									}
+								}
 							}
 
-							res.locals.txids = txids;
 
-							(global.txindexAvailable
-								? coreApi.getRawTransactionsWithInputs(txids, 5)
-								: coreApi.getRawTransactionsByHeights(txids, blockHeightsByTxid)
-									.then(transactions => ({ transactions, txInputsByTransaction: {} }))
-							).then(function(rawTxResult) {
-								res.locals.transactions = rawTxResult.transactions;
-								res.locals.txInputsByTransaction = rawTxResult.txInputsByTransaction;
+							var coinbaseTxBlockHashes = [];
+							var blockHashesByTxid = {};
+							coinbaseTxs.forEach(function(tx) {
+								coinbaseTxBlockHashes.push(tx.blockhash);
+								blockHashesByTxid[tx.txid] = tx.blockhash;
+							});
 
-								// for coinbase txs, we need the block height in order to calculate subsidy to display
-								var coinbaseTxs = [];
+							var blockHeightsPromises = [];
+							if (coinbaseTxs.length > 0) {
+								// we need to query some blockHeights by hash for some coinbase txs
+								blockHeightsPromises.push(utils.safePromise("address_getBlocksByHash", async () => {
+									const blocksByHashResult = await coreApi.getBlocksByHash(coinbaseTxBlockHashes);
+									for (var txid in blockHashesByTxid) {
+										if (blockHashesByTxid.hasOwnProperty(txid)) {
+											blockHeightsByTxid[txid] = blocksByHashResult[blockHashesByTxid[txid]].height;
+										}
+									}
+								}));
+							}
+
+							Promise.all(blockHeightsPromises).then(function() {
+								var addrGainsByTx = {};
+								var addrLossesByTx = {};
+
+								res.locals.addrGainsByTx = addrGainsByTx;
+								res.locals.addrLossesByTx = addrLossesByTx;
+
+								var handledTxids = [];
+
 								for (var i = 0; i < rawTxResult.transactions.length; i++) {
 									var tx = rawTxResult.transactions[i];
+									var txInputs = rawTxResult.txInputsByTransaction[tx.txid] || {};
+									
+									if (handledTxids.includes(tx.txid)) {
+										continue;
+									}
+
+									handledTxids.push(tx.txid);
+
+									for (var j = 0; j < tx.vout.length; j++) {
+										if (tx.vout[j].value > 0 && tx.vout[j].scriptPubKey && tx.vout[j].scriptPubKey.addresses && tx.vout[j].scriptPubKey.addresses.includes(address)) {
+											if (addrGainsByTx[tx.txid] == null) {
+												addrGainsByTx[tx.txid] = new Decimal(0);
+											}
+
+											addrGainsByTx[tx.txid] = addrGainsByTx[tx.txid].plus(new Decimal(tx.vout[j].value));
+										}
+									}
 
 									for (var j = 0; j < tx.vin.length; j++) {
-										if (tx.vin[j].coinbase) {
-											// addressApi sometimes has blockHeightByTxid already available, otherwise we need to query for it
-											if (!blockHeightsByTxid[tx.txid]) {
-												coinbaseTxs.push(tx);
+										var txInput = txInputs[j];
+										var vinJ = tx.vin[j];
+
+										if (txInput != null) {
+											if (txInput && txInput.scriptPubKey && txInput.scriptPubKey.addresses && txInput.scriptPubKey.addresses.includes(address)) {
+												if (addrLossesByTx[tx.txid] == null) {
+													addrLossesByTx[tx.txid] = new Decimal(0);
+												}
+
+												addrLossesByTx[tx.txid] = addrLossesByTx[tx.txid].plus(new Decimal(txInput.value));
 											}
 										}
 									}
+
+									//debugLog("tx: " + JSON.stringify(tx));
+									//debugLog("txInputs: " + JSON.stringify(txInputs));
 								}
 
+								res.locals.blockHeightsByTxid = blockHeightsByTxid;
 
-								var coinbaseTxBlockHashes = [];
-								var blockHashesByTxid = {};
-								coinbaseTxs.forEach(function(tx) {
-									coinbaseTxBlockHashes.push(tx.blockhash);
-									blockHashesByTxid[tx.txid] = tx.blockhash;
-								});
-
-								var blockHeightsPromises = [];
-								if (coinbaseTxs.length > 0) {
-									// we need to query some blockHeights by hash for some coinbase txs
-									blockHeightsPromises.push(utils.safePromise("address_getBlocksByHash", async () => {
-										coreApi.getBlocksByHash(coinbaseTxBlockHashes).then(function(blocksByHashResult) {
-											for (var txid in blockHashesByTxid) {
-												if (blockHashesByTxid.hasOwnProperty(txid)) {
-													blockHeightsByTxid[txid] = blocksByHashResult[blockHashesByTxid[txid]].height;
-												}
-											}
-
-											resolve2();
-
-										}).catch(function(err) {
-											res.locals.pageErrors.push(utils.logError("78ewrgwetg3", err));
-
-											reject2(err);
-										});
-									}));
-								}
-
-								Promise.all(blockHeightsPromises).then(function() {
-									var addrGainsByTx = {};
-									var addrLossesByTx = {};
-
-									res.locals.addrGainsByTx = addrGainsByTx;
-									res.locals.addrLossesByTx = addrLossesByTx;
-
-									var handledTxids = [];
-
-									for (var i = 0; i < rawTxResult.transactions.length; i++) {
-										var tx = rawTxResult.transactions[i];
-										var txInputs = rawTxResult.txInputsByTransaction[tx.txid] || {};
-										
-										if (handledTxids.includes(tx.txid)) {
-											continue;
-										}
-
-										handledTxids.push(tx.txid);
-
-										for (var j = 0; j < tx.vout.length; j++) {
-											if (tx.vout[j].value > 0 && tx.vout[j].scriptPubKey && tx.vout[j].scriptPubKey.addresses && tx.vout[j].scriptPubKey.addresses.includes(address)) {
-												if (addrGainsByTx[tx.txid] == null) {
-													addrGainsByTx[tx.txid] = new Decimal(0);
-												}
-
-												addrGainsByTx[tx.txid] = addrGainsByTx[tx.txid].plus(new Decimal(tx.vout[j].value));
-											}
-										}
-
-										for (var j = 0; j < tx.vin.length; j++) {
-											var txInput = txInputs[j];
-											var vinJ = tx.vin[j];
-
-											if (txInput != null) {
-												if (txInput && txInput.scriptPubKey && txInput.scriptPubKey.addresses && txInput.scriptPubKey.addresses.includes(address)) {
-													if (addrLossesByTx[tx.txid] == null) {
-														addrLossesByTx[tx.txid] = new Decimal(0);
-													}
-
-													addrLossesByTx[tx.txid] = addrLossesByTx[tx.txid].plus(new Decimal(txInput.value));
-												}
-											}
-										}
-
-										//debugLog("tx: " + JSON.stringify(tx));
-										//debugLog("txInputs: " + JSON.stringify(txInputs));
-									}
-
-									res.locals.blockHeightsByTxid = blockHeightsByTxid;
-
-									resolve();
-
-								}).catch(function(err) {
-									res.locals.pageErrors.push(utils.logError("230wefrhg0egt3", err));
-
-									reject(err);
-								});
 							}).catch(function(err) {
-								res.locals.pageErrors.push(utils.logError("asdgf07uh23", err));
-								// the transactions failed loading, render with just the txids list.
-								resolve();
+								res.locals.pageErrors.push(utils.logError("230wefrhg0egt3", err));
 							});
-						} else {
-							// no addressDetails.txids available
-							resolve();
-						}
-					} else {
-						// no addressDetails available
-						resolve();
+						}).catch(function(err) {
+							res.locals.pageErrors.push(utils.logError("asdgf07uh23", err));
+							// the transactions failed loading, render with just the txids list.
+						});
 					}
-				}).catch(function(err) {
-					res.locals.pageErrors.push(utils.logError("23t07ug2wghefud", err));
-
-					res.locals.addressApiError = err;
-
-					reject(err);
-				});
+				}
 			}));
 
 			promises.push(utils.safePromise("address_getBlockchainInfo", async () => {
-				coreApi.getBlockchainInfo().then(function(getblockchaininfo) {
-					res.locals.getblockchaininfo = getblockchaininfo;
-
-					resolve();
-
-				}).catch(function(err) {
-					res.locals.pageErrors.push(utils.logError("132r80h32rh", err));
-
-					reject(err);
-				});
+				res.locals.getblockchaininfo = await coreApi.getBlockchainInfo();
 			}));
 		}
 
@@ -1675,25 +1639,16 @@ router.get("/address/:address", function(req, res, next) {
 				}
 
 				res.locals.addressQrCodeUrl = url;
-
-				resolve();
 			});
 		}));
 
-		Promise.all(promises.map(utils.reflectPromise)).then(function() {
-			res.render("address");
-
-			next();
-
-		}).catch(function(err) {
-			res.locals.pageErrors.push(utils.logError("32197rgh327g2", err));
-
-			res.render("address");
-
-			next();
-		});
+		await Promise.all(promises);
 		
-	}).catch(function(err) {
+		res.render("address");
+
+		next();
+
+	} catch (e) {
 		res.locals.pageErrors.push(utils.logError("2108hs0gsdfe", err, {address:address}));
 
 		res.locals.userMessageMarkdown = `Failed to load address: **${address}**`;
@@ -1701,8 +1656,8 @@ router.get("/address/:address", function(req, res, next) {
 		res.render("address");
 
 		next();
-	});
-});
+	}
+}));
 
 router.get("/rpc-terminal", function(req, res, next) {
 	if (!config.demoSite && !req.authenticated) {
