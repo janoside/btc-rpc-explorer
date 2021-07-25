@@ -846,12 +846,23 @@ expressApp.use(function(req, res, next) {
 
 /// error handlers
 
+const sharedErrorHandler = (err) => {
+	if (err && err.message && err.message.includes("Not Found")) {
+		const path = err.toString().substring(err.toString().lastIndexOf(" ") + 1);
+
+		utils.logError(`NotFound-${path}`, err);
+
+	} else {
+		utils.logError("ExpressUncaughtError", err);
+	}
+};
+
 // development error handler
 // will print stacktrace
 if (expressApp.get("env") === "development" || expressApp.get("env") === "local") {
 	expressApp.use(function(err, req, res, next) {
 		if (err) {
-			utils.logError("3289023yege", err);
+			sharedErrorHandler(err);
 		}
 
 		res.status(err.status || 500);
@@ -866,7 +877,7 @@ if (expressApp.get("env") === "development" || expressApp.get("env") === "local"
 // no stacktraces leaked to user
 expressApp.use(function(err, req, res, next) {
 	if (err) {
-		utils.logError("2309832hcxwgeeew", err);
+		sharedErrorHandler(err);
 	}
 
 	res.status(err.status || 500);

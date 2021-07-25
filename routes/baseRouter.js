@@ -1644,7 +1644,7 @@ router.get("/address/:address", asyncHandler(async (req, res, next) => {
 		next();
 
 	} catch (e) {
-		res.locals.pageErrors.push(utils.logError("2108hs0gsdfe", err, {address:address}));
+		res.locals.pageErrors.push(utils.logError("2108hs0gsdfe", e, {address:address}));
 
 		res.locals.userMessageMarkdown = `Failed to load address: **${address}**`;
 
