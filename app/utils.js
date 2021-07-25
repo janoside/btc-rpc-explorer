@@ -816,8 +816,23 @@ function logError(errorId, err, optionalUserData = null) {
 	if (!global.errorStats[errorId]) {
 		global.errorStats[errorId] = {
 			count: 0,
-			firstSeen: new Date().getTime()
+			firstSeen: new Date().getTime(),
+			properties: {}
 		};
+	}
+
+	if (optionalUserData) {
+		for (const [key, value] of Object.entries(optionalUserData)) {
+			if (!global.errorStats[errorId].properties[key]) {
+				global.errorStats[errorId].properties[key] = {};
+			}
+
+			if (!global.errorStats[errorId].properties[key][value]) {
+				global.errorStats[errorId].properties[key][value] = 0;
+			}
+
+			global.errorStats[errorId].properties[key][value]++;
+		}
 	}
 
 	statTracker.trackEvent(`errors.${errorId}`);

@@ -8,7 +8,7 @@ block headContent
 block content
 	+adminNav
 
-	
+
 	+pageTitle("Admin Dashboard")
 
 	+pageTabs(["Details", "JSON"])
@@ -206,7 +206,7 @@ block content
 						table.table.table-borderless.table-striped
 							thead
 								tr
-									th Error ID
+									th Error
 									th.text-end Count
 									th.text-end First Seen
 									th.text-end Last Seen
@@ -214,7 +214,16 @@ block content
 							tbody
 								each item, itemName in errorStats
 									tr.font-monospace
-										td #{itemName}
+										td
+											div #{itemName}
+											div
+												each propData, propName in item.properties
+													div.ms-4 #{propName}
+														br
+														each propCount, propValue in propData
+															span.badge.bg-primary.me-1.fw-light #{propValue}
+																span.badge.bg-light.text-dark.ms-1 #{propCount}
+
 										td.text-end #{item.count.toLocaleString()}
 										td.text-end #{moment.duration(new Date().getTime() - item.firstSeen).format()} ago
 										td.text-end #{moment.duration(new Date().getTime() - item.lastSeen).format()} ago

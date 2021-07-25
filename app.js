@@ -850,7 +850,7 @@ const sharedErrorHandler = (err) => {
 	if (err && err.message && err.message.includes("Not Found")) {
 		const path = err.toString().substring(err.toString().lastIndexOf(" ") + 1);
 
-		utils.logError(`NotFound-${path}`, err);
+		utils.logError(`NotFound`, err, {path: path});
 
 	} else {
 		utils.logError("ExpressUncaughtError", err);
