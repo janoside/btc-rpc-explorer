@@ -141,7 +141,7 @@ function runOnServer(electrumClient, f) {
 			resolve({result:result, server:electrumClient.host});
 			
 		}).catch(function(err) {
-			utils.logError("dif0e21qdh", err, {host:electrumClient.host, port:electrumClient.port});
+			utils.logError("ElectrumServerError", err, {host:electrumClient.host, port:electrumClient.port});
 
 			reject(err);
 		});

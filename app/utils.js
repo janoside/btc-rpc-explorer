@@ -969,22 +969,15 @@ const getCrawlerFromUserAgentString = userAgentString => {
 };
 
 const timePromise = async (name, promise) => {
-	try {
-		const startTime = startTimeNanos();
+	const startTime = startTimeNanos();
+	
+	const response = await promise;
 
-		const response = await promise;
+	const responseTimeMillis = dtMillis(startTime);
 
-		const responseTimeMillis = dtMillis(startTime);
+	statTracker.trackPerformance(name, responseTimeMillis);
 
-		statTracker.trackPerformance(name, responseTimeMillis);
-
-		return response;
-
-	} catch (e) {
-		logError("238rhgdeaaz-" + name, e);
-
-		throw e;
-	}
+	return response;
 };
 
 const timeFunction = (uid, f) => {

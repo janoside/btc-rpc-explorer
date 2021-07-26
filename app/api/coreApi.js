@@ -1132,7 +1132,7 @@ let mempoolTxSummaryCache = {};
 function getCachedMempoolTxSummaries() {
 	return new Promise(async (resolve, reject) => {
 		try {
-			const allTxids = await utils.timePromise("promises.mempool-summary.getAllMempoolTxids", getAllMempoolTxids());
+			const allTxids = await utils.timePromise("coreApi_mempool_summary_getAllMempoolTxids", getAllMempoolTxids());
 			
 			//const txids = allTxids.slice(0, 50); // for debugging
 			const txids = allTxids;
@@ -1302,7 +1302,7 @@ function getMempoolTxSummaries(allTxids, statusId, statusFunc) {
 function buildMempoolSummary(statusId, ageBuckets, sizeBuckets, statusFunc) {
 	return new Promise(async (resolve, reject) => {
 		try {
-			const allTxids = await utils.timePromise("promises.mempool-summary.getAllMempoolTxids", getAllMempoolTxids());
+			const allTxids = await utils.timePromise("coreApi_mempool_summary_getAllMempoolTxids", getAllMempoolTxids());
 
 			const txSummaries = await getMempoolTxSummaries(allTxids, statusId, statusFunc);
 
@@ -1621,7 +1621,7 @@ function buildMempoolSummary(statusId, ageBuckets, sizeBuckets, statusFunc) {
 function buildPredictedBlocks(statusId, statusFunc) {
 	return new Promise(async (resolve, reject) => {
 		try {
-			const allTxids = await utils.timePromise("promises.mempool-summary.getAllMempoolTxids", getAllMempoolTxids());
+			const allTxids = await utils.timePromise("coreApi_mempool_summary_getAllMempoolTxids", getAllMempoolTxids());
 
 			const txSummaries = await getMempoolTxSummaries(allTxids, statusId, statusFunc);
 
