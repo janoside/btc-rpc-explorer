@@ -17,6 +17,7 @@ A clear and concise description of what the bug is.
  - NodeJS Version [e.g. 9.x]
  - Browser [e.g. chrome, safari]
  - Code Version / Commit [e.g. ab6cde8]
+ - Installation Method [e.g. "npm" or "source code"]
  
 **Configuration file content**
 
