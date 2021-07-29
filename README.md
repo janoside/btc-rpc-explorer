@@ -78,13 +78,16 @@ btc-rpc-explorer
 
 #### Install via AUR Arch Linux:
 
+###### Note: The below AUR package was created and is maintained by [@dougEfresh](https://github.com/dougEfresh). The details and history of the package can be seen [here](https://aur.archlinux.org/packages/btc-rpc-explorer/).
+
 1. `git clone https://aur.archlinux.org/btc-rpc-explorer.git`
 2. `cd btc-rpc-explorer`
 3. `makepkg -csi`
 4. `systemctl enable --now btc-rpc-explorer`
 
 
-Using either method (`npm install`, run from source, aur), after startup open [http://127.0.0.1:3002/](http://127.0.0.1:3002/)
+
+After a default installation+startup using any of the above methods, the app can be viewed at [http://127.0.0.1:3002/](http://127.0.0.1:3002/)
 
 
 ## Configuration
