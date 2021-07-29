@@ -262,7 +262,7 @@ block content
 
 							else
 								- var txIOHighlightAddress = address;
-								- var options = {blockHeightsByTxid: blockHeightsByTxid, showDates: true, highlightAddress: address, addrGainsByTxid: addrGainsByTx, addrLossesByTxid: addrLossesByTx};
+								- var options = {currentBlockHeight: getblockchaininfo.blocks, blockHeightsByTxid: blockHeightsByTxid, showDates: true, showConfirmations: true, highlightAddress: address, addrGainsByTxid: addrGainsByTx, addrLossesByTxid: addrLossesByTx};
 								+txList(transactions, addressDetails.txCount, limit, offset, txInputsByTransaction, options)
 
 							

@@ -154,12 +154,22 @@ mixin txList(visibleTxs, txCount, limit, offset, inputsByTxid, options)
 									span.me-1 -
 									+valueDisplay(options.addrLossesByTxid[tx.txid])
 
+							if (options.addrGainsByTxid && options.addrLossesByTxid && !options.addrGainsByTxid[tx.txid] && !options.addrLossesByTxid[tx.txid])
+								span.badge.bg-danger.me-2(data-bs-toggle="tooltip", title="See transaction details for spent-from-this-address amount")
+									span.fw-light …
+
+							if (options.showConfirmations)
+								+darkBadge
+									span(title=`${(options.currentBlockHeight - txBlockHeight + 1).toLocaleString()} confirmation${(options.currentBlockHeight - txBlockHeight > 1) ? "s" :""}`, data-bs-toggle="tooltip")
+										i.fas.fa-lock.fa-sm.me-2
+										span.fw-light #{(options.currentBlockHeight - txBlockHeight + 1).toLocaleString()}
+
 							if (options.showDates)
 								- var utcMoment = moment.utc(new Date(parseInt(tx.time) * 1000));
 								- var titleStr = `${utcMoment.format("Y-MM-DD HH:mm:ss")} utc`;
 
 								+darkBadge
-									i.far.fa-clock.me-1
+									i.far.fa-clock.fa-sm.me-2
 
 									if (tx.time)
 										span(title=titleStr, data-bs-toggle="tooltip")
