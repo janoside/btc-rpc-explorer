@@ -75,30 +75,33 @@ mixin asciiHexDataDisplay(dataName, uniqueId, hex)
 											a(href=`./tx/${txInput.txid}#output-${txVin.vout}`) #{utils.ellipsizeMiddle(txInput.txid, 22)}
 												span  ##{txVin.vout}
 
-										if (vout && vout.scriptPubKey && vout.scriptPubKey.addresses)
-											.word-wrap
-												small.text-muted
-													span.me-1 (addr:
-													a(href=`./address/${vout.scriptPubKey.addresses[0]}`, class=(txIOHighlightAddress == vout.scriptPubKey.addresses[0] ? "text-info" : null)) #{vout.scriptPubKey.addresses[0]}
+										if (vout && vout.scriptPubKey)
+											- var voutAddresses = utils.getVoutAddresses(vout);
 
-													if (txIOHighlightAddress == vout.scriptPubKey.addresses[0])
-														span(title="Current address", data-bs-toggle="tooltip")
-															i.fas.fa-arrow-left.text-warning.ms-1.text-info
+											if (voutAddresses.length > 0)
+												.word-wrap
+													small.text-muted
+														span.me-1 (addr:
+														a(href=`./address/${voutAddresses[0]}`, class=(txIOHighlightAddress == voutAddresses[0] ? "text-info" : null)) #{voutAddresses[0]}
 
-													if (global.specialAddresses[vout.scriptPubKey.addresses[0]])
-														- var specialAddressInfo = global.specialAddresses[vout.scriptPubKey.addresses[0]];
-														if (specialAddressInfo.type == "minerPayout")
-															span  
-															a(data-bs-toggle="tooltip", title=`Miner payout address: ${specialAddressInfo.minerInfo.name}`)
-																+funItemIcon
+														if (txIOHighlightAddress == voutAddresses[0])
+															span(title="Current address", data-bs-toggle="tooltip")
+																i.fas.fa-arrow-left.text-warning.ms-1.text-info
 
-													span )
+														if (global.specialAddresses[voutAddresses[0]])
+															- var specialAddressInfo = global.specialAddresses[voutAddresses[0]];
+															if (specialAddressInfo.type == "minerPayout")
+																span  
+																a(data-bs-toggle="tooltip", title=`Miner payout address: ${specialAddressInfo.minerInfo.name}`)
+																	+funItemIcon
 
-											if (false)
-												small
-													span.border-dotted(title="Transaction output", data-bs-toggle="tooltip") txo
-													span.me-1 :
-													a(href=`./tx/${txInput.txid}#output-${txVin.vout}`) #{utils.ellipsize(txInput.txid, 20)}[#{txVin.vout}]
+														span )
+
+												if (false)
+													small
+														span.border-dotted(title="Transaction output", data-bs-toggle="tooltip") txo
+														span.me-1 :
+														a(href=`./tx/${txInput.txid}#output-${txVin.vout}`) #{utils.ellipsize(txInput.txid, 20)}[#{txVin.vout}]
 
 										else
 											
@@ -183,8 +186,10 @@ mixin asciiHexDataDisplay(dataName, uniqueId, hex)
 		- var nonZeroVoutValueCount = tx.vout.filter(vout => { return vout.value > 0; }).length;
 
 		each vout, voutIndex in tx.vout
+			- var voutAddresses = utils.getVoutAddresses(vout);
+
 			- var highlightRow = false;
-			if (txIOHighlightAddress != null && vout.scriptPubKey && vout.scriptPubKey.addresses && vout.scriptPubKey.addresses[0] == txIOHighlightAddress)
+			if (txIOHighlightAddress != null && voutAddresses.length > 0 && voutAddresses[0] == txIOHighlightAddress)
 				- highlightRow = true;
 
 			if (!highlightRow)
@@ -213,14 +218,16 @@ mixin asciiHexDataDisplay(dataName, uniqueId, hex)
 					.tx-io-content
 						.clearfix
 							.tx-io-desc
+								- var voutAddresses = utils.getVoutAddresses(vout);
+
 								if (vout.scriptPubKey)
-									if (vout.scriptPubKey.addresses)
+									if (voutAddresses.length > 0)
 										if (true)
 											.mb-1
 												+darkBadge
 													span(title=`Output Type: ${utils.outputTypeName(vout.scriptPubKey.type)}`, data-bs-toggle="tooltip") #{utils.outputTypeAbbreviation(vout.scriptPubKey.type)}
 
-										each addr in vout.scriptPubKey.addresses
+										each addr in voutAddresses
 											a(id=`output-${voutIndex}`, href=`./address/${addr}`)
 												span.font-monospace.word-wrap(class=(highlightRow ? "text-info" : null)) #{addr}
 

@@ -1591,12 +1591,14 @@ router.get("/address/:address", asyncHandler(async (req, res, next) => {
 							handledTxids.push(tx.txid);
 
 							for (var j = 0; j < tx.vout.length; j++) {
-								if (tx.vout[j].value > 0 && tx.vout[j].scriptPubKey && tx.vout[j].scriptPubKey.addresses && tx.vout[j].scriptPubKey.addresses.includes(address)) {
-									if (addrGainsByTx[tx.txid] == null) {
-										addrGainsByTx[tx.txid] = new Decimal(0);
-									}
+								if (tx.vout[j].value > 0 && tx.vout[j].scriptPubKey) {
+									if (utils.getVoutAddresses(tx.vout[j]).includes(address)) {
+										if (addrGainsByTx[tx.txid] == null) {
+											addrGainsByTx[tx.txid] = new Decimal(0);
+										}
 
-									addrGainsByTx[tx.txid] = addrGainsByTx[tx.txid].plus(new Decimal(tx.vout[j].value));
+										addrGainsByTx[tx.txid] = addrGainsByTx[tx.txid].plus(new Decimal(tx.vout[j].value));
+									}
 								}
 							}
 
@@ -1605,12 +1607,14 @@ router.get("/address/:address", asyncHandler(async (req, res, next) => {
 								var vinJ = tx.vin[j];
 
 								if (txInput != null) {
-									if (txInput && txInput.scriptPubKey && txInput.scriptPubKey.addresses && txInput.scriptPubKey.addresses.includes(address)) {
-										if (addrLossesByTx[tx.txid] == null) {
-											addrLossesByTx[tx.txid] = new Decimal(0);
-										}
+									if (txInput && txInput.scriptPubKey) {
+										if (utils.getVoutAddresses(txInput).includes(address)) {
+											if (addrLossesByTx[tx.txid] == null) {
+												addrLossesByTx[tx.txid] = new Decimal(0);
+											}
 
-										addrLossesByTx[tx.txid] = addrLossesByTx[tx.txid].plus(new Decimal(txInput.value));
+											addrLossesByTx[tx.txid] = addrLossesByTx[tx.txid].plus(new Decimal(txInput.value));
+										}
 									}
 								}
 							}

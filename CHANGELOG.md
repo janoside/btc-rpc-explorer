@@ -11,6 +11,7 @@
 * On blocks lists show min/avg/max fee rates instead of just avg
 * Random Bitcoin-related quote shown in footer on each page load
 * New [/quotes](./quotes), curated list of Bitcoin-related quotes (each quote also having its own page like [this](`./quote/0`))
+* Preemptive support for upcoming format change to `getrawtransaction` output (thanks [@xanoni](https://github.com/xanoni))
 * Fix for incorrect homepage block count when using `BTCEXP_UI_HOME_PAGE_LATEST_BLOCKS_COUNT`
 * Fix for inaccurate difficulty adjustment estimates
 * Link to Tor v3 Hidden Service in footer

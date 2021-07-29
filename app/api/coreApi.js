@@ -831,7 +831,7 @@ function summarizeBlockAnalysisData(blockHeight, tx, inputs) {
 				txSummaryVin.value = inputVout.value;
 				txSummaryVin.type = inputVout.scriptPubKey.type;
 				txSummaryVin.reqSigs = inputVout.scriptPubKey.reqSigs;
-				txSummaryVin.addressCount = (inputVout.scriptPubKey.addresses ? inputVout.scriptPubKey.addresses.length : 0);
+				txSummaryVin.addressCount = utils.getVoutAddresses(inputVout).length;
 			}
 
 			txSummary.vin.push(txSummaryVin);
@@ -849,7 +849,7 @@ function summarizeBlockAnalysisData(blockHeight, tx, inputs) {
 			value: tx.vout[i].value,
 			type: tx.vout[i].scriptPubKey.type,
 			reqSigs: tx.vout[i].scriptPubKey.reqSigs,
-			addressCount: tx.vout[i].scriptPubKey.addresses ? tx.vout[i].scriptPubKey.addresses.length : 0
+			addressCount: utils.getVoutAddresses(tx.vout[i]).length
 		});
 	}
 

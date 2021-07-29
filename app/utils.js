@@ -437,8 +437,8 @@ function getMinerFromCoinbaseTx(tx) {
 
 			for (var payoutAddress in miningPoolsConfig.payout_addresses) {
 				if (miningPoolsConfig.payout_addresses.hasOwnProperty(payoutAddress)) {
-					if (tx.vout && tx.vout.length > 0 && tx.vout[0].scriptPubKey && tx.vout[0].scriptPubKey.addresses && tx.vout[0].scriptPubKey.addresses.length > 0) {
-						if (tx.vout[0].scriptPubKey.addresses[0] == payoutAddress) {
+					if (tx.vout && tx.vout.length > 0) {
+						if (getVoutAddress(tx.vout[0]).includes(payoutAddress)) {
 							var minerInfo = miningPoolsConfig.payout_addresses[payoutAddress];
 							minerInfo.identifiedBy = "payout address " + payoutAddress;
 
@@ -1042,6 +1042,32 @@ function stringifySimple(object) {
     return JSON.stringify(simpleObject); // returns cleaned up JSON
 }
 
+function getVoutAddress(vout) {
+	if (vout && vout.scriptPubKey) {
+		if (vout.scriptPubKey.address) {
+			return vout.scriptPubKey.address;
+
+		} else if (vout.scriptPubKey.addresses && vout.scriptPubKey.addresses.length > 0) {
+			return vout.scriptPubKey.addresses[0];
+		}
+	}
+
+	return null;
+}
+
+function getVoutAddresses(vout) {
+	if (vout && vout.scriptPubKey) {
+		if (vout.scriptPubKey.address) {
+			return [vout.scriptPubKey.address];
+
+		} else if (vout.scriptPubKey.addresses) {
+			return vout.scriptPubKey.addresses;
+		}
+	}
+
+	return [];
+}
+
 module.exports = {
 	reflectPromise: reflectPromise,
 	redirectToConnectPageIfNeeded: redirectToConnectPageIfNeeded,
@@ -1091,5 +1117,7 @@ module.exports = {
 	objectProperties: objectProperties,
 	objHasProperty: objHasProperty,
 	stringifySimple: stringifySimple,
-	safePromise: safePromise
+	safePromise: safePromise,
+	getVoutAddress: getVoutAddress,
+	getVoutAddresses: getVoutAddresses
 };
