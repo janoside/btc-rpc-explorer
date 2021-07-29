@@ -412,6 +412,18 @@ module.exports = {
 			date: "2019-06-26",
 			url: "https://bitcoinmagazine.com/culture/op-ed-as-cash-fades-will-bitcoin-keep-protest-alive-in-the-surveillance-age"
 		},
+		{
+			text: "One of the greatest things that Satoshi did was disappear.",
+			speaker: "Jimmy Song",
+			url: "https://jimmysong.medium.com/why-bitcoin-is-different-e17b813fd947",
+			date: "2018-04-02"
+		},
+		{
+			text: "Decentralized digital scarcity is the real innovation... Bitcoin was the first, and... continues to be the only such coin.",
+			speaker: "Jimmy Song",
+			url: "https://jimmysong.medium.com/why-bitcoin-is-different-e17b813fd947",
+			date: "2018-04-02"
+		}
 		/*{
 			text: "Bitcoin is a technological tour de force.",
 			speaker: "Bill Gates",

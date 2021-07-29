@@ -592,8 +592,12 @@ mixin pagination(limit, offset, sort, itemCount, baseUrl, justification="start",
 					span(aria-hidden="true") &raquo;
 
 
-mixin graphPageScriptSetup
-	script(src="./js/chart.min.js", integrity="sha384-GjRWJoCOQprcDc7Q66qkuxVD04BCqkLyMxPifcy0xRk4JjK+KHgjYw1tphyoDlkC")
+mixin graphPageScriptSetup(dateAdapterNeeded=false)
+	script(src="./js/chart.min.js", integrity="sha384-tq9x30vl+bH08RGJ5c7oIlrHDpeF9rYdRFdNQYMOY/VpHt4t0hXYd3Kj23QT9gFN")
+	
+	if (dateAdapterNeeded)
+		script(src="./js/moment.min.js", integrity="sha384-CJyhAlbbRZX14Q8KxKBt0na1ad4KBs9PklAiNk2Efxs9sgimbIZm9kYLJQeNMUfM")
+		script(src="./js/chartjs-adapter-moment.min.js", integrity="sha384-Z9r2EsEmivx0l8T8TvYoqqGcpO0cCjKbqVXB8tYUa0hIWKtGVl0TmaF263CjS6XR")
 	
 	if (userSettings.uiTheme && userSettings.uiTheme == "dark")
 		script.

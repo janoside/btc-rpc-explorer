@@ -340,7 +340,17 @@ module.exports = {
 			blockHash: "000000000000000000003b1e8108e0d85ad0f698ded94360b27e0ca766682b4f",
 			summary: "NYTimes 10/Mar/2021 House Gives Final Approval to Biden's $1.9T Pandemic Relief",
 			alertBodyHtml: "In celebration of their public listing and in homage to Satoshi's <a href='./block-height/0'>Genesis Block</a>, @Coinbase asked F2Pool to embed a message in the blockchain: 'NYTimes 10/Mar/2021 House Gives Final Approval to Biden's $1.9T Pandemic Relief'.",
-			referenceUrl: "https://twitter.com/coinbase/status/1382338154053607429?s=20"
+			referenceUrl: "https://twitter.com/coinbase/status/1382338154053607429"
+		},
+		{
+			type: "blockheight",
+			date: "2021-04-14",
+			chain: "main",
+			blockHeight: 686604,
+			blockHash: "0000000000000000000ccaca16c648fc1a2dce9749af651f9bf3ab2e778980a9",
+			summary: "Diario El Salvador 6/Jun/2021 Bitcoin tendra validez legal",
+			alertBodyHtml: "Immortalizing the proposed legislation in El Salvador to classify bitcoin as legal tender in the country (a bill written in collaboration with <a href='https://Strike.me'>Strike.me</a>) Slush Pool embedded the headline: 'Diario El Salvador 6/Jun/2021 Bitcoin tendra validez legal'.",
+			referenceUrl: "https://twitter.com/slush_pool/status/1401763623417098243"
 		},
 
 

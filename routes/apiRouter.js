@@ -242,20 +242,18 @@ router.get("/mining/hashrate", asyncHandler(async (req, res, next) => {
 
 router.get("/mining/diff-adj-estimate", asyncHandler(async (req, res, next) => {
 	var promises = [];
-	const getblockchaininfo = await utils.timePromise("promises.api.getBlockchainInfo", coreApi.getBlockchainInfo());
+	const getblockchaininfo = await utils.timePromise("api_diffAdjEst_getBlockchainInfo", coreApi.getBlockchainInfo());
 	var currentBlock;
 	var difficultyPeriod = parseInt(Math.floor(getblockchaininfo.blocks / coinConfig.difficultyAdjustmentBlockCount));
 	var difficultyPeriodFirstBlockHeader;
 	
-	promises.push(new Promise(async (resolve, reject) => {
-		currentBlock = await utils.timePromise("promises.api.getBlockHeaderByHeight", coreApi.getBlockHeaderByHeight(getblockchaininfo.blocks));
-		resolve();
+	promises.push(utils.safePromise("api_diffAdjEst_getBlockHeaderByHeight", async () => {
+		currentBlock = await coreApi.getBlockHeaderByHeight(getblockchaininfo.blocks);
 	}));
 	
-	promises.push(new Promise(async (resolve, reject) => {
+	promises.push(utils.safePromise("api_diffAdjEst_getBlockHeaderByHeight2", async () => {
 		let h = coinConfig.difficultyAdjustmentBlockCount * difficultyPeriod;
-		difficultyPeriodFirstBlockHeader = await utils.timePromise("promises.api.getBlockHeaderByHeight", coreApi.getBlockHeaderByHeight(h));
-		resolve();
+		difficultyPeriodFirstBlockHeader = await coreApi.getBlockHeaderByHeight(h);
 	}));
 	
 	await Promise.all(promises);
