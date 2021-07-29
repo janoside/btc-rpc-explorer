@@ -4,6 +4,7 @@
 * XPUB pages: search for any xpub (ypub, zpub, etc) and see summary details and a list of associated addresses (thanks [@pointbiz](https://github.com/pointbiz))
 * Mempool Summary: add top-fee transactions table
 * Homepage: add "Predicted Next Block" section
+* Cleanup support for Taproot/bech32m
 * New [/mining-template](./mining-template) tool, showing structured output of `getblocktemplate` command
 * Various improvements to charts and graphs throughout the tool
 * Better support for BIP9 soft forks shown on [/node-details](./node-details) (e.g. Taproot ST in 0.21.1) (Thanks [@Pantamis](https://github.com/Pantamis))
@@ -21,8 +22,6 @@
 * Misc UI/UX tweaks
 * Cache busting for frontend resources
 * Improved error handling in many places
-* Update bootstrap: v5.0.0-beta3 -> v5.0.2
-* Update chart.js: v2.9.3 -> v3.2.1
 * Updated dependencies
 
 
