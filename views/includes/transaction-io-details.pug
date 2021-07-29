@@ -46,7 +46,7 @@ mixin outputValueDisplay(vout, voutIndex)
 			if (utxos[voutIndex])
 				span(title="This output remains unspent (a valid UTXO)." data-bs-toggle="tooltip")
 					i.far.fa-check-circle.fa-sm.text-success.ms-2
-
+					
 			else if (utxos[voutIndex] == null)
 				span(title="This output has been spent (destroyed)." data-bs-toggle="tooltip")
 					i.far.fa-times-circle.fa-sm.text-danger.ms-2
@@ -290,9 +290,21 @@ mixin outputValueDisplay(vout, voutIndex)
 									+darkBadge
 										span(title=`Output Type: ${utils.outputTypeName(vout.scriptPubKey.type)}`, data-bs-toggle="tooltip") #{utils.outputTypeAbbreviation(vout.scriptPubKey.type)}
 							
+						if (spendings)
+							- var spending_txid = spendings[voutIndex].spender_txhash;
+							if (spending_txid)
+								span.mt-1 spent by
+								a(href=`./tx/${spending_txid}`) #{utils.ellipsizeMiddle(spendings[voutIndex].spender_txhash,9)}
+								if (spendings[voutIndex].spender_height > 0 && spendings[voutIndex].spender_height > spendings[voutIndex].height)
+									span  #{spendings[voutIndex].spender_height - spendings[voutIndex].height} blocks later
+								else if (spendings[voutIndex].spender_height <= 0)
+									span  in the mempool
+								else if (spendings[voutIndex].spender_height == spendings[voutIndex].height)
+									span  in the same block
 
 					span.ms-2.float-end
 						+outputValueDisplay(vout, voutIndex)
+
 
 					if (vout && vout.scriptPubKey.asm && !vout.scriptPubKey.asm.startsWith("OP_RETURN "))
 						if (voutAddresses.length == 0)
