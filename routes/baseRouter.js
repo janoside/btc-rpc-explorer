@@ -13,6 +13,7 @@ const qrcode = require('qrcode');
 const bitcoinjs = require('bitcoinjs-lib');
 const bip32 = require('bip32');
 const b58 = require('bs58check');
+const { bech32, bech32m } = require("bech32");
 const sha256 = require("crypto-js/sha256");
 const hexEnc = require("crypto-js/enc-hex");
 const Decimal = require("decimal.js");
@@ -1448,7 +1449,7 @@ router.get("/address/:address", asyncHandler(async (req, res, next) => {
 			res.locals.addressObj = bitcoinjs.address.fromBase58Check(address);
 
 		} catch (err) {
-			if (!err.toString().startsWith("Error: Non-base58 character")) {
+			if (!err.message.startsWith("Error: Non-base58 character")) {
 				parseAddressErrors.push(utils.logError("u3gr02gwef", err));
 			}
 		}
@@ -1456,12 +1457,13 @@ router.get("/address/:address", asyncHandler(async (req, res, next) => {
 		try {
 			res.locals.addressObj = bitcoinjs.address.fromBech32(address);
 
-		} catch (err2) {
-			if (!err2.toString().startsWith("Error: Mixed-case string " + address)) {
-				parseAddressErrors.push(utils.logError("u02qg02yqge", err2));
-			}
+		} catch (err) {
+			if (err.message.includes("Invalid checksum")) {
+				res.locals.addressObj = bech32m.decode(address);
 
-			
+			} else if (!err.message.startsWith("Error: Mixed-case string " + address)) {
+				parseAddressErrors.push(utils.logError("u02qg02yqge", err));
+			}
 		}
 
 		if (res.locals.addressObj == null) {

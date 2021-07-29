@@ -11,6 +11,7 @@
 				"async": "^3.2.0",
 				"axios": "^0.21.1",
 				"basic-auth": "^2.0.1",
+				"bech32": "2.0.0",
 				"bitcoinjs-lib": "^5.2.0",
 				"bluebird": "^3.7.2",
 				"body-parser": "^1.19.0",
@@ -463,9 +464,9 @@
 			}
 		},
 		"node_modules/bech32": {
-			"version": "1.1.4",
-			"resolved": "https://registry.npmjs.org/bech32/-/bech32-1.1.4.tgz",
-			"integrity": "sha512-s0IrSOzLlbvX7yp4WBfPITzpAU8sqQcpsmwXDiKwrG4r491vwCO/XpejasRNl0piBMe/DvP4Tz0mIS/X1DPJBQ=="
+			"version": "2.0.0",
+			"resolved": "https://registry.npmjs.org/bech32/-/bech32-2.0.0.tgz",
+			"integrity": "sha512-LcknSilhIGatDAsY1ak2I8VtGaHNhgMSYVxFrGLXv+xLHytaKZKcaUJJUE7qmBr7h33o5YQwP55pMI0xmkpJwg=="
 		},
 		"node_modules/bignumber.js": {
 			"version": "9.0.1",
@@ -545,6 +546,11 @@
 			"engines": {
 				"node": ">=8.0.0"
 			}
+		},
+		"node_modules/bitcoinjs-lib/node_modules/bech32": {
+			"version": "1.1.4",
+			"resolved": "https://registry.npmjs.org/bech32/-/bech32-1.1.4.tgz",
+			"integrity": "sha512-s0IrSOzLlbvX7yp4WBfPITzpAU8sqQcpsmwXDiKwrG4r491vwCO/XpejasRNl0piBMe/DvP4Tz0mIS/X1DPJBQ=="
 		},
 		"node_modules/bluebird": {
 			"version": "3.7.2",
@@ -5074,9 +5080,9 @@
 			}
 		},
 		"bech32": {
-			"version": "1.1.4",
-			"resolved": "https://registry.npmjs.org/bech32/-/bech32-1.1.4.tgz",
-			"integrity": "sha512-s0IrSOzLlbvX7yp4WBfPITzpAU8sqQcpsmwXDiKwrG4r491vwCO/XpejasRNl0piBMe/DvP4Tz0mIS/X1DPJBQ=="
+			"version": "2.0.0",
+			"resolved": "https://registry.npmjs.org/bech32/-/bech32-2.0.0.tgz",
+			"integrity": "sha512-LcknSilhIGatDAsY1ak2I8VtGaHNhgMSYVxFrGLXv+xLHytaKZKcaUJJUE7qmBr7h33o5YQwP55pMI0xmkpJwg=="
 		},
 		"bignumber.js": {
 			"version": "9.0.1",
@@ -5143,6 +5149,13 @@
 				"typeforce": "^1.11.3",
 				"varuint-bitcoin": "^1.0.4",
 				"wif": "^2.0.1"
+			},
+			"dependencies": {
+				"bech32": {
+					"version": "1.1.4",
+					"resolved": "https://registry.npmjs.org/bech32/-/bech32-1.1.4.tgz",
+					"integrity": "sha512-s0IrSOzLlbvX7yp4WBfPITzpAU8sqQcpsmwXDiKwrG4r491vwCO/XpejasRNl0piBMe/DvP4Tz0mIS/X1DPJBQ=="
+				}
 			}
 		},
 		"bluebird": {
