@@ -1,3 +1,5 @@
+include ./includes/shared-mixins.pug
+
 doctype html
 html(lang="en")
 	head
@@ -10,15 +12,11 @@ html(lang="en")
 		meta(name="description" content="Open-source, easy-to-use, educational Bitcoin explorer whose only dependency is your Bitcoin Core node.")
 		
 		if (!homepage)
-			link(rel="stylesheet", href="./style/highlight.min.css", integrity="sha384-s4RLYRjGGbVqKOyMGGwfxUTMOO6D7r2eom7hWZQ6BjK2Df4ZyfzLXEkonSm0KLIQ")
+			link(rel="stylesheet", href=`./style/highlight.min.css?v=${appVersion}`, integrity="sha384-s4RLYRjGGbVqKOyMGGwfxUTMOO6D7r2eom7hWZQ6BjK2Df4ZyfzLXEkonSm0KLIQ")
 
 
-		if (userSettings.uiTheme == "light")
-			link(rel="stylesheet", href="./style/light.css", integrity="")
-				
-		else
-			link(rel="stylesheet", href="./style/dark.css", integrity="")
-		
+		+themeCss
+
 
 		link(id="canonical" rel="canonical" href="https://bitcoinexplorer.org")
 
@@ -61,13 +59,9 @@ html(lang="en")
 		
 								
 
-		
-		script(src="./js/jquery.min.js", integrity="sha384-vtXRMe3mGCbOeY7l30aIg8H9p3GdeSe4IFlP6G8JMa7o7lXvnz3GFKzPxzJdPfGK")
-		script(src="./js/bootstrap.bundle.min.js", integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM")
-		script(defer, src="./js/fontawesome.min.js", integrity="sha384-haqrlim99xjfMxRP6EWtafs0sB1WKcMdynwZleuUSwJR0mDeRYbhtY+KPMr+JL6f")
+		+sharedScriptTags
 
-		script(src="./js/site.js", integrity="sha384-vm5VVZ5fSWCFr7otUJ12yWkTUm/K5stVNlqyPnievY00QK3UB72Dl19nS1oyKGeU")
-		
+
 		script.
 			document.addEventListener("DOMContentLoaded", function(event) {
 				// enable tooltips everywhere

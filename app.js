@@ -100,6 +100,8 @@ require("./app/currencies.js");
 
 const package_json = require('./package.json');
 global.appVersion = package_json.version;
+global.cacheId = global.appVersion;
+debugLog(`Default cacheId '${global.cacheId}'`);
 
 global.btcNodeSemver = "0.0.0";
 
@@ -615,11 +617,17 @@ expressApp.onStartup = function() {
 			if (err) {
 				utils.logError("3fehge9ee", err, {desc:"Error accessing git repo"});
 
+				global.cacheId = global.appVersion;
+				debugLog(`Error getting sourcecode version, continuing to use default cacheId '${global.cacheId}'`);
+
 				debugLog(`Starting ${global.coinConfig.ticker} RPC Explorer, v${global.appVersion} (code: unknown commit) at http://${config.host}:${config.port}${config.baseUrl}`);
 
 			} else {
 				global.sourcecodeVersion = log.all[0].hash.substring(0, 10);
+				global.cacheId = log.all[0].hash.substring(0, 10);
 				global.sourcecodeDate = log.all[0].date.substring(0, "0000-00-00".length);
+
+				debugLog(`Using sourcecode version as cacheId: '${global.cacheId}'`);
 
 				debugLog(`Starting ${global.coinConfig.ticker} RPC Explorer, v${global.appVersion} (commit: '${global.sourcecodeVersion}', date: ${global.sourcecodeDate}) at http://${config.host}:${config.port}${config.baseUrl}`);
 			}
@@ -628,6 +636,9 @@ expressApp.onStartup = function() {
 		});
 
 	} else {
+		global.cacheId = global.appVersion;
+		debugLog(`No sourcecode version available, continuing to use default cacheId '${global.cacheId}'`);
+
 		debugLog(`Starting ${global.coinConfig.ticker} RPC Explorer, v${global.appVersion} at http://${config.host}:${config.port}${config.baseUrl}`);
 
 		expressApp.continueStartup();

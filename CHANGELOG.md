@@ -19,6 +19,7 @@
 * Fix for [/rpc-terminal](./rpc-terminal) not parsing non-int parameters properly
 * Fix for edge case where txindex availability check fails at startup (add retries with exp. backoff)
 * Misc UI/UX tweaks
+* Cache busting for frontend resources
 * Improved error handling in many places
 * Update bootstrap: v5.0.0-beta3 -> v5.0.2
 * Update chart.js: v2.9.3 -> v3.2.1
