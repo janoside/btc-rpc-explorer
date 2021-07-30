@@ -485,9 +485,9 @@
 			"link" : "https://pool.binance.com/"
 		},
 		"binance/": {
-            "name" : "Binance Pool",
-            "link" : "https://pool.binance.com/"
-        },
+			"name" : "Binance Pool",
+			"link" : "https://pool.binance.com/"
+		},
 		"/Minerium.com/" : {
 			"name" : "Minerium",
 			"link" : "https://www.minerium.com/"
@@ -577,13 +577,13 @@
 			"link": "https://purebtc.com"
 		},
 		"/E2M/": {
-            "name": "WAYI.CN",
-            "link": "http://www.easy2mine.com/"
-        },
-        "Bitdeer": {
-            "name": "Bitdeer",
-            "link": "https://www.bitdeer.com/"
-        }
+			"name": "WAYI.CN",
+			"link": "http://www.easy2mine.com/"
+		},
+		"Bitdeer": {
+			"name": "Bitdeer",
+			"link": "https://www.bitdeer.com/"
+		}
 	},
 	"payout_addresses" : {
 		"1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa": {
@@ -1274,13 +1274,17 @@
 			"name" : "AAO Pool",
 			"link" : "https://btc.tmspool.top "
 		},
-		"33SAB6pzbhEGPbfY6NVgRDV7jVfspZ3A3Z": {
-			"name" : "carbon-negative-pool",
-			"link" : ""
+		"3D72db1KMCnj7FL7MBsmxTw81z2bVu4UN5" : {
+			"name" : "MARA Pool",
+			"link" : "https://marathondh.com/"
 		},
 		"bc1q7wedv4zdu5smt3shljpu5mgns48jn299mukymc": {
-			"name" : "unknown-n299mukymc",
-			"link" : ""
+			"name" : "F2Pool",
+			"link" : "https://www.f2pool.com/"
+		}
+	},
+	"unknown_miner_payout_addresses": {
+		"33SAB6pzbhEGPbfY6NVgRDV7jVfspZ3A3Z": {
 		}
 	},
 	"block_hashes" : {

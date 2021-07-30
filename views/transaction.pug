@@ -125,7 +125,12 @@ block content
 						if (isCoinbaseTx)
 							if (minerInfo)
 								+summaryItem("Miner")
-									if (minerInfo.identifiedBy)
+									if (minerInfo.type == "address-only")
+										span.badge.bg-secondary
+											span(data-bs-toggle="tooltip", title=`Unknown Miner Payout Address: ${minerInfo.name}`) #{utils.ellipsizeMiddle(minerInfo.name, 16)}
+											+copyTextButton(minerInfo.name)
+
+									else if (minerInfo.identifiedBy)
 										span(data-bs-toggle="tooltip", title=`Identified by: ${minerInfo.identifiedBy}`)
 											+primaryBadge(minerInfo.name, false)
 

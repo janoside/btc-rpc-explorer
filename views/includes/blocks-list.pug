@@ -130,8 +130,14 @@
 									span.fw-light.text-muted -
 						
 						td.font-monospace.text-end
-							if (block.miner && block.miner.name)
-								span.badge.bg-primary(data-bs-toggle="tooltip", title=`Identified by: ${block.miner.identifiedBy}`) #{utils.ellipsize(block.miner.name, 14)}
+							if (block.miner)
+								if (block.miner.type == "address-only")
+									span.badge.bg-secondary
+										span(data-bs-toggle="tooltip", title=`Unknown Miner Payout Address: ${block.miner.name}`) #{utils.ellipsizeMiddle(block.miner.name, 14)}
+										+copyTextButton(block.miner.name)
+
+								else
+									span.badge.bg-primary(data-bs-toggle="tooltip", title=`Identified by: ${block.miner.identifiedBy}`) #{utils.ellipsize(block.miner.name, 14)}
 
 							else if (block.height < global.pruneHeight)
 								span(title="This data is unavailable due to blockchain pruning", data-bs-toggle="tooltip")

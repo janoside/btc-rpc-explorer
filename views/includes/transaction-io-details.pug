@@ -276,11 +276,11 @@ mixin asciiHexDataDisplay(dataName, uniqueId, hex)
 									if (utxos)
 										if (utxos[voutIndex])
 											span(title="This output remains unspent (a valid UTXO)." data-bs-toggle="tooltip")
-												i.fas.fa-lock.text-success.me-2
+												i.fas.fa-lock.fa-sm.text-success.me-2
 
 										else if (utxos[voutIndex] == null)
 											span(title="This output has been spent (destroyed)." data-bs-toggle="tooltip")
-												i.fas.fa-lock-open.text-secondary.me-2
+												i.fas.fa-lock-open.fa-sm.text-secondary.me-2
 
 								if (vout.value > 0 && vout.scriptPubKey.asm.startsWith('OP_RETURN '))
 									span(title="Burned output - as an OP_RETURN output, this value is provably unspendable." data-bs-toggle="tooltip")

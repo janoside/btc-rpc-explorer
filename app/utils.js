@@ -438,7 +438,7 @@ function getMinerFromCoinbaseTx(tx) {
 			for (var payoutAddress in miningPoolsConfig.payout_addresses) {
 				if (miningPoolsConfig.payout_addresses.hasOwnProperty(payoutAddress)) {
 					if (tx.vout && tx.vout.length > 0) {
-						if (getVoutAddress(tx.vout[0]).includes(payoutAddress)) {
+						if (getVoutAddresses(tx.vout[0]).includes(payoutAddress)) {
 							var minerInfo = miningPoolsConfig.payout_addresses[payoutAddress];
 							minerInfo.identifiedBy = "payout address " + payoutAddress;
 
@@ -466,6 +466,23 @@ function getMinerFromCoinbaseTx(tx) {
 
 					return minerInfo;
 				}
+			}
+		}
+	}
+
+	if (tx.vout && tx.vout.length > 0) {
+		for (var i = 0; i < tx.vout.length; i++) {
+			const vout = tx.vout[i];
+
+			const voutValue = new Decimal(vout.value);
+			if (voutValue > 0) {
+				const address = getVoutAddress(vout);
+
+				return {
+					name: address,
+					type: "address-only",
+					identifiedBy: "payout address " + address,
+				};
 			}
 		}
 	}

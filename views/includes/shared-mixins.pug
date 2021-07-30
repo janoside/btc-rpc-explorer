@@ -11,7 +11,7 @@ mixin sharedScriptTags
 	script(src=`./js/bootstrap.bundle.min.js?v=${cacheId}`, integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM")
 	script(defer, src=`./js/fontawesome.min.js?v=${cacheId}`, integrity="sha384-haqrlim99xjfMxRP6EWtafs0sB1WKcMdynwZleuUSwJR0mDeRYbhtY+KPMr+JL6f")
 
-	script(src=`./js/site.js?v=${cacheId}`, integrity="sha384-vm5VVZ5fSWCFr7otUJ12yWkTUm/K5stVNlqyPnievY00QK3UB72Dl19nS1oyKGeU")
+	script(src=`./js/site.js?v=${cacheId}`, integrity="sha384-9zTu6Vsp/p5Eig+Oopol4yGtsmQNIrfV7LCycnEcupFNkECnEM+oXj85+GuqE3iZ")
 
 
 mixin pageTitle(text, subtext, copyableSubtext=false)
@@ -218,10 +218,10 @@ mixin txList(visibleTxs, txCount, limit, offset, inputsByTxid, options)
 
 
 mixin pageTabs(names)
-	ul.nav.nav-tabs
+	ul.nav.nav-tabs#page-tabs
 		each name, nameIndex in names
-			li.nav-item(style=(nameIndex == 0 ? "margin-left: 10px;" : false))
-				a.nav-link(class=(nameIndex == 0 ? "active" : false), data-bs-toggle="tab", href=`#tab-${name.replace(" ", "-")}`, role="tab") #{name}
+			li.nav-item.page-tab(style=(nameIndex == 0 ? "margin-left: 10px;" : false))
+				a.nav-link(class=(nameIndex == 0 ? "active" : false), data-bs-toggle="tab", data-default-tab=(nameIndex == 0 ? "true" : false) href=`#${name.replace(" ", "-")}`, role="tab") #{name}
 
 	.bg-gradient-body-to-main.pb-4.mb-4
 
@@ -230,11 +230,11 @@ mixin pillTabs(names)
 	ul.nav.nav-pills.mb-3
 		each name, nameIndex in names
 			li.nav-item
-				a.nav-link(class=(nameIndex == 0 ? "active" : false), data-bs-toggle="tab", href=`#tab-${name.replace(" ", "-")}`, role="tab") #{name}
+				a.nav-link(class=(nameIndex == 0 ? "active" : false), data-bs-toggle="tab", href=`#${name.replace(" ", "-")}`, role="tab") #{name}
 
 
 mixin pageTab(name, defaultActive=false)
-	div.tab-pane(id=`tab-${name.replace(" ", "-")}`, class=(defaultActive ? "active" : false), role="tabpanel")
+	div.tab-pane(id=`${name.replace(" ", "-")}`, class=(defaultActive ? "active" : false), role="tabpanel")
 		block
 
 

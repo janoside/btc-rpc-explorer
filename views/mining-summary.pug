@@ -196,6 +196,9 @@ block endOfBody
 				if (minerName == "Unknown") {
 					row.find(".miner-name-unknown").text(minerName);
 
+				} else if (minerName.startsWith("address-only:")) {
+					row.find(".miner-name-unknown").text(ellipsizeMiddle(minerName.substring("address-only:".length), 16));
+
 				} else {
 					row.find(".miner-name").text(minerName);
 				}
@@ -212,7 +215,13 @@ block endOfBody
 				row.find(".miner-percent").text(revenuePercent.toDP(2) + "%");
 
 				if (revenuePercent > 1) {
-					pieChartData.labels.push(minerName);
+					if (minerName.startsWith("address-only:")) {
+						pieChartData.labels.push(ellipsizeMiddle(minerName.substring("address-only:".length), 16));
+
+					} else {
+						pieChartData.labels.push(minerName);
+					}
+
 					pieChartData.datasets[0].data.push(revenuePercent.toDP(2));
 					pieChartData.datasets[0].backgroundColor.push(colors[colorIndex++ % colors.length]);
 

@@ -1035,8 +1035,18 @@ function buildMiningSummary(statusId, startBlock, endBlock, statusFunc) {
 							const totalFees = utils.getBlockTotalFeesFromCoinbaseTxAndBlockHeight(coinbaseTx, height);
 							const subsidy = coinConfig.blockRewardFunction(height, global.activeBlockchain);
 
+							var minerName = "Unknown";
+							if (minerInfo) {
+								if (minerInfo.type == "address-only") {
+									minerName = "address-only:" + minerInfo.name;
+
+								} else {
+									minerName = minerInfo.name;
+								}
+							}
+
 							let heightSummary = {
-								mn: (minerInfo ? minerInfo.name : "Unknown"),
+								mn: minerName,
 								tx: block.tx.length,
 								f: totalFees,
 								s: subsidy,
