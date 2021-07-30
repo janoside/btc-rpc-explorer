@@ -478,11 +478,13 @@ function getMinerFromCoinbaseTx(tx) {
 			if (voutValue > 0) {
 				const address = getVoutAddress(vout);
 
-				return {
-					name: address,
-					type: "address-only",
-					identifiedBy: "payout address " + address,
-				};
+				if (address) {
+					return {
+						name: address,
+						type: "address-only",
+						identifiedBy: "payout address " + address,
+					};
+				}
 			}
 		}
 	}
