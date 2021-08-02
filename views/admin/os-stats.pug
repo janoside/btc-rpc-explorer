@@ -41,7 +41,7 @@ block endOfBody
 				for (var i = 0; i < appStats[propName].length; i++) {
 					var item = appStats[propName][i];
 
-					data.push({t:new Date(item.time), y:item.value});
+					data.push({x:new Date(item.time), y:item.value});
 				}
 
 				console.log(propName + " - " + JSON.stringify(data));
