@@ -793,10 +793,6 @@ router.get("/xyzpub/:extendedPubkey", asyncHandler(async (req, res, next) => {
 			res.locals.derivationPath = "-";
 		}
 
-		if (!extendedPubkey.startsWith("xpub")) {
-			res.locals.xpub = anypubToXpub(extendedPubkey);
-		}
-
 		res.locals.receiveAddresses = receiveAddresses;
 		res.locals.changeAddresses = changeAddresses;
 
