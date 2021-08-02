@@ -1,15 +1,16 @@
-##### Unreleased
+##### v3.2.0
+###### 2021-08-02
 
 * Public API! See the docs at [/api/docs](./api/docs) (thanks [@pointbiz](https://github.com/pointbiz))
 * XPUB pages: search for any xpub (ypub, zpub, etc) and see summary details and a list of associated addresses (thanks [@pointbiz](https://github.com/pointbiz))
-* Mempool Summary: add top-fee transactions table
 * Homepage: add "Predicted Next Block" section
+* Mempool Summary: add top-fee transactions table
 * Cleanup support for Taproot/bech32m
 * New [/mining-template](./mining-template) tool, showing structured output of `getblocktemplate` command
-* Various improvements to charts and graphs throughout the tool
+* Various improvements to charts and graphs throughout the tool (including lots of y-axis changes: linear->log)
 * Better support for BIP9 soft forks shown on [/node-details](./node-details) (e.g. Taproot ST in 0.21.1) (Thanks [@Pantamis](https://github.com/Pantamis))
 * New "Recent" and "Favorites" sections on [/rpc-browser](./rpc-browser)
-* On blocks lists show min/avg/max fee rates instead of just avg
+* Block lists: show (min, avg, max) fee rates instead of just avg
 * Random Bitcoin-related quote shown in footer on each page load
 * New [/quotes](./quotes), curated list of Bitcoin-related quotes (each quote also having its own page like [this](`./quote/0`))
 * Preemptive support for upcoming format change to `getrawtransaction` output (thanks [@xanoni](https://github.com/xanoni))
