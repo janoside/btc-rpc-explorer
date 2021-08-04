@@ -12,7 +12,7 @@ block content
 
 	+contentSection("Summary")
 		+summaryRow(2 + (balance ? 1 : 0) + (changeBalance ? 1 : 0) + (xpub ? 1 : 0))
-			+summaryItem("Output Type", "The type of output (address) that is produced from this extended public key.")
+			+summaryItem("Output Type", "The type of output (address) that is produced from this extended public key.<br/><br/>In the technical terms of BIPs 44, 49, and 84 which define the scheme for deriving addresses, this item is referred to as the 'purpose'.")
 				if (pubkeyTypeDesc)
 					span.border-dotted(title=pubkeyTypeDesc, data-bs-toggle="tooltip") #{pubkeyType}
 				else
@@ -35,7 +35,7 @@ block content
 
 	if (relatedKeys)
 		+contentSection("Related Extended Public Keys")
-			p Below are <i>related</i> extended public keys. These keys share public key data, but indicate that the data should be used generate different address types. Each key is also includes the first address in its sequence.
+			p Below are <i>related</i> extended public keys. These keys share public key data, but indicate that the data should be used generate different address types. Each key also includes the first address in its sequence. Clicking on a related key will show the full details including all addresses.
 
 			+summaryRow(relatedKeys.length)
 				each item in relatedKeys

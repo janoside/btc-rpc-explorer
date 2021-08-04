@@ -713,8 +713,8 @@ router.get("/xyzpub/:extendedPubkey", asyncHandler(async (req, res, next) => {
 
 		// if xpub/ypub/zpub convert to address under path m/0/0
 		if (extendedPubkey.match(/^(xpub|tpub).*$/)) {
-			res.locals.pubkeyType = "P2PKH / P2SH";
-			res.locals.pubkeyTypeDesc = "Pay to Public Key Hash (P2PKH) or Pay to Script Hash (P2SH)";
+			res.locals.pubkeyType = "P2PKH";
+			res.locals.pubkeyTypeDesc = "Pay to Public Key Hash";
 			res.locals.derivationPath = "m/44'/0'";
 
 			const xpub_tpub = global.activeBlockchain == "main" ? "xpub" : "tpub";
@@ -754,7 +754,7 @@ router.get("/xyzpub/:extendedPubkey", asyncHandler(async (req, res, next) => {
 
 		} else if (extendedPubkey.match(/^(ypub|upub).*$/)) {
 			res.locals.pubkeyType = "P2WPKH in P2SH";
-			res.locals.pubkeyTypeDesc = "Pay to Witness Public Key Hash (P2WPKH) wrapped inside Pay to Script Hash (P2SH) - aka Wrapped Segwit";
+			res.locals.pubkeyTypeDesc = "Pay to Witness Public Key Hash (P2WPKH) wrapped inside Pay to Script Hash (P2SH), aka Wrapped Segwit";
 			res.locals.derivationPath = "m/49'/0'";
 
 			const xpub_tpub = global.activeBlockchain == "main" ? "xpub" : "tpub";
@@ -781,7 +781,7 @@ router.get("/xyzpub/:extendedPubkey", asyncHandler(async (req, res, next) => {
 
 		} else if (extendedPubkey.match(/^(zpub|vpub).*$/)) {
 			res.locals.pubkeyType = "P2WPKH";
-			res.locals.pubkeyTypeDesc = "Pay to Witness Public Key Hash (P2WPKH) - aka Native Segwit";
+			res.locals.pubkeyTypeDesc = "Pay to Witness Public Key Hash, aka Native Segwit";
 			res.locals.derivationPath = "m/84'/0'";
 
 			const xpub_tpub = global.activeBlockchain == "main" ? "xpub" : "tpub";

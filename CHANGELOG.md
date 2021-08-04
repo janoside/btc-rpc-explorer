@@ -1,5 +1,5 @@
 ##### v3.2.0
-###### 2021-08-02
+###### 2021-08-04
 
 * Public API! See the docs at [/api/docs](./api/docs) (thanks [@pointbiz](https://github.com/pointbiz))
 * XPUB pages: search for any xpub (ypub, zpub, etc) and see summary details and a list of associated addresses (thanks [@pointbiz](https://github.com/pointbiz))
