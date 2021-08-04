@@ -1044,24 +1044,24 @@ function iterateProperties(obj, action) {
 }
 
 function stringifySimple(object) {
-    var simpleObject = {};
-    for (var prop in object) {
-        if (!object.hasOwnProperty(prop)) {
-            continue;
-        }
+		var simpleObject = {};
+		for (var prop in object) {
+				if (!object.hasOwnProperty(prop)) {
+						continue;
+				}
 
-        if (typeof(object[prop]) == 'object') {
-            continue;
-        }
+				if (typeof(object[prop]) == 'object') {
+						continue;
+				}
 
-        if (typeof(object[prop]) == 'function') {
-            continue;
-        }
+				if (typeof(object[prop]) == 'function') {
+						continue;
+				}
 
-        simpleObject[prop] = object[prop];
-    }
+				simpleObject[prop] = object[prop];
+		}
 
-    return JSON.stringify(simpleObject); // returns cleaned up JSON
+		return JSON.stringify(simpleObject); // returns cleaned up JSON
 }
 
 function getVoutAddress(vout) {
