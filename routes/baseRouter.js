@@ -12,7 +12,7 @@ const bitcoinCore = require("btc-rpc-client");
 const qrcode = require('qrcode');
 const bitcoinjs = require('bitcoinjs-lib');
 const bip32 = require('bip32');
-const b58 = require('bs58check');
+const bs58check = require('bs58check');
 const { bech32, bech32m } = require("bech32");
 const sha256 = require("crypto-js/sha256");
 const hexEnc = require("crypto-js/enc-hex");
@@ -702,6 +702,8 @@ router.get("/xyzpub/:extendedPubkey", asyncHandler(async (req, res, next) => {
 		res.locals.paginationBaseUrl = `./xyzpub/${extendedPubkey}`;
 
 
+		res.locals.relatedKeys = [];
+
 		const receiveAddresses = [];
 		const changeAddresses = [];
 
@@ -710,80 +712,100 @@ router.get("/xyzpub/:extendedPubkey", asyncHandler(async (req, res, next) => {
 		res.locals.pubkeyTypeDesc = null;
 
 		// if xpub/ypub/zpub convert to address under path m/0/0
-		if (extendedPubkey.startsWith("xpub")) {
+		if (extendedPubkey.match(/^(xpub|tpub).*$/)) {
 			res.locals.pubkeyType = "P2PKH / P2SH";
 			res.locals.pubkeyTypeDesc = "Pay to Public Key Hash (P2PKH) or Pay to Script Hash (P2SH)";
 			res.locals.derivationPath = "m/44'/0'";
-			
-			var bip32object = bip32.fromBase58(extendedPubkey);
 
-			for (var i = 0; i < limit; i++) {
-				var bip32Child = bip32object.derive(0).derive(offset + i);
-				var publicKey = bip32Child.publicKey;
-				var generatedAddress = bitcoinjs.payments.p2pkh({ pubkey: publicKey }).address;
+			const xpub_tpub = global.activeBlockchain == "main" ? "xpub" : "tpub";
+			const ypub_upub = global.activeBlockchain == "main" ? "ypub" : "upub";
+			const zpub_vpub = global.activeBlockchain == "main" ? "zpub" : "vpub";
 
-				receiveAddresses.push(generatedAddress);
+			let xpub = extendedPubkey;
+			if (!extendedPubkey.startsWith(xpub_tpub)) {
+				xpub = utils.xpubChangeVersionBytes(extendedPubkey, xpub_tpub);
 			}
 
-			for (var i = 0; i < limit; i++) {
-				var bip32Child = bip32object.derive(1).derive(offset + i);
-				var publicKey = bip32Child.publicKey;
-				var generatedAddress = bitcoinjs.payments.p2pkh({ pubkey: publicKey }).address;
+			res.locals.receiveAddresses = utils.bip32Addresses(extendedPubkey, "p2pkh", 0, limit, offset);
+			res.locals.changeAddresses = utils.bip32Addresses(extendedPubkey, "p2pkh", 1, limit, offset);
 
-				changeAddresses.push(generatedAddress);
+			if (!extendedPubkey.startsWith(xpub_tpub)) {
+				res.locals.relatedKeys.push({
+					keyType: xpub_tpub,
+					key: utils.xpubChangeVersionBytes(xpub, xpub_tpub),
+					outputType: "P2PKH",
+					firstAddress: utils.bip32Addresses(xpub, "p2pkh", 0, 1, 0)[0]
+				});
 			}
-		} else if (extendedPubkey.startsWith("ypub")) {
+
+			res.locals.relatedKeys.push({
+				keyType: ypub_upub,
+				key: utils.xpubChangeVersionBytes(xpub, ypub_upub),
+				outputType: "P2WPKH in P2SH",
+				firstAddress: utils.bip32Addresses(xpub, "p2sh(p2wpkh)", 0, 1, 0)[0]
+			});
+
+			res.locals.relatedKeys.push({
+				keyType: zpub_vpub,
+				key: utils.xpubChangeVersionBytes(xpub, zpub_vpub),
+				outputType: "P2WPKH",
+				firstAddress: utils.bip32Addresses(xpub, "p2wpkh", 0, 1, 0)[0]
+			});
+
+		} else if (extendedPubkey.match(/^(ypub|upub).*$/)) {
 			res.locals.pubkeyType = "P2WPKH in P2SH";
 			res.locals.pubkeyTypeDesc = "Pay to Witness Public Key Hash (P2WPKH) wrapped inside Pay to Script Hash (P2SH) - aka Wrapped Segwit";
 			res.locals.derivationPath = "m/49'/0'";
 
-			var data = b58.decode(extendedPubkey)
-			data = data.slice(4)
-			data = Buffer.concat([Buffer.from('0488b21e','hex'), data])
-			
-			var bip32object = bip32.fromBase58(b58.encode(data));
+			const xpub_tpub = global.activeBlockchain == "main" ? "xpub" : "tpub";
+			const zpub_vpub = global.activeBlockchain == "main" ? "zpub" : "vpub";
 
-			for (var i = 0; i < limit; i++) {
-				var bip32Child = bip32object.derive(0).derive(offset + i);
-				var publicKey = bip32Child.publicKey;
-				var generatedAddress = bitcoinjs.payments.p2sh({ redeem: bitcoinjs.payments.p2wpkh({ pubkey: publicKey })}).address;
+			const xpub = utils.xpubChangeVersionBytes(extendedPubkey, xpub_tpub);
 
-				receiveAddresses.push(generatedAddress);
-			}
+			res.locals.receiveAddresses = utils.bip32Addresses(xpub, "p2sh(p2wpkh)", 0, limit, offset);
+			res.locals.changeAddresses = utils.bip32Addresses(xpub, "p2sh(p2wpkh)", 1, limit, offset);
 
-			for (var i = 0; i < limit; i++) {
-				var bip32Child = bip32object.derive(1).derive(offset + i);
-				var publicKey = bip32Child.publicKey;
-				var generatedAddress = bitcoinjs.payments.p2sh({ redeem: bitcoinjs.payments.p2wpkh({ pubkey: publicKey })}).address;
+			res.locals.relatedKeys.push({
+				keyType: xpub_tpub,
+				key: xpub,
+				outputType: "P2PKH",
+				firstAddress: utils.bip32Addresses(xpub, "p2pkh", 0, 1, 0)[0]
+			});
 
-				changeAddresses.push(generatedAddress);
-			}
-		} else if (extendedPubkey.startsWith("zpub")) {
+			res.locals.relatedKeys.push({
+				keyType: zpub_vpub,
+				key: utils.xpubChangeVersionBytes(xpub, zpub_vpub),
+				outputType: "P2WPKH",
+				firstAddress: utils.bip32Addresses(xpub, "p2wpkh", 0, 1, 0)[0]
+			});
+
+		} else if (extendedPubkey.match(/^(zpub|vpub).*$/)) {
 			res.locals.pubkeyType = "P2WPKH";
 			res.locals.pubkeyTypeDesc = "Pay to Witness Public Key Hash (P2WPKH) - aka Native Segwit";
 			res.locals.derivationPath = "m/84'/0'";
 
-			var data = b58.decode(extendedPubkey);
-			data = data.slice(4)
-			data = Buffer.concat([Buffer.from('0488b21e','hex'), data])
-			
-			var bip32object = bip32.fromBase58(b58.encode(data));
+			const xpub_tpub = global.activeBlockchain == "main" ? "xpub" : "tpub";
+			const ypub_upub = global.activeBlockchain == "main" ? "ypub" : "upub";
 
-			for (var i = 0; i < limit; i++) {
-				var bip32Child = bip32object.derive(0).derive(offset + i);
-				var publicKey = bip32Child.publicKey;
-				var generatedAddress = bitcoinjs.payments.p2wpkh({ pubkey: publicKey }).address;
+			const xpub = utils.xpubChangeVersionBytes(extendedPubkey, xpub_tpub);
 
-				receiveAddresses.push(generatedAddress);
-			}
+			res.locals.receiveAddresses = utils.bip32Addresses(xpub, "p2wpkh", 0, limit, offset);
+			res.locals.changeAddresses = utils.bip32Addresses(xpub, "p2wpkh", 1, limit, offset);
 
-			for (var i = 0; i < limit; i++) {
-				var bip32Child = bip32object.derive(1).derive(offset + i);
-				var publicKey = bip32Child.publicKey;
-				var generatedAddress = bitcoinjs.payments.p2wpkh({ pubkey: publicKey }).address;
+			res.locals.relatedKeys.push({
+				keyType: xpub_tpub,
+				key: xpub,
+				outputType: "P2PKH",
+				firstAddress: utils.bip32Addresses(xpub, "p2pkh", 0, 1, 0)[0]
+			});
 
-				changeAddresses.push(generatedAddress);
-			}
+			res.locals.relatedKeys.push({
+				keyType: ypub_upub,
+				key: utils.xpubChangeVersionBytes(xpub, ypub_upub),
+				outputType: "P2WPKH in P2SH",
+				firstAddress: utils.bip32Addresses(xpub, "p2sh(p2wpkh)", 0, 1, 0)[0]
+			});
+
 		} else if (extendedPubkey.startsWith("Ypub")) {
 			res.locals.pubkeyType = "Multi-Sig P2WSH in P2SH";
 			res.locals.derivationPath = "-";
@@ -793,8 +815,6 @@ router.get("/xyzpub/:extendedPubkey", asyncHandler(async (req, res, next) => {
 			res.locals.derivationPath = "-";
 		}
 
-		res.locals.receiveAddresses = receiveAddresses;
-		res.locals.changeAddresses = changeAddresses;
 
 		res.render("extended-public-key");
 
@@ -810,14 +830,6 @@ router.get("/xyzpub/:extendedPubkey", asyncHandler(async (req, res, next) => {
 		next();
 	}
 }));
-
-function anypubToXpub(xyzpub) {
-	let data = b58.decode(xyzpub);
-	data = data.slice(4);
-	data = Buffer.concat([Buffer.from('0488b21e','hex'), data]);
-
-	return b58.encode(data);
-}
 
 router.get("/block-stats", function(req, res, next) {
 	if (semver.lt(global.btcNodeSemver, rpcApi.minRpcVersions.getblockstats)) {
@@ -915,8 +927,15 @@ router.post("/search", function(req, res, next) {
 
 	req.session.query = req.body.query;
 	
-	// xpub/ypub/zpub -> redirect: /xpub/XXX
+	// xpub/ypub/zpub -> redirect: /xyzpub/XXX
 	if (rawCaseQuery.match(/^(xpub|ypub|zpub|Ypub|Zpub).*$/)) {
+		res.redirect(`./xyzpub/${rawCaseQuery}`);
+		
+		return;
+	}
+
+	// tpub/upub/vpub -> redirect: /xyzpub/XXX
+	if (rawCaseQuery.match(/^(tpub|upub|vpub|Upub|Vpub).*$/)) {
 		res.redirect(`./xyzpub/${rawCaseQuery}`);
 		
 		return;

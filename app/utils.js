@@ -8,6 +8,9 @@ const debugErrorVerboseLog = debug("btcexp:errorVerbose");
 const Decimal = require("decimal.js");
 const request = require("request");
 const qrcode = require("qrcode");
+const bs58check = require("bs58check");
+const bip32 = require('bip32');
+const bitcoinjs = require('bitcoinjs-lib');
 
 const config = require("./config.js");
 const coins = require("./coins.js");
@@ -1087,6 +1090,78 @@ function getVoutAddresses(vout) {
 	return [];
 }
 
+const xpubPrefixes = new Map([
+	['xpub', '0488b21e'],
+	['ypub', '049d7cb2'],
+	['Ypub', '0295b43f'],
+	['zpub', '04b24746'],
+	['Zpub', '02aa7ed3'],
+	['tpub', '043587cf'],
+	['upub', '044a5262'],
+	['Upub', '024289ef'],
+	['vpub', '045f1cf6'],
+	['Vpub', '02575483'],
+]);
+
+const bip32TestnetNetwork = {
+	messagePrefix: '\x18Bitcoin Signed Message:\n',
+	bech32: 'tb',
+	bip32: {
+		public: 0x043587cf,
+		private: 0x04358394,
+	},
+	pubKeyHash: 0x6f,
+	scriptHash: 0xc4,
+	wif: 0xEF,
+};
+
+// ref: https://github.com/ExodusMovement/xpub-converter/blob/master/src/index.js
+function xpubChangeVersionBytes(xpub, targetFormat) {
+	if (!xpubPrefixes.has(targetFormat)) {
+		throw new Error("Invalid target version");
+	}
+
+	// trim whitespace
+	xpub = xpub.trim();
+
+	var data = bs58check.decode(xpub);
+	data = data.slice(4);
+	data = Buffer.concat([Buffer.from(xpubPrefixes.get(targetFormat), 'hex'), data]);
+
+	return bs58check.encode(data);
+}
+
+// HD wallet addresses
+function bip32Addresses(extPubkey, addressType, account, limit=10, offset=0) {
+	let network = null;
+	if (!extPubkey.match(/^(xpub|ypub|zpub|Ypub|Zpub).*$/)) {
+		network = bip32TestnetNetwork;
+	}
+
+	let bip32object = bip32.fromBase58(extPubkey, network);
+
+	let addresses = [];
+	for (let i = offset; i < (offset + limit); i++) {
+		let bip32Child = bip32object.derive(account).derive(i);
+		let publicKey = bip32Child.publicKey;
+
+		if (addressType == "p2pkh") {
+			addresses.push(bitcoinjs.payments.p2pkh({ pubkey: publicKey, network: network }).address);
+
+		} else if (addressType == "p2sh(p2wpkh)") {
+			addresses.push(bitcoinjs.payments.p2sh({ redeem: bitcoinjs.payments.p2wpkh({ pubkey: publicKey, network: network })}).address);
+
+		} else if (addressType == "p2wpkh") {
+			addresses.push(bitcoinjs.payments.p2wpkh({ pubkey: publicKey, network: network }).address);
+
+		} else {
+			throw new Error(`Unknown address type: "${addressType}" (should be one of ["p2pkh", "p2sh(p2wpkh)", "p2wpkh"])`)
+		}
+	}
+
+	return addresses;
+}
+
 module.exports = {
 	reflectPromise: reflectPromise,
 	redirectToConnectPageIfNeeded: redirectToConnectPageIfNeeded,
@@ -1138,5 +1213,7 @@ module.exports = {
 	stringifySimple: stringifySimple,
 	safePromise: safePromise,
 	getVoutAddress: getVoutAddress,
-	getVoutAddresses: getVoutAddresses
+	getVoutAddresses: getVoutAddresses,
+	xpubChangeVersionBytes: xpubChangeVersionBytes,
+	bip32Addresses: bip32Addresses
 };

@@ -92,6 +92,19 @@ module.exports = {
 
 
 
+
+		// util
+		{
+			"category":"util",
+			"url":"/api/util/xyzpub/:extendedPubkey",
+			"desc":"Returns details for the specified extended public key, including related keys and addresses.",
+			"returnType":"json",
+			"optionalParams": {"limit":"The number of addresses to return", "offset":"Offset into the list of addresses"},
+			"testUrl": "/api/util/xyzpub/xpub6EuV33a2DXxAhoJTRTnr8qnysu81AA4YHpLY6o8NiGkEJ8KADJ35T64eJsStWsmRf1xXkEANVjXFXnaUKbRtFwuSPCLfDdZwYNZToh4LBCd"
+		},
+
+
+
 		// price
 		{
 			"category":"price",

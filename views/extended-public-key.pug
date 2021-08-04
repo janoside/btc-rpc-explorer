@@ -12,7 +12,7 @@ block content
 
 	+contentSection("Summary")
 		+summaryRow(2 + (balance ? 1 : 0) + (changeBalance ? 1 : 0) + (xpub ? 1 : 0))
-			+summaryItem("Type", "There are a few types of Extended Public Keys and each generates a different set of addresses.")
+			+summaryItem("Output Type", "The type of output (address) that is produced from this extended public key.")
 				if (pubkeyTypeDesc)
 					span.border-dotted(title=pubkeyTypeDesc, data-bs-toggle="tooltip") #{pubkeyType}
 				else
@@ -31,6 +31,27 @@ block content
 				+summaryItem("XPUB", "The 'xpub...' corresponding to this extended public key.")
 					| #{utils.ellipsizeMiddle(xpub, 16)}
 					+copyTextButton(xpub)
+
+
+	if (relatedKeys)
+		+contentSection("Related Extended Public Keys")
+			p Below are <i>related</i> extended public keys. These keys share public key data, but indicate that the data should be used generate different address types. Each key is also includes the first address in its sequence.
+
+			+summaryRow(relatedKeys.length)
+				each item in relatedKeys
+					+summaryItem(`${item.keyType} (${item.outputType})`)
+						a(href=`./xyzpub/${item.key}`) #{utils.ellipsizeMiddle(item.key, 16)}
+						+copyTextButton(item.key)
+						.mt-2
+							small.text-muted First address:
+						a(href=`./address/${item.firstAddress}`) #{utils.ellipsizeMiddle(item.firstAddress, 16)}
+						+copyTextButton(item.firstAddress)
+
+	if (false)
+		.row
+			.col
+				pre
+					code.json #{JSON.stringify(relatedKeys, null, 4)}
 
 	.row
 		.col

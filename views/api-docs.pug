@@ -40,7 +40,15 @@ block content
 
 					.col-md-8
 						
-						| #{item.desc}
+						div #{item.desc}
+
+						if (item.optionalParams)
+							.mt-2
+								small.me-2 Optional params:
+
+								each x, xName in item.optionalParams
+									span(title=x, data-bs-toggle="tooltip")
+										+lightBadge(xName)
 
 						if (false && item.example)
 							.mt-3
