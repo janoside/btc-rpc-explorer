@@ -73,6 +73,10 @@ $alert-dismissible-padding-r: $alert-padding-x * 2.5;
 $dropdown-min-width: 11rem;
 
 
+.bg-content {
+	background-color: $body-bg !important;
+}
+
 code {
 	background-color: $body-bg !important;
 }

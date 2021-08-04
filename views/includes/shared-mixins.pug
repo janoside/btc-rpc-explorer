@@ -1,9 +1,9 @@
 mixin themeCss
 	if (userSettings.uiTheme == "light")
-		link(rel="stylesheet", href=`./style/light.css?v=${cacheId}`, integrity="sha384-j/09KyY2xcL18PSMBJ2DvDeoQg7GveND/rgS81YS9N98n55HGkmIzZNUogqMi68/")
+		link(rel="stylesheet", href=`./style/light.css?v=${cacheId}`, integrity="sha384-6A0YKbb0AQEcKxWNokSf5gjcJsWYriw5A4jpNE/Iv/sfBUASzhqMx4d595GhuG/6")
 			
 	else
-		link(rel="stylesheet", href=`./style/dark.css?v=${cacheId}`, integrity="sha384-mzGF20k+cov5j76o7LC7xZxfNABqrmKQi+rnimNDD9Zn9xnvyI6I0EQiRU3A+GZH")
+		link(rel="stylesheet", href=`./style/dark.css?v=${cacheId}`, integrity="sha384-XI0JrleNQxfB9CuMbPApQTtnqsLwjObQsND4KLJ1+1I2/7X6U8W+3AOVBtkBslmB")
 
 
 mixin sharedScriptTags
@@ -119,7 +119,7 @@ mixin summaryItem(title, titleDesc, subtitle, subtitleDesc)
 // txBlockHeightsByTxid_orSharedBlockHeight, showDates=false, highlightAddress, addrGainsByTxid, addrLossesByTxid)
 mixin txList(visibleTxs, txCount, limit, offset, inputsByTxid, options)
 	if (txCount > limit)
-		.rounded-0.rounded-top.bg-body.border
+		.rounded-0.rounded-top.bg-content.border
 			.p-3
 				h6.fw-normal.mb-2 #{offset.toLocaleString()} - #{Math.min(offset + limit - 1, txCount - 1).toLocaleString()} of #{txCount.toLocaleString()}
 				+pagination(limit, offset, null, txCount, paginationBaseUrl)
@@ -137,7 +137,7 @@ mixin txList(visibleTxs, txCount, limit, offset, inputsByTxid, options)
 
 		- var tx_height_param = (!global.txindexAvailable && txBlockHeight) ? `@${txBlockHeight}` : '';
 
-		.border.bg-body.p-3(class=(txIndex == 0 && txCount <= limit ? "rounded-top" : false), class=(txCount <= limit && txIndex == (visibleTxs.length - 1) ? "rounded-bottom" : false))
+		.border.bg-content.p-3(class=(txIndex == 0 && txCount <= limit ? "rounded-top" : false), class=(txCount <= limit && txIndex == (visibleTxs.length - 1) ? "rounded-bottom" : false))
 			if (tx && tx.txid)
 				.clearfix
 					.float-start
@@ -210,7 +210,7 @@ mixin txList(visibleTxs, txCount, limit, offset, inputsByTxid, options)
 
 
 	if (txCount > limit)
-		.rounded-0.rounded-bottom.bg-body.border
+		.rounded-0.rounded-bottom.bg-content.border
 			.p-3
 				if (!crawlerBot && txCount > limit)
 					h6.fw-normal.mb-2 #{offset.toLocaleString()} - #{Math.min(offset + limit - 1, txCount - 1).toLocaleString()} of #{txCount.toLocaleString()}

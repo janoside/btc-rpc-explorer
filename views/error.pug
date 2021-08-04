@@ -20,11 +20,11 @@ block content
 
 	else if (message)
 		pre
-			code.json.bg-body !{message}
+			code.json.bg-content !{message}
 	else
 		p Unknown error
 
 	if (error)
 		h2 #{error.status}
 		pre
-			code.json.bg-body #{error.stack}
+			code.json.bg-content #{error.stack}

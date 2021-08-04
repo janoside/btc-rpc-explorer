@@ -338,26 +338,26 @@ block content
 					+pageTab("Transaction", true)
 						+contentSection("Transaction")
 							pre
-								code.text-json.json.bg-body(data-lang="json") #{JSON.stringify(result.getrawtransaction, null, 4)}
+								code.text-json.json(data-lang="json") #{JSON.stringify(result.getrawtransaction, null, 4)}
 
 
 					+pageTab("Block Header")
 						+contentSection("Block Header")
 							pre
-								code.text-json.json.bg-body(data-lang="json") #{JSON.stringify(result.getblock, null, 4)}
+								code.text-json.json(data-lang="json") #{JSON.stringify(result.getblock, null, 4)}
 
 					
 					+pageTab("UTXOs")
 						+contentSection("UTXOs")
 							pre
-								code.text-json.json.bg-body(data-lang="json") #{JSON.stringify(utxos, null, 4)}
+								code.text-json.json(data-lang="json") #{JSON.stringify(utxos, null, 4)}
 								
 
 					if (mempoolDetails)
 						+pageTab("Mempool Details")
 							+contentSection("Mempool Details")
 								pre
-									code.json.bg-body(data-lang="json") #{JSON.stringify(mempoolDetails, null, 4)}
+									code.json(data-lang="json") #{JSON.stringify(mempoolDetails, null, 4)}
 
 				//pre #{JSON.stringify(result.txInputs, null, 4)}
 
