@@ -707,20 +707,22 @@ router.get("/xyzpub/:extendedPubkey", asyncHandler(async (req, res, next) => {
 		const receiveAddresses = [];
 		const changeAddresses = [];
 
+		const xpub_tpub = global.activeBlockchain == "main" ? "xpub" : "tpub";
+		const ypub_upub = global.activeBlockchain == "main" ? "ypub" : "upub";
+		const zpub_vpub = global.activeBlockchain == "main" ? "zpub" : "vpub";
+
 		res.locals.pubkeyType = "Unknown";
-		res.locals.derivationPath = "Unknown";
+		res.locals.bip32Path = "Unknown";
 		res.locals.pubkeyTypeDesc = null;
+		res.locals.keyType = extendedPubkey.substring(0, 4);
 
 		// if xpub/ypub/zpub convert to address under path m/0/0
 		if (extendedPubkey.match(/^(xpub|tpub).*$/)) {
 			res.locals.pubkeyType = "P2PKH";
 			res.locals.pubkeyTypeDesc = "Pay to Public Key Hash";
-			res.locals.derivationPath = "m/44'/0'";
+			res.locals.bip32Path = "m/44'/0'";
 
-			const xpub_tpub = global.activeBlockchain == "main" ? "xpub" : "tpub";
-			const ypub_upub = global.activeBlockchain == "main" ? "ypub" : "upub";
-			const zpub_vpub = global.activeBlockchain == "main" ? "zpub" : "vpub";
-
+			
 			let xpub = extendedPubkey;
 			if (!extendedPubkey.startsWith(xpub_tpub)) {
 				xpub = utils.xpubChangeVersionBytes(extendedPubkey, xpub_tpub);
@@ -733,32 +735,40 @@ router.get("/xyzpub/:extendedPubkey", asyncHandler(async (req, res, next) => {
 				res.locals.relatedKeys.push({
 					keyType: xpub_tpub,
 					key: utils.xpubChangeVersionBytes(xpub, xpub_tpub),
+					bip32Path: "m/44'/0'",
 					outputType: "P2PKH",
-					firstAddress: utils.bip32Addresses(xpub, "p2pkh", 0, 1, 0)[0]
+					firstAddresses: utils.bip32Addresses(xpub, "p2pkh", 0, 3, 0)
 				});
 			}
 
 			res.locals.relatedKeys.push({
+				keyType: xpub_tpub,
+				key: extendedPubkey,
+				bip32Path: "m/44'/0'",
+				outputType: "P2PKH",
+				firstAddresses: utils.bip32Addresses(xpub, "p2pkh", 0, 3, 0)
+			});
+
+			res.locals.relatedKeys.push({
 				keyType: ypub_upub,
 				key: utils.xpubChangeVersionBytes(xpub, ypub_upub),
+				bip32Path: "m/49'/0'",
 				outputType: "P2WPKH in P2SH",
-				firstAddress: utils.bip32Addresses(xpub, "p2sh(p2wpkh)", 0, 1, 0)[0]
+				firstAddresses: utils.bip32Addresses(xpub, "p2sh(p2wpkh)", 0, 3, 0)
 			});
 
 			res.locals.relatedKeys.push({
 				keyType: zpub_vpub,
 				key: utils.xpubChangeVersionBytes(xpub, zpub_vpub),
+				bip32Path: "m/84'/0'",
 				outputType: "P2WPKH",
-				firstAddress: utils.bip32Addresses(xpub, "p2wpkh", 0, 1, 0)[0]
+				firstAddresses: utils.bip32Addresses(xpub, "p2wpkh", 0, 3, 0)
 			});
 
 		} else if (extendedPubkey.match(/^(ypub|upub).*$/)) {
 			res.locals.pubkeyType = "P2WPKH in P2SH";
 			res.locals.pubkeyTypeDesc = "Pay to Witness Public Key Hash (P2WPKH) wrapped inside Pay to Script Hash (P2SH), aka Wrapped Segwit";
-			res.locals.derivationPath = "m/49'/0'";
-
-			const xpub_tpub = global.activeBlockchain == "main" ? "xpub" : "tpub";
-			const zpub_vpub = global.activeBlockchain == "main" ? "zpub" : "vpub";
+			res.locals.bip32Path = "m/49'/0'";
 
 			const xpub = utils.xpubChangeVersionBytes(extendedPubkey, xpub_tpub);
 
@@ -768,24 +778,31 @@ router.get("/xyzpub/:extendedPubkey", asyncHandler(async (req, res, next) => {
 			res.locals.relatedKeys.push({
 				keyType: xpub_tpub,
 				key: xpub,
+				bip32Path: "m/44'/0'",
 				outputType: "P2PKH",
-				firstAddress: utils.bip32Addresses(xpub, "p2pkh", 0, 1, 0)[0]
+				firstAddresses: utils.bip32Addresses(xpub, "p2pkh", 0, 3, 0)
+			});
+
+			res.locals.relatedKeys.push({
+				keyType: ypub_upub,
+				key: extendedPubkey,
+				bip32Path: "m/49'/0'",
+				outputType: "P2WPKH in P2SH",
+				firstAddresses: utils.bip32Addresses(xpub, "p2sh(p2wpkh)", 0, 3, 0)
 			});
 
 			res.locals.relatedKeys.push({
 				keyType: zpub_vpub,
 				key: utils.xpubChangeVersionBytes(xpub, zpub_vpub),
+				bip32Path: "m/84'/0'",
 				outputType: "P2WPKH",
-				firstAddress: utils.bip32Addresses(xpub, "p2wpkh", 0, 1, 0)[0]
+				firstAddresses: utils.bip32Addresses(xpub, "p2wpkh", 0, 3, 0)
 			});
 
 		} else if (extendedPubkey.match(/^(zpub|vpub).*$/)) {
 			res.locals.pubkeyType = "P2WPKH";
 			res.locals.pubkeyTypeDesc = "Pay to Witness Public Key Hash, aka Native Segwit";
-			res.locals.derivationPath = "m/84'/0'";
-
-			const xpub_tpub = global.activeBlockchain == "main" ? "xpub" : "tpub";
-			const ypub_upub = global.activeBlockchain == "main" ? "ypub" : "upub";
+			res.locals.bip32Path = "m/84'/0'";
 
 			const xpub = utils.xpubChangeVersionBytes(extendedPubkey, xpub_tpub);
 
@@ -795,24 +812,34 @@ router.get("/xyzpub/:extendedPubkey", asyncHandler(async (req, res, next) => {
 			res.locals.relatedKeys.push({
 				keyType: xpub_tpub,
 				key: xpub,
+				bip32Path: "m/44'/0'",
 				outputType: "P2PKH",
-				firstAddress: utils.bip32Addresses(xpub, "p2pkh", 0, 1, 0)[0]
+				firstAddresses: utils.bip32Addresses(xpub, "p2pkh", 0, 3, 0)
 			});
 
 			res.locals.relatedKeys.push({
 				keyType: ypub_upub,
 				key: utils.xpubChangeVersionBytes(xpub, ypub_upub),
+				bip32Path: "m/49'/0'",
 				outputType: "P2WPKH in P2SH",
-				firstAddress: utils.bip32Addresses(xpub, "p2sh(p2wpkh)", 0, 1, 0)[0]
+				firstAddresses: utils.bip32Addresses(xpub, "p2sh(p2wpkh)", 0, 3, 0)
+			});
+
+			res.locals.relatedKeys.push({
+				keyType: zpub_vpub,
+				key: extendedPubkey,
+				bip32Path: "m/84'/0'",
+				outputType: "P2WPKH",
+				firstAddresses: utils.bip32Addresses(xpub, "p2wpkh", 0, 3, 0)
 			});
 
 		} else if (extendedPubkey.startsWith("Ypub")) {
 			res.locals.pubkeyType = "Multi-Sig P2WSH in P2SH";
-			res.locals.derivationPath = "-";
+			res.locals.bip32Path = "-";
 
 		} else if (extendedPubkey.startsWith("Zpub")) {
 			res.locals.pubkeyType = "Multi-Sig P2WSH";
-			res.locals.derivationPath = "-";
+			res.locals.bip32Path = "-";
 		}
 
 
