@@ -1,14 +1,14 @@
 mixin themeCss
 	if (userSettings.uiTheme == "light")
-		link(rel="stylesheet", href=`./style/light.css?v=${cacheId}`, integrity="sha384-6A0YKbb0AQEcKxWNokSf5gjcJsWYriw5A4jpNE/Iv/sfBUASzhqMx4d595GhuG/6")
+		link(rel="stylesheet", href=`./style/light.css?v=${cacheId}`, integrity="sha384-wxz4y2mGKdDt4KKoNY6qcCFBEhDA4PblHVPpWYq5skSI/e43S6WAyBcfkLoaGfBy")
 			
 	else
-		link(rel="stylesheet", href=`./style/dark.css?v=${cacheId}`, integrity="sha384-XI0JrleNQxfB9CuMbPApQTtnqsLwjObQsND4KLJ1+1I2/7X6U8W+3AOVBtkBslmB")
+		link(rel="stylesheet", href=`./style/dark.css?v=${cacheId}`, integrity="sha384-eR2lR2fRJ89BLpEkrk2XepFXdGXeM7YgKpA/kyKB/Hpo9Zesnvt/twwZ6KSRpoRh")
 
 
 mixin sharedScriptTags
 	script(src=`./js/jquery.min.js?v=${cacheId}`, integrity="sha384-vtXRMe3mGCbOeY7l30aIg8H9p3GdeSe4IFlP6G8JMa7o7lXvnz3GFKzPxzJdPfGK")
-	script(src=`./js/bootstrap.bundle.min.js?v=${cacheId}`, integrity="sha384-U1DAWAznBHeqEIlVSCgzq+c9gqGAJn5c/t99JyeKa9xxaYpSvHU5awsuZVVFIhvj")
+	script(src=`./js/bootstrap.bundle.min.js?v=${cacheId}`, integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM")
 	script(defer, src=`./js/fontawesome.min.js?v=${cacheId}`, integrity="sha384-haqrlim99xjfMxRP6EWtafs0sB1WKcMdynwZleuUSwJR0mDeRYbhtY+KPMr+JL6f")
 
 	script(src=`./js/site.js?v=${cacheId}`, integrity="sha384-9zTu6Vsp/p5Eig+Oopol4yGtsmQNIrfV7LCycnEcupFNkECnEM+oXj85+GuqE3iZ")
