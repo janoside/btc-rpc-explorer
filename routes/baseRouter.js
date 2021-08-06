@@ -1085,8 +1085,13 @@ router.get("/block-height/:blockHeight", asyncHandler(async (req, res, next) => 
 			let funInfo = global.specialBlocks[res.locals.result.getblock.hash];
 
 			res.locals.metaTitle = funInfo.summary;
-			res.locals.metaDesc = funInfo.alertBodyHtml.replace(/<\/?("[^"]*"|'[^']*'|[^>])*(>|$)/g, "");
 
+			if (funInfo.alertBodyHtml) {
+				res.locals.metaDesc = funInfo.alertBodyHtml.replace(/<\/?("[^"]*"|'[^']*'|[^>])*(>|$)/g, "");
+
+			} else {
+				res.locals.metaDesc = "";
+			}
 		} else {
 			res.locals.metaTitle = `Bitcoin Block #${blockHeight.toLocaleString()}`;
 			res.locals.metaDesc = "";
@@ -1172,7 +1177,13 @@ router.get("/block/:blockHash", asyncHandler(async (req, res, next) => {
 			let funInfo = global.specialBlocks[res.locals.result.getblock.hash];
 
 			res.locals.metaTitle = funInfo.summary;
-			res.locals.metaDesc = funInfo.alertBodyHtml.replace(/<\/?("[^"]*"|'[^']*'|[^>])*(>|$)/g, "");
+
+			if (funInfo.alertBodyHtml) {
+				res.locals.metaDesc = funInfo.alertBodyHtml.replace(/<\/?("[^"]*"|'[^']*'|[^>])*(>|$)/g, "");
+
+			} else {
+				res.locals.metaDesc = "";
+			}
 
 		} else {
 			res.locals.metaTitle = `Bitcoin Block ${utils.ellipsizeMiddle(res.locals.result.getblock.hash, 16)}`;
@@ -1410,8 +1421,13 @@ router.get("/tx/:transactionId", asyncHandler(async (req, res, next) => {
 			let funInfo = global.specialTransactions[txid];
 
 			res.locals.metaTitle = funInfo.summary;
-			res.locals.metaDesc = funInfo.alertBodyHtml.replace(/<\/?("[^"]*"|'[^']*'|[^>])*(>|$)/g, "");
 
+			if (funInfo.alertBodyHtml) {
+				res.locals.metaDesc = funInfo.alertBodyHtml.replace(/<\/?("[^"]*"|'[^']*'|[^>])*(>|$)/g, "");
+
+			} else {
+				res.locals.metaDesc = "";
+			}
 		} else {
 			res.locals.metaTitle = `Bitcoin Transaction ${utils.ellipsizeMiddle(txid, 16)}`;
 			res.locals.metaDesc = "";
