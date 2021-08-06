@@ -183,13 +183,17 @@ block content
 						- var blockRewardMax = coinConfig.blockRewardFunction(result.getblock.height, activeBlockchain);
 						- var valueDestroyed = (isCoinbaseTx && parseFloat(totalOutputValue) < parseFloat(blockRewardMax));
 
-					+summaryRow(2 + (tx.weight ? 1 : 0) + (valueDestroyed ? 1 : 0) + (tx.locktime > 0 ? 1 : 0) + (parseInt(daysDestroyed) > 0 ? 1 : 0))
+					+summaryRow(3 + (tx.weight ? 1 : 0) + (valueDestroyed ? 1 : 0) + (tx.locktime > 0 ? 1 : 0) + (parseInt(daysDestroyed) > 0 ? 1 : 0))
 						+summaryItem("Version")
 							| #{result.getrawtransaction.version}
 
 						+summaryItem("Size")
 							span #{tx.vsize.toLocaleString()}
 							small.ms-1 vB
+
+						+summaryItem("Raw Data", `The raw transaction consisting of ${result.getrawtransaction.hex.length} hexadecimal bytes.`, "hex")
+							| #{utils.ellipsizeMiddle(result.getrawtransaction.hex, 12)}
+							+copyTextButton(result.getrawtransaction.hex)
 
 						if (tx.weight)
 							+summaryItem("Weight", null, "wu", "Weight Units")
