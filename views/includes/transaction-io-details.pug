@@ -32,7 +32,7 @@ mixin inputValueDisplay(tx, txVin, vout)
 				i.fas.fa-backspace.text-danger
 
 
-mixin outputValueDisplay(vout)
+mixin outputValueDisplay(vout, voutIndex)
 	if (!vout.scriptPubKey.asm.startsWith('OP_RETURN '))
 		if (utxos)
 			if (utxos[voutIndex])
@@ -262,7 +262,7 @@ mixin outputValueDisplay(vout)
 							
 
 					span.ms-2.float-end
-						+outputValueDisplay(vout)
+						+outputValueDisplay(vout, voutIndex)
 
 					if (vout && vout.scriptPubKey.asm && !vout.scriptPubKey.asm.startsWith("OP_RETURN "))
 						if (voutAddresses.length == 0)
