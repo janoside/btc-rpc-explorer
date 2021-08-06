@@ -1,9 +1,9 @@
 mixin themeCss
 	if (userSettings.uiTheme == "light")
-		link(rel="stylesheet", href=`./style/light.css?v=${cacheId}`, integrity="sha384-wxz4y2mGKdDt4KKoNY6qcCFBEhDA4PblHVPpWYq5skSI/e43S6WAyBcfkLoaGfBy")
+		link(rel="stylesheet", href=`./style/light.css?v=${cacheId}`, integrity="sha384-jx98V2z4L5b4pgDLl57RJUpm9wbL69TDVNLFPFkB+NuNHVv9yY8e0SOekA7W2QYh")
 			
 	else
-		link(rel="stylesheet", href=`./style/dark.css?v=${cacheId}`, integrity="sha384-eR2lR2fRJ89BLpEkrk2XepFXdGXeM7YgKpA/kyKB/Hpo9Zesnvt/twwZ6KSRpoRh")
+		link(rel="stylesheet", href=`./style/dark.css?v=${cacheId}`, integrity="sha384-QCtkYrktZT0mmluAWu04cafhPsvv/jfz7umWGSr4HXVayA2ZIuEFHpv0c8xcMI9j")
 
 
 mixin sharedScriptTags
@@ -125,7 +125,7 @@ mixin txList(visibleTxs, txCount, limit, offset, inputsByTxid, options)
 				+pagination(limit, offset, null, txCount, paginationBaseUrl)
 					
 	
-		.border.border-2
+		.mb-4.mb-md-3
 
 
 	each tx, txIndex in visibleTxs
@@ -141,9 +141,13 @@ mixin txList(visibleTxs, txCount, limit, offset, inputsByTxid, options)
 			if (tx && tx.txid)
 				.clearfix
 					.float-start
-						.mb-4.word-wrap
-							span.badge.bg-primary.fw-normal.me-2(title=`Index in Block: #${(txIndex + offset).toLocaleString()}`, data-bs-toggle="tooltip") ##{(txIndex + offset).toLocaleString()}
-							a(href=`./tx/${tx.txid}${tx_height_param}`) #{tx.txid}
+						.mb-3.word-wrap
+							span.badge.bg-primary.fw-normal.me-2(title=`Index in Block: #${(txIndex + offset).toLocaleString()}`, data-bs-toggle="tooltip")
+								span.d-inline.d-sm-none.me-1 tx
+								| ##{(txIndex + offset).toLocaleString()}
+							
+							a.d-inline.d-lg-none(href=`./tx/${tx.txid}${tx_height_param}`) #{utils.ellipsizeMiddle(tx.txid, 24)}
+							a.d-none.d-lg-inline(href=`./tx/${tx.txid}${tx_height_param}`) #{utils.ellipsizeMiddle(tx.txid, 48)}
 
 							if (global.specialTransactions && global.specialTransactions[tx.txid])
 								a.ms-2(data-bs-toggle="tooltip", title=`<b>${coinConfig.name} Fun!</b><br/>There's something special about this transaction...<br/>Click to read more.`, data-bs-html="true")
@@ -176,26 +180,33 @@ mixin txList(visibleTxs, txCount, limit, offset, inputsByTxid, options)
 
 							if (options.showConfirmations)
 								+darkBadge
-									span(title=`${(options.currentBlockHeight - txBlockHeight + 1).toLocaleString()} confirmation${(options.currentBlockHeight - txBlockHeight > 1) ? "s" :""}`, data-bs-toggle="tooltip")
-										i.fas.fa-lock.fa-sm.me-2
-										span.fw-light #{(options.currentBlockHeight - txBlockHeight + 1).toLocaleString()}
+									if (txBlockHeight)
+										span(title=`${(options.currentBlockHeight - txBlockHeight + 1).toLocaleString()} confirmation${(options.currentBlockHeight - txBlockHeight > 1) ? "s" :""}`, data-bs-toggle="tooltip")
+											i.fas.fa-lock.fa-sm.me-2
+											span.fw-light #{(options.currentBlockHeight - txBlockHeight + 1).toLocaleString()}
 
-							if (options.showDates)
+									else
+										span(title=`Unconfirmed`, data-bs-toggle="tooltip")
+											i.fas.fa-lock.fa-sm.me-2
+											span.fw-light.text-danger 0										
+
+							if (options.showDates && tx.time)
 								- var utcMoment = moment.utc(new Date(parseInt(tx.time) * 1000));
 								- var titleStr = `${utcMoment.format("Y-MM-DD HH:mm:ss")} utc`;
 
-								+darkBadge
-									i.far.fa-clock.fa-sm.me-2
+								.d-none.d-md-inline
+									+darkBadge
+										i.far.fa-clock.fa-sm.me-2
 
-									if (tx.time)
-										span(title=titleStr, data-bs-toggle="tooltip")
+										span.fw-light(title=titleStr, data-bs-toggle="tooltip")
 											+timeAgo(tx.time, true)
 											span.ms-1 ago
 
-									else
-										| unconfirmed
+			
+			hr.mb-4.mx-n3
 
-						
+			.d-none.d-lg-block.border-end.mt-n4.mb-2(style="border-color: currentColor !important; height: 10px; width: 50%; opacity: 0.25;")
+
 			div
 				- var txInputs = inputsByTxid[tx.txid];
 				- var blockHeight = txBlockHeight != undefined ? txBlockHeight : -1;
@@ -206,7 +217,7 @@ mixin txList(visibleTxs, txCount, limit, offset, inputsByTxid, options)
 				include ./transaction-io-details.pug
 
 		if (txIndex < (visibleTxs.length - 1) || txCount > limit)
-			.border.border-2
+			.mb-4.mb-lg-3
 
 
 	if (txCount > limit)

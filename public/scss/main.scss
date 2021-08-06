@@ -217,49 +217,19 @@ pre {
 	border-top: none;
 }
 
-.tx-io-label, .tx-io-content, .tx-io-desc, .tx-io-value {
-	position: relative;
-	width: 100%;
-	min-height: 1px;
-	padding-right: 0px;
-	padding-left: 0px;
-	margin-bottom: 2px;
-	float: left;
-}
-
 @media (min-width: 576px) {
-	.tx-io-label { max-width: 100%; }
-	.tx-io-content { max-width: 100%; }
-	.tx-io-desc { max-width: 100%; }
-	.tx-io-value { max-width: 100%; }
 }
 
 @media (min-width: 768px) {
-	.tx-io-label { max-width: 8%; }
-	.tx-io-content { max-width: 92%; }
-	.tx-io-desc { max-width: 65%; }
-	.tx-io-value { max-width: 35%; text-align: right; }
 }
 
 @media (min-width: 992px) {
-	.tx-io-label { max-width: 11%; }
-	.tx-io-content { max-width: 89%; }
-	.tx-io-desc { max-width: 60%; }
-	.tx-io-value { max-width: 40%; text-align: right; }
 }
 
 @media (min-width: 1200px) {
-	.tx-io-label { max-width: 11%; }
-	.tx-io-content { max-width: 89%; }
-	.tx-io-desc { max-width: 73%; }
-	.tx-io-value { max-width: 27%; text-align: right; }
 }
 
 @media (min-width: 1920px) {
-	.tx-io-label { max-width: 7.5%; }
-	.tx-io-content { max-width: 92.5%; }
-	.tx-io-desc { max-width: 73%; }
-	.tx-io-value { max-width: 27%; text-align: right; }
 }
 
 

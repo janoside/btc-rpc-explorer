@@ -930,8 +930,8 @@ function outputTypeAbbreviation(outputType) {
 		"pubkey": "p2pk",
 		"pubkeyhash": "p2pkh",
 		"scripthash": "p2sh",
-		"witness_v0_keyhash": "v0_p2wpkh",
-		"witness_v0_scripthash": "v0_p2wsh",
+		"witness_v0_keyhash": "p2wpkh",
+		"witness_v0_scripthash": "p2wsh",
 		"witness_v1_taproot": "v1_p2tr",
 		"nonstandard": "nonstandard",
 		"nulldata": "nulldata"

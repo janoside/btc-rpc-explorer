@@ -267,7 +267,7 @@ block content
 								tr
 									th.font-monospace
 										a.badge.card-highlight.border.fw-normal(data-bs-toggle="tooltip", title=`Input #${vinIndex}`, style="white-space: nowrap;")
-											span.me-1 &gt;
+											i.fas.fa-arrow-right.text-danger.me-1
 											| #{vinIndex.toLocaleString()}
 
 									td.word-wrap.text-break.font-monospace
@@ -308,7 +308,7 @@ block content
 								tr
 									th.font-monospace
 										a.badge.card-highlight.border.fw-normal(data-bs-toggle="tooltip", title=`Output #${(voutIndex + 1)}`, style="white-space: nowrap;")
-											span.me-1 &lt;
+											i.fas.fa-arrow-right.text-success.me-1
 											span.fw-normal #{voutIndex.toLocaleString()}
 
 									td.font-monospace.word-wrap
