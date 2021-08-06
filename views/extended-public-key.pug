@@ -33,7 +33,7 @@ block content
 
 	if (relatedKeys)
 		+contentSection(`Extended Public Key "Family"`)
-			p The below "family" of extended public keys all share public key data, but each corresponds to a different <b>BIP32 path</b> and generates a different type of output address. Each key includes the first address from its BIP32 sequence. Clicking on each key will show the full details, including the full list of addresses.
+			p The below "family" of extended public keys all share public key data, but each corresponds to a different <b>BIP32 path</b> and generates a different type of output address. Each key includes the first address from its BIP32 sequence. Clicking on a key will show its full details, including the full list of addresses.
 
 			.table-responsive
 				table.table.table-borderless.table-striped.mb-0
@@ -54,7 +54,7 @@ block content
 											i.fas.fa-arrow-left.text-warning.ms-2
 
 								td
-									a(href=`./xyzpub/${item.key}`) #{utils.ellipsizeMiddle(item.key, 16)}
+									a(href=`./xyzpub/${item.key}`, class=((item.key == extendedPubkey) ? "text-info" : false)) #{utils.ellipsizeMiddle(item.key, 16)}
 									+copyTextButton(item.key)
 
 								td #{item.outputType}
