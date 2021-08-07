@@ -261,7 +261,7 @@ mixin valueDisplay(val)
 			+_valueDisplayLocal(val, 1000000)
 				
 	else
-		span.font-monospace 0
+		span 0
 
 
 mixin _valueDisplayBtc(val)
@@ -374,7 +374,7 @@ mixin valueDisplaySpecial(val, maxDecimals=-1, summarizeAlways=false, summarizeM
 			else if (userSettings.displayCurrency == "local")
 					
 		else
-			span.font-monospace 0
+			span 0
 
 
 mixin confirmations(confirmations, abbreviated=true)

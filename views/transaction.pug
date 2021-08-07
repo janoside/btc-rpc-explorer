@@ -118,7 +118,7 @@ block content
 							
 							+summaryItem("Date")
 								if (tx.time)
-									td.font-monospace
+									td
 										+timestamp(result.getrawtransaction.time)
 										
 
@@ -234,6 +234,7 @@ block content
 					- var blockHeight = -1;
 					if (result && result.getblock)
 						- blockHeight = result.getblock.height;
+						
 					include includes/transaction-io-details.pug
 						
 
@@ -246,7 +247,7 @@ block content
 							ol.mb-0
 								each ancestorTxid, ancestorIndex in mempoolDetails.ancestors
 									li
-										a.font-monospace(href=`./tx/${ancestorTxid}`) #{ancestorTxid}
+										a(href=`./tx/${ancestorTxid}`) #{ancestorTxid}
 
 					if (mempoolDetails.descendants.length > 0)
 						- var descendantDesc = "Descendant Transactions are transactions that spend outputs created by this transaction. This transaction (and all other ancestors transactions) must be confirmed before a descendant transaction can be confirmed (though they can be confirmed in the same block).";
@@ -256,7 +257,7 @@ block content
 								ol.mb-0
 									each descendantTxid, descendantIndex in mempoolDetails.descendants
 										li
-											a.font-monospace(href=`./tx/${descendantTxid}`) #{descendantTxid}
+											a(href=`./tx/${descendantTxid}`) #{descendantTxid}
 
 			
 			+pageTab("Scripts")
@@ -269,12 +270,12 @@ block content
 						tbody
 							each vin, vinIndex in result.getrawtransaction.vin
 								tr
-									th.font-monospace
 										a.badge.card-highlight.border.fw-normal(data-bs-toggle="tooltip", title=`Input #${vinIndex}`, style="white-space: nowrap;")
+									th
 											i.fas.fa-arrow-right.text-danger.me-1
 											| #{vinIndex.toLocaleString()}
 
-									td.word-wrap.text-break.font-monospace
+									td.word-wrap.text-break
 										if (vin.coinbase)
 											div.font-monospace(style="line-height: 1.75em;")
 												.badge.bg-success.me-2 coinbase
@@ -310,12 +311,12 @@ block content
 						tbody
 							each vout, voutIndex in result.getrawtransaction.vout
 								tr
-									th.font-monospace
+									th
 										a.badge.card-highlight.border.fw-normal(data-bs-toggle="tooltip", title=`Output #${(voutIndex + 1)}`, style="white-space: nowrap;")
 											i.fas.fa-arrow-right.text-success.me-1
-											span.fw-normal #{voutIndex.toLocaleString()}
+											span.font-monospace #{voutIndex.toLocaleString()}
 
-									td.font-monospace.word-wrap
+									td.word-wrap
 										if (vout.scriptPubKey && vout.scriptPubKey.asm)
 											- var chunks = vout.scriptPubKey.asm.split(" ");
 											each chunk in chunks

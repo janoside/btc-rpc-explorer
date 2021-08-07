@@ -51,7 +51,7 @@ block content
 								th.text-end Available Size
 
 						tbody
-							tr.text-end.font-monospace
+							tr.text-end
 								td
 									- var data = utils.formatLargeNumber(memstats.total_heap_size, 2);
 									span #{data[0]}
@@ -92,7 +92,7 @@ block content
 
 							tbody
 								each item, itemName in cacheStats
-									tr.font-monospace
+									tr
 										td #{itemName}
 										td.text-end #{item.hit.toLocaleString()}
 										td.text-end #{item.miss.toLocaleString()}
@@ -124,7 +124,7 @@ block content
 
 						tbody
 							each item, itemName in rpcStats
-								tr.font-monospace
+								tr
 									td #{itemName}
 									td.text-end #{item.count.toLocaleString()}
 									td.text-end #{(item.time / 1000).toLocaleString()}
@@ -151,7 +151,7 @@ block content
 
 							tbody
 								each item, itemName in electrumStats.base
-									tr.font-monospace
+									tr
 										td #{itemName}
 										td.text-end #{item.count.toLocaleString()}
 
@@ -182,7 +182,7 @@ block content
 
 							tbody
 								each item, itemName in electrumStats.rpc
-									tr.font-monospace
+									tr
 										td #{itemName}
 										td.text-end #{item.count.toLocaleString()}
 										td.text-end #{(item.time / 1000).toLocaleString()}
@@ -213,7 +213,7 @@ block content
 
 							tbody
 								each item, itemName in errorStats
-									tr.font-monospace
+									tr
 										td
 											div #{itemName}
 											div

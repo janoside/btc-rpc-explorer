@@ -71,8 +71,8 @@ block content
 											.mb-3
 												label(for=("arg_" + argX.name))
 													div
-														span.font-monospace.fw-bold #{argX.name}
-														span.font-monospace : 
+														span.fw-bold #{argX.name}
+														span.me-1 :
 															span  #{argX.properties.join(", ")}
 													if (argX.description)
 														span.text-muted Description: #{argX.description}
