@@ -104,7 +104,7 @@ module.exports = {
 		"main": new Decimal(105000000),
 		"test": new Decimal(105000000),
 		"regtest": new Decimal(105000000),
-		"signet": new Decimal(21000000)
+		"signet": new Decimal(105000000)
 	},
 	targetBlockTimeSeconds: 60,
 	targetBlockTimeMinutes: 1,
