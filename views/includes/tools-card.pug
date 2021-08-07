@@ -6,14 +6,14 @@ if (false)
 			div.row
 				each item, index in [[0, 1, 2], [4, 3, 5], [6, 7, 8]]
 					div.col-md-4
-						ul.pl-0(style="list-style-type: none;")
+						ul.ps-0(style="list-style-type: none;")
 							each toolIndex, toolIndexIndex in item
 								- var siteTool = config.siteTools[toolIndex];
 
 								li
-									div.float-left(style="height: 50px; width: 40px; margin-right: 10px;")
+									div.float-start(style="height: 50px; width: 40px; margin-right: 10px;")
 										span
-											i.fa-2x.mr-2(class=siteTool.fontawesome, style="margin-top: 6px;")
+											i.fa-2x.me-2(class=siteTool.fontawesome, style="margin-top: 6px;")
 
 									a(href=siteTool.url) #{siteTool.name}
 									br
@@ -27,8 +27,8 @@ if (false)
 					each listItem in list
 						- var siteTool = config.siteTools[listItem];
 						li.mb-2
-							span(title=siteTool.desc, data-toggle="tooltip")
-								i.mr-2.fa-lg(class=siteTool.fontawesome, style="width: 30px;")
+							span(title=siteTool.desc, data-bs-toggle="tooltip")
+								i.me-2.fa-lg(class=siteTool.fontawesome, style="width: 30px;")
 							a(href=siteTool.url)
 								span #{siteTool.name}
 
@@ -40,53 +40,126 @@ if (false)
 					each listItem in list
 						- var siteTool = config.siteTools[listItem];
 						li.mb-2
-							span(title=siteTool.desc, data-toggle="tooltip")
-								i.mr-2.fa-sm(class=siteTool.fontawesome, style="width: 30px;")
+							span(title=siteTool.desc, data-bs-toggle="tooltip")
+								i.me-2.fa-sm(class=siteTool.fontawesome, style="width: 30px;")
 							a(href=siteTool.url)
 								span #{siteTool.name}
 
-if (true)
+if (false)
 	div
 		- var priorityList = config.site.prioritizedToolIdsList;
+		- var indexLists1Col = utils.splitArrayIntoChunksByChunkCount(priorityList, 1);
 		- var indexLists2Col = utils.splitArrayIntoChunksByChunkCount(priorityList, 2);
 		- var indexLists3Col = utils.splitArrayIntoChunksByChunkCount(priorityList, 3);
-		- var indexLists4Col = utils.splitArrayIntoChunksByChunkCount(priorityList, 4);
-		- var indexLists5Col = utils.splitArrayIntoChunksByChunkCount(priorityList, 5);
 
-		// xs, sm, xxl
-		div.d-block.d-md-none.d-xxl-block(id="tools-2-col")
+		// xs
+		div.d-block.d-sm-none(id="tools-1-col")
+			div.row
+				each indexList in indexLists1Col
+					div.col
+						ul.list-unstyled.mb-0
+							each toolsItemIndex in indexList
+								- var item = config.siteTools[toolsItemIndex];
+								
+								div.clearfix
+									div.float-start.pt-1(style="width: 38px;")
+										i.fa-lg(class=item.fontawesome, style="width: 20px; margin-right: 10px;")
+
+									div.float-start
+										div
+											a(href=item.url) #{item.name}
+
+								div(style="padding-left: 39px;")
+									p #{item.desc}
+
+		// sm, md, lg
+		div.d-none.d-sm-block.d-xl-none(id="tools-2-col")
 			div.row
 				each indexList in indexLists2Col
 					div.col
 						ul.list-unstyled.mb-0
 							each toolsItemIndex in indexList
-								include tools-card-block.pug
+								- var item = config.siteTools[toolsItemIndex];
+								
+								div.clearfix
+									div.float-start.pt-1(style="width: 38px;")
+										i.fa-lg(class=item.fontawesome, style="width: 20px; margin-right: 10px;")
 
-		// md
-		div.d-none.d-md-block.d-lg-none(id="tools-3-col")
+									div.float-start
+										div
+											a(href=item.url) #{item.name}
+
+								div(style="padding-left: 39px;")
+									p #{item.desc}
+
+		// xl, xxl
+		div.d-none.d-xl-block(id="tools-3-col")
 			div.row
 				each indexList in indexLists3Col
 					div.col
 						ul.list-unstyled.mb-0
 							each toolsItemIndex in indexList
-								include tools-card-block.pug
+								- var item = config.siteTools[toolsItemIndex];
+								
+								div.clearfix
+									div.float-start.pt-1(style="width: 38px;")
+										i.fa-lg(class=item.fontawesome, style="width: 20px; margin-right: 10px;")
 
-		// lg
-		div.d-none.d-lg-block.d-xl-none(id="tools-4-col")
-			div.row
-				each indexList in indexLists4Col
-					div.col
-						ul.list-unstyled.mb-0
-							each toolsItemIndex in indexList
-								include tools-card-block.pug
+									div.float-start
+										div
+											a(href=item.url) #{item.name}
 
-		// xl
-		div.d-none.d-xl-block.d-xxl-none(id="tools-5-col")
-			div.row
-				each indexList in indexLists5Col
-					div.col
-						ul.list-unstyled.mb-0
-							each toolsItemIndex in indexList
-								include tools-card-block.pug
+								div(style="padding-left: 39px;")
+									p #{item.desc}
 
-		
+
+
+
+mixin toolSections(sectionsData)
+	div.row
+		each indexList in sectionsData
+			div.col
+				ul.list-unstyled.mb-3
+					each sectionIndex in indexList
+						- var section = config.site.toolSections[sectionIndex];
+
+						.mb-5
+							.mb-3
+								+summaryTitle(section.name)
+								hr
+
+							each itemIndex in section.items
+								- var item = config.siteTools[itemIndex];
+								
+								div.clearfix
+									div.float-start.pt-1(style="width: 38px;")
+										i.fa-lg(class=item.fontawesome, style="width: 20px; margin-right: 10px;")
+
+									div.float-start
+										div
+											a(href=item.url) #{item.name}
+
+								div.mt-n1(style="padding-left: 39px;")
+									p #{item.desc}
+
+
+
+if (true)
+	div
+		//- var sections1Col = config.site.toolSections.filter(x => true);// utils.splitArrayIntoChunksByChunkCount(priorityList, 1);
+		//- var indexLists2Col = utils.splitArrayIntoChunksByChunkCount(priorityList, 2);
+		- var sectionIndexes3Col = [[0, 1], [2], [3, 4]];//config.site.toolSections.filter(x => true); utils.splitArrayIntoChunksByChunkCount(priorityList, 3);
+
+		// xs
+		if (true)
+			div.d-block.d-sm-none(id="tools-1-col")
+				+toolSections([[0, 1, 2, 3, 4]])
+
+		// sm, md, lg
+		div.d-none.d-sm-block.d-xl-none(id="tools-2-col")
+			+toolSections([[0, 1, 4], [2, 3]])
+			
+
+		// xl, xxl
+		div.d-none.d-xl-block(id="tools-3-col")
+			+toolSections([[0, 1], [2], [3, 4]])

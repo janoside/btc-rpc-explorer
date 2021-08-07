@@ -3,5 +3,6 @@ Disallow: /address/
 Disallow: /rpc*
 Disallow: /tx-stats
 Disallow: /peers
-Disallow: /unconfirmed-tx
+Disallow: /mempool-transactions
 Disallow: /block-analysis/
+Disallow: /snippet/

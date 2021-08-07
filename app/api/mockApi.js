@@ -1,11 +1,13 @@
-var utils = require("../utils.js");
-var config = require("../config.js");
-var coins = require("../coins.js");
+"use strict";
 
-var SHA256 = require("crypto-js/sha256");
-var earliestBlockTime = 1231006505;
-var avgBlockTime = 200000;
-var currentBlockHeight = 1234567;
+const utils = require("../utils.js");
+const config = require("../config.js");
+const coins = require("../coins.js");
+
+const SHA256 = require("crypto-js/sha256");
+const earliestBlockTime = 1231006505;
+const avgBlockTime = 200000;
+const currentBlockHeight = 1234567;
 
 
 function getBlockchainInfo() {
@@ -37,9 +39,9 @@ function getRawMempool() {
 }
 
 function getBlockByHeight(blockHeight) {
-	var txCount = utils.seededRandomIntBetween(blockHeight, 1, 20);
-	var txids = [];
-	for (var i = 0; i < txCount; i++) {
+	const txCount = utils.seededRandomIntBetween(blockHeight, 1, 20);
+	const txids = [];
+	for (let i = 0; i < txCount; i++) {
 		txids.push(SHA256("" + blockHeight + "_" + i));
 	}
 

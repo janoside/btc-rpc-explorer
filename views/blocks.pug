@@ -4,36 +4,34 @@ block headContent
 	title Blocks
 
 block content
-	h1.h3 Blocks
-	hr
+	.clearfix
+		.float-start
+			+pageTitle("Blocks")
+		.float-end
+			if (blocks)
+				nav(aria-label="Page navigation")
+					ul.pagination.justify-content-center.mt-3
+						
+						li.page-item(class=(sort == "desc" ? "active" : false))
+							a.page-link(href=(sort == "desc" ? "javascript:void(0)" : `./blocks?limit=${limit}&offset=0&sort=desc`))
+								span(aria-hidden="true") Newest blocks first
+
+						li.page-item(class=(sort == "asc" ? "active" : false))
+							a.page-link(href=(sort == "asc" ? "javascript:void(0)" : `./blocks?limit=${limit}&offset=0&sort=asc`))
+								span(aria-hidden="true") Oldest blocks first
 
 	if (blocks)
-		nav(aria-label="Page navigation")
-			ul.pagination.justify-content-center
-				
-				li.page-item(class=(sort == "desc" ? "active" : false))
-					a.page-link(href=(sort == "desc" ? "javascript:void(0)" : "/blocks?limit=" + limit + "&offset=0" + "&sort=desc"))
-						span(aria-hidden="true") Newest blocks first
+		+contentSection
+			include includes/blocks-list.pug
 
-				li.page-item(class=(sort == "asc" ? "active" : false))
-					a.page-link(href=(sort == "asc" ? "javascript:void(0)" : "/blocks?limit=" + limit + "&offset=0" + "&sort=asc"))
-						span(aria-hidden="true") Oldest blocks first
+			if (blockCount > limit)
+				if (blocks.length % 2 == 1)
+					hr.mt-4
+				else
+					.mb-2
 
-		div.card.shadow-sm.mb-3
-			div.card-body
-				include includes/blocks-list.pug
+				.mt-4
+					+pagination(limit, offset, sort, blockCount, paginationBaseUrl, "center", true)
 
-				if (blockCount > limit)
-					- var pageNumber = offset / limit + 1;
-					- var pageCount = Math.floor(blockCount / limit);
-					- if (pageCount * limit < blockCount) {
-						- pageCount++;
-					- }
-					- var paginationUrlFunction = function(x) {
-						- return paginationBaseUrl + "?limit=" + limit + "&offset=" + ((x - 1) * limit + "&sort=" + sort);
-					- }
-					
-					div.pt-5
-						include includes/pagination.pug
 	else
 		p No blocks found

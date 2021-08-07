@@ -1,0 +1,242 @@
+extends ../layout
+
+include ./admin-mixins.pug
+
+block headContent
+	title Admin Dashboard
+
+block content
+	+adminNav
+
+
+	+pageTitle("Admin Dashboard")
+
+	+pageTabs(["Details", "JSON"])
+
+	.tab-content
+		+pageTab("Details", true)
+
+			+contentSection("Tools")
+				a.btn.btn-primary(href="./admin/resetUserSettings") Reset User Settings
+
+			+contentSection("Basics")
+				+summaryRow(3)
+					+summaryItem("Uptime")
+						- var uptime = moment.duration(new Date().getTime() - appStartTime);
+						| #{uptime.format()}
+
+					+summaryItem("Node Version")
+						| #{global.nodeVersion}
+
+					+summaryItem("Node Env")
+						| #{process.env.NODE_ENV || "development"}
+
+			+contentSection("User Settings")
+				pre
+					code.json #{JSON.stringify(userSettings, null, 4)}
+
+			+contentSection("App Config")
+				pre
+					code.json #{JSON.stringify(appConfig, null, 4)}
+
+			+contentSection("Memory Stats")
+				.table-responsive
+					table.table.table-borderless.table-hover.table-striped
+						thead
+							tr
+								th.text-end Heap Size
+								th.text-end Used Heap
+								th.text-end Heap Limit
+								th.text-end Physical Size
+								th.text-end Available Size
+
+						tbody
+							tr.text-end.font-monospace
+								td
+									- var data = utils.formatLargeNumber(memstats.total_heap_size, 2);
+									span #{data[0]}
+										small  #{data[1].abbreviation}B
+
+								td
+									- var data = utils.formatLargeNumber(memstats.used_heap_size, 2);
+									span #{data[0]}
+										small  #{data[1].abbreviation}B
+
+								td
+									- var data = utils.formatLargeNumber(memstats.heap_size_limit, 2);
+									span #{data[0]}
+										small  #{data[1].abbreviation}B
+
+								td
+									- var data = utils.formatLargeNumber(memstats.total_physical_size, 2);
+									span #{data[0]}
+										small  #{data[1].abbreviation}B
+
+								td
+									- var data = utils.formatLargeNumber(memstats.total_available_size, 2);
+									span #{data[0]}
+										small  #{data[1].abbreviation}B
+
+					
+
+			if (JSON.stringify(cacheStats) != "{}")
+				+contentSection("Cache Stats")
+					.table-responsive
+						table.table.table-borderless.table-hover.table-striped
+							thead
+								tr
+									th Cache
+									th.text-end Hit
+									th.text-end Miss
+									th.text-end Hit Rate
+
+							tbody
+								each item, itemName in cacheStats
+									tr.font-monospace
+										td #{itemName}
+										td.text-end #{item.hit.toLocaleString()}
+										td.text-end #{item.miss.toLocaleString()}
+										td.text-end
+											if (item.hit > 0 || item.miss > 0)
+												span #{(100 * item.hit / (item.hit + item.miss)).toLocaleString()}
+													small  %
+											else
+												span -
+
+			+contentSection("Cache Sizes")
+				pre
+					code.json #{JSON.stringify(cacheSizes, null, 4)}
+					
+
+			+contentSection("RPC Stats")
+				.table-responsive
+					table.table.table-borderless.table-striped
+						thead
+							tr
+								th Method
+								th.text-end Count
+								th.text-end Time
+									small  (s)
+								th.text-end Avg Time
+									small  (ms)
+								th.text-end Successes / Failures
+								th.text-end Success Rate
+
+						tbody
+							each item, itemName in rpcStats
+								tr.font-monospace
+									td #{itemName}
+									td.text-end #{item.count.toLocaleString()}
+									td.text-end #{(item.time / 1000).toLocaleString()}
+									td.text-end #{(item.time / item.count).toLocaleString()}
+									td.text-end
+										span.text-success #{item.successes.toLocaleString()}
+										span.mx-1 /
+										span.text-danger #{item.failures.toLocaleString()}
+
+									td.text-end
+										span #{new Decimal(item.successes).dividedBy(new Decimal(item.successes + item.failures)).times(100).toDP(1)}
+											small  %
+
+			if (electrumStats)
+				+contentSection("Electrum Stats")
+					.table-responsive
+						table.table.table-borderless.table-striped
+							thead
+								tr
+									th Action
+									th.text-end Count
+									th.text-end First Seen
+									th.text-end Last Seen
+
+							tbody
+								each item, itemName in electrumStats.base
+									tr.font-monospace
+										td #{itemName}
+										td.text-end #{item.count.toLocaleString()}
+
+										if (item.firstSeenAt)
+											td.text-end #{moment.duration(new Date().getTime() - item.firstSeenAt.getTime()).format()} ago
+										else
+											td.text-end -
+
+										if (item.lastSeenAt)
+											td.text-end #{moment.duration(new Date().getTime() - item.lastSeenAt.getTime()).format()} ago
+										else
+											td.text-end -
+
+					hr
+
+					.table-responsive
+						table.table.table-borderless.table-striped
+							thead
+								tr
+									th RPC
+									th.text-end Count
+									th.text-end Time
+										small  (s)
+									th.text-end Avg Time
+										small  (ms)
+									th.text-end Successes / Failures
+									th.text-end Success Rate
+
+							tbody
+								each item, itemName in electrumStats.rpc
+									tr.font-monospace
+										td #{itemName}
+										td.text-end #{item.count.toLocaleString()}
+										td.text-end #{(item.time / 1000).toLocaleString()}
+										td.text-end #{(item.time / item.count).toLocaleString()}
+										td.text-end
+											span.text-success #{item.successes.toLocaleString()}
+											span.mx-1 /
+											span.text-danger #{item.failures.toLocaleString()}
+
+										td.text-end
+											span #{new Decimal(item.successes).dividedBy(new Decimal(item.successes + item.failures)).times(100).toDP(1)}
+												small  %
+
+
+			+contentSection("Error Stats")
+				if (JSON.stringify(errorStats) == "{}")
+					span.text-success No errors encountered
+
+				else
+					div.table-responsive
+						table.table.table-borderless.table-striped
+							thead
+								tr
+									th Error
+									th.text-end Count
+									th.text-end First Seen
+									th.text-end Last Seen
+
+							tbody
+								each item, itemName in errorStats
+									tr.font-monospace
+										td
+											div #{itemName}
+											div
+												each propData, propName in item.properties
+													div.ms-4 #{propName}
+														br
+														each propCount, propValue in propData
+															span.badge.bg-primary.me-1.fw-light #{propValue}
+																span.badge.bg-light.text-dark.ms-1 #{propCount}
+
+										td.text-end #{item.count.toLocaleString()}
+										td.text-end #{moment.duration(new Date().getTime() - item.firstSeen).format()} ago
+										td.text-end #{moment.duration(new Date().getTime() - item.lastSeen).format()} ago
+
+					
+									
+		+pageTab("JSON")
+			+contentSection("Memory Stats")
+				pre
+					code.json #{JSON.stringify(memstats, null, 4)}
+						
+			+contentSection("Error Stats")
+				pre
+					code.json #{JSON.stringify(errorStats, null, 4)}
+
+

@@ -3,10 +3,10 @@ extends layout
 block headContent
 	title Changelog
 
-block content
-	h1.h3 Changelog
-	hr
+	style.
 
-	div.card.shadow-sm.mb-3
-		div.card-body
-			| !{changelogHtml}
+block content
+	+pageTitle("Changelog / Release Notes")
+
+	+contentSection
+		| !{changelogHtml}

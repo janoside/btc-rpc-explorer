@@ -1,17 +1,9 @@
-script(src="/js/chart.bundle.min.js", integrity="sha384-qgOtiGNaHh9fVWUnRjyHlV39rfbDcvPPkEzL1RHvsHKbuqUqM6uybNuVnghY2z4/")
++graphPageScriptSetup
 
 canvas.mb-3(id=graphData.id)
 
-if (session.uiTheme && session.uiTheme == "dark")
-	script.
-		Chart.defaults.global.defaultFontColor='white';
-else
-	script.
-		Chart.defaults.global.defaultFontColor='black';
-
-
 script.
-	Chart.defaults.global.elements.point.radius = 1;
+	Chart.defaults.elements.point.radius = 1;
 	var ctx = document.getElementById("#{graphData.id}").getContext('2d');
 	var graph = new Chart(ctx, {
 		type: 'line',
@@ -32,16 +24,21 @@ script.
 				display: false,
 				text: '#{graphData.title}'
 			},
-			legend: {
-				display: false
+			plugins: {
+				legend: {
+					display: false
+				},
 			},
 			scales: {
-				xAxes: [{
+				x: {
 					type: 'linear',
 					position: 'bottom',
 					scaleLabel: {
 						display: true,
 						labelString: '#{graphData.xaxisTitle}'
+					},
+					grid: {
+						color: gridLineColor
 					},
 					ticks: {
 						stepSize: #{graphData.xaxisStep},
@@ -57,11 +54,14 @@ script.
 							}
 						}*/
 					}
-				}],
-				yAxes: [{
+				},
+				y: {
 					scaleLabel: {
 						display: true,
 						labelString: '#{graphData.yaxisTitle}'
+					},
+					grid: {
+						color: gridLineColor
 					},
 					ticks: {
 						callback: function(value, index, values) {
@@ -73,7 +73,7 @@ script.
 							}
 						}
 					}
-				}]
+				}
 			}
 		}
 	});

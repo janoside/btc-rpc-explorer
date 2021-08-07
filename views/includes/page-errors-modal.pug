@@ -4,7 +4,7 @@ div.modal.fade(id="pageErrorsModal" role="dialog" aria-hidden="true")
 			div.modal-header
 				h5.modal-title Page Errors
 
-				button.close(type="button" data-dismiss="modal" aria-label="Close")
+				button.close(type="button" data-bs-dismiss="modal" aria-label="Close")
 					span(aria-hidden="true") &times;
 
 			div.modal-body
@@ -14,32 +14,31 @@ div.modal.fade(id="pageErrorsModal" role="dialog" aria-hidden="true")
 
 				if (true)
 					each item, itemIndex in pageErrors
-						div.card.shadow-sm(class=(itemIndex < (pageErrors.length - 1) ? "mb-3" : false))
-							div.card-body
-								h6 Error ##{(itemIndex + 1).toLocaleString()}
-								hr
-								//pre
-								//	code.json.bg-light #{JSON.stringify(item.error, null, 4)}
+						div(class=(itemIndex < (pageErrors.length - 1) ? "mb-3" : false))
+							h6 Error ##{(itemIndex + 1).toLocaleString()}
+							hr
+							//pre
+							//	code.json #{JSON.stringify(item.error, null, 4)}
 
-								pre
-									code.json.bg-light #{JSON.stringify(item, null, 4)}
+							pre
+								code.json #{JSON.stringify(item, null, 4)}
 
-								if (item.error.userData)
-									div.mb-3
-										h4.h6 Error Data
+							if (item.error.userData)
+								div.mb-3
+									h4.h6 Error Data
 
-										div.highlight
-											pre
-												code.json.bg-light #{JSON.stringify(item.error.userData, null, 4)}
-
-								if (item.error.stack)
-									h6 Stacktrace
-									- var stackFirstNLines = item.error.stack.split("\n").slice(0, 7).join("\n");
 									div.highlight
 										pre
-											code.json.bg-light #{stackFirstNLines}
+											code.json #{JSON.stringify(item.error.userData, null, 4)}
+
+							if (item.error.stack)
+								h6 Stacktrace
+								- var stackFirstNLines = item.error.stack.split("\n").slice(0, 7).join("\n");
+								div.highlight
+									pre
+										code.json #{stackFirstNLines}
 
 								
 
 			div.modal-footer
-				button.btn.btn-secondary(type="button" data-dismiss="modal") Close
+				button.btn.btn-secondary(type="button" data-bs-dismiss="modal") Close

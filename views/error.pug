@@ -1,16 +1,30 @@
 extends layout
 
 block content
-	h1 Error
-	hr
+	if (errorType)
+		if (errorType == "noRpcConnection")
+			+pageTitle("No RPC Connection")
 
-	if (message)
+		else
+			+pageTitle(errorType)
+
+	else
+		+pageTitle("Error")
+
+
+	if (errorType == "noRpcConnection")
+		+warningAlert
+			.mb-2 This explorer currently is failing to connect to your Bitcoin Core node.
+			.mb-2 Check your connection details (host & port for Bitcoin Core), as well as your authentication details (username, password, etc).
+			.mb-0 All of these parameters need to be specified in a ".env" file or via commandline parameters. See the <a href="https://github.com/janoside/btc-rpc-explorer">project homepage</a> to review how to configure this explorer.
+
+	else if (message)
 		pre
-			code.json.bg-light !{message}
+			code.json.bg-content !{message}
 	else
 		p Unknown error
 
 	if (error)
 		h2 #{error.status}
 		pre
-			code.json.bg-light #{error.stack}
+			code.json.bg-content #{error.stack}

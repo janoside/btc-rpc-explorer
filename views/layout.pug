@@ -1,252 +1,362 @@
+include ./includes/shared-mixins.pug
+
 doctype html
 html(lang="en")
 	head
 		meta(charset="utf-8")
+		base(href=config.baseUrl)
 		meta(name="csrf-token", content=csrfToken)
 		meta(name="viewport", content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0, shrink-to-fit=no")
 
-		link(rel="stylesheet", href="/css/fonts.css", integrity="sha384-XOmmu8j3C2MFUXRVGg8VWYNwlhEkSNb0rW/4e7bi3F56S6PejEmBUQDGZofQyjbL")
-		link(rel="stylesheet", href="/css/highlight.min.css", integrity="sha384-zhIsEafzyQWHSoMCQ4BfT8ZlRXQyIFwAHAJn32PNdsb8n6tVysGZSLpEEIvCskw4")
+		meta(name="description" content="Open-source, easy-to-use, educational Groestlcoin explorer whose only dependency is your Groestlcoin Core node.")
+
+		if (!homepage)
+			link(rel="stylesheet", href=`./style/highlight.min.css?v=${appVersion}`, integrity="sha384-s4RLYRjGGbVqKOyMGGwfxUTMOO6D7r2eom7hWZQ6BjK2Df4ZyfzLXEkonSm0KLIQ")
 
 
-		if (session.uiTheme && session.uiTheme == "dark")
-			link(rel="stylesheet", href="/css/bootstrap-dark.min.css", integrity="sha384-yHrdw+uFPe64ykHEYlYL2lmT0s+veKi1+lmxNqB3jVMOl9iX0h9xDLxcgtFtiV6M")
-			link(rel="stylesheet", href="/css/dark-touchups.css")
-
-		else
-			link(rel="stylesheet", href="/css/bootstrap.min.css", integrity="sha384-QO/VzYasHIIVEtFdqGXHU2wxSK0pjVxX4mrM68IQhYpi0vTCM0ZIuV/KQbPZMfXg")
+		+themeCss
 
 
-		link(rel='stylesheet', href='/css/styling.css')
+		link(id="canonical" rel="canonical" href="https://rpcexplorer.groestlcoin.org")
 
-		link(rel="icon", type="image/png", href=("/img/logo/" + config.coin.toLowerCase() + ".png"))
+		meta(property="og:title" content=(metaTitle != undefined ? metaTitle : "rpcexplorer.groestlcoin.org - Open-Source Groestlcoin Explorer"))
+		meta(property="og:description" content=(metaDesc != undefined ? metaDesc : "Open-source, easy-to-use, educational Groestlcoin explorer whose only dependency is your Groestlcoin Core node."))
+		meta(property="og:image" content="https://rpcexplorer.groestlcoin.org/img/preview.png")
+
+		meta(property="twitter:card" content="summary_large_image")
+		meta(property="twitter:site" content="@GroestlcoinTeam")
+		meta(property="twitter:creator" content="@GroestlcoinTeam")
+		meta(property="twitter:title" content=(metaTitle != undefined ? metaTitle : "rpcexplorer.groestlcoin.org"))
+		meta(property="twitter:description" content=(metaDesc != undefined ? metaDesc : "Open-source, easy-to-use, educational Groestlcoin explorer whose only dependency is your Groestlcoin Core node."))
+		meta(property="twitter:image:src" content=(metaImgUrl != undefined ? metaImgUrl : "https://rpcexplorer.groestlcoin.org/img/preview.png"))
+		meta(property="twitter:domain" content="rpcexplorer.groestlcoin.org")
+
+		link(rel="apple-touch-icon", sizes="180x180", href="./img/logo/apple-touch-icon.png")
+		link(rel="icon", type="image/png", sizes="32x32", href="./img/logo/favicon-32x32.png")
+		link(rel="icon", type="image/png", sizes="16x16", href="./img/logo/favicon-16x16.png")
+		link(rel="manifest", href="./img/logo/site.webmanifest")
+		link(rel="mask-icon", href="./img/logo/safari-pinned-tab.svg", color="#f7931a")
+		link(rel="shortcut icon", href="./img/logo/favicon.ico")
+		meta(name="apple-mobile-web-app-title", content="GRS Explorer")
+		meta(name="application-name", content="GRS Explorer")
+		meta(name="msapplication-TileColor", content="#022e70")
+		meta(name="msapplication-config", content="./img/logo/browserconfig.xml")
+		meta(name="theme-color" content="#022e70")
 
 		include includes/debug-overrides.pug
 
 		block headContent
 			title Explorer
 
-	body.bg-dark
-		nav.navbar.navbar-expand-lg.navbar-dark.bg-dark
-			div.container
-				a.navbar-brand(href="/")
+	body.bg-header-footer
+		nav.navbar.navbar-expand-md.navbar-dark.bg-header-footer
+			.container
+				a.navbar-brand(href="./")
 					span
 						if (coinConfig.logoUrlsByNetwork && coinConfig.logoUrlsByNetwork[activeBlockchain])
 							img.header-image(src=coinConfig.logoUrlsByNetwork[activeBlockchain], alt="logo")
 						else
-							img.header-image(src="/img/logo/btc.svg", alt="logo")
+							img.header-image(src="./img/logo/logo.svg", alt="logo")
 
 						if (coinConfig.siteTitlesByNetwork && coinConfig.siteTitlesByNetwork[activeBlockchain])
-							span #{coinConfig.siteTitlesByNetwork[activeBlockchain]}
+							span.fw-light #{coinConfig.siteTitlesByNetwork[activeBlockchain]}
 						else
-							span Groestlcoin Explorer
+							span.fw-light Groestlcoin Explorer
 
-				button.navbar-toggler.navbar-toggler-right(type="button", data-toggle="collapse", data-target="#navbarNav", aria-label="collapse navigation")
+				button.navbar-toggler.navbar-toggler-end(type="button", data-bs-toggle="collapse", data-bs-target="#navbarNav", aria-label="collapse navigation")
 					span.navbar-toggler-icon
 
-				div.collapse.navbar-collapse(id="navbarNav")
+				.collapse.navbar-collapse(id="navbarNav")
 					if (rpcClient)
-						ul.navbar-nav.mr-auto
+						ul.navbar-nav.me-auto
 							if (false)
 								li.nav-item
-									a.nav-link(href="/about")
+									a.nav-link(href="./about")
 										span About
 
-							if (activeBlockchain != "main")
+							if (false && activeBlockchain != "main")
 								- var chainName = activeBlockchain == "test" ? "testnet" : activeBlockchain
 
 								li.nav-item
-									a.nav-link.text-warning(title=`Current node's chain: ${activeBlockchain}` data-toggle="tooltip") [#{chainName}]
-
-							if (config.siteTools)
-								li.nav-item.dropdown
-									a.nav-link.dropdown-toggle(href="javascript:void(0)", role="button", data-toggle="dropdown", aria-haspopup="true", aria-expanded="false")
-										span  Tools
-									div.dropdown-menu.shadow(aria-label="Tools Items")
-										each itemIndex in config.site.prioritizedToolIdsList
-											- var item = config.siteTools[itemIndex];
-
-											a.dropdown-item(href=item.url)
-												i(class=item.fontawesome, style="width: 20px; margin-right: 10px;")
-												span  #{item.name}
-
-							if (config.site.header.dropdowns)
-								each dropdown, ddIndex in config.site.header.dropdowns
-									li.nav-item.dropdown
-										a.nav-link.dropdown-toggle(href="javascript:void(0)", role="button", data-toggle="dropdown", aria-haspopup="true", aria-expanded="false")
-											span  #{dropdown.title}
-										div.dropdown-menu.shadow(aria-label=(dropdown.title + " Items"))
-											each dropdownLink in dropdown.links
-												a.dropdown-item(href=dropdownLink.url)
-													if (dropdownLink.imgUrl)
-														img(src=dropdownLink.imgUrl, style="width: 24px; height: 24px; margin-right: 8px;", alt=dropdownLink.name)
-													span  #{dropdownLink.name}
+									span.badge.bg-primary(style="margin-top: 0.75rem;", title=`Current node's chain: ${activeBlockchain}` data-bs-toggle="tooltip") #{chainName}
 
 
-						form.form-inline.mr-3(method="post", action="/search")
-							input(type="hidden", name="_csrf", value=csrfToken)
-							div.input-group.input-group-sm
-								input.form-control.form-control-sm(type="text", name="query", placeholder="block height/hash, txid, address", value=(query))
-								div.input-group-append
-									button.btn.btn-primary(type="submit")
-										i.fas.fa-search
+
+
 
 						ul.navbar-nav
-							li.nav-item.dropdown
-								a.nav-link.dropdown-toggle(href="javascript:void(0)", role="button", data-toggle="dropdown", aria-haspopup="true", aria-expanded="false")
-									span  Admin Tools
-								div.dropdown-menu.dropdown-menu-right.shadow(aria-label="Admin Tools Items")
-									a.dropdown-item(href="/admin") Admin Dashboard
+							if (config.demoSite && homepage)
+								li.nav-item.dropdown.me-0.me-md-2.mt-2.mt-md-0.text-center.text-md-start
+									a.nav-link.dropdown-toggle.bg-header-footer-highlight.rounded(href="javascript:void(0)", role="button", data-bs-toggle="dropdown", aria-haspopup="true", aria-expanded="false")
+										span.fa-layers.fa-fw.me-2.ms-1
+											i.fas.fa-circle.fa-lg.text-white(data-fa-transform="shrink-2")
+											i.fas.fa-grip-vertical.fa-lg(style=`color: ${coinConfig.coinColorsByNetwork[activeBlockchain]}`)
 
-							li.nav-item.dropdown
-								a.nav-link.dropdown-toggle(href="javascript:void(0)", id="navbarDropdown", role="button", data-toggle="dropdown", aria-haspopup="true", aria-expanded="false")
-									i.fas.fa-cog.mr-1
-								div.dropdown-menu.dropdown-menu-right.shadow(aria-labelledby="navbarDropdown")
-									if (coinConfig.currencyUnits)
-										span.dropdown-header Currency Units
-										each item in coinConfig.currencyUnits
-											if (item.type == "native" || (config.queryExchangeRates && !config.privacyMode))
-												a.dropdown-item(href=("/changeSetting?name=currencyFormatType&value=" + item.values[0]))
-													each valueName in item.values
-														if (currencyFormatType == valueName)
-															i.fas.fa-check
+									div.dropdown-menu.dropdown-menu-end.shadow(aria-label="Demo Sites")
+										span.dropdown-header Public Demo Sites
+
+										- var demoSites = ["main", "test", "signet"];
+
+										each demoSite in demoSites
+											a.dropdown-item(href=coinConfig.demoSiteUrlsByNetwork[demoSite])
+												span.fa-layers.fa-fw.ms-2
+													i.fas.fa-circle.fa-lg.me-2.text-white(data-fa-transform="shrink-2")
+													i.fas.fa-grip-vertical.fa-lg.me-2(style=`color: ${coinConfig.coinColorsByNetwork[demoSite]}`)
+
+												| #{coinConfig.siteTitlesByNetwork[demoSite].replace("Explorer", "").replace("Bitcoin", "Mainnet")}
+
+							if (config.siteTools)
+								li.nav-item.dropdown.me-0.me-md-2.mt-2.mt-md-0.text-center.text-md-start
+									a.nav-link.rounded.bg-header-footer-highlight.text-white.dropdown-toggle(href="javascript:void(0)", role="button", data-bs-toggle="dropdown", aria-haspopup="true", aria-expanded="false")
+										i.fas.fa-tools.me-2.ms-1
+										| Tools
+
+									div.dropdown-menu.dropdown-menu-end.shadow(aria-label="Tools Items")
+										each section, sectionIndex in config.site.toolSections
+											if (sectionIndex > 0)
+												hr.dropdown-divider.mt-2.mb-1
+
+											span.dropdown-header #{section.name}
+
+											each itemIndex in section.items
+												- var item = config.siteTools[itemIndex];
+
+												a.dropdown-item(href=item.url)
+													i(class=item.fontawesome, style="width: 20px; margin-right: 10px;")
 													span  #{item.name}
 
-									span.dropdown-header Theme
-									a.dropdown-item(href="/changeSetting?name=uiTheme&value=light")
-										if (session.uiTheme == "light" || session.uiTheme == "")
-											i.fas.fa-check
-										span  Light
-									a.dropdown-item(href="/changeSetting?name=uiTheme&value=dark")
-										if (session.uiTheme == "dark")
-											i.fas.fa-check
-										span  Dark
+							li.nav-item.dropdown.me-0.me-md-3.mt-2.mt-md-0.text-center.text-md-start
+								a.nav-link.rounded.bg-header-footer-highlight.text-white.dropdown-toggle(href="javascript:void(0)", id="navbarDropdown", role="button", data-bs-toggle="dropdown", aria-haspopup="true", aria-expanded="false")
+									i.fas.fa-cog.me-2.ms-1
 
-		if (host && port && !homepage && config.site.header.showToolsSubheader)
-			div.container.mb-2.pt-2.d-lg-block.d-none.border-top(id="sub-menu", style="")
-				ul.nav
-					each itemIndex in config.site.subHeaderToolsList
-						- var item = config.siteTools[itemIndex];
-						li.nav-item
-							a.nav-link.text-white.px-2.text-decoration-underline.mr-3(href=item.url)
-								i.mr-1(class=item.fontawesome)
-								span #{item.name}
+								.dropdown-menu.dropdown-menu-end.shadow(aria-labelledby="navbarDropdown")
+									span.dropdown-header Display Currency
 
-		- var bodyBgColor = "#f8f9fa;";
-		if (session.uiTheme && session.uiTheme == "dark")
-			- bodyBgColor = "#0c0c0c;";
+									- var items = ["GRS", "gro"];
+									if (config.queryExchangeRates && global.exchangeRates)
+										- items.push("local");
 
-		div.pb-4.pt-3.pt-md-4(style=("background-color: " + bodyBgColor))
-			div.container.px-2.px-sm-3
+									.btn-group.ms-3
+										each item in items
+											if (userSettings.displayCurrency == item.toLowerCase())
+												span.btn.btn-primary.btn-sm #{item}
+
+											else
+												a.btn.btn-outline-primary.btn-sm(href=`./changeSetting?name=displayCurrency&value=${item.toLowerCase()}`) #{item}
+
+									if (config.queryExchangeRates && global.exchangeRates)
+										hr.dropdown-divider.mt-3.mb-1
+
+										span.dropdown-header Local Currency
+
+										- var items = ["USD", "EUR", "GBP"];
+
+										each item in items
+											a.dropdown-item(href=`./changeSetting?name=localCurrency&value=${item.toLowerCase()}`)
+												.clearfix
+													.float-start
+														span #{item}
+													.float-end
+														if (userSettings.localCurrency == item.toLowerCase())
+															i.fas.fa-check
+
+									hr.dropdown-divider.mt-2.mb-2
+
+									a.dropdown-item(href=`./user-settings`) More settings...
+
+
+
+
+				form.form-inline.d-none.d-lg-inline(method="post", action="./search", style="width: 325px;")
+					input(type="hidden", name="_csrf", value=csrfToken)
+					.input-group.input-group
+						input.form-control.form-control(type="text", name="query", placeholder="block height/hash, txid, address", value=(query))
+
+						button.btn.btn-primary(type="submit")
+							i.fas.fa-search
+
+				form.form-inline.d-lg-none.w-100.mt-2.mt-md-0(method="post", action="./search")
+					input(type="hidden", name="_csrf", value=csrfToken)
+					.input-group.input-group
+						input.form-control.form-control(type="text", name="query", placeholder="height/hash/txid...", value=(query))
+
+						button.btn.btn-primary(type="submit")
+							i.fas.fa-search
+
+
+
+		div.pb-4.pt-3.pt-md-4.bg-main
+			div.container.px-2.px-sm-3.mb-large
 				if (pageErrors && pageErrors.length > 0)
 					include includes/page-errors-modal.pug
 
 					div.alert.alert-danger
 						- var errorText = `This page encountered ${pageErrors.length.toLocaleString()} error${pageErrors.length == 1 ? "" : "s"}:`;
-						span.font-weight-bold #{errorText}
-						a(href="javascript:void(0)", data-toggle="modal", data-target="#pageErrorsModal") Error details
+						span.fw-bold #{errorText}
+						a(href="javascript:void(0)", data-bs-toggle="modal", data-bs-target="#pageErrorsModal") Error details
 
 				if (userMessageMarkdown)
 					div.alert(class=(userMessageType ? `alert-${userMessageType}` : "alert-warning"), role="alert")
 						div.user-message-markdown
-							| !{marked(userMessageMarkdown)}
+							| !{markdown(userMessageMarkdown)}
 
 				if (userMessage)
 					div.alert(class=(userMessageType ? `alert-${userMessageType}` : "alert-warning"), role="alert")
 						span #{userMessage}
-
 
 				div(style="min-height: 500px;")
 					block content
 
 				div(style="margin-bottom: 30px;")
 
-				if (config.demoSite && !crawlerBot)
-					include ./includes/donation-modal.pug
+		footer.footer.border-top.border-primary.bg-header-footer.pt-3.pb-1.px-3.text-white(style="border-width: 5px !important;")
+			.container
+				.row.mb-5
+					.col-7
+						.text-start
+							- var darkTheme = (userSettings.uiTheme == "dark");
+							a.btn.fa-lg.bg-header-footer-highlight.me-2(href=`./changeSetting?name=uiTheme&value=${darkTheme ? "light" : "dark"}`, title=`Active Theme: <b>${darkTheme ? "Dark" : "Light"}</b><br/>Click to switch to <b>${darkTheme ? "Light" : "Dark"}</b>`, data-bs-toggle="tooltip", data-bs-html="true")
 
-		footer.footer.border-top.border-primary.bg-dark.pt-3.pb-1.px-3.text-white(style="border-width: 5px !important;")
-			div.container
-				div.row
-					div.col-md-5
-						dl
-							dt Source
-							dd
-								a(href="https://github.com/groestlcoin/grs-rpc-explorer") github.com/groestlcoin/grs-rpc-explorer
+								i.fas.fa-sun.text-warning.me-1
+
+								span.me-1
+									if (darkTheme)
+										i.fas.fa-toggle-on.text-primary
+									else
+										i.fas.fa-toggle-on.fa-rotate-180.text-warning
+
+								i.fas.fa-moon.text-primary
+
+
+							.btn-group.dropup.me-2
+								button.btn.dropdown-toggle.bg-header-footer-highlight.text-white(type="button" data-bs-toggle="dropdown" aria-expanded="false")
+									i.fas.fa-shield-alt.me-1
+
+								ul.dropdown-menu.shadow(aria-label="Admin Tools Items")
+									span.dropdown-header Admin Tools
+
+									a.dropdown-item(href="./admin/dashboard") Dashboard
+									a.dropdown-item(href="./admin/app-stats") App Stats
+									a.dropdown-item(href="./admin/os-stats") OS Stats
+
+
+					.col-5
+						.text-end
+							span(style="font-size: 1.5rem;")
+								if (global.sourcecodeProjectMetadata)
+									a.text-white.mb-1.me-3(href="https://github.com/groestlcoin/grs-rpc-explorer", title="View source code on Github", data-bs-toggle="tooltip")
+										i.fab.fa-github
+
+								a.text-danger.mb-1.me-3(href="https://www.groestlcoin.org/donations/", target="_blank", title="Support this project with a donation", data-bs-toggle="tooltip")
+									i.fas.fa-heart.text-danger
+
+								a.text-white.mb-1(href="https://twitter.com/GroestlcoinTeam", target="_blank", title="Follow @GroestlcoinTeam on Twitter", data-bs-toggle="tooltip")
+									i.fab.fa-twitter.text-twitter
+
+
+
+				if (!crawlerBot)
+					.mb-4
+						iframe(id="quoteIframe", src="./snippet/quote/random", onload="iframeLoaded('quoteIframe');", scrolling="no", height="0", style="width: 100%;")
+
+				hr
+
+
+				.row.mt-4.mb-6
+					.col-lg-4
+						.mb-4
+							h6 Project
+
+							.ms-2
+								a.footer-link(href="https://github.com/groestlcoin/grs-rpc-explorer") github.com/groestlcoin/grs-rpc-explorer
 
 								if (global.sourcecodeProjectMetadata)
 									div.mt-2
-										a.btn.btn-primary.btn-sm.mr-3.mb-1.text-decoration-none(href="https://github.com/groestlcoin/grs-rpc-explorer")
-											i.fas.fa-star.mr-2
-											span.mr-2 Star
+										a.btn.btn-primary.btn-sm.me-3.mb-1.text-decoration-none(href="https://github.com/groestlcoin/grs-rpc-explorer")
+											i.fas.fa-star.fontawesome-shadow.text-warning.me-2
 											span.badge.bg-white.text-dark #{global.sourcecodeProjectMetadata.stargazers_count}
 
-										a.btn.btn-primary.btn-sm.mr-3.mb-1.text-decoration-none(href="https://github.com/groestlcoin/grs-rpc-explorer/fork")
-											i.fas.fa-code-branch.mr-2
-											span.mr-2 Fork
+										a.btn.btn-primary.btn-sm.me-3.mb-1.text-decoration-none(href="https://github.com/groestlcoin/grs-rpc-explorer/fork")
+											i.fas.fa-code-branch.fontawesome-shadow.me-2
 											span.badge.bg-white.text-dark #{global.sourcecodeProjectMetadata.forks_count}
 
+					.col-lg-4
+						.mb-4
+							h6 App Details
 
-
-							dt App Details
-							dd
+							.ms-2
 								span version: #{global.appVersion}
 								if (sourcecodeVersion)
 									br
 									span commit:
-										a(href=("https://github.com/groestlcoin/grs-rpc-explorer/commit/" + sourcecodeVersion)) #{sourcecodeVersion}
+										a.footer-link(href=`https://github.com/groestlcoin/grs-rpc-explorer/commit/${sourcecodeVersion}`) #{sourcecodeVersion}
 
 								br
 								span released: #{sourcecodeDate}
 								span(style="font-size: 0.9em;")  (
-									a(href="/changelog") changelog
+									a.footer-link(href="./changelog") changelog
 									span )
 
-							if (config.demoSite)
-								dt Public Demos
-								dd
-									if (coinConfig.demoSiteUrl)
-										a(href=coinConfig.demoSiteUrl) #{coinConfig.demoSiteUrl}
+					.col-lg-4
+						if (config.demoSite)
+							.mb-4
+								h6 Public Demos
+
+								.ms-2
+									if (coinConfig.demoSiteUrlsByNetwork && coinConfig.demoSiteUrlsByNetwork.main)
+										a.footer-link(href=coinConfig.demoSiteUrlsByNetwork.main) #{coinConfig.demoSiteUrlsByNetwork.main}
 									else
-										a(href="https://rpcexplorer.groestlcoin.org") https://rpcexplorer.groestlcoin.org
+										a.footer-link(href="https://rpcexplorer.groestlcoin.org") https://rpcexplorer.groestlcoin.org
+
+									br
+
+									a.footer-link(href="http://btcexpz7xlwrqknqw6p3bok6shf73qtkd6zxct4x4qta2ktvh7ntprad.onion", title="Tor v3 Hidden Service", data-bs-toggle="tooltip") btcexp….onion
+									span.ms-1 (tor v3)
+									+copyTextButton("http://btcexpz7xlwrqknqw6p3bok6shf73qtkd6zxct4x4qta2ktvh7ntprad.onion")
 
 									div.mt-2
-										- var demoSites = [];
-										- demoSites.push({url:"https://rpcexplorer.groestlcoin.org", logoUrl:"/img/logo/grs.svg", title:"Groestlcoin Explorer"});
-										- demoSites.push({url:"https://rpcexplorer-test.groestlcoin.org", logoUrl:"/img/logo/tgrs.svg", title:"Testnet Explorer"});
+										- var demoSites = ["main", "test", "signet"];
 
 										each demoSite in demoSites
-											a.mr-2(href=demoSite.url, title=demoSite.title)
-												img(src=demoSite.logoUrl, alt=demoSite.title)
+											a.me-2(href=coinConfig.demoSiteUrlsByNetwork[demoSite], title=coinConfig.siteTitlesByNetwork[demoSite], data-bs-toggle="tooltip")
+												img(src=coinConfig.logoUrlsByNetwork[demoSite], alt=coinConfig.siteTitlesByNetwork[demoSite], style="width: 40px; height: 40px;")
 
-										a.mr-2(href="https://lnd-admin.groestlcoin.org", title="LND Admin")
-											img(src=("/img/logo/lnd-admin.png"), style="width: 32px; height: 32px;", alt="LND Admin")
 
-					div.col-md-7.text-md-right
-						dl
-							dd
-								button.btn.btn-primary(type="button", data-toggle="modal", data-target="#exampleModalCenter")
-									i.fas.fa-heart.mr-2
-									span Support Project
 
-		script(src="/js/jquery.min.js", integrity="sha384-vk5WoKIaW/vJyUAd9n/wmopsmNhiy+L2Z+SBxGYnUkunIxVxAv/UtMOhba/xskxh")
-		script(src="/js/popper.min.js", integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo")
-		script(src="/js/bootstrap.min.js", integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6")
-		script(defer, src="/js/fontawesome.min.js", integrity="sha384-eVEQC9zshBn0rFj4+TU78eNA19HMNigMviK/PU/FFjLXqa/GKPgX58rvt5Z8PLs7")
 
-		script(src="/js/highlight.min.js", integrity="sha384-xLrpH5gNLD6HMLgeDH1/p4FXigQ8T9mgNm+EKtCSXL0OJ5i1bnSi57dnwFuUMM9/")
-
-		script(src="/js/site.js", integrity="sha384-4/UxV25z5d3QFVgqmQ1Aez9CEzXwGz5MbBctDnsoCg6twESX4Jn0wgkazFXUJFqR")
+		+sharedScriptTags
 
 		script.
-			$(document).ready(function() {
-				$('[data-toggle="tooltip"]').tooltip();
-				$('[data-toggle="popover"]').popover({html:true, container:"body"});
+			document.addEventListener("DOMContentLoaded", function(event) {
+				// enable tooltips everywhere
+				var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+				var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+					return new bootstrap.Tooltip(tooltipTriggerEl);
+				});
+
+				// enable popovers everywhere
+				var popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'));
+				var popoverList = popoverTriggerList.map(function (popoverTriggerEl) {
+					return new bootstrap.Popover(popoverTriggerEl);
+				});
+
+				onLoad_tabSelection();
 			});
 
-			hljs.initHighlightingOnLoad();
+		if (!homepage)
+			script(src="./js/highlight.pack.js", integrity="sha384-OGoFdvlhYqw3L+BFpHxdz5136RO9tUlt7OZ2qQZ0N6Z9Qqx0rCQBsg9ko7X4vC64")
+			script.
+				document.addEventListener("DOMContentLoaded", function(event) {
+					hljs.highlightAll();
+				});
+
+		if (process.env.BTCEXP_PLAUSIBLE_ANALYTICS_DOMAIN && process.env.BTCEXP_PLAUSIBLE_ANALYTICS_SCRIPT_URL)
+			script(async defer data-domain=process.env.BTCEXP_PLAUSIBLE_ANALYTICS_DOMAIN src=process.env.BTCEXP_PLAUSIBLE_ANALYTICS_SCRIPT_URL)
+
+
 
 		if (config.credentials.sentryUrl && config.credentials.sentryUrl.length > 0)
-			script(src="/js/sentry.min.js", integrity="sha384-da/Bo2Ah6Uw3mlhl6VINMblg2SyGbSnULKrukse3P5D9PTJi4np9HoKvR19D7zOL", crossorigin="anonymous")
+			script(src="./js/sentry.min.js", integrity="sha384-da/Bo2Ah6Uw3mlhl6VINMblg2SyGbSnULKrukse3P5D9PTJi4np9HoKvR19D7zOL", crossorigin="anonymous")
 			script.
 				Sentry.init({ dsn: '#{config.credentials.sentryUrl}' });
 
