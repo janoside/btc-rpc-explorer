@@ -7,14 +7,14 @@ block content
 	+pageTitle(`${coinConfig.name} Fun`)
 
 
-	+dismissableInfoAlert("funPageNoteDismissed", "About Bitcoin Fun...")
+	+dismissableInfoAlert("funPageNoteDismissed", "About Groestlcoin Fun...")
 		.mb-2 This is a curated list of fun and interesting things in the blockchain or related to the underlying data:
 		ul
 			li Historical firsts
 			li Technical quirks and oddities
 			li Cultural references
 
-		.mb-0 Help curating this list is welcome! You can submit new items by opening an issue or PR on <a href="https://github.com/janoside/btc-rpc-explorer">Github</a>.
+		.mb-0 Help curating this list is welcome! You can submit new items by opening an issue or PR on <a href="https://github.com/groestlcoin/grs-rpc-explorer">Github</a>.
 
 
 	+contentSection
@@ -43,7 +43,7 @@ block content
 											a(href=`./address/${item.address}`) #{item.summary}
 										else if (item.type == "link")
 											a(href=item.url) #{item.summary}
-								
+
 								td
 									if (item.referenceUrl && item.referenceUrl.trim().length > 0)
 										- var matches = item.referenceUrl.match(/^https?\:\/\/([^\/:?#]+)(?:[\/:?#]|$)/i);
@@ -52,7 +52,7 @@ block content
 										- var domain = matches && matches[1];
 
 										if (domain)
-											a(href=item.referenceUrl, rel="nofollow") #{domain} 
+											a(href=item.referenceUrl, rel="nofollow") #{domain}
 												i.fas.fa-external-link-alt
 										else
 											a(href=item.referenceUrl, rel="nofollow") Reference

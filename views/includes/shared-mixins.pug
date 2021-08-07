@@ -1,7 +1,7 @@
 mixin themeCss
 	if (userSettings.uiTheme == "light")
 		link(rel="stylesheet", href=`./style/light.css?v=${cacheId}`, integrity="sha384-jx98V2z4L5b4pgDLl57RJUpm9wbL69TDVNLFPFkB+NuNHVv9yY8e0SOekA7W2QYh")
-			
+
 	else
 		link(rel="stylesheet", href=`./style/dark.css?v=${cacheId}`, integrity="sha384-QCtkYrktZT0mmluAWu04cafhPsvv/jfz7umWGSr4HXVayA2ZIuEFHpv0c8xcMI9j")
 
@@ -22,7 +22,7 @@ mixin pageTitle(text, subtext, copyableSubtext=false)
 			if (copyableSubtext)
 				small
 					+copyTextButton(subtext)
-	
+
 	//hr.mb-3
 
 
@@ -30,7 +30,7 @@ mixin sectionTitleBlock
 	h3.h5.mb-1.fw-light
 		block
 
-			
+
 mixin sectionTitle(text, toggle=false, toggleUniqueClass, toggleUserSettingName, toggleOpen, tooltipText)
 	if (false)
 		pre
@@ -71,7 +71,7 @@ mixin contentSection(title, toggleable=false, toggleUserSettingName, defaultOpen
 mixin summaryRow(itemCount)
 	- locals.summaryItemCount = itemCount;
 	- locals.summaryItemIndex = 0;
-	
+
 	- locals.colCounts = {"sm": 1, "md": Math.min(itemCount, 3), "lg": Math.min(itemCount, 4), "xl": Math.min(itemCount, 5)};
 	- locals.rowCountsArray = utils.objectProperties(locals.colCounts).map(x => [x, locals.colCounts[x]]).map(x => [x[0], (Math.floor(itemCount / x[1]) + ((itemCount % x[1] > 0) ? 1 : 0))]);
 	- locals.rowCounts = {};
@@ -99,7 +99,7 @@ mixin summaryItem(title, titleDesc, subtitle, subtitleDesc)
 		//span.text-danger (#{JSON.stringify(locals.rowCounts)})
 		.text-start.text-md-center
 			+summaryTitle(title, titleDesc, subtitle, subtitleDesc)
-			
+
 
 		.lead.text-start.text-md-center
 			block
@@ -123,8 +123,8 @@ mixin txList(visibleTxs, txCount, limit, offset, inputsByTxid, options)
 			.p-3
 				h6.fw-normal.mb-2 #{offset.toLocaleString()} - #{Math.min(offset + limit - 1, txCount - 1).toLocaleString()} of #{txCount.toLocaleString()}
 				+pagination(limit, offset, null, txCount, paginationBaseUrl)
-					
-	
+
+
 		.mb-4.mb-md-3
 
 
@@ -145,7 +145,7 @@ mixin txList(visibleTxs, txCount, limit, offset, inputsByTxid, options)
 							span.badge.bg-primary.fw-normal.me-2(title=`Index in Block: #${(txIndex + offset).toLocaleString()}`, data-bs-toggle="tooltip")
 								span.d-inline.d-sm-none.me-1 tx
 								| ##{(txIndex + offset).toLocaleString()}
-							
+
 							a.d-inline.d-lg-none(href=`./tx/${tx.txid}${tx_height_param}`) #{utils.ellipsizeMiddle(tx.txid, 24)}
 							a.d-none.d-lg-inline(href=`./tx/${tx.txid}${tx_height_param}`) #{utils.ellipsizeMiddle(tx.txid, 48)}
 
@@ -159,10 +159,10 @@ mixin txList(visibleTxs, txCount, limit, offset, inputsByTxid, options)
 							if (options.mempoolDetailsByTxid && options.mempoolDetailsByTxid[tx.txid])
 								- var mempoolDetails = options.mempoolDetailsByTxid[tx.txid].entry;
 								- var feeRate = new Decimal(mempoolDetails.fee).times(coinConfig.baseCurrencyUnit.multiplier).dividedBy(mempoolDetails.vsize);
-								
+
 								+lightBadge
 									| #{parseInt(feeRate).toLocaleString()}
-									span.fw-light.ms-1 sat/vB
+									span.fw-light.ms-1 gro/vB
 
 							if (options.addrGainsByTxid && options.addrGainsByTxid[tx.txid])
 								span.badge.bg-success.me-2
@@ -188,7 +188,7 @@ mixin txList(visibleTxs, txCount, limit, offset, inputsByTxid, options)
 									else
 										span(title=`Unconfirmed`, data-bs-toggle="tooltip")
 											i.fas.fa-lock.fa-sm.me-2
-											span.fw-light.text-danger 0										
+											span.fw-light.text-danger 0
 
 							if (options.showDates && tx.time)
 								- var utcMoment = moment.utc(new Date(parseInt(tx.time) * 1000));
@@ -202,7 +202,7 @@ mixin txList(visibleTxs, txCount, limit, offset, inputsByTxid, options)
 											+timeAgo(tx.time, true)
 											span.ms-1 ago
 
-			
+
 			hr.mb-4.mx-n3
 
 			.d-none.d-lg-block.border-end.mt-n4.mb-2(style="border-color: currentColor !important; height: 10px; width: 50%; opacity: 0.25;")
@@ -210,7 +210,7 @@ mixin txList(visibleTxs, txCount, limit, offset, inputsByTxid, options)
 			div
 				- var txInputs = inputsByTxid[tx.txid];
 				- var blockHeight = txBlockHeight != undefined ? txBlockHeight : -1;
-				
+
 				if (options.highlightAddress)
 					- var txIOHighlightAddress = options.highlightAddress;
 
@@ -251,15 +251,15 @@ mixin pageTab(name, defaultActive=false)
 
 mixin valueDisplay(val)
 	if (val > 0)
-		if (userSettings.displayCurrency == "btc")
+		if (userSettings.displayCurrency == "grs")
 			+_valueDisplayBtc(val)
 
-		else if (userSettings.displayCurrency == "sat")
+		else if (userSettings.displayCurrency == "gro")
 			+_valueDisplaySat(val, 1000000)
 
 		else if (userSettings.displayCurrency == "local")
 			+_valueDisplayLocal(val, 1000000)
-				
+
 	else
 		span.font-monospace 0
 
@@ -268,7 +268,7 @@ mixin _valueDisplayBtc(val)
 	- var parts = utils.formatCurrencyAmount(val, userSettings.displayCurrency);
 
 	//span #{JSON.stringify(parts)}
-	
+
 	span #{parts.val}
 		if (parts.lessSignificantDigits)
 			span.text-small.text-darken.ms-1 #{parts.lessSignificantDigits}
@@ -277,7 +277,7 @@ mixin _valueDisplayBtc(val)
 		- var localCurFormatData = utils.getExchangedCurrencyFormatData(val, userSettings.localCurrency);
 
 		span.text-tiny.border-dotted.fw-light.ms-1(style="letter-spacing: -0.5px;", data-bs-toggle="tooltip", title=`<span class="me-tiny">${localCurFormatData.symbol}</span><span>${localCurFormatData.value}</span>`, data-bs-html="true") #{parts.currencyUnit}
-			
+
 	else
 		span.text-tiny.fw-light.ms-1(style="letter-spacing: -0.5px;") #{parts.currencyUnit}
 
@@ -286,14 +286,14 @@ mixin _valueDisplaySat(val, summarizeMin=Infinity, summarizeDecimals=3)
 	- var parts = utils.formatCurrencyAmount(val, localCurrencyDisplay ? userSettings.localCurrency : userSettings.displayCurrency);
 
 	//span #{JSON.stringify(parts)}
-	
+
 	if (parts.intVal >= summarizeMin)
 		//span #{JSON.stringify(parts)}
 		- var largeNumberData = utils.formatLargeNumberSignificant(parts.intVal, summarizeDecimals >= 0 ? summarizeDecimals : 3);
 		//span #{JSON.stringify(largeNumberData)} #{parts.intVal}
 		span(title=parts.intVal.toLocaleString(), data-bs-toggle="tooltip") #{largeNumberData[0]}
 		span.ms-1 #{largeNumberData[1].textDesc}
-		
+
 	else
 		span(class=(localCurrencyDisplay ? "border-dotted" : false), title=(localCurrencyDisplay ? `${utils.formatCurrencyAmount(val, coinConfig.defaultCurrencyUnit.name.toLowerCase()).simpleVal} BTC` : false), data-bs-toggle=(localCurrencyDisplay ? "tooltip" : false)) #{parts.intVal.toLocaleString()}
 
@@ -302,7 +302,7 @@ mixin _valueDisplaySat(val, summarizeMin=Infinity, summarizeDecimals=3)
 		- var localCurFormatData = utils.getExchangedCurrencyFormatData(val, userSettings.localCurrency);
 
 		span.text-tiny.border-dotted.fw-light.ms-1(style="letter-spacing: -0.5px;", data-bs-toggle="tooltip", title=`<span class="me-tiny">${localCurFormatData.symbol}</span><span>${localCurFormatData.value}</span>`, data-bs-html="true") #{parts.currencyUnit}
-			
+
 	else
 		span.text-tiny.fw-light.ms-1(style="letter-spacing: -0.5px;") #{parts.currencyUnit}
 
@@ -324,7 +324,7 @@ mixin _valueDisplayLocal(val, summarizeMin=Infinity, summarizeDecimals=3)
 
 	else
 		span.border-dotted(title=`${utils.formatCurrencyAmount(val, coinConfig.defaultCurrencyUnit.name.toLowerCase()).simpleVal} BTC`, data-bs-toggle="tooltip") #{parts.val}
-	
+
 
 mixin valueDisplaySpecial(val, maxDecimals=-1, summarizeAlways=false, summarizeMin=Infinity, summarizeDecimals=-1)
 	if (maxDecimals == -1 && summarizeAlways == false && summarizeMin == undefined)
@@ -350,13 +350,13 @@ mixin valueDisplaySpecial(val, maxDecimals=-1, summarizeAlways=false, summarizeM
 				- var largeNumberData = utils.formatLargeNumberSignificant(parts.intVal, summarizeDecimals >= 0 ? summarizeDecimals : 2);
 				//span #{JSON.stringify(largeNumberData)} #{parts.intVal}
 				span(class=(localCurrencyDisplay ? "border-dotted" : false), title=(localCurrencyDisplay ? `${utils.formatCurrencyAmount(val, coinConfig.defaultCurrencyUnit.name.toLowerCase()).simpleVal} BTC` : false), data-bs-toggle=(localCurrencyDisplay ? "tooltip" : false)) #{largeNumberData[0]} #{largeNumberData[1].textDesc}
-			
+
 			else if (maxDecimals == 0)
 				span(class=(localCurrencyDisplay ? "border-dotted" : false), title=(localCurrencyDisplay ? `${utils.formatCurrencyAmount(val, coinConfig.defaultCurrencyUnit.name.toLowerCase()).simpleVal} BTC` : false), data-bs-toggle=(localCurrencyDisplay ? "tooltip" : false)) #{parts.intVal.toLocaleString()}
 
 			else if (maxDecimals > 0)
 				span(class=(localCurrencyDisplay ? "border-dotted" : false), title=(localCurrencyDisplay ? `${utils.formatCurrencyAmount(val, coinConfig.defaultCurrencyUnit.name.toLowerCase()).simpleVal} BTC` : false), data-bs-toggle=(localCurrencyDisplay ? "tooltip" : false)) #{parts.val}
-			
+
 			else
 				span(class=(localCurrencyDisplay ? "border-dotted" : false), title=(localCurrencyDisplay ? `${utils.formatCurrencyAmount(val, coinConfig.defaultCurrencyUnit.name.toLowerCase()).simpleVal} BTC` : false), data-bs-toggle=(localCurrencyDisplay ? "tooltip" : false)) #{parts.val}
 					if (parts.lessSignificantDigits)
@@ -367,12 +367,12 @@ mixin valueDisplaySpecial(val, maxDecimals=-1, summarizeAlways=false, summarizeM
 					- var localCurFormatData = utils.getExchangedCurrencyFormatData(val, userSettings.localCurrency);
 
 					span.text-tiny.border-dotted.fw-light.ms-1(style="letter-spacing: -0.5px;", data-bs-toggle="tooltip", title=`<span class="me-tiny">${localCurFormatData.symbol}</span><span>${localCurFormatData.value}</span>`, data-bs-html="true") #{parts.currencyUnit}
-						
+
 				else
 					span.text-tiny.fw-light.ms-1(style="letter-spacing: -0.5px;") #{parts.currencyUnit}
-						
+
 			else if (userSettings.displayCurrency == "local")
-					
+
 		else
 			span.font-monospace 0
 
@@ -547,7 +547,7 @@ mixin numWithMutedDecimals(numString)
 
 	else
 		span #{numString}
-				
+
 
 mixin blockRangeFilters
 	.clearfix
@@ -570,10 +570,6 @@ mixin blockRangeFilters
 					button.btn.btn-outline-primary.dropdown-toggle(type="button", id="preconfigured-dropdown", data-bs-toggle="dropdown", aria-haspopup="true", aria-expanded="false") Selections
 					div.dropdown-menu(aria-labelledby="preconfigured-dropdown")
 						a.dropdown-item(href="javascript:void(0)", data-blocks="0-199") First 200 Blocks
-						a.dropdown-item(href="javascript:void(0)", data-blocks="209900-210100") First Halving ±100
-						a.dropdown-item(href="javascript:void(0)", data-blocks="419900-420100") Second Halving ±100
-						a.dropdown-item(href="javascript:void(0)", data-blocks="629900-630100") Third Halving ±100
-						a.dropdown-item(href="javascript:void(0)", data-blocks="481724-481924") SegWit Activation ±100
 
 		.float-start
 			div(id="time-range-buttons")
@@ -584,7 +580,7 @@ mixin blockRangeFilters
 					div.input-group
 						input.form-control(type="text", id="custom-range-start", placeholder="min height", style="width: 125px;")
 						input.form-control(type="text", id="custom-range-end", placeholder="max height", style="width: 125px;")
-						
+
 						button.btn.btn-primary(type="submit") Go
 
 
@@ -623,7 +619,7 @@ mixin pagination(limit, offset, sort, itemCount, baseUrl, justification="start",
 				else if (x == (pageCount - 1) && pageNumber < (pageCount - 5))
 					li.page-item.disabled
 						a.page-link(href="javascript:void(0)") ...
-				
+
 			li.page-item(class=(pageNumber == pageCount ? "disabled" : false))
 				a.page-link(href=(pageNumber == pageCount ? "javascript:void(0)" : paginationUrlFunction(pageNumber + 1)), aria-label="Next")
 					span(aria-hidden="true") &raquo;
@@ -631,11 +627,11 @@ mixin pagination(limit, offset, sort, itemCount, baseUrl, justification="start",
 
 mixin graphPageScriptSetup(dateAdapterNeeded=false)
 	script(src="./js/chart.min.js", integrity="sha384-tq9x30vl+bH08RGJ5c7oIlrHDpeF9rYdRFdNQYMOY/VpHt4t0hXYd3Kj23QT9gFN")
-	
+
 	if (dateAdapterNeeded)
 		script(src="./js/moment.min.js", integrity="sha384-CJyhAlbbRZX14Q8KxKBt0na1ad4KBs9PklAiNk2Efxs9sgimbIZm9kYLJQeNMUfM")
 		script(src="./js/chartjs-adapter-moment.min.js", integrity="sha384-Z9r2EsEmivx0l8T8TvYoqqGcpO0cCjKbqVXB8tYUa0hIWKtGVl0TmaF263CjS6XR")
-	
+
 	if (userSettings.uiTheme && userSettings.uiTheme == "dark")
 		script.
 			Chart.defaults.color='white';
@@ -649,18 +645,18 @@ mixin graphPageScriptSetup(dateAdapterNeeded=false)
 mixin quote(quote, quoteIndex=-1)
 	blockquote.blockquote
 		span.fs-4.font-serif "
-		
+
 		if (quoteIndex >= 0)
 			a.fs-5.font-serif.text-reset(href=`./quote/${quoteIndex}`) #{quote.text}
 		else
 			span.fs-5.font-serif #{quote.text}
-		
+
 		span.fs-4.font-serif "
 		br
 		.ms-8.mt-2
 			if (quote.speaker.indexOf("https://twitter.com") >= 0)
 				- var account = quote.speaker.substring("https://twitter.com/".length);
-				| — 
+				| —
 				a.fs-5(href=quote.speaker, target="_blank") @#{account}
 
 			else
@@ -669,7 +665,7 @@ mixin quote(quote, quoteIndex=-1)
 			if (quote.date)
 				small.fw-light , #{quote.date}
 
-			
+
 			if (quote.url)
 				small.text-muted.ms-2 (
 					a(href=quote.url, target="_blank") ref

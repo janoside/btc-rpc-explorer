@@ -1,24 +1,24 @@
 extends layout
 
 block headContent
-	title Bitcoin Whitepaper
+	title Groestlcoin Whitepaper
 
 block content
-	+pageTitle("Bitcoin Whitepaper", "(Extracted from the blockchain!)")
+	+pageTitle("Groestlcoin Whitepaper", "(Extracted from the blockchain!)")
 
-	+dismissableInfoAlert("whitepaperPageNoteDismissed", "About the Bitcoin Whitepaper Tool...")
-		p Below is the Bitcoin whitepaper, extracted from data in the Bitcoin blockchain (transaction 
+	+dismissableInfoAlert("whitepaperPageNoteDismissed", "About the Groestlcoin Whitepaper Tool...")
+		p Below is the Groestlcoin whitepaper, extracted from data in the Groestlcoin blockchain (transaction
 			a.font-monospace(href="./tx/54e48e5f5c656b26c3bca14a8c95aa583d07ebe84dde3b7dd4a78f4e4186e713") 54e48e5f5c6…
-			span.ms-2 to be precise), served by your <b>Bitcoin Core</b> node.
+			span.ms-2 to be precise), served by your <b>Groestlcoin Core</b> node.
 
-		p The data has been decoded by this tool and is displayed in an iframe below. You can view it directly and/or download it at 
-			a(href="./bitcoin.pdf") /bitcoin.pdf
+		p The data has been decoded by this tool and is displayed in an iframe below. You can view it directly and/or download it at
+			a(href="./groestlcoin.pdf") /groestlcoin.pdf
 			|.
 
 	if (global.activeBlockchain == "main")
-		iframe(src="./bitcoin.pdf", style="width: 100%;", height="800")
+		iframe(src="./groestlcoin.pdf", style="width: 100%;", height="800")
 
 	else
 		+warningAlert
-			.mb-2 Whoops! The Bitcoin Whitepaper is embedded in a particular transaction in the mainnet blockchain. It looks like this node is configured for a different network, so the data is not available to be extracted.
+			.mb-2 Whoops! The groestlcoin Whitepaper is embedded in a particular transaction in the mainnet blockchain. It looks like this node is configured for a different network, so the data is not available to be extracted.
 			| Try running a mainnet node to use this tool.

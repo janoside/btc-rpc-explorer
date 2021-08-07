@@ -1,16 +1,16 @@
 global.currencyTypes = {
-	"btc": {
-		id: "btc",
+	"grs": {
+		id: "grs",
 		type:"native",
-		name:"BTC",
+		name:"GRS",
 		multiplier:1,
 		default:true,
 		decimalPlaces:8
 	},
-	"sat": {
-		id: "sat",
+	"gro": {
+		id: "gro",
 		type:"native",
-		name:"sat",
+		name:"gro",
 		multiplier:100000000,
 		decimalPlaces:0
 	},
@@ -41,7 +41,7 @@ global.currencyTypes = {
 };
 
 global.currencySymbols = {
-	"btc": "₿",
+	"grs": "Ǥ",
 	"usd": "$",
 	"eur": "€",
 	"gbp": "£"

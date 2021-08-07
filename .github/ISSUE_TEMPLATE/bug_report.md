@@ -18,12 +18,12 @@ A clear and concise description of what the bug is.
  - Browser [e.g. chrome, safari]
  - Code Version / Commit [e.g. ab6cde8]
  - Installation Method [e.g. "npm" or "source code"]
- 
+
 **Configuration file content**
 
 Please include the content from the following files. **BE SURE TO MODIFY YOUR CREDENTIALS BEFORE SUBMITTING!!!**
- - bitcoin.conf
- - Your btc-rpc-explorer environment configuration (either `$WORKING_DIR/.env` or `~/.config/btc-rpc-explorer.env`)
+ - groestlcoin.conf
+ - Your grs-rpc-explorer environment configuration (either `$WORKING_DIR/.env` or `~/.config/grs-rpc-explorer.env`)
 
 **To Reproduce**
 

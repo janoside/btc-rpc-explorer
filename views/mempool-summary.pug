@@ -6,7 +6,7 @@ block headContent
 block content
 	+pageTitle("Mempool Summary")
 
-	
+
 	+dismissableInfoAlert("mempoolSummaryNoteDismissed", "About Mempool Summary...")
 		.mb-2 This tool summarizes data about the transactions in your node's <b>mempool</b> - the set of transactions that your node has received from the network but are not yet confirmed in a block.
 		.mb-0 The fee-rate summary data can be helpful for deciding what fee is necessary to get a transaction included in a future block, depending on its priority.
@@ -19,12 +19,12 @@ block content
 					.spinner-border.spinner-border-sm.text-primary.me-2.ms-2
 					span.fw-bold.me-2 Loading:
 					span.fw-light(id="progress-text") ...
-				
+
 				div.progress.mt-2(id="progress-bar", style="height: 7px;")
 					div.progress-bar(id="data-progress", role="progressbar", aria-valuenow="0", aria-valuemin="0" ,aria-valuemax="100")
 
 				div.loading-error
-	
+
 
 	div(id="main-content", style="display: none;")
 		+contentSection("Summary")
@@ -41,7 +41,7 @@ block content
 				+summaryItem("Avg Fee")
 					span#avg-fee
 
-				+summaryItem("Avg Fee Rate", null, "sat/vB")
+				+summaryItem("Avg Fee Rate", null, "gro/vB")
 					span#avg-fee-rate
 
 		+contentSection("Estimate Block Depth")
@@ -51,7 +51,7 @@ block content
 				.float-start
 					.me-4.d-inline-block.mb-3
 						h6 Fee Rate
-							small.fw-light.ms-1 (sat/vB)
+							small.fw-light.ms-1 (gro/vB)
 
 						- var feeRatesToEstimate = [1, 2, 3, 4, 5, 15, 25, 50, 75, 100, 150];
 
@@ -65,25 +65,25 @@ block content
 						form.form-inline(method="post", action="javascript:void(0)", onsubmit=`estimateTransactionMempoolDepth($("#mempoolquery").val()); return false;` style="width: 325px;")
 							.input-group.input-group
 								input.form-control.form-control(id="mempoolquery", type="text", name="mempoolquery", placeholder="txid", value=(mempoolquery), title="<span class='text-warning'>Transaction not found</span>", data-bs-trigger="manual", data-bs-html="true", data-bs-placement="bottom")
-								
+
 								button.btn.btn-primary(type="submit")
 									i.fas.fa-search
 
 					.me-4.d-inline-block.mb-3
 						h6 Custom Fee Rate
-							small.fw-light.ms-1 (sat/vB)
+							small.fw-light.ms-1 (gro/vB)
 
 						form.form-inline(method="post", action="javascript:void(0)", onsubmit=`estimateMempoolDepth($("#customFeeRate").val()); return false;` style="width: 200px;")
 							.input-group.input-group
-								input.form-control.form-control(id="customFeeRate", type="text", name="customFeeRate", placeholder="sat/vB", value=(customFeeRate))
-								
+								input.form-control.form-control(id="customFeeRate", type="text", name="customFeeRate", placeholder="gro/vB", value=(customFeeRate))
+
 								button.btn.btn-primary(type="submit")
 									i.fas.fa-search
 
 			hr.mt-1.mb-3
 
 			+summaryRow(3)
-				+summaryItem("Fee Rate", null, "sat/vB")
+				+summaryItem("Fee Rate", null, "gro/vB")
 					span#estimate-fee-rate -
 
 				+summaryItem("Est. Block Depth")
@@ -114,7 +114,7 @@ block content
 								th.text-end Σ Fees
 								th.text-end Avg Fee
 								th.text-end Avg Fee Rate
-									small.fw-normal.text-muted.ms-2 (sat/vB)
+									small.fw-normal.text-muted.ms-2 (gro/vB)
 						tbody(id="fee-rate-table-body")
 							tr(id="fee-rate-table-row-prototype", style="display: none;")
 								td.font-monospace.data-label
@@ -127,12 +127,12 @@ block content
 
 							tr(id="empty-row-to-fix-striped-coloring", style="display: none;")
 
-			
+
 
 			+contentSection("Size Distribution")
 				canvas.mb-3(id="txSizesBarChart", height="100")
 
-			
+
 
 			+contentSection("Age Distribution")
 				canvas.mb-3(id="txAgesBarChart", height="100")
@@ -145,7 +145,7 @@ block content
 								thead
 									tr
 										th Txid
-										th.text-end Fee Rate (sat/vB)
+										th.text-end Fee Rate (gro/vB)
 
 								tbody(id="topfee-tx-table-body")
 									tr(id="topfee-tx-table-row-prototype", style="display: none;")
@@ -192,12 +192,12 @@ block content
 			if (false)
 				pre
 					code.json#json-content
-		
+
 
 block endOfBody
 
 	+graphPageScriptSetup
-	
+
 	script(src='./js/decimal.js')
 
 	script.
@@ -235,7 +235,7 @@ block endOfBody
 						}).done((summaryResult) => {
 							if (summaryResult.count) {
 								summary = summaryResult;
-							
+
 								$("#json-content").text(JSON.stringify(summaryResult, null, 4));
 
 								hljs.highlightAll();
@@ -284,7 +284,7 @@ block endOfBody
 			$("#tx-count").text(summary.count.toLocaleString());
 			$("#block-count").text(new Decimal(summary.totalWeight).dividedBy(4000000).toDP(1)); // TODO: magic number: block weight
 			$("#total-fees").text(summary.totalFees);
-			
+
 			if (summary.count == 0) {
 				$("#avg-fee").text("-");
 				$("#avg-fee-rate").text("-");
@@ -296,7 +296,7 @@ block endOfBody
 
 				return;
 			}
-			
+
 			$("#avg-fee").text(summary.averageFee);
 			$("#avg-fee-rate").text(summary.averageFeePerByte);
 
@@ -356,7 +356,7 @@ block endOfBody
 							},
 							title: {
 								display: true,
-								text: "Fee Rate (sat/vB)"
+								text: "Fee Rate (gro/vB)"
 							},
 						},
 						y: {
@@ -516,7 +516,7 @@ block endOfBody
 
 				$("#fee-rate-table-body").append(row);
 			}
-			
+
 
 			$("#main-content").show();
 			$("#progress-wrapper").hide();
@@ -589,7 +589,7 @@ block endOfBody
 
 		function buildFeeRateGraphData(summary) {
 			var feeBucketLabels = [];
-			
+
 			var blockCounts = [];
 			for (var i = 0; i < summary["satoshiPerByteBuckets"].length; i++) {
 				var item = summary["satoshiPerByteBuckets"][i];
@@ -610,9 +610,9 @@ block endOfBody
 			}
 
 			feeBucketLabels.push((summary.satoshiPerByteBucketMaxima[summary.satoshiPerByteBucketMaxima.length - 1] + "+"));
-				
+
 			var totalfeeBuckets = summary["satoshiPerByteBucketTotalFees"];
-			
+
 			var graphData = {
 				feeBucketLabels:feeBucketLabels.map(x => [x]),
 				bgColors:[],
@@ -623,7 +623,7 @@ block endOfBody
 			for (var i = 0; i < feeBucketLabels.length; i++) {
 				var feeBucketLabel = feeBucketLabels[i];
 				//var percentTx = Math.round(100 * feeBucketTxCounts[i] / summary.count).toLocaleString();
-				
+
 				//graphData.feeBucketLabels.push([feeBucketLabel]);//, `${feeBucketTxCounts[i]} tx (${percentTx}%)`]);
 				graphData.bgColors.push(`hsl(${(333 * i / feeBucketLabels.length)}, 100%, 50%)`);
 			}
@@ -675,7 +675,7 @@ block endOfBody
 		function estimateTransactionMempoolDepth(txid) {
 			var avgTransactionsPerBlock = 3000;
 			var satsPerBitcoin = 100000000; // TODO: magic number - replace with coinConfig.baseCurrencyUnit.multiplier
-			
+
 			$.ajax({
 				url: `./internal-api/mempool-tx-summaries/${txid}`
 
@@ -683,7 +683,7 @@ block endOfBody
 				if (resultList && resultList.length > 0) {
 					var result = resultList[0];
 
-					var feeRate = new Decimal(result.f).times(100000000).dividedBy(result.sz); // TODO: magic number, sat/BTC
+					var feeRate = new Decimal(result.f).times(100000000).dividedBy(result.sz); // TODO: magic number, gro/GRS
 
 					estimateMempoolDepth(feeRate);
 
@@ -696,7 +696,7 @@ block endOfBody
 
 		function estimateMempoolDepth(feeRate) {
 			feeRate = new Decimal(feeRate);
-			
+
 			if (feeRate > 1000) {
 				$("#estimate-fee-rate").text(parseInt(feeRate).toLocaleString());
 
@@ -710,7 +710,7 @@ block endOfBody
 				var item = summary.satoshiPerByteBuckets[i];
 
 				var blockCount = new Decimal(item.totalWeight).dividedBy(4000000); // TODO: magic number: block weight
-				
+
 				if (feeRate >= (item.minFeeRate || 1) && feeRate < (item.maxFeeRate || 10000000)) {
 					// in this bucket
 					var minBlocks = sumBlockCount;
@@ -730,7 +730,7 @@ block endOfBody
 					} else {
 						$("#estimate-mempooldepth").text(`${Math.floor(minBlocks)} - ${Math.ceil(maxBlocks)}`);
 					}
-					
+
 					var minMinutes = minBlocks.times(10); // TODO: magic number: 10min
 					var maxMinutes = maxBlocks.times(10); // TODO: magic number: 10 min
 

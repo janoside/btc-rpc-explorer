@@ -7,8 +7,8 @@ block content
 	+pageTitle("Extended Public Key", extendedPubkey, true)
 
 	+dismissableInfoAlert("xpubPageNoteDismissed", "About Extended Public Keys...")
-		.mb-3 !{markdown("**Extended Public Keys** (colloquially \"XPUBs\") are **parent** public keys from which many **children** public keys can be mathematically *derived* using the [BIP32](https://github.com/bitcoin/bips/blob/master/bip-0032.mediawiki) standard. Each **child** key represents a Bitcoin address. Therefore, an XPUB represents a unique set of Bitcoin addresses.")}
-		.mb-n3 !{markdown("Wallet software often presents users with an XPUB. Exposure of your XPUB, although it doesn't risk theft of your bitcoin, **harms your privacy** by allowing anyone with access to your XPUB to know all of your addresses and the details of all transactions sent to and from them. This page is meant to demonstrate that fact - search for any XPUB (xpub, ypub, zpub...) and this tool will display all of the addresses derived from that key.")}
+		.mb-3 !{markdown("**Extended Public Keys** (colloquially \"XPUBs\") are **parent** public keys from which many **children** public keys can be mathematically *derived* using the [BIP32](https://github.com/bitcoin/bips/blob/master/bip-0032.mediawiki) standard. Each **child** key represents a Groestlcoin address. Therefore, an XPUB represents a unique set of Groestlcoin addresses.")}
+		.mb-n3 !{markdown("Wallet software often presents users with an XPUB. Exposure of your XPUB, although it doesn't risk theft of your groestlcoin, **harms your privacy** by allowing anyone with access to your XPUB to know all of your addresses and the details of all transactions sent to and from them. This page is meant to demonstrate that fact - search for any XPUB (xpub, ypub, zpub...) and this tool will display all of the addresses derived from that key.")}
 
 	+contentSection("Summary")
 		+summaryRow(3 + (balance ? 1 : 0) + (changeBalance ? 1 : 0) + (xpub ? 1 : 0))
@@ -71,7 +71,7 @@ block content
 							a(href=`./xyzpub/${item.key}`) #{utils.ellipsizeMiddle(item.key, 16)}
 							+copyTextButton(item.key)
 							.mt-2
-							
+
 							div.small.text-muted First #{item.firstAddresses.length.toLocaleString()} addresses:
 
 							each addr in item.firstAddresses
@@ -136,5 +136,3 @@ block content
 	.mt-4
 		.text-center.mb-2 Browse more addresses...
 		+pagination(limit, offset, null, 1000, paginationBaseUrl, "center", true)
-
-

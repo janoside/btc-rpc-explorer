@@ -7,8 +7,8 @@ const utils = require("./../utils.js");
 function getAddressDetails(address, scriptPubkey, sort, limit, offset) {
 	// Note: blockchair api seems to not respect the limit parameter, always using 100
 	return new Promise(function(resolve, reject) {
-		var mainnetUrl = `https://api.blockchair.com/bitcoin/dashboards/address/${address}/?offset=${offset}`;
-		var testnetUrl = `https://api.blockchair.com/bitcoin/testnet/dashboards/address/${address}/?offset=${offset}`;
+		var mainnetUrl = `https://api.blockchair.com/groestlcoin/dashboards/address/${address}/?offset=${offset}`;
+		var testnetUrl = `https://api.blockchair.com/groestlcoin/testnet/dashboards/address/${address}/?offset=${offset}`;
 		var url = (global.activeBlockchain == "main") ? mainnetUrl : ((global.activeBlockchain == "test") ? testnetUrl : mainnetUrl);
 
 		var options = {

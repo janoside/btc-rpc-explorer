@@ -19,7 +19,7 @@ block content
 					+summaryItem("Transactions")
 						| #{blockTemplate.transactions.length.toLocaleString()}
 
-					+summaryItem("Fee Rates", null, "sat/vB")
+					+summaryItem("Fee Rates", null, "gro/vB")
 						| #{new Decimal(minFeeRate).toDP(2)} - #{new Decimal(maxFeeRate).toDP(2)}
 
 					+summaryItem("Total Fees")
@@ -37,7 +37,7 @@ block content
 									th #
 									th ID
 									th.text-end Fee Rate
-										small.text-muted.fw-light.ms-1 (sat/vB)
+										small.text-muted.fw-light.ms-1 (gro/vB)
 
 									th.text-end Fee
 									th.text-end Weight
@@ -61,7 +61,7 @@ block content
 													span.border-dotted(title="Effective fee rate, including ancestor transactions", data-bs-toggle="tooltip")
 														span.text-muted #{new Decimal(tx.avgFeeRate).toDP(2)}
 													| )
-											
+
 
 										td.text-end
 											+valueDisplay(new Decimal(tx.fee).dividedBy(coinConfig.baseCurrencyUnit.multiplier))

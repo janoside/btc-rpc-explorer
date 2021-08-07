@@ -50,7 +50,7 @@ module.exports = {
 		{
 			"category":"blockchain",
 			"url":"/api/blockchain/coins",
-			"desc":"Returns the current supply of Bitcoin. An estimate using a checkpoint can be returned in 2 cases: on 'slow' devices, and before the UTXO set summary is loaded.",
+			"desc":"Returns the current supply of Groestlcoin. An estimate using a checkpoint can be returned in 2 cases: on 'slow' devices, and before the UTXO set summary is loaded.",
 			"returnType":"number"
 		},
 
@@ -78,14 +78,14 @@ module.exports = {
 		{
 			"category":"mempool",
 			"url":"/api/mempool/count",
-			"desc":"Returns the number of transactions in Bitcoin Core's mempool.",
+			"desc":"Returns the number of transactions in Groestlcoin Core's mempool.",
 			"returnType":"integer"
 		},
 
 		{
 			"category":"mempool",
 			"url":"/api/mempool/fees",
-			"desc":"Returns recommended fee rates in sats/vB for next block, ~30 min, 1 hr, and 1 day.",
+			"desc":"Returns recommended fee rates in gros/vB for next block, ~30 min, 1 hr, and 1 day.",
 			"returnType":"json",
 			"example": {"nextBlock":17,"30min":9,"60min":9,"1day":9}
 		},
@@ -125,7 +125,7 @@ module.exports = {
 		{
 			"category":"price",
 			"url":"/api/price/:currency/marketcap",
-			"desc":"Returns the market cap of Bitcoin, in one of USD, EUR, GBP, XAU",
+			"desc":"Returns the market cap of Groestlcoin, in one of USD, EUR, GBP, XAU",
 			"params":[{name: "currency", "options": ["usd", "eur", "gbp", "xau"]}],
 			"returnType":"number",
 			"testUrl": "/api/price/usd/marketcap"
@@ -134,7 +134,7 @@ module.exports = {
 		{
 			"category":"price",
 			"url":"/api/price/:currency/sats",
-			"desc":"Returns the price of 1 unit in 'currency' (e.g. $1) in satoshis",
+			"desc":"Returns the price of 1 unit in 'currency' (e.g. $1) in gros",
 			"params":[{name: "currency", "options": ["usd", "eur", "gbp", "xau"]}],
 			"returnType":"number",
 			"testUrl": "/api/price/usd/sats"
@@ -147,14 +147,14 @@ module.exports = {
 		{
 			"category":"fun",
 			"url":"/api/quotes/all",
-			"desc":"Returns the full curated list of Bitcoin quotes.",
+			"desc":"Returns the full curated list of Groestlcoin quotes.",
 			"returnType":"json"
 		},
 
 		{
 			"category":"fun",
 			"url":"/api/quotes/:index",
-			"desc":"Returns the Bitcoin quote with the given index from the curated list.",
+			"desc":"Returns the Groestlcoin quote with the given index from the curated list.",
 			"returnType":"json",
 			"testUrl": "/api/quotes/0"
 		},
@@ -162,7 +162,7 @@ module.exports = {
 		{
 			"category":"fun",
 			"url":"/api/quotes/random",
-			"desc":"Returns a random Bitcoin quote from the curated list.",
+			"desc":"Returns a random Groestlcoin quote from the curated list.",
 			"returnType":"json"
 		},
 

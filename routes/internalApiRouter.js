@@ -9,7 +9,7 @@ const router = express.Router();
 const util = require('util');
 const moment = require('moment');
 const qrcode = require('qrcode');
-const bitcoinjs = require('bitcoinjs-lib');
+const bitcoinjs = require('groestlcoinjs-lib');
 const sha256 = require("crypto-js/sha256");
 const hexEnc = require("crypto-js/enc-hex");
 const Decimal = require("decimal.js");
@@ -29,7 +29,7 @@ const forceCsrf = csurf({ ignoreMethods: [] });
 
 router.get("/blocks-by-height/:blockHeights", function(req, res, next) {
 	var blockHeightStrs = req.params.blockHeights.split(",");
-	
+
 	var blockHeights = [];
 	for (var i = 0; i < blockHeightStrs.length; i++) {
 		blockHeights.push(parseInt(blockHeightStrs[i]));
@@ -42,7 +42,7 @@ router.get("/blocks-by-height/:blockHeights", function(req, res, next) {
 
 router.get("/block-headers-by-height/:blockHeights", function(req, res, next) {
 	var blockHeightStrs = req.params.blockHeights.split(",");
-	
+
 	var blockHeights = [];
 	for (var i = 0; i < blockHeightStrs.length; i++) {
 		blockHeights.push(parseInt(blockHeightStrs[i]));
@@ -57,7 +57,7 @@ router.get("/block-headers-by-height/:blockHeights", function(req, res, next) {
 
 router.get("/block-stats-by-height/:blockHeights", function(req, res, next) {
 	var blockHeightStrs = req.params.blockHeights.split(",");
-	
+
 	var blockHeights = [];
 	for (var i = 0; i < blockHeightStrs.length; i++) {
 		blockHeights.push(parseInt(blockHeightStrs[i]));
@@ -115,7 +115,7 @@ router.get("/get-predicted-blocks", asyncHandler(async (req, res, next) => {
 
 	if (statusId && predictedBlocksOutputs[statusId]) {
 		var output = predictedBlocksOutputs[statusId];
-		
+
 		res.json(output);
 
 		next();
@@ -182,7 +182,7 @@ router.get("/get-mempool-summary", asyncHandler(async (req, res, next) => {
 
 	if (statusId && mempoolSummaries[statusId]) {
 		var summary = mempoolSummaries[statusId];
-		
+
 		res.json(summary);
 
 		next();
@@ -254,7 +254,7 @@ router.get("/get-mining-summary", asyncHandler(async (req, res, next) => {
 
 	if (statusId && miningSummaries[statusId]) {
 		var summary = miningSummaries[statusId];
-		
+
 		res.json(summary);
 
 		next();
@@ -287,7 +287,7 @@ router.get("/build-mining-summary/:startBlock/:endBlock", asyncHandler(async (re
 		res.json({success:true, status:"started"});
 
 		next();
-		
+
 
 
 		var summary = await coreApi.buildMiningSummary(statusId, startBlock, endBlock, (update) => {
@@ -332,7 +332,7 @@ router.get("/mempool-tx-summaries/:txids", asyncHandler(async (req, res, next) =
 					};
 
 					results.push(itemSummary);
-					
+
 					resolve();
 
 				} catch (e) {

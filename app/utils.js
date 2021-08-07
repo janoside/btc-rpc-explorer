@@ -8,9 +8,9 @@ const debugErrorVerboseLog = debug("btcexp:errorVerbose");
 const Decimal = require("decimal.js");
 const request = require("request");
 const qrcode = require("qrcode");
-const bs58check = require("bs58check");
-const bip32 = require('bip32');
-const bitcoinjs = require('bitcoinjs-lib');
+const bs58check = require("bs58grscheck");
+const bip32 = require('bip32grs');
+const bitcoinjs = require('groestlcoinjs-lib');
 
 const config = require("./config.js");
 const coins = require("./coins.js");
@@ -99,13 +99,13 @@ const ipCache = {
 function redirectToConnectPageIfNeeded(req, res) {
 	if (!req.session.host) {
 		req.session.redirectUrl = req.originalUrl;
-		
+
 		res.redirect("/");
 		res.end();
-		
+
 		return true;
 	}
-	
+
 	return false;
 }
 
@@ -114,14 +114,14 @@ function hex2ascii(hex) {
 	for (var i = 0; i < hex.length; i += 2) {
 		str += String.fromCharCode(parseInt(hex.substr(i, 2), 16));
 	}
-	
+
 	return str;
 }
 
 function splitArrayIntoChunks(array, chunkSize) {
 	var j = array.length;
 	var chunks = [];
-	
+
 	for (var i = 0; i < j; i += chunkSize) {
 		chunks.push(array.slice(i, i + chunkSize));
 	}
@@ -149,28 +149,28 @@ function splitArrayIntoChunksByChunkCount(array, chunkCount) {
 
 function getRandomString(length, chars) {
 	var mask = '';
-	
+
 	if (chars.indexOf('a') > -1) {
 		mask += 'abcdefghijklmnopqrstuvwxyz';
 	}
-	
+
 	if (chars.indexOf('A') > -1) {
 		mask += 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 	}
-	
+
 	if (chars.indexOf('#') > -1) {
 		mask += '0123456789';
 	}
-	
+
 	if (chars.indexOf('!') > -1) {
 		mask += '~`!@#$%^&*()_+-={}[]:";\'<>?,./|\\';
 	}
-	
+
 	var result = '';
 	for (var i = length; i > 0; --i) {
 		result += mask[Math.floor(Math.random() * mask.length)];
 	}
-	
+
 	return result;
 }
 
@@ -214,7 +214,7 @@ function formatCurrencyAmountWithForcedDecimalPlaces(amount, formatType, forcedD
 
 			if (baseStr.indexOf(".") == -1) {
 				returnVal.val = baseStr;
-				
+
 			} else {
 				if (baseStr.length - baseStr.indexOf(".") - 1 > maxValDigits) {
 					returnVal.val = baseStr.substring(0, baseStr.indexOf(".") + maxValDigits + 1);
@@ -272,12 +272,12 @@ function satoshisPerUnitOfLocalCurrency(localCurrency) {
 		var dec = new Decimal(1);
 		var one = new Decimal(1);
 		dec = dec.times(global.exchangeRates[exchangeType]);
-		
+
 		// USD/BTC -> BTC/USD
 		dec = one.dividedBy(dec);
 
 		var unitName = coins[config.coin].baseCurrencyUnit.name;
-		var satCurrencyType = global.currencyTypes["sat"];
+		var satCurrencyType = global.currencyTypes["gro"];
 		var localCurrencyType = global.currencyTypes[localCurrency];
 
 		// BTC/USD -> sat/USD
@@ -285,7 +285,7 @@ function satoshisPerUnitOfLocalCurrency(localCurrency) {
 
 		var exchangedAmt = parseInt(dec);
 
-		return {amt:addThousandsSeparators(exchangedAmt),amtRaw:exchangedAmt, unit:`sat/${localCurrencyType.symbol}`}
+		return {amt:addThousandsSeparators(exchangedAmt),amtRaw:exchangedAmt, unit:`gro/${localCurrencyType.symbol}`}
 	}
 
 	return null;
@@ -302,7 +302,7 @@ function getExchangedCurrencyFormatData(amount, exchangeType, includeUnit=true) 
 			value: addThousandsSeparators(exchangedAmt),
 			unit: exchangeType
 		}
-		
+
 	} else if (exchangeType == "au") {
 		if (global.exchangeRates != null && global.goldExchangeRates != null) {
 			var dec = new Decimal(amount);
@@ -392,7 +392,7 @@ function ellipsizeMiddle(str, length, replacement="…", extraCharAtStart=true) 
 			} else {
 				return str.substring(0, Math.floor((length - replacement.length) / 2)) + replacement + str.slice(-Math.ceil((length - replacement.length) / 2));
 			}
-			
+
 		}
 	}
 }
@@ -433,7 +433,7 @@ function getMinerFromCoinbaseTx(tx) {
 	if (tx == null || tx.vin == null || tx.vin.length == 0) {
 		return null;
 	}
-	
+
 	if (global.miningPoolsConfigs) {
 		for (var i = 0; i < global.miningPoolsConfigs.length; i++) {
 			var miningPoolsConfig = global.miningPoolsConfigs[i];
@@ -552,7 +552,7 @@ function getBlockTotalFeesFromCoinbaseTxAndBlockHeight(coinbaseTx, blockHeight) 
 
 	if (blockReward < 1e-8 || blockReward == null) {
 		return totalOutput;
-		
+
 	} else {
 		return totalOutput.minus(new Decimal(blockReward));
 	}
@@ -560,7 +560,7 @@ function getBlockTotalFeesFromCoinbaseTxAndBlockHeight(coinbaseTx, blockHeight) 
 
 function estimatedSupply(height) {
 	var checkpointData = coinConfig.coinSupplyCheckpointsByNetwork[global.activeBlockchain];
-	
+
 	if (!checkpointData) {
 		return new Decimal(0);
 	}
@@ -569,14 +569,14 @@ function estimatedSupply(height) {
 	var checkpointSupply = checkpointData[1];
 
 	var supply = checkpointSupply;
-	
+
 	var i = checkpointHeight;
 	while (i < height) {
 		supply = supply.plus(new Decimal(coinConfig.blockRewardFunction(i, global.activeBlockchain)));
 
 		i++;
 	}
-	
+
 	return supply;
 }
 
@@ -650,12 +650,12 @@ function geoLocateIpAddresses(ipAddresses, provider) {
 		var promises = [];
 		for (var i = 0; i < ipAddresses.length; i++) {
 			var ipStr = ipAddresses[i];
-			
+
 			promises.push(new Promise(function(resolve2, reject2) {
 				ipCache.get(ipStr).then(function(result) {
 					if (result.value == null) {
 						var apiUrl = "http://api.ipstack.com/" + result.key + "?access_key=" + config.credentials.ipStackComApiAccessKey;
-						
+
 						request(apiUrl, function(error, response, body) {
 							if (error) {
 								debugLog("Failed IP-geo-lookup: " + result.key);
@@ -678,7 +678,7 @@ function geoLocateIpAddresses(ipAddresses, provider) {
 
 									} else {
 										debugLog(`Unknown location for IP-geo-lookup: ${ip}`);
-									}									
+									}
 
 									ipCache.set(ip, resBody, 1000 * 60 * 60 * 24 * 365);
 
@@ -712,7 +712,7 @@ function geoLocateIpAddresses(ipAddresses, provider) {
 
 function parseExponentStringDouble(val) {
 	var [lead,decimal,pow] = val.toString().split(/e|\./);
-	return +pow <= 0 
+	return +pow <= 0
 		? "0." + "0".repeat(Math.abs(pow)-1) + lead + decimal
 		: lead + ( +pow >= decimal.length ? (decimal + "0".repeat(+pow-decimal.length)) : (decimal.slice(0,+pow)+"."+decimal.slice(+pow)));
 }
@@ -811,7 +811,7 @@ const safePromise = (uid, f) => {
 			await f();
 
 			const responseTimeMillis = dtMillis(startTime);
-			
+
 			statTracker.trackPerformance(uid, responseTimeMillis);
 
 			resolve();
@@ -822,7 +822,7 @@ const safePromise = (uid, f) => {
 			const responseTimeMillis = dtMillis(startTime);
 
 			statTracker.trackPerformance(`${uid}_error`, responseTimeMillis);
-			
+
 			resolve(e);
 		}
 	});
@@ -869,7 +869,7 @@ function logError(errorId, err, optionalUserData = null) {
 	}
 
 	debugErrorLog("Error " + errorId + ": " + err + ", json: " + JSON.stringify(err) + (optionalUserData != null ? (", userData: " + optionalUserData + " (json: " + JSON.stringify(optionalUserData) + ")") : ""));
-	
+
 	if (err && err.stack) {
 		debugErrorVerboseLog("Stack: " + err.stack);
 	}
@@ -992,7 +992,7 @@ const getCrawlerFromUserAgentString = userAgentString => {
 
 const timePromise = async (name, promise) => {
 	const startTime = startTimeNanos();
-	
+
 	const response = await promise;
 
 	const responseTimeMillis = dtMillis(startTime);
@@ -1104,8 +1104,8 @@ const xpubPrefixes = new Map([
 ]);
 
 const bip32TestnetNetwork = {
-	messagePrefix: '\x18Bitcoin Signed Message:\n',
-	bech32: 'tb',
+	messagePrefix: '\x1CGroestlcoin Signed Message:\n',
+	bech32: 'tgrs',
 	bip32: {
 		public: 0x043587cf,
 		private: 0x04358394,

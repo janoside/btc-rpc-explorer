@@ -8,7 +8,7 @@ block content
 
 	if (projectedBlocks)
 		+contentSection
-			
+
 			.table-responsive
 				table.table.table-borderless.table-striped.mb-0
 					thead
@@ -25,10 +25,10 @@ block content
 								span.border-dotted(title="The number of transactions included in each block.", data-bs-toggle="tooltip") N(tx)
 
 							th.text-end
-								span.border-dotted(title="The average fee (sat/vB) for all block transactions.", data-bs-toggle="tooltip") Avg Fee
-							
+								span.border-dotted(title="The average fee (gro/vB) for all block transactions.", data-bs-toggle="tooltip") Avg Fee
+
 							th.text-end Σ Fees
-							
+
 							th.text-end % Full
 
 					tbody
@@ -44,39 +44,39 @@ block content
 
 								td.font-monospace.text-end
 									| ~#{new Decimal(10 * (blockIndex + 1)).toDP(0)}m
-								
+
 
 								//- var timeAgoTime = moment.utc(new Date()).diff(moment.utc(new Date(parseInt(block.time) * 1000)));
 								//- var timeAgo = moment.duration(timeAgoTime);
 
 								//- var timeDiff = null;
-								
-								
+
+
 								td.font-monospace.text-end #{(block.txCount || 0).toLocaleString()}
 
 								td.font-monospace.text-end
 									| #{block.avgFeeRate}
-									
+
 
 								td.font-monospace.text-end
 									if (block.totalFees)
 										- var currencyValue = new Decimal(block.totalFees);
 										- var currencyValueDecimals = 3;
 
-										if (userSettings.displayCurrency == "btc")
+										if (userSettings.displayCurrency == "grs")
 											+valueDisplaySpecial(block.totalFees, 4)
 
 										else
 											+valueDisplay(block.totalFees)
 
 
-									
-								
+
+
 								td.font-monospace.text-end
 									- var full = new Decimal(block.weight).dividedBy(coinConfig.maxBlockWeight).times(100);
 									- var full2 = full.toDP(0);
 
-									
+
 									if (full >= 99 || full2 == 99)
 										span.text-success 99+
 

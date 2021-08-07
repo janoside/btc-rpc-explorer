@@ -316,7 +316,7 @@ module.exports = {
 			blockHeight: 0,
 			blockHash: "000000ffbb50fc9898cdd36ec163e6ba23230164c0052a28876255b7dcf2cd36",
 			summary: "The groestlcoin (regtest) Genesis Block.",
-			alertBodyHtml: "This is the first block in the Bitcoin blockchain, known as the 'Genesis Block'. You can read more about <a href='https://en.bitcoin.it/wiki/Genesis_block'>the genesis block</a>.",
+			alertBodyHtml: "This is the first block in the Groestlcoin blockchain, known as the 'Genesis Block'. You can read more about <a href='https://en.bitcoin.it/wiki/Genesis_block'>the genesis block</a>.",
 			referenceUrl: "https://en.bitcoin.it/wiki/Genesis_block"
 		},
 		{

@@ -12,7 +12,7 @@ const router = express.Router();
 const util = require('util');
 const moment = require('moment');
 const qrcode = require('qrcode');
-const bitcoinjs = require('bitcoinjs-lib');
+const bitcoinjs = require('groestlcoinjs-lib');
 const sha256 = require("crypto-js/sha256");
 const hexEnc = require("crypto-js/enc-hex");
 const Decimal = require("decimal.js");
@@ -110,7 +110,7 @@ router.get("/os-stats", function(req, res, next) {
 	res.locals.valueStats.sort((a, b) => {
 		return a[0].localeCompare(b[0]);
 	});
-	
+
 
 	res.render("admin/os-stats");
 
@@ -151,7 +151,7 @@ router.get("/app-stats", function(req, res, next) {
 	res.locals.valueStats.sort((a, b) => {
 		return a[0].localeCompare(b[0]);
 	});
-	
+
 
 	res.render("admin/app-stats");
 
@@ -180,7 +180,7 @@ router.get('/heapdump', (req, res) => {
 		const heapdumpStream = v8.getHeapSnapshot();
 		const fileStream = fs.createWriteStream(filename);
 		heapdumpStream.pipe(fileStream);
-		
+
 		debugLog("Heap dump at startup written to", filename);
 
 		res.status(200).send({msg: "successfully took a heap dump"});

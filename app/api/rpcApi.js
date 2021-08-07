@@ -27,8 +27,8 @@ const rpcQueue = async.queue(function(task, callback) {
 }, config.rpcConcurrency);
 
 const minRpcVersions = {
-	getblockstats: "0.17.0",
-	getindexinfo: "0.21.0"
+	getblockstats: "2.17.2",
+	getindexinfo: "2.21.0"
 };
 
 global.rpcStats = {};
@@ -44,10 +44,10 @@ function getBlockchainInfo() {
 			}
 
 			resolve(getblockchaininfo);
-			
+
 		}).catch(reject);
 	});
-	
+
 }
 
 function getBlockCount() {
@@ -122,7 +122,7 @@ function getBlockStatsByHeight(height) {
 			return new Promise(function(resolve, reject) {
 				resolve(coinConfig.genesisBlockStatsByNetwork[global.activeBlockchain]);
 			});
-			
+
 		} else {
 			return getRpcDataWithParams({method:"getblockstats", parameters:[height]});
 		}
@@ -439,7 +439,7 @@ function getRpcData(cmd, verifyingConnection=false) {
 
 				if (Array.isArray(result) && result.length == 1) {
 					var result0 = result[0];
-					
+
 					if (result0 && result0.name && result0.name == "RpcError") {
 						logStats(cmd, false, new Date().getTime() - startTime, false);
 
@@ -471,7 +471,7 @@ function getRpcData(cmd, verifyingConnection=false) {
 				callback();
 			}
 		};
-		
+
 		rpcQueue.push({rpcCall:rpcCall});
 	});
 }
@@ -524,7 +524,7 @@ function getRpcDataWithParams(request, verifyingConnection=false) {
 				callback();
 			}
 		};
-		
+
 		rpcQueue.push({rpcCall:rpcCall});
 	});
 }

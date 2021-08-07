@@ -6,8 +6,8 @@ const utils = require("./../utils.js");
 
 function getAddressDetails(address, scriptPubkey, sort, limit, offset) {
 	return new Promise(function(resolve, reject) {
-		if (address.startsWith("bc1")) {
-			reject({userText:"blockcypher.com API does not support bc1 (native Segwit) addresses"});
+		if (address.startsWith("grs1")) {
+			reject({userText:"blockcypher.com API does not support grs1 (native Segwit) addresses"});
 
 			return;
 		}
