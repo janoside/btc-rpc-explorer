@@ -24,7 +24,7 @@ Live demos available at:
 * View details of blocks, transactions, and addresses
 * Analysis tools for viewing stats on blocks, transactions, and miner activity
 * JSON REST API
-* See raw JSON content from bitcoind used to generate most pages
+* See raw JSON content from groestlcoind used to generate most pages
 * Search by transaction ID, block hash/height, and address
 * Optional transaction history for addresses by querying from Electrum-protocol servers (e.g. Electrs, ElectrumX) or blockchair.com
 * Mempool summary, with fee, size, and age breakdowns

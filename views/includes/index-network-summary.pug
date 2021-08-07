@@ -18,7 +18,7 @@ if (exchangeRates)
 					span.me-1 #{formatData.symbol}
 					| #{formatData.val}
 
-			+summaryItem("Sats Rate")
+			+summaryItem("Gros Rate")
 				- var satsRateData = utils.satoshisPerUnitOfLocalCurrency(userSettings.localCurrency);
 				span #{satsRateData.amt}
 					small  #{satsRateData.unit}
