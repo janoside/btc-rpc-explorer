@@ -201,7 +201,7 @@ mixin outputValueDisplay(vout, voutIndex)
 			hr
 
 	.col-lg-6(class=(tx.vout.length > tx.vin.length ? "border-lg-start" : false))
-		- var maxRegularRowCount = (txIOHighlightAddress != null ? config.site.addressPage.txOutputMaxDefaultDisplay : 10000000);
+		- var maxRegularRowCount = maxTxOutputDisplayCount || options.maxTxOutputDisplayCount || 15;
 		- var regularRowCount = 0;
 		- var hiddenRowCount = 0;
 		- var nonZeroVoutValueCount = tx.vout.filter(vout => { return vout.value > 0; }).length;

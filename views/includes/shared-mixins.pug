@@ -117,7 +117,7 @@ mixin summaryItem(title, titleDesc, subtitle, subtitleDesc)
 // 		- mempoolDetailsByTxid (map)
 
 // txBlockHeightsByTxid_orSharedBlockHeight, showDates=false, highlightAddress, addrGainsByTxid, addrLossesByTxid)
-mixin txList(visibleTxs, txCount, limit, offset, inputsByTxid, options)
+mixin txList(visibleTxs, txCount, limit, offset, inputsByTxid, options={})
 	if (txCount > limit)
 		.rounded-0.rounded-top.bg-content.border
 			.p-3
@@ -210,6 +210,7 @@ mixin txList(visibleTxs, txCount, limit, offset, inputsByTxid, options)
 			div
 				- var txInputs = inputsByTxid[tx.txid];
 				- var blockHeight = txBlockHeight != undefined ? txBlockHeight : -1;
+				- options.maxTxOutputDisplayCount = maxTxOutputDisplayCount;
 				
 				if (options.highlightAddress)
 					- var txIOHighlightAddress = options.highlightAddress;

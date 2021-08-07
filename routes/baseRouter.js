@@ -1028,6 +1028,8 @@ router.get("/block-height/:blockHeight", asyncHandler(async (req, res, next) => 
 		var limit = config.site.blockTxPageSize;
 		var offset = 0;
 
+		res.locals.maxTxOutputDisplayCount = 15;
+
 		if (req.query.limit) {
 			limit = parseInt(req.query.limit);
 
@@ -1123,6 +1125,8 @@ router.get("/block/:blockHash", asyncHandler(async (req, res, next) => {
 
 		var limit = config.site.blockTxPageSize;
 		var offset = 0;
+
+		res.locals.maxTxOutputDisplayCount = 15;
 
 		if (req.query.limit) {
 			limit = parseInt(req.query.limit);
@@ -1361,6 +1365,8 @@ router.get("/tx/:transactionId", asyncHandler(async (req, res, next) => {
 		res.locals.txid = txid;
 		res.locals.output = output;
 
+		res.locals.maxTxOutputDisplayCount = 40;
+
 
 		if (req.query.blockHeight) {
 			res.locals.blockHeight = req.query.blockHeight;
@@ -1467,6 +1473,8 @@ router.get("/address/:address", asyncHandler(async (req, res, next) => {
 		var limit = config.site.addressTxPageSize;
 		var offset = 0;
 		var sort = "desc";
+
+		res.locals.maxTxOutputDisplayCount = config.site.addressPage.txOutputMaxDefaultDisplay;
 
 		
 		if (req.query.limit) {
