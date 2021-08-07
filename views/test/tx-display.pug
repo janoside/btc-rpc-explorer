@@ -1,0 +1,13 @@
+extends ../layout
+
+block headContent
+	title Test: Transaction Display
+
+block content
+	+pageTitle("Test: Transaction Display")
+	
+	+txList(transactions, transactions.length, transactions.length, 0, txInputsByTransaction, {blockHeightsByTxid:blockHeightsByTxid})
+						
+									
+							
+			
