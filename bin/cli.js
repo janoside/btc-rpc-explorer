@@ -8,20 +8,20 @@ var debugLog = debug("btcexp:config");
 
 const args = require('meow')(`
 	Usage
-	  $ btc-rpc-explorer [options]
+	  $ grs-rpc-explorer [options]
 
 	Options
 	  -p, --port <port>			  port to bind http server [default: 3002]
 	  -i, --host <host>			  host to bind http server [default: 127.0.0.1]
 	  -a, --basic-auth-password <..> protect web interface with a password [default: no password]
-	  -C, --coin <coin>			  crypto-coin to enable [default: BTC]
+	  -C, --coin <coin>			  crypto-coin to enable [default: GRS]
 
-	  -b, --bitcoind-uri <uri>	   connection URI for bitcoind rpc (overrides the options below)
-	  -H, --bitcoind-host <host>	 hostname for bitcoind rpc [default: 127.0.0.1]
-	  -P, --bitcoind-port <port>	 port for bitcoind rpc [default: 8332]
-	  -c, --bitcoind-cookie <path>   path to bitcoind cookie file [default: ~/.bitcoin/.cookie]
-	  -u, --bitcoind-user <user>	 username for bitcoind rpc [default: none]
-	  -w, --bitcoind-pass <pass>	 password for bitcoind rpc [default: none]
+	  -b, --bitcoind-uri <uri>	   connection URI for groestlcoind rpc (overrides the options below)
+	  -H, --bitcoind-host <host>	 hostname for groestlcoind rpc [default: 127.0.0.1]
+	  -P, --bitcoind-port <port>	 port for groestlcoind rpc [default: 1441]
+	  -c, --bitcoind-cookie <path>   path to groestlcoind cookie file [default: ~/.groestlcoin/.cookie]
+	  -u, --bitcoind-user <user>	 username for groestlcoind rpc [default: none]
+	  -w, --bitcoind-pass <pass>	 password for groestlcoind rpc [default: none]
 
 	  --address-api <option>		 api to use for address queries (options: electrum, blockchair.com) [default: none]
 	  -E, --electrum-servers <..>   comma separated list of electrum servers to use for address queries; only used if --address-api=electrum [default: none]
@@ -43,15 +43,15 @@ const args = require('meow')(`
 	  -v, --version				  output version number
 
 	Examples
-	  $ btc-rpc-explorer --port 8080 --bitcoind-port 18443 --bitcoind-cookie ~/.bitcoin/regtest/.cookie
-	  $ btc-rpc-explorer -p 8080 -P 18443 -c ~/.bitcoin/regtest.cookie
+	  $ grs-rpc-explorer --port 8080 --bitcoind-port 18443 --bitcoind-cookie ~/.groestlcoin/regtest/.cookie
+	  $ grs-rpc-explorer -p 8080 -P 18443 -c ~/.groestlcoin/regtest.cookie
 
 	Or using connection URIs
-	  $ btc-rpc-explorer -b bitcoin://bob:myPassword@127.0.0.1:18443/
-	  $ btc-rpc-explorer -b bitcoin://127.0.0.1:18443/?cookie=$HOME/.bitcoin/regtest/.cookie
+	  $ grs-rpc-explorer -b groestlcoin://bob:myPassword@127.0.0.1:18443/
+	  $ grs-rpc-explorer -b groestlcoin://127.0.0.1:18443/?cookie=$HOME/.groestlcoin/regtest/.cookie
 
 	All options may also be specified as environment variables
-	  $ BTCEXP_PORT=8080 BTCEXP_BITCOIND_PORT=18443 BTCEXP_BITCOIND_COOKIE=~/.bitcoin/regtest/.cookie btc-rpc-explorer
+	  $ BTCEXP_PORT=8080 BTCEXP_BITCOIND_PORT=18443 BTCEXP_BITCOIND_COOKIE=~/.groestlcoin/regtest/.cookie grs-rpc-explorer
 
 
 `, {

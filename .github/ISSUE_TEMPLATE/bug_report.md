@@ -13,7 +13,7 @@ A clear and concise description of what the bug is.
 
 **Environment (please complete the following information):**
 
- - Bitcoin Core / Node Version [e.g. 0.16.3]
+ - Groestlcoin Core / Node Version [e.g. 2.16.3]
  - NodeJS Version [e.g. 9.x]
  - Browser [e.g. chrome, safari]
  - Code Version / Commit [e.g. ab6cde8]
