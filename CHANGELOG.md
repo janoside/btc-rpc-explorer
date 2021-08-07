@@ -5,6 +5,7 @@
 * XPUB pages: search for any xpub (ypub, zpub, etc) and see summary details and a list of associated addresses (thanks [@pointbiz](https://github.com/pointbiz))
 * Homepage: add "Predicted Next Block" section
 * Mempool Summary: add top-fee transactions table
+* Improvements to transaction details UI, especially on smaller screens
 * Cleanup support for Taproot/bech32m
 * New [/mining-template](./mining-template) tool, showing structured output of `getblocktemplate` command
 * Various improvements to charts and graphs throughout the tool (including lots of y-axis changes: linear->log)

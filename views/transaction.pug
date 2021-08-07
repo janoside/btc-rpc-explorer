@@ -270,26 +270,26 @@ block content
 						tbody
 							each vin, vinIndex in result.getrawtransaction.vin
 								tr
-										a.badge.card-highlight.border.fw-normal(data-bs-toggle="tooltip", title=`Input #${vinIndex}`, style="white-space: nowrap;")
 									th
+										a.badge.card-highlight.border(data-bs-toggle="tooltip", title=`Input #${vinIndex}`, style="white-space: nowrap;")
 											i.fas.fa-arrow-right.text-danger.me-1
-											| #{vinIndex.toLocaleString()}
+											span.font-monospace #{vinIndex.toLocaleString()}
 
 									td.word-wrap.text-break
 										if (vin.coinbase)
-											div.font-monospace(style="line-height: 1.75em;")
-												.badge.bg-success.me-2 coinbase
-												br
-												span.font-data #{vin.coinbase}
-												br
-												span.fw-bold.me-2 Ascii
-												span.font-plaintext #{utils.hex2ascii(vin.coinbase)}
+											.mb-3(style="line-height: 1.75em;")
+												+successBadge("coinbase")
+												.mt-1.mb-2
+													.d-inline-block.small.border.rounded-1.p-1.px-2.card-highlight.word-wrap #{utils.hex2ascii(vin.coinbase)}
+
+												.d-inline-block.small.border.rounded-1.p-1.px-2.card-highlight.word-wrap #{vin.coinbase}
 
 										if (vin.scriptSig && vin.scriptSig.asm)
 											.mb-2
 												.mb-2
 													+darkBadge("scriptSig")
-												span.font-data #{vin.scriptSig.asm}
+
+												.d-inline-block.small.border.rounded-1.p-1.px-2.card-highlight.word-wrap #{vin.scriptSig.asm}
 
 
 										if (vin.txinwitness && vin.txinwitness.length > 0)
@@ -297,7 +297,7 @@ block content
 												+darkBadge("witness")
 
 											each witnessItem in vin.txinwitness
-												span.font-data.me-3 #{witnessItem}
+												.d-inline-block.small.border.rounded-1.p-1.px-2.card-highlight.word-wrap #{witnessItem}
 
 										
 						
@@ -320,16 +320,14 @@ block content
 										if (vout.scriptPubKey && vout.scriptPubKey.asm)
 											- var chunks = vout.scriptPubKey.asm.split(" ");
 											each chunk in chunks
-												span.me-2
+												.mb-2
 													if (chunk.startsWith("OP_"))
 														+primaryBadge(chunk)
 													else
-														span.font-data #{chunk}
+														.d-inline-block.small.border.rounded-1.p-1.px-2.card-highlight.word-wrap #{chunk}
 
 											if (vout.scriptPubKey.asm.startsWith("OP_RETURN"))
-												br
-												span.fw-bold.me-2 Ascii
-												span.font-data #{utils.hex2ascii(vout.scriptPubKey.asm)}
+												.d-inline-block.small.border.rounded-1.p-1.px-2.card-highlight.word-wrap #{utils.hex2ascii(vout.scriptPubKey.asm)}
 						
 
 			+pageTab("JSON")
