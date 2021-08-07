@@ -191,7 +191,7 @@ block content
 							span #{tx.vsize.toLocaleString()}
 							small.ms-1 vB
 
-						+summaryItem("Raw Data", `The raw transaction consisting of ${result.getrawtransaction.hex.length} hexadecimal bytes.`, "hex")
+						+summaryItem("Raw Data", `The raw transaction consisting of ${result.getrawtransaction.hex.length.toLocaleString()} hexadecimal bytes.`, "hex")
 							| #{utils.ellipsizeMiddle(result.getrawtransaction.hex, 12)}
 							+copyTextButton(result.getrawtransaction.hex)
 
@@ -234,7 +234,7 @@ block content
 					- var blockHeight = -1;
 					if (result && result.getblock)
 						- blockHeight = result.getblock.height;
-						
+
 					include includes/transaction-io-details.pug
 						
 
