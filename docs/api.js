@@ -109,14 +109,14 @@ module.exports = {
 		{
 			"category":"price",
 			"url":"/api/price",
-			"desc":"Returns the price of 1 BTC, in USD, EUR, GBP, and XAU",
+			"desc":"Returns the price of 1 GRS, in USD, EUR, GBP, and XAU",
 			"returnType":"json"
 		},
 
 		{
 			"category":"price",
 			"url":"/api/price/:currency",
-			"desc":"Returns the price of 1 BTC, in one of USD, EUR, GBP, XAU",
+			"desc":"Returns the price of 1 GRS, in one of USD, EUR, GBP, XAU",
 			"params":[{name: "currency", "options": ["usd", "eur", "gbp", "xau"]}],
 			"returnType":"number",
 			"testUrl": "/api/price/usd"
