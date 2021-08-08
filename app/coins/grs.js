@@ -63,9 +63,9 @@ module.exports = {
 		"signet":"./img/logo/logo-signet.svg"
 	},
 	coinIconUrlsByNetwork:{
-		"main":"./img/logo/grs.svg",
-		"test":"./img/logo/grs-testnet.svg",
-		"signet":"./img/logo/grs-signet.svg"
+		"main":"./img/logo/btc.svg",
+		"test":"./img/logo/btc-testnet.svg",
+		"signet":"./img/logo/btc-signet.svg"
 	},
 	coinColorsByNetwork: {
 		"main": "#F7931A",
