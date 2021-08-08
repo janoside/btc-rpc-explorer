@@ -203,7 +203,7 @@ module.exports = {
 			{name: "Mempool", items: [4, 16, 5]},
 			{name: "Analysis", items: [9, 10, 11, 12, 3]},
 			{name: "Technical", items: [15, 6, 7, 1]},
-			{name: "Fun", items: [8, 17, 13]},
+			{name: "Fun", items: [8, 17]}, // whitepaper extracter removed
 		]
 	},
 
