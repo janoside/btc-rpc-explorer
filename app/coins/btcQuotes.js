@@ -1,88 +1,40 @@
 module.exports = {
 	items: [
 		{
-			text: "Governments are good at cutting off the heads of centrally controlled networks like Napster, but pure P2P networks like Gnutella and Tor seem to be holding their own.",
-			speaker: "Satoshi",
-			date: "2008-11-07",
-			url: "https://www.mail-archive.com/cryptography@metzdowd.com/msg09971.html"
+			text: "Taproot has officially been locked-in, and will be activated 2016 blocks later! Groestlcoin will be the first coin to be activated via a soft-fork",
+			speaker: "GroestlcoinTeam",
+			date: "2021-06-24",
+			url: "https://twitter.com/GroestlcoinTeam/status/1407986860970893314"
 		},
 		{
-			text: "Proof-of-work has the nice property that it can be relayed through untrusted middlemen.",
-			speaker: "Satoshi",
-			date: "2010-08-07",
-			url: "https://bitcointalk.org/index.php?topic=721.msg8114#msg8114"
+			text: "Join our brand new Groestlcoin News telegram channel! Get alerted for any news and and be the first in the know!",
+			speaker: "GroestlcoinTeam",
+			date: "2021-05-28",
+			url: "https://twitter.com/GroestlcoinTeam/status/1398341388929060869"
 		},
 		{
-			text: "It doesn't matter who tells you a longest chain, the proof-of-work speaks for itself.",
-			speaker: "Satoshi",
-			date: "2010-08-07",
-			url: "https://bitcointalk.org/index.php?topic=721.msg8114#msg8114"
+			text: "Still remember these guys pushing the envelope back in 2013. Can't stop, wait stop attitude. This group is amazing.",
+			speaker: "Buudozer",
+			date: "2020-12-21",
+			url: "https://twitter.com/subnetmask/status/1341023176424243200"
 		},
 		{
-			text: "Lost coins only make everyone else's coins worth slightly more.  Think of it as a donation to everyone.",
-			speaker: "Satoshi",
-			date: "2010-06-21",
-			url: "https://bitcointalk.org/index.php?topic=198.msg1647#msg1647"
+			text: "These guys just don't stop. Nice work.",
+			speaker: "TDevD",
+			date: "2020-12-21",
+			url: "https://twitter.com/SamouraiDev/status/1340978797919809537"
 		},
 		{
-			text: "I'm sure that in 20 years there will either be very large transaction volume or no volume.",
-			speaker: "Satoshi",
-			date: "2010-02-14",
-			url: "https://bitcointalk.org/index.php?topic=48.msg329#msg329"
+			text: "First coin to perform a Taproot (segwit v1) transaction on Testnet",
+			speaker: "GroestlcoinTeam",
+			date: "2020-12-21",
+			url: "https://twitter.com/GroestlcoinTeam/status/1340978236084396033"
 		},
 		{
-			text: "We shouldn't be counting or spending transactions until they have at least 1 confirmation... unconfirmed transactions are very much second class citizens.",
-			speaker: "Satoshi",
-			date: "2010-09-30",
-			url: "https://bitcointalk.org/index.php?topic=1306.msg14714#msg14714"
-		},
-		{
-			text: "As computers get faster and the total computing power applied to creating bitcoins increases, the difficulty increases proportionally to keep the total new production constant.",
-			speaker: "Satoshi",
-			date: "2008-11-08",
-			url: "https://www.mail-archive.com/cryptography@metzdowd.com/msg09979.html"
-		},
-		{
-			text: "Coins have to get initially distributed somehow, and a constant rate seems like the best formula.",
-			speaker: "Satoshi",
-			date: "2008-11-08",
-			url: "https://www.mail-archive.com/cryptography@metzdowd.com/msg09979.html"
-		},
-		{
-			text: "The project needs to grow gradually so the software can be strengthened along the way.",
-			speaker: "Satoshi",
-			date: "2010-12-05",
-			url: "https://bitcointalk.org/index.php?topic=1735.msg26999#msg26999"
-		},
-		{
-			text: "I'm sure that in 20 years there will either be very large transaction volume or no volume.",
-			speaker: "Satoshi",
-			date: "2010-02-14",
-			url: "https://bitcointalk.org/index.php?topic=48.msg329#msg329"
-		},
-		{
-			text: "Lost coins only make everyone else's coins worth slightly more. Think of it as a donation to everyone.",
-			speaker: "Satoshi",
-			date: "2010-06-21",
-			url: "https://bitcointalk.org/index.php?topic=198.msg1647#msg1647"
-		},
-		{
-			text: "Being open source means anyone can independently review the code. If it was closed source, nobody could verify the security. I think it's essential for a program of this nature to be open source.",
-			speaker: "Satoshi",
-			date: "2009-12-12",
-			url: "https://bitcointalk.org/index.php?topic=13.msg46#msg46"
-		},
-		{
-			text: "[Lost] coins can never be recovered, and the total circulation is less.  Since the effective circulation is reduced, all the remaining coins are worth slightly more.  It's the opposite of when a government prints money and the value of existing money goes down.",
-			speaker: "Satoshi",
-			date: "2009-12-12",
-			url: "https://bitcointalk.org/index.php?topic=13.msg46#msg46"
-		},
-		{
-			text: "[Mining is] easy now but it'll get harder as the network grows.",
-			speaker: "Satoshi",
-			date: "2009-12-12",
-			url: "https://bitcointalk.org/index.php?topic=13.msg46#msg46"
+			text: "Taproot is coming to GRS.",
+			speaker: "GroestlcoinTeam",
+			date: "2020-12-18",
+			url: "https://twitter.com/GroestlcoinTeam/status/1339921078064459780"
 		}
 
 	]
