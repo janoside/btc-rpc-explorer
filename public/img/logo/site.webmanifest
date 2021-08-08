@@ -1,6 +1,6 @@
 {
-    "name": "GRS Explorer",
-    "short_name": "GRS Explorer",
+    "name": "BTC Explorer",
+    "short_name": "BTC Explorer",
     "icons": [
         {
             "src": "android-chrome-192x192.png",
