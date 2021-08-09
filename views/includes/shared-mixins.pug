@@ -148,7 +148,8 @@ mixin txList(visibleTxs, txCount, limit, offset, inputsByTxid, options={})
 								span.d-inline.d-sm-none.me-1 tx
 								| ##{(txIndex + offset).toLocaleString()}
 							
-							a.d-inline.d-lg-none(href=`./tx/${tx.txid}${tx_height_param}`) #{utils.ellipsizeMiddle(tx.txid, 24)}
+							a.d-inline.d-md-none.small(href=`./tx/${tx.txid}${tx_height_param}`) #{utils.ellipsizeMiddle(tx.txid, 24)}
+							a.d-none.d-md-inline.d-lg-none(href=`./tx/${tx.txid}${tx_height_param}`) #{utils.ellipsizeMiddle(tx.txid, 24)}
 							a.d-none.d-lg-inline(href=`./tx/${tx.txid}${tx_height_param}`) #{utils.ellipsizeMiddle(tx.txid, 48)}
 
 							if (global.specialTransactions && global.specialTransactions[tx.txid])
@@ -159,9 +160,12 @@ mixin txList(visibleTxs, txCount, limit, offset, inputsByTxid, options={})
 					.float-end
 						.me-n2
 							.d-inline.d-sm-none
-								a(href="javascript:void(0)", title="Toggle input address(es)", data-bs-toggle="tooltip", onclick=`$(this).find(".toggle-icon").toggleClass("fa-plus-square").toggleClass("fa-minus-square"); $(".tx-input-address-${tx.txid}").toggle();`)
-									i.toggle-icon.far.fa-plus-square.text-muted.text-end
+								a(href="javascript:void(0)", onclick=`$(this).find(".toggle-icon").toggleClass("fa-plus-square").toggleClass("fa-minus-square"); $(".tx-input-address-${tx.txid}").toggle();`)
+									i.toggle-icon.far.fa-plus-square.text-muted.text-end.fa-lg
 
+
+					.float-start.float-sm-end.mt-n2.mt-sm-0.mb-2.mb-sm-0
+						.me-n2
 							if (options.mempoolDetailsByTxid && options.mempoolDetailsByTxid[tx.txid])
 								- var mempoolDetails = options.mempoolDetailsByTxid[tx.txid].entry;
 								- var feeRate = new Decimal(mempoolDetails.fee).times(coinConfig.baseCurrencyUnit.multiplier).dividedBy(mempoolDetails.vsize);
@@ -189,7 +193,14 @@ mixin txList(visibleTxs, txCount, limit, offset, inputsByTxid, options={})
 									if (txBlockHeight)
 										span(title=`${(options.currentBlockHeight - txBlockHeight + 1).toLocaleString()} confirmation${(options.currentBlockHeight - txBlockHeight > 1) ? "s" :""}`, data-bs-toggle="tooltip")
 											i.fas.fa-lock.fa-sm.me-1
-											span.fw-light #{(options.currentBlockHeight - txBlockHeight + 1).toLocaleString()}
+											- var confCount = options.currentBlockHeight - txBlockHeight + 1;
+											- var confData = utils.formatLargeNumber(confCount);
+											
+											span.fw-light
+												if (confCount < 1000)
+													| #{confCount}
+												else
+													| #{parseInt(confData[0])}#{confData[1].abbreviation}
 
 									else
 										span(title=`Unconfirmed`, data-bs-toggle="tooltip")
@@ -206,7 +217,6 @@ mixin txList(visibleTxs, txCount, limit, offset, inputsByTxid, options={})
 
 										span.fw-light(title=titleStr, data-bs-toggle="tooltip")
 											+timeAgo(tx.time, true)
-											span.ms-1 ago
 
 			
 			hr.mb-4.mx-n3
