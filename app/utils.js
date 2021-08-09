@@ -932,12 +932,12 @@ function buildQrCodeUrl(str, results) {
 
 function outputTypeAbbreviation(outputType) {
 	var map = {
-		"pubkey": "p2pk",
-		"pubkeyhash": "p2pkh",
-		"scripthash": "p2sh",
-		"witness_v0_keyhash": "p2wpkh",
-		"witness_v0_scripthash": "p2wsh",
-		"witness_v1_taproot": "p2tr",
+		"pubkey": "P2PK",
+		"pubkeyhash": "P2PKH",
+		"scripthash": "P2SH",
+		"witness_v0_keyhash": "P2WPKH",
+		"witness_v0_scripthash": "P2WSH",
+		"witness_v1_taproot": "P2TR",
 		"nonstandard": "nonstandard",
 		"nulldata": "nulldata"
 	};
