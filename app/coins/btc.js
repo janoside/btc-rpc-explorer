@@ -475,6 +475,9 @@ module.exports = {
 			},
 			"fe28050b93faea61fa88c4c630f0e1f0a1c24d0082dd0e10d369e13212128f33" : {
 				blockHeight: 1000, blockHash: "00000000c937983704a73af28acdec37b049d214adbda81d7e2a3dd146f6ed09"
+			},
+			"b10c007c60e14f9d087e0291d4d0c7869697c6681d979c6639dbd960792b4d41" : {
+				blockHeight: 692261, blockHash: "0000000000000000000f14c35b2d841e986ab5441de8c585d5ffe55ea1e395ad"
 			}
 		}
 	},
