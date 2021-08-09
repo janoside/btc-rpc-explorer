@@ -96,7 +96,7 @@ mixin outputValueDisplay(vout, voutIndex)
 								span(title="Coinbase transactions are special transactions created by the miner of a block. They distribute the block reward (subsidy) as the miner chooses, along with all of the fees paid by transactions included in the block.", data-bs-toggle="tooltip") coinbase
 							
 							.mt-2.d-none.d-sm-block
-								+asciiHexDataDisplay("coinbase data", "coinbase-data", txVin.coinbase)
+								+asciiHexDataDisplay("coinbase data", `coinbase-${tx.txid}`, txVin.coinbase)
 
 							// xs only
 							.d-inline.d-sm-none.small.border.rounded-1.px-1.card-highlight.ms-1
