@@ -27,7 +27,7 @@ block content
 
 				tbody
 					each item, itemIndex in performanceStats
-						tr.font-monospace
+						tr
 							td #{item[0]}
 							td.text-end #{Math.round(item[1].min).toLocaleString()}
 							td.text-end #{Math.round(item[1].avg).toLocaleString()}
@@ -52,7 +52,7 @@ block content
 
 				tbody
 					each item, itemIndex in eventStats
-						tr.font-monospace
+						tr
 							td #{item[0]}
 							td.text-end #{item[1].toLocaleString()}
 
@@ -73,7 +73,7 @@ block content
 
 				tbody
 					each item, itemIndex in valueStats
-						tr.font-monospace
+						tr
 							td #{item[0]}
 							td.text-end #{Math.round(item[1].min).toLocaleString()}
 							td.text-end #{Math.round(item[1].avg).toLocaleString()}

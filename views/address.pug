@@ -251,7 +251,7 @@ block content
 											tr
 												td.text-end
 													small.text-muted #{(txidIndex + offset + 1).toLocaleString()}
-												td.font-monospace
+												td
 													- var blockHeight = addressDetails.blockHeightsByTxid[txid];
 													- var blockHeightParam = blockHeight > 0 ? `@${blockHeight}` : "";
 													a(href=`./tx/${txid}${blockHeightParam}`) #{txid}

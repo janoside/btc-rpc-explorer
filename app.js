@@ -111,6 +111,7 @@ const internalApiActionsRouter = require('./routes/internalApiRouter.js');
 const apiActionsRouter = require('./routes/apiRouter.js');
 const snippetActionsRouter = require('./routes/snippetRouter.js');
 const adminActionsRouter = require('./routes/adminRouter.js');
+const testActionsRouter = require('./routes/testRouter.js');
 
 const expressApp = express();
 
@@ -836,6 +837,11 @@ expressApp.use(config.baseUrl + 'internal-api/', internalApiActionsRouter);
 expressApp.use(config.baseUrl + 'api/', apiActionsRouter);
 expressApp.use(config.baseUrl + 'snippet/', snippetActionsRouter);
 expressApp.use(config.baseUrl + 'admin/', adminActionsRouter);
+
+if (expressApp.get("env") === "local") {
+	expressApp.use(config.baseUrl + 'test/', testActionsRouter);
+}
+
 
 expressApp.use(function(req, res, next) {
 	var time = Date.now() - req.startTime;

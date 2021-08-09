@@ -63,7 +63,7 @@ block content
 				div.mb-1 Your node is currently downloading and verifying blockchain data. Until the process is finished, some features of this tool will be unusable and/or unreliable.
 
 				span.fw-bold Progress:
-				span.font-monospace #{new Decimal(getblockchaininfo.verificationprogress).times(100).toDP(3)}%
+				span #{new Decimal(getblockchaininfo.verificationprogress).times(100).toDP(3)}%
 
 
 

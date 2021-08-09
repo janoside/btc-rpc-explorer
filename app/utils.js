@@ -932,7 +932,7 @@ function outputTypeAbbreviation(outputType) {
 		"scripthash": "p2sh",
 		"witness_v0_keyhash": "p2wpkh",
 		"witness_v0_scripthash": "p2wsh",
-		"witness_v1_taproot": "v1_p2tr",
+		"witness_v1_taproot": "p2tr",
 		"nonstandard": "nonstandard",
 		"nulldata": "nulldata"
 	};

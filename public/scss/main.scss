@@ -52,6 +52,7 @@ $border-radius-lg:            .5rem !default;
 
 
 $badge-border-radius: 0.2rem;
+$badge-font-weight: 400;
 
 
 $tooltip-max-width: 350px;
@@ -161,12 +162,12 @@ img.header-image {
 	margin-right: 10px;
 }
 
-$font-family-monospace: -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica Neue,Arial,Noto Sans,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol,Noto Color Emoji;
+//$font-family-monospace: -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica Neue,Arial,Noto Sans,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol,Noto Color Emoji;
 
-.font-monospace {
+//.font-monospace {
 	/*font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica Neue,Arial,Noto Sans,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol,Noto Color Emoji !important;*/
 	/*font-family: "Source Code Pro", monospace !important;*/
-}
+//}
 
 code, .font-json, .font-data, .font-plaintext {
 	font-family: "Source Code Pro", monospace !important;

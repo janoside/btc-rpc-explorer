@@ -39,10 +39,10 @@ block content
 								td
 									small.text-muted #{(blockIndex + 1).toLocaleString()}
 
-								td.font-monospace.text-end
+								td.text-end
 									| +#{(blockIndex + 1)}
 
-								td.font-monospace.text-end
+								td.text-end
 									| ~#{new Decimal(10 * (blockIndex + 1)).toDP(0)}m
 
 
@@ -52,13 +52,13 @@ block content
 								//- var timeDiff = null;
 
 
-								td.font-monospace.text-end #{(block.txCount || 0).toLocaleString()}
+								td.text-end #{(block.txCount || 0).toLocaleString()}
 
-								td.font-monospace.text-end
+								td.text-end
 									| #{block.avgFeeRate}
 
 
-								td.font-monospace.text-end
+								td.text-end
 									if (block.totalFees)
 										- var currencyValue = new Decimal(block.totalFees);
 										- var currencyValueDecimals = 3;
@@ -72,7 +72,7 @@ block content
 
 
 
-								td.font-monospace.text-end
+								td.text-end
 									- var full = new Decimal(block.weight).dividedBy(coinConfig.maxBlockWeight).times(100);
 									- var full2 = full.toDP(0);
 

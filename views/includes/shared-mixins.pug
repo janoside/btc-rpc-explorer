@@ -1,9 +1,11 @@
 mixin themeCss
 	if (userSettings.uiTheme == "light")
-		link(rel="stylesheet", href=`./style/light.css?v=${cacheId}`, integrity="sha384-jx98V2z4L5b4pgDLl57RJUpm9wbL69TDVNLFPFkB+NuNHVv9yY8e0SOekA7W2QYh")
+		link(rel="stylesheet", href=`./style/light.css?v=${cacheId}`, integrity="sha384-QCNlLZKpZ7Mny1dU7J4l+6E5g1PZ/OPMmU90FI1Xn8DW0m5Cwjv37UQXKv5+/pDj")
+		//link(rel="stylesheet", href=`./style/light.css?v=${cacheId}`, integrity="")
 
 	else
-		link(rel="stylesheet", href=`./style/dark.css?v=${cacheId}`, integrity="sha384-QCtkYrktZT0mmluAWu04cafhPsvv/jfz7umWGSr4HXVayA2ZIuEFHpv0c8xcMI9j")
+		link(rel="stylesheet", href=`./style/dark.css?v=${cacheId}`, integrity="sha384-fhVMUPjTesgQwlZdk+EpLxH6u4Ll9ZGjLMUFV0UVgXCusyFHbDESuBKqP6dCe5aA")
+		//link(rel="stylesheet", href=`./style/dark.css?v=${cacheId}`, integrity="")
 
 
 mixin sharedScriptTags
@@ -117,7 +119,7 @@ mixin summaryItem(title, titleDesc, subtitle, subtitleDesc)
 // 		- mempoolDetailsByTxid (map)
 
 // txBlockHeightsByTxid_orSharedBlockHeight, showDates=false, highlightAddress, addrGainsByTxid, addrLossesByTxid)
-mixin txList(visibleTxs, txCount, limit, offset, inputsByTxid, options)
+mixin txList(visibleTxs, txCount, limit, offset, inputsByTxid, options={})
 	if (txCount > limit)
 		.rounded-0.rounded-top.bg-content.border
 			.p-3
@@ -162,16 +164,16 @@ mixin txList(visibleTxs, txCount, limit, offset, inputsByTxid, options)
 
 								+lightBadge
 									| #{parseInt(feeRate).toLocaleString()}
-									span.fw-light.ms-1 gro/vB
+									span.text-tiny.ms-tiny gro/vB
 
 							if (options.addrGainsByTxid && options.addrGainsByTxid[tx.txid])
-								span.badge.bg-success.me-2
-									span.me-1 +
+								+successBadge
+									span.me-tiny +
 									+valueDisplay(options.addrGainsByTxid[tx.txid])
 
 							if (options.addrLossesByTxid && options.addrLossesByTxid[tx.txid])
 								span.badge.bg-danger.me-2
-									span.me-1 -
+									span.me-tiny -
 									+valueDisplay(options.addrLossesByTxid[tx.txid])
 
 							if (options.addrGainsByTxid && options.addrLossesByTxid && !options.addrGainsByTxid[tx.txid] && !options.addrLossesByTxid[tx.txid])
@@ -182,12 +184,12 @@ mixin txList(visibleTxs, txCount, limit, offset, inputsByTxid, options)
 								+darkBadge
 									if (txBlockHeight)
 										span(title=`${(options.currentBlockHeight - txBlockHeight + 1).toLocaleString()} confirmation${(options.currentBlockHeight - txBlockHeight > 1) ? "s" :""}`, data-bs-toggle="tooltip")
-											i.fas.fa-lock.fa-sm.me-2
+											i.fas.fa-lock.fa-sm.me-1
 											span.fw-light #{(options.currentBlockHeight - txBlockHeight + 1).toLocaleString()}
 
 									else
 										span(title=`Unconfirmed`, data-bs-toggle="tooltip")
-											i.fas.fa-lock.fa-sm.me-2
+											i.fas.fa-lock.fa-sm.me-1
 											span.fw-light.text-danger 0
 
 							if (options.showDates && tx.time)
@@ -196,7 +198,7 @@ mixin txList(visibleTxs, txCount, limit, offset, inputsByTxid, options)
 
 								.d-none.d-md-inline
 									+darkBadge
-										i.far.fa-clock.fa-sm.me-2
+										i.far.fa-clock.fa-sm.me-1
 
 										span.fw-light(title=titleStr, data-bs-toggle="tooltip")
 											+timeAgo(tx.time, true)
@@ -210,6 +212,7 @@ mixin txList(visibleTxs, txCount, limit, offset, inputsByTxid, options)
 			div
 				- var txInputs = inputsByTxid[tx.txid];
 				- var blockHeight = txBlockHeight != undefined ? txBlockHeight : -1;
+				- options.maxTxOutputDisplayCount = maxTxOutputDisplayCount;
 
 				if (options.highlightAddress)
 					- var txIOHighlightAddress = options.highlightAddress;
@@ -261,13 +264,15 @@ mixin valueDisplay(val)
 			+_valueDisplayLocal(val, 1000000)
 
 	else
-		span.font-monospace 0
+		span 0
 
 
 mixin _valueDisplayBtc(val)
 	- var parts = utils.formatCurrencyAmount(val, userSettings.displayCurrency);
 
 	//span #{JSON.stringify(parts)}
+
+	//span.d-inline.d-sm-none.fw-light.me-tiny ₿
 
 	span #{parts.val}
 		if (parts.lessSignificantDigits)
@@ -276,10 +281,10 @@ mixin _valueDisplayBtc(val)
 	if (exchangeRates)
 		- var localCurFormatData = utils.getExchangedCurrencyFormatData(val, userSettings.localCurrency);
 
-		span.text-tiny.border-dotted.fw-light.ms-1(style="letter-spacing: -0.5px;", data-bs-toggle="tooltip", title=`<span class="me-tiny">${localCurFormatData.symbol}</span><span>${localCurFormatData.value}</span>`, data-bs-html="true") #{parts.currencyUnit}
+		span.xs-hidden.d-none.d-sm-inline.text-tiny.border-dotted.fw-light.ms-1(style="letter-spacing: -0.5px;", data-bs-toggle="tooltip", title=`<span class="me-tiny">${localCurFormatData.symbol}</span><span>${localCurFormatData.value}</span>`, data-bs-html="true") #{parts.currencyUnit}
 
 	else
-		span.text-tiny.fw-light.ms-1(style="letter-spacing: -0.5px;") #{parts.currencyUnit}
+		span.xs-hidden.d-none.d-sm-inline.text-tiny.fw-light.ms-1(style="letter-spacing: -0.5px;") #{parts.currencyUnit}
 
 
 mixin _valueDisplaySat(val, summarizeMin=Infinity, summarizeDecimals=3)
@@ -301,10 +306,10 @@ mixin _valueDisplaySat(val, summarizeMin=Infinity, summarizeDecimals=3)
 	if (exchangeRates)
 		- var localCurFormatData = utils.getExchangedCurrencyFormatData(val, userSettings.localCurrency);
 
-		span.text-tiny.border-dotted.fw-light.ms-1(style="letter-spacing: -0.5px;", data-bs-toggle="tooltip", title=`<span class="me-tiny">${localCurFormatData.symbol}</span><span>${localCurFormatData.value}</span>`, data-bs-html="true") #{parts.currencyUnit}
+		span.xs-hidden.d-none.d-sm-inline.text-tiny.border-dotted.fw-light.ms-1(style="letter-spacing: -0.5px;", data-bs-toggle="tooltip", title=`<span class="me-tiny">${localCurFormatData.symbol}</span><span>${localCurFormatData.value}</span>`, data-bs-html="true") #{parts.currencyUnit}
 
 	else
-		span.text-tiny.fw-light.ms-1(style="letter-spacing: -0.5px;") #{parts.currencyUnit}
+		span.xs-hidden.d-none.d-sm-inline.text-tiny.fw-light.ms-1(style="letter-spacing: -0.5px;") #{parts.currencyUnit}
 
 
 mixin _valueDisplayLocal(val, summarizeMin=Infinity, summarizeDecimals=3)
@@ -313,7 +318,7 @@ mixin _valueDisplayLocal(val, summarizeMin=Infinity, summarizeDecimals=3)
 	- var parts = utils.formatCurrencyAmount(val, userSettings.localCurrency);
 
 	//span #{JSON.stringify(parts)}
-	span.me-1 #{global.currencySymbols[userSettings.localCurrency]}
+	span.fw-light.me-tiny #{global.currencySymbols[userSettings.localCurrency]}
 
 	if (parts.intVal >= summarizeMin)
 		- var largeNumberData = utils.formatLargeNumberSignificant(parts.intVal, summarizeDecimals >= 0 ? summarizeDecimals : 3);
@@ -374,7 +379,7 @@ mixin valueDisplaySpecial(val, maxDecimals=-1, summarizeAlways=false, summarizeM
 			else if (userSettings.displayCurrency == "local")
 
 		else
-			span.font-monospace 0
+			span 0
 
 
 mixin confirmations(confirmations, abbreviated=true)
@@ -432,6 +437,12 @@ mixin darkBadge(text)
 
 mixin lightBadge(text)
 	span.badge.bg-light.text-dark.border.me-2 #{text ? text : ""}
+		if (block)
+			block
+
+
+mixin successBadge(text)
+	span.badge.bg-success.me-2 #{text ? text : ""}
 		if (block)
 			block
 
