@@ -1,9 +1,11 @@
 mixin themeCss
 	if (userSettings.uiTheme == "light")
-		link(rel="stylesheet", href=`./style/light.css?v=${cacheId}`, integrity="sha384-SyvA5KzH5U5+aKYdKeF+um3fiNA34aVg8OwGnR3pCgok0ETrEGtAJ47DQTOEFHrb")
+		link(rel="stylesheet", href=`./style/light.css?v=${cacheId}`, integrity="sha384-QCNlLZKpZ7Mny1dU7J4l+6E5g1PZ/OPMmU90FI1Xn8DW0m5Cwjv37UQXKv5+/pDj")
+		//link(rel="stylesheet", href=`./style/light.css?v=${cacheId}`, integrity="")
 			
 	else
-		link(rel="stylesheet", href=`./style/dark.css?v=${cacheId}`, integrity="sha384-pE5l68293sdG66T4tUTGUf17nNkepbBFko51on+Dwi9v85sUV9dmp4HMKhRwN88m")
+		link(rel="stylesheet", href=`./style/dark.css?v=${cacheId}`, integrity="sha384-fhVMUPjTesgQwlZdk+EpLxH6u4Ll9ZGjLMUFV0UVgXCusyFHbDESuBKqP6dCe5aA")
+		//link(rel="stylesheet", href=`./style/dark.css?v=${cacheId}`, integrity="")
 
 
 mixin sharedScriptTags
@@ -428,25 +430,25 @@ mixin timestamp(timestamp, includeAgo=true, formatString)
 
 
 mixin darkBadge(text)
-	span.badge.bg-dark.border.border-dark.fw-light.me-2 #{text ? text : ""}
+	span.badge.bg-dark.border.border-dark.me-2 #{text ? text : ""}
 		if (block)
 			block
 
 
 mixin lightBadge(text)
-	span.badge.bg-light.text-dark.fw-light.border.me-2 #{text ? text : ""}
+	span.badge.bg-light.text-dark.border.me-2 #{text ? text : ""}
 		if (block)
 			block
 
 
 mixin successBadge(text)
-	span.badge.bg-success.fw-light.me-2 #{text ? text : ""}
+	span.badge.bg-success.me-2 #{text ? text : ""}
 		if (block)
 			block
 
 
 mixin primaryBadge(text, endMargin=true)
-	span.badge.bg-primary.fw-light(class=(endMargin ? "me-2" : false)) #{text ? text : ""}
+	span.badge.bg-primary(class=(endMargin ? "me-2" : false)) #{text ? text : ""}
 		if (block)
 			block
 
