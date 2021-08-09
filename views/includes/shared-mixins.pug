@@ -152,7 +152,7 @@ mixin txList(visibleTxs, txCount, limit, offset, inputsByTxid, options={})
 							a.d-none.d-lg-inline(href=`./tx/${tx.txid}${tx_height_param}`) #{utils.ellipsizeMiddle(tx.txid, 48)}
 
 							if (global.specialTransactions && global.specialTransactions[tx.txid])
-								a.ms-2(data-bs-toggle="tooltip", title=`<b>${coinConfig.name} Fun!</b><br/>There's something special about this transaction...<br/>Click to read more.`, data-bs-html="true")
+								a.ms-2(data-bs-toggle="tooltip", title=`${coinConfig.name} Fun! There's something special about this transaction…`)
 									+funItemIcon
 
 
