@@ -279,6 +279,7 @@ block content
 										if (vin.coinbase)
 											.mb-3(style="line-height: 1.75em;")
 												+successBadge("coinbase")
+												
 												.mt-1.mb-2
 													.d-inline-block.small.border.rounded-1.p-1.px-2.card-highlight.word-wrap #{utils.hex2ascii(vin.coinbase)}
 
@@ -296,8 +297,8 @@ block content
 											.mb-2
 												+darkBadge("witness")
 
-											each witnessItem in vin.txinwitness
-												.d-inline-block.small.border.rounded-1.p-1.px-2.card-highlight.word-wrap #{witnessItem}
+											each witnessItem, witnessIndex in vin.txinwitness
+												.d-inline-block.small.border.rounded-1.p-1.px-2.card-highlight.word-wrap(class=(witnessIndex < (vin.txinwitness.length - 1) ? "mb-2" : false)) #{witnessItem}
 
 										
 						
