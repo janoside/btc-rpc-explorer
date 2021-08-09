@@ -90,7 +90,7 @@ html(lang="en")
 									a.nav-link.dropdown-toggle.bg-header-footer-highlight.rounded(href="javascript:void(0)", role="button", data-bs-toggle="dropdown", aria-haspopup="true", aria-expanded="false")
 										span.fa-layers.fa-fw.me-2.ms-1
 											i.fas.fa-circle.fa-lg.text-white(data-fa-transform="shrink-2")
-											i.fas.fa-grip-vertical.fa-lg(style=`color: ${coinConfig.coinColorsByNetwork[activeBlockchain]}`)
+											i.fab.fa-bitcoin.fa-lg(style=`color: ${coinConfig.coinColorsByNetwork[activeBlockchain]}`)
 
 									div.dropdown-menu.dropdown-menu-end.shadow(aria-label="Demo Sites")
 										span.dropdown-header Public Demo Sites
@@ -101,7 +101,7 @@ html(lang="en")
 											a.dropdown-item(href=coinConfig.demoSiteUrlsByNetwork[demoSite])
 												span.fa-layers.fa-fw.ms-2
 													i.fas.fa-circle.fa-lg.me-2.text-white(data-fa-transform="shrink-2")
-													i.fas.fa-grip-vertical.fa-lg.me-2(style=`color: ${coinConfig.coinColorsByNetwork[demoSite]}`)
+													i.fab.fa-bitcoin.fa-lg.me-2(style=`color: ${coinConfig.coinColorsByNetwork[demoSite]}`)
 
 												| #{coinConfig.siteTitlesByNetwork[demoSite].replace("Explorer", "").replace("Groestlcoin", "Mainnet")}
 
