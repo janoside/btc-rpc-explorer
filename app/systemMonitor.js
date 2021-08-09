@@ -19,6 +19,8 @@ const systemMonitorInterval = setInterval(() => {
 			return;
 		}
 
+		debugLog("pidusage: " + JSON.stringify(stat));
+
 		statTracker.trackValue("process.cpu", stat.cpu);
 		statTracker.trackValue("process.mem_mb", stat.memory / 1024 / 1024);
 		statTracker.trackValue("process.ctime", stat.ctime);
