@@ -355,7 +355,6 @@ function lookupTxBlockHash(txid) {
 
 // Lookup the spending transaction and height of a given transaction output. Only works with Electrum 1.5 protocol, ElectRS 0.9.0 does not implement subscriptions
 // but can return the transaction spending the given outpoint
-
 function lookupOutpointTx(txid, vout) {
 	if (electrumClients.length == 0) {
 		return Promise.reject({ error: "Not supported by Electrum 1.4", userText: noConnectionsErrorText });
@@ -379,7 +378,6 @@ function lookupOutpointTx(txid, vout) {
 		}
 	});
 }
-
 
 function logStats(cmd, dt, success) {
 	if (!global.electrumStats.rpc[cmd]) {
