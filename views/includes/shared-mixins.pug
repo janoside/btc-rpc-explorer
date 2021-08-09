@@ -280,7 +280,7 @@ mixin _valueDisplayBtc(val)
 	
 	span #{parts.val}
 		if (parts.lessSignificantDigits)
-			span.text-small.text-darken.fw-lighter.ms-1 #{parts.lessSignificantDigits}
+			span.text-small.text-darken.ms-1 #{parts.lessSignificantDigits}
 
 	if (exchangeRates)
 		- var localCurFormatData = utils.getExchangedCurrencyFormatData(val, userSettings.localCurrency);
