@@ -68,8 +68,8 @@ module.exports = {
 		"signet":"./img/logo/btc-signet.svg"
 	},
 	coinColorsByNetwork: {
-		"main": "#F7931A",
-		"test": "#1daf00",
+		"main": "#007089",
+		"test": "#04387c",
 		"signet": "#af008c",
 		"regtest": "#777"
 	},
