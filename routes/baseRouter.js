@@ -1509,34 +1509,56 @@ router.get("/address/:address", asyncHandler(async (req, res, next) => {
 		
 		res.locals.result = {};
 
-		var parseAddressErrors = [];
+		var addressEncoding = "unknown";
+
+		var base58Error = null;
+		var bech32Error = null;
+		var bech32mError = null;
 
 		try {
 			res.locals.addressObj = bitcoinjs.address.fromBase58Check(address);
+			addressEncoding = "base58";
 
 		} catch (err) {
-			if (!err.message.startsWith("Error: Non-base58 character")) {
-				parseAddressErrors.push(utils.logError("u3gr02gwef", err));
+			base58Error = err;
+		}
+
+		if (addressEncoding == "unknown") {
+			try {
+				res.locals.addressObj = bitcoinjs.address.fromBech32(address);
+				addressEncoding = "bech32";
+
+			} catch (err) {
+				bech32Error = err;
 			}
 		}
 
-		try {
-			res.locals.addressObj = bitcoinjs.address.fromBech32(address);
-
-		} catch (err) {
-			if (err.message.includes("Invalid checksum")) {
+		if (addressEncoding == "unknown") {
+			try {
 				res.locals.addressObj = bech32m.decode(address);
+				addressEncoding = "bech32m";
 
-			} else if (!err.message.startsWith("Error: Mixed-case string " + address)) {
-				parseAddressErrors.push(utils.logError("u02qg02yqge", err));
+			} catch (err) {
+				bech32mError = err;
+			}
+		}
+		
+
+		if (res.locals.addressObj == null || addressEncoding == "unknown") {
+			if (base58Error) {
+				res.locals.pageErrors.push(utils.logError("AddressParseError-001", base58Error));
+			}
+
+			if (bech32Error) {
+				res.locals.pageErrors.push(utils.logError("AddressParseError-002", bech32Error));
+			}
+
+			if (bech32mError) {
+				res.locals.pageErrors.push(utils.logError("AddressParseError-003", bech32mError));
 			}
 		}
 
-		if (res.locals.addressObj == null) {
-			parseAddressErrors.forEach(function(x) {
-				res.locals.pageErrors.push(x);
-			});
-		}
+		res.locals.addressEncoding = addressEncoding;
 
 		if (global.miningPoolsConfigs) {
 			for (var i = 0; i < global.miningPoolsConfigs.length; i++) {
