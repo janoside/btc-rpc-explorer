@@ -228,7 +228,16 @@ block content
 
 				
 				- var inputsOutputsSectionTitle = `${tx.vin.length.toLocaleString()} Input${tx.vin.length == 1 ? "" : "s"}, ${tx.vout.length.toLocaleString()} Output${tx.vout.length == 1 ? "" : "s"}`;
-				+contentSection(inputsOutputsSectionTitle)
+				
+				+sectionTitleBlock
+					.clearfix
+						.float-start #{inputsOutputsSectionTitle}
+						.float-end
+							.d-inline.d-sm-none
+								a(href="javascript:void(0)", title="Toggle input address(es)", data-bs-toggle="tooltip", onclick=`$(this).find(".toggle-icon").toggleClass("fa-plus-square").toggleClass("fa-minus-square"); $(".tx-input-address-${tx.txid}").toggle();`)
+									i.toggle-icon.far.fa-plus-square.text-muted.text-end
+
+				+contentSection
 					- var tx = result.getrawtransaction;
 					- var txInputs = result.txInputs;
 					- var blockHeight = -1;

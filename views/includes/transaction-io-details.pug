@@ -145,6 +145,13 @@ mixin outputValueDisplay(vout, voutIndex)
 												a.d-none.d-sm-inline(data-bs-toggle="tooltip", title=`Miner payout address: ${specialAddressInfo.minerInfo.name}`)
 													+funItemIcon
 
+									.d-block.d-sm-none
+										div(class=`tx-input-address-${tx.txid}`, style="display: none;")
+											a.sz-xs-sm.small(href=`./address/${voutAddresses[0]}`, class=(txIOHighlightAddress == voutAddresses[0] ? "text-info" : null)) #{utils.ellipsizeMiddle(voutAddresses[0], 24)}
+											
+											if (tx.vin.length > 1 || txVinIndex > 0)
+												hr.mb-1
+
 									if (false)
 										small
 											span.border-dotted(title="Transaction output", data-bs-toggle="tooltip") txo

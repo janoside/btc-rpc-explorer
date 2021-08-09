@@ -158,6 +158,10 @@ mixin txList(visibleTxs, txCount, limit, offset, inputsByTxid, options={})
 
 					.float-end
 						.me-n2
+							.d-inline.d-sm-none
+								a(href="javascript:void(0)", title="Toggle input address(es)", data-bs-toggle="tooltip", onclick=`$(this).find(".toggle-icon").toggleClass("fa-plus-square").toggleClass("fa-minus-square"); $(".tx-input-address-${tx.txid}").toggle();`)
+									i.toggle-icon.far.fa-plus-square.text-muted.text-end
+
 							if (options.mempoolDetailsByTxid && options.mempoolDetailsByTxid[tx.txid])
 								- var mempoolDetails = options.mempoolDetailsByTxid[tx.txid].entry;
 								- var feeRate = new Decimal(mempoolDetails.fee).times(coinConfig.baseCurrencyUnit.multiplier).dividedBy(mempoolDetails.vsize);
