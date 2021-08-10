@@ -157,10 +157,24 @@ mixin txList(visibleTxs, txCount, limit, offset, inputsByTxid, options={})
 									+funItemIcon
 
 
-					.float-end
-						.d-block.d-sm-none
-							a(href="javascript:void(0)", onclick=`$(this).find(".toggle-icon").toggleClass("fa-plus-square").toggleClass("fa-minus-square"); $(".tx-input-address-${tx.txid}").toggle();`)
-								i.toggle-icon.far.fa-plus-square.text-muted.text-end.fa-lg
+
+					- var hasInputAddresses = false;
+					if (tx && tx.vin && inputsByTxid && inputsByTxid[tx.txid])
+						- var txInputs = inputsByTxid[tx.txid];
+						each txVin, txVinIndex in tx.vin
+							if (!txVin.coinbase)
+								- var vout = null;
+								if (txInputs[txVinIndex])
+									- var voutAddresses = utils.getVoutAddresses(txInputs[txVinIndex]);
+
+									if (voutAddresses.length > 0)
+										- hasInputAddresses = true;
+
+					if (hasInputAddresses)
+						.float-end
+							.d-block.d-sm-none
+								a(href="javascript:void(0)", onclick=`$(this).find(".toggle-icon").toggleClass("fa-plus-square").toggleClass("fa-minus-square"); $(".tx-input-address-${tx.txid}").toggle();`)
+									i.toggle-icon.far.fa-plus-square.text-muted.text-end.fa-lg
 
 
 					.float-start.float-sm-end.mt-n2.mt-sm-0.mb-2.mb-sm-0
