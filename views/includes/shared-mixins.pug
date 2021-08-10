@@ -164,7 +164,7 @@ mixin txList(visibleTxs, txCount, limit, offset, inputsByTxid, options={})
 
 
 					.float-start.float-sm-end.mt-n2.mt-sm-0.mb-2.mb-sm-0
-						.me-5
+						.me-5.me-sm-n2
 							if (options.mempoolDetailsByTxid && options.mempoolDetailsByTxid[tx.txid])
 								- var mempoolDetails = options.mempoolDetailsByTxid[tx.txid].entry;
 								- var feeRate = new Decimal(mempoolDetails.fee).times(coinConfig.baseCurrencyUnit.multiplier).dividedBy(mempoolDetails.vsize);
