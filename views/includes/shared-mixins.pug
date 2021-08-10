@@ -405,7 +405,7 @@ mixin confirmations(confirmations, abbreviated=true)
 			i.fas.fa-check.ms-1
 
 
-mixin timestamp(timestamp, includeAgo=true, formatString)
+mixin timestamp(timestamp, includeAgo=true, formatString, includeUtc=true)
 	- var utcMoment = moment.utc(new Date(parseInt(timestamp) * 1000));
 
 	- var yearStr = utcMoment.format("Y");
@@ -425,12 +425,16 @@ mixin timestamp(timestamp, includeAgo=true, formatString)
 	else if (dateStr == nowDateStr)
 		span.border-dotted(title=titleStr, data-bs-toggle="tooltip")
 			| #{utcMoment.format("HH:mm")}
-			small.text-muted.ms-1 utc
+
+			if (includeUtc)
+				small.text-muted.ms-1 utc
 
 	else if (yearStr == nowYearStr)
 		span.border-dotted(title=titleStr, data-bs-toggle="tooltip")
 			| #{utcMoment.format("M/D HH:mm")}
-			small.text-muted.ms-1 utc
+
+			if (includeUtc)
+				small.text-muted.ms-1 utc
 
 	else
 		span.border-dotted(title=titleStr, data-bs-toggle="tooltip")
