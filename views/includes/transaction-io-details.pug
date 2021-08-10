@@ -96,7 +96,7 @@ mixin outputValueDisplay(vout, voutIndex)
 								span(title="Coinbase transactions are special transactions created by the miner of a block. They distribute the block reward (subsidy) as the miner chooses, along with all of the fees paid by transactions included in the block.", data-bs-toggle="tooltip") coinbase
 							
 							.mt-2.d-none.d-sm-block
-								+asciiHexDataDisplay("coinbase data", "coinbase-data", txVin.coinbase)
+								+asciiHexDataDisplay("coinbase data", `coinbase-${tx.txid}`, txVin.coinbase)
 
 							// xs only
 							.d-inline.d-sm-none.small.border.rounded-1.px-1.card-highlight.ms-1
@@ -144,6 +144,17 @@ mixin outputValueDisplay(vout, voutIndex)
 												span  
 												a.d-none.d-sm-inline(data-bs-toggle="tooltip", title=`Miner payout address: ${specialAddressInfo.minerInfo.name}`)
 													+funItemIcon
+
+									.d-block.d-sm-none
+										div(class=`tx-input-address-${tx.txid}`, style="display: none;")
+											a.sz-xs-sm.small(href=`./address/${voutAddresses[0]}`, class=(txIOHighlightAddress == voutAddresses[0] ? "text-info" : null)) #{utils.ellipsizeMiddle(voutAddresses[0], 24)}
+											
+											if (txIOHighlightAddress == voutAddresses[0])
+												span(title="Current address", data-bs-toggle="tooltip")
+													i.fas.fa-arrow-left.text-warning.ms-1.text-info
+													
+											if (tx.vin.length > 1 || txVinIndex > 0)
+												hr.mb-1
 
 									if (false)
 										small

@@ -204,13 +204,18 @@ function formatCurrencyAmountWithForcedDecimalPlaces(amount, formatType, forcedD
 			return {val:baseStr, currencyUnit:currencyType.name, simpleVal:baseStr, intVal:parseInt(dec)};
 
 		} else {
-			// toDP will strip trailing zeroes
-			var baseStr = addThousandsSeparators(dec.toDP(decimalPlaces));
+			// toDP excludes trailing zeroes but doesn't "fix" numbers like 1e-8
+			// instead, we use toFixed and manually strip trailing zeroes
+			// old method is kept for reference since this is sensitive, high-volume code
+			var baseStr = addThousandsSeparators(dec.toFixed(decimalPlaces).replace(/0+$/, "").replace(/\.$/, ""));
+			//var baseStr = addThousandsSeparators(dec.toDP(decimalPlaces)); // old version, failed to properly format "1e-8" (left unchanged)
 
 			var returnVal = {currencyUnit:currencyType.name, simpleVal:baseStr, intVal:parseInt(dec)};
 
 			// max digits in "val"
 			var maxValDigits = config.site.valueDisplayMaxLargeDigits;
+
+			// todo: make this section locale-aware (don't hardcode ".")
 
 			if (baseStr.indexOf(".") == -1) {
 				returnVal.val = baseStr;
@@ -927,12 +932,12 @@ function buildQrCodeUrl(str, results) {
 
 function outputTypeAbbreviation(outputType) {
 	var map = {
-		"pubkey": "p2pk",
-		"pubkeyhash": "p2pkh",
-		"scripthash": "p2sh",
-		"witness_v0_keyhash": "p2wpkh",
-		"witness_v0_scripthash": "p2wsh",
-		"witness_v1_taproot": "p2tr",
+		"pubkey": "P2PK",
+		"pubkeyhash": "P2PKH",
+		"scripthash": "P2SH",
+		"witness_v0_keyhash": "P2WPKH",
+		"witness_v0_scripthash": "P2WSH",
+		"witness_v1_taproot": "P2TR",
 		"nonstandard": "nonstandard",
 		"nulldata": "nulldata"
 	};

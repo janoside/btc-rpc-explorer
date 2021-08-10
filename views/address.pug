@@ -75,7 +75,7 @@ block content
 					- if (x.ismine) { flags.push(["Mine", "This address is owned by your node."]); }
 					- if (x.iswatchonly) { flags.push(["Watch-Only"]); }
 
-					- var summaryRowItemCount = (addressDetails ? ((addressDetails.txCount != null ? 1 : 0) + (addressDetails.balanceSat ? 1 : 0) + (addressDetails.unconfirmedBalanceSat ? 1 : 0) + (addressDetails.totalReceivedSat ? 1 : 0)) : 0) + (flags.length > 0 ? 1 : 0);
+					- var summaryRowItemCount = ((addressEncoding && addressEncoding != "unknown") ? 1 : 0) + (addressDetails ? ((addressDetails.txCount != null ? 1 : 0) + (addressDetails.balanceSat ? 1 : 0) + (addressDetails.unconfirmedBalanceSat ? 1 : 0) + (addressDetails.totalReceivedSat ? 1 : 0)) : 0) + (flags.length > 0 ? 1 : 0);
 					if (summaryRowItemCount > 0)
 						.clearfix
 							.float-start
@@ -86,6 +86,10 @@ block content
 
 						+contentSection
 							+summaryRow(summaryRowItemCount)
+								if (addressEncoding && addressEncoding != "unknown")
+									+summaryItem("Encoding")
+										| #{addressEncoding}
+
 								if (addressDetails && addressDetails.txCount != null)
 									+summaryItem("Transactions")
 										| #{addressDetails.txCount.toLocaleString()}

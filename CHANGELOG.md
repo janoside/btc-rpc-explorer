@@ -21,6 +21,7 @@
 * Fix for `DEBUG` environment variable being ignored
 * Fix for [/rpc-terminal](./rpc-terminal) not parsing non-int parameters properly
 * Fix for edge case where txindex availability check fails at startup (add retries with exp. backoff)
+* Fix for tiny-value display (i.e. 1e-8 -> 0.00000001)
 * Misc UI/UX tweaks
 * Cache busting for frontend resources
 * Improved error handling in many places
