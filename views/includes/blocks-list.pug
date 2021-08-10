@@ -3,20 +3,18 @@
 		thead
 			tr
 				//th
-				if (!hideBlockIndex)
-					th
 
 				th.text-end Height
 
-				if (!hideTimestampColumn)
-					th.text-end
-						span.border-dotted(title="UTC timestamp of the block.", data-bs-toggle="tooltip") Date
+				//if (!hideTimestampColumn)
+				th.text-end.d-none.d-md-table-cell
+					span.border-dotted(title="UTC timestamp of the block.", data-bs-toggle="tooltip") Date
 
-				th.text-end(class=(hideTimestampColumn ? false : "d-none d-md-table-cell")) Age
+				th.text-end Age
 				
 				th.text-end.d-none.d-sm-table-cell
 					span.border-dotted(title="<b>Time To Mine</b><br/>The time it took to mine this block after the previous block. <span class='text-success'>Fast</span> blocks (< 5min) and <span class='text-danger'>Slow</span> blocks (> 15min) are highlighted.", data-bs-toggle="tooltip", data-bs-html="true") TTM
-				th.text-start.d-none.d-sm-table-cell Miner
+				th.text-start Miner
 				th.text-end
 					span.border-dotted(title="The number of transactions included in each block.", data-bs-toggle="tooltip") N(tx)
 
@@ -58,13 +56,6 @@
 
 				if (block && ((sort == "desc" && (blockIndex < blocks.length - 1 || block.height == 0)) || (sort == "asc" && (block.height == 0 || blockIndex > 0))))
 					tr
-						if (!hideBlockIndex)
-							td
-								if (sort == "desc")
-									small.text-muted #{(blockIndex + offset + 1).toLocaleString()}
-								else
-									small.text-muted #{(blockIndex + offset).toLocaleString()}
-
 						td.text-end
 							if (global.specialBlocks && global.specialBlocks[block.hash])
 								a(data-bs-toggle="tooltip", title=`${coinConfig.name} Fun! There's something special about this block…`)
@@ -90,12 +81,12 @@
 							if (blockIndex < blocks.length - 1)
 								- var timeDiff = moment.duration(moment.utc(new Date(parseInt(block.time) * 1000)).diff(moment.utc(new Date(parseInt(blocks[blockIndex + 1].time) * 1000))));
 
-						if (!hideTimestampColumn)
-							td.text-end
-								+timestamp(block.time, false)
+						//if (!hideTimestampColumn)
+						td.text-end.d-none.d-md-table-cell
+							+timestamp(block.time, false, null, false)
 							
 
-						td.text-end(class=(hideTimestampColumn ? false : "d-none d-md-table-cell"))
+						td.text-end
 
 							if (sort != "asc" && blockIndex == 0 && offset == 0 && timeAgoTime > (15 * 60 * 1000))
 								- var timeAgoTime = block.time;
@@ -131,15 +122,23 @@
 								else
 									span.fw-light.text-muted -
 						
-						td.text-start.d-none.d-sm-table-cell
+						td.text-start
 							if (block.miner)
 								if (block.miner.type == "address-only")
 									span.badge.bg-secondary
-										span(data-bs-toggle="tooltip", title=`Unknown Miner Payout Address: ${block.miner.name}`) #{utils.ellipsizeMiddle(block.miner.name, 14)}
-										+copyTextButton(block.miner.name)
+										.d-inline.d-md-none
+											span(data-bs-toggle="tooltip", title=`Unknown Miner Payout Address: ${block.miner.name}`) #{utils.ellipsizeMiddle(block.miner.name, 10)}
+
+										.d-none.d-md-inline
+											span(data-bs-toggle="tooltip", title=`Unknown Miner Payout Address: ${block.miner.name}`) #{utils.ellipsizeMiddle(block.miner.name, 14)}
+											+copyTextButton(block.miner.name)
 
 								else
-									span.badge.bg-primary(data-bs-toggle="tooltip", title=`Identified by: ${block.miner.identifiedBy}`) #{utils.ellipsize(block.miner.name, 14)}
+									.d-inline.d-sm-none
+										span.badge.bg-primary(data-bs-toggle="tooltip", title=`Identified by: ${block.miner.identifiedBy}`) #{utils.ellipsize(block.miner.name, 12)}
+
+									.d-none.d-sm-inline
+										span.badge.bg-primary(data-bs-toggle="tooltip", title=`Identified by: ${block.miner.identifiedBy}`) #{utils.ellipsize(block.miner.name, 14)}
 
 							else if (block.height < global.pruneHeight)
 								span(title="This data is unavailable due to blockchain pruning", data-bs-toggle="tooltip")

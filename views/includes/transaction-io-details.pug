@@ -149,6 +149,10 @@ mixin outputValueDisplay(vout, voutIndex)
 										div(class=`tx-input-address-${tx.txid}`, style="display: none;")
 											a.sz-xs-sm.small(href=`./address/${voutAddresses[0]}`, class=(txIOHighlightAddress == voutAddresses[0] ? "text-info" : null)) #{utils.ellipsizeMiddle(voutAddresses[0], 24)}
 											
+											if (txIOHighlightAddress == voutAddresses[0])
+												span(title="Current address", data-bs-toggle="tooltip")
+													i.fas.fa-arrow-left.text-warning.ms-1.text-info
+													
 											if (tx.vin.length > 1 || txVinIndex > 0)
 												hr.mb-1
 
