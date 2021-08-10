@@ -14,4 +14,4 @@ else
 			span #{timeAgo.minutes()}m
 
 	else
-		span #{utils.shortenTimeDiff(timeAgo.format())}
+		span #{utils.shortenTimeDiff(timeAgo.format()).split(", ").join(" ")}
