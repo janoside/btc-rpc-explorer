@@ -1501,7 +1501,7 @@ router.get("/address/:address", asyncHandler(async (req, res, next) => {
 
 		var address = utils.asAddress(req.params.address);
 
-		res.locals.metaTitle = `Bitcoin Address ${address}`;
+		res.locals.metaTitle = `Groestlcoin Address ${address}`;
 
 		res.locals.address = address;
 		res.locals.limit = limit;
@@ -1546,7 +1546,7 @@ router.get("/address/:address", asyncHandler(async (req, res, next) => {
 				bech32mError = err;
 			}
 		}
-		
+
 
 		if (res.locals.addressObj == null || addressEncoding == "unknown") {
 			if (base58Error) {
