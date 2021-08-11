@@ -701,6 +701,8 @@ router.get("/xyzpub/:extendedPubkey", asyncHandler(async (req, res, next) => {
 
 		res.locals.paginationBaseUrl = `./xyzpub/${extendedPubkey}`;
 
+		res.locals.metaTitle = `Extended Public Key: ${utils.ellipsizeMiddle(extendedPubkey, 24)}`;
+
 
 		res.locals.relatedKeys = [];
 
@@ -1498,6 +1500,8 @@ router.get("/address/:address", asyncHandler(async (req, res, next) => {
 
 
 		var address = utils.asAddress(req.params.address);
+
+		res.locals.metaTitle = `Bitcoin Address ${address}`;
 
 		res.locals.address = address;
 		res.locals.limit = limit;
