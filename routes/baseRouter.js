@@ -302,14 +302,22 @@ router.get("/", asyncHandler(async (req, res, next) => {
 		var timePerBlock2 = dt / heightDiff;
 		var predictedBlockCount = dt / coinConfig.targetBlockTimeSeconds;
 
+		var blockRatioPercent = new Decimal(blockCount / predictedBlockCount).times(100);
+		if (blockRatioPercent > 400) {
+			blockRatioPercent = new Decimal(400);
+		}
+		if (blockRatioPercent < 25) {
+			blockRatioPercent = new Decimal(25);
+		}
+
 		if (predictedBlockCount > blockCount) {
-			var diffAdjPercent = new Decimal(100).minus(new Decimal(blockCount / predictedBlockCount).times(100)).times(-1);
+			var diffAdjPercent = new Decimal(100).minus(blockRatioPercent).times(-1);
 			var diffAdjText = `Blocks during the current difficulty epoch have taken this long, on average, to be mined. If this pace continues, then in ${res.locals.blocksUntilDifficultyAdjustment.toLocaleString()} block${res.locals.blocksUntilDifficultyAdjustment == 1 ? "" : "s"} (${daysUntilAdjustmentStr}) the difficulty will adjust downward: -${diffAdjPercent.toDP(1)}%`;
 			var diffAdjSign = "-";
 			var textColorClass = "text-danger";
 
 		} else {
-			var diffAdjPercent = new Decimal(100).minus(new Decimal(predictedBlockCount / blockCount).times(100));
+			var diffAdjPercent = blockRatioPercent.minus(new Decimal(100));
 			var diffAdjText = `Blocks during the current difficulty epoch have taken this long, on average, to be mined. If this pace continues, then in ${res.locals.blocksUntilDifficultyAdjustment.toLocaleString()} block${res.locals.blocksUntilDifficultyAdjustment == 1 ? "" : "s"} (${daysUntilAdjustmentStr}) the difficulty will adjust upward: +${diffAdjPercent.toDP(1)}%`;
 			var diffAdjSign = "+";
 			var textColorClass = "text-success";
