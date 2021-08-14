@@ -443,12 +443,16 @@ function getRpcData(cmd, verifyingConnection=false) {
 					if (result0 && result0.name && result0.name == "RpcError") {
 						logStats(cmd, false, new Date().getTime() - startTime, false);
 
+						debugLog("RpcErrorResult-01: " + JSON.stringify(result0));
+
 						throw new Error(`RpcError: type=errorResponse-01`);
 					}
 				}
 
-				if (result.name && result.name == "RpcError") {
+				if (result && result.name && result.name == "RpcError") {
 					logStats(cmd, false, new Date().getTime() - startTime, false);
+
+					debugLog("RpcErrorResult-02: " + JSON.stringify(result));
 
 					throw new Error(`RpcError: type=errorResponse-02`);
 				}
@@ -496,12 +500,16 @@ function getRpcDataWithParams(request, verifyingConnection=false) {
 					if (result0 && result0.name && result0.name == "RpcError") {
 						logStats(request.method, true, new Date().getTime() - startTime, false);
 
+						debugLog("RpcErrorResult-03: " + JSON.stringify(result0));
+
 						throw new Error(`RpcError: type=errorResponse-03`);
 					}
 				}
 
-				if (result.name && result.name == "RpcError") {
+				if (result && result.name && result.name == "RpcError") {
 					logStats(request.method, true, new Date().getTime() - startTime, false);
+
+					debugLog("RpcErrorResult-04: " + JSON.stringify(result));
 
 					throw new Error(`RpcError: type=errorResponse-04`);
 				}
