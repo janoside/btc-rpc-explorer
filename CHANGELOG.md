@@ -1,3 +1,10 @@
+##### Unreleased
+
+* Fix for difficulty adjustment estimate
+* Updated miners, including identification of "Patoshi"-pattern blocks
+* Error handling improvements
+
+
 ##### v3.2.0
 ###### 2021-08-10
 
