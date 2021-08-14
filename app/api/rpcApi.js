@@ -229,7 +229,7 @@ function getBlockByHash(blockHash) {
 			return getRawTransaction(block.tx[0], blockHash).then(function(tx) {
 				block.coinbaseTx = tx;
 				block.totalFees = utils.getBlockTotalFeesFromCoinbaseTxAndBlockHeight(tx, block.height);
-				block.miner = utils.getMinerFromCoinbaseTx(tx);
+				block.miner = utils.identifyMiner(tx, block.height);
 				return block;
 			})
 		}).catch(function(err) {
