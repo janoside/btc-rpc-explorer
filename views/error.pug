@@ -19,12 +19,13 @@ block content
 			.mb-0 All of these parameters need to be specified in a ".env" file or via commandline parameters. See the <a href="https://github.com/janoside/btc-rpc-explorer">project homepage</a> to review how to configure this explorer.
 
 	else if (message)
-		pre
-			code.json.bg-content !{message}
+		+contentSection
+			| #{message}
+
 	else
 		p Unknown error
 
-	if (error)
-		h2 #{error.status}
-		pre
-			code.json.bg-content #{error.stack}
+	if (error && error.stack)
+		+contentSection(error.status ? `Status: ${error.status}` : null)
+			pre
+				code.json #{error.stack}

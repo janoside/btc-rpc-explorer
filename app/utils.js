@@ -848,7 +848,7 @@ const safePromise = (uid, f) => {
 
 global.errorStats = {};
 
-function logError(errorId, err, optionalUserData = null) {
+function logError(errorId, err, optionalUserData = null, logStacktrace=true) {
 	if (!global.errorLog) {
 		global.errorLog = [];
 	}
@@ -888,7 +888,7 @@ function logError(errorId, err, optionalUserData = null) {
 
 	debugErrorLog("Error " + errorId + ": " + err + ", json: " + JSON.stringify(err) + (optionalUserData != null ? (", userData: " + optionalUserData + " (json: " + JSON.stringify(optionalUserData) + ")") : ""));
 	
-	if (err && err.stack) {
+	if (err && err.stack && logStacktrace) {
 		debugErrorVerboseLog("Stack: " + err.stack);
 	}
 
