@@ -870,7 +870,7 @@ const sharedErrorHandler = (req, err) => {
 		const crawler = utils.getCrawlerFromUserAgentString(userAgent);
 		const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress; 
 
-		const attributes = { path:path, ip:ip, userAgent:userAgent };
+		const attributes = { path:path };
 
 		if (crawler) {
 			attributes.crawler = crawler;
