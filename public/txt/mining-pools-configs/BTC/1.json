@@ -542,7 +542,7 @@
         },
         "MARA Pool": {
             "name": "MARA Pool",
-            "link": "https://marathondh.com"
+            "link": "https://marapool.com"
         }
     },
     "payout_addresses" : {
@@ -1138,6 +1138,10 @@
             "name" : "Binance Pool",
             "link" : "https://pool.binance.com/"
         },
+        "1JvXhnHCi6XqcanvrZJ5s2Qiv4tsmm2UMy": {
+            "name" : "Binance Pool",
+            "link" : "https://pool.binance.com/"
+        },
         "34Jpa4Eu3ApoPVUKNTN2WeuXVVq1jzxgPi": {
             "name" : "Lubian.com",
             "link" : "http://www.lubian.com/"
@@ -1190,9 +1194,9 @@
             "name" : "F2Pool",
             "link" : "https://www.f2pool.com/"
         },
-        "3LC8dDKyBsrWPfzhXyt7aAyjXxGYkfDdHu": {
+        "3D72db1KMCnj7FL7MBsmxTw81z2bVu4UN5": {
             "name": "MARA Pool",
-            "link": "https://marathondh.com"
+            "link": "https://marapool.com"
         }
     }
 }
