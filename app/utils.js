@@ -848,7 +848,7 @@ const safePromise = (uid, f) => {
 
 global.errorStats = {};
 
-function logError(errorId, err, optionalUserData = null, logStacktrace=true) {
+function logError(errorId, err, optionalUserData = {}, logStacktrace=true) {
 	if (!global.errorLog) {
 		global.errorLog = [];
 	}
@@ -859,6 +859,10 @@ function logError(errorId, err, optionalUserData = null, logStacktrace=true) {
 			firstSeen: new Date().getTime(),
 			properties: {}
 		};
+	}
+
+	if (optionalUserData && error.message) {
+		optionalUserData.errorMsg = error.message;
 	}
 
 	if (optionalUserData) {
