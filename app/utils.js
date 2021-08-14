@@ -861,8 +861,8 @@ function logError(errorId, err, optionalUserData = {}, logStacktrace=true) {
 		};
 	}
 
-	if (optionalUserData && error.message) {
-		optionalUserData.errorMsg = error.message;
+	if (optionalUserData && err.message) {
+		optionalUserData.errorMsg = err.message;
 	}
 
 	if (optionalUserData) {
