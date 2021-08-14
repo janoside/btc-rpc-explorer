@@ -20,19 +20,31 @@
             "name" : "BTC.com",
             "link" : "https://pool.btc.com"
         },
+        "BTCPool" : {
+            "name" : "BTCPool (unidentified)",
+            "link" : "https://github.com/0xB10C/known-mining-pools/issues/28"
+        },
         "BITFARMS": {
             "name": "Bitfarms",
             "link": "https://www.bitarms.io/"
         },
+        "Ukrpool.com": {
+            "name": "UKRPool",
+            "link": "https://ukrpool.com/"
+        },
         "/Huobi/": {
-            "name": "Huobi.pool",
+            "name": "Huobi Pool",
             "link": "https://www.hpt.com/"
         },
         "/HuoBi/": {
-            "name": "Huobi.pool",
+            "name": "Huobi Pool",
             "link": "https://www.hpt.com/"
         },
         "/E2M & BTC.TOP/": {
+            "name": "WAYI.CN",
+            "link": "https://www.easy2mine.com/"
+        },
+        "/E2M/": {
             "name": "WAYI.CN",
             "link": "http://www.easy2mine.com/"
         },
@@ -40,9 +52,13 @@
             "name": "CanoePool",
             "link": "https://www.canoepool.com/"
         },
+        "/ArkPool/": {
+            "name": "ArkPool",
+            "link": ""
+        },
         "/BTC.TOP/": {
             "name" : "BTC.TOP",
-            "link" : "http://www.btc.top/"
+            "link" : "https://www.btc.top/"
         },
         "pool.bitcoin.com" : {
             "name" : "Bitcoin.com",
@@ -50,19 +66,19 @@
         },
         "Mined By 175btc.com" : {
             "name" : "175btc",
-            "link" : "http://www.175btc.com/"
+            "link" : "https://www.175btc.com/"
         },
         "/mined by gbminers/" : {
             "name" : "GBMiners",
-            "link" : "http://gbminers.com/"
+            "link" : "https://gbminers.com/"
         },
         "/A-XBT/" : {
             "name" : "A-XBT",
-            "link" : "http://www.a-xbt.com"
+            "link" : "https://www.a-xbt.com"
         },
         "ASICMiner" : {
             "name" : "ASICMiner",
-            "link" : "http://www.asicminer.co"
+            "link" : "https://www.asicminer.co"
         },
         "BitMinter" : {
             "name" : "BitMinter",
@@ -74,27 +90,27 @@
         },
         "btcserv" : {
             "name" : "BTCServ",
-            "link" : "http://btcserv.net/"
+            "link" : "https://btcserv.net/"
         },
         "simplecoin" : {
             "name" : "simplecoin.us",
-            "link" : "http://simplecoin.us/"
+            "link" : "https://simplecoin.us/"
         },
         "BTC Guild" : {
             "name" : "BTC Guild",
-            "link" : "http://www.btcguild.com/"
+            "link" : "https://www.btcguild.com/"
         },
         "Eligius" : {
             "name" : "Eligius",
-            "link" : "http://eligius.st/"
+            "link" : "https://eligius.st/"
         },
         "ozco.in" : {
             "name" : "OzCoin",
-            "link" : "http://ozcoin.net/"
+            "link" : "https://ozcoin.net/"
         },
         "ozcoin" : {
             "name" : "OzCoin",
-            "link" : "http://ozcoin.net/"
+            "link" : "https://ozcoin.net/"
         },
         "EMC" : {
             "name" : "EclipseMC",
@@ -102,7 +118,7 @@
         },
         "MaxBTC" : {
             "name" : "MaxBTC",
-            "link" : "http://maxbtc.com/"
+            "link" : "https://maxbtc.com/"
         },
         "triplemining" : {
             "name" : "TripleMining",
@@ -114,7 +130,7 @@
         },
         "CoinLab" : {
             "name" : "CoinLab",
-            "link" : "http://coinlab.com/"
+            "link" : "https://coinlab.com/"
         },
         "50BTC" : {
             "name" : "50BTC",
@@ -124,17 +140,21 @@
             "name" : "GHash.IO",
             "link" : "https://ghash.io/"
         },
+        "MARA Pool" : {
+            "name" : "MARA Pool",
+            "link" : "https://marathondh.com/"
+        },
         "st mining corp" : {
             "name" : "ST Mining Corp",
             "link" : "https://bitcointalk.org/index.php?topic=77000.msg3207708#msg3207708"
         },
         "bitparking" : {
             "name" : "Bitparking",
-            "link" : "http://mmpool.bitparking.com/"
+            "link" : "https://mmpool.bitparking.com/"
         },
         "mmpool" : {
             "name" : "mmpool",
-            "link" : "http://mmpool.org/pool"
+            "link" : "https://mmpool.org/pool"
         },
         "by polmine.pl" : {
             "name" : "Polmine",
@@ -162,11 +182,11 @@
         },
         "HHTT" : {
             "name" : "HHTT",
-            "link" : "http://hhtt.1209k.com/"
+            "link" : "https://hhtt.1209k.com/"
         },
         "megabigpower.com" : {
             "name" : "MegaBigPower",
-            "link" : "http://megabigpower.com/"
+            "link" : "https://megabigpower.com/"
         },
         "/mtred/" : {
             "name" : "Mt Red",
@@ -174,15 +194,15 @@
         },
         "nmcbit.com" : {
             "name" : "NMCbit",
-            "link" : "http://nmcbit.com/"
+            "link" : "https://nmcbit.com/"
         },
         "yourbtc.net" : {
             "name" : "Yourbtc.net",
-            "link" : "http://yourbtc.net/"
+            "link" : "https://yourbtc.net/"
         },
         "Give-Me-Coins" : {
             "name" : "Give Me Coins",
-            "link" : "http://give-me-coins.com/"
+            "link" : "https://give-me-coins.com/"
         },
         "/slush/" : {
            "name" : "SlushPool",
@@ -202,7 +222,7 @@
         },
         "Mined by MultiCoin.co" : {
             "name" : "MultiCoin.co",
-            "link" : "http://multicoin.co"
+            "link" : "https://multicoin.co"
         },
         "bcpool.io" : {
             "name" : "bcpool.io",
@@ -210,7 +230,7 @@
         },
         "cointerra" : {
             "name" : "Cointerra",
-            "link" : "http://cointerra.com/"
+            "link" : "https://cointerra.com/"
         },
         "Kano" : {
             "name" : "KanoPool",
@@ -218,11 +238,15 @@
         },
         "/solo.ckpool.org/" : {
             "name" : "Solo CK",
-            "link" : "http://solo.ckpool.org/"
+            "link" : "https://solo.ckpool.org/"
+        },
+        "ckpool" : {
+            "name" : "CKPool",
+            "link" : "https://ckpool.org"
         },
         "/ckpool.org/" : {
             "name" : "CKPool",
-            "link" : "http://ckpool.org"
+            "link" : "https://ckpool.org"
         },
         "/NiceHashSolo" : {
             "name" : "NiceHash",
@@ -266,15 +290,15 @@
         },
         "Bitsolo Pool" : {
             "name" : "Bitsolo",
-            "link" : "http://bitsolo.net/"
+            "link" : "https://bitsolo.net/"
         },
         "/BitFury/" : {
             "name" : "BitFury",
-            "link" : "http://bitfury.com/"
+            "link" : "https://bitfury.com/"
         },
         "/Bitfury/" : {
             "name" : "BitFury",
-            "link" : "http://bitfury.com/"
+            "link" : "https://bitfury.com/"
         },
         "/pool34/" : {
             "name" : "21 Inc.",
@@ -282,23 +306,23 @@
         },
         "/agentD/" : {
             "name" : "digitalBTC",
-            "link" : "http://digitalbtc.com/"
+            "link" : "https://digitalbtc.com/"
         },
         "/八宝池 8baochi.com/" : {
             "name" : "8baochi",
-            "link" : "http://8baochi.com/"
+            "link" : "https://8baochi.com/"
         },
         "myBTCcoin Pool" : {
             "name" : "myBTCcoin Pool",
-            "link" : "http://mybtccoin.com/"
+            "link" : "https://mybtccoin.com/"
         },
         "TBDice" : {
             "name" : "TBDice",
-            "link" : "http://tbdice.org/"
+            "link" : "https://tbdice.org/"
         },
         "HASHPOOL" : {
             "name" : "HASHPOOL",
-            "link" : "http://hashpool.com/"
+            "link" : "https://hashpool.com/"
         },
         "/Nexious/" : {
             "name" : "Nexious",
@@ -306,7 +330,7 @@
         },
         "/bravo-mining/" : {
             "name" : "Bravo Mining",
-            "link" : "http://www.bravo-mining.com/"
+            "link" : "https://www.bravo-mining.com/"
         },
         "/HotPool/" : {
             "name": "HotPool",
@@ -318,11 +342,11 @@
         },
         "/BCMonster/" : {
             "name": "BCMonster",
-            "link": "http://www.bcmonster.com/"
+            "link": "https://www.bcmonster.com/"
         },
         "Mined by 1hash.com" : {
             "name": "1Hash",
-            "link": "http://www.1hash.com/"
+            "link": "https://www.1hash.com/"
         },
         "/HaoBTC/" : {
             "name": "Bixin",
@@ -346,7 +370,7 @@
         },
         "/ViaBTC/" : {
             "name": "ViaBTC",
-            "link": "http://viabtc.com/"
+            "link": "https://viabtc.com/"
         },
         "/ConnectBTC - Home for Miners/" : {
             "name" : "ConnectBTC",
@@ -366,11 +390,11 @@
         },
         "/DCExploration/" : {
             "name" : "DCExploration",
-            "link" : "http://dcexploration.cn"
+            "link" : "https://dcexploration.cn"
         },
         "/DCEX/" : {
             "name" : "DCEX",
-            "link" : "http://dcexploration.cn"
+            "link" : "https://dcexploration.cn"
         },
         "/BTPOOL/" : {
             "name" : "BTPOOL",
@@ -390,11 +414,11 @@
         },
         "/phash.io/" : {
             "name": "PHash.IO",
-            "link": "http://phash.io"
+            "link": "https://phash.io"
         },
         "/phash.cn/" : {
             "name": "PHash.IO",
-            "link": "http://phash.io"
+            "link": "https://phash.io"
         },
         "/RigPool.com/" : {
             "name": "RigPool",
@@ -402,7 +426,7 @@
         },
         "/haozhuzhu/" : {
             "name": "HAOZHUZHU",
-            "link": "http://haozhuzhu.com/"
+            "link": "https://haozhuzhu.com/"
         },
         "/$Mined by 7pool.com/" : {
             "name": "7pool",
@@ -418,7 +442,7 @@
         },
         "/DPOOL.TOP/": {
             "name" : "DPOOL",
-            "link" : "http://www.dpool.top/"
+            "link" : "https://www.dpool.top/"
         },
         "/Rawpool.com/": {
             "name" : "Rawpool.com",
@@ -426,7 +450,7 @@
         },
         "/haominer/": {
             "name" : "haominer",
-            "link" : "http://haominer.com/"
+            "link" : "https://haominer.com/"
         },
         "/Helix/": {
             "name": "Helix",
@@ -466,7 +490,7 @@
         },
         "/Tangpool/": {
             "name" : "Tangpool",
-            "link" : "http://www.tangpool.com/"
+            "link" : "https://www.tangpool.com/"
         },
         "/bytepool.com/": {
             "name" : "BytePool",
@@ -488,6 +512,14 @@
             "name" : "Binance Pool",
             "link" : "https://pool.binance.com/"
         },
+        "binance.com/": {
+            "name" : "Binance Pool",
+            "link" : "https://pool.binance.com/"
+        },
+        "binance/": {
+            "name" : "Binance Pool",
+            "link" : "https://pool.binance.com/"
+        },
         "/Minerium.com/" : {
             "name" : "Minerium",
             "link" : "https://www.minerium.com/"
@@ -498,14 +530,14 @@
         },
         "/lubian.com/" : {
             "name" : "Lubian.com",
-            "link" : "http://www.lubian.com/"
+            "link" : "https://www.lubian.com/"
         },
         "/hash.okkong.com/" : {
             "name" : "OKKONG",
             "link" : "https://hash.okkong.com"
         },
-        "/AAOPOOL/" : {
-            "name" : "AAO Pool",
+        "/TMSPOOL/" : {
+            "name" : "TMSPool",
             "link" : "https://btc.tmspool.top"
         },
         "/one_more_mcd/" : {
@@ -532,17 +564,13 @@
             "name": "SBI Crypto",
             "link": "https://www.sbicrypto.com"
        	},
-        "/ArkPool/": {
-            "name": "ArkPool",
-            "link": "https://www.arkpool.com/"
+        "TogetherPool": {
+            "name": "TogetherPool",
+            "link": "https://www.togetherpool.com"
         },
-        "/PureBTC.COM/": {
-            "name": "PureBTC.COM",
-            "link": "https://purebtc.com"
-        },
-        "MARA Pool": {
-            "name": "MARA Pool",
-            "link": "https://marapool.com"
+        "Bitdeer": {
+            "name": "Bitdeer",
+            "link": "https://www.bitdeer.com/"
         }
     },
     "payout_addresses" : {
@@ -590,6 +618,10 @@
             "name" : "Polmine",
             "link" : "https://polmine.pl/"
         },
+        "16jnC5hVyjk4gE6BJtLqkkyfZHqXCB5PBu" : {
+            "name" : "Polmine",
+            "link" : "https://polmine.pl/"
+        },
         "1CK6KHY6MHgYvmRQ4PAafKYDrg1ejbH1cE" : {
             "name" : "SlushPool",
             "link" : "https://slushpool.com/"
@@ -598,17 +630,29 @@
             "name" : "SlushPool",
             "link" : "https://slushpool.com/"
         },
+        "3P8sR3K8wAk3bom7tqpr5VrzCz9TVYNTQd" : {
+            "name" : "CKPool",
+            "link" : "https://ckpool.org"
+        },
         "1AcAj9p6zJn4xLXdvmdiuPCtY7YkBPTAJo" : {
             "name" : "BitFury",
-            "link" : "http://bitfury.com/"
+            "link" : "https://bitfury.com/"
+        },
+        "1Nd99aNgYWpKkqcqSMgWtdtVDadewAS5F7" : {
+            "name" : "BitFury",
+            "link" : "https://bitfury.com/"
+        },
+        "1Ca1KNQQo8akbrwTjjXuk8aikvC2pwodU2" : {
+            "name" : "BTCPool",
+            "link" : ""
         },
         "1BX5YoLwvqzvVwSrdD4dC32vbouHQn2tuF" : {
             "name" : "Cointerra",
-            "link" : "http://cointerra.com/"
+            "link" : "https://cointerra.com/"
         },
         "19PkHafEN18mquJ9ChwZt5YEFoCdPP5vYB" : {
             "name" : "BitMinter",
-            "link" : "http://bitminter.com/"
+            "link" : "https://bitminter.com/"
         },
         "15xiShqUqerfjFdyfgBH1K7Gwp6cbYmsTW" : {
             "name" : "EclipseMC",
@@ -616,35 +660,35 @@
         },
         "1BwZeHJo7b7M2op7VDfYnsmcpXsUYEcVHm" : {
             "name" : "BTC Nuggets",
-            "link" : "http://104.197.8.250/"
+            "link" : "https://104.197.8.250/"
         },
         "1KFHE7w8BhaENAswwryaoccDb6qcT6DbYY" : {
             "name" : "F2Pool",
             "link" : "https://www.f2pool.com/"
         },
+        "bc1qf274x7penhcd8hsv3jcmwa5xxzjl2a6pa9pxwm" : {
+            "name" : "F2Pool",
+            "link" : "https://www.f2pool.com/"
+        },
+        "bc1q7wedv4zdu5smt3shljpu5mgns48jn299mukymc" : {
+            "name" : "F2Pool",
+            "link" : "https://www.f2pool.com/"
+        },
         "3HuobiNg2wHjdPU2mQczL9on8WF7hZmaGd" : {
-            "name" : "Huobi.pool",
+            "name" : "Huobi Pool",
             "link" : "https://www.hpt.com/"
         },
         "18Zcyxqna6h7Z7bRjhKvGpr8HSfieQWXqj" : {
-            "name" : "Huobi.pool",
+            "name" : "Huobi Pool",
             "link" : "https://www.hpt.com/"
         },
         "1EepjXgvWUoRyNvuLSAxjiqZ1QqKGDANLW" : {
-            "name" : "Huobi.pool",
+            "name" : "Huobi Pool",
             "link" : "https://www.hpt.com/"
         },
         "1MvYASoHjqynMaMnP7SBmenyEWiLsTqoU6" : {
-            "name" : "Huobi.pool",
+            "name" : "Huobi Pool",
             "link" : "https://www.hpt.com/"
-        },
-        "1BDbsWi3Mrcjp1wdop3PWFNCNZtu4R7Hjy" : {
-            "name" : "EMCDPool",
-            "link" : "https://pool.emcd.io"
-        },
-        "12QVFmJH2b4455YUHkMpEnWLeRY3eJ4Jb5" : {
-            "name" : "AAO Pool",
-            "link" : "https://btc.tmspool.top "
         },
         "1ALA5v7h49QT7WYLcRsxcXqXUqEqaWmkvw" : {
             "name" : "CloudHashing",
@@ -654,9 +698,9 @@
             "name" : "MegaBigPower",
             "link" : "https://megabigpower.com"
         },
-        "1HTejfsPZQGi3afCMEZTn2xdmoNzp13n3F" : {
-            "name" : "Bitalo",
-            "link" : "https://bitalo.com/mining"
+        "18xf3MQvdVzKhyRvog8Q5P5THWvSjJUkzf" : {
+            "name" : "MegaBigPower",
+            "link" : "https://megabigpower.com"
         },
         "1JLRXD8rjRgQtTS9MvfQALfHgGWau9L9ky" : {
             "name" : "BWPool",
@@ -664,7 +708,7 @@
         },
         "18zRehBcA2YkYvsC7dfQiFJNyjmWvXsvon" : {
             "name" : "Bitsolo",
-            "link" : "http://bitsolo.net/"
+            "link" : "https://bitsolo.net/"
         },
         "155fzsEBHy9Ri2bMQ8uuuR3tv1YzcDywd4" : {
             "name" : "BitClub",
@@ -672,7 +716,7 @@
         },
         "14yfxkcpHnju97pecpM7fjuTkVdtbkcfE6" : {
             "name" : "BitFury",
-            "link" : "http://bitfury.com/"
+            "link" : "https://bitfury.com/"
         },
         "15rQXUSBQRubShPpiJfDLxmwS8ze2RUm4z" : {
             "name" : "21 Inc.",
@@ -688,7 +732,7 @@
         },
         "1MimPd6LrPKGftPRHWdfk8S3KYBfN4ELnD" : {
             "name" : "digitalBTC",
-            "link" : "http://digitalbtc.com/"
+            "link" : "https://digitalbtc.com/"
         },
         "1NY15MK947MLzmPUa2gL7UgyR8prLh2xfu" : {
             "name" : "digitalX Mintsy",
@@ -696,51 +740,43 @@
         },
         "1P4B6rx1js8TaEDXvZvtrkiEb9XrJgMQ19" : {
             "name" : "Telco 214",
-            "link" : "http://www.telco214.com/"
+            "link" : "https://www.telco214.com/"
         },
         "1MoYfV4U61wqTPTHCyedzFmvf2o3uys2Ua" : {
             "name" : "Telco 214",
-            "link" : "http://www.telco214.com/"
+            "link" : "https://www.telco214.com/"
         },
         "1GaKSh2t396nfSg5Ku2J3Yn1vfVsXrGuH5" : {
             "name" : "Telco 214",
-            "link" : "http://www.telco214.com/"
+            "link" : "https://www.telco214.com/"
         },
         "1AsEJU4ht5wR7BzV6xsNQpwi5qRx4qH1ac" : {
             "name" : "Telco 214",
-            "link" : "http://www.telco214.com/"
+            "link" : "https://www.telco214.com/"
         },
         "18ikmzPqk721ZNvWhDos1UL4H29w352Kj5" : {
             "name" : "Telco 214",
-            "link" : "http://www.telco214.com/"
+            "link" : "https://www.telco214.com/"
         },
         "1DXRoTT67mCbhdHHL1it4J1xsSZHHnFxYR" : {
             "name" : "Telco 214",
-            "link" : "http://www.telco214.com/"
+            "link" : "https://www.telco214.com/"
         },
         "152f1muMCNa7goXYhYAQC61hxEgGacmncB" : {
             "name" : "BTCC",
             "link" : "https://pool.btcc.com/"
         },
-        "1PmRrdp1YSkp1LxPyCfcmBHDEipG5X4eJB" : {
-            "name" : "BTC Pool Party",
-            "link" : "https://btcpoolparty.com/"
-        },
         "1Hk9gD8xMo2XBUhE73y5zXEM8xqgffTB5f" : {
             "name" : "8baochi",
-            "link" : "http://8baochi.com/"
+            "link" : "https://8baochi.com/"
         },
         "151T7r1MhizzJV6dskzzUkUdr7V8JxV2Dx" : {
             "name" : "myBTCcoin Pool",
-            "link" : "http://www.mybtccoin.com/"
+            "link" : "https://www.mybtccoin.com/"
         },
         "1MFsp2txCPwMMBJjNNeKaduGGs8Wi1Ce7X" : {
             "name" : "A-XBT",
-            "link" : "http://www.a-xbt.com/"
-        },
-        "1BUiW44WuJ2jiJgXiyxJVFMN8bc1GLdXRk" : {
-            "name" : "TBDice",
-            "link" : "http://tbdice.org/"
+            "link" : "https://www.a-xbt.com/"
         },
         "1MeffGLauEj2CZ18hRQqUauTXb9JAuLbGw" : {
             "name" : "Multipool",
@@ -748,7 +784,7 @@
         },
         "1qtKetXKgqa7j1KrB19HbvfRiNUncmakk" : {
             "name" : "transactioncoinmining",
-            "link" : "http://sha256.transactioncoinmining.com/"
+            "link" : "https://sha256.transactioncoinmining.com/"
         },
         "15MxzsutVroEE9XiDckLxUHTCDAEZgPZJi" : {
             "name" : "BTCDig",
@@ -760,11 +796,19 @@
         },
         "1AePMyovoijxvHuKhTqWvpaAkRCF4QswC6" : {
             "name" : "Tricky's BTC Pool",
-            "link" : "http://pool.wemine.uk/"
+            "link" : "https://pool.wemine.uk/"
         },
         "17judvK4AC2M6KhaBbAEGw8CTKc9Pg8wup" : {
             "name" : "HotPool",
             "link" : "https://hotpool.co/"
+        },
+        "1KTNEBhQdj81UhDkJaoe3r8VtAsrnmpmnS" : {
+            "name" : "MegaBigPower",
+            "link" : "https://megabigpower.com"
+        },
+        "17JJ3oZyF4ShQMGukDjpMWhmooCjEvoVVB" : {
+            "name" : "MegaBigPower",
+            "link" : "https://megabigpower.com"
         },
         "1jKSjMLnDNup6NPgCjveeP9tUn4YpT94Y" : {
             "name" : "BTCMP",
@@ -780,19 +824,19 @@
         },
         "1F1xcRt8H8Wa623KqmkEontwAAVqDSAWCV" : {
             "name" : "1Hash",
-            "link" : "http://www.1hash.com/"
+            "link" : "https://www.1hash.com/"
         },
         "1BRY8AD7vSNUEE75NjzfgiG18mWjGQSRuJ" : {
             "name" : "UNOMP",
-            "link" : "http://199.115.116.7:8925/"
+            "link" : "https://199.115.116.7:8925/"
         },
         "19RE4mz2UbDxDVougc6GGdoT4x5yXxwFq2" : {
             "name" : "Patels",
-            "link" : "http://patelsminingpool.com/"
+            "link" : "https://patelsminingpool.com/"
         },
         "197miJmttpCt2ubVs6DDtGBYFDroxHmvVB" : {
             "name" : "Patels",
-            "link" : "http://patelsminingpool.com/"
+            "link" : "https://patelsminingpool.com/"
         },
         "3NA8hsjfdgVkmmVS9moHmkZsVCoLxUkvvv" : {
             "name" : "BTC.com",
@@ -816,7 +860,7 @@
         },
         "18EPLvrs2UE11kWBB3ABS7Crwj5tTBYPoa" : {
             "name" : "GoGreenLight",
-            "link" : "http://www.gogreenlight.se/"
+            "link" : "https://www.gogreenlight.se/"
         },
         "1KPQkehgYAqwiC6UCcbojM3mbGjURrQJF2" : {
             "name" : "ConnectBTC",
@@ -836,7 +880,11 @@
         },
         "19qa95rTbDziNCS9EexUbh2hVY4viUU9tt" : {
             "name" : "HAOZHUZHU",
-            "link" : "http://haozhuzhu.com"
+            "link" : "https://haozhuzhu.com"
+        },
+        "125K2xfiBdae42gSKiCGwi85Frpy1vHmGj": {
+            "name": "UKRPool",
+            "link": "https://ukrpool.com/"
         },
         "1AZ6BkCo4zgTuuLpRStJH8iNsehXTMp456" : {
             "name" : "BitcoinIndia",
@@ -860,27 +908,23 @@
         },
         "13Sd8Y7nUao3z4bJFkZvCRXpFqHvLy49YY" : {
             "name" : "Telco 214",
-            "link" : "http://www.telco214.com"
-        },
-        "18hvMLisvfc58PvA5rHH7NsLN9CV5ddB2x" : {
-            "name" : "Telco 214",
-            "link" : "http://www.telco214.com"
+            "link" : "https://www.telco214.com"
         },
         "1BUhwvF9oo3qkaSjjPpWrUzQxXNjkHdMZF" : {
             "name" : "Telco 214",
-            "link" : "http://www.telco214.com"
+            "link" : "https://www.telco214.com"
         },
         "1CNq2FAw6S5JfBiDkjkYJUVNQwjoeY4Zfi" : {
             "name" : "Telco 214",
-            "link" : "http://www.telco214.com"
+            "link" : "https://www.telco214.com"
         },
         "1LXWA3EEEwPixQcyFWXKX2hWHpkDoLknZW" : {
             "name" : "Telco 214",
-            "link" : "http://www.telco214.com"
+            "link" : "https://www.telco214.com"
         },
         "14M1pQ5KKeqmDrmqKyZEnaxAGJfBPrfWvQ" : {
             "name" : "Telco 214",
-            "link" : "http://www.telco214.com"
+            "link" : "https://www.telco214.com"
         },
         "12znnESiJ3bgCLftwwrg9wzQKN8fJtoBDa" : {
             "name" : "shawnp0wers",
@@ -892,7 +936,11 @@
         },
         "1Hz96kJKF2HLPGY15JWLB5m9qGNxvt8tHJ" : {
             "name" : "BTC.TOP",
-            "link" : "http://btc.top"
+            "link" : "https://btc.top"
+        },
+        "3QLeXx1J9Tp3TBnQyHrhVxne9KqkAS9JSR" : {
+            "name" : "CN/TT",
+            "link" : ""
         },
         "1Afcpc2FpPnREU6i52K3cicmHdvYRAH9Wo" : {
             "name" : "CANOE",
@@ -904,7 +952,7 @@
         },
         "1E18BNyobcoiejcDYAz5SjbrzifNDEpM88" : {
             "name" : "BCMonster",
-            "link" : "http://www.bcmonster.com"
+            "link" : "https://www.bcmonster.com"
         },
         "1JLc3JxvpdL1g5zoX8sKLP4BkJQiwnJftU" : {
             "name" : "7pool",
@@ -914,21 +962,17 @@
             "name" : "MiningKings",
             "link" : "https://miningkings.com/"
         },
-        "1ApE99VM5RJzMRRtwd2JMgmkGabtJqoMEz" : {
-            "name" : "MiningKings",
-            "link" : "https://miningkings.com/"
-        },
         "1KGbsDDAgJN2HDNBjmMHp9828qATo5B9c9" : {
             "name" : "MiningKings",
             "link" : "https://miningkings.com/"
         },
         "1ACAgPuFFidYzPMXbiKptSrwT74Dg8hq2v" : {
             "name" : "DPOOL",
-            "link" : "http://www.dpool.top/"
+            "link" : "https://www.dpool.top/"
         },
-        "1FbBbv5oYqFKwiPm4CAqvAy8345n8AQ74b" : {
-            "name" : "Rawpool.com",
-            "link" : "https://www.rawpool.com/"
+        "1AM2fYfpY3ZeMeCKXmN66haoWxvB89pJUx" : {
+            "name" : "DPOOL",
+            "link" : "https://www.dpool.top/"
         },
         "1LsFmhnne74EmU4q4aobfxfrWY4wfMVd8w" : {
             "name" : "tiger",
@@ -946,13 +990,37 @@
             "name" : "Poolin",
             "link" : "https://www.poolin.com/"
         },
+        "35qGBQsRQb8CSUzcSWktMykeA6zm5iCEJJ" : {
+            "name" : "Poolin",
+            "link" : "https://www.poolin.com/"
+        },
+        "3DXfeMBimuvN3TWnQXDhr47P8M8yxMy9Pd" : {
+            "name" : "Poolin",
+            "link" : "https://www.poolin.com/"
+        },
+        "3LC8dDKyBsrWPfzhXyt7aAyjXxGYkfDdHu" : {
+            "name" : "MARA Pool",
+            "link" : "https://marathondh.com/"
+        },
+        "3D72db1KMCnj7FL7MBsmxTw81z2bVu4UN5" : {
+            "name" : "MARA Pool",
+            "link" : "https://marathondh.com/"
+        },
+        "3A2dwyVPbZc41vvmJVYxYsrkvNKnz2B4wN" : {
+            "name" : "Poolin",
+            "link" : "https://www.poolin.com/"
+        },
         "12Taz8FFXQ3E2AGn3ZW1SZM5bLnYGX4xR6" : {
             "name" : "Tangpool",
-            "link" : "http://www.tangpool.com/"
+            "link" : "https://www.tangpool.com/"
+        },
+        "1FeDtFhARLxjKUPPkQqEBL78tisenc9znS" : {
+            "name" : "BitFury",
+            "link" : "https://bitfury.com/"
         },
         "1M1Xw2rczxkF3p3wiNHaTmxvbpZZ7M6vaa" : {
-            "name": "1M1X",
-            "link": ""
+            "name": "Poolin",
+            "link": "https://www.poolin.com"
         },
         "39m5Wvn9ZqyhYmCYpsyHuGMt5YYw4Vmh1Z" : {
             "name": "BytePool",
@@ -998,10 +1066,6 @@
             "name": "AntPool",
             "link": "https://www.antpool.com/"
         },
-        "1CBqo1w3hmm9SCmbu2Yg6Ls4uLfkUqZJsx": {
-            "name": "AntPool",
-            "link": "https://www.antpool.com/"
-        },
         "1CyB8GJNEsNVXtPutB36nrDY3fMXBTzXSX": {
             "name": "AntPool",
             "link": "https://www.antpool.com/"
@@ -1022,15 +1086,7 @@
             "name": "AntPool",
             "link": "https://www.antpool.com/"
         },
-        "1B7ZBX2C39b26M9chHLURGSFTJA6DDQkZv": {
-            "name": "AntPool",
-            "link": "https://www.antpool.com/"
-        },
         "1NS4gbx1G2D5rc9PnvVsPys12nKxGiQg72": {
-            "name": "AntPool",
-            "link": "https://www.antpool.com/"
-        },
-        "1KmgBTL7cFmFFYTD7HcdkMcZXRcTkh2WwS": {
             "name": "AntPool",
             "link": "https://www.antpool.com/"
         },
@@ -1074,45 +1130,25 @@
             "name": "AntPool",
             "link": "https://www.antpool.com/"
         },
-        "1CZHhV67Qos4xXb8uYqvAGjK8Wq52woPi5": {
-            "name": "AntPool",
-            "link": "https://www.antpool.com/"
+        "3QYvfQoG9Gs9Vfvbpw6947muSqhoGagvF6": {
+            "name": "Rawpool",
+            "link": "https://www.rawpool.com"
         },
-        "1Pzf7qT7bBGouvnjRvtRD8VhTyqjX1NrJT": {
-            "name": "AntPool",
-            "link": "https://www.antpool.com/"
+        "35y82tEPDa2wm6tzkEacMG8GPPW7zbMj83": {
+            "name": "Rawpool",
+            "link": "https://www.rawpool.com"
         },
-        "3FaYVQF6wCMUB9NCeRe4tUp1zZx8qqM7H1": {
-            "name": "AntPool",
-            "link": "https://www.antpool.com/"
+        "3CLigLYNkrtoNgNcUwTaKoUSHCwr9W851W": {
+            "name": "Rawpool",
+            "link": "https://www.rawpool.com"
         },
-        "1MiQrT5sEKTUGNMbd9WS3yPPkSjWdpYA2r": {
-            "name": "AntPool",
-            "link": "https://www.antpool.com/"
+        "bc1qwlrsvgtn99rqp3fgaxq6f6jkgms80rnej0a8tc": {
+            "name": "TogetherPool",
+            "link": "https://www.togetherpool.com"
         },
-        "1H6ckqNWikmVT3wpN3X1BQ6b156Xc9nT2L": {
-            "name": "AntPool",
-            "link": "https://www.antpool.com/"
-        },
-        "1GT2N4dCufvbnTKMbS61QrQPN4SexCAFiH": {
-            "name": "AntPool",
-            "link": "https://www.antpool.com/"
-        },
-        "1GEG1JR81jvUXs7TMAuo3SPBHZrpJijcjt": {
-            "name": "AntPool",
-            "link": "https://www.antpool.com/"
-        },
-        "1FrHkVsW7csAYYaRbUUcrKSmv91hcQnsqQ": {
-            "name": "AntPool",
-            "link": "https://www.antpool.com/"
-        },
-        "1DQaDTefKPjHz3beLuo8KHRZF9t2Sc6foP": {
-            "name": "AntPool",
-            "link": "https://www.antpool.com/"
-        },
-        "1D9jw3QHNankXxtcGVihsDK7Z7THN6j7Pg": {
-            "name": "AntPool",
-            "link": "https://www.antpool.com/"
+        "1QEiAhdHdMhBgVbDM7zUXWGkNhgEEJ6uLd": {
+            "name": "ArkPool",
+            "link": ""
         },
         "12cKiMNhCtBhZRUBCnYXo8A4WQzMUtYjmR": {
             "name": "Sigmapool.com",
@@ -1134,69 +1170,21 @@
             "name" : "Binance Pool",
             "link" : "https://pool.binance.com/"
         },
-        "bc1qx9t2l3pyny2spqpqlye8svce70nppwtaxwdrp4": {
+        "1JvXhnHCi6XqcanvrZJ5s2Qiv4tsmm2UMy": {
             "name" : "Binance Pool",
             "link" : "https://pool.binance.com/"
         },
-        "1JvXhnHCi6XqcanvrZJ5s2Qiv4tsmm2UMy": {
+        "bc1qx9t2l3pyny2spqpqlye8svce70nppwtaxwdrp4": {
             "name" : "Binance Pool",
             "link" : "https://pool.binance.com/"
         },
         "34Jpa4Eu3ApoPVUKNTN2WeuXVVq1jzxgPi": {
             "name" : "Lubian.com",
-            "link" : "http://www.lubian.com/"
+            "link" : "https://www.lubian.com/"
         },
         "1FFxkVijzvUPUeHgkFjBk2Qw8j3wQY2cDw" : {
             "name" : "Foundry USA",
             "link" : "https://foundrydigital.com/"
-        },
-        "1QEiAhdHdMhBgVbDM7zUXWGkNhgEEJ6uLd": {
-            "name": "ArkPool",
-            "link": "https://www.arkpool.com/"
-        },
-        "147SwRQdpCfj5p8PnfsXV2SsVVpVcz3aPq": {
-            "name": "1THash",
-            "link": "https://www.1thash.top"
-        },
-        "15vgygQ7ZsWdvZpctmTZK4673QBHsos6Sh": {
-            "name": "1THash",
-            "link": "https://www.1thash.top"
-        },
-        "bc1qnnl503n04cqacpwvhr89qr70metxr79ht3n380": {
-            "name": "Rawpool",
-            "link": "https://www.rawpool.com"
-        },
-        "bc1qwlrsvgtn99rqp3fgaxq6f6jkgms80rnej0a8tc": {
-            "name": "Rawpool",
-            "link": "https://www.rawpool.com"
-        },
-        "bc1q8ej2g5uxdsg0jwl0mpl606qfjxgkyv3p29yf37": {
-            "name": "Rawpool",
-            "link": "https://www.rawpool.com"
-        },
-        "bc1qru8mtv3e3u7ms6ecjmwgeakdakclemvhnw00q9": {
-            "name": "Rawpool",
-            "link": "https://www.rawpool.com"
-        },
-        "3QYvfQoG9Gs9Vfvbpw6947muSqhoGagvF6": {
-            "name": "Rawpool",
-            "link": "https://www.rawpool.com"
-        },
-        "35y82tEPDa2wm6tzkEacMG8GPPW7zbMj83": {
-            "name": "Rawpool",
-            "link": "https://www.rawpool.com"
-        },
-        "3CLigLYNkrtoNgNcUwTaKoUSHCwr9W851W": {
-            "name": "Rawpool",
-            "link": "https://www.rawpool.com"
-        },
-        "bc1qf274x7penhcd8hsv3jcmwa5xxzjl2a6pa9pxwm": {
-            "name" : "F2Pool",
-            "link" : "https://www.f2pool.com/"
-        },
-        "3D72db1KMCnj7FL7MBsmxTw81z2bVu4UN5": {
-            "name": "MARA Pool",
-            "link": "https://marapool.com"
         }
     }
 }
