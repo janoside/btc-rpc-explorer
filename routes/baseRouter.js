@@ -1441,14 +1441,6 @@ router.get("/tx/:transactionId", asyncHandler(async (req, res, next) => {
 				if (res.locals.utxos[vout] == null) {
 					outpoints.push([txid, parseInt(vout)]);
 				}
-				//spending_promises.push(new Promise(async (resolve, reject) => {
-				//	if (res.locals.utxos[vout] == null) {
-				//		const spent = await electrumAddressApi.lookupOutpointTx(txid, parseInt(vout));
-				//		resolve(spent);
-				//	} else {
-				//		resolve(false);
-				//	}
-				//}));
 			}
 
 			const spent_outpoints = await electrumAddressApi.lookupOutpointsTx(outpoints);
@@ -1463,9 +1455,6 @@ router.get("/tx/:transactionId", asyncHandler(async (req, res, next) => {
 				}
 			}
 			res.locals.spendings = spendings_status
-			//await Promise.all(spending_promises).then((outpoint_results) => {
-			//	res.locals.spendings = outpoint_results;
-			//});
 		}
 
 		if (global.specialTransactions && global.specialTransactions[txid]) {
