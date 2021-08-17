@@ -1436,21 +1436,36 @@ router.get("/tx/:transactionId", asyncHandler(async (req, res, next) => {
 
 		// Electrs 0.9.0 support spending transaction lookup for an outpoint
 		if ((config.addressApi == "electrum" || config.addressApi == "electrumx")  && config.electrumTxIndex) {
-			let spending_promises = [];
+			let outpoints = [];
 			for (const vout in tx.vout) {
-				spending_promises.push(new Promise(async (resolve, reject) => {
-					if (res.locals.utxos[vout] == null) {
-						const spent = await electrumAddressApi.lookupOutpointTx(txid, parseInt(vout));
-						resolve(spent);
-					} else {
-						resolve(false);
-					}
-				}));
+				if (res.locals.utxos[vout] == null) {
+					outpoints.push([txid, parseInt(vout)]);
+				}
+				//spending_promises.push(new Promise(async (resolve, reject) => {
+				//	if (res.locals.utxos[vout] == null) {
+				//		const spent = await electrumAddressApi.lookupOutpointTx(txid, parseInt(vout));
+				//		resolve(spent);
+				//	} else {
+				//		resolve(false);
+				//	}
+				//}));
 			}
 
-			await Promise.all(spending_promises).then((outpoint_results) => {
-				res.locals.spendings = outpoint_results;
-			});
+			const spent_outpoints = await electrumAddressApi.lookupOutpointsTx(outpoints);
+			let spendings_status = [];
+			let spent_idx = 0;
+			for (const vout in tx.vout) {
+				if (res.locals.utxos[vout] == null) {
+					spendings_status.push(spent_outpoints[spent_idx].result);
+					++spent_idx;
+				} else {
+					spendings_status.push(false)
+				}
+			}
+			res.locals.spendings = spendings_status
+			//await Promise.all(spending_promises).then((outpoint_results) => {
+			//	res.locals.spendings = outpoint_results;
+			//});
 		}
 
 		if (global.specialTransactions && global.specialTransactions[txid]) {

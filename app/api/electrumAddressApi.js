@@ -355,27 +355,52 @@ function lookupTxBlockHash(txid) {
 
 // Lookup the spending transaction and height of a given transaction output. Only works with Electrum 1.5 protocol, ElectRS 0.9.0 does not implement subscriptions
 // but can return the transaction spending the given outpoint
-function lookupOutpointTx(txid, vout) {
+function lookupOutpointsTx(outpoints) {
 	if (electrumClients.length == 0) {
 		return Promise.reject({ error: "Not supported by Electrum 1.4", userText: noConnectionsErrorText });
 	}
 
+	if (outpoints.length == 0) {
+		return Promise.resolve(null);
+	}
 	return runOnAllServers(function(electrumClient) {
-		return electrumClient.request('blockchain.outpoint.subscribe', [txid, vout]);
-	}).then(function(results) {
-		var spend_infos = results[0].result;
-		runOnAllServers(function(electrumClient) {
-			return electrumClient.request('blockchain.outpoint.unsubscribe', [txid, vout]) //will fail until subscriptions for outpoint are implemented in ElectRS
-		});
-		if (results.slice(1).every(({ result }) => result == spend_infos)) {
-			if (spend_infos.length < 2) {
-				return false;
-			} else {
-				return spend_infos;
+		return new Promise((resolve, reject) => {
+			let contents = [];
+			let arguments_far_calls = {};
+			for (let outpoint of outpoints) {
+				const id = ++electrumClient.id;
+				const request = utils.makeRequest('blockchain.outpoint.subscribe', outpoint, id);
+				contents.push(request);
+				arguments_far_calls[id] = outpoint;
 			}
-		} else {
-			return Promise.reject({conflictedResults:results});
-		}
+			const content = '[' + contents.join(',') + ']';
+			const promise = utils.createPromiseResultBatch(resolve, reject, arguments_far_calls);
+			electrumClient.callback_message_queue[electrumClient.id] = promise;
+			electrumClient.conn.write(content + '\n');
+		});
+	}).then(function(results) {
+		runOnAllServers(function(electrumClient) {
+			return new Promise((resolve, reject) => {
+                        	let contents = [];
+                        	let arguments_far_calls = {};
+                        	for (let outpoint of outpoints) {
+                        	       	const id = ++electrumClient.id;
+                               		const request = utils.makeRequest('blockchain.outpoint.unsubscribe', outpoint, id);
+                               		contents.push(request);
+					arguments_far_calls[id] = outpoint;
+				}
+                        	const content = '[' + contents.join(',') + ']';
+				const promise = utils.createPromiseResultBatch(resolve, reject, arguments_far_calls);
+                        	electrumClient.callback_message_queue[electrumClient.id] = promise;
+                        	electrumClient.conn.write(content + '\n');
+			});
+		});
+		const spend_infos = results[0].result;
+		if (results.slice(1).every(({ result }) => result == spend_infos)) {
+                        return spend_infos;
+                } else {
+                        return Promise.reject({conflictedResults:results});
+                }
 	});
 }
 
@@ -406,6 +431,6 @@ module.exports = {
 	connectToServers: connectToServers,
 	getAddressDetails: getAddressDetails,
 	lookupTxBlockHash: lookupTxBlockHash,
-	lookupOutpointTx: lookupOutpointTx,
+	lookupOutpointsTx: lookupOutpointsTx,
 };
 
