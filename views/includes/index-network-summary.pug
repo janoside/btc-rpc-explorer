@@ -11,13 +11,13 @@ if (exchangeRates || networkVolume)
 		+summaryItem("Exchange Rate")
 			- getcurrentcmc = utils.getcurrentcmc();
 			//-- var getwcnprice = getcurrentcmc[0] +' BTC'+'('+'$' + getcurrentcmc[1]+')';
-			- var getwcnprice_usd = '$' + getcurrentcmc[1];
+			- var getwcnprice_usd = parseFloat(getcurrentcmc[1]).toFixed(4);
 			- var getwcnprice_btc = getcurrentcmc[0] +" BTC";
-			span #{getwcnprice_usd} 
+			span $ #{getwcnprice_usd} 
 			<span style="font-size:14px;font-weight: bold;color:grey;"> = #{getwcnprice_btc}</span>
 		+summaryItem("Market Cap")
-			- var getwcncapprice = '$' + getcurrentcmc[2];
-			span #{getwcncapprice}					
+			- var getwcncapprice = parseFloat(getcurrentcmc[2]).toFixed(2);
+			span $ #{parseFloat(getwcncapprice).toLocaleString()}					
 if (exchangeRates)
 	+contentSection("Market")
 		- var colCount = 3 + (networkVolume ? 1 : 0) + (goldExchangeRates ? 1 : 0);
