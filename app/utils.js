@@ -92,12 +92,58 @@ const ipCache = {
 };
 
 // Updated Current Supply for WCN
+function getcurrentcmc() {
+	var arrresult = [];
+	
+	var currentsupply = 0;
+	var totalcurrentsupply = 0;
+	var fs = require('fs');
+	var request = require('request');
+	//-----
+	try {  
+		var data = fs.readFileSync('/root/explorer/supply.log', 'utf8');
+		//console.log("Read Total Supply:"+ data.toString());
+		totalcurrentsupply = (data/100000000);
+	} catch(e) {
+		console.log('Error:', e.stack);
+	}
+	currentsupply = totalcurrentsupply; 
+	console.log('CMC Total Supply: '+ currentsupply);
+	//-----
+	request('http://api.widecoin.org:1123/getprice', function (error, response, body) {
+	  if (!error && response.statusCode == 200) {
+		 var getjson = JSON.parse(body);
+		 console.log(getjson.result.price_usd);
+		 var formatcapprice = (currentsupply*getjson.result.price_usd).toFixed(0).replace(/\d(?=(\d{3})+\.)/g, '$&,');  // 12,345.67
+		 var formatprice_usd = getjson.result.price_usd
+		 var formatprice_btc = getjson.result.price_btc
+		 var results = formatprice_btc +"-"+ formatprice_usd +'-'+ formatcapprice
+		 //-----------
+		 fs.writeFile('market.log', results , function (err) {
+			if (err) return console.log(err);
+			console.log('Override Market Price!');
+		 });
+	  }
+	});
+	//----------
+	try {  
+		var data = fs.readFileSync('/root/explorer/market.log', 'utf8');
+		//console.log("Read Total Supply:"+ data.toString());
+		const datasplit = data.split('-');
+		arrresult[0] = datasplit[0];
+		arrresult[1] = datasplit[1];
+		arrresult[2] = datasplit[2];
+	} catch(e) {
+		console.log('Error:', e.stack);
+	}
+	console.log('CMC ARR 0:'+ arrresult[0] +"CMC ARR 01"+ arrresult[1]);
+	return arrresult;
+}
 function getcurrentsupply() {
 	var currentsupply = 7795829;
 	var totalcurrentsupply = 0;
 	//-----
 	var fs = require('fs');
-
 	var request = require('request');
 	request('http://api.widecoin.org:1123/supply', function (error, response, body) {
 	  if (!error && response.statusCode == 200) {
@@ -1007,6 +1053,7 @@ function iterateProperties(obj, action) {
 module.exports = {
 	// Update Current Supply for WCN
 	getcurrentsupply: getcurrentsupply,
+	getcurrentcmc: getcurrentcmc,
 	reflectPromise: reflectPromise,
 	redirectToConnectPageIfNeeded: redirectToConnectPageIfNeeded,
 	hex2ascii: hex2ascii,
