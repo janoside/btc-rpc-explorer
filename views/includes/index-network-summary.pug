@@ -5,8 +5,19 @@ if (exchangeRates || networkVolume)
 - var utxoCalculatingDesc = "At startup the app pulls a summary of the UTXO set. Until this summary is retrieved this data can't be displayed. Wait for the summary request to your node to return, then refresh this page.";
 
 
-
-
+//- Update WCN MarketCap
++contentSection("Market")
+	+summaryRow(2)
+		+summaryItem("Exchange Rate")
+			- getcurrentcmc = utils.getcurrentcmc();
+			//-- var getwcnprice = getcurrentcmc[0] +' BTC'+'('+'$' + getcurrentcmc[1]+')';
+			- var getwcnprice_usd = '$' + getcurrentcmc[1];
+			- var getwcnprice_btc = getcurrentcmc[0] +" BTC";
+			span #{getwcnprice_usd} 
+			<span style="font-size:14px;font-weight: bold;color:grey;"> = #{getwcnprice_btc}</span>
+		+summaryItem("Market Cap")
+			- var getwcncapprice = '$' + getcurrentcmc[2];
+			span #{getwcncapprice}					
 if (exchangeRates)
 	+contentSection("Market")
 		- var colCount = 3 + (networkVolume ? 1 : 0) + (goldExchangeRates ? 1 : 0);
@@ -62,6 +73,7 @@ if (exchangeRates)
 .clearfix
 	.float-start
 		+sectionTitle("Network Summary")
+		//-+sectionTitle("General Info")
 	.float-end
 		if (userSettings.homepageShowTechDetails == "true")
 			a.me-2(href="./changeSetting?name=homepageShowTechDetails&value=false", title="Hide technical network details", data-bs-toggle="tooltip", data-bs-placement="bottom")
@@ -73,6 +85,13 @@ if (exchangeRates)
 
 +contentSection
 	+summaryRow(1 + (hashrate7d ? 1 : 0) + (chainTxStats[7 * targetBlocksPerDay] ? 1 : 0) + (difficultyAdjustmentData ? 1 : 0))
+		//--+summaryItem("Exchange Rate", "")
+			- var maxSupply = coinConfig.maxSupplyByNetwork[activeBlockchain];
+				- var rscurrentSupply = utils.getcurrentsupply();
+				- var rscurrentSupplyPercentage = ((utils.getcurrentsupply()/35000000)*100);
+				- var rscurrentSupplyPercentageRound = parseFloat(rscurrentSupplyPercentage).toFixed(2);
+				- var getexrate = "1";
+				span #{getexrate}			
 		if (hashrate7d)
 			+summaryItem("7d Hashrate", "The average hashrate of the global mining network over the last 7 days. A comparison to the 30-day average is included to help gauge the rate of change.")
 				- var hashrate7dayData = utils.formatLargeNumber(hashrate7d, 1);
