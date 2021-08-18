@@ -117,7 +117,12 @@ function getcurrentcmc() {
 		 var formatcapprice = (currentsupply*getjson.result.price_usd).toFixed(0).replace(/\d(?=(\d{3})+\.)/g, '$&,');  // 12,345.67
 		 var formatprice_usd = getjson.result.price_usd
 		 var formatprice_btc = getjson.result.price_btc
-		 var results = formatprice_btc +"-"+ formatprice_usd +'-'+ formatcapprice
+		 var chklength = getjson.result.length;
+		 if (chklength> 0) {
+			var results = formatprice_btc +"-"+ formatprice_usd +'-'+ formatcapprice;
+		 } else {
+			var results =  "NULL-NULL-NULL";
+		 }
 		 //-----------
 		 fs.writeFile('market.log', results , function (err) {
 			if (err) return console.log(err);
