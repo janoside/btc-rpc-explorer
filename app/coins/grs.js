@@ -85,8 +85,8 @@ module.exports = {
 		"signet": "https://rpcexplorer-signet.groestlcoin.org",
 	},
 	knownTransactionsByNetwork: {
-		main: "f4184fc596403b9d638783cf57adfe4c75c605f6356fbc91338530e9831e9e16",
-		test: "22e7e860660f368b5c653c272b0445a0625d19fdec02fc158ef9800a5c3a07e8",
+		main: "c4d5b7cea3aed136e6e2beabcb4cdc21aa2d32b75a94eb74313154dac0615235",
+		test: "73f1a0a89f65311230290d63f9635d165096d4451cc7da7cdb6e1ac2bfc103f7",
 		signet: "39332e10af6fe491e8ae4ba1e2dd674698fedf8aa3c8c42bf71572debc1bb5b9"
 	},
 	miningPoolsConfigUrls:[
