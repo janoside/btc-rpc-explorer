@@ -434,8 +434,8 @@ function logMemoryUsage() {
 	//debugLog("memoryUsage: heapUsed=" + mbUsed + ", heapTotal=" + mbTotal + ", ratio=" + parseInt(mbUsed / mbTotal * 100));
 }
 
-function getMinerFromCoinbaseTx(tx) {
-	if (tx == null || tx.vin == null || tx.vin.length == 0) {
+function identifyMiner(coinbaseTx, blockHeight) {
+	if (coinbaseTx == null || coinbaseTx.vin == null || coinbaseTx.vin.length == 0) {
 		return null;
 	}
 
@@ -445,8 +445,8 @@ function getMinerFromCoinbaseTx(tx) {
 
 			for (var payoutAddress in miningPoolsConfig.payout_addresses) {
 				if (miningPoolsConfig.payout_addresses.hasOwnProperty(payoutAddress)) {
-					if (tx.vout && tx.vout.length > 0) {
-						if (getVoutAddresses(tx.vout[0]).includes(payoutAddress)) {
+					if (coinbaseTx.vout && coinbaseTx.vout.length > 0) {
+						if (getVoutAddresses(coinbaseTx.vout[0]).includes(payoutAddress)) {
 							var minerInfo = miningPoolsConfig.payout_addresses[payoutAddress];
 							minerInfo.identifiedBy = "payout address " + payoutAddress;
 
@@ -458,7 +458,7 @@ function getMinerFromCoinbaseTx(tx) {
 
 			for (var coinbaseTag in miningPoolsConfig.coinbase_tags) {
 				if (miningPoolsConfig.coinbase_tags.hasOwnProperty(coinbaseTag)) {
-					if (hex2ascii(tx.vin[0].coinbase).indexOf(coinbaseTag) != -1) {
+					if (hex2ascii(coinbaseTx.vin[0].coinbase).indexOf(coinbaseTag) != -1) {
 						var minerInfo = miningPoolsConfig.coinbase_tags[coinbaseTag];
 						minerInfo.identifiedBy = "coinbase tag '" + coinbaseTag + "'";
 
@@ -468,19 +468,32 @@ function getMinerFromCoinbaseTx(tx) {
 			}
 
 			for (var blockHash in miningPoolsConfig.block_hashes) {
-				if (blockHash == tx.blockhash) {
+				if (blockHash == coinbaseTx.blockhash) {
 					var minerInfo = miningPoolsConfig.block_hashes[blockHash];
 					minerInfo.identifiedBy = "known block hash '" + blockHash + "'";
 
 					return minerInfo;
 				}
 			}
+
+			if (miningPoolsConfig.block_heights) {
+				for (var minerName in miningPoolsConfig.block_heights) {
+					var minerInfo = miningPoolsConfig.block_heights[minerName];
+					minerInfo.name = minerName;
+
+					if (minerInfo.heights.includes(blockHeight)) {
+						minerInfo.identifiedBy = "known block height #" + blockHeight;
+
+						return minerInfo;
+					}
+				}
+			}
 		}
 	}
 
-	if (tx.vout && tx.vout.length > 0) {
-		for (var i = 0; i < tx.vout.length; i++) {
-			const vout = tx.vout[i];
+	if (coinbaseTx.vout && coinbaseTx.vout.length > 0) {
+		for (var i = 0; i < coinbaseTx.vout.length; i++) {
+			const vout = coinbaseTx.vout[i];
 
 			const voutValue = new Decimal(vout.value);
 			if (voutValue > 0) {
@@ -835,7 +848,7 @@ const safePromise = (uid, f) => {
 
 global.errorStats = {};
 
-function logError(errorId, err, optionalUserData = null) {
+function logError(errorId, err, optionalUserData = {}, logStacktrace=true) {
 	if (!global.errorLog) {
 		global.errorLog = [];
 	}
@@ -846,6 +859,10 @@ function logError(errorId, err, optionalUserData = null) {
 			firstSeen: new Date().getTime(),
 			properties: {}
 		};
+	}
+
+	if (optionalUserData && err.message) {
+		optionalUserData.errorMsg = err.message;
 	}
 
 	if (optionalUserData) {
@@ -875,7 +892,7 @@ function logError(errorId, err, optionalUserData = null) {
 
 	debugErrorLog("Error " + errorId + ": " + err + ", json: " + JSON.stringify(err) + (optionalUserData != null ? (", userData: " + optionalUserData + " (json: " + JSON.stringify(optionalUserData) + ")") : ""));
 
-	if (err && err.stack) {
+	if (err && err.stack && logStacktrace) {
 		debugErrorVerboseLog("Stack: " + err.stack);
 	}
 
@@ -1185,7 +1202,7 @@ module.exports = {
 	seededRandomIntBetween: seededRandomIntBetween,
 	randomInt: randomInt,
 	logMemoryUsage: logMemoryUsage,
-	getMinerFromCoinbaseTx: getMinerFromCoinbaseTx,
+	identifyMiner: identifyMiner,
 	getBlockTotalFeesFromCoinbaseTxAndBlockHeight: getBlockTotalFeesFromCoinbaseTxAndBlockHeight,
 	estimatedSupply: estimatedSupply,
 	refreshExchangeRates: refreshExchangeRates,

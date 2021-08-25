@@ -91,9 +91,9 @@ module.exports = {
 	},
 	miningPoolsConfigUrls:[
 		"https://raw.githubusercontent.com/btc21/Bitcoin-Known-Miners/master/miners.json",
+		"https://raw.githubusercontent.com/0xB10C/known-mining-pools/master/pools.json",
 		"https://raw.githubusercontent.com/btccom/Blockchain-Known-Pools/master/pools.json",
-		"https://raw.githubusercontent.com/blockchain/Blockchain-Known-Pools/master/pools.json",
-		"https://raw.githubusercontent.com/0xB10C/known-mining-pools/master/pools.json"
+		"https://raw.githubusercontent.com/blockchain/Blockchain-Known-Pools/master/pools.json"
 	],
 	maxBlockWeight: 4000000,
 	maxBlockSize: 1000000,
