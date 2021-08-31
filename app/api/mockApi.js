@@ -281,10 +281,6 @@ function getRawTransactions(txids) {
 	});
 }
 
-function getMinerFromCoinbaseTx(tx) {
-	return null;
-}
-
 function getHelp() {
 	return new Promise(function(resolve, reject) {
 		reject("Not implemented");

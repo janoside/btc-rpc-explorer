@@ -949,7 +949,7 @@ function getBlockByHashWithTransactions(blockHash, txLimit, txOffset) {
 				if (txsResult.transactions && txsResult.transactions.length > 0) {
 					block.coinbaseTx = txsResult.transactions[0];
 					block.totalFees = utils.getBlockTotalFeesFromCoinbaseTxAndBlockHeight(block.coinbaseTx, block.height);
-					block.miner = utils.getMinerFromCoinbaseTx(block.coinbaseTx);
+					block.miner = utils.identifyMiner(block.coinbaseTx, block.height);
 				}
 
 				// if we're on page 2+, drop the coinbase tx that was added in order to get miner info
@@ -1031,7 +1031,7 @@ function buildMiningSummary(statusId, startBlock, endBlock, statusFunc) {
 
 							const coinbaseTx = await getRawTransaction(block.tx[0]);
 
-							const minerInfo = utils.getMinerFromCoinbaseTx(coinbaseTx);
+							const minerInfo = utils.identifyMiner(coinbaseTx, height);
 							const totalFees = utils.getBlockTotalFeesFromCoinbaseTxAndBlockHeight(coinbaseTx, height);
 							const subsidy = coinConfig.blockRewardFunction(height, global.activeBlockchain);
 
