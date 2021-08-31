@@ -6,7 +6,7 @@ const debugErrorLog = debug("btcexp:error");
 const debugErrorVerboseLog = debug("btcexp:errorVerbose");
 
 const Decimal = require("decimal.js");
-const request = require("request");
+const axios = require("axios");
 const qrcode = require("qrcode");
 const bs58check = require("bs58check");
 const bip32 = require('bip32');
@@ -585,30 +585,28 @@ function estimatedSupply(height) {
 	return supply;
 }
 
-function refreshExchangeRates() {
+async function refreshExchangeRates() {
 	if (!config.queryExchangeRates) {
 		return;
 	}
 
 	if (coins[config.coin].exchangeRateData) {
-		request(coins[config.coin].exchangeRateData.jsonUrl, function(error, response, body) {
-			if (error == null && response && response.statusCode && response.statusCode == 200) {
-				var responseBody = JSON.parse(body);
+		try {
+			const response = await axios.get(coins[config.coin].exchangeRateData.jsonUrl);
 
-				var exchangeRates = coins[config.coin].exchangeRateData.responseBodySelectorFunction(responseBody);
-				if (exchangeRates != null) {
-					global.exchangeRates = exchangeRates;
-					global.exchangeRatesUpdateTime = new Date();
+			var exchangeRates = coins[config.coin].exchangeRateData.responseBodySelectorFunction(response.data);
+			if (exchangeRates != null) {
+				global.exchangeRates = exchangeRates;
+				global.exchangeRatesUpdateTime = new Date();
 
-					debugLog("Using exchange rates: " + JSON.stringify(global.exchangeRates) + " starting at " + global.exchangeRatesUpdateTime);
+				debugLog("Using exchange rates: " + JSON.stringify(global.exchangeRates) + " starting at " + global.exchangeRatesUpdateTime);
 
-				} else {
-					debugLog("Unable to get exchange rate data");
-				}
 			} else {
-				logError("39r7h2390fgewfgds", {error:error, response:response, body:body});
+				debugLog("Unable to get exchange rate data");
 			}
-		});
+		} catch (err) {
+			logError("39r7h2390fgewfgds", err);
+		}
 	}
 
 	if (coins[config.coin].goldExchangeRateData) {
@@ -619,24 +617,22 @@ function refreshExchangeRates() {
 			debugLog("Using DEBUG gold exchange rates: " + JSON.stringify(global.goldExchangeRates) + " starting at " + global.goldExchangeRatesUpdateTime);
 
 		} else {
-			request(coins[config.coin].goldExchangeRateData.jsonUrl, function(error, response, body) {
-				if (error == null && response && response.statusCode && response.statusCode == 200) {
-					var responseBody = JSON.parse(body);
+			try {
+				const response = await axios.get(coins[config.coin].goldExchangeRateData.jsonUrl);
 
-					var exchangeRates = coins[config.coin].goldExchangeRateData.responseBodySelectorFunction(responseBody);
-					if (exchangeRates != null) {
-						global.goldExchangeRates = exchangeRates;
-						global.goldExchangeRatesUpdateTime = new Date();
+				var exchangeRates = coins[config.coin].goldExchangeRateData.responseBodySelectorFunction(response.data);
+				if (exchangeRates != null) {
+					global.goldExchangeRates = exchangeRates;
+					global.goldExchangeRatesUpdateTime = new Date();
 
-						debugLog("Using gold exchange rates: " + JSON.stringify(global.goldExchangeRates) + " starting at " + global.goldExchangeRatesUpdateTime);
+					debugLog("Using gold exchange rates: " + JSON.stringify(global.goldExchangeRates) + " starting at " + global.goldExchangeRatesUpdateTime);
 
-					} else {
-						debugLog("Unable to get gold exchange rate data");
-					}
 				} else {
-					logError("34082yt78yewewe", {error:error, response:response, body:body});
+					debugLog("Unable to get gold exchange rate data");
 				}
-			});
+			} catch (err) {
+				logError("34082yt78yewewe", err);
+			}
 		}
 	}
 }
@@ -655,45 +651,39 @@ function geoLocateIpAddresses(ipAddresses, provider) {
 		var promises = [];
 		for (var i = 0; i < ipAddresses.length; i++) {
 			var ipStr = ipAddresses[i];
-			
+
 			promises.push(new Promise(function(resolve2, reject2) {
-				ipCache.get(ipStr).then(function(result) {
+				ipCache.get(ipStr).then(async function(result) {
 					if (result.value == null) {
 						var apiUrl = "http://api.ipstack.com/" + result.key + "?access_key=" + config.credentials.ipStackComApiAccessKey;
 						
-						request(apiUrl, function(error, response, body) {
-							if (error) {
-								debugLog("Failed IP-geo-lookup: " + result.key);
+						try {
+							const response = await axios.get(apiUrl);
 
-								logError("39724gdge33a", error, {ip: result.key});
+							var ip = response.data.ip;
 
-								// we failed to get what we wanted, but there's no meaningful recourse,
-								// so we log the failure and continue without objection
-								resolve2();
+							ipDetails.detailsByIp[ip] = response.data;
+
+							if (response.data.latitude && response.data.longitude) {
+								debugLog(`Successful IP-geo-lookup: ${ip} -> (${response.data.latitude}, ${response.data.longitude})`);
 
 							} else {
-								if (response != null && response.statusCode == 200) {
-									var resBody = JSON.parse(response.body);
-									var ip = resBody.ip;
+								debugLog(`Unknown location for IP-geo-lookup: ${ip}`);
+							}									
 
-									ipDetails.detailsByIp[ip] = resBody;
+							ipCache.set(ip, response.data, 1000 * 60 * 60 * 24 * 365);
 
-									if (resBody.latitude && resBody.longitude) {
-										debugLog(`Successful IP-geo-lookup: ${ip} -> (${resBody.latitude}, ${resBody.longitude})`);
+							resolve2();
 
-									} else {
-										debugLog(`Unknown location for IP-geo-lookup: ${ip}`);
-									}									
+						} catch (err) {
+							debugLog("Failed IP-geo-lookup: " + result.key);
 
-									ipCache.set(ip, resBody, 1000 * 60 * 60 * 24 * 365);
+							logError("39724gdge33a", error, {ip: result.key});
 
-								} else {
-									debugLog("Unsuccessful IP-geo-lookup: " + result.key);
-								}
-
-								resolve2();
-							}
-						});
+							// we failed to get what we wanted, but there's no meaningful recourse,
+							// so we log the failure and continue without objection
+							resolve2();
+						}
 
 					} else {
 						ipDetails.detailsByIp[result.key] = result.value;

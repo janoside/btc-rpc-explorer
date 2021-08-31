@@ -83,7 +83,7 @@ const momentDurationFormat = require("moment-duration-format");
 const coreApi = require("./app/api/coreApi.js");
 const rpcApi = require("./app/api/rpcApi.js");
 const coins = require("./app/coins.js");
-const request = require("request");
+const axios = require("axios");
 const qrcode = require("qrcode");
 const addressApi = require("./app/api/addressApi.js");
 const electrumAddressApi = require("./app/api/electrumAddressApi.js");
@@ -93,7 +93,6 @@ const auth = require('./app/auth.js');
 const sso = require('./app/sso.js');
 const markdown = require("markdown-it")();
 const v8 = require("v8");
-const axios = require("axios");
 var compression = require("compression");
 
 require("./app/currencies.js");
@@ -247,24 +246,21 @@ function loadMiningPoolConfigs() {
 	});
 }
 
-function getSourcecodeProjectMetadata() {
+async function getSourcecodeProjectMetadata() {
 	var options = {
 		url: "https://api.github.com/repos/janoside/btc-rpc-explorer",
 		headers: {
 			'User-Agent': 'request'
 		}
 	};
+	try {
+		const response = await axios(options);
 
-	request(options, function(error, response, body) {
-		if (error == null && response && response.statusCode && response.statusCode == 200) {
-			var responseBody = JSON.parse(body);
+		global.sourcecodeProjectMetadata = response.data;
 
-			global.sourcecodeProjectMetadata = responseBody;
-
-		} else {
-			utils.logError("3208fh3ew7eghfg", {error:error, response:response, body:body});
+	} catch (err) {
+		utils.logError("3208fh3ew7eghfg", err);
 		}
-	});
 }
 
 function loadChangelog() {
