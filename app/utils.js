@@ -1,5 +1,7 @@
 "use strict";
 
+const fs = require("fs");
+
 const debug = require("debug");
 const debugLog = debug("btcexp:utils");
 const debugErrorLog = debug("btcexp:error");
@@ -60,6 +62,42 @@ if (redisCache.active) {
 	ipRedisCache = redisCache.createCache("v0", onRedisCacheEvent);
 }
 
+let ipMemoryCacheNewItems = false;
+const ipCacheFile = `${config.filesystemCacheDir}/ip-address-cache.json`;
+
+if (fs.existsSync(ipCacheFile)) {
+	try {
+		let rawData = fs.readFileSync(ipCacheFile);
+
+		ipMemoryCache = JSON.parse(rawData);
+
+		debugLog(`Loaded ip address cache (${rawData.length.toLocaleString()} bytes)`);
+
+	} catch (err) {
+		// failed to read cache file, delete it in case it's corrupted
+		fs.unlinkSync(ipCacheFile);
+	}
+}
+
+setInterval(() => {
+	if (ipMemoryCacheNewItems) {
+		try {
+			if (!fs.existsSync(config.filesystemCacheDir)){
+				fs.mkdirSync(config.filesystemCacheDir);
+			}
+
+			debugLog(`Saved updated ip address cache`);
+
+			fs.writeFileSync(ipCacheFile, JSON.stringify(ipMemoryCache, null, 4));
+
+		} catch (e) {
+			utils.logError("24308tew7hgde", e);
+		}
+
+		ipMemoryCacheNewItems = false;
+	}
+}, 60000);
+
 const ipCache = {
 	get:function(key) {
 		return new Promise(function(resolve, reject) {
@@ -87,6 +125,8 @@ const ipCache = {
 	},
 	set:function(key, value, expirationMillis) {
 		ipMemoryCache[key] = value;
+
+		ipMemoryCacheNewItems = true;
 
 		if (ipRedisCache != null) {
 			ipRedisCache.set("ip-" + key, value, expirationMillis);
@@ -652,6 +692,21 @@ function geoLocateIpAddresses(ipAddresses, provider) {
 		for (var i = 0; i < ipAddresses.length; i++) {
 			var ipStr = ipAddresses[i];
 
+			if (ipStr.endsWith(".onion")) {
+				// tor, no location possible
+				continue;
+			}
+
+			if (ipStr == "127.0.0.1") {
+				// skip
+				continue;
+			}
+
+			if (!ipStr.match(/^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$/)) {
+				// non-IPv4, skip it
+				continue;
+			}
+			
 			promises.push(new Promise(function(resolve2, reject2) {
 				ipCache.get(ipStr).then(async function(result) {
 					if (result.value == null) {
