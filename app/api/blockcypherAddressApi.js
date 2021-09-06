@@ -1,13 +1,13 @@
 "use strict";
 
-const request = require("request");
+const axios = require("axios");
 const utils = require("./../utils.js");
 
 
 function getAddressDetails(address, scriptPubkey, sort, limit, offset) {
-	return new Promise(function(resolve, reject) {
+	return new Promise(async (resolve, reject) => {
 		if (address.startsWith("grs1")) {
-			reject({userText:"blockcypher.com API does not support grs1 (native Segwit) addresses"});
+			reject({userText:"blockcypher.com API does not support bc1 (native Segwit) addresses"});
 
 			return;
 		}
@@ -24,39 +24,39 @@ function getAddressDetails(address, scriptPubkey, sort, limit, offset) {
 			}
 		};
 
-		request(options, function(error, response, body) {
-			if (error == null && response && response.statusCode && response.statusCode == 200) {
-				var blockcypherJson = JSON.parse(body);
+		try {
+			const apiResponse = await axios.get(
+				url,
+				{ headers: { "User-Agent": "axios" }});
 
-				var response = {};
+			var blockcypherJson = apiResponse.data;
 
-				response.txids = [];
-				response.blockHeightsByTxid = {};
+			var response = {};
 
-				// blockcypher doesn't support offset for paging, so simulate up to the hard cap of 2,000
-				for (var i = offset; i < Math.min(blockcypherJson.txrefs.length, limitOffset); i++) {
-					var tx = blockcypherJson.txrefs[i];
+			response.txids = [];
+			response.blockHeightsByTxid = {};
 
-					response.txids.push(tx.tx_hash);
-					response.blockHeightsByTxid[tx.tx_hash] = tx.block_height;
-				}
+			// blockcypher doesn't support offset for paging, so simulate up to the hard cap of 2,000
+			for (var i = offset; i < Math.min(blockcypherJson.txrefs.length, limitOffset); i++) {
+				var tx = blockcypherJson.txrefs[i];
 
-				response.txCount = blockcypherJson.n_tx;
-				response.totalReceivedSat = blockcypherJson.total_received;
-				response.totalSentSat = blockcypherJson.total_sent;
-				response.balanceSat = blockcypherJson.final_balance;
-				response.source = "blockcypher.com";
-
-				resolve({addressDetails:response});
-
-			} else {
-				var fullError = {error:error, response:response, body:body};
-
-				utils.logError("097wef0adsgadgs", fullError);
-
-				reject(fullError);
+				response.txids.push(tx.tx_hash);
+				response.blockHeightsByTxid[tx.tx_hash] = tx.block_height;
 			}
-		});
+
+			response.txCount = blockcypherJson.n_tx;
+			response.totalReceivedSat = blockcypherJson.total_received;
+			response.totalSentSat = blockcypherJson.total_sent;
+			response.balanceSat = blockcypherJson.final_balance;
+			response.source = "blockcypher.com";
+
+			resolve({addressDetails:response});
+
+		} catch (err) {
+			utils.logError("097wef0adsgadgs", err);
+
+			reject(err);
+		}
 	});
 }
 
