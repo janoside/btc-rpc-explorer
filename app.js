@@ -864,7 +864,7 @@ const sharedErrorHandler = (req, err) => {
 		const path = err.toString().substring(err.toString().lastIndexOf(" ") + 1);
 		const userAgent = req.headers['user-agent'];
 		const crawler = utils.getCrawlerFromUserAgentString(userAgent);
-		const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress; 
+		const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
 		const attributes = { path:path };
 

@@ -96,7 +96,7 @@ function getSmartFeeEstimate(mode="CONSERVATIVE", confTargetBlockCount) {
 	return getRpcDataWithParams({method:"estimatesmartfee", parameters:[confTargetBlockCount, mode]});
 }
 
-function getNetworkHashrate(blockCount=144) {
+function getNetworkHashrate(blockCount=1440) {
 	return getRpcDataWithParams({method:"getnetworkhashps", parameters:[blockCount]});
 }
 

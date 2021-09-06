@@ -298,7 +298,7 @@ router.get("/mempool/count", function(req, res, next) {
 });
 
 router.get("/mempool/fees", function(req, res, next) {
-	var feeConfTargets = [1, 3, 6, 144];
+	var feeConfTargets = [1, 2, 3, 4];
 	coreApi.getSmartFeeEstimates("CONSERVATIVE", feeConfTargets).then(function(rawSmartFeeEstimates){
 		var smartFeeEstimates = {};
 
@@ -314,9 +314,9 @@ router.get("/mempool/fees", function(req, res, next) {
 
 		var results = {
 			"nextBlock":smartFeeEstimates[1],
-			"30min":smartFeeEstimates[3],
-			"60min":smartFeeEstimates[6],
-			"1day":smartFeeEstimates[144]
+			"2min":smartFeeEstimates[2],
+			"3min":smartFeeEstimates[3],
+			"4min":smartFeeEstimates[4]
 		};
 
 		res.json(results);

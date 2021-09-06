@@ -64,7 +64,7 @@ router.get("/", asyncHandler(async (req, res, next) => {
 		res.locals.offset = 0;
 		res.locals.sort = "desc";
 
-		var feeConfTargets = [1, 6, 144, 1008];
+		var feeConfTargets = [1, 2, 3, 4];
 		res.locals.feeConfTargets = feeConfTargets;
 
 
@@ -2115,13 +2115,13 @@ router.get("/tx-stats", function(req, res, next) {
 		res.locals.getblockchaininfo = result.getblockchaininfo;
 		res.locals.txStats = result.txCountStats;
 
-		coreApi.getTxCountStats(targetBlocksPerDay / 4, -144, "latest").then(function(result2) {
+		coreApi.getTxCountStats(targetBlocksPerDay / 4, -1440, "latest").then(function(result2) {
 			res.locals.txStatsDay = result2.txCountStats;
 
-			coreApi.getTxCountStats(targetBlocksPerDay / 4, -144 * 7, "latest").then(function(result3) {
+			coreApi.getTxCountStats(targetBlocksPerDay / 4, -1440 * 7, "latest").then(function(result3) {
 				res.locals.txStatsWeek = result3.txCountStats;
 
-				coreApi.getTxCountStats(targetBlocksPerDay / 4, -144 * 30, "latest").then(function(result4) {
+				coreApi.getTxCountStats(targetBlocksPerDay / 4, -1440 * 30, "latest").then(function(result4) {
 					res.locals.txStatsMonth = result4.txCountStats;
 
 					res.render("tx-stats");
