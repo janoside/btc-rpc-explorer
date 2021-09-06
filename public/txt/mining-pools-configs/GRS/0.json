@@ -20,9 +20,39 @@
             "name": "zergpool.com",
             "link": "https://zergpool.com/"
         },
-        "Cybtcpool": {
-            "name": "Cybtc.info",
-            "link": "https://cybtc.info/"
+        "ThomasBlock": {
+            "name": "ThomasBlock",
+            "link": "https://ThomasBlock/"
+        }
+    },
+    "payout_addresses" : {
+        "FcVPbmwVk6yb3ZTp1yKJpFRcBy39CjdVos": {
+            "name" : "SuprNova.cc",
+            "link" : "https://grs.suprnova.cc/"
+        },
+        "Fr5m2irs9vNWSAFXJK6KPtxqW9YWg384FX": {
+            "name" : "MiningDutch",
+            "link" : "https://www.mining-dutch.nl/"
+        },
+        "Fai7L9MJHa58NBe4RS4s4foXmBeMyN6N7a" : {
+            "name" : "MiningPoolHub",
+            "link" : "http://groestlcoin.miningpoolhub.com/"
+        },
+        "32LWvvNGe6uk92k3cs2qPhM9yuCzknCDWu" : {
+            "name" : "zergpool.com",
+            "link" : "https://zergpool.com/"
+        },
+        "3M3iwjeW6UoAxBB8ZMefRtRccCXnuKbBo4" : {
+            "name" : "Zpool.ca",
+            "link" : "https://www.zpool.ca"
+        },
+        "FfZxCBEajVH5jbXwC9VQ2Rwu4sFqijN9yk" : {
+            "name" : "ThomasBlock",
+            "link" : "https://ThomasBlock/"
+        }
+    },
+    "unknown_miner_payout_addresses": {
+        "3E2p6qP9vh4hFfuVQLsxTAziRDDHJ5DnQj": {
         }
     }
 }
