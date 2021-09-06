@@ -1528,7 +1528,7 @@ router.get("/address/:address", asyncHandler(async (req, res, next) => {
 		var bech32mError = null;
 
 		try {
-			res.locals.addressObj = bitcoinjs.address.fromBase58Check(address);
+			res.locals.addressObj = bitcoinjs.address.fromBase58GrsCheck(address);
 			addressEncoding = "base58";
 
 		} catch (err) {
