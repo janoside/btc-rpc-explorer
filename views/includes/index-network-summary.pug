@@ -101,7 +101,7 @@ if (exchangeRates)
 				| #{chainTxStats[7 * targetBlocksPerDay].window_tx_count.toLocaleString()}
 
 		if (difficultyAdjustmentData)
-			- var desc = `Estimate for the difficulty adjustment that will occur in ${difficultyAdjustmentData.blocksLeft.toLocaleString()} block${difficultyAdjustmentData.blocksLeft == 1 ? "" : "s"} (${difficultyAdjustmentData.timeLeftStr}). This is calculated using the average block time during the current difficulty epoch (currently, the last ${difficultyAdjustmentData.calculationBlockCount.toLocaleString()} block${difficultyAdjustmentData.calculationBlockCount == 1 ? "" : "s"}). Note: This estimate becomes more reliable as the difficulty epoch nears its end.`;
+			- var desc = `Estimate for the difficulty adjustment that will occur in ${difficultyAdjustmentData.blocksLeft.toLocaleString()} block (1 min).`;
 
 			if (false)
 				pre
