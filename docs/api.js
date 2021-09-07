@@ -85,9 +85,9 @@ module.exports = {
 		{
 			"category":"mempool",
 			"url":"/api/mempool/fees",
-			"desc":"Returns recommended fee rates in gros/vB for next block, ~30 min, 1 hr, and 1 day.",
+			"desc":"Returns recommended fee rates in gros/vB for next block, 2 min, 3 min, and 4 min.",
 			"returnType":"json",
-			"example": {"nextBlock":17,"30min":9,"60min":9,"1day":9}
+			"example": {"nextBlock":20,"2min":20,"3min":20,"4min":20}
 		},
 
 
