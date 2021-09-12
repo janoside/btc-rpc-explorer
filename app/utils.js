@@ -48,6 +48,7 @@ const crawlerBotUserAgentStrings = {
 	"facebook": new RegExp("facebot", "i"),
 	"alexa": new RegExp("ia_archiver", "i"),
 	"aol": new RegExp("aolbuild", "i"),
+	"moz.com": new RegExp("dotbot", "i"),
 };
 
 const ipMemoryCache = {};
