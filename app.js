@@ -18,6 +18,7 @@ debug.enable(debugDefaultCategories);
 const debugLog = debug("btcexp:app");
 const debugErrorLog = debug("btcexp:error");
 const debugPerfLog = debug("btcexp:actionPerformace");
+const debugAccessLog = debug("btcexp:access");
 
 const configPaths = [
 	path.join(os.homedir(), ".config", "btc-rpc-explorer.env"),
@@ -841,8 +842,9 @@ if (expressApp.get("env") === "local") {
 
 expressApp.use(function(req, res, next) {
 	var time = Date.now() - req.startTime;
-	
-	debugPerfLog("Finished action '%s' in %d ms", req.path, time);
+	var userAgent = req.headers['user-agent'];
+
+	debugAccessLog(`Finished action '${req.path}' (${res.statusCode}) in ${time}ms for UA '${userAgent}'`);
 
 	if (!res.headersSent) {
 		next();
