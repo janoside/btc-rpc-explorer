@@ -5,7 +5,13 @@ const Decimal8 = Decimal.clone({ precision:8, rounding:8 });
 
 const btcFun = require("./btcFun.js");
 
-var currencyUnits = [
+const blockRewardEras = [ new Decimal8(50) ];
+for (let i = 1; i < 34; i++) {
+	let previous = blockRewardEras[i - 1];
+	blockRewardEras.push(new Decimal8(previous).dividedBy(2));
+}
+
+const currencyUnits = [
 	{
 		type:"native",
 		name:"BTC",
@@ -522,15 +528,9 @@ module.exports = {
 		}
 	},
 	blockRewardFunction:function(blockHeight, chain) {
-		var eras = [ new Decimal8(50) ];
-		for (var i = 1; i < 34; i++) {
-			var previous = eras[i - 1];
-			eras.push(new Decimal8(previous).dividedBy(2));
-		}
+		let halvingBlockInterval = (chain == "regtest" ? 150 : 210000);
+		let index = Math.floor(blockHeight / halvingBlockInterval);
 
-		var halvingBlockInterval = (chain == "regtest" ? 150 : 210000);
-		var index = Math.floor(blockHeight / halvingBlockInterval);
-
-		return eras[index];
+		return blockRewardEras[index];
 	}
 };
