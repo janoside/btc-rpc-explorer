@@ -48,7 +48,8 @@ const crawlerBotUserAgentStrings = {
 	"facebook": new RegExp("facebot", "i"),
 	"alexa": new RegExp("ia_archiver", "i"),
 	"aol": new RegExp("aolbuild", "i"),
-	"moz.com": new RegExp("dotbot", "i"),
+	"moz": new RegExp("dotbot", "i"),
+	"semrush": new RegExp("SemrushBot", "i")
 };
 
 const ipMemoryCache = {};

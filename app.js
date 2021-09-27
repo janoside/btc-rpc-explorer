@@ -843,8 +843,14 @@ if (expressApp.get("env") === "local") {
 expressApp.use(function(req, res, next) {
 	var time = Date.now() - req.startTime;
 	var userAgent = req.headers['user-agent'];
+	var crawler = utils.getCrawlerFromUserAgentString(userAgent);
+	
+	if (crawler) {
+		debugAccessLog(`Finished action '${req.path}' (${res.statusCode}) in ${time}ms for crawler '${crawler}' / '${userAgent}'`);
 
-	debugAccessLog(`Finished action '${req.path}' (${res.statusCode}) in ${time}ms for UA '${userAgent}'`);
+	} else {
+		debugAccessLog(`Finished action '${req.path}' (${res.statusCode}) in ${time}ms for UA '${userAgent}'`);
+	}
 
 	if (!res.headersSent) {
 		next();
