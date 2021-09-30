@@ -1,6 +1,10 @@
 ##### Unreleased
 
 * Fix for difficulty adjustment estimate
+* New API actions:
+	* [/api/mining/next-block](./api/mining/next-block)
+	* [/api/mining/next-block/txids](./api/mining/next-block/txids)
+	* [/api/mining/next-block/includes/:txid](./api/mining/next-block/includes/yourTxid)
 * Updated miners, including identification of "Patoshi"-pattern blocks
 * Performance improvements
 	* Fix for performance degradation over time due to slow "estimatedSupply" function
