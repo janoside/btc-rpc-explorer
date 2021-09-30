@@ -87,6 +87,14 @@ router.get("/os-stats", function(req, res, next) {
 	next();
 });
 
+router.get("/perf-log", function(req, res, next) {
+	res.locals.perfLog = utils.perfLog;
+
+	res.render("admin/perf-log");
+
+	next();
+});
+
 
 router.get("/app-stats", function(req, res, next) {
 	res.locals.stats = statTracker.currentStats();

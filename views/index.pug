@@ -71,7 +71,7 @@ block content
 		
 		
 		
-		if (nextBlockTemplate)
+		if (true || nextBlockTemplate)
 			if (false)
 				pre
 					code.json #{JSON.stringify(nextBlockFeeRateGroups, null, 4)}
@@ -84,19 +84,20 @@ block content
 				.float-start
 					a.ms-2(href="./mining-template") See details
 			
-			+contentSection
-				+summaryRow(3)
-					+summaryItem("Transactions")
-						| #{nextBlockTemplate.transactions.length.toLocaleString()}
+			#index-next-block
+				+contentSection
+					+summaryRow(3)
+						+summaryItem("Transactions")
+							.text-center.text-reset
+								.spinner-border.spinner-border-sm
 
-					+summaryItem("Fee Rates", "Minimum and maximum fee rates for transactions that are predicted to be included in the next block.", "sat/vB")
-						+numWithMutedDecimals(new Decimal(nextBlockMinFeeRate).toDP(2).toString())
-						span.mx-2 -
-						+numWithMutedDecimals(new Decimal(nextBlockMaxFeeRate).toDP(2).toString())
-
-						
-					+summaryItem("Total Fees", "Sum of fees for all transactions that are predicted to be included in the next block.")
-						+valueDisplay(nextBlockTotalFees)
+						+summaryItem("Fee Rates", "Minimum and maximum fee rates for transactions that are predicted to be included in the next block.", "sat/vB")
+							.text-center
+								.spinner-border.spinner-border-sm
+							
+						+summaryItem("Total Fees", "Sum of fees for all transactions that are predicted to be included in the next block.")
+							.text-center
+								.spinner-border.spinner-border-sm
 
 				if (false)
 					.mt-4
@@ -138,4 +139,11 @@ block content
 			include includes/tools-card.pug
 				
 
+block endOfBody
+	script.
+		$(document).ready(function() {
+			$.get("./snippet/next-block", function(data) {
+				$("#index-next-block").html(data);
+			});
+		});
 		

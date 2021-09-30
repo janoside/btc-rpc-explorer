@@ -883,30 +883,6 @@ function colorHexToHsl(hex) {
 const reflectPromise = p => p.then(v => ({v, status: "resolved" }),
 							e => ({e, status: "rejected" }));
 
-const safePromise = (uid, f) => {
-	return new Promise(async (resolve, reject) => {
-		const startTime = startTimeNanos();
-
-		try {
-			await f();
-
-			const responseTimeMillis = dtMillis(startTime);
-			
-			statTracker.trackPerformance(uid, responseTimeMillis);
-
-			resolve();
-
-		} catch (e) {
-			logError(uid, e);
-
-			const responseTimeMillis = dtMillis(startTime);
-
-			statTracker.trackPerformance(`${uid}_error`, responseTimeMillis);
-			
-			resolve(e);
-		}
-	});
-};
 
 global.errorStats = {};
 
@@ -1074,19 +1050,47 @@ const getCrawlerFromUserAgentString = userAgentString => {
 	return null;
 };
 
-const timePromise = async (name, promise) => {
+const safePromise = async (uid, promise) => {
+	try {
+		const response = await promise();
+
+		return response;
+
+	} catch (e) {
+		logError(uid, e);
+	}
+};
+
+const timePromise = async (name, promise, perfResults=null) => {
 	const startTime = startTimeNanos();
 
-	const response = await promise;
+	try {
+		const response = await promise();
 
 		const responseTimeMillis = dtMillis(startTime);
 
 		statTracker.trackPerformance(name, responseTimeMillis);
 
+		if (perfResults) {
+			perfResults[name] = Math.max(1, parseInt(responseTimeMillis));
+		}
+
 		return response;
+
+	} catch (e) {
+		const responseTimeMillis = dtMillis(startTime);
+
+		statTracker.trackPerformance(`${name}_error`, responseTimeMillis);
+
+		if (perfResults) {
+			perfResults[`${name}_error`] = Math.max(1, parseInt(responseTimeMillis));
+		}
+
+		throw e;
+	}
 };
 
-const timeFunction = (uid, f) => {
+const timeFunction = (uid, f, perfResults=null) => {
 	const startTime = startTimeNanos();
 
 	f();
@@ -1094,6 +1098,10 @@ const timeFunction = (uid, f) => {
 	const responseTimeMillis = dtMillis(startTime);
 
 	statTracker.trackPerformance(uid, responseTimeMillis);
+
+	if (perfResults) {
+		perfResults[uid] = responseTimeMillis;
+	}
 };
 
 const startTimeNanos = () => {
@@ -1246,6 +1254,46 @@ function bip32Addresses(extPubkey, addressType, account, limit=10, offset=0) {
 	return addresses;
 }
 
+
+const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
+const awaitPromises = async (promises) => {
+	const promiseResults = await Promise.allSettled(promises);
+
+	promiseResults.forEach(x => {
+		if (x.status == "rejected") {
+			if (x.reason) {
+				logError("awaitPromises_rejected", x.reason);
+			}
+		}
+	});
+};
+
+const perfLog = [];
+let perfLogItemCount = 0;
+const perfLogMaxItems = 100;
+const perfLogNewItem = (tags) => {
+	const newItem = tags;
+
+	newItem.id = getRandomString(12, "aA#");
+	newItem.date = new Date();
+	newItem.results = {};
+	newItem.index = perfLogItemCount;
+
+	perfLogItemCount++;
+
+	perfLog.splice(0, 0, newItem);
+
+	while (perfLog.length > perfLogMaxItems) {
+		perfLog.splice(perfLog.length - 1, 1);
+	}
+
+	return {
+		perfId:newItem.id,
+		perfResults:newItem.results
+	};
+};
+
 module.exports = {
 	reflectPromise: reflectPromise,
 	redirectToConnectPageIfNeeded: redirectToConnectPageIfNeeded,
@@ -1299,5 +1347,9 @@ module.exports = {
 	getVoutAddress: getVoutAddress,
 	getVoutAddresses: getVoutAddresses,
 	xpubChangeVersionBytes: xpubChangeVersionBytes,
-	bip32Addresses: bip32Addresses
+	bip32Addresses: bip32Addresses,
+	sleep: sleep,
+	awaitPromises: awaitPromises,
+	perfLogNewItem: perfLogNewItem,
+	perfLog: perfLog
 };

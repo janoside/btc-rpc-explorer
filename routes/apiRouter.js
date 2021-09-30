@@ -241,22 +241,25 @@ router.get("/mining/hashrate", asyncHandler(async (req, res, next) => {
 }));
 
 router.get("/mining/diff-adj-estimate", asyncHandler(async (req, res, next) => {
+	const { perfId, perfResults } = utils.perfLogNewItem({action:"api.diff-adj-estimate"});
+	res.locals.perfId = perfId;
+
 	var promises = [];
-	const getblockchaininfo = await utils.timePromise("api_diffAdjEst_getBlockchainInfo", coreApi.getBlockchainInfo());
+	const getblockchaininfo = await utils.timePromise("api_diffAdjEst_getBlockchainInfo", coreApi.getBlockchainInfo);
 	var currentBlock;
 	var difficultyPeriod = parseInt(Math.floor(getblockchaininfo.blocks / coinConfig.difficultyAdjustmentBlockCount));
 	var difficultyPeriodFirstBlockHeader;
 	
-	promises.push(utils.safePromise("api_diffAdjEst_getBlockHeaderByHeight", async () => {
+	promises.push(utils.timePromise("api.diff-adj-est.getBlockHeaderByHeight", async () => {
 		currentBlock = await coreApi.getBlockHeaderByHeight(getblockchaininfo.blocks);
-	}));
+	}, perfResults));
 	
-	promises.push(utils.safePromise("api_diffAdjEst_getBlockHeaderByHeight2", async () => {
+	promises.push(utils.timePromise("api.diff-adj-est.getBlockHeaderByHeight2", async () => {
 		let h = coinConfig.difficultyAdjustmentBlockCount * difficultyPeriod;
 		difficultyPeriodFirstBlockHeader = await coreApi.getBlockHeaderByHeight(h);
-	}));
-	
-	await Promise.all(promises);
+	}, perfResults));
+
+	await utils.awaitPromises(promises);
 	
 	var firstBlockHeader = difficultyPeriodFirstBlockHeader;
 	var heightDiff = currentBlock.height - firstBlockHeader.height;
@@ -591,16 +594,16 @@ router.get("/quotes/random", function(req, res, next) {
 	next();
 });
 
-router.get("/quotes/:quoteIndex", function(req, res, next) {
-	var index = parseInt(req.params.quoteIndex);
-	
-	res.json(btcQuotes.items[index]);
+router.get("/quotes/all", function(req, res, next) {
+	res.json(btcQuotes.items);
 
 	next();
 });
 
-router.get("/quotes/all", function(req, res, next) {
-	res.json(btcQuotes.items);
+router.get("/quotes/:quoteIndex", function(req, res, next) {
+	var index = parseInt(req.params.quoteIndex);
+	
+	res.json(btcQuotes.items[index]);
 
 	next();
 });
