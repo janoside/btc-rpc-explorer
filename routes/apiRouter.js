@@ -289,6 +289,80 @@ router.get("/mining/diff-adj-estimate", asyncHandler(async (req, res, next) => {
 	res.send(diffAdjPercent.toFixed(2).toString());
 }));
 
+router.get("/mining/next-block", asyncHandler(async (req, res, next) => {
+	const promises = [];
+
+	const result = {};
+
+	promises.push(utils.timePromise("api/next-block/getblocktemplate", async () => {
+		let nextBlockEstimate = await utils.timePromise("api/next-block/getNextBlockEstimate", async () => {
+			return await coreApi.getNextBlockEstimate();
+		});
+
+
+		//result.blockTemplate = nextBlockEstimate.blockTemplate;
+		//result.feeRateGroups = nextBlockEstimate.feeRateGroups;
+		result.txCount = nextBlockEstimate.blockTemplate.transactions.length;
+
+		result.minFeeRate = nextBlockEstimate.minFeeRate;
+		result.maxFeeRate = nextBlockEstimate.maxFeeRate;
+		result.minFeeTxid = nextBlockEstimate.minFeeTxid;
+		result.maxFeeTxid = nextBlockEstimate.maxFeeTxid;
+
+		result.totalFees = nextBlockEstimate.totalFees.toNumber();
+	}));
+
+	await utils.awaitPromises(promises);
+
+	res.json(result);
+}));
+
+router.get("/mining/next-block/txids", asyncHandler(async (req, res, next) => {
+	const promises = [];
+
+	const txids = [];
+
+	promises.push(utils.timePromise("api/next-block/getblocktemplate", async () => {
+		let nextBlockEstimate = await utils.timePromise("api/next-block/getNextBlockEstimate", async () => {
+			return await coreApi.getNextBlockEstimate();
+		});
+
+		nextBlockEstimate.blockTemplate.transactions.forEach(x => {
+			txids.push(x.txid);
+		});
+	}));
+
+	await utils.awaitPromises(promises);
+
+	res.json(txids);
+}));
+
+router.get("/mining/next-block/includes/:txid", asyncHandler(async (req, res, next) => {
+	const txid = req.params.txid;
+
+	const promises = [];
+
+	let txidIncluded = false;
+
+	promises.push(utils.timePromise("api/next-block/getblocktemplate", async () => {
+		let nextBlockEstimate = await utils.timePromise("api/next-block/getNextBlockEstimate", async () => {
+			return await coreApi.getNextBlockEstimate();
+		});
+
+		for (let i = 0; i < nextBlockEstimate.blockTemplate.transactions.length; i++) {
+			if (nextBlockEstimate.blockTemplate.transactions[i].txid == txid) {
+				txidIncluded = true;
+
+				return;
+			}
+		}
+	}));
+
+	await utils.awaitPromises(promises);
+
+	res.send(txidIncluded);
+}));
+
 
 
 
