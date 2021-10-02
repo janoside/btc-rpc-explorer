@@ -1363,6 +1363,53 @@ router.get("/tx/:transactionId@:blockHeight", asyncHandler(async (req, res, next
 	next();
 }));
 
+router.get("/outpoint/:transactionId-:vout", asyncHandler(async (req, res, next) => {
+        if ((config.addressApi == "electrum" || config.addressApi == "electrumx")  && config.electrumTxIndex) {
+                try {
+                        var txid = utils.asHash(req.params.transactionId);
+                        var vout = parseInt(req.params.vout);
+                        var outpoint = [txid, vout];
+
+                        const spent_outpoints = await electrumAddressApi.lookupOutpointsTx([outpoint]);
+                        const spending_tx = spent_outpoints[0].result;
+
+                        if (spending_tx.spender_txhash == undefined) {
+                                res.locals.userMessageMarkdown = `Outpoint unspent: txid=**${txid}**, vout=**${vout}**`;
+                                req.url = "/tx/" + req.params.transactionId;
+                                next();
+                        } else {
+                                req.url = "/tx/" + spending_tx.spender_txhash;
+                                next();
+                        }
+                } catch (err) {
+                        if (global.prunedBlockchain && res.locals.blockHeight && res.locals.blockHeight < global.pruneHeight) {
+                                // Failure to load tx here is expected and a full description of the situation is given to the user
+                                // in the UI. No need to also show an error userMessage here.
+
+                        } else if (!global.txindexAvailable) {
+                                res.locals.noTxIndexMsg = noTxIndexMsg;
+
+                                // As above, failure to load the tx is expected here and good user feedback is given in the UI.
+                                // No need for error userMessage.
+
+                        } else {
+                                res.locals.userMessageMarkdown = `Outpoint not found: txid=**${txid}**, vout=**${vout}**`;
+                        }
+
+
+
+                        utils.logError("1237y4ewssgt", err);
+
+                        res.render("transaction");
+
+                        next();
+                }
+        } else {
+                req.url = "/tx/" + req.params.transactionId;
+
+                next();
+        }
+}));
 
 router.get("/tx/:transactionId", asyncHandler(async (req, res, next) => {
 	try {
@@ -1434,28 +1481,43 @@ router.get("/tx/:transactionId", asyncHandler(async (req, res, next) => {
 
 		await Promise.all(promises);
 
-		// Electrs 0.9.0 support spending transaction lookup for an outpoint
-		if ((config.addressApi == "electrum" || config.addressApi == "electrumx")  && config.electrumTxIndex) {
-			let outpoints = [];
-			for (const vout in tx.vout) {
-				if (res.locals.utxos[vout] == null) {
-					outpoints.push([txid, parseInt(vout)]);
-				}
-			}
+		                // Electrs 0.9.0 support spending transaction lookup for an outpoint
+                if ((config.addressApi == "electrum" || config.addressApi == "electrumx")  && config.electrumTxIndex) {
+                        if (res.locals.utxos.length > 200) {
+                                res.locals.userMessageMarkdown = `Too many spent outpoints to fetch spending transactions`;
+                        } else {
+                                let outpoints = [];
+                                for (const vout in tx.vout) {
+                                        if (res.locals.utxos[vout] == null) {
+                                                outpoints.push([txid, parseInt(vout)]);
+                                        }
+                                        //spending_promises.push(new Promise(async (resolve, reject) => {
+                                        //      if (res.locals.utxos[vout] == null) {
+                                        //              const spent = await electrumAddressApi.lookupOutpointTx(txid, parseInt(vout));
+                                        //              resolve(spent);
+                                        //      } else {
+                                        //              resolve(false);
+                                        //      }
+                                        //}));
+                                }
 
-			const spent_outpoints = await electrumAddressApi.lookupOutpointsTx(outpoints);
-			let spendings_status = [];
-			let spent_idx = 0;
-			for (const vout in tx.vout) {
-				if (res.locals.utxos[vout] == null) {
-					spendings_status.push(spent_outpoints[spent_idx].result);
-					++spent_idx;
-				} else {
-					spendings_status.push(false)
-				}
-			}
-			res.locals.spendings = spendings_status
-		}
+                                const spent_outpoints = await electrumAddressApi.lookupOutpointsTx(outpoints);
+                                let spendings_status = [];
+                                let spent_idx = 0;
+                                for (const vout in tx.vout) {
+                                        if (res.locals.utxos[vout] == null) {
+                                                spendings_status.push(spent_outpoints[spent_idx].result);
+                                                ++spent_idx;
+                                        } else {
+                                                spendings_status.push(false)
+                                        }
+                                }
+                                res.locals.spendings = spendings_status
+                                //await Promise.all(spending_promises).then((outpoint_results) => {
+                          	//      res.locals.spendings = outpoint_results;
+                                //});
+                        }
+                }
 
 		if (global.specialTransactions && global.specialTransactions[txid]) {
 			let funInfo = global.specialTransactions[txid];
