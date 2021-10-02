@@ -294,6 +294,21 @@ mixin outputValueDisplay(vout, voutIndex)
 									+darkBadge
 										span(title=`Output Type: ${utils.outputTypeName(vout.scriptPubKey.type)}`, data-bs-toggle="tooltip") #{utils.outputTypeAbbreviation(vout.scriptPubKey.type)}
 							
+                                                if (spendings)
+                                                        - var spending_vout = spendings[voutIndex];
+                                                        if (spending_vout && spending_vout.spender_txhash)
+                                                                span.mt-1 spent by
+                                                                a(href=`./tx/${spending_vout.spender_txhash}`) #{utils.ellipsizeMiddle(spending_vout.spender_txhash,9)}
+                                                                if (spending_vout.spender_height > 0 && spending_vout.spender_height > spending_vout.height)
+                                                                        span  #{spending_vout.spender_height - spending_vout.height} blocks later
+                                                                else if (spending_vout.spender_height <= 0)
+                                                                        span  in the mempool
+                                                                else
+                                                                        span  in the same block
+
+                                                else if (utxos && utxos[voutIndex] == null)
+                                                        span.mt-1 spent by
+                                                        a(href=`./outpoint/${txid}-${voutIndex}`) this transaction
 
 					span.ms-2.float-end
 						+outputValueDisplay(vout, voutIndex)

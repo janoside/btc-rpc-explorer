@@ -1255,6 +1255,27 @@ function bip32Addresses(extPubkey, addressType, account, limit=10, offset=0) {
 }
 
 
+function createPromiseResultBatch(resolve, reject, argz) {
+	return (err, result) => {
+		if (result && result[0] && result[0].id) {
+			// this is a batch request response
+			for (let r of result) {
+				r.param = argz[r.id];
+			}
+		}
+		if (err) reject(err);
+		else resolve(result);
+	};
+};
+
+function makeRequest(method, params, id) {
+	return JSON.stringify({
+		jsonrpc: '2.0',
+		method: method,
+		params: params,
+		id: id,
+	});
+
 const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
 const awaitPromises = async (promises) => {
@@ -1348,6 +1369,8 @@ module.exports = {
 	getVoutAddresses: getVoutAddresses,
 	xpubChangeVersionBytes: xpubChangeVersionBytes,
 	bip32Addresses: bip32Addresses,
+	createPromiseResultBatch: createPromiseResultBatch,
+	makeRequest: makeRequest,
 	sleep: sleep,
 	awaitPromises: awaitPromises,
 	perfLogNewItem: perfLogNewItem,
