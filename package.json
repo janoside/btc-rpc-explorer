@@ -6,6 +6,7 @@
 	"bin": "bin/cli.js",
 	"scripts": {
 		"start": "node ./bin/www",
+		"test": "node ./bin/test.js",
 		"miners": "node ./bin/refresh-mining-pool-configs.js",
 		"integrity": "node ./bin/frontend-resource-integrity.js",
 		"css-light-debug": "node-sass --output-style expanded --source-map scss --precision 6 ./public/scss/light.scss ./public/style/light.css",
@@ -61,7 +62,6 @@
 		"pug": "^3.0.2",
 		"qrcode": "^1.4.4",
 		"redis": "^3.0.2",
-		"request": "^2.88.2",
 		"semver": "^7.3.5",
 		"serve-favicon": "^2.5.0",
 		"simple-git": "^2.39.0"

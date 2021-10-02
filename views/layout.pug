@@ -238,6 +238,7 @@ html(lang="en")
 									a.dropdown-item(href="./admin/dashboard") Dashboard
 									a.dropdown-item(href="./admin/app-stats") App Stats
 									a.dropdown-item(href="./admin/os-stats") OS Stats
+									a.dropdown-item(href="./admin/perf-log") Performance Log
 							
 								
 					.col-5
@@ -342,6 +343,12 @@ html(lang="en")
 
 				onLoad_tabSelection();
 			});
+
+		if (perfResults)
+			script.
+				var perfId = !{JSON.stringify(perfId)};
+
+				console.log(`Performance ID: ${perfId}`);
 
 		if (!homepage)
 			script(src="./js/highlight.pack.js", integrity="sha384-OGoFdvlhYqw3L+BFpHxdz5136RO9tUlt7OZ2qQZ0N6Z9Qqx0rCQBsg9ko7X4vC64")

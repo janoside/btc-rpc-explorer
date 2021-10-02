@@ -1,12 +1,14 @@
 "use strict";
 
+const fs = require("fs");
+
 const debug = require("debug");
 const debugLog = debug("btcexp:utils");
 const debugErrorLog = debug("btcexp:error");
 const debugErrorVerboseLog = debug("btcexp:errorVerbose");
 
 const Decimal = require("decimal.js");
-const request = require("request");
+const axios = require("axios");
 const qrcode = require("qrcode");
 const bs58check = require("bs58check");
 const bip32 = require('bip32');
@@ -46,6 +48,8 @@ const crawlerBotUserAgentStrings = {
 	"facebook": new RegExp("facebot", "i"),
 	"alexa": new RegExp("ia_archiver", "i"),
 	"aol": new RegExp("aolbuild", "i"),
+	"moz": new RegExp("dotbot", "i"),
+	"semrush": new RegExp("SemrushBot", "i")
 };
 
 const ipMemoryCache = {};
@@ -59,6 +63,42 @@ if (redisCache.active) {
 
 	ipRedisCache = redisCache.createCache("v0", onRedisCacheEvent);
 }
+
+let ipMemoryCacheNewItems = false;
+const ipCacheFile = `${config.filesystemCacheDir}/ip-address-cache.json`;
+
+if (fs.existsSync(ipCacheFile)) {
+	try {
+		let rawData = fs.readFileSync(ipCacheFile);
+
+		ipMemoryCache = JSON.parse(rawData);
+
+		debugLog(`Loaded ip address cache (${rawData.length.toLocaleString()} bytes)`);
+
+	} catch (err) {
+		// failed to read cache file, delete it in case it's corrupted
+		fs.unlinkSync(ipCacheFile);
+	}
+}
+
+setInterval(() => {
+	if (ipMemoryCacheNewItems) {
+		try {
+			if (!fs.existsSync(config.filesystemCacheDir)){
+				fs.mkdirSync(config.filesystemCacheDir);
+			}
+
+			debugLog(`Saved updated ip address cache`);
+
+			fs.writeFileSync(ipCacheFile, JSON.stringify(ipMemoryCache, null, 4));
+
+		} catch (e) {
+			utils.logError("24308tew7hgde", e);
+		}
+
+		ipMemoryCacheNewItems = false;
+	}
+}, 60000);
 
 const ipCache = {
 	get:function(key) {
@@ -87,6 +127,8 @@ const ipCache = {
 	},
 	set:function(key, value, expirationMillis) {
 		ipMemoryCache[key] = value;
+
+		ipMemoryCacheNewItems = true;
 
 		if (ipRedisCache != null) {
 			ipRedisCache.set("ip-" + key, value, expirationMillis);
@@ -434,8 +476,8 @@ function logMemoryUsage() {
 	//debugLog("memoryUsage: heapUsed=" + mbUsed + ", heapTotal=" + mbTotal + ", ratio=" + parseInt(mbUsed / mbTotal * 100));
 }
 
-function getMinerFromCoinbaseTx(tx) {
-	if (tx == null || tx.vin == null || tx.vin.length == 0) {
+function identifyMiner(coinbaseTx, blockHeight) {
+	if (coinbaseTx == null || coinbaseTx.vin == null || coinbaseTx.vin.length == 0) {
 		return null;
 	}
 	
@@ -445,8 +487,8 @@ function getMinerFromCoinbaseTx(tx) {
 
 			for (var payoutAddress in miningPoolsConfig.payout_addresses) {
 				if (miningPoolsConfig.payout_addresses.hasOwnProperty(payoutAddress)) {
-					if (tx.vout && tx.vout.length > 0) {
-						if (getVoutAddresses(tx.vout[0]).includes(payoutAddress)) {
+					if (coinbaseTx.vout && coinbaseTx.vout.length > 0) {
+						if (getVoutAddresses(coinbaseTx.vout[0]).includes(payoutAddress)) {
 							var minerInfo = miningPoolsConfig.payout_addresses[payoutAddress];
 							minerInfo.identifiedBy = "payout address " + payoutAddress;
 
@@ -458,7 +500,7 @@ function getMinerFromCoinbaseTx(tx) {
 
 			for (var coinbaseTag in miningPoolsConfig.coinbase_tags) {
 				if (miningPoolsConfig.coinbase_tags.hasOwnProperty(coinbaseTag)) {
-					if (hex2ascii(tx.vin[0].coinbase).indexOf(coinbaseTag) != -1) {
+					if (hex2ascii(coinbaseTx.vin[0].coinbase).indexOf(coinbaseTag) != -1) {
 						var minerInfo = miningPoolsConfig.coinbase_tags[coinbaseTag];
 						minerInfo.identifiedBy = "coinbase tag '" + coinbaseTag + "'";
 
@@ -468,19 +510,32 @@ function getMinerFromCoinbaseTx(tx) {
 			}
 
 			for (var blockHash in miningPoolsConfig.block_hashes) {
-				if (blockHash == tx.blockhash) {
+				if (blockHash == coinbaseTx.blockhash) {
 					var minerInfo = miningPoolsConfig.block_hashes[blockHash];
 					minerInfo.identifiedBy = "known block hash '" + blockHash + "'";
 
 					return minerInfo;
 				}
 			}
+
+			if (miningPoolsConfig.block_heights) {
+				for (var minerName in miningPoolsConfig.block_heights) {
+					var minerInfo = miningPoolsConfig.block_heights[minerName];
+					minerInfo.name = minerName;
+
+					if (minerInfo.heights.includes(blockHeight)) {
+						minerInfo.identifiedBy = "known block height #" + blockHeight;
+
+						return minerInfo;
+					}
+				}
+			}
 		}
 	}
 
-	if (tx.vout && tx.vout.length > 0) {
-		for (var i = 0; i < tx.vout.length; i++) {
-			const vout = tx.vout[i];
+	if (coinbaseTx.vout && coinbaseTx.vout.length > 0) {
+		for (var i = 0; i < coinbaseTx.vout.length; i++) {
+			const vout = coinbaseTx.vout[i];
 
 			const voutValue = new Decimal(vout.value);
 			if (voutValue > 0) {
@@ -564,51 +619,64 @@ function getBlockTotalFeesFromCoinbaseTxAndBlockHeight(coinbaseTx, blockHeight) 
 }
 
 function estimatedSupply(height) {
-	var checkpointData = coinConfig.coinSupplyCheckpointsByNetwork[global.activeBlockchain];
-	
-	if (!checkpointData) {
-		return new Decimal(0);
+	const checkpoint = coinConfig.utxoSetCheckpointsByNetwork[global.activeBlockchain];
+
+	let checkpointHeight = 0;
+	let checkpointSupply = new Decimal(50);
+
+	if (checkpoint && checkpoint.height <= height) {
+		//console.log("using checkpoint");
+		checkpointHeight = checkpoint.height;
+		checkpointSupply = new Decimal(checkpoint.total_amount);
 	}
 
-	var checkpointHeight = checkpointData[0];
-	var checkpointSupply = checkpointData[1];
+	let halvingBlockInterval = coinConfig.halvingBlockIntervalsByNetwork[global.activeBlockchain];
 
-	var supply = checkpointSupply;
-	
-	var i = checkpointHeight;
+	let supply = checkpointSupply;
+
+	let i = checkpointHeight;
 	while (i < height) {
-		supply = supply.plus(new Decimal(coinConfig.blockRewardFunction(i, global.activeBlockchain)));
+		let nextHalvingHeight = halvingBlockInterval * Math.floor(i / halvingBlockInterval) + halvingBlockInterval;
+		
+		if (height < nextHalvingHeight) {
+			let heightDiff = height - i;
 
-		i++;
+			//console.log(`adding(${heightDiff}): ` + new Decimal(heightDiff).times(coinConfig.blockRewardFunction(i, global.activeBlockchain)));
+			return supply.plus(new Decimal(heightDiff).times(coinConfig.blockRewardFunction(i, global.activeBlockchain)));
+		}
+
+		let heightDiff = nextHalvingHeight - i;
+
+		supply = supply.plus(new Decimal(heightDiff).times(coinConfig.blockRewardFunction(i, global.activeBlockchain)));
+		
+		i += heightDiff;
 	}
-	
+
 	return supply;
 }
 
-function refreshExchangeRates() {
+async function refreshExchangeRates() {
 	if (!config.queryExchangeRates) {
 		return;
 	}
 
 	if (coins[config.coin].exchangeRateData) {
-		request(coins[config.coin].exchangeRateData.jsonUrl, function(error, response, body) {
-			if (error == null && response && response.statusCode && response.statusCode == 200) {
-				var responseBody = JSON.parse(body);
+		try {
+			const response = await axios.get(coins[config.coin].exchangeRateData.jsonUrl);
 
-				var exchangeRates = coins[config.coin].exchangeRateData.responseBodySelectorFunction(responseBody);
-				if (exchangeRates != null) {
-					global.exchangeRates = exchangeRates;
-					global.exchangeRatesUpdateTime = new Date();
+			var exchangeRates = coins[config.coin].exchangeRateData.responseBodySelectorFunction(response.data);
+			if (exchangeRates != null) {
+				global.exchangeRates = exchangeRates;
+				global.exchangeRatesUpdateTime = new Date();
 
-					debugLog("Using exchange rates: " + JSON.stringify(global.exchangeRates) + " starting at " + global.exchangeRatesUpdateTime);
+				debugLog("Using exchange rates: " + JSON.stringify(global.exchangeRates) + " starting at " + global.exchangeRatesUpdateTime);
 
-				} else {
-					debugLog("Unable to get exchange rate data");
-				}
 			} else {
-				logError("39r7h2390fgewfgds", {error:error, response:response, body:body});
+				debugLog("Unable to get exchange rate data");
 			}
-		});
+		} catch (err) {
+			logError("39r7h2390fgewfgds", err);
+		}
 	}
 
 	if (coins[config.coin].goldExchangeRateData) {
@@ -619,24 +687,22 @@ function refreshExchangeRates() {
 			debugLog("Using DEBUG gold exchange rates: " + JSON.stringify(global.goldExchangeRates) + " starting at " + global.goldExchangeRatesUpdateTime);
 
 		} else {
-			request(coins[config.coin].goldExchangeRateData.jsonUrl, function(error, response, body) {
-				if (error == null && response && response.statusCode && response.statusCode == 200) {
-					var responseBody = JSON.parse(body);
+			try {
+				const response = await axios.get(coins[config.coin].goldExchangeRateData.jsonUrl);
 
-					var exchangeRates = coins[config.coin].goldExchangeRateData.responseBodySelectorFunction(responseBody);
-					if (exchangeRates != null) {
-						global.goldExchangeRates = exchangeRates;
-						global.goldExchangeRatesUpdateTime = new Date();
+				var exchangeRates = coins[config.coin].goldExchangeRateData.responseBodySelectorFunction(response.data);
+				if (exchangeRates != null) {
+					global.goldExchangeRates = exchangeRates;
+					global.goldExchangeRatesUpdateTime = new Date();
 
-						debugLog("Using gold exchange rates: " + JSON.stringify(global.goldExchangeRates) + " starting at " + global.goldExchangeRatesUpdateTime);
+					debugLog("Using gold exchange rates: " + JSON.stringify(global.goldExchangeRates) + " starting at " + global.goldExchangeRatesUpdateTime);
 
-					} else {
-						debugLog("Unable to get gold exchange rate data");
-					}
 				} else {
-					logError("34082yt78yewewe", {error:error, response:response, body:body});
+					debugLog("Unable to get gold exchange rate data");
 				}
-			});
+			} catch (err) {
+				logError("34082yt78yewewe", err);
+			}
 		}
 	}
 }
@@ -655,45 +721,54 @@ function geoLocateIpAddresses(ipAddresses, provider) {
 		var promises = [];
 		for (var i = 0; i < ipAddresses.length; i++) {
 			var ipStr = ipAddresses[i];
+
+			if (ipStr.endsWith(".onion")) {
+				// tor, no location possible
+				continue;
+			}
+
+			if (ipStr == "127.0.0.1") {
+				// skip
+				continue;
+			}
+
+			if (!ipStr.match(/^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$/)) {
+				// non-IPv4, skip it
+				continue;
+			}
 			
 			promises.push(new Promise(function(resolve2, reject2) {
-				ipCache.get(ipStr).then(function(result) {
+				ipCache.get(ipStr).then(async function(result) {
 					if (result.value == null) {
 						var apiUrl = "http://api.ipstack.com/" + result.key + "?access_key=" + config.credentials.ipStackComApiAccessKey;
 						
-						request(apiUrl, function(error, response, body) {
-							if (error) {
-								debugLog("Failed IP-geo-lookup: " + result.key);
+						try {
+							const response = await axios.get(apiUrl);
 
-								logError("39724gdge33a", error, {ip: result.key});
+							var ip = response.data.ip;
 
-								// we failed to get what we wanted, but there's no meaningful recourse,
-								// so we log the failure and continue without objection
-								resolve2();
+							ipDetails.detailsByIp[ip] = response.data;
+
+							if (response.data.latitude && response.data.longitude) {
+								debugLog(`Successful IP-geo-lookup: ${ip} -> (${response.data.latitude}, ${response.data.longitude})`);
 
 							} else {
-								if (response != null && response.statusCode == 200) {
-									var resBody = JSON.parse(response.body);
-									var ip = resBody.ip;
+								debugLog(`Unknown location for IP-geo-lookup: ${ip}`);
+							}									
 
-									ipDetails.detailsByIp[ip] = resBody;
+							ipCache.set(ip, response.data, 1000 * 60 * 60 * 24 * 365);
 
-									if (resBody.latitude && resBody.longitude) {
-										debugLog(`Successful IP-geo-lookup: ${ip} -> (${resBody.latitude}, ${resBody.longitude})`);
+							resolve2();
 
-									} else {
-										debugLog(`Unknown location for IP-geo-lookup: ${ip}`);
-									}									
+						} catch (err) {
+							debugLog("Failed IP-geo-lookup: " + result.key);
 
-									ipCache.set(ip, resBody, 1000 * 60 * 60 * 24 * 365);
+							logError("39724gdge33a", error, {ip: result.key});
 
-								} else {
-									debugLog("Unsuccessful IP-geo-lookup: " + result.key);
-								}
-
-								resolve2();
-							}
-						});
+							// we failed to get what we wanted, but there's no meaningful recourse,
+							// so we log the failure and continue without objection
+							resolve2();
+						}
 
 					} else {
 						ipDetails.detailsByIp[result.key] = result.value;
@@ -808,34 +883,10 @@ function colorHexToHsl(hex) {
 const reflectPromise = p => p.then(v => ({v, status: "resolved" }),
 							e => ({e, status: "rejected" }));
 
-const safePromise = (uid, f) => {
-	return new Promise(async (resolve, reject) => {
-		const startTime = startTimeNanos();
-
-		try {
-			await f();
-
-			const responseTimeMillis = dtMillis(startTime);
-			
-			statTracker.trackPerformance(uid, responseTimeMillis);
-
-			resolve();
-
-		} catch (e) {
-			logError(uid, e);
-
-			const responseTimeMillis = dtMillis(startTime);
-
-			statTracker.trackPerformance(`${uid}_error`, responseTimeMillis);
-			
-			resolve(e);
-		}
-	});
-};
 
 global.errorStats = {};
 
-function logError(errorId, err, optionalUserData = null) {
+function logError(errorId, err, optionalUserData = {}, logStacktrace=true) {
 	if (!global.errorLog) {
 		global.errorLog = [];
 	}
@@ -846,6 +897,10 @@ function logError(errorId, err, optionalUserData = null) {
 			firstSeen: new Date().getTime(),
 			properties: {}
 		};
+	}
+
+	if (optionalUserData && err.message) {
+		optionalUserData.errorMsg = err.message;
 	}
 
 	if (optionalUserData) {
@@ -875,7 +930,7 @@ function logError(errorId, err, optionalUserData = null) {
 
 	debugErrorLog("Error " + errorId + ": " + err + ", json: " + JSON.stringify(err) + (optionalUserData != null ? (", userData: " + optionalUserData + " (json: " + JSON.stringify(optionalUserData) + ")") : ""));
 	
-	if (err && err.stack) {
+	if (err && err.stack && logStacktrace) {
 		debugErrorVerboseLog("Stack: " + err.stack);
 	}
 
@@ -995,19 +1050,47 @@ const getCrawlerFromUserAgentString = userAgentString => {
 	return null;
 };
 
-const timePromise = async (name, promise) => {
-	const startTime = startTimeNanos();
-	
-	const response = await promise;
+const safePromise = async (uid, promise) => {
+	try {
+		const response = await promise();
 
-	const responseTimeMillis = dtMillis(startTime);
+		return response;
 
-	statTracker.trackPerformance(name, responseTimeMillis);
-
-	return response;
+	} catch (e) {
+		logError(uid, e);
+	}
 };
 
-const timeFunction = (uid, f) => {
+const timePromise = async (name, promise, perfResults=null) => {
+	const startTime = startTimeNanos();
+
+	try {
+		const response = await promise();
+
+		const responseTimeMillis = dtMillis(startTime);
+
+		statTracker.trackPerformance(name, responseTimeMillis);
+
+		if (perfResults) {
+			perfResults[name] = Math.max(1, parseInt(responseTimeMillis));
+		}
+
+		return response;
+
+	} catch (e) {
+		const responseTimeMillis = dtMillis(startTime);
+
+		statTracker.trackPerformance(`${name}_error`, responseTimeMillis);
+
+		if (perfResults) {
+			perfResults[`${name}_error`] = Math.max(1, parseInt(responseTimeMillis));
+		}
+
+		throw e;
+	}
+};
+
+const timeFunction = (uid, f, perfResults=null) => {
 	const startTime = startTimeNanos();
 
 	f();
@@ -1015,6 +1098,10 @@ const timeFunction = (uid, f) => {
 	const responseTimeMillis = dtMillis(startTime);
 
 	statTracker.trackPerformance(uid, responseTimeMillis);
+
+	if (perfResults) {
+		perfResults[uid] = responseTimeMillis;
+	}
 };
 
 const startTimeNanos = () => {
@@ -1049,24 +1136,24 @@ function iterateProperties(obj, action) {
 }
 
 function stringifySimple(object) {
-		var simpleObject = {};
-		for (var prop in object) {
-				if (!object.hasOwnProperty(prop)) {
-						continue;
-				}
+	var simpleObject = {};
+	for (var prop in object) {
+			if (!object.hasOwnProperty(prop)) {
+					continue;
+			}
 
-				if (typeof(object[prop]) == 'object') {
-						continue;
-				}
+			if (typeof(object[prop]) == 'object') {
+					continue;
+			}
 
-				if (typeof(object[prop]) == 'function') {
-						continue;
-				}
+			if (typeof(object[prop]) == 'function') {
+					continue;
+			}
 
-				simpleObject[prop] = object[prop];
-		}
+			simpleObject[prop] = object[prop];
+	}
 
-		return JSON.stringify(simpleObject); // returns cleaned up JSON
+	return JSON.stringify(simpleObject); // returns cleaned up JSON
 }
 
 function getVoutAddress(vout) {
@@ -1167,6 +1254,7 @@ function bip32Addresses(extPubkey, addressType, account, limit=10, offset=0) {
 	return addresses;
 }
 
+
 function createPromiseResultBatch(resolve, reject, argz) {
 	return (err, result) => {
 		if (result && result[0] && result[0].id) {
@@ -1187,6 +1275,44 @@ function makeRequest(method, params, id) {
 		params: params,
 		id: id,
 	});
+
+const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
+const awaitPromises = async (promises) => {
+	const promiseResults = await Promise.allSettled(promises);
+
+	promiseResults.forEach(x => {
+		if (x.status == "rejected") {
+			if (x.reason) {
+				logError("awaitPromises_rejected", x.reason);
+			}
+		}
+	});
+};
+
+const perfLog = [];
+let perfLogItemCount = 0;
+const perfLogMaxItems = 100;
+const perfLogNewItem = (tags) => {
+	const newItem = tags;
+
+	newItem.id = getRandomString(12, "aA#");
+	newItem.date = new Date();
+	newItem.results = {};
+	newItem.index = perfLogItemCount;
+
+	perfLogItemCount++;
+
+	perfLog.splice(0, 0, newItem);
+
+	while (perfLog.length > perfLogMaxItems) {
+		perfLog.splice(perfLog.length - 1, 1);
+	}
+
+	return {
+		perfId:newItem.id,
+		perfResults:newItem.results
+	};
 };
 
 module.exports = {
@@ -1207,7 +1333,7 @@ module.exports = {
 	seededRandomIntBetween: seededRandomIntBetween,
 	randomInt: randomInt,
 	logMemoryUsage: logMemoryUsage,
-	getMinerFromCoinbaseTx: getMinerFromCoinbaseTx,
+	identifyMiner: identifyMiner,
 	getBlockTotalFeesFromCoinbaseTxAndBlockHeight: getBlockTotalFeesFromCoinbaseTxAndBlockHeight,
 	estimatedSupply: estimatedSupply,
 	refreshExchangeRates: refreshExchangeRates,
@@ -1245,4 +1371,8 @@ module.exports = {
 	bip32Addresses: bip32Addresses,
 	createPromiseResultBatch: createPromiseResultBatch,
 	makeRequest: makeRequest,
+	sleep: sleep,
+	awaitPromises: awaitPromises,
+	perfLogNewItem: perfLogNewItem,
+	perfLog: perfLog
 };

@@ -42,7 +42,6 @@
 				"pug": "^3.0.2",
 				"qrcode": "^1.4.4",
 				"redis": "^3.0.2",
-				"request": "^2.88.2",
 				"semver": "^7.3.5",
 				"serve-favicon": "^2.5.0",
 				"simple-git": "^2.39.0"
@@ -4269,9 +4268,9 @@
 			}
 		},
 		"node_modules/tar": {
-			"version": "6.1.6",
-			"resolved": "https://registry.npmjs.org/tar/-/tar-6.1.6.tgz",
-			"integrity": "sha512-oaWyu5dQbHaYcyZCTfyPpC+VmI62/OM2RTUYavTk1MDr1cwW5Boi3baeYQKiZbY2uSQJGr+iMOzb/JFxLrft+g==",
+			"version": "6.1.11",
+			"resolved": "https://registry.npmjs.org/tar/-/tar-6.1.11.tgz",
+			"integrity": "sha512-an/KZQzQUkZCkuoAA64hM92X0Urb6VpRhAFllDzz44U2mcD5scmT3zBc4VgVpkugF580+DQn8eAFSyoQt0tznA==",
 			"dev": true,
 			"dependencies": {
 				"chownr": "^2.0.0",
@@ -8124,9 +8123,9 @@
 			"dev": true
 		},
 		"tar": {
-			"version": "6.1.6",
-			"resolved": "https://registry.npmjs.org/tar/-/tar-6.1.6.tgz",
-			"integrity": "sha512-oaWyu5dQbHaYcyZCTfyPpC+VmI62/OM2RTUYavTk1MDr1cwW5Boi3baeYQKiZbY2uSQJGr+iMOzb/JFxLrft+g==",
+			"version": "6.1.11",
+			"resolved": "https://registry.npmjs.org/tar/-/tar-6.1.11.tgz",
+			"integrity": "sha512-an/KZQzQUkZCkuoAA64hM92X0Urb6VpRhAFllDzz44U2mcD5scmT3zBc4VgVpkugF580+DQn8eAFSyoQt0tznA==",
 			"dev": true,
 			"requires": {
 				"chownr": "^2.0.0",

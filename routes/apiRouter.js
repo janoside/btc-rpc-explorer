@@ -241,22 +241,25 @@ router.get("/mining/hashrate", asyncHandler(async (req, res, next) => {
 }));
 
 router.get("/mining/diff-adj-estimate", asyncHandler(async (req, res, next) => {
+	const { perfId, perfResults } = utils.perfLogNewItem({action:"api.diff-adj-estimate"});
+	res.locals.perfId = perfId;
+
 	var promises = [];
-	const getblockchaininfo = await utils.timePromise("api_diffAdjEst_getBlockchainInfo", coreApi.getBlockchainInfo());
+	const getblockchaininfo = await utils.timePromise("api_diffAdjEst_getBlockchainInfo", coreApi.getBlockchainInfo);
 	var currentBlock;
 	var difficultyPeriod = parseInt(Math.floor(getblockchaininfo.blocks / coinConfig.difficultyAdjustmentBlockCount));
 	var difficultyPeriodFirstBlockHeader;
 	
-	promises.push(utils.safePromise("api_diffAdjEst_getBlockHeaderByHeight", async () => {
+	promises.push(utils.timePromise("api.diff-adj-est.getBlockHeaderByHeight", async () => {
 		currentBlock = await coreApi.getBlockHeaderByHeight(getblockchaininfo.blocks);
-	}));
+	}, perfResults));
 	
-	promises.push(utils.safePromise("api_diffAdjEst_getBlockHeaderByHeight2", async () => {
+	promises.push(utils.timePromise("api.diff-adj-est.getBlockHeaderByHeight2", async () => {
 		let h = coinConfig.difficultyAdjustmentBlockCount * difficultyPeriod;
 		difficultyPeriodFirstBlockHeader = await coreApi.getBlockHeaderByHeight(h);
-	}));
-	
-	await Promise.all(promises);
+	}, perfResults));
+
+	await utils.awaitPromises(promises);
 	
 	var firstBlockHeader = difficultyPeriodFirstBlockHeader;
 	var heightDiff = currentBlock.height - firstBlockHeader.height;
@@ -284,6 +287,80 @@ router.get("/mining/diff-adj-estimate", asyncHandler(async (req, res, next) => {
 	}
 	
 	res.send(diffAdjPercent.toFixed(2).toString());
+}));
+
+router.get("/mining/next-block", asyncHandler(async (req, res, next) => {
+	const promises = [];
+
+	const result = {};
+
+	promises.push(utils.timePromise("api/next-block/getblocktemplate", async () => {
+		let nextBlockEstimate = await utils.timePromise("api/next-block/getNextBlockEstimate", async () => {
+			return await coreApi.getNextBlockEstimate();
+		});
+
+
+		//result.blockTemplate = nextBlockEstimate.blockTemplate;
+		//result.feeRateGroups = nextBlockEstimate.feeRateGroups;
+		result.txCount = nextBlockEstimate.blockTemplate.transactions.length;
+
+		result.minFeeRate = nextBlockEstimate.minFeeRate;
+		result.maxFeeRate = nextBlockEstimate.maxFeeRate;
+		result.minFeeTxid = nextBlockEstimate.minFeeTxid;
+		result.maxFeeTxid = nextBlockEstimate.maxFeeTxid;
+
+		result.totalFees = nextBlockEstimate.totalFees.toNumber();
+	}));
+
+	await utils.awaitPromises(promises);
+
+	res.json(result);
+}));
+
+router.get("/mining/next-block/txids", asyncHandler(async (req, res, next) => {
+	const promises = [];
+
+	const txids = [];
+
+	promises.push(utils.timePromise("api/next-block/getblocktemplate", async () => {
+		let nextBlockEstimate = await utils.timePromise("api/next-block/getNextBlockEstimate", async () => {
+			return await coreApi.getNextBlockEstimate();
+		});
+
+		nextBlockEstimate.blockTemplate.transactions.forEach(x => {
+			txids.push(x.txid);
+		});
+	}));
+
+	await utils.awaitPromises(promises);
+
+	res.json(txids);
+}));
+
+router.get("/mining/next-block/includes/:txid", asyncHandler(async (req, res, next) => {
+	const txid = req.params.txid;
+
+	const promises = [];
+
+	let txidIncluded = false;
+
+	promises.push(utils.timePromise("api/next-block/getblocktemplate", async () => {
+		let nextBlockEstimate = await utils.timePromise("api/next-block/getNextBlockEstimate", async () => {
+			return await coreApi.getNextBlockEstimate();
+		});
+
+		for (let i = 0; i < nextBlockEstimate.blockTemplate.transactions.length; i++) {
+			if (nextBlockEstimate.blockTemplate.transactions[i].txid == txid) {
+				txidIncluded = true;
+
+				return;
+			}
+		}
+	}));
+
+	await utils.awaitPromises(promises);
+
+	res.send(txidIncluded);
 }));
 
 
@@ -591,16 +668,16 @@ router.get("/quotes/random", function(req, res, next) {
 	next();
 });
 
-router.get("/quotes/:quoteIndex", function(req, res, next) {
-	var index = parseInt(req.params.quoteIndex);
-	
-	res.json(btcQuotes.items[index]);
+router.get("/quotes/all", function(req, res, next) {
+	res.json(btcQuotes.items);
 
 	next();
 });
 
-router.get("/quotes/all", function(req, res, next) {
-	res.json(btcQuotes.items);
+router.get("/quotes/:quoteIndex", function(req, res, next) {
+	var index = parseInt(req.params.quoteIndex);
+	
+	res.json(btcQuotes.items[index]);
 
 	next();
 });

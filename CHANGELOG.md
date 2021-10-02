@@ -1,3 +1,19 @@
+##### Unreleased
+
+* Fix for difficulty adjustment estimate
+* New API actions:
+	* [/api/mining/next-block](./api/mining/next-block)
+	* [/api/mining/next-block/txids](./api/mining/next-block/txids)
+	* [/api/mining/next-block/includes/:txid](./api/mining/next-block/includes/yourTxid)
+* Updated miners, including identification of "Patoshi"-pattern blocks
+* Performance improvements
+	* Fix for performance degradation over time due to slow "estimatedSupply" function
+	* Homepage speedup by making "Estimated Next Block" data load asynchonously
+* Error handling improvements
+* Fix for `/api/quotes/all`
+* Performance log admin page at [/admin/perf-log](./admin/perf-log)
+
+
 ##### v3.2.0
 ###### 2021-08-10
 

@@ -5,7 +5,13 @@ const Decimal8 = Decimal.clone({ precision:8, rounding:8 });
 
 const btcFun = require("./btcFun.js");
 
-var currencyUnits = [
+const blockRewardEras = [ new Decimal8(50) ];
+for (let i = 1; i < 34; i++) {
+	let previous = blockRewardEras[i - 1];
+	blockRewardEras.push(new Decimal8(previous).dividedBy(2));
+}
+
+const currencyUnits = [
 	{
 		type:"native",
 		name:"BTC",
@@ -91,9 +97,9 @@ module.exports = {
 	},
 	miningPoolsConfigUrls:[
 		"https://raw.githubusercontent.com/btc21/Bitcoin-Known-Miners/master/miners.json",
+		"https://raw.githubusercontent.com/0xB10C/known-mining-pools/master/pools.json",
 		"https://raw.githubusercontent.com/btccom/Blockchain-Known-Pools/master/pools.json",
-		"https://raw.githubusercontent.com/blockchain/Blockchain-Known-Pools/master/pools.json",
-		"https://raw.githubusercontent.com/0xB10C/known-mining-pools/master/pools.json"
+		"https://raw.githubusercontent.com/blockchain/Blockchain-Known-Pools/master/pools.json"
 	],
 	maxBlockWeight: 4000000,
 	maxBlockSize: 1000000,
@@ -127,6 +133,10 @@ module.exports = {
 		"test": [ 1940614, new Decimal(20963051.112) ],
 		"signet": [ 29472, new Decimal(1473600) ],
 		"regtest": [ 0, new Decimal(0) ]
+	},
+
+	utxoSetCheckpointsByNetwork: {
+		"main": {"height":702329,"bestblock":"00000000000000000005d323e8b476eac408e88002591b5ed7381ec9baaf2d13","transactions":45854214,"txouts":75356871,"bogosize":5640223435,"hash_serialized_2":"727879e512dde3c87ec4b3b4185d8212506a5eee517694a34785c0a63a7d78b9","disk_size":4582442992,"total_amount":"18826856.29247566","lastUpdated":1632692076775}
 	},
 	
 	genesisBlockHashesByNetwork:{
@@ -522,15 +532,9 @@ module.exports = {
 		}
 	},
 	blockRewardFunction:function(blockHeight, chain) {
-		var eras = [ new Decimal8(50) ];
-		for (var i = 1; i < 34; i++) {
-			var previous = eras[i - 1];
-			eras.push(new Decimal8(previous).dividedBy(2));
-		}
+		let halvingBlockInterval = (chain == "regtest" ? 150 : 210000);
+		let index = Math.floor(blockHeight / halvingBlockInterval);
 
-		var halvingBlockInterval = (chain == "regtest" ? 150 : 210000);
-		var index = Math.floor(blockHeight / halvingBlockInterval);
-
-		return eras[index];
+		return blockRewardEras[index];
 	}
 };

@@ -80,7 +80,7 @@ block content
 					- isTxConfirmed = false;
 
 				if (isCoinbaseTx)
-					- var minerInfo = utils.getMinerFromCoinbaseTx(result.getrawtransaction);
+					- var minerInfo = utils.identifyMiner(result.getrawtransaction, result.getblock.height);
 
 				+contentSection("Summary")
 					+summaryRow((isTxConfirmed ? 2 : 3) + (isCoinbaseTx ? 1 : 2) + (isCoinbaseTx && minerInfo ? 1 : 0))
