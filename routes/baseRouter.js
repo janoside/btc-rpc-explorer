@@ -1363,6 +1363,61 @@ router.get("/tx/:transactionId@:blockHeight", asyncHandler(async (req, res, next
 	next();
 }));
 
+router.get("/outpoint/:transactionId-:vout", asyncHandler(async (req, res, next) => {
+	if ((config.addressApi == "electrum" || config.addressApi == "electrumx")  && config.electrumTxIndex) {
+		try {
+			var txid = utils.asHash(req.params.transactionId);
+			var vout = parseInt(req.params.vout);
+			var outpoint = [txid, vout];
+
+			const spent_outpoints = await electrumAddressApi.lookupOutpointsTx([outpoint]);
+			const spending_tx = spent_outpoints[0].result;
+
+			if (spending_tx.spender_txhash == undefined) {
+				res.locals.userMessageMarkdown = `Outpoint **${txid}:${vout}** unspent`;
+				req.url = "/tx/" + req.params.transactionId + `#output-${vout}`;
+				next();
+			} else {
+				var diff_height = "in the mempool";
+				if (spending_tx.spender_height > 0) {
+					diff_height = `after ${spending_tx.spender_height - spending_tx.height} block`
+					if (spending_tx.spender_height - spending_tx.height > 1) {
+						diff_height += `s`
+					}
+				}
+				res.locals.userMessageMarkdown = `Outpoint **${txid}:${vout}** spent by this transaction ` + diff_height;
+				req.url = "/tx/" + spending_tx.spender_txhash;
+				next();
+			}
+		} catch (err) {
+			if (global.prunedBlockchain && res.locals.blockHeight && res.locals.blockHeight < global.pruneHeight) {
+                                // Failure to load tx here is expected and a full description of the situation is given to the user
+                                // in the UI. No need to also show an error userMessage here.
+
+			} else if (!global.txindexAvailable) {
+				res.locals.noTxIndexMsg = noTxIndexMsg;
+
+                                // As above, failure to load the tx is expected here and good user feedback is given in the UI.
+                                // No need for error userMessage.
+
+			} else {
+				res.locals.userMessageMarkdown = `Outpoint not found: txid=**${txid}**, vout=**${vout}**`;
+			}
+
+
+
+			utils.logError("1237y4ewssgt", err);
+
+			res.render("transaction");
+
+			next();
+		}
+	} else {
+		req.url = "/tx/" + req.params.transactionId;
+
+		next();
+	}
+}));
 
 router.get("/tx/:transactionId", asyncHandler(async (req, res, next) => {
 	try {
@@ -1436,25 +1491,28 @@ router.get("/tx/:transactionId", asyncHandler(async (req, res, next) => {
 
 		// Electrs 0.9.0 support spending transaction lookup for an outpoint
 		if ((config.addressApi == "electrum" || config.addressApi == "electrumx")  && config.electrumTxIndex) {
-			let outpoints = [];
-			for (const vout in tx.vout) {
-				if (res.locals.utxos[vout] == null) {
-					outpoints.push([txid, parseInt(vout)]);
+			if (res.locals.utxos.length > 200) {
+				res.locals.spendings = null;
+			} else {
+				let outpoints = [];
+				for (const vout in tx.vout) {
+					if (res.locals.utxos[vout] == null) {
+						outpoints.push([txid, parseInt(vout)]);
+					}
 				}
-			}
-
-			const spent_outpoints = await electrumAddressApi.lookupOutpointsTx(outpoints);
-			let spendings_status = [];
-			let spent_idx = 0;
-			for (const vout in tx.vout) {
-				if (res.locals.utxos[vout] == null) {
-					spendings_status.push(spent_outpoints[spent_idx].result);
-					++spent_idx;
-				} else {
-					spendings_status.push(false)
+				const spent_outpoints = await electrumAddressApi.lookupOutpointsTx(outpoints);
+				let spendings_status = [];
+				let spent_idx = 0;
+				for (const vout in tx.vout) {
+					if (res.locals.utxos[vout] == null) {
+						spendings_status.push(spent_outpoints[spent_idx].result);
+						++spent_idx;
+					} else {
+						spendings_status.push(false)
+					}
 				}
+				res.locals.spendings = spendings_status
 			}
-			res.locals.spendings = spendings_status
 		}
 
 		if (global.specialTransactions && global.specialTransactions[txid]) {
