@@ -241,6 +241,10 @@ mixin outputValueDisplay(vout, voutIndex)
 				- hiddenRow = true;
 				- hiddenRowCount++;
 
+			- var spent = false;
+			if (false && config.electrumServers && config.electrumServers.length > 0)
+				- spent = electrumAddressApi.lookupOutpointTx(vout, voutIndex)
+
 			div(data-txid=tx.txid, class=(hiddenRow ? "d-none" : ""))
 				.clearfix.mb-0.mb-sm-2.mb-md-0
 					a.xs-hidden.d-none.d-sm-inline.badge.card-highlight.border.text-decoration-none.fw-normal.me-2(data-bs-toggle="tooltip", title=`Output #${voutIndex.toLocaleString()}`, style="white-space: nowrap;")

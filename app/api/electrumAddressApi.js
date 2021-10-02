@@ -404,6 +404,7 @@ function lookupOutpointsTx(outpoints) {
 	});
 }
 
+
 function logStats(cmd, dt, success) {
 	if (!global.electrumStats.rpc[cmd]) {
 		global.electrumStats.rpc[cmd] = {count:0, time:0, successes:0, failures:0};
