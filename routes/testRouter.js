@@ -45,7 +45,7 @@ router.get("/tx-display", asyncHandler(async (req, res, next) => {
 
 		res.locals.blockHeightsByTxid[txid] = data.blockHeight;
 
-		promises.push(utils.safePromise("tx_display_getRawTransactionsWithInputs", async () => {
+		promises.push(utils.timePromise("test.tx-display.getRawTransactionsWithInputs", async () => {
 			const transactionData = await coreApi.getRawTransactionsWithInputs([txid], 5, blockHash);
 
 			res.locals.transactions.push(transactionData.transactions[0]);

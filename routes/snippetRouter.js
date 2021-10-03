@@ -13,6 +13,7 @@ const bitcoinjs = require('groestlcoinjs-lib');
 const sha256 = require("crypto-js/sha256");
 const hexEnc = require("crypto-js/enc-hex");
 const Decimal = require("decimal.js");
+const asyncHandler = require("express-async-handler");
 
 const utils = require('./../app/utils.js');
 const coins = require("./../app/coins.js");
@@ -43,6 +44,39 @@ router.get("/quote/random", function(req, res, next) {
 
 	next();
 });
+
+router.get("/next-block", asyncHandler(async (req, res, next) => {
+	const promises = [];
+
+	const result = {};
+
+	promises.push(utils.timePromise("api/next-block/getblocktemplate", async () => {
+		let nextBlockEstimate = await utils.timePromise("api/next-block/getNextBlockEstimate", async () => {
+			return await coreApi.getNextBlockEstimate();
+		});
+
+
+		result.txCount = nextBlockEstimate.blockTemplate.transactions.length;
+
+		result.minFeeRate = nextBlockEstimate.minFeeRate;
+		result.maxFeeRate = nextBlockEstimate.maxFeeRate;
+		result.minFeeTxid = nextBlockEstimate.minFeeTxid;
+		result.maxFeeTxid = nextBlockEstimate.maxFeeTxid;
+
+		result.totalFees = nextBlockEstimate.totalFees.toNumber();
+	}));
+
+	await utils.awaitPromises(promises);
+
+	res.locals.minFeeRate = result.minFeeRate;
+	res.locals.maxFeeRate = result.maxFeeRate;
+	res.locals.txCount = result.txCount;
+	res.locals.totalFees = result.totalFees;
+
+	res.render("snippets/index-next-block");
+}));
+
+
 
 
 module.exports = router;

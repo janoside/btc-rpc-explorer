@@ -88,6 +88,10 @@ function getPeerInfo() {
 	return getRpcData("getpeerinfo");
 }
 
+function getBlockTemplate() {
+	return getRpcDataWithParams({method:"getblocktemplate", parameters:[{"rules": ["segwit"]}]});
+}
+
 function getAllMempoolTxids() {
 	return getRpcDataWithParams({method:"getrawmempool", parameters:[false]});
 }
@@ -604,6 +608,7 @@ module.exports = {
 	getBlockHeaderByHeight: getBlockHeaderByHeight,
 	getBlockHashByHeight: getBlockHashByHeight,
 	getTxOut: getTxOut,
+	getBlockTemplate: getBlockTemplate,
 
 	minRpcVersions: minRpcVersions
 };

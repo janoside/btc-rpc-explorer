@@ -48,6 +48,8 @@ const crawlerBotUserAgentStrings = {
 	"facebook": new RegExp("facebot", "i"),
 	"alexa": new RegExp("ia_archiver", "i"),
 	"aol": new RegExp("aolbuild", "i"),
+	"moz": new RegExp("dotbot", "i"),
+	"semrush": new RegExp("SemrushBot", "i")
 };
 
 const ipMemoryCache = {};
@@ -617,22 +619,37 @@ function getBlockTotalFeesFromCoinbaseTxAndBlockHeight(coinbaseTx, blockHeight) 
 }
 
 function estimatedSupply(height) {
-	var checkpointData = coinConfig.coinSupplyCheckpointsByNetwork[global.activeBlockchain];
+	const checkpoint = coinConfig.utxoSetCheckpointsByNetwork[global.activeBlockchain];
 
-	if (!checkpointData) {
-		return new Decimal(0);
+	let checkpointHeight = 0;
+	let checkpointSupply = new Decimal(512);
+
+	if (checkpoint && checkpoint.height <= height) {
+		//console.log("using checkpoint");
+		checkpointHeight = checkpoint.height;
+		checkpointSupply = new Decimal(checkpoint.total_amount);
 	}
 
-	var checkpointHeight = checkpointData[0];
-	var checkpointSupply = checkpointData[1];
+	let halvingBlockInterval = coinConfig.halvingBlockIntervalsByNetwork[global.activeBlockchain];
 
-	var supply = checkpointSupply;
+	let supply = checkpointSupply;
 
-	var i = checkpointHeight;
+	let i = checkpointHeight;
 	while (i < height) {
-		supply = supply.plus(new Decimal(coinConfig.blockRewardFunction(i, global.activeBlockchain)));
+		let nextHalvingHeight = halvingBlockInterval * Math.floor(i / halvingBlockInterval) + halvingBlockInterval;
 
-		i++;
+		if (height < nextHalvingHeight) {
+			let heightDiff = height - i;
+
+			//console.log(`adding(${heightDiff}): ` + new Decimal(heightDiff).times(coinConfig.blockRewardFunction(i, global.activeBlockchain)));
+			return supply.plus(new Decimal(heightDiff).times(coinConfig.blockRewardFunction(i, global.activeBlockchain)));
+		}
+
+		let heightDiff = nextHalvingHeight - i;
+
+		supply = supply.plus(new Decimal(heightDiff).times(coinConfig.blockRewardFunction(i, global.activeBlockchain)));
+
+		i += heightDiff;
 	}
 
 	return supply;
@@ -866,30 +883,6 @@ function colorHexToHsl(hex) {
 const reflectPromise = p => p.then(v => ({v, status: "resolved" }),
 							e => ({e, status: "rejected" }));
 
-const safePromise = (uid, f) => {
-	return new Promise(async (resolve, reject) => {
-		const startTime = startTimeNanos();
-
-		try {
-			await f();
-
-			const responseTimeMillis = dtMillis(startTime);
-
-			statTracker.trackPerformance(uid, responseTimeMillis);
-
-			resolve();
-
-		} catch (e) {
-			logError(uid, e);
-
-			const responseTimeMillis = dtMillis(startTime);
-
-			statTracker.trackPerformance(`${uid}_error`, responseTimeMillis);
-
-			resolve(e);
-		}
-	});
-};
 
 global.errorStats = {};
 
@@ -1057,19 +1050,47 @@ const getCrawlerFromUserAgentString = userAgentString => {
 	return null;
 };
 
-const timePromise = async (name, promise) => {
-	const startTime = startTimeNanos();
+const safePromise = async (uid, promise) => {
+	try {
+		const response = await promise();
 
-	const response = await promise;
+		return response;
 
-	const responseTimeMillis = dtMillis(startTime);
-
-	statTracker.trackPerformance(name, responseTimeMillis);
-
-	return response;
+	} catch (e) {
+		logError(uid, e);
+	}
 };
 
-const timeFunction = (uid, f) => {
+const timePromise = async (name, promise, perfResults=null) => {
+	const startTime = startTimeNanos();
+
+	try {
+		const response = await promise();
+
+		const responseTimeMillis = dtMillis(startTime);
+
+		statTracker.trackPerformance(name, responseTimeMillis);
+
+		if (perfResults) {
+			perfResults[name] = Math.max(1, parseInt(responseTimeMillis));
+		}
+
+		return response;
+
+	} catch (e) {
+		const responseTimeMillis = dtMillis(startTime);
+
+		statTracker.trackPerformance(`${name}_error`, responseTimeMillis);
+
+		if (perfResults) {
+			perfResults[`${name}_error`] = Math.max(1, parseInt(responseTimeMillis));
+		}
+
+		throw e;
+	}
+};
+
+const timeFunction = (uid, f, perfResults=null) => {
 	const startTime = startTimeNanos();
 
 	f();
@@ -1077,6 +1098,10 @@ const timeFunction = (uid, f) => {
 	const responseTimeMillis = dtMillis(startTime);
 
 	statTracker.trackPerformance(uid, responseTimeMillis);
+
+	if (perfResults) {
+		perfResults[uid] = responseTimeMillis;
+	}
 };
 
 const startTimeNanos = () => {
@@ -1111,24 +1136,24 @@ function iterateProperties(obj, action) {
 }
 
 function stringifySimple(object) {
-		var simpleObject = {};
-		for (var prop in object) {
-				if (!object.hasOwnProperty(prop)) {
-						continue;
-				}
+	var simpleObject = {};
+	for (var prop in object) {
+			if (!object.hasOwnProperty(prop)) {
+					continue;
+			}
 
-				if (typeof(object[prop]) == 'object') {
-						continue;
-				}
+			if (typeof(object[prop]) == 'object') {
+					continue;
+			}
 
-				if (typeof(object[prop]) == 'function') {
-						continue;
-				}
+			if (typeof(object[prop]) == 'function') {
+					continue;
+			}
 
-				simpleObject[prop] = object[prop];
-		}
+			simpleObject[prop] = object[prop];
+	}
 
-		return JSON.stringify(simpleObject); // returns cleaned up JSON
+	return JSON.stringify(simpleObject); // returns cleaned up JSON
 }
 
 function getVoutAddress(vout) {
@@ -1229,6 +1254,46 @@ function bip32Addresses(extPubkey, addressType, account, limit=10, offset=0) {
 	return addresses;
 }
 
+
+const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
+const awaitPromises = async (promises) => {
+	const promiseResults = await Promise.allSettled(promises);
+
+	promiseResults.forEach(x => {
+		if (x.status == "rejected") {
+			if (x.reason) {
+				logError("awaitPromises_rejected", x.reason);
+			}
+		}
+	});
+};
+
+const perfLog = [];
+let perfLogItemCount = 0;
+const perfLogMaxItems = 100;
+const perfLogNewItem = (tags) => {
+	const newItem = tags;
+
+	newItem.id = getRandomString(12, "aA#");
+	newItem.date = new Date();
+	newItem.results = {};
+	newItem.index = perfLogItemCount;
+
+	perfLogItemCount++;
+
+	perfLog.splice(0, 0, newItem);
+
+	while (perfLog.length > perfLogMaxItems) {
+		perfLog.splice(perfLog.length - 1, 1);
+	}
+
+	return {
+		perfId:newItem.id,
+		perfResults:newItem.results
+	};
+};
+
 module.exports = {
 	reflectPromise: reflectPromise,
 	redirectToConnectPageIfNeeded: redirectToConnectPageIfNeeded,
@@ -1282,5 +1347,9 @@ module.exports = {
 	getVoutAddress: getVoutAddress,
 	getVoutAddresses: getVoutAddresses,
 	xpubChangeVersionBytes: xpubChangeVersionBytes,
-	bip32Addresses: bip32Addresses
+	bip32Addresses: bip32Addresses,
+	sleep: sleep,
+	awaitPromises: awaitPromises,
+	perfLogNewItem: perfLogNewItem,
+	perfLog: perfLog
 };

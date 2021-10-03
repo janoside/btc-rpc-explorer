@@ -1,5 +1,5 @@
 module.exports = {
-	"version": "1.0.0",
+	"version": "1.1.0",
 	"routes":[
 		// blocks
 		{
@@ -70,6 +70,28 @@ module.exports = {
 			"url":"/api/mining/diff-adj-estimate",
 			"desc":"Returns the current estimate for the next difficulty adjustment as a percentage.",
 			"returnType":"number"
+		},
+
+		{
+			"category":"mining",
+			"url":"/api/mining/next-block",
+			"desc":"Returns a summary for the estimated next block to be mined (produced via getblocktemplate).",
+			"returnType":"json"
+		},
+
+		{
+			"category":"mining",
+			"url":"/api/mining/next-block/txids",
+			"desc":"Returns a list of the transaction IDs included in the estimated next block to be mined (produced via getblocktemplate).",
+			"returnType":"json"
+		},
+
+		{
+			"category":"mining",
+			"url":"/api/mining/next-block/includes/:txid",
+			"desc":"Returns whether the specified transaction ID is included in the estimated next block to be mined (produced via getblocktemplate).",
+			"returnType":"boolean",
+			"testUrl":"/api/mining/next-block/includes/yourTxId"
 		},
 
 

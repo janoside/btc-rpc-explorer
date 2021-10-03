@@ -52,7 +52,7 @@ global.miningSummaryLruCache = cacheUtils.lruCache(config.slowDeviceMode ? 500 :
 global.lruCaches = [ global.miscLruCache, global.blockLruCache, global.txLruCache, global.miningSummaryLruCache ];
 
 (function () {
-	let pruneCaches = function() {
+	const pruneCaches = () => {
 		let totalLengthBefore = 0;
 		global.lruCaches.forEach(x => (totalLengthBefore += x.length));
 
@@ -90,7 +90,7 @@ if (!config.noInmemoryRpcCache) {
 		miss: 0
 	};
 
-	var onMemoryCacheEvent = function(cacheType, eventType, cacheKey) {
+	const onMemoryCacheEvent = function(cacheType, eventType, cacheKey) {
 		global.cacheStats.memory[eventType]++;
 		statTracker.trackEvent(`caches.memory.${eventType}`);
 		//debugLog(`cache.${cacheType}.${eventType}: ${cacheKey}`);
@@ -110,7 +110,7 @@ if (redisCache.active) {
 		error: 0
 	};
 
-	var onRedisCacheEvent = function(cacheType, eventType, cacheKey) {
+	const onRedisCacheEvent = function(cacheType, eventType, cacheKey) {
 		global.cacheStats.redis[eventType]++;
 		statTracker.trackEvent(`caches.redis.${eventType}`);
 		//debugLog(`cache.${cacheType}.${eventType}: ${cacheKey}`);
@@ -119,10 +119,10 @@ if (redisCache.active) {
 	// md5 of the active RPC credentials serves as part of the key; this enables
 	// multiple instances of btc-rpc-explorer (eg mainnet + testnet) to share
 	// a single redis instance peacefully
-	var rpcHostPort = `${config.credentials.rpc.host}:${config.credentials.rpc.port}`;
-	var rpcCredKeyComponent = md5(JSON.stringify(config.credentials.rpc)).substring(0, 8);
+	const rpcHostPort = `${config.credentials.rpc.host}:${config.credentials.rpc.port}`;
+	const rpcCredKeyComponent = md5(JSON.stringify(config.credentials.rpc)).substring(0, 8);
 	
-	var redisCacheObj = redisCache.createCache(`${cacheKeyVersion}-${rpcCredKeyComponent}`, onRedisCacheEvent);
+	const redisCacheObj = redisCache.createCache(`${cacheKeyVersion}-${rpcCredKeyComponent}`, onRedisCacheEvent);
 
 	miscCaches.push(redisCacheObj);
 	blockCaches.push(redisCacheObj);
@@ -181,8 +181,14 @@ function tryCacheThenRpcApi(cache, cacheKey, cacheMaxAge, rpcApiFunction, cacheC
 		cache.get(cacheKey).then(function(result) {
 			cacheResult = result;
 
-			finallyFunc();
-			
+			try {
+				finallyFunc();
+
+			} catch (e) {
+				utils.logError("823hredhee", e);
+
+				reject(e);
+			}
 		}).catch(function(err) {
 			utils.logError("nds9fc2eg621tf3", err, {cacheKey:cacheKey});
 
@@ -272,6 +278,114 @@ function getBlockStatsByHeight(height) {
 
 function getUtxoSetSummary() {
 	return tryCacheThenRpcApi(miscCache, "getUtxoSetSummary", FIFTEEN_MIN, rpcApi.getUtxoSetSummary);
+}
+
+async function getNextBlockEstimate() {
+	const blockTemplate = await getBlockTemplate();
+
+	let minFeeRate = 1000000;
+	let maxFeeRate = 0;
+	let minFeeTxid = null;
+	let maxFeeTxid = null;
+
+	var parentTxIndexes = new Set();
+	blockTemplate.transactions.forEach(tx => {
+		if (tx.depends && tx.depends.length > 0) {
+			tx.depends.forEach(index => {
+				parentTxIndexes.add(index);
+			});
+		}
+	});
+
+	var txIndex = 1;
+	blockTemplate.transactions.forEach(tx => {
+		var feeRate = tx.fee / tx.weight * 4;
+		if (tx.depends && tx.depends.length > 0) {
+			var totalFee = tx.fee;
+			var totalWeight = tx.weight;
+
+			tx.depends.forEach(index => {
+				totalFee += blockTemplate.transactions[index - 1].fee;
+				totalWeight += blockTemplate.transactions[index - 1].weight;
+			});
+
+			tx.avgFeeRate = totalFee / totalWeight * 4;
+		}
+
+		// txs that are ancestors should not be included in min/max
+		// calculations since their native fee rate is different than
+		// their effective fee rate (which takes descendant fee rates
+		// into account)
+		if (!parentTxIndexes.has(txIndex) && (!tx.depends || tx.depends.length == 0)) {
+			if (feeRate < minFeeRate) {
+				minFeeRate = feeRate;
+				minFeeTxid = tx.txid;
+			}
+
+			if (feeRate > maxFeeRate) {
+				maxFeeRate = feeRate;
+				maxFeeTxid = tx.txid;
+			}
+		}
+
+		txIndex++;
+	});
+
+	const feeRateGroups = [];
+	var groupCount = 10;
+	for (var i = 0; i < groupCount; i++) {
+		feeRateGroups.push({
+			minFeeRate: minFeeRate + i * (maxFeeRate - minFeeRate) / groupCount,
+			maxFeeRate: minFeeRate + (i + 1) * (maxFeeRate - minFeeRate) / groupCount,
+			totalWeight: 0,
+			txidCount: 0,
+			//txids: []
+		});
+	}
+
+	var txIncluded = 0;
+	blockTemplate.transactions.forEach(tx => {
+		var feeRate = tx.avgFeeRate ? tx.avgFeeRate : (tx.fee / tx.weight * 4);
+
+		for (var i = 0; i < feeRateGroups.length; i++) {
+			if (feeRate >= feeRateGroups[i].minFeeRate) {
+				if (feeRate < feeRateGroups[i].maxFeeRate) {
+					feeRateGroups[i].totalWeight += tx.weight;
+					feeRateGroups[i].txidCount++;
+					
+					//res.locals.nextBlockFeeRateGroups[i].txids.push(tx.txid);
+
+					txIncluded++;
+
+					break;
+				}
+			}
+		}
+	});
+
+	feeRateGroups.forEach(group => {
+		group.weightRatio = group.totalWeight / blockTemplate.weightlimit;
+	});
+
+
+
+	const subsidy = coinConfig.blockRewardFunction(blockTemplate.height, global.activeBlockchain);
+
+	const totalFees = new Decimal(blockTemplate.coinbasevalue).dividedBy(coinConfig.baseCurrencyUnit.multiplier).minus(new Decimal(subsidy));
+
+	return {
+		blockTemplate: blockTemplate,
+		feeRateGroups: feeRateGroups,
+		totalFees: totalFees,
+		minFeeRate: minFeeRate,
+		maxFeeRate: maxFeeRate,
+		minFeeTxid: minFeeTxid,
+		maxFeeTxid: maxFeeTxid
+	};
+}
+
+function getBlockTemplate() {
+	return tryCacheThenRpcApi(miscCache, "getblocktemplate", 5 * ONE_SEC, rpcApi.getBlockTemplate);
 }
 
 function getTxCountStats(dataPtCount, blockStart, blockEnd) {
@@ -1142,7 +1256,7 @@ let mempoolTxSummaryCache = {};
 function getCachedMempoolTxSummaries() {
 	return new Promise(async (resolve, reject) => {
 		try {
-			const allTxids = await utils.timePromise("coreApi_mempool_summary_getAllMempoolTxids", getAllMempoolTxids());
+			const allTxids = await utils.timePromise("coreApi_mempool_summary_getAllMempoolTxids", getAllMempoolTxids);
 			
 			//const txids = allTxids.slice(0, 50); // for debugging
 			const txids = allTxids;
@@ -1312,7 +1426,7 @@ function getMempoolTxSummaries(allTxids, statusId, statusFunc) {
 function buildMempoolSummary(statusId, ageBuckets, sizeBuckets, statusFunc) {
 	return new Promise(async (resolve, reject) => {
 		try {
-			const allTxids = await utils.timePromise("coreApi_mempool_summary_getAllMempoolTxids", getAllMempoolTxids());
+			const allTxids = await utils.timePromise("coreApi_mempool_summary_getAllMempoolTxids", getAllMempoolTxids);
 
 			const txSummaries = await getMempoolTxSummaries(allTxids, statusId, statusFunc);
 
@@ -1631,7 +1745,7 @@ function buildMempoolSummary(statusId, ageBuckets, sizeBuckets, statusFunc) {
 function buildPredictedBlocks(statusId, statusFunc) {
 	return new Promise(async (resolve, reject) => {
 		try {
-			const allTxids = await utils.timePromise("coreApi_mempool_summary_getAllMempoolTxids", getAllMempoolTxids());
+			const allTxids = await utils.timePromise("coreApi_mempool_summary_getAllMempoolTxids", getAllMempoolTxids);
 
 			const txSummaries = await getMempoolTxSummaries(allTxids, statusId, statusFunc);
 
@@ -2024,5 +2138,7 @@ module.exports = {
 	buildPredictedBlocks: buildPredictedBlocks,
 	buildMiningSummary: buildMiningSummary,
 	getCachedMempoolTxSummaries: getCachedMempoolTxSummaries,
-	getMempoolTxSummaries: getMempoolTxSummaries
+	getMempoolTxSummaries: getMempoolTxSummaries,
+	getBlockTemplate: getBlockTemplate,
+	getNextBlockEstimate: getNextBlockEstimate
 };

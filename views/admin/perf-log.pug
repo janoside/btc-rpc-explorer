@@ -1,0 +1,40 @@
+extends ../layout
+
+include ./admin-mixins.pug
+
+block headContent
+	title Performance Log
+
+block content
+	+adminNav
+
+	
+	+pageTitle("Performance Log")
+
+	table.table.table-striped
+		thead
+			tr
+				th #
+				th ID
+				th Type
+				th Date
+
+		tbody
+			each item, itemIndex in perfLog
+				tr(xclass=(itemIndex % 2 == 0 ? "bg-dark" : false))
+					td #{item.index.toLocaleString()}
+					td #{item.id}
+					td #{item.action}
+					td
+						| -#{moment.duration(new Date().getTime() - item.date.getTime()).format()}
+						
+						//- var timeDiff = moment.duration(moment.utc(new Date(parseInt(block.time) * 1000)).diff(moment.utc(new Date(parseInt(blocks[blockIndex - 1].time) * 1000))));
+
+						//include ../includes/time-ago-text.pug
+
+				tr(xclass=(itemIndex % 2 == 0 ? "bg-dark" : false))
+					td(colspan="3")
+						pre #{JSON.stringify(item.results, null, 4)}
+
+
+

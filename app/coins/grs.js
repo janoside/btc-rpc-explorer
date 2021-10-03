@@ -5,7 +5,13 @@ const Decimal8 = Decimal.clone({ precision:8, rounding:8 });
 
 const btcFun = require("./btcFun.js");
 
-var currencyUnits = [
+const blockRewardEras = [ new Decimal8(50) ];
+for (let i = 1; i < 34; i++) {
+	let previous = blockRewardEras[i - 1];
+	blockRewardEras.push(new Decimal8(previous).dividedBy(2));
+}
+
+const currencyUnits = [
 	{
 		type:"native",
 		name:"GRS",
@@ -127,6 +133,10 @@ module.exports = {
 		"test": [ 2284501, new Decimal(71030393) ],
 		"signet": [ 29472, new Decimal(1473600) ],
 		"regtest": [ 0, new Decimal(0) ]
+	},
+
+	utxoSetCheckpointsByNetwork: {
+		"main": {"height":3782345,"bestblock":"0000000000000b7b4f4b75d37acba3c8c14f22a2b0a09f22768465e4504ccf36","transactions":157784,"txouts":430352,"bogosize":32298706,"hash_serialized_2":"2345036cc703d329c0dee6917879d72e543c6e59eb1c8bc4d181ef3a82d0479e","disk_size":23763902,"total_amount":"78519613.88738880","lastUpdated":1633291116000}
 	},
 
 	genesisBlockHashesByNetwork:{
