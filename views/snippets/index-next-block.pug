@@ -5,11 +5,11 @@ include ../includes/shared-mixins.pug
 		+summaryItem("Transactions")
 			| #{txCount.toLocaleString()}
 
-		+summaryItem("Fee Rates", "Minimum and maximum fee rates for transactions that are predicted to be included in the next block.", "sat/vB")
+		+summaryItem("Fee Rates", "Minimum and maximum fee rates for transactions that are predicted to be included in the next block.", "gro/vB")
 			+numWithMutedDecimals(new Decimal(minFeeRate).toDP(2).toString())
 			span.mx-2 -
 			+numWithMutedDecimals(new Decimal(maxFeeRate).toDP(2).toString())
 
-			
+
 		+summaryItem("Total Fees", "Sum of fees for all transactions that are predicted to be included in the next block.")
 			+valueDisplay(totalFees)
