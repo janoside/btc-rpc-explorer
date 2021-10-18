@@ -495,6 +495,7 @@ module.exports = {
 	blockRewardFunction2:function(blockHeight, chain) {
 		var getrw= 0;
 		var halvings = 2102400;
+
 		if (blockHeight > 1 && blockHeight<=50000){
 			getrw = 50;
 		}else if(blockHeight > 50001 && blockHeight <= 100000){
@@ -502,7 +503,7 @@ module.exports = {
 		}else if(blockHeight > 100001 && blockHeight <= 500000){
 			getrw = 10;
 		}else{
-			reward = 5;
+			var reward = 5;
 			if (blockHeight > halvings){
 				while (blockHeight > halvings){
 					reward = reward/2;
