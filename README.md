@@ -1,21 +1,19 @@
 # BTC RPC Explorer
 
+### Self-Hosted Bitcoin block explorer for everyone running [Bitcoin Core](https://github.com/bitcoin/bitcoin).
+
 ![homepage](./public/img/screenshots/homepage-v3.png)
 
-[![npm version][npm-ver-img]][npm-ver-url] [![NPM downloads][npm-dl-img]][npm-dl-url]
+[![npm version][npm-ver-img]][npm-ver-url] [![NPM downloads][npm-dl-alltime-img]][npm-dl-url]
 
-
-Self-Hosted Bitcoin explorer for anyone running [Bitcoin Core](https://github.com/bitcoin/bitcoin).
 
 This is a self-hosted explorer for the Bitcoin blockchain, driven by RPC calls to your own [Bitcoin](https://github.com/bitcoin/bitcoin) node. It is easy to run and can be connected to other tools (like Electrum servers) to achieve a full-featured explorer.
 
 Whatever reasons you may have for running a full node (trustlessness, technical curiosity, supporting the network, etc) it's valuable to appreciate the *fullness* of your node. With this explorer, you can explore not just the blockchain database, but also explore all of the functional capabilities of your own node.
 
-Live demos available at:
+Live demos:
 
-* Mainnet - [BitcoinExplorer.org](https://bitcoinexplorer.org)
-* Testnet - [testnet.BitcoinExplorer.org](https://testnet.bitcoinexplorer.org)
-* Signet - [signet.BitcoinExplorer.org](https://signet.bitcoinexplorer.org)
+* [BitcoinExplorer.org](https://bitcoinexplorer.org) / [testnet](https://testnet.bitcoinexplorer.org) / [signet](https://signet.bitcoinexplorer.org)
 
 
 # Features
@@ -156,4 +154,9 @@ If you get value from this project, please consider supporting my continued work
 [npm-ver-url]: https://www.npmjs.com/package/btc-rpc-explorer
 [npm-dl-img]: http://img.shields.io/npm/dm/btc-rpc-explorer.svg?style=flat
 [npm-dl-url]: https://npmcharts.com/compare/btc-rpc-explorer?minimal=true
+
+[npm-dl-weekly-img]: https://badgen.net/npm/dw/btc-rpc-explorer?icon=npm&cache=300
+[npm-dl-monthly-img]: https://badgen.net/npm/dm/btc-rpc-explorer?icon=npm&cache=300
+[npm-dl-yearly-img]: https://badgen.net/npm/dy/btc-rpc-explorer?icon=npm&cache=300
+[npm-dl-alltime-img]: https://badgen.net/npm/dt/btc-rpc-explorer?icon=npm&cache=300&label=total%20downloads
 
