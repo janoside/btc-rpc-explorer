@@ -544,7 +544,7 @@
             "name" : "EMCDPool",
             "link" : "https://pool.emcd.io"
         },
-        "/Foundry USA Pool #dropgold/" : {
+        "Foundry USA Pool" : {
             "name" : "Foundry USA",
             "link" : "https://foundrydigital.com/"
         },
@@ -1181,6 +1181,14 @@
         "34Jpa4Eu3ApoPVUKNTN2WeuXVVq1jzxgPi": {
             "name" : "Lubian.com",
             "link" : "https://www.lubian.com/"
+        },
+        "33SAB6pzbhEGPbfY6NVgRDV7jVfspZ3A3Z": {
+            "name" : "Carbon Negative (unidentified)",
+            "link" : "https://github.com/0xB10C/known-mining-pools/issues/48"
+        },
+        "1MkCDCzHpBsYQivp8MxjY5AkTGG1f2baoe": {
+            "name": "Luxor",
+            "link": "https://mining.luxor.tech"
         },
         "1FFxkVijzvUPUeHgkFjBk2Qw8j3wQY2cDw" : {
             "name" : "Foundry USA",

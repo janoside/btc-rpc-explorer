@@ -512,7 +512,7 @@
             "name" : "EMCDPool",
             "link" : "https://pool.emcd.io"
         },
-        "/Foundry USA Pool #dropgold/" : {
+        "Foundry USA Pool" : {
             "name" : "Foundry USA",
             "link" : "https://foundrydigital.com/"
         },
@@ -543,9 +543,21 @@
         "MARA Pool": {
             "name": "MARA Pool",
             "link": "https://marapool.com"
+        },
+        "KuCoinPool": {
+            "name": "KuCoinPool",
+            "link": "https://www.kucoin.com/mining-pool/"
         }
     },
     "payout_addresses" : {
+        "1MkCDCzHpBsYQivp8MxjY5AkTGG1f2baoe": {
+            "name": "Luxor",
+            "link": "https://mining.luxor.tech"
+        },
+        "1ArTPjj6pV3aNRhLPjJVPYoxB98VLBzUmb": {
+            "name" : "KuCoinPool",
+            "link" : "https://www.kucoin.com/mining-pool/"
+         },
         "3Bmb9Jig8A5kHdDSxvDZ6eryj3AXd3swuJ": {
             "name" : "NovaBlock",
             "link" : "https://novablock.com"
@@ -1194,7 +1206,7 @@
             "name" : "F2Pool",
             "link" : "https://www.f2pool.com/"
         },
-        "3D72db1KMCnj7FL7MBsmxTw81z2bVu4UN5": {
+        "1A32KFEX7JNPmU1PVjrtiXRrTQcesT3Nf1": {
             "name": "MARA Pool",
             "link": "https://marapool.com"
         }
