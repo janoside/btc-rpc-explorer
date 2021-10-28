@@ -107,6 +107,13 @@ block content
 											i.fas.fa-times.text-danger
 
 								li
+									span.me-2 coinstatsindex
+									if (getindexinfo && getindexinfo["coinstatsindex"])
+										i.fas.fa-check.text-success
+									else
+										i.fas.fa-times.text-danger
+
+								li
 									span.me-2 blockfilterindex
 									if (getindexinfo && getindexinfo["basic block filter index"])
 										i.fas.fa-check.text-success
