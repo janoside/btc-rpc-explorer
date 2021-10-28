@@ -2,9 +2,11 @@
 
 ### Self-Hosted Bitcoin block explorer for everyone running [Bitcoin Core](https://github.com/bitcoin/bitcoin).
 
+[![npm version][npm-ver-img]][npm-ver-url] [![NPM downloads][npm-dl-alltime-img]][npm-dl-url]
+
+
 ![homepage](./public/img/screenshots/homepage-v3.png)
 
-[![npm version][npm-ver-img]][npm-ver-url] [![NPM downloads][npm-dl-alltime-img]][npm-dl-url]
 
 
 This is a self-hosted explorer for the Bitcoin blockchain, driven by RPC calls to your own [Bitcoin](https://github.com/bitcoin/bitcoin) node. It is easy to run and can be connected to other tools (like Electrum servers) to achieve a full-featured explorer.
