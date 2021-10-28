@@ -63,15 +63,15 @@ module.exports = {
 	name:"Bitcoin",
 	ticker:"BTC",
 	logoUrlsByNetwork:{
-		"main":"./img/logo/logo.svg",
-		"test":"./img/logo/logo-testnet.svg",
-		"regtest":"./img/logo/logo-regtest.svg",
-		"signet":"./img/logo/logo-signet.svg"
+		"main":"./img/logo/mainnet/logo.svg",
+		"test":"./img/logo/testnet/logo.svg",
+		"regtest":"./img/logo/regtest/logo.svg",
+		"signet":"./img/logo/signet/logo.svg"
 	},
 	coinIconUrlsByNetwork:{
-		"main":"./img/logo/btc.svg",
-		"test":"./img/logo/btc-testnet.svg",
-		"signet":"./img/logo/btc-signet.svg"
+		"main":"./img/logo/mainnet/coin-icon.svg",
+		"test":"./img/logo/testnet/coin-icon.svg",
+		"signet":"./img/logo/signet/coin-icon.svg"
 	},
 	coinColorsByNetwork: {
 		"main": "#F7931A",
