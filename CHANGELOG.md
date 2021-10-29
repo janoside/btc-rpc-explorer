@@ -9,6 +9,7 @@
 * Performance improvements
 	* Fix for performance degradation over time due to slow "estimatedSupply" function
 	* Homepage speedup by making "Estimated Next Block" data load asynchonously
+	* Caching for [/difficulty-history](./difficulty-history) data
 * [/node-details](./node-details): Include `coinstatsindex` status
 * Unique favicon color based on the active network (mainnet=orange, testnet=green, signet=magenta, regtest=gray)
 * Error handling improvements
