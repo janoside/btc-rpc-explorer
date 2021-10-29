@@ -66,6 +66,11 @@ html(lang="en")
 							span.fw-light #{coinConfig.siteTitlesByNetwork[activeBlockchain]}
 						else
 							span.fw-light Bitcoin Explorer
+
+				if (false && config.demoSite)
+					- var networkNameMap = {"main": "Mainnet", "test": "Testnet", "signet": "Signet"};
+					span.badge.bg-primary(title=`This is a public demo, but this tool is designed to be installed and run by all Bitcoiners...<br/><i>Don't Trust, Verify</i>!`, data-bs-toggle="tooltip", data-bs-html="true")
+						span Public Demo
 						
 				button.navbar-toggler.navbar-toggler-end(type="button", data-bs-toggle="collapse", data-bs-target="#navbarNav", aria-label="collapse navigation")
 					span.navbar-toggler-icon
