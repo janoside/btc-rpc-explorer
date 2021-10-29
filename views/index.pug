@@ -18,41 +18,29 @@ block content
 						div Check your RPC connection info and/or check this application's error log for possible hints about the cause of this issue.
 	else
 
-		+dismissableInfoAlert("homepageWelcomeBannerDismissed")
-			.clearfix
-				.float-start
-					h4.fw-light.mb-2 Welcome to Bitcoin Explorer!
-				.float-start
-					if (config.demoSite)
-						- var networkNameMap = {"main": "Mainnet", "test": "Testnet", "signet": "Signet"};
-						span.badge.bg-primary.mb-1.ms-0.ms-md-3.mt-1(title=`This is a public demo, but this tool is designed to be installed and run by all Bitcoiners...<br/><i>Don't Trust, Verify</i>!`, data-bs-toggle="tooltip", data-bs-html="true")
-							span.me-2 #{networkNameMap[global.activeBlockchain]} Demo
-							i.fas.fa-sticky-note
+		+dismissableAlert("homepageWelcomeBannerDismissed")
+			h5 Bitcoin Explorer
+				span.fw-light :
+					span.fst-italic.ms-1 The free, open-source, easy-to-setup, easy-to-use, self-hosted explorer
 			
 
-			.mb-2 An easy-to-use, educational explorer whose <u>only dependency is your <b>Bitcoin Core</b> node</u>!
-			.mb-3
-				- var features = ["Open-Source", "Easy Setup", "Low Hardware Requirements", "Self Hosted"];
+			span.fw-light Protect your privacy while enjoying the conveniences of public explorers. Made for Bitcoiners by Bitcoiners. Enjoy!
 
-				each feature in features
-					span.badge.bg-light.text-dark.border.me-2
-						span.me-2 #{feature}
-						i.fas.fa-check
-			
-			.mt-4.mb-2
+			hr
+
+			.fa-lg.mt-2
 				if (global.sourcecodeProjectMetadata)
-					a.btn.btn-primary.mb-2.mb-md-1.me-3(href="https://github.com/janoside/btc-rpc-explorer", title="View source code on Github", data-bs-toggle="tooltip", data-bs-placement="bottom")
-						i.fab.fa-github.fa-lg.me-2
+					a.btn.btn-sm.btn-primary.mb-2.mb-md-1.me-3(href="https://github.com/janoside/btc-rpc-explorer", title="View source code on Github", data-bs-toggle="tooltip", data-bs-placement="bottom")
+						i.fab.fa-github.fa-lg.text-white.me-2
 						| View Source
 
-				a.btn.btn-primary.mb-2.mb-md-1.me-3(href="https://donate.bitcoinexplorer.org", target="_blank", title="Support this project with a donation", data-bs-toggle="tooltip", data-bs-placement="bottom")
-					i.fas.fa-heart.text-danger.fa-lg.me-2
+				a.btn.btn-sm.btn-primary.mb-2.mb-md-1.me-3(href="https://donate.bitcoinexplorer.org", target="_blank", title="Support this project with a donation", data-bs-toggle="tooltip", data-bs-placement="bottom")
+					i.fas.fa-heart.fa-lg.text-danger.me-2
 					| Donate
-
-				a.btn.btn-primary.mb-2.mb-md-1(href="https://twitter.com/BitcoinExplorer", target="_blank", title="Follow @BitcoinExplorer on Twitter", data-bs-toggle="tooltip", data-bs-placement="bottom")
-					i.fab.fa-twitter.text-twitter.fa-lg.me-2
-					| @BitcoinExplorer
 					
+				a.btn.btn-sm.btn-primary.mb-2.mb-md-1.me-3(href="https://twitter.com/BitcoinExplorer", target="_blank", title="Follow @BitcoinExplorer on Twitter", data-bs-toggle="tooltip", data-bs-placement="bottom")
+					i.fab.fa-twitter.fa-lg.text-twitter.me-2
+					| @BitcoinExplorer
 
 				
 

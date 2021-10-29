@@ -572,6 +572,27 @@ mixin dismissableInfoAlert(userSettingDismissedName, textToShowWhenClosed)
 							i.far.fa-plus-square.fa-lg
 
 
+mixin dismissableAlert(userSettingDismissedName, textToShowWhenClosed)
+	if (!userSettings.hideInfoNotes || userSettings.hideInfoNotes == "false")
+		if (userSettings[userSettingDismissedName] != "true")
+			.alert.alert-primary.alert-dismissible.shadow-sm.mb-4(role="alert")
+				block
+
+				a.btn-close(href=`./changeSetting?name=${userSettingDismissedName}&value=true`, aria-label="Close", style="text-decoration: none;", title="Hide this note", data-bs-toggle="tooltip")
+				//button.btn-close.text-muted(type="button", data-bs-dismiss="alert", aria-label="Close", title="Hide this note", data-bs-toggle="tooltip")
+
+		else if (textToShowWhenClosed)
+			.alert.alert-primary.shadow-sm.mb-4(role="alert")
+				.clearfix
+					.float-start
+						i.fas.fa-info-circle.fa-lg.me-3
+						| #{textToShowWhenClosed}
+
+					.float-end
+						a.text-muted(href=`./changeSetting?name=${userSettingDismissedName}&value=false`, aria-label="Close", style="text-decoration: none;", title="Open this note", data-bs-toggle="tooltip")
+							i.far.fa-plus-square.fa-lg
+
+
 mixin warningAlert
 	.alert.alert-warning.shadow-sm.mb-4.ps-3.ps-md-7(role="alert")
 		i.d-none.d-md-inline.fas.fa-exclamation-triangle.fa-lg.d-inline-block(style="position: absolute; top: 0; left: 0; width: 36px; margin-left: 0.4rem; margin-top: 1.3rem;")
