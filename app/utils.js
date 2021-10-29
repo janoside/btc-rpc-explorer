@@ -1112,7 +1112,16 @@ const fileCache = (cacheDir, filename) => {
 			if (fs.existsSync(filepath)) {
 				let rawData = fs.readFileSync(filepath);
 
-				return JSON.parse(rawData);
+				try {
+					return JSON.parse(rawData);
+
+				} catch (e) {
+					logError("378y43edewe", e);
+
+					fs.unlinkSync(filepath);
+
+					return null;
+				}
 			}
 
 			return null;

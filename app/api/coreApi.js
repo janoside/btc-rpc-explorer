@@ -1313,7 +1313,7 @@ const mempoolTxFileCache = utils.fileCache(config.filesystemCacheDir, `mempool-t
 function getMempoolTxSummaries(allTxids, statusId, statusFunc) {
 	return new Promise(async (resolve, reject) => {
 		try {
-			mempoolTxSummaryCache = mempoolTxFileCache.tryLoadJson();
+			mempoolTxSummaryCache = (mempoolTxFileCache.tryLoadJson() || {});
 			
 
 			//const txids = allTxids.slice(0, 50); // for debugging
