@@ -1104,6 +1104,29 @@ const timeFunction = (uid, f, perfResults=null) => {
 	}
 };
 
+const fileCache = (cacheDir, filename) => {
+	const filepath = `${cacheDir}/${filename}`;
+
+	return {
+		tryLoadJson: () => {
+			if (fs.existsSync(filepath)) {
+				let rawData = fs.readFileSync(filepath);
+
+				return JSON.parse(rawData);
+			}
+
+			return null;
+		},
+		writeJson: (obj) => {
+			if (!fs.existsSync(cacheDir)) {
+				fs.mkdirSync(cacheDir);
+			}
+
+			fs.writeFileSync(filepath, JSON.stringify(obj));
+		}
+	};
+};
+
 const startTimeNanos = () => {
 	return process.hrtime.bigint();
 };
@@ -1351,5 +1374,6 @@ module.exports = {
 	sleep: sleep,
 	awaitPromises: awaitPromises,
 	perfLogNewItem: perfLogNewItem,
-	perfLog: perfLog
+	perfLog: perfLog,
+	fileCache: fileCache
 };

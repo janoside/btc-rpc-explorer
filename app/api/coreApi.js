@@ -1307,16 +1307,14 @@ function getCachedMempoolTxSummaries() {
 	});
 }
 
-const mempoolTxSummaryFile = `${config.filesystemCacheDir}/mempool-tx-summaries.json`;
+
+const mempoolTxFileCache = utils.fileCache(config.filesystemCacheDir, `mempool-tx-summaries.json`);
 
 function getMempoolTxSummaries(allTxids, statusId, statusFunc) {
 	return new Promise(async (resolve, reject) => {
 		try {
-			if (fs.existsSync(mempoolTxSummaryFile)) {
-				let rawData = fs.readFileSync(mempoolTxSummaryFile);
-
-				mempoolTxSummaryCache = JSON.parse(rawData);
-			}
+			mempoolTxSummaryCache = mempoolTxFileCache.tryLoadJson();
+			
 
 			//const txids = allTxids.slice(0, 50); // for debugging
 			const txids = allTxids;
@@ -1403,12 +1401,8 @@ function getMempoolTxSummaries(allTxids, statusId, statusFunc) {
 			mempoolTxSummaryCache.lastUpdated = new Date();
 
 			try {
-				if (!fs.existsSync(config.filesystemCacheDir)){
-					fs.mkdirSync(config.filesystemCacheDir);
-				}
-
-				fs.writeFileSync(mempoolTxSummaryFile, JSON.stringify(mempoolTxSummaryCache));
-
+				mempoolTxFileCache.writeJson(mempoolTxSummaryCache);
+				
 			} catch (e) {
 				utils.logError("h32uheifehues", e);
 			}
