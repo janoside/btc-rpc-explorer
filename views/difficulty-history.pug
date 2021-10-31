@@ -99,37 +99,34 @@ block endOfBody
 
 		var heights = [];
 		var height = 0;
+		var chunkSize = 10;
 		while (height <= blockCount) {
 			heights.push([height]);
 			height += !{coinConfig.difficultyAdjustmentBlockCount};
 		}
 
 		$(document).ready(function() {
-			loadData(heights, 1, heights.length);
-		});
+			var heightChunks = [];
 
-		function loadData(heightChunks, chunkSize, count) {
-			var chunkStrs = [];
+			var currentChunk = [];
+			heightChunks.push(currentChunk);
 
-			for (var i = 0; i < heightChunks.length; i++) {
-				var heightChunk = heightChunks[i];
-
-				var chunkStr = "";
-
-				for (var j = 0; j < heightChunk.length; j++) {
-					if (j > 0) {
-						chunkStr += ",";
-					}
-
-					chunkStr += heightChunk[j];
+			for (var i = 0; i < heights.length; i++) {
+				if (currentChunk.length == chunkSize) {
+					currentChunk = [];
+					heightChunks.push(currentChunk);
 				}
 
-				chunkStrs.push(chunkStr);
+				currentChunk.push(heights[i]);
 			}
 
-			//alert(JSON.stringify(chunks));
+			loadData(heightChunks.map(x => x.join(",")));
+		});
 
-			var results = [];
+		function loadData(chunkStrs) {
+			//console.log(JSON.stringify(chunkStrs));
+
+			var results = {heights:[]};
 
 			var statusCallback = function(chunkIndexDone, chunkCount) {
 				//console.log("Done: " + Math.min(((chunkIndexDone + 1) * chunkSize), count) + " of " + count);
@@ -137,7 +134,7 @@ block endOfBody
 				var wPercent = `${parseInt(100 * (chunkIndexDone + 1) / parseFloat(chunkCount))}%`;
 
 				$("#data-progress").css("width", wPercent);
-				$("#progress-text").text(`${Math.min(((chunkIndexDone + 1) * chunkSize), count).toLocaleString()} of ${count.toLocaleString()} (${wPercent})`);
+				$("#progress-text").text(`${Math.min(((chunkIndexDone + 1) * chunkSize), chunkStrs.length).toLocaleString()} of ${chunkStrs.length.toLocaleString()} (${wPercent})`);
 			};
 
 			var finishedCallback = function() {
@@ -309,7 +306,7 @@ block endOfBody
 				return;
 			}
 
-			var url = `./internal-api/block-headers-by-height/${chunks[chunkIndex]}`;
+			var url = `./internal-api/difficulty-by-height/${chunks[chunkIndex]}`;
 
 			//console.log(url);
 
@@ -317,8 +314,10 @@ block endOfBody
 				url: url
 
 			}).done(function(result) {
-				for (var i = 0; i < result.length; i++) {
-					results.push(result[i]);
+				for (var height in result) {
+					results.heights.push(parseInt(height));
+
+					results[height] = result[height];
 				}
 
 				statusCallback(chunkIndex, chunks.length);
@@ -328,6 +327,8 @@ block endOfBody
 		}
 
 		function summarizeData(raw) {
+			raw.heights.sort((a, b) => { a - b });
+
 			var summary = {};
 			summary.difficultyData = [];
 			summary.difficultyDeltaData = [];
@@ -335,19 +336,22 @@ block endOfBody
 			summary.graphData = [];
 			summary.changeGraphData = [];
 
-			for (var i = 0; i < raw.length; i++) {
-				summary.difficultyData.push({epoch:i, date:raw[i].time, difficulty:raw[i].difficulty});
+			for (var i = 0; i < raw.heights.length; i++) {
+				var heightStr = `${raw.heights[i]}`;
+				var previousHeightStr = `${raw.heights[i - 1]}`;
 
-				summary.graphData.push({x:i, y:raw[i].difficulty});
+				summary.difficultyData.push({epoch:i, date:raw[heightStr].time, difficulty:raw[heightStr].difficulty});
+
+				summary.graphData.push({x:i, y:raw[heightStr].difficulty});
 
 				if (i == 0) {
-					summary.changeGraphData.push({x:i, y:raw[i].difficulty});
+					summary.changeGraphData.push({x:i, y:raw[heightStr].difficulty});
 
 					summary.difficultyDeltaData.push({epoch:i});
 
 				} else {
-					var d1 = raw[i].difficulty;
-					var d0 = raw[i - 1].difficulty
+					var d1 = raw[heightStr].difficulty;
+					var d0 = raw[previousHeightStr].difficulty
 
 					var deltaPercent = 100 * (d1 / d0 - 1);
 

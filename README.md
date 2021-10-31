@@ -1,21 +1,21 @@
 # GRS RPC Explorer
 
+### Self-Hosted Groestlcoin block explorer for everyone running [Groestlcoin Core](https://github.com/groestlcoin/groestlcoin).
+
+[![npm version][npm-ver-img]][npm-ver-url] [![NPM downloads][npm-dl-alltime-img]][npm-dl-url]
+
+
 ![homepage](./public/img/screenshots/homepage-v3.png)
 
-[![npm version][npm-ver-img]][npm-ver-url] [![NPM downloads][npm-dl-img]][npm-dl-url]
 
-
-Self-Hosted Groestlcoin explorer for anyone running [Groestlcoin Core](https://github.com/groestlcoin/groestlcoin).
 
 This is a self-hosted explorer for the Groestlcoin blockchain, driven by RPC calls to your own [Groestlcoin](https://github.com/groestlcoin/groestlcoin) node. It is easy to run and can be connected to other tools (like Electrum servers) to achieve a full-featured explorer.
 
 Whatever reasons you may have for running a full node (trustlessness, technical curiosity, supporting the network, etc) it's valuable to appreciate the *fullness* of your node. With this explorer, you can explore not just the blockchain database, but also explore all of the functional capabilities of your own node.
 
-Live demos available at:
+Live demos:
 
-* Mainnet - [rpcexplorer.groestlcoin.org](https://rpcexplorer.groestlcoin.org)
-* Testnet - [rpcexplorer-test.groestlcoin.org](https://rpcexplorer-test.groestlcoin.org)
-* Signet - [rpcexplorer-signet.groestlcoin.org](https://rpcexplorer-signet.groestlcoin.org)
+* [mainnet](https://rpcexplorer.groestlcoin.org) / [testnet](https://rpcexplorer-test.groestlcoin.org) / [signet](https://rpcexplorer-signet.groestlcoin.org)
 
 
 # Features
