@@ -146,10 +146,26 @@ if (exchangeRates)
 
 	hr.mt-3.mb-3
 
-	+summaryRow((mempoolInfo == undefined ? 0 : 1) + (smartFeeEstimates ? ((smartFeeEstimates[1] ? 1 : 0) + (smartFeeEstimates[6] ? 1 : 0) + (smartFeeEstimates[144] ? 1 : 0)) : 0))
+	- var smartFeeEstimateBlocks = [];
+	- var smartFeeEstimateStrings = [];
+	if (smartFeeEstimates)
+		if (smartFeeEstimates[1])
+			- smartFeeEstimateBlocks.push(1);
+			- smartFeeEstimateStrings.push(smartFeeEstimates[1]);
+		if (smartFeeEstimates[6])
+			- smartFeeEstimateBlocks.push(6);
+			- smartFeeEstimateStrings.push(smartFeeEstimates[6]);
+		if (smartFeeEstimates[144])
+			- smartFeeEstimateBlocks.push(144);
+			- smartFeeEstimateStrings.push(smartFeeEstimates[144]);
+
+	+summaryRow((mempoolInfo == undefined ? 0 : 2) + (smartFeeEstimateStrings.length > 0 ? 1 : 0))
 		if (mempoolInfo)
-			+summaryItem("Mempool")
+			+summaryItem("Mempool N(Tx)", "The number of unconfirmed transactions in your node's mempool")
 				span(class=(mempoolInfo.size > 11000) ? "text-danger" : (mempoolInfo.size > 7000 ? "text-warning" : "text-success")) #{mempoolInfo.size.toLocaleString()}
+
+			+summaryItem("Mempool N(Block)", "The number of blocks needed to confirm all mempool transactions")
+				| #{new Decimal(mempoolInfo.bytes / coinConfig.maxBlockSize).toDP(1)}
 
 		if (false)
 			+summaryItem("Next Block (est.)")
@@ -161,20 +177,11 @@ if (exchangeRates)
 					i.fas.fa-circle
 				small.ms-2.text-muted sat/vB
 
-		if (smartFeeEstimates && smartFeeEstimates[1])
-			+summaryItem("Smart Fee (1 block)")
-				| #{smartFeeEstimates[1]}
-				small.ms-2.text-muted sat/vB
+		if (smartFeeEstimateStrings.length > 0)
+			+summaryItem(`Smart Fees (${smartFeeEstimateBlocks.join(", ")})`, `The recommended fee rate to target confirmation in ${smartFeeEstimateBlocks.join(", ")} blocks`, "sat/vB")
+				| #{smartFeeEstimateStrings.join(", ")}
 
-		if (smartFeeEstimates && smartFeeEstimates[6])
-			+summaryItem("Smart Fee (1 hr)")
-				| #{smartFeeEstimates[6]}
-				small.ms-2.text-muted sat/vB
-
-		if (smartFeeEstimates && smartFeeEstimates[144])
-			+summaryItem("Smart Fee (1 day)")
-				| #{smartFeeEstimates[144]}
-				small.ms-2.text-muted sat/vB
+		
 
 	if (userSettings.homepageShowTechDetails == "true")
 		hr.mt-3.mb-3

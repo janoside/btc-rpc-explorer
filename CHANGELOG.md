@@ -1,6 +1,5 @@
 ##### Unreleased
 
-* Fix for difficulty adjustment estimate
 * New tool for viewing the latest UTXO Set: [/utxo-set](./utxo-set)
 * New API actions:
 	* [/api/blockchain/utxo-set](./api/blockchain/utxo-set)
@@ -8,16 +7,17 @@
 	* [/api/mining/next-block/txids](./api/mining/next-block/txids)
 	* [/api/mining/next-block/includes/:txid](./api/mining/next-block/includes/yourTxid)
 * Updated miners, including identification of "Patoshi"-pattern blocks
+* [/node-details](./node-details): Include `coinstatsindex` status
+* Support querying UTXO Set even with slowDeviceMode=true, iff coinstatsindex is available
+* Fix for difficulty adjustment estimate
 * Performance improvements
 	* Fix for performance degradation over time due to slow "estimatedSupply" function
 	* Homepage speedup by making "Estimated Next Block" data load asynchonously
 	* Caching for [/difficulty-history](./difficulty-history) data
-* [/node-details](./node-details): Include `coinstatsindex` status
-* Support querying UTXO Set even with slowDeviceMode=true, iff coinstatsindex is available
 * Unique favicon color based on the active network (mainnet=orange, testnet=green, signet=magenta, regtest=gray)
 * Error handling improvements
 * Fix for `/api/quotes/all`
-* Fix for incorrect date on "Diario El Salvador..." fun item
+* Fix for incorrect date on "Diario El Salvador..." fun item (thanks [@Dirkson643](https://github.com/Dirkson643))
 * Performance log admin page at [/admin/perf-log](./admin/perf-log)
 
 
