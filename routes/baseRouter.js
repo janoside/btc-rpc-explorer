@@ -2165,6 +2165,12 @@ router.get("/difficulty-history", function(req, res, next) {
 	});
 });
 
+router.get("/utxo-set", function(req, res, next) {
+	res.render("utxo-set");
+
+	next();
+});
+
 router.get("/about", function(req, res, next) {
 	res.render("about");
 

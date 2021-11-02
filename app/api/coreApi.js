@@ -276,8 +276,43 @@ function getBlockStatsByHeight(height) {
 	});
 }
 
-function getUtxoSetSummary() {
-	return tryCacheThenRpcApi(miscCache, "getUtxoSetSummary", FIFTEEN_MIN, rpcApi.getUtxoSetSummary);
+
+const utxoSetFileCache = utils.fileCache(config.filesystemCacheDir, `utxo-set.json`);
+
+function getUtxoSetSummary(useCoinStatsIndexIfAvailable=true, useCacheIfAvailable=true) {
+	return tryCacheThenRpcApi(miscCache, "getUtxoSetSummary", FIFTEEN_MIN, async () => {
+		let utxoSetSummary = utxoSetFileCache.tryLoadJson();
+
+		if (utxoSetSummary && useCacheIfAvailable) {
+			return utxoSetSummary;
+
+		} else {
+			utxoSetSummary = await rpcApi.getUtxoSetSummary(useCoinStatsIndexIfAvailable);
+
+			if (utxoSetSummary && utxoSetSummary.total_amount) {
+				if (useCoinStatsIndexIfAvailable && global.getindexinfo && global.getindexinfo.coinstatsindex) {
+					utxoSetSummary.usingCoinStatsIndex = true;
+
+				} else {
+					utxoSetSummary.usingCoinStatsIndex = false;
+				}
+
+				utxoSetSummary.lastUpdated = Date.now();
+
+				try {
+					utxoSetFileCache.writeJson(utxoSetSummary);
+					
+				} catch (e) {
+					utils.logError("h32uheifehues", e);
+				}
+
+				return utxoSetSummary;
+
+			} else {
+				return null;
+			}
+		}
+	});
 }
 
 async function getNextBlockEstimate() {

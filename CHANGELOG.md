@@ -1,6 +1,7 @@
 ##### Unreleased
 
 * Fix for difficulty adjustment estimate
+* New tool for viewing the latest UTXO Set: [/utxo-set](./utxo-set)
 * New API actions:
 	* [/api/mining/next-block](./api/mining/next-block)
 	* [/api/mining/next-block/txids](./api/mining/next-block/txids)
@@ -11,6 +12,7 @@
 	* Homepage speedup by making "Estimated Next Block" data load asynchonously
 	* Caching for [/difficulty-history](./difficulty-history) data
 * [/node-details](./node-details): Include `coinstatsindex` status
+* Support querying UTXO Set even with slowDeviceMode=true, iff coinstatsindex is available
 * Unique favicon color based on the active network (mainnet=orange, testnet=green, signet=magenta, regtest=gray)
 * Error handling improvements
 * Fix for `/api/quotes/all`

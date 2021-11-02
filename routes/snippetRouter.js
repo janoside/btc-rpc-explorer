@@ -76,6 +76,23 @@ router.get("/next-block", asyncHandler(async (req, res, next) => {
 	res.render("snippets/index-next-block");
 }));
 
+router.get("/utxo-set", asyncHandler(async (req, res, next) => {
+	const promises = [];
+
+	promises.push(utils.timePromise("api/utxo-set", async () => {
+		if (global.utxoSetSummary) {
+			res.locals.utxoSetSummary = global.utxoSetSummary;
+
+		} else {
+			res.locals.utxoSetSummary = await coreApi.getUtxoSetSummary(true, true);
+		}
+	}));
+
+	await utils.awaitPromises(promises);
+
+	res.render("snippets/utxo-set");
+}));
+
 
 
 

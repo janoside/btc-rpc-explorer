@@ -403,17 +403,18 @@ async function onRpcConnectionVerified(getnetworkinfo, getblockchaininfo) {
 		setInterval(utils.refreshExchangeRates, 1800000);
 	}
 
-	// UTXO pull
-	refreshUtxoSetSummary();
-	setInterval(refreshUtxoSetSummary, 30 * 60 * 1000);
-
 
 	// 1d / 7d volume
 	refreshNetworkVolumes();
 	setInterval(refreshNetworkVolumes, 30 * 60 * 1000);
 
 
-	assessTxindexAvailability();
+	await assessTxindexAvailability();
+
+
+	// UTXO pull
+	refreshUtxoSetSummary();
+	setInterval(refreshUtxoSetSummary, 30 * 60 * 1000);
 }
 
 var txindexCheckCount = 0;
@@ -480,6 +481,7 @@ async function assessTxindexAvailability() {
 
 async function refreshUtxoSetSummary() {
 	if (config.slowDeviceMode) {
+		if (!global.getindexinfo || !global.getindexinfo.coinstatsindex) {
 		global.utxoSetSummary = null;
 		global.utxoSetSummaryPending = false;
 
@@ -487,12 +489,12 @@ async function refreshUtxoSetSummary() {
 
 		return;
 	}
+	}
 
 	// flag that we're working on calculating UTXO details (to differentiate cases where we don't have the details and we're not going to try computing them)
 	global.utxoSetSummaryPending = true;
 
-	global.utxoSetSummary = await coreApi.getUtxoSetSummary();
-	global.utxoSetSummary.lastUpdated = Date.now();
+	global.utxoSetSummary = await coreApi.getUtxoSetSummary(true, false);
 
 	debugLog("Refreshed utxo summary: " + JSON.stringify(global.utxoSetSummary));
 }

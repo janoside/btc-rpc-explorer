@@ -1,0 +1,42 @@
+extends layout
+
+block headContent
+	title UTXO Set
+	
+block content
+	+pageTitle("UTXO Set", "\"Run the Numbers\"")
+
+	+dismissableInfoAlert("utxoSetPageNoteDismissed", "About the UTXO Set...")
+		h6.mb-2 About the UTXO Set
+
+		.mb-2 A <b>UTXO</b>, or Unspent Transaction Output, defines a spendable unit of BTC. Every UTXO, when spent, is effectively destroyed and replaced with multiple other UTXOs of different values (see simplified example below), a process analogous to smelting and re-forging physical coins each time they are spent (impractical in the physical world, but easy when working with bits of data).
+		.text-center.font-monospace.mb-3 (UTXO #1: 1 BTC)  ---spend/destroy--->  (UTXO #2: 0.25 BTC) and (UTXO #3: 0.75 BTC)
+		.mb-2 With this in mind, the <b>UTXO Set</b> is the set of all UTXOs and defines all spendable BTC units.
+		.mb-2 Every BTC node is capable of <b>independently and trustlessly</b> verifying the entire UTXO Set! Your node has done (or is currently doing) that verification.
+
+		| (Note that the verification process can be <i>quite</i> slow, depending on the node's hardware configuration and indexing options used.)
+
+	#utxo-set-content
+		.spinner-border.spinner-border-sm
+
+block endOfBody
+	script.
+		$(document).ready(function() {
+			$.get("./snippet/utxo-set", function(data) {
+				$("#utxo-set-content").html(data);
+
+				// enable tooltips everywhere
+				var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+				var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+					return new bootstrap.Tooltip(tooltipTriggerEl);
+				});
+
+				// enable popovers everywhere
+				var popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'));
+				var popoverList = popoverTriggerList.map(function (popoverTriggerEl) {
+					return new bootstrap.Popover(popoverTriggerEl);
+				});
+
+				hljs.highlightAll();
+			});
+		});
