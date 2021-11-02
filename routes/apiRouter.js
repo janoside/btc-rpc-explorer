@@ -161,6 +161,14 @@ router.get("/blockchain/coins", function(req, res, next) {
 	}
 });
 
+router.get("/blockchain/utxo-set", asyncHandler(async (req, res, next) => {
+	const utxoSetSummary = await coreApi.getUtxoSetSummary(true, true);
+	
+	res.send(supply.toString());
+
+	next();
+}));
+
 
 
 

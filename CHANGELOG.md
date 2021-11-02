@@ -3,6 +3,7 @@
 * Fix for difficulty adjustment estimate
 * New tool for viewing the latest UTXO Set: [/utxo-set](./utxo-set)
 * New API actions:
+	* [/api/blockchain/utxo-set](./api/blockchain/utxo-set)
 	* [/api/mining/next-block](./api/mining/next-block)
 	* [/api/mining/next-block/txids](./api/mining/next-block/txids)
 	* [/api/mining/next-block/includes/:txid](./api/mining/next-block/includes/yourTxid)

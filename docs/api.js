@@ -50,8 +50,15 @@ module.exports = {
 		{
 			"category":"blockchain",
 			"url":"/api/blockchain/coins",
-			"desc":"Returns the current supply of Bitcoin. An estimate using a checkpoint can be returned in 2 cases: on 'slow' devices, and before the UTXO set summary is loaded.",
+			"desc":"Returns the current supply of Bitcoin. An estimate using a checkpoint can be returned in 2 cases: on 'slow' devices, and before the UTXO Set snapshot is loaded.",
 			"returnType":"number"
+		},
+
+		{
+			"category":"blockchain",
+			"url":"/api/blockchain/utxo-set",
+			"desc":"Returns the latest UTXO Set snapshot. Warning: This call can be very slow, depending on node hardware and index configurations.",
+			"returnType":"json"
 		},
 
 
