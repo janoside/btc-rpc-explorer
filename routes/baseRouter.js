@@ -1381,7 +1381,7 @@ router.get("/tx/:transactionId", asyncHandler(async (req, res, next) => {
 		const promises = [];
 
 		if (req.query.blockHeight) {
-			res.locals.blockHeight = req.query.blockHeight;
+			res.locals.blockHeight = parseInt(req.query.blockHeight);
 		}
 
 		res.locals.result = {};

@@ -478,7 +478,7 @@ async function assessTxindexAvailability() {
 	}
 }
 
-function refreshUtxoSetSummary() {
+async function refreshUtxoSetSummary() {
 	if (config.slowDeviceMode) {
 		global.utxoSetSummary = null;
 		global.utxoSetSummaryPending = false;
@@ -491,13 +491,10 @@ function refreshUtxoSetSummary() {
 	// flag that we're working on calculating UTXO details (to differentiate cases where we don't have the details and we're not going to try computing them)
 	global.utxoSetSummaryPending = true;
 
-	coreApi.getUtxoSetSummary().then(function(result) {
-		global.utxoSetSummary = result;
+	global.utxoSetSummary = await coreApi.getUtxoSetSummary();
+	global.utxoSetSummary.lastUpdated = Date.now();
 
-		result.lastUpdated = Date.now();
-
-		debugLog("Refreshed utxo summary: " + JSON.stringify(result));
-	});
+	debugLog("Refreshed utxo summary: " + JSON.stringify(global.utxoSetSummary));
 }
 
 function refreshNetworkVolumes() {
@@ -849,7 +846,7 @@ expressApp.use(function(req, res, next) {
 		debugAccessLog(`Finished action '${req.path}' (${res.statusCode}) in ${time}ms for crawler '${crawler}' / '${userAgent}'`);
 
 	} else {
-		debugAccessLog(`Finished action '${req.path}' (${res.statusCode}) in ${time}ms for UA '${userAgent}'`);
+	debugAccessLog(`Finished action '${req.path}' (${res.statusCode}) in ${time}ms for UA '${userAgent}'`);
 	}
 
 	if (!res.headersSent) {
