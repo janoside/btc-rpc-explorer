@@ -42,6 +42,20 @@ block content
 					i.fab.fa-twitter.fa-lg.text-twitter.me-2
 					| @BitcoinExplorer
 
+		
+		if (getblockchaininfo.softforks && getblockchaininfo.softforks.taproot && getblockchaininfo.softforks.taproot.bip9)
+			- var minTaprootHeight = getblockchaininfo.softforks.taproot.bip9.min_activation_height;
+			- var blocksLeft = minTaprootHeight - getblockchaininfo.blocks;
+			//- var blocksLeft = -145;
+
+			if (blocksLeft > 0)
+				+blockCountdown("Taproot Activation", blocksLeft)
+					| The softfork known as Taproot will activate on Bitcoin's mainnet at block height 709,632. After activation, any Bitcoin user will be able to use a new address type that enables new features and functionality. The Taproot upgrade has been ~4 years in the making!
+
+			else if (blocksLeft <= 0 && blocksLeft > -144)
+				.alert.alert-success
+					h5 Taproot: Activation Height Reached 🎉
+					| Taproot has activated on Bitcoin's mainnet as of block height <a href="./block-height/709632">709,632</a>!
 				
 
 		if (getblockchaininfo.initialblockdownload && !["regtest", "signet"].includes(global.activeBlockchain))

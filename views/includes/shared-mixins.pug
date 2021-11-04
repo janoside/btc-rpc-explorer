@@ -533,6 +533,68 @@ mixin timeAgo(timeAgoTime, only1Element=false)
 				span #{utils.shortenTimeDiff(timeAgo.format())}
 
 
+mixin blockCountdown(title, blocksLeft)
+	- var countdownId = utils.getRandomString(10, "aA");
+	.alert.alert-success
+		.d-flex.justify-content-between
+			div
+				h5.mb-0
+					span.me-2 #{title}:
+
+					span.lead(id=`countdown-time-${countdownId}`)
+						| #{blocksLeft.toLocaleString()} block#{blocksLeft > 1 ? "s" : ""}
+						
+						- var secondsToGo = 10 * 60 * blocksLeft;
+						- var minutesToGo = secondsToGo / 60;
+						- var hoursToGo = minutesToGo / 60;
+						- var daysToGo = hoursToGo / 24;
+
+						span.ms-1 (
+						span ~
+						if (daysToGo > 2)
+							| #{parseInt(daysToGo)} days
+							- var hours = 24 * (daysToGo - Math.floor(daysToGo));
+							if (hours > 1)
+								span.ms-1 #{parseInt(hours)} hour#{parseInt(hours) > 1 ? "s" :""}
+
+						else if (daysToGo > 1)
+							| 1 day
+							- var hours = 24 * (daysToGo - Math.floor(daysToGo));
+							if (hours > 1)
+								span.ms-1 #{parseInt(hours)} hour#{parseInt(hours) > 1 ? "s" :""}
+
+						else if (hoursToGo > 2)
+							| #{parseInt(hoursToGo)} hours
+							- var minutes = 60 * (hoursToGo - Math.floor(hoursToGo));
+							if (minutes > 1)
+								span.ms-1 #{parseInt(minutes)} minute#{parseInt(minutes) > 1 ? "s" :""}
+
+						else if (hoursToGo > 1)
+							| 1 hour
+							- var minutes = 60 * (hoursToGo - Math.floor(hoursToGo));
+							if (minutes > 1)
+								span.ms-1 #{parseInt(minutes)} minute#{parseInt(minutes) > 1 ? "s" :""}
+
+						else
+							- var minutes = 60 * (hoursToGo - Math.floor(hoursToGo));
+							if (minutes > 1)
+								span #{parseInt(minutes)} minute#{parseInt(minutes) > 1 ? "s" :""}
+
+						span )
+
+			if (block)
+				a.text-body(href="javascript:void(0);", onclick=`$("#countdown-block-${countdownId}").toggle(); $(".countdown-togglers-${countdownId}").toggle();`)
+					i.far.fa-plus-square(class=`countdown-togglers-${countdownId}`)
+					i.far.fa-minus-square(class=`countdown-togglers-${countdownId}`, style="display: none;")
+
+		if (block)
+			div(id=`countdown-block-${countdownId}`, style="display: none;")
+				.mt-2
+					block
+
+		
+
+
 mixin copyTextButton(text)
 	small.ms-2
 		if (false)
