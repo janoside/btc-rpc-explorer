@@ -170,6 +170,19 @@ html(lang="en")
 															i.fas.fa-check
 
 									hr.dropdown-divider.mt-2.mb-2
+									span.dropdown-header Theme
+
+									- var items = ["fa", "sat"];
+									if (config.queryExchangeRates && global.exchangeRates)
+										- items.push("local");
+
+									.btn-group.ms-3
+										a.btn.btn-sm.px-3(id="theme-toggler-light", href=`javascript:void(0);` onclick=`toggleTheme(); return false;`, class=(userSettings.uiTheme == "light" ? "btn-primary" : "btn-outline-primary"))
+											i.fas.fa-sun.text-warning
+										a.btn.btn-sm.px-3(id="theme-toggler-dark",href=`javascript:void(0);` onclick=`toggleTheme(); return false;`, class=(userSettings.uiTheme == "light" ? "btn-outline-primary" : "btn-primary"))
+											i.fas.fa-moon
+
+									hr.dropdown-divider.mt-2.mb-2
 
 									a.dropdown-item(href=`./user-settings`) More settings...
 
@@ -223,20 +236,6 @@ html(lang="en")
 				.row.mb-5
 					.col-7
 						.text-start
-							- var darkTheme = (userSettings.uiTheme == "dark");
-							a.btn.fa-lg.bg-header-footer-highlight.me-2(href=`./changeSetting?name=uiTheme&value=${darkTheme ? "light" : "dark"}`, title=`Active Theme: <b>${darkTheme ? "Dark" : "Light"}</b><br/>Click to switch to <b>${darkTheme ? "Light" : "Dark"}</b>`, data-bs-toggle="tooltip", data-bs-html="true")
-
-								i.fas.fa-sun.text-warning.me-1
-								
-								span.me-1
-									if (darkTheme)
-										i.fas.fa-toggle-on.text-primary
-									else
-										i.fas.fa-toggle-on.fa-rotate-180.text-warning
-
-								i.fas.fa-moon.text-primary
-
-
 							.btn-group.dropup.me-2
 								button.btn.dropdown-toggle.bg-header-footer-highlight.text-white(type="button" data-bs-toggle="dropdown" aria-expanded="false")
 									i.fas.fa-shield-alt.me-1
@@ -338,17 +337,7 @@ html(lang="en")
 		
 		script.
 			document.addEventListener("DOMContentLoaded", function(event) {
-				// enable tooltips everywhere
-				var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-				var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
-					return new bootstrap.Tooltip(tooltipTriggerEl);
-				});
-
-				// enable popovers everywhere
-				var popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'));
-				var popoverList = popoverTriggerList.map(function (popoverTriggerEl) {
-					return new bootstrap.Popover(popoverTriggerEl);
-				});
+				enableTooltipsAndPopovers();
 
 				onLoad_tabSelection();
 			});

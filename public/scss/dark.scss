@@ -81,7 +81,6 @@ $modal-content-color: $body-color;
 
 
 
-
 .alert-primary {
 	color: $body-color;
 	background-color: lighten($body-bg, 8%);
@@ -105,6 +104,13 @@ $modal-content-color: $body-color;
 	color: $body-color;
 	background-color: #d9962b;
 	border-color: darken(#d9962b, 10%);
+	border-width: 2px;
+}
+
+.alert-success {
+	color: $body-color;
+	background-color: darken(#198754, 10%);
+	border-color: lighten(#198754, 5%);
 	border-width: 2px;
 }
 

@@ -132,6 +132,7 @@ block endOfBody
 		$(document).ready(function() {
 			$.get("./snippet/next-block", function(data) {
 				$("#index-next-block").html(data);
+				enableTooltipsAndPopovers();
 			});
 		});
 		
