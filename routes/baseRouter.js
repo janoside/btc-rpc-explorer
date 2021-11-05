@@ -473,10 +473,16 @@ router.get("/disconnect", function(req, res, next) {
 router.get("/changeSetting", function(req, res, next) {
 	if (req.query.name) {
 		if (!req.session.userSettings) {
-			req.session.userSettings = {};
+			req.session.userSettings = Object.create(null);
 		}
 
-		req.session.userSettings[req.query.name] = req.query.value;
+		if (typeof req.query.name !== "string" || typeof req.query.value !== "string") {
+			res.redirect(req.headers.referer);
+
+			return;
+		}
+
+		req.session.userSettings[req.query.name.toString()] = req.query.value.toString();
 
 		var userSettings = JSON.parse(req.cookies["user-settings"] || "{}");
 		userSettings[req.query.name] = req.query.value;

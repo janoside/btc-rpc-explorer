@@ -753,30 +753,29 @@ expressApp.use(function(req, res, next) {
 
 
 	if (!req.session.userSettings) {
-		req.session.userSettings = JSON.parse(req.cookies["user-settings"] || "{}");
+		req.session.userSettings = Object.create(null);
+
+		const cookieSettings = JSON.parse(req.cookies["user-settings"] || "{}");
+		for (const [key, value] of Object.entries(cookieSettings)) {
+			req.session.userSettings[key] = value;
+		}
 	}
 
 	const userSettings = req.session.userSettings;
 	res.locals.userSettings = userSettings;
 
+	// set defaults
+	userSettings.displayCurrency = (userSettings.displayCurrency || config.displayDefaults.displayCurrency);
+	userSettings.localCurrency = (userSettings.localCurrency || config.displayDefaults.localCurrency);
+	userSettings.uiTimezone = (userSettings.uiTimezone || config.displayDefaults.timezone);
+	userSettings.uiTheme = (userSettings.uiTheme || config.displayDefaults.theme);
 
 
-	if (!userSettings.displayCurrency) {
-		userSettings.displayCurrency = "btc";
-	}
-
-	if (!userSettings.localCurrency) {
-		userSettings.localCurrency = "usd";
-	}
-
-	// theme
-	if (!userSettings.uiTheme) {
-		userSettings.uiTheme = config.defaultTheme;
-	}
-
-
+	// make available in templates
 	res.locals.displayCurrency = userSettings.displayCurrency;
 	res.locals.localCurrency = userSettings.localCurrency;
+	res.locals.uiTimezone = userSettings.uiTimezone;
+	res.locals.uiTheme = userSettings.uiTheme;
 
 
 	if (!["/", "/connect"].includes(req.originalUrl)) {

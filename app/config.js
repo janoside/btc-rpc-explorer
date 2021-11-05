@@ -20,7 +20,6 @@ const coins = require("./coins.js");
 const credentials = require("./credentials.js");
 
 const currentCoin = process.env.BTCEXP_COIN || "BTC";
-const defaultTheme = process.env.BTCEXP_UI_THEME || "dark";
 
 const rpcCred = credentials.rpc;
 
@@ -87,7 +86,13 @@ module.exports = {
 	baseUrl: baseUrl,
 
 	coin: currentCoin,
-	defaultTheme: defaultTheme,
+
+	displayDefaults: {
+		displayCurrency: (process.env.BTCEXP_DISPLAY_CURRENCY || "btc"),
+		localCurrency: (process.env.BTCEXP_LOCAL_CURRENCY || "usd"),
+		theme: (process.env.BTCEXP_UI_THEME || "dark"),
+		timezone: (process.env.BTCEXP_UI_TIMEZONE || "utc"),
+	},
 
 	cookieSecret: cookieSecret,
 
