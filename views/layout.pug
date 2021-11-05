@@ -183,6 +183,17 @@ html(lang="en")
 											i.fas.fa-moon
 
 									hr.dropdown-divider.mt-2.mb-2
+									span.dropdown-header Timezone
+
+									- var items = ["fa", "sat"];
+									if (config.queryExchangeRates && global.exchangeRates)
+										- items.push("local");
+
+									.btn-group.ms-3
+										a.btn.btn-sm.px-3(href=`./changeSetting?name=uiTimezone&value=utc`, class=(userSettings.uiTimezone == "utc" ? "btn-primary" : "btn-outline-primary")) utc
+										a.btn.btn-sm.px-3(href=`./changeSetting?name=uiTimezone&value=local`, class=(userSettings.uiTimezone == "utc" ? "btn-outline-primary" : "btn-primary")) local
+
+									hr.dropdown-divider.mt-2.mb-2
 
 									a.dropdown-item(href=`./user-settings`) More settings...
 
