@@ -80,7 +80,7 @@ block content
 								if (result.getblock.miner.type == "address-only")
 									span.badge.bg-secondary
 										span(data-bs-toggle="tooltip", title=`Unknown Miner Payout Address: ${result.getblock.miner.name}`) #{utils.ellipsizeMiddle(result.getblock.miner.name, 16)}
-										+copyTextButton(result.getblock.miner.address)
+										+copyTextButton(result.getblock.miner.name)
 
 								else if (result.getblock.miner.identifiedBy)
 									span.badge.bg-primary(data-bs-toggle="tooltip", title=`Identified by: ${result.getblock.miner.identifiedBy}`) #{result.getblock.miner.name}
