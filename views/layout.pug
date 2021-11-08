@@ -190,8 +190,8 @@ html(lang="en")
 										- items.push("local");
 
 									.btn-group.ms-3
-										a.btn.btn-sm.px-3(href=`./changeSetting?name=uiTimezone&value=utc`, class=(userSettings.uiTimezone == "utc" ? "btn-primary" : "btn-outline-primary")) utc
-										a.btn.btn-sm.px-3(href=`./changeSetting?name=uiTimezone&value=local`, class=(userSettings.uiTimezone == "utc" ? "btn-outline-primary" : "btn-primary")) local
+										a.btn.btn-sm.px-3(href=`./changeSetting?name=uiTimezone&value=utc`, class=(userSettings.uiTimezone == "utc" ? "btn-primary" : "btn-outline-primary")) UTC
+										a.btn.btn-sm.px-3(href=`./changeSetting?name=uiTimezone&value=local`, class=(userSettings.uiTimezone == "utc" ? "btn-outline-primary" : "btn-primary")) Local
 
 									hr.dropdown-divider.mt-2.mb-2
 
@@ -343,14 +343,30 @@ html(lang="en")
 								
 								
 
+		h1.text-white haha: #{tzOffset}
 		
 		+sharedScriptTags
 		
 		script.
+			var uiTzOffset = !{tzOffset || -1};
 			document.addEventListener("DOMContentLoaded", function(event) {
 				enableTooltipsAndPopovers();
 
 				onLoad_tabSelection();
+
+				console.log(new Date().toTimeString());
+				console.log(Intl.DateTimeFormat().resolvedOptions().timeZone);
+				console.log(new Date().getTimezoneOffset());
+
+				alert("here: " + JSON.stringify(uiTzOffset));
+				if (uiTzOffset == -1) {
+					console.log("HAHA");
+					uiTzOffset = new Date().getTimezoneOffset();
+
+					$.get(`./changeSetting?name=tzOffset&value=${uiTzOffset}`, function(data) {
+						console.log("Timezone updated.");
+					});
+				}
 			});
 
 		if (perfResults)

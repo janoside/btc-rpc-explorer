@@ -415,39 +415,59 @@ mixin confirmations(confirmations, abbreviated=true)
 
 
 mixin timestamp(timestamp, includeAgo=true, formatString, includeUtc=true)
+	- var tzMoment = moment(new Date(parseInt(timestamp) * 1000));
 	- var utcMoment = moment.utc(new Date(parseInt(timestamp) * 1000));
+	- var momentObj = (uiTimezone == "utc" ? utcMoment : tzMoment);
 
-	- var yearStr = utcMoment.format("Y");
+	- var yearStr = momentObj.format("Y");
 	- var nowYearStr = moment.utc(new Date()).format("Y");
 
-	- var dateStr = utcMoment.format("Y-M-D");
+	- var dateStr = momentObj.format("Y-M-D");
 	- var nowDateStr = moment.utc(new Date()).format("Y-M-D");
 
-	- var titleStr = `${utcMoment.format("Y-MM-DD HH:mm:ss")} utc`;
+	if (uiTimezone == "local")
+		- var titleStr = `${tzMoment.format("Y-MM-DD, h:mm:ss A")}<br/>(${utcMoment.format("Y-MM-DD, HH:mm:ss")} UTC)`;
+	else
+		- var titleStr = `${utcMoment.format("Y-MM-DD, HH:mm:ss")} utc`;
 
 	if (formatString)
-		span.border-dotted(title=titleStr, data-bs-toggle="tooltip")
-			| #{utcMoment.format(formatString)}
+		span.border-dotted(title=titleStr, data-bs-toggle="tooltip", data-bs-html="true")
+			span.tz-local(data-timestamp-utc=`${parseInt(timestamp) * 1000}`, data-date-format=formatString) #{momentObj.format(formatString)}
+
 			if (["H", "m", "s"].some(str => formatString.includes(str)))
 				small.text-muted.ms-1 utc
 
 	else if (dateStr == nowDateStr)
-		span.border-dotted(title=titleStr, data-bs-toggle="tooltip")
-			| #{utcMoment.format("HH:mm")}
+		span.border-dotted(title=titleStr, data-bs-toggle="tooltip", data-bs-html="true")
+			if (uiTimezone == "local")
+				span.tz-local(data-timestamp-utc=`${parseInt(timestamp) * 1000}`, data-date-format="M/D, h:mm") #{momentObj.format("h:mm")}
+				small.fw-light.ms-1 #{momentObj.format("A")}
 
-			if (includeUtc)
-				small.text-muted.ms-1 utc
+			else if (uiTimezone == "utc")
+				| #{momentObj.format("HH:mm")}
+
+				if (includeUtc)
+					small.fw-light.ms-1 UTC
 
 	else if (yearStr == nowYearStr)
-		span.border-dotted(title=titleStr, data-bs-toggle="tooltip")
-			| #{utcMoment.format("M/D HH:mm")}
+		span.border-dotted(title=titleStr, data-bs-toggle="tooltip", data-bs-html="true")
+			if (uiTimezone == "local")
+				span.tz-local(data-timestamp-utc=`${parseInt(timestamp) * 1000}`, data-date-format="M/D, h:mm") #{momentObj.format("M/D, h:mm")}
+				small.fw-light.ms-1 #{momentObj.format("A")}
 
-			if (includeUtc)
-				small.text-muted.ms-1 utc
+			else if (uiTimezone == "utc")
+				| #{momentObj.format("M/D, HH:mm")}
+
+				if (uiTimezone == "utc" && includeUtc)
+					small.fw-light.ms-1 UTC
 
 	else
-		span.border-dotted(title=titleStr, data-bs-toggle="tooltip")
-			| #{utcMoment.format("YYYY-MM-DD")}
+		span.border-dotted(title=titleStr, data-bs-toggle="tooltip", data-bs-html="true")
+			if (uiTimezone == "local")
+				span.tz-local(data-timestamp-utc=`${parseInt(timestamp) * 1000}`, data-date-format="YYYY-MM-DD") #{momentObj.format("YYYY-MM-DD")}
+				
+			else if (uiTimezone == "utc")
+				| #{momentObj.format("YYYY-MM-DD")}
 
 	if (includeAgo)
 		small.text-muted.ms-2 (

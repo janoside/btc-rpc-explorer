@@ -777,6 +777,10 @@ expressApp.use(function(req, res, next) {
 	res.locals.uiTimezone = userSettings.uiTimezone;
 	res.locals.uiTheme = userSettings.uiTheme;
 
+	if (userSettings.tzOffset) {
+		res.locals.tzOffset = userSettings.tzOffset;
+	}
+
 
 	if (!["/", "/connect"].includes(req.originalUrl)) {
 		if (utils.redirectToConnectPageIfNeeded(req, res)) {
