@@ -158,7 +158,7 @@ block content
 									span 0
 
 				+contentSection("Technical Details", true, "blockPageShowTechSummary")
-					+summaryRow(6 + (result.getblock.weight ? 1 : 0) + (result.getblock.size ? 1 : 0) + (result.blockstats ? 1 : 0) + (result.blockstats && result.blockstats.utxo_increase ? 1 : 0) + (result.blockstats && result.blockstats.maxtxsize ? 1 : 0))
+					+summaryRow(5 + (result.getblock.weight ? 1 : 0) + (result.getblock.size ? 1 : 0) + (result.blockstats ? 1 : 0) + (result.blockstats && result.blockstats.utxo_increase ? 1 : 0) + (result.blockstats && result.blockstats.maxtxsize ? 1 : 0) + (result.getblock.difficulty ? 1 : 0))
 						if (result.getblock.weight)
 							+summaryItem("Weight", null, "wu", "Weight Units")
 								span #{result.getblock.weight.toLocaleString()}
@@ -194,17 +194,18 @@ block content
 								else
 									| 1
 
-						+summaryItem("Difficulty")
-							- var difficultyData = utils.formatLargeNumber(result.getblock.difficulty, 3);
-							
-							if (result.getblock.difficulty > 1000)
-								span.border-dotted(title=parseFloat(result.getblock.difficulty).toLocaleString(), data-bs-toggle="tooltip")
-									span #{difficultyData[0]}
-									span  x 10
-									sup #{difficultyData[1].exponent}
+						if (result.getblock.difficulty)
+							+summaryItem("Difficulty")
+								- var difficultyData = utils.formatLargeNumber(result.getblock.difficulty, 3);
+								
+								if (result.getblock.difficulty > 1000)
+									span.border-dotted(title=parseFloat(result.getblock.difficulty).toLocaleString(), data-bs-toggle="tooltip")
+										span #{difficultyData[0]}
+										span  x 10
+										sup #{difficultyData[1].exponent}
 
-							else
-								span #{new Decimal(result.getblock.difficulty).toDP(3)}
+								else
+									span #{new Decimal(result.getblock.difficulty).toDP(3)}
 
 						if (result.blockstats && result.blockstats.utxo_increase)
 							+summaryItem("UTXO Δ")
