@@ -586,8 +586,8 @@ function getTxTotalInputOutputValues(tx, txInputs, blockHeight) {
 		}
 
 		for (var i = 0; i < tx.vout.length; i++) {
-			totalOutputValue = totalOutputValue.plus(new Decimal(tx.vout[i].value));
-		}
+				totalOutputValue = totalOutputValue.plus(new Decimal(tx.vout[i].value));
+			}
 	} catch (err) {
 		logError("2308sh0sg44", err, {tx:tx, txInputs:txInputs, blockHeight:blockHeight});
 	}
@@ -887,6 +887,13 @@ const reflectPromise = p => p.then(v => ({v, status: "resolved" }),
 global.errorStats = {};
 
 function logError(errorId, err, optionalUserData = {}, logStacktrace=true) {
+	debugErrorLog("Error " + errorId + ": " + err + ", json: " + JSON.stringify(err) + (optionalUserData != null ? (", userData: " + optionalUserData + " (json: " + JSON.stringify(optionalUserData) + ")") : ""));
+	
+	if (err && err.stack && logStacktrace) {
+		debugErrorVerboseLog("Stack: " + err.stack);
+	}
+
+
 	if (!global.errorLog) {
 		global.errorLog = [];
 	}
@@ -928,12 +935,7 @@ function logError(errorId, err, optionalUserData = {}, logStacktrace=true) {
 		global.errorLog.splice(0, 1);
 	}
 
-	debugErrorLog("Error " + errorId + ": " + err + ", json: " + JSON.stringify(err) + (optionalUserData != null ? (", userData: " + optionalUserData + " (json: " + JSON.stringify(optionalUserData) + ")") : ""));
 	
-	if (err && err.stack && logStacktrace) {
-		debugErrorVerboseLog("Stack: " + err.stack);
-	}
-
 	var returnVal = {errorId:errorId, error:err};
 	if (optionalUserData) {
 		returnVal.userData = optionalUserData;
