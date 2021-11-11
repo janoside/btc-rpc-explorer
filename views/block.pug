@@ -258,7 +258,7 @@ block content
 						
 				else
 					+contentSection(`${txCount.toLocaleString()} Transaction${txCount == 1 ? "" : "s"}`, false, "blockPageShowTxDetails", true, false)
-						+txList(result.transactions, txCount, limit, offset, result.txInputsByTransaction, {sharedBlockHeight: result.getblock.height})
+						+txList(result.transactions, txCount, limit, offset, result.txInputsByTransaction, {sharedBlockHeight: result.getblock.height, hidePagination:crawlerBot})
 						
 									
 							

@@ -115,7 +115,7 @@ mixin summaryItem(title, titleDesc, subtitle, subtitleDesc)
 
 // txBlockHeightsByTxid_orSharedBlockHeight, showDates=false, highlightAddress, addrGainsByTxid, addrLossesByTxid)
 mixin txList(visibleTxs, txCount, limit, offset, inputsByTxid, options={})
-	if (txCount > limit)
+	if (txCount > limit && !options.hidePagination)
 		.rounded-0.rounded-top.bg-content.border
 			.p-3
 				h6.fw-normal.mb-2 #{offset.toLocaleString()} - #{Math.min(offset + limit - 1, txCount - 1).toLocaleString()} of #{txCount.toLocaleString()}
@@ -245,7 +245,7 @@ mixin txList(visibleTxs, txCount, limit, offset, inputsByTxid, options={})
 			.mb-4.mb-lg-3
 
 
-	if (txCount > limit)
+	if (txCount > limit && !options.hidePagination)
 		.rounded-0.rounded-bottom.bg-content.border
 			.p-3
 				if (!crawlerBot && txCount > limit)

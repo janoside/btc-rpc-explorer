@@ -1392,15 +1392,17 @@ router.get("/tx/:transactionId", asyncHandler(async (req, res, next) => {
 
 		res.locals.result = {};
 
+		let txInputLimit = (res.locals.crawlerBot) ? 3 : -1;
+
 		var txPromise = req.query.blockHeight ? 
 				async () => {
 					const block = await coreApi.getBlockByHeight(parseInt(req.query.blockHeight));
 					res.locals.block = block;
-					return await coreApi.getRawTransactionsWithInputs([txid], -1, block.hash);
+					return await coreApi.getRawTransactionsWithInputs([txid], txInputLimit, block.hash);
 				}
 				:
 				async () => {
-					return await coreApi.getRawTransactionsWithInputs([txid], -1);
+					return await coreApi.getRawTransactionsWithInputs([txid], txInputLimit);
 				};
 
 		const rawTxResult = await utils.timePromise("tx.getRawTransactionsWithInputs", txPromise, perfResults);
