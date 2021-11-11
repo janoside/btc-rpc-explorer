@@ -18,7 +18,7 @@ block content
 					+summaryItem("Block")
 						a(href=`./block/${block.hash}`) ##{block.height.toLocaleString()}
 
-					+summaryItem("Date")
+					+summaryItem("Date / Time")
 						if (block.time)
 							+timestamp(block.time)
 
@@ -116,10 +116,9 @@ block content
 									+confirmations(tx.confirmations)
 									| )
 							
-							+summaryItem("Date")
+							+summaryItem("Date / Time")
 								if (tx.time)
-									td
-										+timestamp(result.getrawtransaction.time)
+									+timestamp(result.getrawtransaction.time)
 										
 
 						if (isCoinbaseTx)
