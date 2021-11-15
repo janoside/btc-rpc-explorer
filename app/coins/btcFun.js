@@ -57,6 +57,16 @@ module.exports = {
 			alertBodyHtml:"This address corresponds to a Bitcoin Script (<span class='font-data'>6e879169a67ca687</span>) that allows anyone who can demonstrate a RIPEMD160 collision to spend from it. On September 13, 2013 this address was funded as a RIPEMD160-collision bounty. It has continued to accumulate 'bounty donations' for 7+ years and, as of this writing (April 2021), the bounty remains uncollected.",
 			referenceUrl:"https://bitcointalk.org/index.php?topic=293382.0"
 		},
+	        {
+		        type: "tx",
+		        date: "2010-07-29",
+		        chain: "main",
+		        txid: "e411dbebd2f7d64dafeef9b14b5c59ec60c36779d43f850e5e347abee1e1a455",
+		        blockHeight: 71036,
+		        summary: "One of several transactions in this block with a ton of OP_CHECKSIG commands.",
+		        alertBodyHtml: "This caused every node to do extra unnecessary work, and it could have been used as a denial-of-service attack. A new version of Bitcoin was quickly released. The new version did not cause a fork on the main network, though it did cause one on the test network (where someone had played around with the attack more)." ,
+		        referenceUrl: "https://en.bitcoin.it/wiki/Common_Vulnerabilities_and_Exposures#CVE-2010-5138"
+		},
 		{
 			type:"address",
 			date:"2013-09-13",
