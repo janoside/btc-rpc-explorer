@@ -118,10 +118,9 @@ function getcurrentcmc() {
 		 var formatcapprice = (currentsupply*getjson.result.price_usd).toFixed(0).replace(/\d(?=(\d{3})+\.)/g, '$&,');  // 12,345.67
 		 var formatprice_usd = getjson.result.price_usd
 		 var formatprice_btc = getjson.result.price_btc
-
 		 var chklength = Object.keys(getjson.result).length;
 		 if ( chklength > 0) {
-			if (nonformatcapprice<5000){
+			if (nonformatcapprice < 5000){
 				var results =  "NULL-NULL-NULL";
 			}else{
 				var results = formatprice_btc +"-"+ formatprice_usd +'-'+ formatcapprice;
