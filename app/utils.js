@@ -114,13 +114,18 @@ function getcurrentcmc() {
 	  if (!error && response.statusCode == 200) {
 		 var getjson = JSON.parse(body);
 		 console.log(getjson.result.price_usd);
+		 var nonformatcapprice = currentsupply*getjson.result.price_usd
 		 var formatcapprice = (currentsupply*getjson.result.price_usd).toFixed(0).replace(/\d(?=(\d{3})+\.)/g, '$&,');  // 12,345.67
 		 var formatprice_usd = getjson.result.price_usd
 		 var formatprice_btc = getjson.result.price_btc
 
 		 var chklength = Object.keys(getjson.result).length;
 		 if ( chklength > 0) {
-			var results = formatprice_btc +"-"+ formatprice_usd +'-'+ formatcapprice;
+			if (nonformatcapprice<5000){
+				var results =  "NULL-NULL-NULL";
+			}else{
+				var results = formatprice_btc +"-"+ formatprice_usd +'-'+ formatcapprice;
+			}
 		 } else {
 			var results =  "NULL-NULL-NULL";
 		 }
