@@ -10,6 +10,7 @@
 * [/node-details](./node-details): Include `coinstatsindex` status
 * Support querying UTXO Set even with slowDeviceMode=true, iff coinstatsindex is available
 * Fix for difficulty adjustment estimate
+* When viewing unconfirmed transaction details, show an info dialog if the transaction is predicted to be confirmed in the next block
 * Performance improvements
 	* Fix for performance degradation over time due to slow "estimatedSupply" function
 	* Homepage speedup by making "Estimated Next Block" data load asynchonously

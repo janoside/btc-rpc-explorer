@@ -60,7 +60,12 @@ block content
 
 		div.tab-content
 			+pageTab("Details", true)
-				
+
+				#alert-included-next-block.alert.alert-info(style="display: none;")
+					h6 Confirmation Predicted in Next Block
+					.mb-2 This transaction is currently unconfirmed but, with the current mempool, it's predicted to be confirmed in the next block.
+					span It's currently transaction #<span id='next-block-index'></span> of <span id='next-block-count'></span>.
+
 				if (global.specialTransactions && global.specialTransactions[txid])
 					- var stInfo = global.specialTransactions[txid];
 
@@ -87,7 +92,7 @@ block content
 						if (!isTxConfirmed)
 							+summaryItem("Status")
 								span.text-danger Unconfirmed
-
+									
 							+summaryItem("First Seen", "The time when this transaction entered your node's mempool.")
 								+timestamp(mempoolDetails.entry.time)
 
@@ -374,3 +379,19 @@ block content
 				//pre #{JSON.stringify(result.txInputs, null, 4)}
 
 		
+block endOfBody
+
+	script.
+		var txid = "!{txid}";
+		$(document).ready(function() {
+			$.ajax({
+				url: `./api/mining/next-block/includes/${txid}`
+
+			}).done(res => {
+				if (res.included) {
+					$("#next-block-index").text(res.index.toLocaleString());
+					$("#next-block-count").text(res.txCount.toLocaleString());
+					$("#alert-included-next-block").show();
+				}
+			});
+		});

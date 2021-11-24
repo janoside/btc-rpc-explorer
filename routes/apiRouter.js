@@ -350,16 +350,19 @@ router.get("/mining/next-block/includes/:txid", asyncHandler(async (req, res, ne
 
 	const promises = [];
 
-	let txidIncluded = false;
+	let txidIndex = -1;
+	let txCount = -1;
 
 	promises.push(utils.timePromise("api/next-block/getblocktemplate", async () => {
 		let nextBlockEstimate = await utils.timePromise("api/next-block/getNextBlockEstimate", async () => {
 			return await coreApi.getNextBlockEstimate();
 		});
 
+		txCount = nextBlockEstimate.blockTemplate.transactions.length;
+
 		for (let i = 0; i < nextBlockEstimate.blockTemplate.transactions.length; i++) {
 			if (nextBlockEstimate.blockTemplate.transactions[i].txid == txid) {
-				txidIncluded = true;
+				txidIndex = i;
 
 				return;
 			}
@@ -368,7 +371,13 @@ router.get("/mining/next-block/includes/:txid", asyncHandler(async (req, res, ne
 
 	await utils.awaitPromises(promises);
 
-	res.send(txidIncluded);
+	let response = {included:(txidIndex >= 0)};
+	if (txidIndex >= 0) {
+		response.index = txidIndex;
+		response.txCount = txCount;
+	}
+
+	res.json(response);
 }));
 
 
