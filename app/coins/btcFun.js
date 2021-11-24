@@ -352,6 +352,45 @@ module.exports = {
 			alertBodyHtml: "Immortalizing the proposed legislation in El Salvador to classify bitcoin as legal tender in the country (a bill written in collaboration with <a href='https://Strike.me'>Strike.me</a>) Slush Pool embedded the headline: 'Diario El Salvador 6/Jun/2021 Bitcoin tendra validez legal'.",
 			referenceUrl: "https://twitter.com/slush_pool/status/1401763623417098243"
 		},
+		{
+			type: "blockheight",
+			date: "2021-11-14",
+			chain: "main",
+			blockHeight: 709632,
+			blockHash: "0000000000000000000687bca986194dc2c1f949318629b44bb54ec0a94d8244",
+			summary: "The first Taproot-enforcing block",
+			alertBodyHtml: "Nearly 4 years after the Taproot upgrade was conceived, and after ",
+			referenceUrl: "https://twitter.com/pwuille/status/1403725170993336322"
+		},
+		{
+			type: "tx",
+			date: "2021-11-14",
+			chain: "main",
+			txid: "777c998695de4b7ecec54c058c73b2cab71184cf1655840935cd9388923dc288",
+			blockHeight: 709632,
+			summary: "The first Pay-to-Taproot (P2TR) transaction in Bitcoin's history.",
+			alertBodyHtml: "Saluting the network's upgrade with a cheerful OP_RETURN message 'gm taproot 🥕', <a href='https://twitter.com/FedericoTenga'>@FedericoTenga</a> overpaid by ~3.3x (a fee rate of ~2,500 sat/vB) for the historic honor of sending the first mainnet Pay-to-Taproot (P2TR) transaction ever.",
+			referenceUrl: "https://twitter.com/FedericoTenga/status/1459755752080519168"
+		},
+		{
+			type: "tx",
+			date: "2021-11-14",
+			chain: "main",
+			txid: "33e794d097969002ee05d336686fc03c9e15a597c1b9827669460fac98799036",
+			blockHeight: 709635,
+			summary: "The first mainnet spend of a Pay-to-Taproot (P2TR) output.",
+			referenceUrl: "https://twitter.com/achow101/status/1459759674723651585"
+		},
+		{
+			type: "tx",
+			date: "2021-11-14",
+			chain: "main",
+			txid: "2eb8dbaa346d4be4e82fe444c2f0be00654d8cfd8c4a9a61b11aeaab8c00b272",
+			blockHeight: 709635,
+			summary: "The first use of OP_CHECKSIGADD",
+			alertBodyHtml: "Created by a modified version of <a href='https://twitter.com/bitcoindevkit'>@bitcoindevkit</a>, this Taproot script-spend with a 1-of-2 multisig is the first mainnet transaction to use OP_CHECKSIGADD.",
+			referenceUrl: "https://twitter.com/afilini/status/1459763243556163584"
+		},
 
 
 
@@ -398,6 +437,6 @@ module.exports = {
 			summary: "The coinbase transaction of the Genesis Block.",
 			alertBodyHtml: "This transaction doesn't really exist! This is the coinbase transaction of the <a href='./block/000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f'>Bitcoin Genesis Block</a>. For more background about this special-case transaction, you can read <a href='https://github.com/bitcoin/bitcoin/issues/3303'>this brief discussion</a> among some of the <a href='https://bitcoin.org'>Bitcoin</a> developers.",
 			referenceUrl: "https://github.com/bitcoin/bitcoin/issues/3303"
-		},
+		}
 	]
 };
