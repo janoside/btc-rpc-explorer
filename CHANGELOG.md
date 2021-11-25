@@ -19,6 +19,7 @@
 * Error handling improvements
 * Fix for `/api/quotes/all`
 * Fix for incorrect date on "Diario El Salvador..." fun item (thanks [@Dirkson643](https://github.com/Dirkson643))
+* New `Fun` items related to Taproot activation
 * Performance log admin page at [/admin/perf-log](./admin/perf-log)
 
 

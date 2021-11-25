@@ -368,8 +368,8 @@ module.exports = {
 			chain: "main",
 			txid: "777c998695de4b7ecec54c058c73b2cab71184cf1655840935cd9388923dc288",
 			blockHeight: 709632,
-			summary: "The first Pay-to-Taproot (P2TR) transaction in Bitcoin's history.",
-			alertBodyHtml: "Saluting the network's upgrade with a cheerful OP_RETURN message 'gm taproot 🥕', <a href='https://twitter.com/FedericoTenga'>@FedericoTenga</a> overpaid by ~3.3x (a fee rate of ~2,500 sat/vB) for the historic honor of sending the first mainnet Pay-to-Taproot (P2TR) transaction ever.",
+			summary: "The first (post-activation) Pay-to-Taproot (P2TR) transaction in Bitcoin's history.",
+			alertBodyHtml: "Saluting the network's upgrade with a cheerful OP_RETURN message 'gm taproot 🥕', <a href='https://twitter.com/FedericoTenga'>@FedericoTenga</a> overpaid by ~3.3x (a fee rate of ~2,500 sat/vB) for the historic honor of sending the first (post-activation) mainnet Pay-to-Taproot (P2TR) transaction. (Note that there exist several quirky pre-activation P2TR outputs, including <a href='./tx/b53e3bc5edbb41b34a963ecf67eb045266cf841cab73a780940ce6845377f141'>the true 'first-ever' P2TR output</a>.)",
 			referenceUrl: "https://twitter.com/FedericoTenga/status/1459755752080519168"
 		},
 		{
@@ -390,6 +390,26 @@ module.exports = {
 			summary: "The first use of OP_CHECKSIGADD",
 			alertBodyHtml: "Created by a modified version of <a href='https://twitter.com/bitcoindevkit'>@bitcoindevkit</a>, this Taproot script-spend with a 1-of-2 multisig is the first mainnet transaction to use OP_CHECKSIGADD.",
 			referenceUrl: "https://twitter.com/afilini/status/1459763243556163584"
+		},
+		{
+			type: "tx",
+			date: "2021-07-23",
+			chain: "main",
+			txid: "b10c007c60e14f9d087e0291d4d0c7869697c6681d979c6639dbd960792b4d41",
+			blockHeight: 692261,
+			summary: "The (real) first mainnet spend of Pay-to-Taproot (P2TR) outputs.",
+			alertBodyHtml: "This interesting transaction exists in the blockchain only because of special coordination with F2Pool. Because this transaction spends Pay-to-Taproot outputs, and because it was created before Taproot activation, it was considered \"non-standard\" and would not be relayed across the Bitcoin network, despite technically being valid. Therefore, as a technical demonstration, <a href='https://b10c.me'>https://b10c.me</a> coordinated with F2Pool to mine this non-standard transaction, wherein the P2TR outputs were effectively anyone-can-spend outputs.",
+			referenceUrl: "https://b10c.me/blog/007-spending-p2tr-pre-activation/"
+		},
+		{
+			type: "tx",
+			date: "2019-12-17",
+			chain: "main",
+			txid: "b53e3bc5edbb41b34a963ecf67eb045266cf841cab73a780940ce6845377f141",
+			blockHeight: 608548,
+			summary: "The (real) first mainnet Pay-to-Taproot output.",
+			alertBodyHtml: "Created LONG before Taproot lock-in, let alone activation, this transaction's #0 output is the first ever P2TR output. It was created by Matthew Zipkin to test sending support for bech32 witness version 1. Interestingly, this output, along with 3 other pre-Activation P2TR outputs, was also SPENT before activation, via special coordination with F2Pool.",
+			referenceUrl: "https://b10c.me/blog/007-spending-p2tr-pre-activation/"
 		},
 
 
