@@ -11,7 +11,7 @@ if (exchangeRates)
 	+contentSection("Market")
 		- var colCount = 3 + (networkVolume ? 1 : 0) + (goldExchangeRates ? 1 : 0);
 		+summaryRow(colCount)
-			+summaryItem("Exchange Rate", `Source: ${new URL(coinConfig.exchangeRateData.jsonUrl).hostname}`)
+			+summaryItem("Exchange Rate", `Source: ${new URL(coinConfig.exchangeRateData.jsonUrl).hostname}<br/>Last Updated: ${new Decimal(new Date().getTime() - global.exchangeRatesUpdateTime.getTime()).dividedBy(1000).dividedBy(60).toDP(0)} min ago`)
 				- var formatData = utils.formatExchangedCurrency(1.0, userSettings.localCurrency);
 
 				span.text-success
