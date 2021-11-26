@@ -15,6 +15,7 @@
 	* Fix for performance degradation over time due to slow "estimatedSupply" function
 	* Homepage speedup by making "Estimated Next Block" data load asynchonously
 	* Caching for [/difficulty-history](./difficulty-history) data
+* Unicode formatting for OP_RETURN and other similar data
 * Unique favicon color based on the active network (mainnet=orange, testnet=green, signet=magenta, regtest=gray)
 * Error handling improvements
 * Fix for `/api/quotes/all`
