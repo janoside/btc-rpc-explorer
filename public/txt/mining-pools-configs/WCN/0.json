@@ -33,8 +33,12 @@
       "link": "trossmining.de"
     },
     "solopools.net": {
-      "name": "Solopools",
+      "name": "Solopools.net",
       "link": "solopools.net"
+    },
+    "SOLOPOOLS.ORG": {
+      "name": "Solopools.org",
+      "link": "solopools.org"    
     }
   }
 }
