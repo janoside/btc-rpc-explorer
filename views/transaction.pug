@@ -294,7 +294,7 @@ block content
 												+successBadge("coinbase")
 												
 												.mt-1.mb-2
-													.d-inline-block.small.border.rounded-1.p-1.px-2.card-highlight.word-wrap #{utils.hex2ascii(vin.coinbase)}
+													.d-inline-block.small.border.rounded-1.p-1.px-2.card-highlight.word-wrap #{utils.formatHex(vin.coinbase, "utf8")}
 
 												.d-inline-block.small.border.rounded-1.p-1.px-2.card-highlight.word-wrap #{vin.coinbase}
 
@@ -341,7 +341,9 @@ block content
 														.d-inline-block.small.border.rounded-1.p-1.px-2.card-highlight.word-wrap #{chunk}
 
 											if (vout.scriptPubKey.asm.startsWith("OP_RETURN"))
-												.d-inline-block.small.border.rounded-1.p-1.px-2.card-highlight.word-wrap #{utils.hex2ascii(vout.scriptPubKey.asm)}
+												- var asm = vout.scriptPubKey.asm;
+												- asm = asm.substring("OP_RETURN ".length);
+												.d-inline-block.small.border.rounded-1.p-1.px-2.card-highlight.word-wrap #{utils.formatHex(asm, "utf8")}
 						
 
 			+pageTab("JSON")

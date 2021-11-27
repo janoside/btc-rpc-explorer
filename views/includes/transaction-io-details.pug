@@ -3,12 +3,15 @@
 mixin asciiHexDataDisplay(dataName, uniqueId, hex)
 	div
 		.d-inline-block.small.border.rounded-1.p-1.px-2.card-highlight.word-wrap
-			span.fw-light(title=`ASCII-encoded ${dataName}`, data-bs-toggle="tooltip") #{utils.hex2ascii(hex)}
+			span.fw-light(title=`UTF8-encoded ${dataName}`, data-bs-toggle="tooltip") #{utils.formatHex(hex, "utf8")}
 
-		a.text-muted.ms-2(href="javascript:void(0)", onclick=`$('#hex-${uniqueId}').toggle(); $(this).find(".toggle-plus-minus").toggleClass("fa-plus-square"); $(this).find(".toggle-plus-minus").toggleClass("fa-minus-square"); return false;`, title="Toggle Hex Display", data-bs-toggle="tooltip")
+		a.text-muted.ms-2(href="javascript:void(0)", onclick=`$('#hex-ascii-${uniqueId}').toggle(); $(this).find(".toggle-plus-minus").toggleClass("fa-plus-square"); $(this).find(".toggle-plus-minus").toggleClass("fa-minus-square"); return false;`, title="Toggle More Encodings", data-bs-toggle="tooltip")
 			i.toggle-plus-minus.far.fa-plus-square
 
-	div(id=`hex-${uniqueId}`, style="display: none;")
+	div(id=`hex-ascii-${uniqueId}`, style="display: none;")
+		.d-inline-block.small.border.rounded-1.p-1.px-2.mt-2.word-wrap.card-highlight
+			span.fw-light(title=`ASCII-encoded ${dataName}`, data-bs-toggle="tooltip") #{utils.formatHex(hex, "ascii")}
+
 		.d-inline-block.small.border.rounded-1.p-1.px-2.mt-2.word-wrap.card-highlight
 			span.fw-light(title=`Hex-encoded ${dataName}`, data-bs-toggle="tooltip") #{hex}
 
@@ -99,9 +102,8 @@ mixin outputValueDisplay(vout, voutIndex)
 								+asciiHexDataDisplay("coinbase data", `coinbase-${tx.txid}`, txVin.coinbase)
 
 							// xs only
-							.d-inline.d-sm-none.small.border.rounded-1.px-1.card-highlight.ms-1
-								- var asm = txVin.coinbase;
-								span.fw-light #{utils.hex2ascii(asm.substring(0, Math.min(asm.length, 10)))}…
+							.d-inline-block.d-sm-none.small.border.rounded-1.px-1.card-highlight.ms-3.mt-1
+								span.text-tiny.fw-light #{utils.formatHex(txVin.coinbase, "utf8")}
 
 
 						else
@@ -285,9 +287,9 @@ mixin outputValueDisplay(vout, voutIndex)
 								span.small.xs-only.d-inline.d-sm-none
 									+primaryBadge("OP_RETURN")
 
-								.xs-sm.d-inline.d-md-none.small.border.rounded-1.px-1.card-highlight.ms-n1
+								.xs-sm.d-inline-block.d-md-none.small.border.rounded-1.px-1.card-highlight.ms-3.mt-1
 									- var asm = vout.scriptPubKey.asm.substring("OP_RETURN ".length);
-									span.fw-light #{utils.hex2ascii(asm.substring(0, Math.min(asm.length, 10)))}…
+									span.text-tiny.fw-light #{utils.formatHex(asm, "utf8")}
 							
 							else if (vout.scriptPubKey.type)
 								span.small.xs-only.d-inline.d-sm-none

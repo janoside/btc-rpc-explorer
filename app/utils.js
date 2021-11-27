@@ -152,8 +152,8 @@ function redirectToConnectPageIfNeeded(req, res) {
 	return false;
 }
 
-function hex2ascii(hex) {
-	return Buffer.from(hex, "hex").toString("utf8");
+function formatHex(hex, outputFormat="utf8") {
+	return Buffer.from(hex, "hex").toString(outputFormat);
 }
 
 function splitArrayIntoChunks(array, chunkSize) {
@@ -496,7 +496,7 @@ function identifyMiner(coinbaseTx, blockHeight) {
 
 			for (var coinbaseTag in miningPoolsConfig.coinbase_tags) {
 				if (miningPoolsConfig.coinbase_tags.hasOwnProperty(coinbaseTag)) {
-					if (hex2ascii(coinbaseTx.vin[0].coinbase).indexOf(coinbaseTag) != -1) {
+					if (formatHex(coinbaseTx.vin[0].coinbase, "utf8").indexOf(coinbaseTag) != -1) {
 						var minerInfo = miningPoolsConfig.coinbase_tags[coinbaseTag];
 						minerInfo.identifiedBy = "coinbase tag '" + coinbaseTag + "'";
 
@@ -1327,7 +1327,7 @@ const perfLogNewItem = (tags) => {
 module.exports = {
 	reflectPromise: reflectPromise,
 	redirectToConnectPageIfNeeded: redirectToConnectPageIfNeeded,
-	hex2ascii: hex2ascii,
+	formatHex: formatHex,
 	splitArrayIntoChunks: splitArrayIntoChunks,
 	splitArrayIntoChunksByChunkCount: splitArrayIntoChunksByChunkCount,
 	getRandomString: getRandomString,
