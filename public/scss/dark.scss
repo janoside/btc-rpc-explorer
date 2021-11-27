@@ -76,8 +76,16 @@ $modal-content-color: $body-color;
 
 
 
+$toast-color:                       $body-color;
+$toast-background-color:            lighten($body-bg, 15%);
+$toast-border-color:                rgba(255, 255, 255, .1);
+$toast-header-color:                $body-color;
+$toast-header-background-color:     lighten($body-bg, 7%);
+$toast-header-border-color:         rgba(0, 0, 0, .05) !default;
+
+
+
 @import "./main";
-@import "../../node_modules/bootstrap/scss/bootstrap";
 
 
 

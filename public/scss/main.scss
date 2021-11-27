@@ -74,6 +74,9 @@ $alert-dismissible-padding-r: $alert-padding-x * 2.5;
 $dropdown-min-width: 11rem;
 
 
+@import "../../node_modules/bootstrap/scss/bootstrap";
+
+
 .bg-content {
 	background-color: $body-bg !important;
 }
@@ -96,6 +99,10 @@ code {
 
 .text-lighten {
 	filter: brightness(120%);
+}
+
+.text-tight-spacing {
+	letter-spacing: -0.5px;
 }
 
 

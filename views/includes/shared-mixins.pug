@@ -1,6 +1,6 @@
 mixin themeCss
-	link(id="light-theme-link-tag", rel="stylesheet", href=`./style/light.css?v=${cacheId}`, integrity="sha384-QCNlLZKpZ7Mny1dU7J4l+6E5g1PZ/OPMmU90FI1Xn8DW0m5Cwjv37UQXKv5+/pDj")
-	link(id="dark-theme-link-tag", rel=(userSettings.uiTheme == "dark" ? "stylesheet" : false), href=`./style/dark.css?v=${cacheId}`, integrity="sha384-f3cflfaC2N3gEVrH46fvVwIxrG1YdJ2ADkwH2b3iZumBB9aS39h8C+3lvuPBfRcI")
+	link(id="light-theme-link-tag", rel="stylesheet", href=`./style/light.css?v=${cacheId}`, integrity="sha384-4a2ZOSpbpgzo72vW2r6xG1CtOXtoIEdaT0IRJYg/00nfB70u1ZVUIuNXnS+iZAkl")
+	link(id="dark-theme-link-tag", rel=(userSettings.uiTheme == "dark" ? "stylesheet" : false), href=`./style/dark.css?v=${cacheId}`, integrity="sha384-8QdxLQpny5VMpE7s27I/6J2H3gjzK/VCjWj2eO5NgQmyTBRg3ilOPuMCQ8mMmm2u")
 
 
 mixin sharedScriptTags
@@ -303,10 +303,10 @@ mixin _valueDisplayBtc(val)
 	if (exchangeRates)
 		- var localCurFormatData = utils.getExchangedCurrencyFormatData(val, userSettings.localCurrency);
 
-		span.xs-hidden.d-none.d-sm-inline.text-tiny.border-dotted.fw-light.ms-1(style="letter-spacing: -0.5px;", data-bs-toggle="tooltip", title=`<span class="me-tiny">${localCurFormatData.symbol}</span><span>${localCurFormatData.value}</span>`, data-bs-html="true") #{parts.currencyUnit}
+		span.xs-hidden.d-none.d-sm-inline.text-tiny.text-tight-spacing.border-dotted.fw-light.ms-1(data-bs-toggle="tooltip", title=`<span class="me-tiny">${localCurFormatData.symbol}</span><span>${localCurFormatData.value}</span>`, data-bs-html="true") #{parts.currencyUnit}
 			
 	else
-		span.xs-hidden.d-none.d-sm-inline.text-tiny.fw-light.ms-1(style="letter-spacing: -0.5px;") #{parts.currencyUnit}
+		span.xs-hidden.d-none.d-sm-inline.text-tiny.text-tight-spacing.fw-light.ms-1 #{parts.currencyUnit}
 
 
 mixin _valueDisplaySat(val, summarizeMin=Infinity, summarizeDecimals=3)
@@ -328,10 +328,10 @@ mixin _valueDisplaySat(val, summarizeMin=Infinity, summarizeDecimals=3)
 	if (exchangeRates)
 		- var localCurFormatData = utils.getExchangedCurrencyFormatData(val, userSettings.localCurrency);
 
-		span.xs-hidden.d-none.d-sm-inline.text-tiny.border-dotted.fw-light.ms-1(style="letter-spacing: -0.5px;", data-bs-toggle="tooltip", title=`<span class="me-tiny">${localCurFormatData.symbol}</span><span>${localCurFormatData.value}</span>`, data-bs-html="true") #{parts.currencyUnit}
+		span.xs-hidden.d-none.d-sm-inline.text-tiny.text-tight-spacing.border-dotted.fw-light.ms-1(data-bs-toggle="tooltip", title=`<span class="me-tiny">${localCurFormatData.symbol}</span><span>${localCurFormatData.value}</span>`, data-bs-html="true") #{parts.currencyUnit}
 			
 	else
-		span.xs-hidden.d-none.d-sm-inline.text-tiny.fw-light.ms-1(style="letter-spacing: -0.5px;") #{parts.currencyUnit}
+		span.xs-hidden.d-none.d-sm-inline.text-tiny.text-tight-spacing.fw-light.ms-1 #{parts.currencyUnit}
 
 
 mixin _valueDisplayLocal(val, summarizeMin=Infinity, summarizeDecimals=3)
@@ -393,10 +393,10 @@ mixin valueDisplaySpecial(val, maxDecimals=-1, summarizeAlways=false, summarizeM
 				if (exchangeRates)
 					- var localCurFormatData = utils.getExchangedCurrencyFormatData(val, userSettings.localCurrency);
 
-					span.text-tiny.border-dotted.fw-light.ms-1(style="letter-spacing: -0.5px;", data-bs-toggle="tooltip", title=`<span class="me-tiny">${localCurFormatData.symbol}</span><span>${localCurFormatData.value}</span>`, data-bs-html="true") #{parts.currencyUnit}
+					span.text-tiny.text-tight-spacing.border-dotted.fw-light.ms-1(data-bs-toggle="tooltip", title=`<span class="me-tiny">${localCurFormatData.symbol}</span><span>${localCurFormatData.value}</span>`, data-bs-html="true") #{parts.currencyUnit}
 						
 				else
-					span.text-tiny.fw-light.ms-1(style="letter-spacing: -0.5px;") #{parts.currencyUnit}
+					span.text-tiny.text-tight-spacing.fw-light.ms-1 #{parts.currencyUnit}
 						
 			else if (userSettings.displayCurrency == "local")
 					
