@@ -414,40 +414,62 @@ mixin confirmations(confirmations, abbreviated=true)
 			i.fas.fa-check.ms-1
 
 
-mixin timestamp(timestamp, includeAgo=true, formatString, includeUtc=true)
+mixin timestamp(timestamp, includeAgo=true, formatString)
+	- var tzDiff = -parseFloat(browserTzOffset);
+	
+	if (userTzOffset != "unset")
+		- tzDiff = parseFloat(userTzOffset);
+
+	- var tzMoment = moment.utc(new Date(parseInt(timestamp) * 1000)).add(tzDiff, "hours");
 	- var utcMoment = moment.utc(new Date(parseInt(timestamp) * 1000));
+	- var momentObj = (uiTimezone == "utc" ? utcMoment : tzMoment);
+	- var nowMoment = (uiTimezone == "utc" ? moment.utc(new Date()) : moment.utc(new Date()).add(tzDiff, "hours"));
 
-	- var yearStr = utcMoment.format("Y");
-	- var nowYearStr = moment.utc(new Date()).format("Y");
+	- var yearStr = momentObj.format("Y");
+	- var nowYearStr = nowMoment.format("Y");
 
-	- var dateStr = utcMoment.format("Y-M-D");
-	- var nowDateStr = moment.utc(new Date()).format("Y-M-D");
+	- var dateStr = momentObj.format("Y-M-D");
+	- var nowDateStr = nowMoment.format("Y-M-D");
 
-	- var titleStr = `${utcMoment.format("Y-MM-DD HH:mm:ss")} utc`;
+
+	if (tzDiff != 0 && uiTimezone == "local")
+		- var titleStr = `${tzMoment.format("Y-MM-DD, h:mm:ss A")}<br/>(${utcMoment.format("Y-MM-DD, HH:mm:ss")} UTC)`;
+	else
+		- var titleStr = `${utcMoment.format("Y-MM-DD, HH:mm:ss")} utc`;
 
 	if (formatString)
-		span.border-dotted(title=titleStr, data-bs-toggle="tooltip")
-			| #{utcMoment.format(formatString)}
-			if (["H", "m", "s"].some(str => formatString.includes(str)))
-				small.text-muted.ms-1 utc
+		span.border-dotted(title=titleStr, data-bs-toggle="tooltip", data-bs-html="true")
+			span.date-text(id=`xyz-${utils.getRandomString(10, "aA1")}`, data-timestamp-utc=`${parseInt(timestamp)}`, data-date-format=formatString, data-date-ago=includeAgo.toString()) #{momentObj.format(formatString)}
+				if (["H", "m", "s"].some(str => formatString.includes(str)))
+					span.text-tiny.text-tight-spacing.text-muted.ms-tiny UTC
 
 	else if (dateStr == nowDateStr)
-		span.border-dotted(title=titleStr, data-bs-toggle="tooltip")
-			| #{utcMoment.format("HH:mm")}
+		span.border-dotted(title=titleStr, data-bs-toggle="tooltip", data-bs-html="true")
+			if (tzDiff != 0 && uiTimezone == "local")
+				span.date-text(id=`xyz-${utils.getRandomString(10, "aA1")}`, data-timestamp-utc=`${parseInt(timestamp)}`, data-date-ago=includeAgo.toString()) #{momentObj.format("h:mm")}
+					span.text-tiny.text-tight-spacing.fw-light.ms-tiny #{momentObj.format("A")}
 
-			if (includeUtc)
-				small.text-muted.ms-1 utc
+			else
+				span #{momentObj.format("HH:mm")}
+					span.text-tiny.text-tight-spacing.fw-light.ms-tiny UTC
 
 	else if (yearStr == nowYearStr)
-		span.border-dotted(title=titleStr, data-bs-toggle="tooltip")
-			| #{utcMoment.format("M/D HH:mm")}
+		span.border-dotted(title=titleStr, data-bs-toggle="tooltip", data-bs-html="true")
+			if (tzDiff != 0 && uiTimezone == "local")
+				span.date-text(id=`xyz-${utils.getRandomString(10, "aA1")}`, data-timestamp-utc=`${parseInt(timestamp)}`, data-date-ago=includeAgo.toString()) #{momentObj.format("M/D, h:mm")}
+					span.text-tiny.text-tight-spacing.fw-light.ms-tiny #{momentObj.format("A")}
 
-			if (includeUtc)
-				small.text-muted.ms-1 utc
+			else
+				span #{momentObj.format("M/D, HH:mm")}
+					span.text-tiny.text-tight-spacing.fw-light.ms-tiny UTC
 
 	else
-		span.border-dotted(title=titleStr, data-bs-toggle="tooltip")
-			| #{utcMoment.format("YYYY-MM-DD")}
+		span.border-dotted(title=titleStr, data-bs-toggle="tooltip", data-bs-html="true")
+			if (tzDiff != 0 && uiTimezone == "local")
+				span.date-text(id=`xyz-${utils.getRandomString(10, "aA1")}`, data-timestamp-utc=`${parseInt(timestamp)}`, data-date-ago=includeAgo.toString()) #{momentObj.format("YYYY-MM-DD")}
+				
+			else
+				span #{momentObj.format("YYYY-MM-DD")}
 
 	if (includeAgo)
 		small.text-muted.ms-2 (
@@ -577,7 +599,7 @@ mixin blockCountdown(title, blocksLeft)
 
 						else
 							- var minutes = 60 * (hoursToGo - Math.floor(hoursToGo));
-								span #{parseInt(minutes)} minute#{parseInt(minutes) > 1 ? "s" :""}
+							span #{parseInt(minutes)} minute#{parseInt(minutes) > 1 ? "s" :""}
 
 						span )
 

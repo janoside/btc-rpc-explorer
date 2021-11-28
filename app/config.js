@@ -91,7 +91,7 @@ module.exports = {
 		displayCurrency: (process.env.BTCEXP_DISPLAY_CURRENCY || "btc"),
 		localCurrency: (process.env.BTCEXP_LOCAL_CURRENCY || "usd"),
 		theme: (process.env.BTCEXP_UI_THEME || "dark"),
-		timezone: (process.env.BTCEXP_UI_TIMEZONE || "utc"),
+		timezone: (process.env.BTCEXP_UI_TIMEZONE || "local"),
 	},
 
 	cookieSecret: cookieSecret,

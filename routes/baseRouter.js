@@ -482,6 +482,14 @@ router.get("/changeSetting", function(req, res, next) {
 			return;
 		}
 
+		if (req.query.name == "userTzOffset") {
+			if (parseFloat(req.query.value) == NaN) {
+				res.redirect(req.headers.referer);
+
+				return;
+			}
+		}
+
 		req.session.userSettings[req.query.name.toString()] = req.query.value.toString();
 
 		var userSettings = JSON.parse(req.cookies["user-settings"] || "{}");

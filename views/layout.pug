@@ -31,7 +31,7 @@ html(lang="en")
 		meta(property="twitter:image:src" content=(metaImgUrl != undefined ? metaImgUrl : "https://bitcoinexplorer.org/img/preview.png"))
 		meta(property="twitter:domain" content="bitcoinexplorer.org")
 
-		- var network = global.activeBlockchain;
+		- var network = global.activeBlockchain || "main";
 		if (!network.endsWith("net") && network != "regtest")
 			- network = (network + "net"); // handles "main" -> "mainnet" and "test" -> "testnet"
 
@@ -183,15 +183,19 @@ html(lang="en")
 											i.fas.fa-moon
 
 									hr.dropdown-divider.mt-2.mb-2
-									span.dropdown-header Timezone
+									span.dropdown-header Dislay Timezone
 
 									- var items = ["fa", "sat"];
 									if (config.queryExchangeRates && global.exchangeRates)
 										- items.push("local");
 
 									.btn-group.ms-3
-										a.btn.btn-sm.px-3(href=`./changeSetting?name=uiTimezone&value=utc`, class=(userSettings.uiTimezone == "utc" ? "btn-primary" : "btn-outline-primary")) utc
-										a.btn.btn-sm.px-3(href=`./changeSetting?name=uiTimezone&value=local`, class=(userSettings.uiTimezone == "utc" ? "btn-outline-primary" : "btn-primary")) local
+										a.btn.btn-sm.px-3(href=`./changeSetting?name=uiTimezone&value=utc`, class=(userSettings.uiTimezone == "utc" ? "btn-primary" : "btn-outline-primary")) UTC
+										a.btn.btn-sm.px-3(href=`./changeSetting?name=uiTimezone&value=local`, class=(userSettings.uiTimezone == "utc" ? "btn-outline-primary" : "btn-primary")) Local
+
+									p.px-3.pt-2.small.text-muted "Local" uses your browser's default offset:
+										span#browser-tz-offset.badge.bg-light.text-dark.ms-1.border
+										i.fas.fa-info-circle.ms-1(title="This value comes from your brower. If you wish to set a custom offset, you can do so below, in 'More settings...'", data-bs-toggle="tooltip")
 
 									hr.dropdown-divider.mt-2.mb-2
 
@@ -343,14 +347,50 @@ html(lang="en")
 								
 								
 
-		
 		+sharedScriptTags
 		
 		script.
-			document.addEventListener("DOMContentLoaded", function(event) {
+			var serverTzOffset = "!{new Decimal(new Date().getTimezoneOffset()).dividedBy(60)}";
+			var browserTzOffset = "!{browserTzOffset}";
+			var currentBrowserTzOffset = (new Date().getTimezoneOffset() / 60).toString();
+			var userTzOffset = "!{userTzOffset}";
+			
+			document.addEventListener("DOMContentLoaded", function(event) {''
 				enableTooltipsAndPopovers();
 
 				onLoad_tabSelection();
+
+				//console.log(Intl.DateTimeFormat().resolvedOptions().timeZone);
+				console.log("Manual TZ Offset: " + userTzOffset);
+				console.log("Browser TZ Offset: " + browserTzOffset);
+
+				var displayTz = -1 * browserTzOffset;
+				$("#browser-tz-offset").text(`${displayTz >= 0 ? "+" : ""}${displayTz} hr`);
+
+				if (browserTzOffset != currentBrowserTzOffset) {
+					browserTzOffset = currentBrowserTzOffset;
+
+					$.get(`./changeSetting?name=browserTzOffset&value=${browserTzOffset}`, function(data) {
+						console.log("Browser timezone saved.");
+
+						if (userTzOffset == "unset") {
+							$(".date-text").each((i, obj) => {
+								var timestampUtc = $(obj).attr("data-timestamp-utc");
+								var includeAgo = $(obj).attr("data-date-ago");
+								var formatStr = $(obj).attr("data-date-format");
+								if (formatStr) {
+									formatStr = `&formatString=${formatStr}`;
+								}
+								
+								$.get(`./snippet/timestamp?timestamp=${timestampUtc}&includeAgo=${includeAgo}${formatStr}`, function(data) {
+									$(obj).html(data);
+
+									enableTooltipsAndPopovers();
+								});
+							});
+						}
+					});
+				}
 			});
 
 		if (perfResults)

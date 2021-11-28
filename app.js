@@ -776,6 +776,8 @@ expressApp.use(function(req, res, next) {
 	res.locals.localCurrency = userSettings.localCurrency;
 	res.locals.uiTimezone = userSettings.uiTimezone;
 	res.locals.uiTheme = userSettings.uiTheme;
+	res.locals.userTzOffset = userSettings.userTzOffset || "unset";
+	res.locals.browserTzOffset = userSettings.browserTzOffset || "0";
 
 
 	if (!["/", "/connect"].includes(req.originalUrl)) {

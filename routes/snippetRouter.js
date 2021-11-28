@@ -93,6 +93,19 @@ router.get("/utxo-set", asyncHandler(async (req, res, next) => {
 	res.render("snippets/utxo-set");
 }));
 
+router.get("/timezone-refresh-toast", asyncHandler(async (req, res, next) => {
+	res.render("snippets/tz-update-toast");
+}));
+
+
+router.get("/timestamp", asyncHandler(async (req, res, next) => {
+	res.locals.timestamp = req.query.timestamp;
+	res.locals.includeAgo = req.query.includeAgo ? (req.query.includeAgo == "true") : true;
+	res.locals.formatString = req.query.formatString;
+
+	res.render("snippets/timestamp");
+}));
+
 
 
 
