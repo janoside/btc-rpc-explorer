@@ -121,7 +121,8 @@ if (exchangeRates)
 						| )
 
 				else
-					small.border-dotted.text-muted(title="Estimate unavailable<br/>A difficulty epoch just ended. The first block of the new epoch must be mined before an estimate can be calculated.", data-bs-toggle="tooltip", data-bs-html="true") next block needed…
+					small.border-dotted.text-muted(title="Estimate pending...<br/>A new difficulty epoch just started. Difficulty adjustment estimates made with too little data can be very unreliable, so are not calculated.", data-bs-toggle="tooltip", data-bs-html="true")
+						i.fas.fa-hourglass-half
 
 		+summaryItem("Coins", utxoSetSummary ? null : `This value is estimated.`)
 			- var maxSupply = coinConfig.maxSupplyByNetwork[activeBlockchain];
