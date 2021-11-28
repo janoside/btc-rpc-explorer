@@ -10,12 +10,14 @@
 * [/node-details](./node-details): Include `coinstatsindex` status
 * Support querying UTXO Set even with slowDeviceMode=true, iff coinstatsindex is available
 * Fix for difficulty adjustment estimate
+* [/difficulty-history](./difficulty-history): Support for viewing different time ranges
 * When viewing unconfirmed transaction details, show an info dialog if the transaction is predicted to be confirmed in the next block
 * Performance improvements
 	* Fix for performance degradation over time due to slow "estimatedSupply" function
 	* Homepage speedup by making "Estimated Next Block" data load asynchonously
 	* Caching for [/difficulty-history](./difficulty-history) data
 * Unicode formatting for OP_RETURN and other similar data
+* Support for displaying timestamps in local timezone (by using browser default, or setting a manual offset)
 * Unique favicon color based on the active network (mainnet=orange, testnet=green, signet=magenta, regtest=gray)
 * Error handling improvements
 * Fix for `/api/quotes/all`
