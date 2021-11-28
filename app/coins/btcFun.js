@@ -21,15 +21,15 @@ module.exports = {
 			referenceUrl: "https://github.com/bitcoin/bitcoin/issues/3303"
 		},
 		{
-                        type: "tx",
-                        date: "2010-07-29",
-                        chain: "main",
-                        txid: "e411dbebd2f7d64dafeef9b14b5c59ec60c36779d43f850e5e347abee1e1a455",
-                        blockHeight: 71036,
-                        summary: "One of several transactions in this block with a ton of OP_CHECKSIG commands.",
-                        alertBodyHtml: "This caused every node to do extra unnecessary work, and it could have been used as a denial-of-service attack. A new version of Bitcoin was quickly released. The new version did not cause a fork on the main network, though it did cause one on the test network (where someone had played around with the attack more)." ,
-                        referenceUrl: "https://en.bitcoin.it/wiki/Common_Vulnerabilities_and_Exposures#CVE-2010-5138"
-                },
+			type: "tx",
+			date: "2010-07-29",
+			chain: "main",
+			txid: "e411dbebd2f7d64dafeef9b14b5c59ec60c36779d43f850e5e347abee1e1a455",
+			blockHeight: 71036,
+			summary: "Early transaction with MANY (4,000+) OP_CHECKSIG commands, before this DoS vector was fixed.",
+			alertBodyHtml: "Multiple transactions in Block #71,036, including this one, included MANY OP_CHECKSIG commands, causing nodes to perform unnecessary work, and helped identify a possible denial-of-service (DoS) attack. A new version of Bitcoin was quickly released. The new version did not cause a fork on the main network, though it did cause one on the test network (where someone had played around with the attack more)." ,
+			referenceUrl: "https://en.bitcoin.it/wiki/Common_Vulnerabilities_and_Exposures#CVE-2010-5138"
+		},
 		{
 			type: "tx",
 			date: "2009-10-12",
