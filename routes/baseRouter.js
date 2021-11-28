@@ -289,7 +289,7 @@ router.get("/", asyncHandler(async (req, res, next) => {
 
 		await utils.timePromise("homepage.render", async () => {
 			res.render("index");
-		}, perfResults);
+		});
 
 		next();
 	}
@@ -337,7 +337,7 @@ router.get("/node-details", asyncHandler(async (req, res, next) => {
 
 		await utils.timePromise("node-details.render", async () => {
 			res.render("node-details");
-		}, perfResults);
+		});
 
 		next();
 	}
@@ -413,7 +413,7 @@ router.get("/peers", asyncHandler(async (req, res, next) => {
 
 		await utils.timePromise("peers.render", async () => {
 			res.render("peers");
-		}, perfResults);
+		});
 
 		next();
 	}
@@ -641,7 +641,7 @@ router.get("/blocks", asyncHandler(async (req, res, next) => {
 
 		await utils.timePromise("blocks.render", async () => {
 			res.render("blocks");
-		}, perfResults);
+		});
 
 		next();
 	}
@@ -1124,7 +1124,7 @@ router.get("/block-height/:blockHeight", asyncHandler(async (req, res, next) => 
 
 		await utils.timePromise("block-height.render", async () => {
 			res.render("block");
-		}, perfResults);
+		});
 
 		next();
 	}
@@ -1226,7 +1226,7 @@ router.get("/block/:blockHash", asyncHandler(async (req, res, next) => {
 
 		await utils.timePromise("block.render", async () => {
 			res.render("block");
-		}, perfResults);
+		});
 
 		next();
 	}
@@ -1432,6 +1432,7 @@ router.get("/tx/:transactionId", asyncHandler(async (req, res, next) => {
 		if (tx.confirmations == null) {
 			promises.push(utils.timePromise("tx.getMempoolTxDetails", async () => {
 				res.locals.mempoolDetails = await coreApi.getMempoolTxDetails(txid, true);
+
 			}, perfResults));
 			
 		} else {
@@ -1487,7 +1488,7 @@ router.get("/tx/:transactionId", asyncHandler(async (req, res, next) => {
 
 		await utils.timePromise("tx.render", async () => {
 			res.render("transaction");
-		}, perfResults);
+		});
 
 		next();
 	}
@@ -1777,7 +1778,7 @@ router.get("/address/:address", asyncHandler(async (req, res, next) => {
 
 		await utils.timePromise("address.render", async () => {
 			res.render("address");
-		}, perfResults);
+		});
 
 		next();
 	}
