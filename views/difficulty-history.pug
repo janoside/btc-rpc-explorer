@@ -29,14 +29,22 @@ block content
 
 
 	div#main-content(style="display: none;")
+		- var yearItems = [["All Time", 10000], ["8 yr", 8], ["4 yr", 4], ["2 yr", 2], ["1 yr", 1]];
+
 		+pageTabs(["Details", "Data"])
 
 		.tab-content
 			+pageTab("Details", true)
+
 				.row
 					.col
 						+contentSection("Difficulty History")
-							canvas(id="graph-diff-hist")
+							.btn-group.mb-3
+								each yearItem in yearItems
+									a.btn.btn-outline-primary(id=`diff-hist-selector-${yearItem[1]}`, class="diff-hist-selector", href=`javascript:void(0)`, onclick=`$('.graph-diff-hist').hide(); $('#graph-diff-hist-${yearItem[1]}').show(); $(".diff-hist-selector").addClass("btn-outline-primary").removeClass("btn-primary"); $(this).toggleClass("btn-outline-primary").addClass("btn-primary"); return false;`) #{yearItem[0]}
+
+							each yearItem in yearItems
+								canvas(id=`graph-diff-hist-${yearItem[1]}`, class='graph-diff-hist')
 
 								
 
@@ -96,10 +104,13 @@ block endOfBody
 	
 	script.
 		var blockCount = !{blockCount};
+		var yearItems = !{JSON.stringify(yearItems)};
 		
 		var heights = [];
 		var height = 0;
 		var chunkSize = 10;
+		var summary = null;
+
 		while (height <= blockCount) {
 			heights.push([height]);
 			height += !{coinConfig.difficultyAdjustmentBlockCount};
@@ -138,11 +149,13 @@ block endOfBody
 			};
 
 			var finishedCallback = function() {
-				var summary = summarizeData(results);
+				summary = summarizeData(results);
 
 				fillDifficultyTable(summary);
 
-				createGraph("graph-diff-hist", [summary.graphData], "Difficulty", true);
+				for (var i = 0; i < yearItems.length; i++) {
+					createGraph(`graph-diff-hist-${yearItems[i][1]}`, [summary.graphData_years[yearItems[i][1]]], "Difficulty", true);
+				}
 
 				createGraph("graph-diff-change", [summary.changeGraphData], "Difficulty Change %", false);
 
@@ -150,9 +163,30 @@ block endOfBody
 				
 				$("#main-content").show();
 				$("#progress-wrapper").hide();
+
+				// only show the first graph (All Time)
+				$(`.graph-diff-hist`).hide();
+				$(`#graph-diff-hist-${yearItems[0][1]}`).show();
+
+				$(`#diff-hist-selector-${yearItems[0][1]}`).removeClass("btn-outline-primary").addClass("btn-primary");
 			};
 
 			getData(results, chunkStrs, 0, statusCallback, finishedCallback);
+		}
+
+		function graphDiffHistory(numYears) {
+			let data = [];
+			let yearCount = 0;
+			for (let i = summary.graphData_years.length - 1; i >= 0; i--) {
+				data = data.concat(summary.graphData_years[i]);
+
+				yearCount++;
+				if (yearCount == numYears) {
+					break;
+				}
+			}
+
+			createGraph("graph-diff-hist", [data], "Difficulty", true);
 		}
 
 		function fillDifficultyTable(summary) {
@@ -231,7 +265,12 @@ block endOfBody
 			}
 		}
 
+		var chartsById = {};
 		function createGraph(graphId, datas, yLabelStr, logY) {
+			if (chartsById[graphId]) {
+				chartsById[graphId].destroy();
+			}
+
 			var datasets = [];
 
 			for (var i = 0; i < datas.length; i++) {
@@ -297,6 +336,8 @@ block endOfBody
 					}
 				}
 			});
+
+			chartsById[graphId] = graph;
 		}
 
 		function getData(results, chunks, chunkIndex, statusCallback, finishedCallback) {
@@ -334,6 +375,10 @@ block endOfBody
 			summary.difficultyDeltaData = [];
 
 			summary.graphData = [];
+			summary.graphData_years = {};
+			for (let i = 0; i < yearItems.length; i++) {
+				summary.graphData_years[yearItems[i][1]] = [];
+			}
 			summary.changeGraphData = [];
 
 			for (var i = 0; i < raw.heights.length; i++) {
@@ -343,6 +388,14 @@ block endOfBody
 				summary.difficultyData.push({epoch:i, date:raw[heightStr].time, difficulty:raw[heightStr].difficulty});
 
 				summary.graphData.push({x:i, y:raw[heightStr].difficulty});
+
+				var yearIndex = Math.floor((raw.heights.length - i) / 26);
+				for (let j = 0; j < yearItems.length; j++) {
+					if (yearIndex < yearItems[j][1]) {
+						summary.graphData_years[yearItems[j][1]].push({x:i, y:raw[heightStr].difficulty});
+					}
+				}
+
 
 				if (i == 0) {
 					summary.changeGraphData.push({x:i, y:raw[heightStr].difficulty});
@@ -379,6 +432,8 @@ block endOfBody
 					summary.changeGraphData.push({x:i, y:deltaPercent});
 				}
 			}
+
+			console.log(summary.graphData_years);
 
 			/*
 			var epochChunkCount = 3;
