@@ -122,6 +122,13 @@ $toast-header-border-color:         rgba(0, 0, 0, .05) !default;
 	border-width: 2px;
 }
 
+.alert-info {
+	color: $body-color;
+	background-color: darken(#cff4fc, 60%);
+	border-color: darken(#cff4fc, 50%);
+	border-width: 2px;
+}
+
 
 
 .bg-main {

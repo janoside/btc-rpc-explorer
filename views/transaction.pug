@@ -391,7 +391,7 @@ block endOfBody
 
 			}).done(res => {
 				if (res.included) {
-					$("#next-block-index").text(res.index.toLocaleString());
+					$("#next-block-index").text((res.index + 1).toLocaleString());
 					$("#next-block-count").text(res.txCount.toLocaleString());
 					$("#alert-included-next-block").show();
 				}
