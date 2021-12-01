@@ -83,7 +83,7 @@ block content
 										+copyTextButton(result.getblock.miner.name)
 
 								else if (result.getblock.miner.identifiedBy)
-									span.badge.bg-primary(data-bs-toggle="tooltip", title=`Identified by: ${result.getblock.miner.identifiedBy}`) #{result.getblock.miner.name}
+									span.badge.bg-primary(data-bs-toggle="tooltip", data-bs-html="true", title=`Identified by: ${result.getblock.miner.identifiedBy}${result.getblock.miner.note ? ("<br/><br/>" + result.getblock.miner.note) : ""}`) #{result.getblock.miner.name}
 
 								else
 									small.badge.bg-primary #{result.getblock.miner.name}

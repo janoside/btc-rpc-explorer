@@ -135,7 +135,7 @@ block content
 											+copyTextButton(minerInfo.name)
 
 									else if (minerInfo.identifiedBy)
-										span(data-bs-toggle="tooltip", title=`Identified by: ${minerInfo.identifiedBy}`)
+										span(data-bs-toggle="tooltip", data-bs-html="true", title=`Identified by: ${minerInfo.identifiedBy}${minerInfo.note ? ("<br/><br/>" + minerInfo.note) : ""}`)
 											+primaryBadge(minerInfo.name, false)
 
 									else
