@@ -6,6 +6,7 @@
 	* [/api/mining/next-block](./api/mining/next-block)
 	* [/api/mining/next-block/txids](./api/mining/next-block/txids)
 	* [/api/mining/next-block/includes/:txid](./api/mining/next-block/includes/yourTxid)
+* Major fixes for data displayed in [/tx-stats](./tx-stats) tool
 * Updated miners, including identification of "Patoshi"-pattern blocks
 * [/node-details](./node-details): Include `coinstatsindex` status
 * Support querying UTXO Set even with slowDeviceMode=true, iff coinstatsindex is available

@@ -252,9 +252,9 @@ function getUptimeSeconds() {
 	return tryCacheThenRpcApi(miscCache, "getUptimeSeconds", ONE_SEC, rpcApi.getUptimeSeconds);
 }
 
-function getChainTxStats(blockCount) {
-	return tryCacheThenRpcApi(miscCache, "getChainTxStats-" + blockCount, FIFTEEN_MIN, function() {
-		return rpcApi.getChainTxStats(blockCount);
+function getChainTxStats(blockCount, blockhashEnd) {
+	return tryCacheThenRpcApi(miscCache, "getChainTxStats-" + blockCount + "-" + blockhashEnd, FIFTEEN_MIN, function() {
+		return rpcApi.getChainTxStats(blockCount, blockhashEnd);
 	});
 }
 
@@ -423,79 +423,88 @@ function getBlockTemplate() {
 	return tryCacheThenRpcApi(miscCache, "getblocktemplate", 5 * ONE_SEC, rpcApi.getBlockTemplate);
 }
 
-function getTxCountStats(dataPtCount, blockStart, blockEnd) {
-	return new Promise(function(resolve, reject) {
-		var dataPoints = dataPtCount;
+async function getTxStats(dataPtCount, blockStart, blockEnd) {
+	let cacheKey = `txStats-${dataPtCount}-${blockStart}-${blockEnd}`;
 
-		getBlockchainInfo().then(function(getblockchaininfo) {
-			if (typeof blockStart === "string") {
-				if (["genesis", "first", "zero"].includes(blockStart)) {
-					blockStart = 0;
-				}
-			}
+	let cacheResult = await miscCache.get(cacheKey);
+	if (cacheResult) {
+		console.log("CACHE RESULT");
+		return cacheResult;
+	}
 
-			if (typeof blockEnd === "string") {
-				if (["latest", "tip", "newest"].includes(blockEnd)) {
-					blockEnd = getblockchaininfo.blocks;
-				}
-			}
+	let getblockchaininfo = await getBlockchainInfo();
+	
+	if (typeof blockStart === "string") {
+		if (["genesis", "first", "zero"].includes(blockStart)) {
+			blockStart = 0;
+		}
+	}
 
-			if (blockStart > blockEnd) {
-				reject(`Error 37rhw0e7ufdsgf: blockStart (${blockStart}) > blockEnd (${blockEnd})`);
+	if (typeof blockEnd === "string") {
+		if (["latest", "tip", "newest"].includes(blockEnd)) {
+			blockEnd = getblockchaininfo.blocks;
+		}
+	}
 
-				return;
-			}
+	if (blockStart > blockEnd) {
+		throw new Error(`Error 37rhw0e7ufdsgf: blockStart (${blockStart}) > blockEnd (${blockEnd})`);
+	}
 
-			if (blockStart < 0) {
-				blockStart += getblockchaininfo.blocks;
-			}
+	if (blockStart < 0) {
+		blockStart += getblockchaininfo.blocks;
+	}
 
-			if (blockEnd < 0) {
-				blockEnd += getblockchaininfo.blocks;
-			}
+	if (blockEnd < 0) {
+		blockEnd += getblockchaininfo.blocks;
+	}
 
-			var chainTxStatsIntervals = [];
-			for (var i = 0; i < dataPoints; i++) {
-				chainTxStatsIntervals.push(parseInt(Math.max(10, getblockchaininfo.blocks - blockStart - i * (blockEnd - blockStart) / (dataPoints - 1) - 1)));
-			}
+	const promises = [];
 
-			var promises = [];
-			for (var i = 0; i < chainTxStatsIntervals.length; i++) {
-				promises.push(getChainTxStats(chainTxStatsIntervals[i]));
-			}
+	const blockCount = Math.floor((blockEnd - blockStart) / dataPtCount) || 1;
+	if (dataPtCount > (blockEnd - blockStart)) {
+		dataPtCount = (blockEnd - blockStart);
+	}
+	
+	for (let i = 0; i < dataPtCount; i++) {
+		let blockHeightEnd = blockStart + (i + 1) * blockCount;
+		
+		promises.push((async () => {
+			let blockhashEnd = await getBlockHashByHeight(blockHeightEnd);
 
-			Promise.all(promises).then(function(results) {
-				if (results[0].name == "RpcError" && results[0].code == -8) {
-					// recently started node - no meaningful data to return
-					resolve(null);
+			// Math.min below is to handle the edge case where we're starting from genesis block, which doesn't behave the same as others
+			return await rpcApi.getChainTxStats(Math.min(blockCount, blockHeightEnd - 1), blockhashEnd);
 
-					return;
-				}
+		})());
+	}
 
-				var txStats = {
-					txCounts: [],
-					txLabels: [],
-					txRates: []
-				};
+	const results = await Promise.all(promises);
 
-				for (var i = results.length - 1; i >= 0; i--) {
-					if (results[i].window_tx_count) {
-						txStats.txCounts.push( {x:(getblockchaininfo.blocks - results[i].window_block_count), y: (results[i].txcount - results[i].window_tx_count)} );
-						txStats.txRates.push( {x:(getblockchaininfo.blocks - results[i].window_block_count), y: (results[i].txrate)} );
-						txStats.txLabels.push(i);
-					}
-				}
-				
-				resolve({txCountStats:txStats, getblockchaininfo:getblockchaininfo, totalTxCount:results[0].txcount});
+	//console.log(results);
 
-			}).catch(function(err) {
-				reject(err);
-			});
+	if (results.length == 0 || (results[0].name == "RpcError" && results[0].code == -8)) {
+		// recently started node - no meaningful data to return
+		return null;
+	}
 
-		}).catch(function(err) {
-			reject(err);
-		});
-	});
+	let summary = {
+		txCounts: [],
+		txLabels: [],
+		txRates: []
+	};
+
+	for (let i = results.length - 1; i >= 0; i--) {
+		if (results[i].window_tx_count) {
+			summary.txCounts.push( {x:(blockStart + i * blockCount), y: results[i].window_tx_count} );
+			summary.txRates.push( {x:(blockStart + i * blockCount), y: results[i].txrate} );
+			summary.txLabels.push(i);
+		}
+	}
+
+	miscCache.set(cacheKey, summary, 60 * ONE_MIN);
+
+	//console.log(summary);
+	
+	return summary;
 }
 
 function getSmartFeeEstimates(mode, confTargetBlockCounts) {
@@ -2151,7 +2160,7 @@ module.exports = {
 	getPeerSummary: getPeerSummary,
 	getChainTxStats: getChainTxStats,
 	getMempoolTxids: getMempoolTxids,
-	getTxCountStats: getTxCountStats,
+	getTxStats: getTxStats,
 	getSmartFeeEstimates: getSmartFeeEstimates,
 	getSmartFeeEstimate: getSmartFeeEstimate,
 	getUtxoSetSummary: getUtxoSetSummary,

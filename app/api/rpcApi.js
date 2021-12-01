@@ -190,8 +190,13 @@ function getRawMempoolEntry(txid) {
 	});
 }
 
-function getChainTxStats(blockCount) {
-	return getRpcDataWithParams({method:"getchaintxstats", parameters:[blockCount]});
+function getChainTxStats(blockCount, blockhashEnd=null) {
+	let params = [blockCount];
+	if (blockhashEnd) {
+		params.push(blockhashEnd);
+	}
+
+	return getRpcDataWithParams({method:"getchaintxstats", parameters:params});
 }
 
 function getBlockByHeight(blockHeight) {
@@ -509,7 +514,7 @@ function getRpcDataWithParams(request, verifyingConnection=false) {
 					if (result0 && result0.name && result0.name == "RpcError") {
 						logStats(request.method, true, new Date().getTime() - startTime, false);
 
-						debugLog("RpcErrorResult-03: " + JSON.stringify(result0));
+						debugLog("RpcErrorResult-03: request=" + JSON.stringify(request) + ", result=" + JSON.stringify(result0));
 
 						throw new Error(`RpcError: type=errorResponse-03`);
 					}

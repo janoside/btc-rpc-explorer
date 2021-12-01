@@ -168,7 +168,7 @@ router.get("/", asyncHandler(async (req, res, next) => {
 
 		if (false && getblockchaininfo.chain !== 'regtest') {
 			/*promises.push(new Promise(async (resolve, reject) => {
-				res.locals.txStats = await utils.timePromise("homepage.getTxCountStats", coreApi.getTxCountStats(targetBlocksPerDay / 4, -targetBlocksPerDay, "latest"));
+				res.locals.txStats = await utils.timePromise("homepage.getTxStats", coreApi.getTxStats(targetBlocksPerDay / 4, -targetBlocksPerDay, "latest"));
 				
 				resolve();
 			}));*/
@@ -2130,40 +2130,48 @@ router.get("/mempool-transactions", asyncHandler(async (req, res, next) => {
 	}
 }));
 
-router.get("/tx-stats", function(req, res, next) {
-	var dataPoints = 100;
+router.get("/tx-stats", asyncHandler(async (req, res, next) => {
+	const promises = [];
+	const perfResults = {};
 
-	if (req.query.dataPoints) {
-		dataPoints = req.query.dataPoints;
-	}
+	res.locals.getblockchaininfo = await coreApi.getBlockchainInfo();
+	let tipHeight = res.locals.getblockchaininfo.blocks;
 
-	if (dataPoints > 250) {
-		dataPoints = 250;
-	}
+	// only re-calculate tx-stats every X blocks since it's data heavy
+	let heightInterval = 6;
+	let height = heightInterval * Math.floor(tipHeight / heightInterval);
 
-	var targetBlocksPerDay = 24 * 60 * 60 / global.coinConfig.targetBlockTimeSeconds;
+	promises.push(utils.timePromise("tx-stats.getTxStats-all", async () => {
+		const statsAll = await coreApi.getTxStats(250, 0, height);
 
-	coreApi.getTxCountStats(dataPoints, 0, "latest").then(function(result) {
-		res.locals.getblockchaininfo = result.getblockchaininfo;
-		res.locals.txStats = result.txCountStats;
+		res.locals.txStats = statsAll;
+	}, perfResults));
 
-		coreApi.getTxCountStats(targetBlocksPerDay / 4, -144, "latest").then(function(result2) {
-			res.locals.txStatsDay = result2.txCountStats;
+	promises.push(utils.timePromise("tx-stats.getTxStats-day", async () => {
+		const statsDay = await coreApi.getTxStats(144, height - 144, height);
+		
+		res.locals.txStatsDay = statsDay;
+	}, perfResults));
 
-			coreApi.getTxCountStats(targetBlocksPerDay / 4, -144 * 7, "latest").then(function(result3) {
-				res.locals.txStatsWeek = result3.txCountStats;
+	promises.push(utils.timePromise("tx-stats.getTxStats-week", async () => {
+		const statsWeek = await coreApi.getTxStats(200, height - 144 * 7, height);
 
-				coreApi.getTxCountStats(targetBlocksPerDay / 4, -144 * 30, "latest").then(function(result4) {
-					res.locals.txStatsMonth = result4.txCountStats;
+		res.locals.txStatsWeek = statsWeek;
+	}, perfResults));
 
-					res.render("tx-stats");
+	promises.push(utils.timePromise("tx-stats.getTxStats-month", async () => {
+		const statsMonth = await coreApi.getTxStats(250, height - 144 * 30, height);
 
-					next();
-				});
-			});
-		});
-	});
-});
+		res.locals.txStatsMonth = statsMonth;
+	}, perfResults));
+
+
+	await utils.awaitPromises(promises);
+
+	res.render("tx-stats");
+
+	next();
+}));
 
 router.get("/difficulty-history", function(req, res, next) {
 	coreApi.getBlockchainInfo().then(function(getblockchaininfo) {
