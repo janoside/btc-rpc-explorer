@@ -1297,6 +1297,8 @@ const awaitPromises = async (promises) => {
 			}
 		}
 	});
+
+	return promiseResults;
 };
 
 const perfLog = [];

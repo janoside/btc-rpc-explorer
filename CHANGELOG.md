@@ -1,6 +1,7 @@
+##### v3.3.0
 ##### Unreleased
 
-* New tool for viewing the latest UTXO Set: [/utxo-set](./utxo-set)
+* New tool for viewing the UTXO Set: [/utxo-set](./utxo-set)
 * New API actions:
 	* [/api/blockchain/utxo-set](./api/blockchain/utxo-set)
 	* [/api/mining/next-block](./api/mining/next-block)

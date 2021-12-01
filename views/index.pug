@@ -79,12 +79,12 @@ block content
 				pre
 					code.json #{JSON.stringify(nextBlockFeeRateGroups, null, 4)}
 
-			.clearfix
-				.float-start
+			.d-flex.flex-row
+				div
 					- var desc = "Prediction for the next block, based on the output of the getblocktemplate command";
 					+sectionTitle("Predicted Next Block", false, null, null, null, desc)
 
-				.float-start
+				div
 					a.ms-2(href="./mining-template") See details
 			
 			#index-next-block
