@@ -3,7 +3,7 @@
 mixin asciiHexDataDisplay(dataName, uniqueId, hex)
 	div
 		.d-inline-block.small.border.rounded-1.p-1.px-2.card-highlight.word-wrap
-			span.badge.bg-light.text-dark.fw-light.border.mb-1.me-1 utf8
+			span.text-tiny.badge.bg-light.text-dark.fw-light.border.mb-1.me-1 utf8
 			span #{utils.formatHex(hex, "utf8")}
 
 		a.text-muted.ms-2(href="javascript:void(0)", onclick=`$('#hex-ascii-${uniqueId}').toggle(); $(this).find(".toggle-plus-minus").toggleClass("fa-plus-square"); $(this).find(".toggle-plus-minus").toggleClass("fa-minus-square"); return false;`, title="Toggle More Encodings", data-bs-toggle="tooltip")
@@ -11,13 +11,13 @@ mixin asciiHexDataDisplay(dataName, uniqueId, hex)
 
 	div(id=`hex-ascii-${uniqueId}`, style="display: none;")
 		.d-inline-block.small.border.rounded-1.p-1.px-2.mt-2.word-wrap.card-highlight
-			span.badge.bg-light.text-dark.fw-light.border.mb-1.me-1 ascii
+			span.text-tiny.badge.bg-light.text-dark.fw-light.border.mb-1.me-1 ascii
 			span #{utils.formatHex(hex, "ascii")}
 
 		br
 
 		.d-inline-block.small.border.rounded-1.p-1.px-2.mt-2.word-wrap.card-highlight
-			span.badge.bg-light.text-dark.fw-light.border.mb-1.me-1 hex
+			span.text-tiny.badge.bg-light.text-dark.fw-light.border.mb-1.me-1 hex
 			span #{hex}
 
 
