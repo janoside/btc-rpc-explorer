@@ -1546,14 +1546,16 @@ router.get("/address/:address", asyncHandler(async (req, res, next) => {
 		var bech32Error = null;
 		var bech32mError = null;
 
-		try {
-			res.locals.addressObj = bitcoinjs.address.fromBase58Check(address);
-			res.locals.addressObj.hash = res.locals.addressObj.hash.toString("hex");
+		if (address.match(/^[132m].*$/)) {
+			try {
+				res.locals.addressObj = bitcoinjs.address.fromBase58Check(address);
+				res.locals.addressObj.hash = res.locals.addressObj.hash.toString("hex");
 
-			addressEncoding = "base58";
+				addressEncoding = "base58";
 
-		} catch (err) {
-			base58Error = err;
+			} catch (err) {
+				base58Error = err;
+			}
 		}
 
 		if (addressEncoding == "unknown") {
