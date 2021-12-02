@@ -380,6 +380,38 @@ router.get("/mining/next-block/includes/:txid", asyncHandler(async (req, res, ne
 	res.json(response);
 }));
 
+router.get("/mining/miner-summary", asyncHandler(async (req, res, next) => {
+	let startHeight = -1;
+	let endHeight = -1;
+
+	if (req.query.since) {
+		const regex = /^([0-9]+)d$/;
+		const match = req.query.since.match(regex);
+
+		if (match) {
+			let days = parseInt(match[1]);
+			let getblockchaininfo = await coreApi.getBlockchainInfo();
+
+			startHeight = getblockchaininfo.blocks - 144 * days;
+			endHeight = getblockchaininfo.blocks;
+		}
+	} else if (req.query.startHeight && req.query.endHeight) {
+		startHeight = parseInt(req.query.startHeight);
+		endHeight = parseInt(req.query.endHeight);
+	}
+
+	if (startHeight == -1 || endHeight == -1) {
+		res.json({success:false, error:"Unknown start or end height - use either 'since' (e.g. 'since=7d') or 'startHeight'+'endHeight' parameters to specify the blocks to analyze."});
+
+		return;
+	}
+
+	const summary = await coreApi.buildMiningSummary(null, startHeight, endHeight, null);
+
+	res.json(summary);
+}));
+
+
 
 
 

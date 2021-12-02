@@ -101,6 +101,17 @@ module.exports = {
 			"testUrl":"/api/mining/next-block/includes/yourTxId"
 		},
 
+		{
+			"category":"mining",
+			"url":"/api/mining/miner-summary",
+			"desc":"Returns whether the specified transaction ID is included in the estimated next block to be mined (produced via getblocktemplate).",
+			"returnType":"json",
+			"optionalParams": {"since":"Use the form 'Nd' to specify the number of day to look back (e.g. 'since=7d' will analyze the last 7 days)", "startHeight+endHeight":"Use these 2 parameters to specify a custom start/end height (e.g. 'startHeight=0&endHeight=24' to analyze the first 25 blocks)"},
+			"testUrl":"/api/mining/miner-summary?since=1d"
+		},
+
+
+
 
 
 		// mempool

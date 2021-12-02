@@ -1154,10 +1154,13 @@ function buildMiningSummary(statusId, startBlock, endBlock, statusFunc) {
 
 			const markItemsDone = (count) => {
 				doneCount += count;
-				statusFunc({count: 3 * blockCount + 1, done: doneCount});
+				if (statusFunc) {
+					statusFunc({count: 3 * blockCount + 1, done: doneCount});
+				}
 			};
 
 			const summariesByHeight = {};
+			const minerInfoByName = {};
 			
 
 			for (var i = startBlock; i <= endBlock; i++) {
@@ -1202,6 +1205,8 @@ function buildMiningSummary(statusId, startBlock, endBlock, statusFunc) {
 									minerName = minerInfo.name;
 								}
 							}
+
+							minerInfoByName[minerName] = minerInfo;
 
 							let heightSummary = {
 								mn: minerName,
@@ -1255,7 +1260,7 @@ function buildMiningSummary(statusId, startBlock, endBlock, statusFunc) {
 					summary.minerNamesSortedByBlockCount.push(miner);
 
 					summary.miners[miner] = {
-						name: miner, blocks: [], totalFees: new Decimal(0), totalSubsidy: new Decimal(0), totalTransactions: 0, totalWeight: 0, subsidyCount: 0
+						name: miner, details: minerInfoByName[miner], blocks: [], totalFees: new Decimal(0), totalSubsidy: new Decimal(0), totalTransactions: 0, totalWeight: 0, subsidyCount: 0
 					};
 				}
 
@@ -1280,7 +1285,9 @@ function buildMiningSummary(statusId, startBlock, endBlock, statusFunc) {
 
 
 			// we're done, send final status update
-			statusFunc({count: 3 * blockCount + 1, done: 3 * blockCount + 1});
+			if (statusFunc) {
+				statusFunc({count: 3 * blockCount + 1, done: 3 * blockCount + 1});
+			}
 
 
 			resolve(summary);
