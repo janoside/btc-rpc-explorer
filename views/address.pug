@@ -142,8 +142,8 @@ block content
 
 							if (addressObj && addressObj.hash)
 								+summaryItem("Hash 160")
-									| #{utils.ellipsizeMiddle(addressObj.hash.toString("hex"), 12)}
-									+copyTextButton(addressObj.hash.toString("hex"))
+									| #{utils.ellipsizeMiddle(addressObj.hash, 12)}
+									+copyTextButton(addressObj.hash)
 
 							+summaryItem("Script Pub Key")
 								| #{utils.ellipsizeMiddle(result.validateaddress.scriptPubKey, 12)}
@@ -283,7 +283,7 @@ block content
 							pre
 								code.json #{JSON.stringify(addressDetails, null, 4)}
 
-					if (false && addressObj)
+					if (addressObj)
 						+contentSection("addressObj")
 							pre
 								code.json #{JSON.stringify(addressObj, null, 4)}

@@ -1548,6 +1548,8 @@ router.get("/address/:address", asyncHandler(async (req, res, next) => {
 
 		try {
 			res.locals.addressObj = bitcoinjs.address.fromBase58Check(address);
+			res.locals.addressObj.hash = res.locals.addressObj.hash.toString("hex");
+
 			addressEncoding = "base58";
 
 		} catch (err) {
@@ -1557,6 +1559,8 @@ router.get("/address/:address", asyncHandler(async (req, res, next) => {
 		if (addressEncoding == "unknown") {
 			try {
 				res.locals.addressObj = bitcoinjs.address.fromBech32(address);
+				res.locals.addressObj.data = res.locals.addressObj.data.toString("hex");
+
 				addressEncoding = "bech32";
 
 			} catch (err) {
@@ -1567,6 +1571,8 @@ router.get("/address/:address", asyncHandler(async (req, res, next) => {
 		if (addressEncoding == "unknown") {
 			try {
 				res.locals.addressObj = bech32m.decode(address);
+				res.locals.addressObj.words = Buffer.from(res.locals.addressObj.words).toString("hex");
+
 				addressEncoding = "bech32m";
 
 			} catch (err) {
