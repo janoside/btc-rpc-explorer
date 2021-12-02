@@ -12,6 +12,7 @@ const qrcode = require('qrcode');
 const bitcoinjs = require('bitcoinjs-lib');
 const sha256 = require("crypto-js/sha256");
 const hexEnc = require("crypto-js/enc-hex");
+const { bech32, bech32m } = require("bech32");
 const Decimal = require("decimal.js");
 const asyncHandler = require("express-async-handler");
 const markdown = require("markdown-it")();
@@ -168,6 +169,180 @@ router.get("/blockchain/utxo-set", asyncHandler(async (req, res, next) => {
 
 	next();
 }));
+
+
+
+
+
+
+
+/// ADDRESSES
+
+router.get("/address/:address", asyncHandler(async (req, res, next) => {
+	try {
+		const { perfId, perfResults } = utils.perfLogNewItem({action:"api.address"});
+		res.locals.perfId = perfId;
+
+		var limit = config.site.addressTxPageSize;
+		var offset = 0;
+		var sort = "desc";
+
+		res.locals.maxTxOutputDisplayCount = config.site.addressPage.txOutputMaxDefaultDisplay;
+
+		
+		if (req.query.limit) {
+			limit = parseInt(req.query.limit);
+		}
+
+		if (req.query.offset) {
+			offset = parseInt(req.query.offset);
+		}
+
+		if (req.query.sort) {
+			sort = req.query.sort;
+		}
+
+
+		const address = utils.asAddress(req.params.address);
+
+		const transactions = [];
+		const addressApiSupport = addressApi.getCurrentAddressApiFeatureSupport();
+		
+		const result = {};
+
+		let addressEncoding = "unknown";
+
+		let base58Error = null;
+		let bech32Error = null;
+		let bech32mError = null;
+
+		if (address.match(/^[132m].*$/)) {
+			try {
+				let base58check = bitcoinjs.address.fromBase58Check(address);
+				result.base58 = {hash:base58check.hash.toString("hex")};
+
+				addressEncoding = "base58";
+
+			} catch (err) {
+				base58Error = err;
+			}
+		}
+
+		if (addressEncoding == "unknown") {
+			try {
+				let bech32 = bitcoinjs.address.fromBech32(address);
+				result.bech32 = {data:bech32.data.toString("hex")};
+
+				addressEncoding = "bech32";
+
+			} catch (err) {
+				bech32Error = err;
+			}
+		}
+
+		if (addressEncoding == "unknown") {
+			try {
+				let bech32m = bech32m.decode(address);
+				result.bech32m = {words:Buffer.from(bech32m.words).toString("hex")};
+
+				addressEncoding = "bech32m";
+
+			} catch (err) {
+				bech32mError = err;
+			}
+		}
+
+		if (addressEncoding == "unknown") {
+			res.json({success:false, error:"Invalid address"});
+
+			next();
+
+			return;
+		}
+		
+
+		if (result.addressObj == null || addressEncoding == "unknown") {
+			if (base58Error) {
+				utils.logError("AddressParseError-001", base58Error);
+			}
+
+			if (bech32Error) {
+				utils.logError("AddressParseError-002", bech32Error);
+			}
+
+			if (bech32mError) {
+				utils.logError("AddressParseError-003", bech32mError);
+			}
+		}
+
+		result.encoding = addressEncoding;
+
+		result.notes = [];
+		if (global.specialAddresses[address] && global.specialAddresses[address].type == "fun") {
+			let funInfo = global.specialAddresses[address].addressInfo;
+
+			notes.push(funInfo);
+		}
+
+		if (global.miningPoolsConfigs) {
+			for (var i = 0; i < global.miningPoolsConfigs.length; i++) {
+				if (global.miningPoolsConfigs[i].payout_addresses[address]) {
+					let note = global.miningPoolsConfigs[i].payout_addresses[address];
+					note.type = "payout address for miner";
+
+					result.notes.push(note);
+
+					break;
+				}
+			}
+		}
+
+		if (result.notes.length == 0) {
+			delete result.notes;
+		}
+
+
+
+		const validateaddressResult = await coreApi.getAddress(address);
+		result.validateaddress = validateaddressResult;
+
+		const promises = [];
+
+		var addrScripthash = hexEnc.stringify(sha256(hexEnc.parse(validateaddressResult.scriptPubKey)));
+		addrScripthash = addrScripthash.match(/.{2}/g).reverse().join("");
+
+		result.electrumScripthash = addrScripthash;
+
+		promises.push(utils.timePromise("address.getAddressDetails", async () => {
+			const addressDetailsResult = await addressApi.getAddressDetails(address, validateaddressResult.scriptPubKey, sort, limit, offset);
+
+			var addressDetails = addressDetailsResult.addressDetails;
+
+			result.txHistory = addressDetails;
+			result.txHistory.request = {};
+			result.txHistory.request.limit = limit;
+			result.txHistory.request.offset = offset;
+			result.txHistory.request.sort = sort;
+
+			if (addressDetailsResult.errors && addressDetailsResult.errors.length > 0) {
+				result.txHistory.errors = addressDetailsResult.errors;
+			}
+		}, perfResults));
+
+		await utils.awaitPromises(promises);
+		
+		res.json(result);
+
+		next();
+
+	} catch (e) {
+		res.json({success:false});
+
+		next();
+	}
+}));
+
+
 
 
 

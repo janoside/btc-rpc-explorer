@@ -64,6 +64,19 @@ module.exports = {
 
 
 
+
+		// addresses
+		{
+			"category":"address",
+			"url":"/api/address/:address",
+			"desc":"Returns a summary of data pertaining to the given address. The output of this call will depend heavily on the configured 'Address API' (see .env-sample file).",
+			"optionalParams": {"limit":"Number of transactions to return", "offset":"Offset into transactions", "sort":"Sorting direction for transactions ('desc'=new first, 'asc'=old first)"},
+			"returnType":"json"
+		},
+
+
+
+
 		// mining
 		{
 			"category":"mining",

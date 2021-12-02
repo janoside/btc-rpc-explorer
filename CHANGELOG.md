@@ -4,9 +4,11 @@
 * New tool for viewing the UTXO Set: [/utxo-set](./utxo-set)
 * New API actions:
 	* [/api/blockchain/utxo-set](./api/blockchain/utxo-set)
+	* [/api/address/yourAddress](./api/address/yourAddress)
 	* [/api/mining/next-block](./api/mining/next-block)
 	* [/api/mining/next-block/txids](./api/mining/next-block/txids)
 	* [/api/mining/next-block/includes/:txid](./api/mining/next-block/includes/yourTxid)
+	* [/api/mining/miner-summary](./api/mining/miner-summary?since=1d)
 * Major fixes for data displayed in [/tx-stats](./tx-stats) tool
 * Updated miners, including identification of "Patoshi"-pattern blocks
 * [/node-details](./node-details): Include `coinstatsindex` status
