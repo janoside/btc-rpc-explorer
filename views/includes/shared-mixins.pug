@@ -1,6 +1,6 @@
 mixin themeCss
-	link(id="light-theme-link-tag", rel="stylesheet", href=`./style/light.css?v=${cacheId}`, integrity="sha384-4a2ZOSpbpgzo72vW2r6xG1CtOXtoIEdaT0IRJYg/00nfB70u1ZVUIuNXnS+iZAkl")
-	link(id="dark-theme-link-tag", rel=(userSettings.uiTheme == "dark" ? "stylesheet" : false), href=`./style/dark.css?v=${cacheId}`, integrity="sha384-NrFLw8anyEfXsJQablzFWpNygV2cRGHkF/cVuuh3GkemssNvMxORpVlyRVZEbFX5")
+	link(id="light-theme-link-tag", rel="stylesheet", href=`./style/light.css?v=${cacheId}`, integrity="sha384-2IOzI878TTw33HP3+JZFcpyuJGLwyccd0p0UKUbf6Co/hSpMYfN3wRmemOfIkOvP")
+	link(id="dark-theme-link-tag", rel=(userSettings.uiTheme == "dark" ? "stylesheet" : false), href=`./style/dark.css?v=${cacheId}`, integrity="sha384-6/iYuwxEchAckZ2aZnoPcaT87KatmeAQadYwQpoY+/MuJ4+DkCrYt8+nTgP2DKjm")
 
 
 mixin sharedScriptTags

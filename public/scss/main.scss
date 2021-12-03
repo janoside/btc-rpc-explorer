@@ -1,8 +1,8 @@
 $spacer: 1rem;
 $spacers: (
 	0: 0,
-	1: $spacer / 4,
-	2: $spacer / 2,
+	1: calc($spacer / 4),
+	2: calc($spacer / 2),
 	3: $spacer,
 	4: $spacer * 1.5,
 	5: $spacer * 2,
