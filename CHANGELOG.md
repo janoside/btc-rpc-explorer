@@ -20,7 +20,12 @@
 	* Fix for performance degradation over time due to slow "estimatedSupply" function
 	* Homepage speedup by making "Estimated Next Block" data load asynchonously
 	* Caching for [/difficulty-history](./difficulty-history) data
-* Unicode formatting for OP_RETURN and other similar data
+* Unicode formatting for OP_RETURN and other similar data (with ascii+hex accessible via toggle)
+* New `.env` options for setting defaults (see `.env-sample` for details):
+	* BTCEXP_DISPLAY_CURRENCY (btc,sat,local)
+	* BTCEXP_LOCAL_CURRENCY (usd,eur,gbp)
+	* BTCEXP_UI_TIMEZONE (utc,local)
+	* BTCEXP_UI_HIDE_INFO_PANELS (true,false)
 * Support for displaying timestamps in local timezone (by using browser default, or setting a manual offset)
 * Unique favicon color based on the active network (mainnet=orange, testnet=green, signet=magenta, regtest=gray)
 * Error handling improvements

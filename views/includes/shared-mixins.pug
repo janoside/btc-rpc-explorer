@@ -628,7 +628,8 @@ mixin copyTextButton(text)
 
 
 mixin dismissableInfoAlert(userSettingDismissedName, textToShowWhenClosed)
-	if (!userSettings.hideInfoNotes || userSettings.hideInfoNotes == "false")
+	- var hiddenByEnvVar = (config.site.hideInfoNotes == "true");
+	if (!hiddenByEnvVar && (!userSettings.hideInfoNotes || userSettings.hideInfoNotes == "false"))
 		if (userSettings[userSettingDismissedName] != "true")
 			.alert.alert-primary.alert-dismissible.shadow-sm.mb-4.ps-3.ps-md-7(role="alert")
 				i.d-none.d-md-inline.fas.fa-info-circle.fa-lg.d-inline-block(style="position: absolute; top: 0; left: 0; width: 36px; margin-left: 0.4rem; margin-top: 1.3rem;")

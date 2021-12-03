@@ -54,6 +54,7 @@ for (let i = 0; i < electrumServerUriStrings.length; i++) {
 	"BTCEXP_NO_INMEMORY_RPC_CACHE",
 	"BTCEXP_RPC_ALLOWALL",
 	"BTCEXP_ELECTRUM_TXINDEX",
+	"BTCEXP_UI_HIDE_INFO_NOTES",
 
 ].forEach(function(item) {
 	if (process.env[item] === undefined) {
@@ -91,7 +92,7 @@ module.exports = {
 		displayCurrency: (process.env.BTCEXP_DISPLAY_CURRENCY || "btc"),
 		localCurrency: (process.env.BTCEXP_LOCAL_CURRENCY || "usd"),
 		theme: (process.env.BTCEXP_UI_THEME || "dark"),
-		timezone: (process.env.BTCEXP_UI_TIMEZONE || "local"),
+		timezone: (process.env.BTCEXP_UI_TIMEZONE || "local")
 	},
 
 	cookieSecret: cookieSecret,
@@ -190,6 +191,7 @@ module.exports = {
 	redisUrl:process.env.BTCEXP_REDIS_URL,
 
 	site: {
+		hideInfoNotes: process.env.BTCEXP_UI_HIDE_INFO_NOTES,
 		homepage:{
 			recentBlocksCount: parseInt(process.env.BTCEXP_UI_HOME_PAGE_LATEST_BLOCKS_COUNT || (slowDeviceMode ? 5 : 10))
 		},
