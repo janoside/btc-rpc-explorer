@@ -82,11 +82,14 @@ if (exchangeRates)
 
 				if (hashrate30d)
 					- var ratio = hashrate7d / hashrate30d;
-						
+					
 					small
 						| (
 						span.border-dotted(title='7d hashrate vs 30d hashrate.' data-bs-toggle='tooltip')
-							if (ratio > 1)
+							if (new Decimal(ratio).toDP(1) == "1")
+								span.text-muted +0%
+
+							else if (ratio > 1)
 								- var ratioPercent = new Decimal(ratio).times(100).minus(100);
 								span.text-success +#{ratioPercent.toDP(1)}%
 
