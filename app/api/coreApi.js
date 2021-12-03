@@ -489,16 +489,24 @@ async function getTxStats(dataPtCount, blockStart, blockEnd) {
 	let summary = {
 		txCounts: [],
 		txLabels: [],
-		txRates: []
+		txRates: [],
+		timespans: [],
+		blocksPerPoint: blockCount
 	};
 
+	let totalTimespan = 0;
 	for (let i = results.length - 1; i >= 0; i--) {
 		if (results[i].window_tx_count) {
 			summary.txCounts.push( {x:(blockStart + i * blockCount), y: results[i].window_tx_count} );
 			summary.txRates.push( {x:(blockStart + i * blockCount), y: results[i].txrate} );
+			summary.timespans.push( {x:(blockStart + i * blockCount), y: results[i].window_interval});
 			summary.txLabels.push(i);
+
+			totalTimespan += results[i].window_interval;
 		}
 	}
+
+	summary.avgTimespan = (totalTimespan / results.length);
 
 	miscCache.set(cacheKey, summary, 60 * ONE_MIN);
 
