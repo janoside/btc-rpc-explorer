@@ -772,11 +772,11 @@ mixin pagination(limit, offset, sort, itemCount, baseUrl, justification="start",
 
 
 mixin graphPageScriptSetup(dateAdapterNeeded=false)
-	script(src="./js/chart.min.js", integrity="sha384-ovAl4wbIXnEbY76lSb6GrprFBkoYeu4RKYYNMsADThIn2AweWPOyJqoyR/8/kgML")
+	script(src=`./js/chart.min.js?v=${cacheId}`, integrity="sha384-ovAl4wbIXnEbY76lSb6GrprFBkoYeu4RKYYNMsADThIn2AweWPOyJqoyR/8/kgML")
 	
 	if (dateAdapterNeeded)
-		script(src="./js/moment.min.js", integrity="sha384-CJyhAlbbRZX14Q8KxKBt0na1ad4KBs9PklAiNk2Efxs9sgimbIZm9kYLJQeNMUfM")
-		script(src="./js/chartjs-adapter-moment.min.js", integrity="sha384-Z9r2EsEmivx0l8T8TvYoqqGcpO0cCjKbqVXB8tYUa0hIWKtGVl0TmaF263CjS6XR")
+		script(src=`./js/moment.min.js?v=${cacheId}`, integrity="sha384-CJyhAlbbRZX14Q8KxKBt0na1ad4KBs9PklAiNk2Efxs9sgimbIZm9kYLJQeNMUfM")
+		script(src=`./js/chartjs-adapter-moment.min.js?v=${cacheId}`, integrity="sha384-Z9r2EsEmivx0l8T8TvYoqqGcpO0cCjKbqVXB8tYUa0hIWKtGVl0TmaF263CjS6XR")
 	
 	if (userSettings.uiTheme && userSettings.uiTheme == "dark")
 		script.
