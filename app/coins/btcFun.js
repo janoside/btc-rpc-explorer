@@ -364,12 +364,22 @@ module.exports = {
 		},
 		{
 			type: "blockheight",
+			date: "2021-06-13",
+			chain: "main",
+			blockHeight: 687455,
+			blockHash: "00000000000000000001464428893b618817bff3128a6e17a2c043de53ca4673",
+			summary: "Taproot Lock-In via Speedy Trial mechanism.",
+			alertBodyHtml: "As the last block of epoch #340, wherein over 90% of blocks were flagged by their miners to indicate Taproot acceptance/readiness, the mining of this block represents the lock-in of the Taproot soft fork on the network via the Speedy Trial activation mechanism. After lock-in, there was a delay period of 11 epochs before nodes began enforcing Taproot's rules in <a href='./block-height/709632'>Block #709,632</a>.",
+			referenceUrl: "https://github.com/bitcoin/bitcoin/pull/21686"
+		},
+		{
+			type: "blockheight",
 			date: "2021-11-14",
 			chain: "main",
 			blockHeight: 709632,
 			blockHash: "0000000000000000000687bca986194dc2c1f949318629b44bb54ec0a94d8244",
 			summary: "The first Taproot-enforcing block",
-			alertBodyHtml: "Nearly 4 years after the Taproot upgrade was conceived, and after ",
+			alertBodyHtml: "Nearly 4 years after the Taproot upgrade was conceived, and after a contentious process of deciding how to safely upgrade the network, the Taproot soft fork locked in with the mining of <a href='./block-height/687455'>Block #687,455</a> and then finally began to be enforced by nodes in this block.",
 			referenceUrl: "https://twitter.com/pwuille/status/1403725170993336322"
 		},
 		{
