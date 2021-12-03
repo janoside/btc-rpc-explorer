@@ -218,37 +218,37 @@ router.get("/address/:address", asyncHandler(async (req, res, next) => {
 
 		if (address.match(/^[132m].*$/)) {
 			try {
-				let base58check = bitcoinjs.address.fromBase58Check(address);
-				result.base58 = {hash:base58check.hash.toString("hex")};
+				let base58Data = bitcoinjs.address.fromBase58Check(address);
+				result.base58 = {hash:base58Data.hash.toString("hex"), version:base58Data.version};
 
 				addressEncoding = "base58";
 
 			} catch (err) {
-				base58Error = err;
+				utils.logError("api.AddressParseError-001", err);
 			}
 		}
 
 		if (addressEncoding == "unknown") {
 			try {
-				let bech32 = bitcoinjs.address.fromBech32(address);
-				result.bech32 = {data:bech32.data.toString("hex")};
+				let bech32Data = bitcoinjs.address.fromBech32(address);
+				result.bech32 = {data:bech32Data.data.toString("hex"), version:bech32Data.version};
 
 				addressEncoding = "bech32";
 
 			} catch (err) {
-				bech32Error = err;
+				utils.logError("api.AddressParseError-002", err);
 			}
 		}
 
 		if (addressEncoding == "unknown") {
 			try {
-				let bech32m = bech32m.decode(address);
-				result.bech32m = {words:Buffer.from(bech32m.words).toString("hex")};
+				let bech32mData = bech32m.decode(address);
+				result.bech32m = {words:Buffer.from(bech32mData.words).toString("hex"), version:bech32mData.version};
 
 				addressEncoding = "bech32m";
 
 			} catch (err) {
-				bech32mError = err;
+				utils.logError("api.AddressParseError-003", err);
 			}
 		}
 
@@ -258,21 +258,6 @@ router.get("/address/:address", asyncHandler(async (req, res, next) => {
 			next();
 
 			return;
-		}
-		
-
-		if (result.addressObj == null || addressEncoding == "unknown") {
-			if (base58Error) {
-				utils.logError("AddressParseError-001", base58Error);
-			}
-
-			if (bech32Error) {
-				utils.logError("AddressParseError-002", bech32Error);
-			}
-
-			if (bech32mError) {
-				utils.logError("AddressParseError-003", bech32mError);
-			}
 		}
 
 		result.encoding = addressEncoding;
