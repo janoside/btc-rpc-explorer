@@ -17,7 +17,7 @@ block content
 		if (true)
 			+contentSection("Transaction Counts")
 				.row
-					.col-xl-6
+					.col-lg-6.mb-3
 						.d-flex.flex-row
 							h6.mb-3 Last ~24 Hrs
 							div.small.text-muted.ms-1 (#{new Decimal(txStatsDay.avgTimespan).dividedBy(60).toDP(1)} min/pt)
@@ -28,7 +28,7 @@ block content
 						- var graphData = {id:"graphDay", dataVar:"txCountDataDay", labels:txStatsDay.txLabels, title:"Transactions, 24hr", xaxisTitle:"Block", xaxisStep:5, yaxisTitle:"Tx Count"};
 						include ./includes/line-graph.pug
 
-					.col-lg-6
+					.col-lg-6.mb-3
 						.d-flex.flex-row
 							h6.mb-3 Last ~7 Days
 							div.small.text-muted.ms-1 (#{new Decimal(txStatsWeek.avgTimespan).dividedBy(60).toDP(1)} min/pt)
@@ -40,7 +40,7 @@ block content
 						- var graphData = {id:"graphWeek", dataVar:"txCountDataWeek", labels:txStatsWeek.txLabels, title:"Transactions, 7day", xaxisTitle:"Block", xaxisStep:100, yaxisTitle:"Tx Count"};
 						include ./includes/line-graph.pug
 
-					.col-lg-6
+					.col-lg-6.mb-3
 						.d-flex.flex-row
 							h6.mb-3 Last ~30 Days
 							div.small.text-muted.ms-1 (#{new Decimal(txStatsMonth.avgTimespan).dividedBy(60).dividedBy(60).toDP(1)} hr/pt)
@@ -51,7 +51,7 @@ block content
 						- var graphData = {id:"graphMonth", dataVar:"txCountDataMonth", labels:txStatsMonth.txLabels, title:"Transactions, 30day", xaxisTitle:"Block", xaxisStep:500, yaxisTitle:"Tx Count"};
 						include ./includes/line-graph.pug
 
-					.col-lg-6
+					.col-lg-6.mb-3
 						.d-flex.flex-row
 							h6.mb-3 Last ~365 Days
 							div.small.text-muted.ms-1 (#{new Decimal(txStatsYear.avgTimespan).dividedBy(60).dividedBy(60).dividedBy(24).toDP(1)} day/pt)
@@ -82,7 +82,7 @@ block content
 
 			+contentSection
 				.row
-					.col-xl-6
+					.col-lg-6.mb-3
 						.d-flex.flex-row
 							h6.mb-3 Last ~24 Hrs
 							div.small.text-muted.ms-1 (#{new Decimal(txStatsDay.avgTimespan).dividedBy(60).toDP(1)} min/pt)
@@ -93,7 +93,7 @@ block content
 						- var graphData = {id:"graphRateDay", dataVar:"txRateDataDay", labels:txStatsDay.txLabels, title:"Tx Rate, 24hr", xaxisTitle:"Block", xaxisStep:5, yaxisTitle:"Tx Per Sec"};
 						include ./includes/line-graph.pug
 
-					.col-lg-6
+					.col-lg-6.mb-3
 						.d-flex.flex-row
 							h6.mb-3 Last ~7 Days
 							div.small.text-muted.ms-1 (#{new Decimal(txStatsWeek.avgTimespan).dividedBy(60).toDP(1)} min/pt)
@@ -104,7 +104,7 @@ block content
 						- var graphData = {id:"graphRateWeek", dataVar:"txRateDataWeek", labels:txStatsWeek.txLabels, title:"Tx Rate, 7day", xaxisTitle:"Block", xaxisStep:100, yaxisTitle:"Tx Per Sec"};
 						include ./includes/line-graph.pug
 
-					.col-lg-6
+					.col-lg-6.mb-3
 						.d-flex.flex-row
 							h6.mb-3 Last ~30 Days
 							div.small.text-muted.ms-1 (#{new Decimal(txStatsMonth.avgTimespan).dividedBy(60).dividedBy(60).toDP(1)} hr/pt)
@@ -115,7 +115,7 @@ block content
 						- var graphData = {id:"graphRateMonth", dataVar:"txRateDataMonth", labels:txStatsMonth.txLabels, title:"Tx Rate, 30day", xaxisTitle:"Block", xaxisStep:500, yaxisTitle:"Tx Per Sec"};
 						include ./includes/line-graph.pug
 
-					.col-lg-6
+					.col-lg-6.mb-3
 						.d-flex.flex-row
 							h6.mb-3 Last ~365 Days
 							div.small.text-muted.ms-1 (#{new Decimal(txStatsYear.avgTimespan).dividedBy(60).dividedBy(60).dividedBy(24).toDP(1)} day/pt)
@@ -127,12 +127,14 @@ block content
 						include ./includes/line-graph.pug
 
 					.col
-						h6.mb-3 All Time
+						.d-flex.flex-row
+							h6.mb-3 All Time
+							div.small.text-muted.ms-1 (#{new Decimal(txStats.avgTimespan).dividedBy(60).dividedBy(60).dividedBy(24).toDP(1)} day/pt)
 						script var txRateDataAlltime = [];
 						each item, index in txStats.txRates
 							script txRateDataAlltime.push({x:#{item.x}, y:#{item.y}});
 
-						- var graphData = {id:"graphRateAlltime", dataVar:"txRateDataAlltime", labels:txStatsYear.txLabels, title:"Tx Rate, All time", xaxisTitle:"Block", xaxisStep:500, yaxisTitle:"Tx Per Sec"};
+						- var graphData = {id:"graphRateAlltime", dataVar:"txRateDataAlltime", labels:txStats.txLabels, title:"Tx Rate, All time", xaxisTitle:"Block", xaxisStep:500, yaxisTitle:"Tx Per Sec"};
 						include ./includes/line-graph.pug
 
 								
