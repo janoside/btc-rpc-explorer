@@ -236,7 +236,7 @@ module.exports = {
 	/* 11 */	{name:"Block Analysis", url:"./block-analysis", desc:"Summary analysis for all transactions in a block.", fontawesome:"fas fa-angle-double-down"},
 	/* 12 */	{name:"Difficulty History", url:"./difficulty-history", desc:"Details of difficulty changes over time.", fontawesome:"fas fa-chart-line"},
 
-	/* 13 */	{name:"Whitepaper Extracter", url:"./bitcoin-whitepaper", desc:"Extract the Bitcoin whitepaper from data embedded within the blockchain.", fontawesome:"far fa-file-alt"},
+	/* 13 */	{name:"Whitepaper Extractor", url:"./bitcoin-whitepaper", desc:"Extract the Bitcoin whitepaper from data embedded within the blockchain.", fontawesome:"far fa-file-alt"},
 	
 	/* 14 */	{name:"Predicted Blocks", url:"./predicted-blocks", desc:"View predicted future blocks based on the current mempool.", fontawesome:"fas fa-arrow-circle-right"},
 
