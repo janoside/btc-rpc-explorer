@@ -9,30 +9,24 @@ block headContent
 block content
 	if (result.getblock)
 
-		.mb-3
-			.clearfix
-				.float-start
-					if (result.getblock.previousblockhash)
-						a.btn.btn-sm.btn-primary.ms-2(href=`./block/${result.getblock.previousblockhash}`, title=`Block ${(result.getblock.height - 1).toLocaleString()}`, data-bs-toggle="tooltip") &laquo; Prev Block
-
-					else if (result.getblock.hash == genesisBlockHash)
-						span.btn.btn-sm.btn-success.ms-2 Genesis Block!
-
-					if (result.getblock.nextblockhash)
-						a.btn.btn-sm.btn-primary.ms-2(href=`./block/${result.getblock.nextblockhash}`, title=`Block ${(result.getblock.height + 1).toLocaleString()}`, data-bs-toggle="tooltip") Next Block
-							span.ms-1 &raquo;
-					else
-						span.btn.btn-sm.btn-success.ms-2 Latest Block!
-
-				.float-end
-					if (result.getblock.tx != null && result.getblock.tx.length > 0)
-						a.btn.btn-primary.btn-sm.me-2(href=`./block-analysis/${result.getblock.hash}`, title="See a summary analysis of all transactions in this block.", data-bs-toggle="tooltip")
-							i.fas.fa-angle-double-down.me-2
-							| Block Analysis
-
-		hr
-
 		+pageTitle(`Block #${result.getblock.height.toLocaleString()}`, result.getblock.hash, true)
+			if (result.getblock.previousblockhash)
+				a.btn.btn-sm.btn-primary.ms-2(href=`./block/${result.getblock.previousblockhash}`, title=`Block ${(result.getblock.height - 1).toLocaleString()}`, data-bs-toggle="tooltip") &larr; Prev Block
+
+			else if (result.getblock.hash == genesisBlockHash)
+				span.btn.btn-sm.btn-success.ms-2 Genesis Block!
+
+			if (result.getblock.nextblockhash)
+				a.btn.btn-sm.btn-primary.ms-2(href=`./block/${result.getblock.nextblockhash}`, title=`Block ${(result.getblock.height + 1).toLocaleString()}`, data-bs-toggle="tooltip") Next Block
+					span.ms-1 &rarr;
+			else
+				span.btn.btn-sm.btn-success.ms-2 Latest Block!
+
+
+			if (result.getblock.tx != null && result.getblock.tx.length > 0)
+				a.btn.btn-secondary.btn-sm.ms-4(href=`./block-analysis/${result.getblock.hash}`, title="See a summary analysis of all transactions in this block.", data-bs-toggle="tooltip")
+					i.fas.fa-angle-double-down.me-2
+					| Block Analysis
 		
 		
 

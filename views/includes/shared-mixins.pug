@@ -1,6 +1,6 @@
 mixin themeCss
-	link(id="light-theme-link-tag", rel="stylesheet", href=`./style/light.css?v=${cacheId}`, integrity="sha384-2IOzI878TTw33HP3+JZFcpyuJGLwyccd0p0UKUbf6Co/hSpMYfN3wRmemOfIkOvP")
-	link(id="dark-theme-link-tag", rel=(userSettings.uiTheme == "dark" ? "stylesheet" : false), href=`./style/dark.css?v=${cacheId}`, integrity="sha384-6/iYuwxEchAckZ2aZnoPcaT87KatmeAQadYwQpoY+/MuJ4+DkCrYt8+nTgP2DKjm")
+	link(id="light-theme-link-tag", rel="stylesheet", href=`./style/light.css?v=${cacheId}`, integrity="sha384-PIEdZ5ZghkulWtuedysHXrLithKg0Cf8CNyi1VZFeLghI3x2KiIcBUXj2ZlmHmeq")
+	link(id="dark-theme-link-tag", rel=(userSettings.uiTheme == "dark" ? "stylesheet" : false), href=`./style/dark.css?v=${cacheId}`, integrity="sha384-ox1rEDWY1FjZnNlAWpElsdN71dPIkCcHnCYtcPF9Be7qYp6NnWLDvIZUaGFN7cvU")
 
 
 mixin sharedScriptTags
@@ -12,13 +12,18 @@ mixin sharedScriptTags
 
 
 mixin pageTitle(text, subtext, copyableSubtext=false)
-	h1.fw-light.word-wrap.mb-4
-		| #{text}
-		br
-		span.text-tiny #{subtext}
-			if (copyableSubtext)
-				small
-					+copyTextButton(subtext)
+	.d-flex.justify-content-between
+		h1.fw-light.word-wrap.mb-1
+			| #{text}
+		
+		if (block)
+			.text-right
+				block
+
+	h4.fw-light.word-wrap.mb-4 #{subtext}
+		if (copyableSubtext)
+			small
+				+copyTextButton(subtext)
 	
 	//hr.mb-3
 
@@ -43,7 +48,7 @@ mixin sectionTitle(text, toggle=false, toggleUniqueClass, toggleUserSettingName,
 
 		if (toggle)
 			small(title=`Toggle ${text}`, data-bs-toggle="tooltip")
-				a.text-muted.fs-6(href=`./changeSetting?name=${toggleUserSettingName}&value=false`)
+				a.text-card-highlight.fs-6(href=`./changeSetting?name=${toggleUserSettingName}&value=false`)
 					i.toggle-plus-minus.far.ms-2(class=(toggleOpen ? "fa-minus-square" : "fa-plus-square"))
 
 
@@ -81,9 +86,9 @@ mixin summaryRow(itemCount)
 
 
 mixin summaryTitle(title, titleDesc, subtitle, subtitleDesc)
-	span.fs-6.text-uppercase.fw-light.text-muted(class=(titleDesc ? "border-dotted" : false), class=(subtitle ? "me-2" : false), title=titleDesc, data-bs-toggle="tooltip", data-bs-html="true") #{title}
+	span.fs-6.text-uppercase.fw-light.text-muted.text-card-highlight(class=(titleDesc ? "border-dotted" : false), class=(subtitle ? "me-2" : false), title=titleDesc, data-bs-toggle="tooltip", data-bs-html="true") #{title}
 	if (subtitle)
-		small.text-muted
+		small.text-card-highlight.fw-light
 			| (
 			span(class=(subtitleDesc ? "border-dotted" : false), title=subtitleDesc, data-bs-toggle="tooltip", data-bs-html="true") #{subtitle}
 			| )
@@ -259,7 +264,7 @@ mixin pageTabs(names)
 			li.nav-item.page-tab(style=(nameIndex == 0 ? "margin-left: 10px;" : false))
 				a.nav-link(class=(nameIndex == 0 ? "active" : false), data-bs-toggle="tab", data-default-tab=(nameIndex == 0 ? "true" : false) href=`#${name.replace(" ", "-")}`, role="tab") #{name}
 
-	.bg-gradient-body-to-main.pb-4.mb-4
+	.bg-gradient-body-to-main.pb-4.mb-2
 
 
 mixin pillTabs(names)
@@ -407,11 +412,48 @@ mixin valueDisplaySpecial(val, maxDecimals=-1, summarizeAlways=false, summarizeM
 mixin confirmations(confirmations, abbreviated=true)
 	if (confirmations < 6)
 		span.text-warning.border-dotted(title="Fewer than 6 confirmations is generally considered <b>unsettled</b> for high-value transactions because block <b>re-organizations</b> that could affect them have reasonable probability.", data-bs-toggle="tooltip", data-bs-html="true") #{confirmations.toLocaleString()}
-			i.fas.fa-unlock-alt.ms-1
+			i.fas.fa-unlock-alt.fa-sm.ms-1
 	else
 		span.border-dotted.text-success(title="6 confirmations is generally considered <b>settled</b>. High-value transactions may require more;<br/>Low-value transactions may require fewer.", data-bs-toggle="tooltip", data-bs-html="true")
 			| #{abbreviated && confirmations > 1000 ? `${Math.floor(confirmations/1000)}k` : confirmations.toLocaleString()}
 			i.fas.fa-check.ms-1
+
+
+
+mixin dataEncodingBadge(encodingType)
+	span.small.badge.bg-dark.text-light.border.border-dark.mb-tiny.me-1 #{encodingType}
+
+
+
+mixin hexDataDisplay(hex, order="utf8,ascii,hex")
+	- var items = order.split(",");
+	- var uniqueId = utils.getRandomString(12, "aA");
+
+	div
+		.d-inline-block.small.border.rounded-1.p-1.px-2.card-highlight.word-wrap
+			+dataEncodingBadge(items[0])
+			span #{utils.formatHex(hex, items[0])}
+
+		+copyTextButton(hex)
+		
+		a.text-muted.ms-2(href="javascript:void(0)", onclick=`$('#hex-display-expanded-${uniqueId}').toggle(); $(this).find(".toggle-plus-minus").toggleClass("fa-plus-square"); $(this).find(".toggle-plus-minus").toggleClass("fa-minus-square"); return false;`, title="Toggle More Encodings")
+			i.toggle-plus-minus.far.fa-plus-square.text-card-highlight
+
+	div(id=`hex-display-expanded-${uniqueId}`, style="display: none;")
+		each item, itemIndex in items
+			if (itemIndex > 0)
+				if (itemIndex > 1)
+					br
+				
+				.d-inline-block.small.border.rounded-1.p-1.px-2.mt-2.word-wrap.card-highlight
+					+dataEncodingBadge(item)
+					span #{utils.formatHex(hex, item)}
+
+		
+		if (false)
+			.d-inline-block.small.border.rounded-1.p-1.px-2.mt-2.word-wrap.card-highlight
+				+dataEncodingBadge("hex")
+				span #{hex}
 
 
 mixin timestamp(timestamp, includeAgo=true, formatString)

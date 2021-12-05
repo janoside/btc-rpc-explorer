@@ -28,11 +28,13 @@
 	* BTCEXP_UI_HIDE_INFO_PANELS (true,false)
 * Support for displaying timestamps in local timezone (by using browser default, or setting a manual offset)
 * Unique favicon color based on the active network (mainnet=orange, testnet=green, signet=magenta, regtest=gray)
+* Lots of minor styling improvements
 * Error handling improvements
 * Fix for `/api/quotes/all`
 * Fix for incorrect date on "Diario El Salvador..." fun item (thanks [@Dirkson643](https://github.com/Dirkson643))
 * New `Fun` items related to Taproot activation
 * Performance log admin page at [/admin/perf-log](./admin/perf-log)
+* Updated dependencies
 
 
 ##### v3.2.0

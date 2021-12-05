@@ -275,7 +275,7 @@ block content
 			
 			+pageTab("Scripts")
 				+contentSection("Input Scripts")
-					table.table.table-borderless.table-striped
+					table.table
 						thead
 							tr
 								th(style="width: 50px;")
@@ -292,11 +292,9 @@ block content
 										if (vin.coinbase)
 											.mb-3(style="line-height: 1.75em;")
 												+successBadge("coinbase")
-												
-												.mt-1.mb-2
-													.d-inline-block.small.border.rounded-1.p-1.px-2.card-highlight.word-wrap #{utils.formatHex(vin.coinbase, "utf8")}
 
-												.d-inline-block.small.border.rounded-1.p-1.px-2.card-highlight.word-wrap #{vin.coinbase}
+												.mt-2
+													+hexDataDisplay(vin.coinbase)
 
 										if (vin.scriptSig && vin.scriptSig.asm)
 											.mb-2
@@ -311,17 +309,18 @@ block content
 												+darkBadge("witness")
 
 											each witnessItem, witnessIndex in vin.txinwitness
-												.d-inline-block.small.border.rounded-1.p-1.px-2.card-highlight.word-wrap(class=(witnessIndex < (vin.txinwitness.length - 1) ? "mb-2" : false)) #{witnessItem}
+												+hexDataDisplay(witnessItem)
+												//.d-inline-block.small.border.rounded-1.p-1.px-2.card-highlight.word-wrap(class=(witnessIndex < (vin.txinwitness.length - 1) ? "mb-2" : false)) #{witnessItem}
 
 										
 						
 
 				+contentSection("Output Scripts")
-					table.table.table-borderless.table-striped
+					table.table
 						thead
 							tr
 								th(style="width: 50px;")
-								th Script Pub Key (asm)
+								th Script Pub Key
 						tbody
 							each vout, voutIndex in result.getrawtransaction.vout
 								tr
@@ -333,18 +332,26 @@ block content
 									td.word-wrap
 										if (vout.scriptPubKey && vout.scriptPubKey.asm)
 											- var chunks = vout.scriptPubKey.asm.split(" ");
-											each chunk in chunks
-												.mb-2
-													if (chunk.startsWith("OP_"))
-														+primaryBadge(chunk)
-													else
-														.d-inline-block.small.border.rounded-1.p-1.px-2.card-highlight.word-wrap #{chunk}
 
-											if (vout.scriptPubKey.asm.startsWith("OP_RETURN"))
+											if (chunks[0] == "OP_RETURN")
+												.mb-2
+													+primaryBadge(chunks[0])
+
 												- var asm = vout.scriptPubKey.asm;
 												- asm = asm.substring("OP_RETURN ".length);
-												.d-inline-block.small.border.rounded-1.p-1.px-2.card-highlight.word-wrap #{utils.formatHex(asm, "utf8")}
-						
+												+hexDataDisplay(asm)
+
+											else
+												each chunk, chunkIndex in chunks
+													.mb-2
+														if (chunk.startsWith("OP_"))
+															+primaryBadge(chunk)
+
+														else
+															+hexDataDisplay(chunk, "hex,utf8,ascii")
+
+											
+
 
 			+pageTab("JSON")
 				- var pillTabs = ["Transaction", "Block Header", "UTXOs"];

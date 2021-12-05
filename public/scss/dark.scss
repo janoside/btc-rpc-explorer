@@ -1,9 +1,9 @@
-$body-bg: #041f47;
-$body-color: #fafcfc;
+$body-bg: #051c3e;
+$body-color: #f5f7f7;
 
 $main-bg: darken($body-bg, 6%);
 
-$text-muted: #b7bfc7;
+$text-muted: #b2bac2;
 
 $dark: #22272b;
 
@@ -14,6 +14,7 @@ $dark: #22272b;
 
 $blue: #0d6efd;
 $link-color: $blue;
+$card-highlight-color: #406fb4;
 
 
 
@@ -89,6 +90,7 @@ $toast-header-border-color:         rgba(0, 0, 0, .05) !default;
 
 
 
+
 .alert-primary {
 	color: $body-color;
 	background-color: lighten($body-bg, 8%);
@@ -155,6 +157,14 @@ $toast-header-border-color:         rgba(0, 0, 0, .05) !default;
 	background-color: lighten($card-bg, 5%);
 	border: solid 1px lighten($card-bg, 10%) !important;
 	color: $body-color;
+}
+
+.text-card-highlight {
+	color: $card-highlight-color !important;
+}
+
+.border-dotted {
+	border-bottom: dotted 1px #6688bc;
 }
 
 code {
