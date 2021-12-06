@@ -65,8 +65,8 @@ block content
 						table.table.table-striped.table-borderless.mb-0
 							thead
 								tr
-									th Transaction
-									th.text-end Output Value
+									th.text-card-highlight.text-uppercase.fw-light Transaction
+									th.text-end.text-card-highlight.text-uppercase.fw-light Output Value
 
 							tbody(id="tbody-top-value-tx")
 								tr.row-prototype(style="display: none;")
@@ -81,9 +81,10 @@ block content
 						table.table.table-striped.table-borderless.mb-0
 							thead
 								tr
-									th Transaction
-									th.text-end Size
-										small.fw-normal.text-muted.ms-2 (vB)
+									th.text-card-highlight.text-uppercase.fw-light Transaction
+									th.text-end.text-card-highlight.fw-light
+										span.text-uppercase Size
+										small.ms-2 (vB)
 
 							tbody(id="tbody-top-size-tx")
 								tr.row-prototype(style="display: none;")
@@ -100,8 +101,8 @@ block content
 							table.table.table-striped.table-borderless.mb-0
 								thead
 									tr
-										th Transaction
-										th.text-end Fee
+										th.text-card-highlight.text-uppercase.fw-light Transaction
+										th.text-end.text-card-highlight.text-uppercase.fw-light Fee
 
 								tbody(id="tbody-top-fee-tx")
 									tr.row-prototype(style="display: none;")
@@ -117,9 +118,10 @@ block content
 							table.table.table-striped.table-borderless.mb-0
 								thead
 									tr
-										th Transaction
-										th.text-end Fee Rate
-											small.text-muted.fw-normal.ms-2 (sat/vB)
+										th.text-card-highlight.text-uppercase.fw-light Transaction
+										th.text-end.text-card-highlight.fw-light
+											span.text-uppercase Fee Rate
+											small.ms-2 (sat/vB)
 
 								tbody(id="tbody-top-fee-rate-tx")
 									tr.row-prototype(style="display: none;")

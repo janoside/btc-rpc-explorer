@@ -77,6 +77,11 @@ $dropdown-min-width: 11rem;
 @import "../../node_modules/bootstrap/scss/bootstrap";
 
 
+.table > :not(:first-child) {
+	border-top: 0px;
+}
+
+
 .bg-content {
 	background-color: $body-bg !important;
 }

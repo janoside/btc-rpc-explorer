@@ -1,6 +1,6 @@
 mixin themeCss
-	link(id="light-theme-link-tag", rel="stylesheet", href=`./style/light.css?v=${cacheId}`, integrity="sha384-PIEdZ5ZghkulWtuedysHXrLithKg0Cf8CNyi1VZFeLghI3x2KiIcBUXj2ZlmHmeq")
-	link(id="dark-theme-link-tag", rel=(userSettings.uiTheme == "dark" ? "stylesheet" : false), href=`./style/dark.css?v=${cacheId}`, integrity="sha384-ox1rEDWY1FjZnNlAWpElsdN71dPIkCcHnCYtcPF9Be7qYp6NnWLDvIZUaGFN7cvU")
+	link(id="light-theme-link-tag", rel="stylesheet", href=`./style/light.css?v=${cacheId}`, integrity="sha384-G+XehzyDofsc9ZlqIF7hYXsaYijKshaTro74HxGnvEmvNiv2lRjGxO8g8HShNBQG")
+	link(id="dark-theme-link-tag", rel=(userSettings.uiTheme == "dark" ? "stylesheet" : false), href=`./style/dark.css?v=${cacheId}`, integrity="sha384-xjIBl325k0VYsT0wAem/8jzIxea9FDLsVmHZG8STGMhLu+rDq/xlWxo/iR6oJQ6w")
 
 
 mixin sharedScriptTags
@@ -86,7 +86,7 @@ mixin summaryRow(itemCount)
 
 
 mixin summaryTitle(title, titleDesc, subtitle, subtitleDesc)
-	span.fs-6.text-uppercase.fw-light.text-muted.text-card-highlight(class=(titleDesc ? "border-dotted" : false), class=(subtitle ? "me-2" : false), title=titleDesc, data-bs-toggle="tooltip", data-bs-html="true") #{title}
+	span.fs-6.text-uppercase.fw-light.text-card-highlight(class=(titleDesc ? "border-dotted" : false), class=(subtitle ? "me-2" : false), title=titleDesc, data-bs-toggle="tooltip", data-bs-html="true") #{title}
 	if (subtitle)
 		small.text-card-highlight.fw-light
 			| (
@@ -127,7 +127,8 @@ mixin txList(visibleTxs, txCount, limit, offset, inputsByTxid, options={})
 				+pagination(limit, offset, null, txCount, paginationBaseUrl)
 					
 	
-		.mb-4.mb-md-3
+		//.mb-4.mb-md-3
+		.pb-4.pb-md-3.bg-tx-separator
 
 
 	each tx, txIndex in visibleTxs
@@ -247,7 +248,7 @@ mixin txList(visibleTxs, txCount, limit, offset, inputsByTxid, options={})
 				include ./transaction-io-details.pug
 
 		if (txIndex < (visibleTxs.length - 1) || txCount > limit)
-			.mb-4.mb-lg-3
+			.pb-4.pb-md-3.bg-tx-separator
 
 
 	if (txCount > limit && !options.hidePagination)
@@ -420,8 +421,10 @@ mixin confirmations(confirmations, abbreviated=true)
 
 
 
-mixin dataEncodingBadge(encodingType)
-	span.small.badge.bg-dark.text-light.border.border-dark.mb-tiny.me-1 #{encodingType}
+mixin cardHighlightBadge(text)
+	span.small.badge.bg-card-highlight-badge.border.border-card-highlight-badge.text-reset.mb-tiny.me-1 #{text ? text : ""}
+		if (block)
+			block
 
 
 
@@ -429,31 +432,30 @@ mixin hexDataDisplay(hex, order="utf8,ascii,hex")
 	- var items = order.split(",");
 	- var uniqueId = utils.getRandomString(12, "aA");
 
-	div
-		.d-inline-block.small.border.rounded-1.p-1.px-2.card-highlight.word-wrap
-			+dataEncodingBadge(items[0])
-			span #{utils.formatHex(hex, items[0])}
+	.d-inline-block.small.border.rounded-1.p-1.px-2.card-highlight.word-wrap
+		+cardHighlightBadge(items[0])
+		span.small #{utils.formatHex(hex, items[0])}
+			if (items[0] == "hex")
+				.d-none.d-md-inline
+					+copyTextButton(hex)
 
-		+copyTextButton(hex)
+		div(id=`hex-display-expanded-${uniqueId}`, style="display: none;")
+			each item, itemIndex in items
+				if (itemIndex > 0)
+					if (itemIndex > 1)
+						br
+					
+					+cardHighlightBadge(item)
+					span.small #{utils.formatHex(hex, item)}
+						if (item == "hex")
+							.d-inline.d-md-inline
+								+copyTextButton(hex)
 		
-		a.text-muted.ms-2(href="javascript:void(0)", onclick=`$('#hex-display-expanded-${uniqueId}').toggle(); $(this).find(".toggle-plus-minus").toggleClass("fa-plus-square"); $(this).find(".toggle-plus-minus").toggleClass("fa-minus-square"); return false;`, title="Toggle More Encodings")
-			i.toggle-plus-minus.far.fa-plus-square.text-card-highlight
 
-	div(id=`hex-display-expanded-${uniqueId}`, style="display: none;")
-		each item, itemIndex in items
-			if (itemIndex > 0)
-				if (itemIndex > 1)
-					br
-				
-				.d-inline-block.small.border.rounded-1.p-1.px-2.mt-2.word-wrap.card-highlight
-					+dataEncodingBadge(item)
-					span #{utils.formatHex(hex, item)}
+	a.text-muted.ms-2(href="javascript:void(0)", onclick=`$('#hex-display-expanded-${uniqueId}').toggle(); $(this).find(".toggle-plus-minus").toggleClass("fa-plus-square"); $(this).find(".toggle-plus-minus").toggleClass("fa-minus-square"); return false;`, title="Toggle More Encodings")
+		i.toggle-plus-minus.far.fa-plus-square.text-card-highlight
 
-		
-		if (false)
-			.d-inline-block.small.border.rounded-1.p-1.px-2.mt-2.word-wrap.card-highlight
-				+dataEncodingBadge("hex")
-				span #{hex}
+	
 
 
 mixin timestamp(timestamp, includeAgo=true, formatString)
@@ -514,9 +516,18 @@ mixin timestamp(timestamp, includeAgo=true, formatString)
 				span #{momentObj.format("YYYY-MM-DD")}
 
 	if (includeAgo)
-		small.text-muted.ms-2 (
-			+timeAgo(timestamp, true)
-			span  ago)
+		- var timeAgo = moment.duration(moment.utc(new Date()).diff(moment.utc(new Date(parseInt(timestamp) * 1000))));
+		
+		if (timeAgo.asSeconds() < 0)
+			- timeAgo = moment.duration(moment.utc(new Date(parseInt(timestamp) * 1000)).diff(moment.utc(new Date())));
+
+			small.text-muted.ms-2 (+
+				| #{timeAgo.format()}
+				span )
+		else
+			small.text-muted.ms-2 (
+				+timeAgo(timestamp, true)
+				span  ago)
 
 
 mixin darkBadge(text)
@@ -738,7 +749,7 @@ mixin blockRangeFilters
 		.float-start.me-4
 			div(id="time-range-buttons")
 				div.mb-2
-					span.border-dotted(title="Analyze blocks over the last N days (approximated using average block time).", data-bs-toggle="tooltip") Time Range
+					span.border-dotted.text-uppercase.fw-light.text-card-highlight(title="Analyze blocks over the last N days (approximated using average block time).", data-bs-toggle="tooltip") Time Range
 				div.btn-group
 					a.btn.btn-primary.block-count-btn(href="javascript:void(0)", data-blockCount="144") 1 day
 					a.btn.btn-outline-primary.block-count-btn(href="javascript:void(0)", data-blockCount="432") 3 day
@@ -748,7 +759,7 @@ mixin blockRangeFilters
 		.float-start.me-4
 			div(id="block-selections-buttons")
 				div.mb-2
-					span.border-dotted(title="Choose from a list of pre-configured 'interesting' historical block ranges.", data-bs-toggle="tooltip") Interesting History
+					span.border-dotted.text-uppercase.fw-light.text-card-highlight(title="Choose from a list of pre-configured 'interesting' historical block ranges.", data-bs-toggle="tooltip") Interesting History
 
 				div.dropdown
 					button.btn.btn-outline-primary.dropdown-toggle(type="button", id="preconfigured-dropdown", data-bs-toggle="dropdown", aria-haspopup="true", aria-expanded="false") Selections
@@ -762,7 +773,7 @@ mixin blockRangeFilters
 		.float-start
 			div(id="time-range-buttons")
 				div.mb-2
-					span.border-dotted(title="Manually enter a range of blocks to analyze.", data-bs-toggle="tooltip") Custom Block Range
+					span.border-dotted.text-uppercase.fw-light.text-card-highlight(title="Manually enter a range of blocks to analyze.", data-bs-toggle="tooltip") Custom Block Range
 
 				form.form-inline.me-3(id="custom-range-form")
 					div.input-group

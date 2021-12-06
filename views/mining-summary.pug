@@ -40,11 +40,11 @@ block content
 						table.table.table-borderless.table-striped.mb-0
 							thead
 								tr
-									th Miner
-									th.text-end Blocks
-									th.text-end
+									th.text-card-highlight.text-uppercase.fw-light Miner
+									th.text-end.text-card-highlight.text-uppercase.fw-light Blocks
+									th.text-end.text-card-highlight.text-uppercase.fw-light
 										span.border-dotted(title="Σ (Subsidy + Fees)", data-bs-toggle="tooltip") Revenue
-									th.text-end
+									th.text-end.text-card-highlight.text-uppercase.fw-light
 										span.border-dotted(title="Percent of total subsidy plus fees", data-bs-toggle="tooltip") % Revenue
 									
 							tbody(id="summary-table-body")
@@ -222,7 +222,7 @@ block endOfBody
 						pieChartData.labels.push(minerName);
 					}
 
-					pieChartData.datasets[0].data.push(revenuePercent.toDP(2));
+					pieChartData.datasets[0].data.push(revenuePercent.toNumber());
 					pieChartData.datasets[0].backgroundColor.push(colors[colorIndex++ % colors.length]);
 
 					pieChartTotalPercent = pieChartTotalPercent.plus(revenuePercent);
@@ -238,7 +238,7 @@ block endOfBody
 			}
 
 			pieChartData.labels.push("Other");
-			pieChartData.datasets[0].data.push(new Decimal(100).minus(pieChartTotalPercent).toDP(2));
+			pieChartData.datasets[0].data.push(new Decimal(100).minus(pieChartTotalPercent).toNumber());
 			pieChartData.datasets[0].backgroundColor.push("#aaaaaa");
 
 

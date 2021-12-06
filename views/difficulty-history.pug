@@ -69,15 +69,16 @@ block content
 								table.table.table-striped.table-borderless.mb-3
 									thead
 										tr
-											th.text-end Epoch
-											th.text-end Start Block
-											th.text-end Start Date
-												small.text-muted.ms-1.fw-light (utc)
+											th.text-end.text-card-highlight.text-uppercase.fw-light Epoch
+											th.text-end.text-card-highlight.text-uppercase.fw-light Start Block
+											th.text-end.text-card-highlight.fw-light
+												span.text-uppercase Start Date
+												small.ms-1 (utc)
 											//th Date
 											//th.text-end Block Start
-											th.text-end Difficulty
-											th.text-end Difficulty Δ
-												small.text-muted.ms-1.fw-light (%)
+											th.text-end.text-card-highlight.text-uppercase.fw-light Difficulty
+											th.text-end.text-card-highlight.text-uppercase.fw-light Difficulty Δ
+												small.ms-1 (%)
 											
 									tbody(id="difficulty-table-body")
 										tr(id="difficulty-table-row-prototype", style="display: none;")

@@ -1,5 +1,5 @@
 $body-bg: #051c3e;
-$body-color: #f5f7f7;
+$body-color: #f7fafa;
 
 $main-bg: darken($body-bg, 6%);
 
@@ -137,16 +137,30 @@ $toast-header-border-color:         rgba(0, 0, 0, .05) !default;
 	background-color: $main-bg !important;
 }
 
+$header-footer-bg: #112138;
+
 .bg-header-footer {
-	background-color: #162740 !important;
+	background-color: $header-footer-bg !important;
 }
 
 .bg-header-footer-highlight {
-	background-color: lighten(#162740, 15%) !important;
+	background-color: lighten($header-footer-bg, 12%) !important;
 }
 
 .bg-gradient-body-to-main {
 	background: linear-gradient(0deg, $main-bg 0%, $body-bg 100%);
+}
+
+.bg-card-highlight-badge {
+	background-color: $body-bg !important;
+}
+
+.bg-tx-separator {
+	background-color: #131a24;
+}
+
+.border-card-highlight-badge {
+	border-color: #183662 !important;
 }
 
 .border-dark {

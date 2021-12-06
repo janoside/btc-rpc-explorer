@@ -21,7 +21,7 @@ mixin inputValueDisplay(tx, txVin, vout)
 				i.fas.fa-backspace.text-danger
 
 
-mixin outputValueDisplay(vout, voutIndex)
+mixin outputValueDisplay(tx, vout, voutIndex)
 	if (vout.value > 0 && vout.scriptPubKey.asm.startsWith('OP_RETURN '))
 		span(title="Burned output - as an OP_RETURN output, this value is provably unspendable." data-bs-toggle="tooltip")
 			i.fas.fa-fire.text-danger.me-2
@@ -37,8 +37,13 @@ mixin outputValueDisplay(vout, voutIndex)
 					i.far.fa-check-circle.fa-sm.text-success.ms-2
 
 			else if (utxos[voutIndex] == null)
-				span(title="This output has been spent (destroyed)." data-bs-toggle="tooltip")
-					i.far.fa-times-circle.fa-sm.text-danger.ms-2
+				if (tx.txid == "4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b")
+					span(title="This output is UNSPENDABLE, and therefore these coins do not exist!" data-bs-toggle="tooltip")
+						i.fas.fa-flag.fa-sm.text-warning.ms-2
+
+				else
+					span(title="This output has been spent (destroyed)." data-bs-toggle="tooltip")
+						i.far.fa-times-circle.fa-sm.text-danger.ms-2
 
 
 .row
@@ -88,7 +93,7 @@ mixin outputValueDisplay(vout, voutIndex)
 								+hexDataDisplay(txVin.coinbase)
 
 							// xs only
-							.d-inline-block.d-sm-none.small.border.rounded-1.px-1.card-highlight.ms-3.mt-1
+							.d-inline-block.d-sm-none.small.border.rounded-1.px-1.card-highlight.mt-1
 								span.text-tiny.fw-light #{utils.formatHex(txVin.coinbase, "utf8")}
 
 
@@ -246,7 +251,6 @@ mixin outputValueDisplay(vout, voutIndex)
 								
 								a(href="https://github.com/bitcoin/bips/blob/master/bip-0141.mediawiki#commitment-structure", data-bs-toggle="tooltip", title="Read about the SegWit Commitment", target="_blank")
 									+darkBadge("SegWit")
-										i.fas.fa-flag.fa-sm.ms-1
 										i.fas.fa-external-link-alt.fa-sm.ms-1
 
 							.my-2.d-none.d-md-block
@@ -273,7 +277,7 @@ mixin outputValueDisplay(vout, voutIndex)
 								span.small.xs-only.d-inline.d-sm-none
 									+primaryBadge("OP_RETURN")
 
-								.xs-sm.d-inline-block.d-md-none.small.border.rounded-1.px-1.card-highlight.ms-3.mt-1
+								.xs-sm.d-inline-block.d-md-none.small.border.rounded-1.px-1.card-highlight.mt-1
 									- var asm = vout.scriptPubKey.asm.substring("OP_RETURN ".length);
 									span.text-tiny.fw-light #{utils.formatHex(asm, "utf8")}
 							
@@ -284,7 +288,7 @@ mixin outputValueDisplay(vout, voutIndex)
 							
 
 					span.ms-2.float-end
-						+outputValueDisplay(vout, voutIndex)
+						+outputValueDisplay(tx, vout, voutIndex)
 
 					if (vout && vout.scriptPubKey.asm && !vout.scriptPubKey.asm.startsWith("OP_RETURN "))
 						if (voutAddresses.length == 0)

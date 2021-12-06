@@ -4,41 +4,41 @@
 			tr
 				//th
 
-				th.text-end Height
+				th.text-end.text-card-highlight.fw-normal.text-uppercase Height
 
 				//if (!hideTimestampColumn)
-				th.text-end.d-none.d-md-table-cell
+				th.text-end.text-card-highlight.fw-normal.text-uppercase.d-none.d-md-table-cell
 					span.border-dotted(title="Timestamp of the block.", data-bs-toggle="tooltip") Time
 
-				th.text-end Age
+				th.text-end.text-card-highlight.fw-normal.text-uppercase Age
 				
-				th.text-end.d-none.d-sm-table-cell
+				th.text-end.text-card-highlight.fw-normal.text-uppercase.d-none.d-sm-table-cell
 					span.border-dotted(title="<b>Time To Mine</b><br/>The time it took to mine this block after the previous block. <span class='text-success'>Fast</span> blocks (< 5min) and <span class='text-danger'>Slow</span> blocks (> 15min) are highlighted.", data-bs-toggle="tooltip", data-bs-html="true") TTM
-				th.text-start Miner
-				th.text-end
+				th.text-start.text-card-highlight.fw-normal.text-uppercase Miner
+				th.text-end.text-card-highlight.fw-normal.text-uppercase
 					span.border-dotted(title="The number of transactions included in each block.", data-bs-toggle="tooltip") N(tx)
 
 				if (blockstatsByHeight)
-					th.text-end.d-none.d-lg-table-cell
+					th.text-end.text-card-highlight.fw-normal.text-uppercase.d-none.d-lg-table-cell
 						span.border-dotted(title="The total output of all transactions in each block.", data-bs-toggle="tooltip") Volume
 
 				if (blockstatsByHeight)
-					th.text-end.d-none.d-md-table-cell
+					th.text-end.text-card-highlight.fw-normal.text-uppercase.d-none.d-md-table-cell
 						span.border-dotted(title="The min/avg/max fee rates (sat/vB) for transactions in this block.", data-bs-toggle="tooltip") Fee Rates
 				else
-					th.text-end
+					th.text-end.text-card-highlight.fw-normal.text-uppercase
 						span.border-dotted(title="The average fee (sat/vB) for all block transactions.", data-bs-toggle="tooltip") Avg Fee
 
 
-				th.text-end.d-none.d-lg-table-cell Σ Fees
+				th.text-end.text-card-highlight.fw-normal.text-uppercase.d-none.d-lg-table-cell Σ Fees
 				
 				//th.text-end Size (kB)
 
 				if (blocks && blocks.length > 0 && blocks[0].weight)
-					th.text-end.d-none.d-lg-table-cell % Full
+					th.text-end.text-card-highlight.fw-normal.text-uppercase.d-none.d-lg-table-cell % Full
 
 				else
-					th.text-end.d-none.d-lg-table-cell Size
+					th.text-end.text-card-highlight.fw-normal.text-uppercase.d-none.d-lg-table-cell Size
 						small  (kB)
 		tbody
 

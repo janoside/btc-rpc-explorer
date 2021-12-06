@@ -61,8 +61,9 @@ block content
 		div.tab-content
 			+pageTab("Details", true)
 
-				#alert-included-next-block.alert.alert-info(style="display: none;")
-					h6 Confirmation Predicted in Next Block
+				#alert-included-next-block.alert.alert-primary(style="display: none;")
+					h6 Confirmation: Predicted in Next Block
+						i.fas.fa-check.text-success.ms-1
 					.mb-2 This transaction is currently unconfirmed but, with the current mempool, it's predicted to be confirmed in the next block.
 					span It's currently transaction #<span id='next-block-index'></span> of <span id='next-block-count'></span>.
 
@@ -187,13 +188,26 @@ block content
 						- var blockRewardMax = coinConfig.blockRewardFunction(result.getblock.height, activeBlockchain);
 						- var valueDestroyed = (isCoinbaseTx && parseFloat(totalOutputValue) < parseFloat(blockRewardMax));
 
-					+summaryRow(3 + (tx.weight ? 1 : 0) + (valueDestroyed ? 1 : 0) + (tx.locktime > 0 ? 1 : 0) + (parseInt(daysDestroyed) > 0 ? 1 : 0))
+					- var showLocktime = false;
+					if (tx.locktime > 500000000 && result.getrawtransaction.locktime > (new Date().getTime() / 1000))
+						// future-dated locktime date
+						- showLocktime = true;
+
+					if (tx.locktime > 0 && !isTxConfirmed)
+						// unconfirmed locktime block height
+						- showLocktime = true;
+
+					+summaryRow(3 + (tx.weight ? 1 : 0) + (valueDestroyed ? 1 : 0) + (showLocktime ? 1 : 0) + (parseInt(daysDestroyed) > 0 ? 1 : 0))
 						+summaryItem("Version")
 							| #{result.getrawtransaction.version}
 
-						+summaryItem("Size")
+						+summaryItem("Size", null, "vB")
 							span #{tx.vsize.toLocaleString()}
-							small.ms-1 vB
+
+							if (tx.size != tx.vsize)
+								span.small.text-muted.ms-2 (
+									span.border-dotted(title=`Raw size: ${tx.size} B`, data-bs-toggle="tooltip") #{tx.size.toLocaleString()}
+									| )
 
 						+summaryItem("Raw Data", `The raw transaction consisting of ${result.getrawtransaction.hex.length.toLocaleString()} hexadecimal bytes.`, "hex")
 							| #{utils.ellipsizeMiddle(result.getrawtransaction.hex, 12)}
@@ -209,19 +223,17 @@ block content
 								span.text-danger
 									+valueDisplay(currencyValue)
 
-						if (tx.locktime > 0)
-							+summaryItem("Locktime")
-								if (tx.locktime < 500000000)
-									span.me-1 Spendable:
-									a(href=`./block-height/${result.getrawtransaction.locktime}`) #{result.getrawtransaction.locktime.toLocaleString()}
-									span +
-									a.ms-2(href="https://developer.bitcoin.org/devguide/transactions.html#locktime-and-sequence-number", data-bs-toggle="tooltip", title="Read more about locktime", target="_blank")
-										i.fas.fa-external-link-alt.small
+						if (showLocktime)
+							+summaryItem("Locktime", "A specification of the earliest that a transaction may be mined. If this value is &leq; 500M, the value is interpreted as a block height; otherwise, it is interpreted as a unix timestamp.")
+								if (tx.locktime < 500000000 && !isTxConfirmed)
+									span.me-1 
+									a.border-dotted(href=`./block-height/${result.getrawtransaction.locktime}`, title=`May be mined at this block height, or later`, data-bs-toggle="tooltip") #{result.getrawtransaction.locktime.toLocaleString()}
+
 								else
-									span Spendable: #{moment.utc(new Date(result.getrawtransaction.locktime * 1000)).format("Y-MM-DD HH:mm:ss")}
-										small.ms-1 utc
-									a.ms-2(href="https://developer.bitcoin.org/devguide/transactions.html#locktime-and-sequence-number", data-bs-toggle="tooltip", title="Read more about locktime", target="_blank")
-										i.fas.fa-external-link-alt.fs-6
+									+timestamp(result.getrawtransaction.locktime)
+									if (result.getrawtransaction.locktime > (new Date().getTime() / 1000))
+										span.border-dotted.ms-1(title=`This future-dated 'locktime' value is only possible because this is a coinbase transaction. Normally, locktime specifies the earliest that a transaction may be mined (included in a block). But, because this transaction was created by the miner in the process of mining a block, it is able to bypass some of the normal validity checks that nodes on the network perform on transactions.`, data-bs-toggle="tooltip")
+											i.fas.fa-flag.fa-sm.text-warning
 
 						if (parseInt(daysDestroyed) > 0)
 							- var daysDestroyedDesc = `The sum of all input values multiplied by the number of days that input's UTXO existed before being spent. Large values can sometimes be interesting, indicating the spending of long-dormant coins. A 1 ${coinConfig.ticker} UTXO spent after 7 days dormant results in 7 days destroyed, as does a 7 ${coinConfig.ticker} UTXO spent after 1 day dormant.`;
@@ -279,7 +291,7 @@ block content
 						thead
 							tr
 								th(style="width: 50px;")
-								th Input
+								th.text-card-highlight.text-uppercase.fw-normal Input
 						tbody
 							each vin, vinIndex in result.getrawtransaction.vin
 								tr
@@ -309,6 +321,7 @@ block content
 												+darkBadge("witness")
 
 											each witnessItem, witnessIndex in vin.txinwitness
+												div(class=(witnessIndex > 0 ? "mt-2" : false))
 												+hexDataDisplay(witnessItem)
 												//.d-inline-block.small.border.rounded-1.p-1.px-2.card-highlight.word-wrap(class=(witnessIndex < (vin.txinwitness.length - 1) ? "mb-2" : false)) #{witnessItem}
 
@@ -320,7 +333,7 @@ block content
 						thead
 							tr
 								th(style="width: 50px;")
-								th Script Pub Key
+								th.text-card-highlight.text-uppercase.fw-normal Script Pub Key
 						tbody
 							each vout, voutIndex in result.getrawtransaction.vout
 								tr

@@ -79,13 +79,13 @@ block content
 				pre
 					code.json #{JSON.stringify(nextBlockFeeRateGroups, null, 4)}
 
-			.d-flex.flex-row
+			.d-flex.justify-content-between
 				div
 					- var desc = "Prediction for the next block, based on the output of the getblocktemplate command";
 					+sectionTitle("Predicted Next Block", false, null, null, null, desc)
 
 				div
-					a.ms-2(href="./mining-template") See details
+					a.small.ms-2(href="./mining-template") Next block details &raquo;
 			
 			#index-next-block
 				+contentSection
@@ -121,21 +121,18 @@ block content
 
 
 		if (latestBlocks)
-			+contentSection("Latest Blocks")
+			.d-flex.justify-content-between
+				div
+					+sectionTitle("Latest Blocks")
+
+				div
+					a.small.ms-2(href="./blocks") Browse blocks &raquo;
+
+			+contentSection
 				- var blocks = latestBlocks;
 				- var blockOffset = 0;
 
 				include includes/blocks-list.pug
-
-				if (blocks.length % 2 == 1)
-					hr
-				else
-					.mb-2
-
-				.text-center.pt-1
-					a.btn.btn-primary.btn-sm(href="./blocks")
-						i.fas.fa-cubes.me-2
-						| Browse Blocks &raquo;
 							
 
 		+contentSection("Tools")

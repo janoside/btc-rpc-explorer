@@ -27,6 +27,7 @@
 	* BTCEXP_UI_TIMEZONE (utc,local)
 	* BTCEXP_UI_HIDE_INFO_PANELS (true,false)
 * Support for displaying timestamps in local timezone (by using browser default, or setting a manual offset)
+* Cleanup treatment of `locktime` on transaction details pages
 * Unique favicon color based on the active network (mainnet=orange, testnet=green, signet=magenta, regtest=gray)
 * Lots of minor styling improvements
 * Error handling improvements

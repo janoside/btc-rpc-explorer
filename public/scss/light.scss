@@ -19,9 +19,12 @@ $alert-border-scale: -60%;
 
 
 
+$table-striped-bg: rgba(0, 0, 0, 0.04);
 
 
 @import "./main";
+
+
 
 
 
@@ -47,6 +50,18 @@ $alert-border-scale: -60%;
 
 .bg-gradient-body-to-main {
 	background: linear-gradient(0deg, $main-bg 0%, $body-bg 100%);
+}
+
+.bg-card-highlight-badge {
+	background-color: darken($card-bg, 10%) !important;
+}
+
+.bg-tx-separator {
+	background-color: #dce1e5;
+}
+
+.border-card-highlight-badge {
+	border-color: darken($card-bg, 16%) !important;
 }
 
 .text-card-highlight {

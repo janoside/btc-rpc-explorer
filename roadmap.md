@@ -9,6 +9,7 @@
 * Holidays
 	* Genesis Day
 	* Pizza Day
+	* https://twitter.com/nvk/status/1463857031551541260
 * Countdown to halving
 * Countdown to difficulty change
 * Historical mining config:

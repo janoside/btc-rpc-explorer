@@ -60,3 +60,4 @@ typings/
 # cache dir
 cache/
 
+*.css.map

@@ -34,8 +34,8 @@ block content
 							thead
 								tr
 									th
-									th Version
-									th.text-end Count
+									th.text-card-highlight.text-uppercase.fw-light Version
+									th.text-end.text-card-highlight.text-uppercase.fw-light Count
 							tbody
 								each item, index in peerSummary.versionSummary
 									tr(class=(index >= 5 ? "versions-hidden-rows" : false))
@@ -50,8 +50,8 @@ block content
 							thead
 								tr
 									th
-									th Services
-									th.text-end Count
+									th.text-card-highlight.text-uppercase.fw-light Services
+									th.text-end.text-card-highlight.text-uppercase.fw-light Count
 							tbody
 								each item, index in peerSummary.servicesSummary
 									tr(class=(index >= 5 ? "services-hidden-rows" : false))
@@ -73,8 +73,8 @@ block content
 								thead
 									tr
 										th
-										th Network Type
-										th.text-end Count
+										th.text-card-highlight.text-uppercase.fw-light Network Type
+										th.text-end.text-card-highlight.text-uppercase.fw-light Count
 								tbody
 									each item, index in peerSummary.networkTypeSummary
 										tr
@@ -90,8 +90,8 @@ block content
 								thead
 									tr
 										th
-										th Connection Type
-										th.text-end Count
+										th.text-card-highlight.text-uppercase.fw-light Connection Type
+										th.text-end.text-card-highlight.text-uppercase.fw-light Count
 								tbody
 									each item, index in peerSummary.connectionTypeSummary
 										tr
@@ -106,15 +106,15 @@ block content
 					thead
 						tr
 							th
-							th Version
-							th Address
-							th Services
-							th Conn. Type
+							th.text-card-highlight.text-uppercase.fw-light Version
+							th.text-card-highlight.text-uppercase.fw-light Address
+							th.text-card-highlight.text-uppercase.fw-light Services
+							th.text-card-highlight.text-uppercase.fw-light Conn. Type
 
 							if (peerIpSummary && peerIpSummary.ips)
-								th Location
+								th.text-card-highlight.text-uppercase.fw-light Location
 
-							th Last Send / Receive
+							th.text-card-highlight.text-uppercase.fw-light Last Send / Receive
 
 					tbody
 						each item, index in peerSummary.getpeerinfo

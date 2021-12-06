@@ -78,24 +78,21 @@ if (exchangeRates)
 				- var hashrate7dayData = utils.formatLargeNumber(hashrate7d, 1);
 
 				span.me-1 #{hashrate7dayData[0]}
-				small.border-dotted.me-2(title=`${hashrate7dayData[1].abbreviation}H = ${hashrate7dayData[1].name}-hash (x10^${hashrate7dayData[1].exponent})` data-bs-toggle='tooltip') #{hashrate7dayData[1].abbreviation}H/s
+				span.small.text-muted.border-dotted.me-2(title=`${hashrate7dayData[1].abbreviation}H = ${hashrate7dayData[1].name}-hash (x10^${hashrate7dayData[1].exponent})` data-bs-toggle='tooltip') #{hashrate7dayData[1].abbreviation}H/s
 
 				if (hashrate30d)
 					- var ratio = hashrate7d / hashrate30d;
-					
+
 					small
 						| (
 						span.border-dotted(title='7d hashrate vs 30d hashrate.' data-bs-toggle='tooltip')
-							if (new Decimal(ratio).toDP(1) == "1")
-								span.text-muted +0%
-
-							else if (ratio > 1)
+							if (ratio > 1)
 								- var ratioPercent = new Decimal(ratio).times(100).minus(100);
-								span.text-success +#{ratioPercent.toDP(1)}%
+								span.text-success +#{ratioPercent.toDP(2)}%
 
 							else
 								- var ratioPercent = new Decimal(100).minus(new Decimal(ratio).times(100));
-								span.text-danger -#{ratioPercent.toDP(1)}%
+								span.text-danger -#{ratioPercent.toDP(2)}%
 
 						| )
 
@@ -163,13 +160,20 @@ if (exchangeRates)
 			- smartFeeEstimateBlocks.push(144);
 			- smartFeeEstimateStrings.push(smartFeeEstimates[144]);
 
-	+summaryRow((mempoolInfo == undefined ? 0 : 2) + (smartFeeEstimateStrings.length > 0 ? 1 : 0))
+	+summaryRow((mempoolInfo == undefined ? 0 : 1) + (smartFeeEstimateStrings.length > 0 ? 1 : 0))
 		if (mempoolInfo)
-			+summaryItem("Mempool N(Tx)", "The number of unconfirmed transactions in your node's mempool")
-				span(class=(mempoolInfo.size > 11000) ? "text-danger" : (mempoolInfo.size > 7000 ? "text-warning" : "text-success")) #{mempoolInfo.size.toLocaleString()}
+			- var thresholds = [11000, 7000];
+			- var colorClass = (mempoolInfo.size > 11000) ? "text-danger" : (mempoolInfo.size > 7000 ? "text-warning" : "text-success");
 
-			+summaryItem("Mempool N(Block)", "The number of blocks needed to confirm all mempool transactions")
-				| #{new Decimal(mempoolInfo.bytes / coinConfig.maxBlockSize).toDP(1)}
+			+summaryItem("Mempool", "The number of unconfirmed transactions in your node's mempool, and the number of blocks needed to confirm those transactions")
+				span(class=colorClass) #{mempoolInfo.size.toLocaleString()}
+				span.text-tiny.text-muted.ms-1 tx
+
+				span.fw-light.text-muted.mx-2 &ndash;
+
+				span(class=colorClass) #{new Decimal(mempoolInfo.bytes / coinConfig.maxBlockSize).toDP(2)}
+				span.text-tiny.text-muted.ms-1 block
+
 
 		if (false)
 			+summaryItem("Next Block (est.)")

@@ -16,9 +16,6 @@ block content
 	.tab-content
 		+pageTab("Details", true)
 
-			+contentSection("Tools")
-				a.btn.btn-primary(href="./admin/resetUserSettings") Reset User Settings
-
 			+contentSection("Basics")
 				+summaryRow(3)
 					+summaryItem("Uptime")
@@ -30,10 +27,6 @@ block content
 
 					+summaryItem("Node Env")
 						| #{process.env.NODE_ENV || "development"}
-
-			+contentSection("User Settings")
-				pre
-					code.json #{JSON.stringify(userSettings, null, 4)}
 
 			+contentSection("App Config")
 				pre

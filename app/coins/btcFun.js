@@ -431,6 +431,15 @@ module.exports = {
 			alertBodyHtml: "Created LONG before Taproot lock-in, let alone activation, this transaction's #0 output is the first ever P2TR output. It was created by Matthew Zipkin to test sending support for bech32 witness version 1. Interestingly, this output, along with 3 other pre-Activation P2TR outputs, was also SPENT before activation, via special coordination with F2Pool.",
 			referenceUrl: "https://b10c.me/blog/007-spending-p2tr-pre-activation/"
 		},
+		{
+			type: "tx",
+			date: "2021-12-06",
+			chain: "main",
+			txid: "562ff53512901dfdd0fca0d6b6a79444aad5767db716ece7c0a1bd15482b6384",
+			blockHeight: 712928,
+			summary: "Far-future dated Locktime value.",
+			alertBodyHtml: "The 'locktime' value of a transaction usually specifies the earliest time that a transaction may be mined (included in a block). The value can take one of two forms: a block height (if the value is &leq; 500M), or a unix timestamp. The locktime value of this transaction seemingly indicates that the transaction cannot be mined until the year 2076. But, because this is a coinbase transaction (created by a miner in the process of mining a block), its locktime value does not need to honor the usual purpose, and may instead be representing some other data from the miner. This situation arises fairly regularly in coinbase transactions."
+		},
 
 
 
