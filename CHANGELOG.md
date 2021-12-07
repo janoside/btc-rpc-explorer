@@ -1,5 +1,5 @@
 ##### v3.3.0
-##### Unreleased
+###### 2021-12-07
 
 * New tool for viewing the UTXO Set: [/utxo-set](./utxo-set)
 * New API actions:
