@@ -428,7 +428,7 @@ module.exports = {
 			txid: "b53e3bc5edbb41b34a963ecf67eb045266cf841cab73a780940ce6845377f141",
 			blockHeight: 608548,
 			summary: "The (real) first mainnet Pay-to-Taproot output.",
-			alertBodyHtml: "Created LONG before Taproot lock-in, let alone activation, this transaction's #0 output is the first ever P2TR output. It was created by Matthew Zipkin to test sending support for bech32 witness version 1. Interestingly, this output, along with 3 other pre-Activation P2TR outputs, was also SPENT before activation, via special coordination with F2Pool.",
+			alertBodyHtml: "Created LONG before Taproot lock-in, let alone activation, this transaction's #0 output is the first ever P2TR output. It was created by Matthew Zipkin to test sending support for bech32 witness version 1. Interestingly, this output, along with 3 other pre-Activation P2TR outputs, was also SPENT before activation in <a href='./tx/b10c007c60e14f9d087e0291d4d0c7869697c6681d979c6639dbd960792b4d41'>Transaction b10c007...</a>, which required special coordination with F2Pool.",
 			referenceUrl: "https://b10c.me/blog/007-spending-p2tr-pre-activation/"
 		},
 		{
