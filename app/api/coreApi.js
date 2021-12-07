@@ -857,21 +857,14 @@ function getSummarizedTransactionOutput(txid, voutIndex) {
 	return tryCacheThenRpcApi(txCache, `txoSummary-${txid}-${voutIndex}`, FIFTEEN_MIN, rpcApiFunction, function() { return true; });
 }
 
-function getTxUtxos(tx) {
-	return new Promise(function(resolve, reject) {
-		var promises = [];
+async function getTxUtxos(tx) {
+	const promises = [];
 
-		for (var i = 0; i < tx.vout.length; i++) {
-			promises.push(getUtxo(tx.txid, i));
-		}
+	for (let i = 0; i < tx.vout.length; i++) {
+		promises.push(getUtxo(tx.txid, i));
+	}
 
-		Promise.all(promises).then(function(results) {
-			resolve(results);
-
-		}).catch(function(err) {
-			reject(err);
-		});
-	});
+	return Promise.all(promises);
 }
 
 function getUtxo(txid, outputIndex) {
