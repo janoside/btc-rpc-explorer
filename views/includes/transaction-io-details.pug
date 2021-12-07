@@ -341,7 +341,7 @@ mixin outputValueDisplay(tx, vout, voutIndex)
 
 		if (hiddenRowCount > 0)
 			a.small(href="javascript:void(0)", onclick=("showAllTxOutputs(this, '" + tx.txid + "');")) 
-				i.far.fa-plus-square.text-muted.me-1
+				i.far.fa-plus-square.text-card-highlight.me-1
 				| Show remaining #{hiddenRowCount.toLocaleString()} outputs
 
 		if (nonZeroVoutValueCount > 1)
