@@ -200,6 +200,7 @@ html(lang="en")
 									hr.dropdown-divider.mt-2.mb-2
 
 									a.dropdown-item(href=`./user-settings`) More settings...
+									a.dropdown-item(href=`./admin/dashboard`) Admin Dashboard
 
 
 							
@@ -248,37 +249,6 @@ html(lang="en")
 
 		footer.footer.border-top.border-primary.bg-header-footer.pt-3.pb-1.px-3.text-white(style="border-width: 5px !important;")
 			.container
-				.row.mb-5
-					.col-7
-						.text-start
-							.btn-group.dropup.me-2
-								button.btn.dropdown-toggle.bg-header-footer-highlight.text-white(type="button" data-bs-toggle="dropdown" aria-expanded="false")
-									i.fas.fa-shield-alt.me-1
-
-								ul.dropdown-menu.shadow(aria-label="Admin Tools Items")
-									span.dropdown-header Admin Tools
-
-									a.dropdown-item(href="./admin/dashboard") Dashboard
-									a.dropdown-item(href="./admin/app-stats") App Stats
-									a.dropdown-item(href="./admin/os-stats") OS Stats
-									a.dropdown-item(href="./admin/perf-log") Performance Log
-							
-								
-					.col-5
-						.text-end
-							span(style="font-size: 1.5rem;")
-								if (global.sourcecodeProjectMetadata)
-									a.text-white.mb-1.me-3(href="https://github.com/janoside/btc-rpc-explorer", title="View source code on Github", data-bs-toggle="tooltip")
-										i.fab.fa-github
-
-								a.text-danger.mb-1.me-3(href="https://donate.bitcoinexplorer.org", target="_blank", title="Support this project with a donation", data-bs-toggle="tooltip")
-									i.fas.fa-heart.text-danger
-
-								a.text-white.mb-1(href="https://twitter.com/BitcoinExplorer", target="_blank", title="Follow @BitcoinExplorer on Twitter", data-bs-toggle="tooltip")
-									i.fab.fa-twitter.text-twitter
-
-
-				
 				if (!crawlerBot)
 					.mb-4
 						iframe(id="quoteIframe", src="./snippet/quote/random", onload="iframeLoaded('quoteIframe');", scrolling="no", height="0", style="width: 100%;")
@@ -287,7 +257,7 @@ html(lang="en")
 
 				
 				.row.mt-4.mb-6
-					.col-lg-4
+					.col-lg-3
 						.mb-4
 							h6 Project
 
@@ -304,7 +274,7 @@ html(lang="en")
 											i.fas.fa-code-branch.fontawesome-shadow.me-2
 											span.badge.bg-white.text-dark #{global.sourcecodeProjectMetadata.forks_count}
 
-					.col-lg-4
+					.col-lg-3
 						.mb-4
 							h6 App Details
 
@@ -321,7 +291,7 @@ html(lang="en")
 									a.footer-link(href="./changelog") changelog
 									span )
 
-					.col-lg-4
+					.col-lg-3
 						if (config.demoSite)
 							.mb-4
 								h6 Public Demos
@@ -344,6 +314,22 @@ html(lang="en")
 										each demoSite in demoSites
 											a.me-2(href=coinConfig.demoSiteUrlsByNetwork[demoSite], title=coinConfig.siteTitlesByNetwork[demoSite], data-bs-toggle="tooltip")
 												img(src=coinConfig.logoUrlsByNetwork[demoSite], alt=coinConfig.siteTitlesByNetwork[demoSite], style="width: 40px; height: 40px;")
+
+					.col-lg-3
+						.mb-4
+							h6 Links
+
+							.ms-2
+								span(style="font-size: 1.5rem;")
+									if (global.sourcecodeProjectMetadata)
+										a.text-white.mb-1.me-3(href="https://github.com/janoside/btc-rpc-explorer", title="View source code on Github", data-bs-toggle="tooltip")
+											i.fab.fa-github
+
+									a.text-danger.mb-1.me-3(href="https://donate.bitcoinexplorer.org", target="_blank", title="Support this project with a donation", data-bs-toggle="tooltip")
+										i.fas.fa-heart.text-danger
+
+									a.text-white.mb-1(href="https://twitter.com/BitcoinExplorer", target="_blank", title="Follow @BitcoinExplorer on Twitter", data-bs-toggle="tooltip")
+										i.fab.fa-twitter.text-twitter
 								
 								
 
