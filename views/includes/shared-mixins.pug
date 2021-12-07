@@ -432,28 +432,30 @@ mixin hexDataDisplay(hex, order="utf8,ascii,hex")
 	- var items = order.split(",");
 	- var uniqueId = utils.getRandomString(12, "aA");
 
-	.d-inline-block.small.border.rounded-1.p-1.px-2.card-highlight.word-wrap
-		+cardHighlightBadge(items[0])
-		span.small #{utils.formatHex(hex, items[0])}
-			if (items[0] == "hex")
-				.d-none.d-md-inline
-					+copyTextButton(hex)
+	.d-flex.flex-row
+		.d-inline-block.small.border.rounded-1.p-1.px-2.card-highlight.word-wrap
+			+cardHighlightBadge(items[0])
+			span.small #{utils.formatHex(hex, items[0])}
+				if (items[0] == "hex")
+					.d-none.d-md-inline
+						+copyTextButton(hex)
 
-		div(id=`hex-display-expanded-${uniqueId}`, style="display: none;")
-			each item, itemIndex in items
-				if (itemIndex > 0)
-					if (itemIndex > 1)
-						br
-					
-					+cardHighlightBadge(item)
-					span.small #{utils.formatHex(hex, item)}
-						if (item == "hex")
-							.d-inline.d-md-inline
-								+copyTextButton(hex)
+			div(id=`hex-display-expanded-${uniqueId}`, style="display: none;")
+				each item, itemIndex in items
+					if (itemIndex > 0)
+						if (itemIndex > 1)
+							br
+						
+						+cardHighlightBadge(item)
+						span.small #{utils.formatHex(hex, item)}
+							if (item == "hex")
+								.d-inline.d-md-inline
+									+copyTextButton(hex)
 		
 
-	a.text-muted.ms-2(href="javascript:void(0)", onclick=`$('#hex-display-expanded-${uniqueId}').toggle(); $(this).find(".toggle-plus-minus").toggleClass("fa-plus-square"); $(this).find(".toggle-plus-minus").toggleClass("fa-minus-square"); return false;`, title="Toggle More Encodings")
-		i.toggle-plus-minus.far.fa-plus-square.text-card-highlight
+		div
+			a.text-muted.ms-2(href="javascript:void(0)", onclick=`$('#hex-display-expanded-${uniqueId}').toggle(); $(this).find(".toggle-plus-minus").toggleClass("fa-plus-square"); $(this).find(".toggle-plus-minus").toggleClass("fa-minus-square"); return false;`, title="Toggle More Encodings")
+				i.toggle-plus-minus.far.fa-plus-square.text-card-highlight
 
 	
 
