@@ -4,9 +4,11 @@ This changelog specifically tracks changes to the Public API available at `/api`
 ###### Unreleased
 
 * Added: /api/blockchain/utxo-set
+* Added: /api/address/:address
 * Added: /api/mining/next-block
 * Added: /api/mining/next-block/txids
 * Added: /api/mining/next-block/includes/:txid
+* Added: /api/mining/miner-summary
 
 
 
