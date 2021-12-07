@@ -435,10 +435,12 @@ mixin hexDataDisplay(hex, order="utf8,ascii,hex")
 	.d-flex.flex-row
 		.d-inline-block.small.border.rounded-1.p-1.px-2.card-highlight.word-wrap
 			+cardHighlightBadge(items[0])
-			span.small #{utils.formatHex(hex, items[0])}
-				if (items[0] == "hex")
-					.d-none.d-md-inline
-						+copyTextButton(hex)
+			span.text-tiny.d-inline.d-sm-none #{utils.formatHex(hex, items[0])}
+			span.small.d-none.d-sm-inline #{utils.formatHex(hex, items[0])}
+			
+			if (items[0] == "hex")
+				.d-none.d-md-inline
+					+copyTextButton(hex)
 
 			div(id=`hex-display-expanded-${uniqueId}`, style="display: none;")
 				each item, itemIndex in items
@@ -447,10 +449,13 @@ mixin hexDataDisplay(hex, order="utf8,ascii,hex")
 							br
 						
 						+cardHighlightBadge(item)
-						span.small #{utils.formatHex(hex, item)}
-							if (item == "hex")
-								.d-inline.d-md-inline
-									+copyTextButton(hex)
+						
+						span.text-tiny.d-inline.d-sm-none #{utils.formatHex(hex, item)}
+						span.small.d-none.d-sm-inline #{utils.formatHex(hex, item)}
+						
+						if (item == "hex")
+							.d-inline.d-md-inline
+								+copyTextButton(hex)
 		
 
 		div

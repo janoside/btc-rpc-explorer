@@ -79,7 +79,7 @@ mixin outputValueDisplay(tx, vout, voutIndex)
 						if (vout && vout.coinbaseSpend)
 							span.d-none.d-sm-inline
 								+successBadge
-									span(title=`This input spends a coinbase output (mining reward), meaning that this represents the first time these coins have been spent.`, data-bs-toggle="tooltip") 1st spend
+									span(title=`This input spends a coinbase output (mining reward), meaning that this represents the first time these coins have been spent.`, data-bs-toggle="tooltip") 1<sup>st</sup> spend
 
 						span.ms-1.float-end
 							+inputValueDisplay(tx, txVin, vout)
@@ -89,12 +89,8 @@ mixin outputValueDisplay(tx, vout, voutIndex)
 							+successBadge
 								span(title="Coinbase transactions are special transactions created by the miner of a block. They distribute the block reward (subsidy) as the miner chooses, along with all of the fees paid by transactions included in the block.", data-bs-toggle="tooltip") coinbase
 							
-							.mt-2.d-none.d-sm-block
+							.mt-2
 								+hexDataDisplay(txVin.coinbase)
-
-							// xs only
-							.d-inline-block.d-sm-none.small.border.rounded-1.px-1.card-highlight.mt-1
-								span.text-tiny.fw-light #{utils.formatHex(txVin.coinbase, "utf8")}
 
 
 						else
@@ -235,7 +231,7 @@ mixin outputValueDisplay(tx, vout, voutIndex)
 				- hiddenRowCount++;
 
 			div(data-txid=tx.txid, class=(hiddenRow ? "d-none" : ""))
-				.clearfix.mb-0.mb-sm-2.mb-md-0
+				.clearfix.mb-0.mb-sm-2.mb-md-3
 					a.xs-hidden.d-none.d-sm-inline.badge.card-highlight.border.text-decoration-none.fw-normal.me-2(data-bs-toggle="tooltip", title=`Output #${voutIndex.toLocaleString()}`, style="white-space: nowrap;")
 						i.d-inline.fas.fa-arrow-right.text-success
 						
@@ -246,21 +242,22 @@ mixin outputValueDisplay(tx, vout, voutIndex)
 
 					if (vout && vout.scriptPubKey)
 						if (vout.scriptPubKey.hex && vout.scriptPubKey.hex.startsWith('6a24aa21a9ed'))
-							span.d-none.d-sm-inline
+							span
 								+primaryBadge("OP_RETURN")
 								
 								a(href="https://github.com/bitcoin/bips/blob/master/bip-0141.mediawiki#commitment-structure", data-bs-toggle="tooltip", title="Read about the SegWit Commitment", target="_blank")
-									+darkBadge("SegWit")
+									+darkBadge
+										span.small SegWit
 										i.fas.fa-external-link-alt.fa-sm.ms-1
 
-							.my-2.d-none.d-md-block
+							.my-2
 								+hexDataDisplay(vout.scriptPubKey.asm.substring("OP_RETURN ".length))
 
 						else if (vout.scriptPubKey.asm && vout.scriptPubKey.asm.startsWith('OP_RETURN '))
-							span.d-none.d-sm-inline
+							span
 								+primaryBadge("OP_RETURN")
 
-							.my-2.d-none.d-md-block
+							.my-2
 								+hexDataDisplay(vout.scriptPubKey.asm.substring("OP_RETURN ".length))
 						
 						else if (vout.scriptPubKey.type)
@@ -274,12 +271,13 @@ mixin outputValueDisplay(tx, vout, voutIndex)
 							// xs display only, output type when we have no address (e.g. op_return)
 
 							if (vout.scriptPubKey.asm && vout.scriptPubKey.asm.startsWith('OP_RETURN '))
-								span.small.xs-only.d-inline.d-sm-none
-									+primaryBadge("OP_RETURN")
+								if (false)
+									span.small.xs-only.d-inline.d-sm-none
+										+primaryBadge("OP_RETURN")
 
-								.xs-sm.d-inline-block.d-md-none.small.border.rounded-1.px-1.card-highlight.mt-1
-									- var asm = vout.scriptPubKey.asm.substring("OP_RETURN ".length);
-									span.text-tiny.fw-light #{utils.formatHex(asm, "utf8")}
+									.xs-sm.d-inline-block.d-md-none.small.border.rounded-1.px-1.card-highlight.mt-1
+										- var asm = vout.scriptPubKey.asm.substring("OP_RETURN ".length);
+										span.text-tiny.fw-light #{utils.formatHex(asm, "utf8")}
 							
 							else if (vout.scriptPubKey.type)
 								span.small.xs-only.d-inline.d-sm-none
@@ -292,8 +290,8 @@ mixin outputValueDisplay(tx, vout, voutIndex)
 
 					if (vout && vout.scriptPubKey.asm && !vout.scriptPubKey.asm.startsWith("OP_RETURN "))
 						if (voutAddresses.length == 0)
-							.my-2.d-none.d-sm-block
-								+hexDataDisplay(vout.scriptPubKey.asm)
+							.my-2
+								+hexDataDisplay(vout.scriptPubKey.hex)
 
 
 					if (voutAddresses.length > 0)
@@ -339,7 +337,7 @@ mixin outputValueDisplay(tx, vout, voutIndex)
 					hr.d-none.d-md-block
 
 				else
-					.mb-3
+					.mb-0
 
 		if (hiddenRowCount > 0)
 			a.small(href="javascript:void(0)", onclick=("showAllTxOutputs(this, '" + tx.txid + "');")) 
