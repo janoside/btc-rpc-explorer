@@ -249,9 +249,22 @@ block content
 					.clearfix
 						.float-start #{inputsOutputsSectionTitle}
 						.float-end
-							.d-inline.d-sm-none
-								a(href="javascript:void(0)", onclick=`$(this).find(".toggle-icon").toggleClass("fa-plus-square").toggleClass("fa-minus-square"); $(".tx-input-address-${tx.txid}").toggle();`)
-									i.toggle-icon.far.fa-plus-square.text-muted.text-end.fa-lg
+							- var hasInputAddresses = false;
+							- var txInputs = result.txInputs;
+							if (tx && tx.vin && txInputs)
+								each txVin, txVinIndex in tx.vin
+									if (!txVin.coinbase)
+										- var vout = null;
+										if (txInputs[txVinIndex])
+											- var voutAddresses = utils.getVoutAddresses(txInputs[txVinIndex]);
+
+											if (voutAddresses.length > 0)
+												- hasInputAddresses = true;
+
+							if (hasInputAddresses)
+								.d-inline.d-sm-none
+									a(href="javascript:void(0)", onclick=`$(this).find(".toggle-icon").toggleClass("fa-plus-square").toggleClass("fa-minus-square"); $(".tx-input-address-${tx.txid}").toggle();`)
+										i.toggle-icon.far.fa-plus-square.text-muted.text-end.fa-lg
 
 				+contentSection
 					- var tx = result.getrawtransaction;
