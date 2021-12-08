@@ -6,18 +6,9 @@ block headContent
 block content
 	
 
-	.mb-3
-		.clearfix
-			.float-start
-				if (result.getblock)
-					a.btn.btn-sm.btn-primary.ms-2(href=`./block/${result.getblock.hash}`) &laquo; Block Details
-
-			.float-end
-
-	hr
-
-
-	+pageTitle("Block Analysis", result.getblock.hash, true)
+	+pageTitle(`Block Analysis`, result.getblock.hash, true)
+		if (result.getblock)
+			a.btn.btn-sm.btn-primary.ms-2(href=`./block/${result.getblock.hash}`) &laquo; Back to Block
 
 
 	if (block && (!block.tx || block.tx.length == 0) && global.prunedBlockchain)
