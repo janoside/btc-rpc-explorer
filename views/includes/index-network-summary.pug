@@ -170,15 +170,17 @@ if (exchangeRates)
 	+summaryRow((mempoolInfo == undefined ? 0 : 1) + (smartFeeEstimateStrings.length > 0 ? 1 : 0))
 		if (mempoolInfo)
 			- var thresholds = [11000, 7000];
-			- var colorClass = (mempoolInfo.size > 11000) ? "text-danger" : (mempoolInfo.size > 7000 ? "text-warning" : "text-success");
-
+			- var colorClass_txCount = (mempoolInfo.size > 11000) ? "text-danger" : (mempoolInfo.size > 7000 ? "text-warning" : "text-success");
+			- var blockCount = new Decimal(mempoolInfo.bytes).dividedBy(coinConfig.maxBlockSize);
+			- var colorClass_blockCount = (blockCount > 20) ? "text-danger" : (blockCount > 10 ? "text-warning" : "text-success");
+			
 			+summaryItem("Mempool", "The number of unconfirmed transactions in your node's mempool, and the number of blocks needed to confirm those transactions")
-				span(class=colorClass) #{mempoolInfo.size.toLocaleString()}
+				span(class=colorClass_txCount) #{mempoolInfo.size.toLocaleString()}
 				span.text-tiny.text-muted.ms-1 tx
 
 				span.fw-light.text-muted.mx-2 &ndash;
 
-				span(class=colorClass) #{new Decimal(mempoolInfo.bytes / coinConfig.maxBlockSize).toDP(2)}
+				span(class=colorClass_blockCount) #{blockCount.toDP(2)}
 				span.text-tiny.text-muted.ms-1 blocks
 
 

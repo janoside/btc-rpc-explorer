@@ -206,7 +206,7 @@ block content
 
 							if (tx.size != tx.vsize)
 								span.small.text-muted.ms-2 (
-									span.border-dotted(title=`Raw size: ${tx.size} B`, data-bs-toggle="tooltip") #{tx.size.toLocaleString()}
+									span.border-dotted(title=`Raw size: ${tx.size.toLocaleString()} B`, data-bs-toggle="tooltip") #{tx.size.toLocaleString()}
 									| )
 
 						+summaryItem("Raw Data", `The raw transaction consisting of ${result.getrawtransaction.hex.length.toLocaleString()} hexadecimal bytes.`, "hex")

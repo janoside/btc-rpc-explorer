@@ -218,7 +218,7 @@ mixin txList(visibleTxs, txCount, limit, offset, inputsByTxid, options={})
 
 									else
 										span(title=`Unconfirmed`, data-bs-toggle="tooltip")
-											i.fas.fa-lock.fa-sm.me-1
+											i.fas.fa-unlock.fa-sm.text-danger.me-1
 											span.fw-light.text-danger 0
 
 							if (options.showDates && tx.time)
