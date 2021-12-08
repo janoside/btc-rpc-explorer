@@ -1545,7 +1545,7 @@ function buildMempoolSummary(statusId, ageBuckets, sizeBuckets, statusFunc) {
 				}
 			});
 
-			maxSize = 2000;
+			//maxSize = 2000;
 
 			const feeBucketMaxCount = 250;
 			const feeSatoshiBuckets = [];
