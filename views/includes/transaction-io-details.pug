@@ -1,16 +1,5 @@
 - var totalIOValues = utils.getTxTotalInputOutputValues(tx, txInputs, blockHeight);
 
-mixin asciiHexDataDisplay(dataName, uniqueId, hex)
-	div
-		.d-inline-block.small.border.rounded-1.p-1.px-2.card-highlight.word-wrap
-			span.fw-light(title=`ASCII-encoded ${dataName}`, data-bs-toggle="tooltip") #{utils.hex2ascii(hex)}
-
-		a.text-muted.ms-2(href="javascript:void(0)", onclick=`$('#hex-${uniqueId}').toggle(); $(this).find(".toggle-plus-minus").toggleClass("fa-plus-square"); $(this).find(".toggle-plus-minus").toggleClass("fa-minus-square"); return false;`, title="Toggle Hex Display", data-bs-toggle="tooltip")
-			i.toggle-plus-minus.far.fa-plus-square
-
-	div(id=`hex-${uniqueId}`, style="display: none;")
-		.d-inline-block.small.border.rounded-1.p-1.px-2.mt-2.word-wrap.card-highlight
-			span.fw-light(title=`Hex-encoded ${dataName}`, data-bs-toggle="tooltip") #{hex}
 
 
 mixin inputValueDisplay(tx, txVin, vout)
@@ -32,7 +21,7 @@ mixin inputValueDisplay(tx, txVin, vout)
 				i.fas.fa-backspace.text-danger
 
 
-mixin outputValueDisplay(vout, voutIndex)
+mixin outputValueDisplay(tx, vout, voutIndex)
 	if (vout.value > 0 && vout.scriptPubKey.asm.startsWith('OP_RETURN '))
 		span(title="Burned output - as an OP_RETURN output, this value is provably unspendable." data-bs-toggle="tooltip")
 			i.fas.fa-fire.text-danger.me-2
@@ -48,8 +37,13 @@ mixin outputValueDisplay(vout, voutIndex)
 					i.far.fa-check-circle.fa-sm.text-success.ms-2
 
 			else if (utxos[voutIndex] == null)
-				span(title="This output has been spent (destroyed)." data-bs-toggle="tooltip")
-					i.far.fa-times-circle.fa-sm.text-danger.ms-2
+				if (tx.txid == "4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b")
+					span(title="This output is UNSPENDABLE, and therefore these coins do not exist!" data-bs-toggle="tooltip")
+						i.fas.fa-flag.fa-sm.text-warning.ms-2
+
+				else
+					span(title="This output has been spent (destroyed)." data-bs-toggle="tooltip")
+						i.far.fa-times-circle.fa-sm.text-danger.ms-2
 
 
 .row
@@ -85,7 +79,7 @@ mixin outputValueDisplay(vout, voutIndex)
 						if (vout && vout.coinbaseSpend)
 							span.d-none.d-sm-inline
 								+successBadge
-									span(title=`This input spends a coinbase output (mining reward), meaning that this represents the first time these coins have been spent.`, data-bs-toggle="tooltip") 1st spend
+									span(title=`This input spends a coinbase output (mining reward), meaning that this represents the first time these coins have been spent.`, data-bs-toggle="tooltip") 1<sup>st</sup> spend
 
 						span.ms-1.float-end
 							+inputValueDisplay(tx, txVin, vout)
@@ -95,13 +89,8 @@ mixin outputValueDisplay(vout, voutIndex)
 							+successBadge
 								span(title="Coinbase transactions are special transactions created by the miner of a block. They distribute the block reward (subsidy) as the miner chooses, along with all of the fees paid by transactions included in the block.", data-bs-toggle="tooltip") coinbase
 							
-							.mt-2.d-none.d-sm-block
-								+asciiHexDataDisplay("coinbase data", `coinbase-${tx.txid}`, txVin.coinbase)
-
-							// xs only
-							.d-inline.d-sm-none.small.border.rounded-1.px-1.card-highlight.ms-1
-								- var asm = txVin.coinbase;
-								span.fw-light #{utils.hex2ascii(asm.substring(0, Math.min(asm.length, 10)))}…
+							.mt-2
+								+hexDataDisplay(txVin.coinbase)
 
 
 						else
@@ -242,7 +231,7 @@ mixin outputValueDisplay(vout, voutIndex)
 				- hiddenRowCount++;
 
 			div(data-txid=tx.txid, class=(hiddenRow ? "d-none" : ""))
-				.clearfix.mb-0.mb-sm-2.mb-md-0
+				.clearfix.mb-0.mb-sm-2.mb-md-3
 					a.xs-hidden.d-none.d-sm-inline.badge.card-highlight.border.text-decoration-none.fw-normal.me-2(data-bs-toggle="tooltip", title=`Output #${voutIndex.toLocaleString()}`, style="white-space: nowrap;")
 						i.d-inline.fas.fa-arrow-right.text-success
 						
@@ -253,23 +242,23 @@ mixin outputValueDisplay(vout, voutIndex)
 
 					if (vout && vout.scriptPubKey)
 						if (vout.scriptPubKey.hex && vout.scriptPubKey.hex.startsWith('6a24aa21a9ed'))
-							span.d-none.d-sm-inline
+							span
 								+primaryBadge("OP_RETURN")
 								
 								a(href="https://github.com/bitcoin/bips/blob/master/bip-0141.mediawiki#commitment-structure", data-bs-toggle="tooltip", title="Read about the SegWit Commitment", target="_blank")
-									+darkBadge("SegWit")
-										i.fas.fa-flag.fa-sm.ms-1
+									+darkBadge
+										span.small SegWit
 										i.fas.fa-external-link-alt.fa-sm.ms-1
 
-							.my-2.d-none.d-md-block
-								+asciiHexDataDisplay("OP_RETURN data", `op_return-${tx.txid}-${vout.n}`, vout.scriptPubKey.asm.substring("OP_RETURN ".length))
+							.my-2
+								+hexDataDisplay(vout.scriptPubKey.asm.substring("OP_RETURN ".length))
 
 						else if (vout.scriptPubKey.asm && vout.scriptPubKey.asm.startsWith('OP_RETURN '))
-							span.d-none.d-sm-inline
+							span
 								+primaryBadge("OP_RETURN")
 
-							.my-2.d-none.d-md-block
-								+asciiHexDataDisplay("OP_RETURN data", `op_return-${tx.txid}-${vout.n}`, vout.scriptPubKey.asm.substring("OP_RETURN ".length))
+							.my-2
+								+hexDataDisplay(vout.scriptPubKey.asm.substring("OP_RETURN ".length))
 						
 						else if (vout.scriptPubKey.type)
 							span.d-none.d-sm-inline
@@ -282,12 +271,13 @@ mixin outputValueDisplay(vout, voutIndex)
 							// xs display only, output type when we have no address (e.g. op_return)
 
 							if (vout.scriptPubKey.asm && vout.scriptPubKey.asm.startsWith('OP_RETURN '))
-								span.small.xs-only.d-inline.d-sm-none
-									+primaryBadge("OP_RETURN")
+								if (false)
+									span.small.xs-only.d-inline.d-sm-none
+										+primaryBadge("OP_RETURN")
 
-								.xs-sm.d-inline.d-md-none.small.border.rounded-1.px-1.card-highlight.ms-n1
-									- var asm = vout.scriptPubKey.asm.substring("OP_RETURN ".length);
-									span.fw-light #{utils.hex2ascii(asm.substring(0, Math.min(asm.length, 10)))}…
+									.xs-sm.d-inline-block.d-md-none.small.border.rounded-1.px-1.card-highlight.mt-1
+										- var asm = vout.scriptPubKey.asm.substring("OP_RETURN ".length);
+										span.text-tiny.fw-light #{utils.formatHex(asm, "utf8")}
 							
 							else if (vout.scriptPubKey.type)
 								span.small.xs-only.d-inline.d-sm-none
@@ -296,12 +286,12 @@ mixin outputValueDisplay(vout, voutIndex)
 							
 
 					span.ms-2.float-end
-						+outputValueDisplay(vout, voutIndex)
+						+outputValueDisplay(tx, vout, voutIndex)
 
 					if (vout && vout.scriptPubKey.asm && !vout.scriptPubKey.asm.startsWith("OP_RETURN "))
 						if (voutAddresses.length == 0)
-							.my-2.d-none.d-sm-block
-								+asciiHexDataDisplay("ASM data", `asm-${tx.txid}-${vout.n}`, vout.scriptPubKey.asm)
+							.my-2
+								+hexDataDisplay(vout.scriptPubKey.hex)
 
 
 					if (voutAddresses.length > 0)
@@ -340,18 +330,18 @@ mixin outputValueDisplay(vout, voutIndex)
 								span(title=`Output Type: ${utils.outputTypeName(vout.scriptPubKey.type)}`, data-bs-toggle="tooltip")
 									+darkBadge(utils.outputTypeAbbreviation(vout.scriptPubKey.type))
 
-							+asciiHexDataDisplay("ASM data", `asm-${tx.txid}-${vout.n}`, vout.scriptPubKey.asm)
+							+hexDataDisplay(vout.scriptPubKey.asm)
 
 
 				if (voutIndex < (tx.vout.length - 1) || nonZeroVoutValueCount > 1)
 					hr.d-none.d-md-block
 
 				else
-					.mb-3
+					.mb-0
 
 		if (hiddenRowCount > 0)
 			a.small(href="javascript:void(0)", onclick=("showAllTxOutputs(this, '" + tx.txid + "');")) 
-				i.far.fa-plus-square.text-muted.me-1
+				i.far.fa-plus-square.text-card-highlight.me-1
 				| Show remaining #{hiddenRowCount.toLocaleString()} outputs
 
 		if (nonZeroVoutValueCount > 1)

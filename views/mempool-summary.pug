@@ -50,8 +50,9 @@ block content
 			.clearfix
 				.float-start
 					.me-4.d-inline-block.mb-3
-						h6 Fee Rate
-							small.fw-light.ms-1 (gro/vB)
+						h6.text-card-highlight.fw-light
+							span.text-uppercase Fee Rate
+							small.ms-1 (gro/vB)
 
 						- var feeRatesToEstimate = [1, 2, 3, 4, 5, 15, 25, 50, 75, 100, 150];
 
@@ -60,7 +61,7 @@ block content
 								a.btn.btn-outline-primary.fee-rate-btn(href="javascript:void(0)", onclick=`estimateMempoolDepth(parseInt($(this).attr("data-fee-rate"))); return false;`, data-fee-rate=feeRateToEstimate) #{feeRateToEstimate}
 
 					.me-4.d-inline-block.mb-3
-						h6 Transaction ID
+						h6.text-card-highlight.text-uppercase.fw-light Transaction ID
 
 						form.form-inline(method="post", action="javascript:void(0)", onsubmit=`estimateTransactionMempoolDepth($("#mempoolquery").val()); return false;` style="width: 325px;")
 							.input-group.input-group
@@ -70,8 +71,9 @@ block content
 									i.fas.fa-search
 
 					.me-4.d-inline-block.mb-3
-						h6 Custom Fee Rate
-							small.fw-light.ms-1 (gro/vB)
+						h6.text-card-highlight.fw-light
+							span.text-uppercase Custom Fee Rate
+							small.ms-1 (gro/vB)
 
 						form.form-inline(method="post", action="javascript:void(0)", onsubmit=`estimateMempoolDepth($("#customFeeRate").val()); return false;` style="width: 200px;")
 							.input-group.input-group
@@ -104,17 +106,18 @@ block content
 					table.table.table-striped.table-borderless.mb-3
 						thead
 							tr
-								th Fee Rate
-								th.text-end N(tx)
-								th.text-end
+								th.text-card-highlight.text-uppercase.fw-light Fee Rate
+								th.text-end.text-card-highlight.text-uppercase.fw-light N(tx)
+								th.text-end.text-card-highlight.text-uppercase.fw-light
 									span.border-dotted(title="The number of blocks filled by all transactions in this fee-rate bucket.", data-bs-toggle="tooltip") N(blocks)
 
-								th.text-end
+								th.text-end.text-card-highlight.text-uppercase.fw-light
 									span.border-dotted(title="The running total of the number of blocks filled by transactions at this fee-rate and higher.", data-bs-toggle="tooltip") Σ N(blocks)
-								th.text-end Σ Fees
-								th.text-end Avg Fee
-								th.text-end Avg Fee Rate
-									small.fw-normal.text-muted.ms-2 (gro/vB)
+								th.text-end.text-card-highlight.text-uppercase.fw-light Σ Fees
+								th.text-end.text-card-highlight.text-uppercase.fw-light Avg Fee
+								th.text-end.text-card-highlight.fw-light
+									span.text-uppercase Avg Fee Rate
+									small.ms-1 (gro/vB)
 						tbody(id="fee-rate-table-body")
 							tr(id="fee-rate-table-row-prototype", style="display: none;")
 								td.data-label
@@ -144,8 +147,10 @@ block content
 							table.table.table-striped.table-borderless.mb-3
 								thead
 									tr
-										th Txid
-										th.text-end Fee Rate (gro/vB)
+										th.text-card-highlight.text-uppercase.fw-light Txid
+										th.text-end.text-card-highlight.fw-light
+											span.text-uppercase Fee Rate
+											span.ms-2 (gro/vB)
 
 								tbody(id="topfee-tx-table-body")
 									tr(id="topfee-tx-table-row-prototype", style="display: none;")
@@ -160,8 +165,8 @@ block content
 							table.table.table-striped.table-borderless.mb-3
 								thead
 									tr
-										th Txid
-										th.text-end
+										th.text-card-highlight.text-uppercase.fw-light Txid
+										th.text-end.text-card-highlight.text-uppercase.fw-light
 											span.border-dotted(title="How long ago this transaction was first seen by your node.", data-bs-toggle="tooltip")
 												| Age
 
@@ -178,8 +183,8 @@ block content
 							table.table.table-striped.table-borderless.mb-3
 								thead
 									tr
-										th Txid
-										th.text-end Size
+										th.text-card-highlight.text-uppercase.fw-light Txid
+										th.text-end.text-card-highlight.text-uppercase.fw-light Size
 
 								tbody(id="largest-tx-table-body")
 									tr(id="largest-tx-table-row-prototype", style="display: none;")

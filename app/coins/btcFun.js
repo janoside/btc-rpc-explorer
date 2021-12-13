@@ -61,6 +61,6 @@ module.exports = {
 			summary: "The coinbase transaction of the Genesis Block.",
 			alertBodyHtml: "This transaction doesn't really exist! This is the coinbase transaction of the <a href='/block/000000ffbb50fc9898cdd36ec163e6ba23230164c0052a28876255b7dcf2cd36'>Groestlcoin Genesis Block</a>. For more background about this special-case transaction, you can read <a href='https://github.com/bitcoin/bitcoin/issues/3303'>this brief discussion</a> among some of the <a href='https://bitcoin.org'>Bitcoin</a> developers.",
 			referenceUrl: "https://github.com/bitcoin/bitcoin/issues/3303"
-		},
+		}
 	]
 };

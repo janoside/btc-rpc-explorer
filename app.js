@@ -403,17 +403,18 @@ async function onRpcConnectionVerified(getnetworkinfo, getblockchaininfo) {
 		setInterval(utils.refreshExchangeRates, 1800000);
 	}
 
-	// UTXO pull
-	refreshUtxoSetSummary();
-	setInterval(refreshUtxoSetSummary, 30 * 60 * 1000);
-
 
 	// 1d / 7d volume
 	refreshNetworkVolumes();
 	setInterval(refreshNetworkVolumes, 30 * 60 * 1000);
 
 
-	assessTxindexAvailability();
+	await assessTxindexAvailability();
+
+
+	// UTXO pull
+	refreshUtxoSetSummary();
+	setInterval(refreshUtxoSetSummary, 30 * 60 * 1000);
 }
 
 var txindexCheckCount = 0;
@@ -480,6 +481,7 @@ async function assessTxindexAvailability() {
 
 async function refreshUtxoSetSummary() {
 	if (config.slowDeviceMode) {
+		if (!global.getindexinfo || !global.getindexinfo.coinstatsindex) {
 		global.utxoSetSummary = null;
 		global.utxoSetSummaryPending = false;
 
@@ -487,12 +489,12 @@ async function refreshUtxoSetSummary() {
 
 		return;
 	}
+	}
 
 	// flag that we're working on calculating UTXO details (to differentiate cases where we don't have the details and we're not going to try computing them)
 	global.utxoSetSummaryPending = true;
 
-	global.utxoSetSummary = await coreApi.getUtxoSetSummary();
-	global.utxoSetSummary.lastUpdated = Date.now();
+	global.utxoSetSummary = await coreApi.getUtxoSetSummary(true, false);
 
 	debugLog("Refreshed utxo summary: " + JSON.stringify(global.utxoSetSummary));
 }
@@ -751,30 +753,31 @@ expressApp.use(function(req, res, next) {
 
 
 	if (!req.session.userSettings) {
-		req.session.userSettings = JSON.parse(req.cookies["user-settings"] || "{}");
+		req.session.userSettings = Object.create(null);
+
+		const cookieSettings = JSON.parse(req.cookies["user-settings"] || "{}");
+		for (const [key, value] of Object.entries(cookieSettings)) {
+			req.session.userSettings[key] = value;
+		}
 	}
 
 	const userSettings = req.session.userSettings;
 	res.locals.userSettings = userSettings;
 
+	// set defaults
+	userSettings.displayCurrency = (userSettings.displayCurrency || config.displayDefaults.displayCurrency);
+	userSettings.localCurrency = (userSettings.localCurrency || config.displayDefaults.localCurrency);
+	userSettings.uiTimezone = (userSettings.uiTimezone || config.displayDefaults.timezone);
+	userSettings.uiTheme = (userSettings.uiTheme || config.displayDefaults.theme);
 
 
-	if (!userSettings.displayCurrency) {
-		userSettings.displayCurrency = "grs";
-	}
-
-	if (!userSettings.localCurrency) {
-		userSettings.localCurrency = "usd";
-	}
-
-	// theme
-	if (!userSettings.uiTheme) {
-		userSettings.uiTheme = config.defaultTheme;
-	}
-
-
+	// make available in templates
 	res.locals.displayCurrency = userSettings.displayCurrency;
 	res.locals.localCurrency = userSettings.localCurrency;
+	res.locals.uiTimezone = userSettings.uiTimezone;
+	res.locals.uiTheme = userSettings.uiTheme;
+	res.locals.userTzOffset = userSettings.userTzOffset || "unset";
+	res.locals.browserTzOffset = userSettings.browserTzOffset || "0";
 
 
 	if (!["/", "/connect"].includes(req.originalUrl)) {

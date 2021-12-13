@@ -5,7 +5,10 @@
 [![npm version][npm-ver-img]][npm-ver-url] [![NPM downloads][npm-dl-alltime-img]][npm-dl-url]
 
 
-![homepage](./public/img/screenshots/homepage-v3.png)
+---
+
+
+![homepage](./public/img/screenshots/homepage.png)
 
 
 

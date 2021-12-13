@@ -1,8 +1,8 @@
-$spacer: 1rem;
+$spacer: 0.9rem;
 $spacers: (
 	0: 0,
-	1: $spacer / 4,
-	2: $spacer / 2,
+	1: calc($spacer / 4),
+	2: calc($spacer / 2),
 	3: $spacer,
 	4: $spacer * 1.5,
 	5: $spacer * 2,
@@ -74,6 +74,14 @@ $alert-dismissible-padding-r: $alert-padding-x * 2.5;
 $dropdown-min-width: 11rem;
 
 
+@import "../../node_modules/bootstrap/scss/bootstrap";
+
+
+.table > :not(:first-child) {
+	border-top: 0px;
+}
+
+
 .bg-content {
 	background-color: $body-bg !important;
 }
@@ -96,6 +104,10 @@ code {
 
 .text-lighten {
 	filter: brightness(120%);
+}
+
+.text-tight-spacing {
+	letter-spacing: -0.5px;
 }
 
 

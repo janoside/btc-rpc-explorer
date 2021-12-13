@@ -143,8 +143,8 @@ router.get("/difficulty-by-height/:blockHeights", asyncHandler(async (req, res, 
 
 
 
-const predictedBlocksStatuses = {};
-const predictedBlocksOutputs = {};
+const predictedBlocksStatuses = Object.create(null);
+const predictedBlocksOutputs = Object.create(null);
 
 router.get("/predicted-blocks-status", asyncHandler(async (req, res, next) => {
 	const statusId = req.query.statusId;
@@ -210,8 +210,8 @@ router.get("/build-predicted-blocks", asyncHandler(async (req, res, next) => {
 
 
 
-const mempoolSummaryStatuses = {};
-const mempoolSummaries = {};
+const mempoolSummaryStatuses = Object.create(null);
+const mempoolSummaries = Object.create(null);
 
 router.get("/mempool-summary-status", asyncHandler(async (req, res, next) => {
 	const statusId = req.query.statusId;
@@ -282,8 +282,8 @@ router.get("/build-mempool-summary", asyncHandler(async (req, res, next) => {
 
 
 
-const miningSummaryStatuses = {};
-const miningSummaries = {};
+const miningSummaryStatuses = Object.create(null);
+const miningSummaries = Object.create(null);
 
 router.get("/mining-summary-status", asyncHandler(async (req, res, next) => {
 	const statusId = req.query.statusId;

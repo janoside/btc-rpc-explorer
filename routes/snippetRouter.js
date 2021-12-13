@@ -76,6 +76,36 @@ router.get("/next-block", asyncHandler(async (req, res, next) => {
 	res.render("snippets/index-next-block");
 }));
 
+router.get("/utxo-set", asyncHandler(async (req, res, next) => {
+	const promises = [];
+
+	promises.push(utils.timePromise("api/utxo-set", async () => {
+		if (global.utxoSetSummary) {
+			res.locals.utxoSetSummary = global.utxoSetSummary;
+
+		} else {
+			res.locals.utxoSetSummary = await coreApi.getUtxoSetSummary(true, true);
+		}
+	}));
+
+	await utils.awaitPromises(promises);
+
+	res.render("snippets/utxo-set");
+}));
+
+router.get("/timezone-refresh-toast", asyncHandler(async (req, res, next) => {
+	res.render("snippets/tz-update-toast");
+}));
+
+
+router.get("/timestamp", asyncHandler(async (req, res, next) => {
+	res.locals.timestamp = req.query.timestamp;
+	res.locals.includeAgo = req.query.includeAgo ? (req.query.includeAgo == "true") : true;
+	res.locals.formatString = req.query.formatString;
+
+	res.render("snippets/timestamp");
+}));
+
 
 
 

@@ -116,9 +116,9 @@ if (false)
 
 
 mixin toolSections(sectionsData)
-	div.row
+	.row
 		each indexList in sectionsData
-			div.col
+			.col
 				ul.list-unstyled.mb-3
 					each sectionIndex in indexList
 						- var section = config.site.toolSections[sectionIndex];
@@ -131,15 +131,15 @@ mixin toolSections(sectionsData)
 							each itemIndex in section.items
 								- var item = config.siteTools[itemIndex];
 								
-								div.clearfix
+								.clearfix
 									div.float-start.pt-1(style="width: 38px;")
 										i.fa-lg(class=item.fontawesome, style="width: 20px; margin-right: 10px;")
 
-									div.float-start
+									.float-start
 										div
 											a(href=item.url) #{item.name}
 
-								div.mt-n1(style="padding-left: 39px;")
+								.mt-n1(style="padding-left: 39px;")
 									p #{item.desc}
 
 

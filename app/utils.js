@@ -49,7 +49,8 @@ const crawlerBotUserAgentStrings = {
 	"alexa": new RegExp("ia_archiver", "i"),
 	"aol": new RegExp("aolbuild", "i"),
 	"moz": new RegExp("dotbot", "i"),
-	"semrush": new RegExp("SemrushBot", "i")
+	"semrush": new RegExp("SemrushBot", "i"),
+	"majestic": new RegExp("MJ12bot", "i")
 };
 
 const ipMemoryCache = {};
@@ -151,13 +152,8 @@ function redirectToConnectPageIfNeeded(req, res) {
 	return false;
 }
 
-function hex2ascii(hex) {
-	var str = "";
-	for (var i = 0; i < hex.length; i += 2) {
-		str += String.fromCharCode(parseInt(hex.substr(i, 2), 16));
-	}
-
-	return str;
+function formatHex(hex, outputFormat="utf8") {
+	return Buffer.from(hex, "hex").toString(outputFormat);
 }
 
 function splitArrayIntoChunks(array, chunkSize) {
@@ -500,7 +496,7 @@ function identifyMiner(coinbaseTx, blockHeight) {
 
 			for (var coinbaseTag in miningPoolsConfig.coinbase_tags) {
 				if (miningPoolsConfig.coinbase_tags.hasOwnProperty(coinbaseTag)) {
-					if (hex2ascii(coinbaseTx.vin[0].coinbase).indexOf(coinbaseTag) != -1) {
+					if (formatHex(coinbaseTx.vin[0].coinbase, "utf8").indexOf(coinbaseTag) != -1) {
 						var minerInfo = miningPoolsConfig.coinbase_tags[coinbaseTag];
 						minerInfo.identifiedBy = "coinbase tag '" + coinbaseTag + "'";
 
@@ -586,8 +582,8 @@ function getTxTotalInputOutputValues(tx, txInputs, blockHeight) {
 		}
 
 		for (var i = 0; i < tx.vout.length; i++) {
-			totalOutputValue = totalOutputValue.plus(new Decimal(tx.vout[i].value));
-		}
+				totalOutputValue = totalOutputValue.plus(new Decimal(tx.vout[i].value));
+			}
 	} catch (err) {
 		logError("2308sh0sg44", err, {tx:tx, txInputs:txInputs, blockHeight:blockHeight});
 	}
@@ -887,6 +883,13 @@ const reflectPromise = p => p.then(v => ({v, status: "resolved" }),
 global.errorStats = {};
 
 function logError(errorId, err, optionalUserData = {}, logStacktrace=true) {
+	debugErrorLog("Error " + errorId + ": " + err + ", json: " + JSON.stringify(err) + (optionalUserData != null ? (", userData: " + optionalUserData + " (json: " + JSON.stringify(optionalUserData) + ")") : ""));
+
+	if (err && err.stack && logStacktrace) {
+		debugErrorVerboseLog("Stack: " + err.stack);
+	}
+
+
 	if (!global.errorLog) {
 		global.errorLog = [];
 	}
@@ -928,11 +931,6 @@ function logError(errorId, err, optionalUserData = {}, logStacktrace=true) {
 		global.errorLog.splice(0, 1);
 	}
 
-	debugErrorLog("Error " + errorId + ": " + err + ", json: " + JSON.stringify(err) + (optionalUserData != null ? (", userData: " + optionalUserData + " (json: " + JSON.stringify(optionalUserData) + ")") : ""));
-
-	if (err && err.stack && logStacktrace) {
-		debugErrorVerboseLog("Stack: " + err.stack);
-	}
 
 	var returnVal = {errorId:errorId, error:err};
 	if (optionalUserData) {
@@ -1299,6 +1297,8 @@ const awaitPromises = async (promises) => {
 			}
 		}
 	});
+
+	return promiseResults;
 };
 
 const perfLog = [];
@@ -1329,7 +1329,7 @@ const perfLogNewItem = (tags) => {
 module.exports = {
 	reflectPromise: reflectPromise,
 	redirectToConnectPageIfNeeded: redirectToConnectPageIfNeeded,
-	hex2ascii: hex2ascii,
+	formatHex: formatHex,
 	splitArrayIntoChunks: splitArrayIntoChunks,
 	splitArrayIntoChunksByChunkCount: splitArrayIntoChunksByChunkCount,
 	getRandomString: getRandomString,

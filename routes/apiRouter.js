@@ -12,6 +12,7 @@ const qrcode = require('qrcode');
 const bitcoinjs = require('groestlcoinjs-lib');
 const sha256 = require("crypto-js/sha256");
 const hexEnc = require("crypto-js/enc-hex");
+const { bech32, bech32m } = require("bech32");
 const Decimal = require("decimal.js");
 const asyncHandler = require("express-async-handler");
 const markdown = require("markdown-it")();
@@ -160,6 +161,173 @@ router.get("/blockchain/coins", function(req, res, next) {
 		}).catch(next);
 	}
 });
+
+router.get("/blockchain/utxo-set", asyncHandler(async (req, res, next) => {
+	const utxoSetSummary = await coreApi.getUtxoSetSummary(true, true);
+	
+	res.json(utxoSetSummary);
+
+	next();
+}));
+
+
+
+
+
+
+
+/// ADDRESSES
+
+router.get("/address/:address", asyncHandler(async (req, res, next) => {
+	try {
+		const { perfId, perfResults } = utils.perfLogNewItem({action:"api.address"});
+		res.locals.perfId = perfId;
+
+		var limit = config.site.addressTxPageSize;
+		var offset = 0;
+		var sort = "desc";
+
+		res.locals.maxTxOutputDisplayCount = config.site.addressPage.txOutputMaxDefaultDisplay;
+
+		
+		if (req.query.limit) {
+			limit = parseInt(req.query.limit);
+		}
+
+		if (req.query.offset) {
+			offset = parseInt(req.query.offset);
+		}
+
+		if (req.query.sort) {
+			sort = req.query.sort;
+		}
+
+
+		const address = utils.asAddress(req.params.address);
+
+		const transactions = [];
+		const addressApiSupport = addressApi.getCurrentAddressApiFeatureSupport();
+		
+		const result = {};
+
+		let addressEncoding = "unknown";
+
+		let base58Error = null;
+		let bech32Error = null;
+		let bech32mError = null;
+
+		if (address.match(/^[132m].*$/)) {
+			try {
+				let base58Data = bitcoinjs.address.fromBase58Check(address);
+				result.base58 = {hash:base58Data.hash.toString("hex"), version:base58Data.version};
+
+				addressEncoding = "base58";
+
+			} catch (err) {
+				utils.logError("api.AddressParseError-001", err);
+			}
+		}
+
+		if (addressEncoding == "unknown") {
+			try {
+				let bech32Data = bitcoinjs.address.fromBech32(address);
+				result.bech32 = {data:bech32Data.data.toString("hex"), version:bech32Data.version};
+
+				addressEncoding = "bech32";
+
+			} catch (err) {
+				utils.logError("api.AddressParseError-002", err);
+			}
+		}
+
+		if (addressEncoding == "unknown") {
+			try {
+				let bech32mData = bech32m.decode(address);
+				result.bech32m = {words:Buffer.from(bech32mData.words).toString("hex"), version:bech32mData.version};
+
+				addressEncoding = "bech32m";
+
+			} catch (err) {
+				utils.logError("api.AddressParseError-003", err);
+			}
+		}
+
+		if (addressEncoding == "unknown") {
+			res.json({success:false, error:"Invalid address"});
+
+			next();
+
+			return;
+		}
+
+		result.encoding = addressEncoding;
+
+		result.notes = [];
+		if (global.specialAddresses[address] && global.specialAddresses[address].type == "fun") {
+			let funInfo = global.specialAddresses[address].addressInfo;
+
+			notes.push(funInfo);
+		}
+
+		if (global.miningPoolsConfigs) {
+			for (var i = 0; i < global.miningPoolsConfigs.length; i++) {
+				if (global.miningPoolsConfigs[i].payout_addresses[address]) {
+					let note = global.miningPoolsConfigs[i].payout_addresses[address];
+					note.type = "payout address for miner";
+
+					result.notes.push(note);
+
+					break;
+				}
+			}
+		}
+
+		if (result.notes.length == 0) {
+			delete result.notes;
+		}
+
+
+
+		const validateaddressResult = await coreApi.getAddress(address);
+		result.validateaddress = validateaddressResult;
+
+		const promises = [];
+
+		var addrScripthash = hexEnc.stringify(sha256(hexEnc.parse(validateaddressResult.scriptPubKey)));
+		addrScripthash = addrScripthash.match(/.{2}/g).reverse().join("");
+
+		result.electrumScripthash = addrScripthash;
+
+		promises.push(utils.timePromise("address.getAddressDetails", async () => {
+			const addressDetailsResult = await addressApi.getAddressDetails(address, validateaddressResult.scriptPubKey, sort, limit, offset);
+
+			var addressDetails = addressDetailsResult.addressDetails;
+
+			result.txHistory = addressDetails;
+			result.txHistory.request = {};
+			result.txHistory.request.limit = limit;
+			result.txHistory.request.offset = offset;
+			result.txHistory.request.sort = sort;
+
+			if (addressDetailsResult.errors && addressDetailsResult.errors.length > 0) {
+				result.txHistory.errors = addressDetailsResult.errors;
+			}
+		}, perfResults));
+
+		await utils.awaitPromises(promises);
+		
+		res.json(result);
+
+		next();
+
+	} catch (e) {
+		res.json({success:false});
+
+		next();
+	}
+}));
+
+
 
 
 
@@ -342,16 +510,19 @@ router.get("/mining/next-block/includes/:txid", asyncHandler(async (req, res, ne
 
 	const promises = [];
 
-	let txidIncluded = false;
+	let txidIndex = -1;
+	let txCount = -1;
 
 	promises.push(utils.timePromise("api/next-block/getblocktemplate", async () => {
 		let nextBlockEstimate = await utils.timePromise("api/next-block/getNextBlockEstimate", async () => {
 			return await coreApi.getNextBlockEstimate();
 		});
 
+		txCount = nextBlockEstimate.blockTemplate.transactions.length;
+
 		for (let i = 0; i < nextBlockEstimate.blockTemplate.transactions.length; i++) {
 			if (nextBlockEstimate.blockTemplate.transactions[i].txid == txid) {
-				txidIncluded = true;
+				txidIndex = i;
 
 				return;
 			}
@@ -360,8 +531,46 @@ router.get("/mining/next-block/includes/:txid", asyncHandler(async (req, res, ne
 
 	await utils.awaitPromises(promises);
 
-	res.send(txidIncluded);
+	let response = {included:(txidIndex >= 0)};
+	if (txidIndex >= 0) {
+		response.index = txidIndex;
+		response.txCount = txCount;
+	}
+
+	res.json(response);
 }));
+
+router.get("/mining/miner-summary", asyncHandler(async (req, res, next) => {
+	let startHeight = -1;
+	let endHeight = -1;
+
+	if (req.query.since) {
+		const regex = /^([0-9]+)d$/;
+		const match = req.query.since.match(regex);
+
+		if (match) {
+			let days = parseInt(match[1]);
+			let getblockchaininfo = await coreApi.getBlockchainInfo();
+
+			startHeight = getblockchaininfo.blocks - 144 * days;
+			endHeight = getblockchaininfo.blocks;
+		}
+	} else if (req.query.startHeight && req.query.endHeight) {
+		startHeight = parseInt(req.query.startHeight);
+		endHeight = parseInt(req.query.endHeight);
+	}
+
+	if (startHeight == -1 || endHeight == -1) {
+		res.json({success:false, error:"Unknown start or end height - use either 'since' (e.g. 'since=7d') or 'startHeight'+'endHeight' parameters to specify the blocks to analyze."});
+
+		return;
+	}
+
+	const summary = await coreApi.buildMiningSummary(null, startHeight, endHeight, null);
+
+	res.json(summary);
+}));
+
 
 
 

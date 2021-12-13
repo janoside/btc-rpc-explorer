@@ -7,10 +7,10 @@ block content
 	+pageTitle("User Settings")
 
 	+contentSection("Display Options")
-		.row
+		.row.pb-3.border-bottom.mb-4
 			.col.text-start
 				h6 Hide info notes
-				span.ps-3 Enabling this option hides all informational notes across the site.
+				span.text-muted Enabling this option hides all informational notes across the site.
 			.col.text-end.me-3
 				.d-inline-block.text-center
 					if (userSettings.hideInfoNotes && userSettings.hideInfoNotes == "true")
@@ -22,3 +22,25 @@ block content
 						div No
 						a(href=`./changeSetting?name=hideInfoNotes&value=true`)
 							i.fas.fa-toggle-off.fa-2x
+
+
+		.row
+			.col.text-start
+				h6 Manual UTC Offset
+					span.small.text-muted.ms-1 (hours)
+				span.text-muted If you want to set a custom UTC offset, rather than using your browser's default, you can set it here. This is helpful if your browser uses UTC time as a privacy-protecting measure. For locales ~West of UTC (i.e. West of London), set a negative value; for locales ~East of UTC, set a positive value.
+			.col.text-end.me-3
+				.d-inline-block.text-end
+					form(method="get", action="./changeSetting")
+						input(type="hidden", name="name", value="userTzOffset")
+						input(type="text", name="value", value=userTzOffset)
+
+					span.small.text-muted (Example: for New York, enter "-5")
+
+	+contentSection("User Settings")
+		pre
+			code.json #{JSON.stringify(userSettings, null, 4)}
+
+		hr
+
+		a.btn.btn-primary(href="./admin/resetUserSettings") Reset To Defaults

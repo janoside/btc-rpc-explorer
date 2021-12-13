@@ -1,21 +1,41 @@
-##### Unreleased
+##### v3.3.0
+###### 2021-12-07
 
-* Fix for difficulty adjustment estimate
+* New tool for viewing the UTXO Set: [/utxo-set](./utxo-set)
 * New API actions:
+	* [/api/blockchain/utxo-set](./api/blockchain/utxo-set)
+	* [/api/address/yourAddress](./api/address/yourAddress)
 	* [/api/mining/next-block](./api/mining/next-block)
 	* [/api/mining/next-block/txids](./api/mining/next-block/txids)
 	* [/api/mining/next-block/includes/:txid](./api/mining/next-block/includes/yourTxid)
+	* [/api/mining/miner-summary](./api/mining/miner-summary?since=1d)
+* Major fixes for data displayed in [/tx-stats](./tx-stats) tool
 * Updated miners, including identification of "Patoshi"-pattern blocks
+* [/node-details](./node-details): Include `coinstatsindex` status
+* Support querying UTXO Set even with slowDeviceMode=true, iff coinstatsindex is available
+* Fix for difficulty adjustment estimate
+* [/difficulty-history](./difficulty-history): Support for viewing different time ranges
+* When viewing unconfirmed transaction details, show an info dialog if the transaction is predicted to be confirmed in the next block
 * Performance improvements
 	* Fix for performance degradation over time due to slow "estimatedSupply" function
 	* Homepage speedup by making "Estimated Next Block" data load asynchonously
 	* Caching for [/difficulty-history](./difficulty-history) data
-* [/node-details](./node-details): Include `coinstatsindex` status
+* Unicode formatting for OP_RETURN and other similar data (with ascii+hex accessible via toggle)
+* New `.env` options for setting defaults (see `.env-sample` for details):
+	* BTCEXP_DISPLAY_CURRENCY (btc,sat,local)
+	* BTCEXP_LOCAL_CURRENCY (usd,eur,gbp)
+	* BTCEXP_UI_TIMEZONE (utc,local)
+	* BTCEXP_UI_HIDE_INFO_PANELS (true,false)
+* Support for displaying timestamps in local timezone (by using browser default, or setting a manual offset)
+* Cleanup treatment of `locktime` on transaction details pages
 * Unique favicon color based on the active network (mainnet=orange, testnet=green, signet=magenta, regtest=gray)
+* Lots of minor styling improvements
 * Error handling improvements
 * Fix for `/api/quotes/all`
-* Fix for incorrect date on "Diario El Salvador..." fun item
+* Fix for incorrect date on "Diario El Salvador..." fun item (thanks [@Dirkson643](https://github.com/Dirkson643))
+* New `Fun` items related to Taproot activation
 * Performance log admin page at [/admin/perf-log](./admin/perf-log)
+* Updated dependencies
 
 
 ##### v3.2.0

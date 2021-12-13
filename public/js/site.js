@@ -39,6 +39,36 @@ function copyTextToClipboard(text) {
 	});
 }
 
+function enableTooltipsAndPopovers() {
+	// enable tooltips everywhere
+	var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+	var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+		return new bootstrap.Tooltip(tooltipTriggerEl);
+	});
+
+	// enable popovers everywhere
+	var popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'));
+	var popoverList = popoverTriggerList.map(function (popoverTriggerEl) {
+		return new bootstrap.Popover(popoverTriggerEl);
+	});
+}
+
+function toggleTheme() {
+	var darkThemeActivating = ($("#dark-theme-link-tag").attr("rel") != "stylesheet");
+	
+	$("#dark-theme-link-tag").attr("rel", darkThemeActivating ? "stylesheet" : null);
+
+	var c1 = darkThemeActivating ? "btn-outline-primary" : "btn-primary";
+	var c2 = darkThemeActivating ? "btn-primary" : "btn-outline-primary";
+
+	$("#theme-toggler-dark").removeClass(c1).addClass(c2);
+	$("#theme-toggler-light").removeClass(c2).addClass(c1);
+
+	$.get(`./changeSetting?name=uiTheme&value=${darkThemeActivating ? "dark" : "light"}`, function(data) {
+		console.log("Theme updated.");
+	});
+}
+
 function iframeLoaded(iframeId) {
 	var iframeElement = document.getElementById(iframeId);
 

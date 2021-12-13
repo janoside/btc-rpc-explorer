@@ -43,11 +43,13 @@ block content
 
 						if (item.optionalParams)
 							.mt-2
-								small.me-2 Optional params:
-
+								.mb-1
+									small.me-2 Optional parameters
+								
 								each x, xName in item.optionalParams
-									span(title=x, data-bs-toggle="tooltip")
+									div
 										+lightBadge(xName)
+										span.small #{x}
 
 						if (false && item.example)
 							.mt-3

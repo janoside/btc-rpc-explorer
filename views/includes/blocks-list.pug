@@ -4,41 +4,41 @@
 			tr
 				//th
 
-				th.text-end Height
+				th.text-end.text-card-highlight.fw-normal.text-uppercase Height
 
 				//if (!hideTimestampColumn)
-				th.text-end.d-none.d-md-table-cell
-					span.border-dotted(title="UTC timestamp of the block.", data-bs-toggle="tooltip") Date
+				th.text-end.text-card-highlight.fw-normal.text-uppercase.d-none.d-md-table-cell
+					span.border-dotted(title="Timestamp of the block.", data-bs-toggle="tooltip") Time
 
-				th.text-end Age
+				th.text-end.text-card-highlight.fw-normal.text-uppercase Age
 
-				th.text-end.d-none.d-sm-table-cell
+				th.text-end.text-card-highlight.fw-normal.text-uppercase.d-none.d-sm-table-cell
 					span.border-dotted(title="<b>Time To Mine</b><br/>The time it took to mine this block after the previous block. <span class='text-success'>Fast</span> blocks (< 5min) and <span class='text-danger'>Slow</span> blocks (> 15min) are highlighted.", data-bs-toggle="tooltip", data-bs-html="true") TTM
-				th.text-start Miner
-				th.text-end
+				th.text-start.text-card-highlight.fw-normal.text-uppercase Miner
+				th.text-end.text-card-highlight.fw-normal.text-uppercase
 					span.border-dotted(title="The number of transactions included in each block.", data-bs-toggle="tooltip") N(tx)
 
 				if (blockstatsByHeight)
-					th.text-end.d-none.d-lg-table-cell
+					th.text-end.text-card-highlight.fw-normal.text-uppercase.d-none.d-lg-table-cell
 						span.border-dotted(title="The total output of all transactions in each block.", data-bs-toggle="tooltip") Volume
 
 				if (blockstatsByHeight)
-					th.text-end.d-none.d-md-table-cell
+					th.text-end.text-card-highlight.fw-normal.text-uppercase.d-none.d-md-table-cell
 						span.border-dotted(title="The min/avg/max fee rates (gro/vB) for transactions in this block.", data-bs-toggle="tooltip") Fee Rates
 				else
-					th.text-end
+					th.text-end.text-card-highlight.fw-normal.text-uppercase
 						span.border-dotted(title="The average fee (gro/vB) for all block transactions.", data-bs-toggle="tooltip") Avg Fee
 
 
-				th.text-end.d-none.d-lg-table-cell Σ Fees
+				th.text-end.text-card-highlight.fw-normal.text-uppercase.d-none.d-lg-table-cell Σ Fees
 
 				//th.text-end Size (kB)
 
 				if (blocks && blocks.length > 0 && blocks[0].weight)
-					th.text-end.d-none.d-lg-table-cell % Full
+					th.text-end.text-card-highlight.fw-normal.text-uppercase.d-none.d-lg-table-cell % Full
 
 				else
-					th.text-end.d-none.d-lg-table-cell Size
+					th.text-end.text-card-highlight.fw-normal.text-uppercase.d-none.d-lg-table-cell Size
 						small  (kB)
 		tbody
 
@@ -83,7 +83,7 @@
 
 						//if (!hideTimestampColumn)
 						td.text-end.d-none.d-md-table-cell
-							+timestamp(block.time, false, null, false)
+							+timestamp(block.time, false, null)
 
 
 						td.text-end
@@ -121,7 +121,7 @@
 									small.border-dotted.text-muted(title="Not applicable: genesis block has no previous block to compare to.", data-bs-toggle="tooltip") N/A (genesis)
 								else
 									span.fw-light.text-muted -
-						
+
 						td.text-start
 							if (block.miner)
 								if (block.miner.type == "address-only")
@@ -135,10 +135,10 @@
 
 								else
 									.d-inline.d-sm-none
-										span.badge.bg-primary(data-bs-toggle="tooltip", title=`Identified by: ${block.miner.identifiedBy}`) #{utils.ellipsize(block.miner.name, 12)}
+										span.badge.bg-primary(data-bs-toggle="tooltip", data-bs-html="true", title=`Identified by: ${block.miner.identifiedBy}${block.miner.note ? ("<br/><br/>" + block.miner.note) : ""}`) #{utils.ellipsize(block.miner.name, 12)}
 
 									.d-none.d-sm-inline
-										span.badge.bg-primary(data-bs-toggle="tooltip", title=`Identified by: ${block.miner.identifiedBy}`) #{utils.ellipsize(block.miner.name, 14)}
+										span.badge.bg-primary(data-bs-toggle="tooltip", data-bs-html="true", title=`Identified by: ${block.miner.identifiedBy}${block.miner.note ? ("<br/><br/>" + block.miner.note) : ""}`) #{utils.ellipsize(block.miner.name, 14)}
 
 							else if (block.height < global.pruneHeight)
 								span(title="This data is unavailable due to blockchain pruning", data-bs-toggle="tooltip")

@@ -1,29 +1,29 @@
 mixin themeCss
-	if (userSettings.uiTheme == "light")
-		link(rel="stylesheet", href=`./style/light.css?v=${cacheId}`, integrity="sha384-QCNlLZKpZ7Mny1dU7J4l+6E5g1PZ/OPMmU90FI1Xn8DW0m5Cwjv37UQXKv5+/pDj")
-		//link(rel="stylesheet", href=`./style/light.css?v=${cacheId}`, integrity="")
-
-	else
-		link(rel="stylesheet", href=`./style/dark.css?v=${cacheId}`, integrity="sha384-fhVMUPjTesgQwlZdk+EpLxH6u4Ll9ZGjLMUFV0UVgXCusyFHbDESuBKqP6dCe5aA")
-		//link(rel="stylesheet", href=`./style/dark.css?v=${cacheId}`, integrity="")
+	link(id="light-theme-link-tag", rel="stylesheet", href=`./style/light.css?v=${cacheId}`, integrity="sha384-G+XehzyDofsc9ZlqIF7hYXsaYijKshaTro74HxGnvEmvNiv2lRjGxO8g8HShNBQG")
+	link(id="dark-theme-link-tag", rel=(userSettings.uiTheme == "dark" ? "stylesheet" : false), href=`./style/dark.css?v=${cacheId}`, integrity="sha384-xjIBl325k0VYsT0wAem/8jzIxea9FDLsVmHZG8STGMhLu+rDq/xlWxo/iR6oJQ6w")
 
 
 mixin sharedScriptTags
 	script(src=`./js/jquery.min.js?v=${cacheId}`, integrity="sha384-vtXRMe3mGCbOeY7l30aIg8H9p3GdeSe4IFlP6G8JMa7o7lXvnz3GFKzPxzJdPfGK")
-	script(src=`./js/bootstrap.bundle.min.js?v=${cacheId}`, integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM")
+	script(src=`./js/bootstrap.bundle.min.js?v=${cacheId}`, integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p")
 	script(defer, src=`./js/fontawesome.min.js?v=${cacheId}`, integrity="sha384-haqrlim99xjfMxRP6EWtafs0sB1WKcMdynwZleuUSwJR0mDeRYbhtY+KPMr+JL6f")
 
-	script(src=`./js/site.js?v=${cacheId}`, integrity="sha384-9zTu6Vsp/p5Eig+Oopol4yGtsmQNIrfV7LCycnEcupFNkECnEM+oXj85+GuqE3iZ")
+	script(src=`./js/site.js?v=${cacheId}`, integrity="sha384-RNCa5sCPh1hkJyKAu8z5Hai8r9IxpVBF2W6GFhSb2JSuSlECW8d85ufzyXBSRwLZ")
 
 
 mixin pageTitle(text, subtext, copyableSubtext=false)
-	h1.fw-light.word-wrap.mb-4
-		| #{text}
-		br
-		span.text-tiny #{subtext}
-			if (copyableSubtext)
-				small
-					+copyTextButton(subtext)
+	.d-flex.justify-content-between
+		h1.fw-light.word-wrap.mb-1
+			| #{text}
+
+		if (block)
+			.text-right
+				block
+
+	h4.fw-light.word-wrap.mb-4 #{subtext}
+		if (copyableSubtext)
+			small
+				+copyTextButton(subtext)
 
 	//hr.mb-3
 
@@ -48,7 +48,7 @@ mixin sectionTitle(text, toggle=false, toggleUniqueClass, toggleUserSettingName,
 
 		if (toggle)
 			small(title=`Toggle ${text}`, data-bs-toggle="tooltip")
-				a.text-muted.fs-6(href=`./changeSetting?name=${toggleUserSettingName}&value=false`)
+				a.text-card-highlight.fs-6(href=`./changeSetting?name=${toggleUserSettingName}&value=false`)
 					i.toggle-plus-minus.far.ms-2(class=(toggleOpen ? "fa-minus-square" : "fa-plus-square"))
 
 
@@ -86,9 +86,9 @@ mixin summaryRow(itemCount)
 
 
 mixin summaryTitle(title, titleDesc, subtitle, subtitleDesc)
-	span.fs-6.text-uppercase.fw-light.text-muted(class=(titleDesc ? "border-dotted" : false), class=(subtitle ? "me-2" : false), title=titleDesc, data-bs-toggle="tooltip", data-bs-html="true") #{title}
+	span.fs-6.text-uppercase.fw-light.text-card-highlight(class=(titleDesc ? "border-dotted" : false), class=(subtitle ? "me-2" : false), title=titleDesc, data-bs-toggle="tooltip", data-bs-html="true") #{title}
 	if (subtitle)
-		small.text-muted
+		small.text-card-highlight.fw-light
 			| (
 			span(class=(subtitleDesc ? "border-dotted" : false), title=subtitleDesc, data-bs-toggle="tooltip", data-bs-html="true") #{subtitle}
 			| )
@@ -120,14 +120,15 @@ mixin summaryItem(title, titleDesc, subtitle, subtitleDesc)
 
 // txBlockHeightsByTxid_orSharedBlockHeight, showDates=false, highlightAddress, addrGainsByTxid, addrLossesByTxid)
 mixin txList(visibleTxs, txCount, limit, offset, inputsByTxid, options={})
-	if (txCount > limit)
+	if (txCount > limit && !options.hidePagination)
 		.rounded-0.rounded-top.bg-content.border
 			.p-3
 				h6.fw-normal.mb-2 #{offset.toLocaleString()} - #{Math.min(offset + limit - 1, txCount - 1).toLocaleString()} of #{txCount.toLocaleString()}
 				+pagination(limit, offset, null, txCount, paginationBaseUrl)
 
 
-		.mb-4.mb-md-3
+		//.mb-4.mb-md-3
+		.pb-4.pb-md-3.bg-tx-separator
 
 
 	each tx, txIndex in visibleTxs
@@ -174,7 +175,7 @@ mixin txList(visibleTxs, txCount, limit, offset, inputsByTxid, options={})
 						.float-end
 							.d-block.d-sm-none
 								a(href="javascript:void(0)", onclick=`$(this).find(".toggle-icon").toggleClass("fa-plus-square").toggleClass("fa-minus-square"); $(".tx-input-address-${tx.txid}").toggle();`)
-									i.toggle-icon.far.fa-plus-square.text-muted.text-end.fa-lg
+									i.toggle-icon.far.fa-plus-square.text-card-highlight.text-end.fa-lg
 
 
 					.float-start.float-sm-end.mt-n2.mt-sm-0.mb-2.mb-sm-0
@@ -217,7 +218,7 @@ mixin txList(visibleTxs, txCount, limit, offset, inputsByTxid, options={})
 
 									else
 										span(title=`Unconfirmed`, data-bs-toggle="tooltip")
-											i.fas.fa-lock.fa-sm.me-1
+											i.fas.fa-unlock.fa-sm.text-danger.me-1
 											span.fw-light.text-danger 0
 
 							if (options.showDates && tx.time)
@@ -247,10 +248,10 @@ mixin txList(visibleTxs, txCount, limit, offset, inputsByTxid, options={})
 				include ./transaction-io-details.pug
 
 		if (txIndex < (visibleTxs.length - 1) || txCount > limit)
-			.mb-4.mb-lg-3
+			.pb-4.pb-md-3.bg-tx-separator
 
 
-	if (txCount > limit)
+	if (txCount > limit && !options.hidePagination)
 		.rounded-0.rounded-bottom.bg-content.border
 			.p-3
 				if (!crawlerBot && txCount > limit)
@@ -264,7 +265,7 @@ mixin pageTabs(names)
 			li.nav-item.page-tab(style=(nameIndex == 0 ? "margin-left: 10px;" : false))
 				a.nav-link(class=(nameIndex == 0 ? "active" : false), data-bs-toggle="tab", data-default-tab=(nameIndex == 0 ? "true" : false) href=`#${name.replace(" ", "-")}`, role="tab") #{name}
 
-	.bg-gradient-body-to-main.pb-4.mb-4
+	.bg-gradient-body-to-main.pb-4.mb-2
 
 
 mixin pillTabs(names)
@@ -308,10 +309,10 @@ mixin _valueDisplayBtc(val)
 	if (exchangeRates)
 		- var localCurFormatData = utils.getExchangedCurrencyFormatData(val, userSettings.localCurrency);
 
-		span.xs-hidden.d-none.d-sm-inline.text-tiny.border-dotted.fw-light.ms-1(style="letter-spacing: -0.5px;", data-bs-toggle="tooltip", title=`<span class="me-tiny">${localCurFormatData.symbol}</span><span>${localCurFormatData.value}</span>`, data-bs-html="true") #{parts.currencyUnit}
+		span.xs-hidden.d-none.d-sm-inline.text-tiny.text-tight-spacing.border-dotted.fw-light.ms-1(data-bs-toggle="tooltip", title=`<span class="me-tiny">${localCurFormatData.symbol}</span><span>${localCurFormatData.value}</span>`, data-bs-html="true") #{parts.currencyUnit}
 
 	else
-		span.xs-hidden.d-none.d-sm-inline.text-tiny.fw-light.ms-1(style="letter-spacing: -0.5px;") #{parts.currencyUnit}
+		span.xs-hidden.d-none.d-sm-inline.text-tiny.text-tight-spacing.fw-light.ms-1 #{parts.currencyUnit}
 
 
 mixin _valueDisplaySat(val, summarizeMin=Infinity, summarizeDecimals=3)
@@ -333,10 +334,10 @@ mixin _valueDisplaySat(val, summarizeMin=Infinity, summarizeDecimals=3)
 	if (exchangeRates)
 		- var localCurFormatData = utils.getExchangedCurrencyFormatData(val, userSettings.localCurrency);
 
-		span.xs-hidden.d-none.d-sm-inline.text-tiny.border-dotted.fw-light.ms-1(style="letter-spacing: -0.5px;", data-bs-toggle="tooltip", title=`<span class="me-tiny">${localCurFormatData.symbol}</span><span>${localCurFormatData.value}</span>`, data-bs-html="true") #{parts.currencyUnit}
+		span.xs-hidden.d-none.d-sm-inline.text-tiny.text-tight-spacing.border-dotted.fw-light.ms-1(data-bs-toggle="tooltip", title=`<span class="me-tiny">${localCurFormatData.symbol}</span><span>${localCurFormatData.value}</span>`, data-bs-html="true") #{parts.currencyUnit}
 
 	else
-		span.xs-hidden.d-none.d-sm-inline.text-tiny.fw-light.ms-1(style="letter-spacing: -0.5px;") #{parts.currencyUnit}
+		span.xs-hidden.d-none.d-sm-inline.text-tiny.text-tight-spacing.fw-light.ms-1 #{parts.currencyUnit}
 
 
 mixin _valueDisplayLocal(val, summarizeMin=Infinity, summarizeDecimals=3)
@@ -398,10 +399,10 @@ mixin valueDisplaySpecial(val, maxDecimals=-1, summarizeAlways=false, summarizeM
 				if (exchangeRates)
 					- var localCurFormatData = utils.getExchangedCurrencyFormatData(val, userSettings.localCurrency);
 
-					span.text-tiny.border-dotted.fw-light.ms-1(style="letter-spacing: -0.5px;", data-bs-toggle="tooltip", title=`<span class="me-tiny">${localCurFormatData.symbol}</span><span>${localCurFormatData.value}</span>`, data-bs-html="true") #{parts.currencyUnit}
+					span.text-tiny.text-tight-spacing.border-dotted.fw-light.ms-1(data-bs-toggle="tooltip", title=`<span class="me-tiny">${localCurFormatData.symbol}</span><span>${localCurFormatData.value}</span>`, data-bs-html="true") #{parts.currencyUnit}
 
 				else
-					span.text-tiny.fw-light.ms-1(style="letter-spacing: -0.5px;") #{parts.currencyUnit}
+					span.text-tiny.text-tight-spacing.fw-light.ms-1 #{parts.currencyUnit}
 
 			else if (userSettings.displayCurrency == "local")
 
@@ -412,52 +413,128 @@ mixin valueDisplaySpecial(val, maxDecimals=-1, summarizeAlways=false, summarizeM
 mixin confirmations(confirmations, abbreviated=true)
 	if (confirmations < 6)
 		span.text-warning.border-dotted(title="Fewer than 6 confirmations is generally considered <b>unsettled</b> for high-value transactions because block <b>re-organizations</b> that could affect them have reasonable probability.", data-bs-toggle="tooltip", data-bs-html="true") #{confirmations.toLocaleString()}
-			i.fas.fa-unlock-alt.ms-1
+			i.fas.fa-unlock-alt.fa-sm.ms-1
 	else
 		span.border-dotted.text-success(title="6 confirmations is generally considered <b>settled</b>. High-value transactions may require more;<br/>Low-value transactions may require fewer.", data-bs-toggle="tooltip", data-bs-html="true")
 			| #{abbreviated && confirmations > 1000 ? `${Math.floor(confirmations/1000)}k` : confirmations.toLocaleString()}
 			i.fas.fa-check.ms-1
 
 
-mixin timestamp(timestamp, includeAgo=true, formatString, includeUtc=true)
+
+mixin cardHighlightBadge(text)
+	span.small.badge.bg-card-highlight-badge.border.border-card-highlight-badge.text-reset.mb-tiny.me-1 #{text ? text : ""}
+		if (block)
+			block
+
+
+
+mixin hexDataDisplay(hex, order="utf8,ascii,hex")
+	- var items = order.split(",");
+	- var uniqueId = utils.getRandomString(12, "aA");
+
+	.d-flex.flex-row
+		.d-inline-block.small.border.rounded-1.p-1.px-2.card-highlight.word-wrap
+			+cardHighlightBadge(items[0])
+			span.text-tiny.d-inline.d-sm-none #{utils.formatHex(hex, items[0])}
+			span.small.d-none.d-sm-inline #{utils.formatHex(hex, items[0])}
+
+			if (items[0] == "hex")
+				.d-none.d-md-inline
+					+copyTextButton(hex)
+
+			div(id=`hex-display-expanded-${uniqueId}`, style="display: none;")
+				each item, itemIndex in items
+					if (itemIndex > 0)
+						if (itemIndex > 1)
+							br
+
+						+cardHighlightBadge(item)
+
+						span.text-tiny.d-inline.d-sm-none #{utils.formatHex(hex, item)}
+						span.small.d-none.d-sm-inline #{utils.formatHex(hex, item)}
+
+						if (item == "hex")
+							.d-inline.d-md-inline
+								+copyTextButton(hex)
+
+
+		div
+			a.text-muted.ms-2(href="javascript:void(0)", onclick=`$('#hex-display-expanded-${uniqueId}').toggle(); $(this).find(".toggle-plus-minus").toggleClass("fa-plus-square"); $(this).find(".toggle-plus-minus").toggleClass("fa-minus-square"); return false;`, title="Toggle More Encodings")
+				i.toggle-plus-minus.far.fa-plus-square.text-card-highlight
+
+
+
+
+mixin timestamp(timestamp, includeAgo=true, formatString)
+	- var tzDiff = -parseFloat(browserTzOffset);
+
+	if (userTzOffset != "unset")
+		- tzDiff = parseFloat(userTzOffset);
+
+	- var tzMoment = moment.utc(new Date(parseInt(timestamp) * 1000)).add(tzDiff, "hours");
 	- var utcMoment = moment.utc(new Date(parseInt(timestamp) * 1000));
+	- var momentObj = (uiTimezone == "utc" ? utcMoment : tzMoment);
+	- var nowMoment = (uiTimezone == "utc" ? moment.utc(new Date()) : moment.utc(new Date()).add(tzDiff, "hours"));
 
-	- var yearStr = utcMoment.format("Y");
-	- var nowYearStr = moment.utc(new Date()).format("Y");
+	- var yearStr = momentObj.format("Y");
+	- var nowYearStr = nowMoment.format("Y");
 
-	- var dateStr = utcMoment.format("Y-M-D");
-	- var nowDateStr = moment.utc(new Date()).format("Y-M-D");
+	- var dateStr = momentObj.format("Y-M-D");
+	- var nowDateStr = nowMoment.format("Y-M-D");
 
-	- var titleStr = `${utcMoment.format("Y-MM-DD HH:mm:ss")} utc`;
+
+	if (tzDiff != 0 && uiTimezone == "local")
+		- var titleStr = `${tzMoment.format("Y-MM-DD, h:mm:ss A")}<br/>(${utcMoment.format("Y-MM-DD, HH:mm:ss")} UTC)`;
+	else
+		- var titleStr = `${utcMoment.format("Y-MM-DD, HH:mm:ss")} utc`;
 
 	if (formatString)
-		span.border-dotted(title=titleStr, data-bs-toggle="tooltip")
-			| #{utcMoment.format(formatString)}
-			if (["H", "m", "s"].some(str => formatString.includes(str)))
-				small.text-muted.ms-1 utc
+		span.border-dotted(title=titleStr, data-bs-toggle="tooltip", data-bs-html="true")
+			span.date-text(id=`xyz-${utils.getRandomString(10, "aA1")}`, data-timestamp-utc=`${parseInt(timestamp)}`, data-date-format=formatString, data-date-ago=includeAgo.toString()) #{momentObj.format(formatString)}
+				if (["H", "m", "s"].some(str => formatString.includes(str)))
+					span.text-tiny.text-tight-spacing.text-muted.ms-tiny UTC
 
 	else if (dateStr == nowDateStr)
-		span.border-dotted(title=titleStr, data-bs-toggle="tooltip")
-			| #{utcMoment.format("HH:mm")}
+		span.border-dotted(title=titleStr, data-bs-toggle="tooltip", data-bs-html="true")
+			if (tzDiff != 0 && uiTimezone == "local")
+				span.date-text(id=`xyz-${utils.getRandomString(10, "aA1")}`, data-timestamp-utc=`${parseInt(timestamp)}`, data-date-ago=includeAgo.toString()) #{momentObj.format("h:mm")}
+					span.text-tiny.text-tight-spacing.fw-light.ms-tiny #{momentObj.format("A")}
 
-			if (includeUtc)
-				small.text-muted.ms-1 utc
+			else
+				span #{momentObj.format("HH:mm")}
+					span.text-tiny.text-tight-spacing.fw-light.ms-tiny UTC
 
 	else if (yearStr == nowYearStr)
-		span.border-dotted(title=titleStr, data-bs-toggle="tooltip")
-			| #{utcMoment.format("M/D HH:mm")}
+		span.border-dotted(title=titleStr, data-bs-toggle="tooltip", data-bs-html="true")
+			if (tzDiff != 0 && uiTimezone == "local")
+				span.date-text(id=`xyz-${utils.getRandomString(10, "aA1")}`, data-timestamp-utc=`${parseInt(timestamp)}`, data-date-ago=includeAgo.toString()) #{momentObj.format("M/D, h:mm")}
+					span.text-tiny.text-tight-spacing.fw-light.ms-tiny #{momentObj.format("A")}
 
-			if (includeUtc)
-				small.text-muted.ms-1 utc
+			else
+				span #{momentObj.format("M/D, HH:mm")}
+					span.text-tiny.text-tight-spacing.fw-light.ms-tiny UTC
 
 	else
-		span.border-dotted(title=titleStr, data-bs-toggle="tooltip")
-			| #{utcMoment.format("YYYY-MM-DD")}
+		span.border-dotted(title=titleStr, data-bs-toggle="tooltip", data-bs-html="true")
+			if (tzDiff != 0 && uiTimezone == "local")
+				span.date-text(id=`xyz-${utils.getRandomString(10, "aA1")}`, data-timestamp-utc=`${parseInt(timestamp)}`, data-date-ago=includeAgo.toString()) #{momentObj.format("YYYY-MM-DD")}
+
+			else
+				span #{momentObj.format("YYYY-MM-DD")}
 
 	if (includeAgo)
-		small.text-muted.ms-2 (
-			+timeAgo(timestamp, true)
-			span  ago)
+		- var timeAgo = moment.duration(moment.utc(new Date()).diff(moment.utc(new Date(parseInt(timestamp) * 1000))));
+
+		if (timeAgo.asSeconds() < 0)
+			- timeAgo = moment.duration(moment.utc(new Date(parseInt(timestamp) * 1000)).diff(moment.utc(new Date())));
+
+			small.text-muted.ms-2 (+
+				| #{timeAgo.format()}
+				span )
+		else
+			small.text-muted.ms-2 (
+				+timeAgo(timestamp, true)
+				span  ago)
 
 
 mixin darkBadge(text)
@@ -538,6 +615,67 @@ mixin timeAgo(timeAgoTime, only1Element=false)
 				span #{utils.shortenTimeDiff(timeAgo.format())}
 
 
+mixin blockCountdown(title, blocksLeft)
+	- var countdownId = utils.getRandomString(10, "aA");
+	.alert.alert-success
+		.d-flex.justify-content-between
+			div
+				h5.mb-0
+					span.me-2 #{title}:
+
+					span.lead(id=`countdown-time-${countdownId}`)
+						| #{blocksLeft.toLocaleString()} block#{blocksLeft > 1 ? "s" : ""}
+
+						- var secondsToGo = 10 * 60 * blocksLeft;
+						- var minutesToGo = secondsToGo / 60;
+						- var hoursToGo = minutesToGo / 60;
+						- var daysToGo = hoursToGo / 24;
+
+						span.ms-1 (
+						span ~
+						if (daysToGo > 2)
+							| #{parseInt(daysToGo)} days
+							- var hours = 24 * (daysToGo - Math.floor(daysToGo));
+							if (hours > 1)
+								span.ms-1 #{parseInt(hours)} hour#{parseInt(hours) > 1 ? "s" :""}
+
+						else if (daysToGo > 1)
+							| 1 day
+							- var hours = 24 * (daysToGo - Math.floor(daysToGo));
+							if (hours > 1)
+								span.ms-1 #{parseInt(hours)} hour#{parseInt(hours) > 1 ? "s" :""}
+
+						else if (hoursToGo > 2)
+							| #{parseInt(hoursToGo)} hours
+							- var minutes = 60 * (hoursToGo - Math.floor(hoursToGo));
+							if (minutes > 1)
+								span.ms-1 #{parseInt(minutes)} minute#{parseInt(minutes) > 1 ? "s" :""}
+
+						else if (hoursToGo >= 1)
+							| 1 hour
+							- var minutes = 60 * (hoursToGo - Math.floor(hoursToGo));
+							if (minutes > 1)
+								span.ms-1 #{parseInt(minutes)} minute#{parseInt(minutes) > 1 ? "s" :""}
+
+						else
+							- var minutes = 60 * (hoursToGo - Math.floor(hoursToGo));
+							span #{parseInt(minutes)} minute#{parseInt(minutes) > 1 ? "s" :""}
+
+						span )
+
+			if (block)
+				a.text-body(href="javascript:void(0);", onclick=`$("#countdown-block-${countdownId}").toggle(); $(".countdown-togglers-${countdownId}").toggle();`)
+					i.far.fa-plus-square(class=`countdown-togglers-${countdownId}`)
+					i.far.fa-minus-square(class=`countdown-togglers-${countdownId}`, style="display: none;")
+
+		if (block)
+			div(id=`countdown-block-${countdownId}`, style="display: none;")
+				.mt-2
+					block
+
+
+
+
 mixin copyTextButton(text)
 	small.ms-2
 		if (false)
@@ -550,7 +688,8 @@ mixin copyTextButton(text)
 
 
 mixin dismissableInfoAlert(userSettingDismissedName, textToShowWhenClosed)
-	if (!userSettings.hideInfoNotes || userSettings.hideInfoNotes == "false")
+	- var hiddenByEnvVar = (config.site.hideInfoNotes == "true");
+	if (!hiddenByEnvVar && (!userSettings.hideInfoNotes || userSettings.hideInfoNotes == "false"))
 		if (userSettings[userSettingDismissedName] != "true")
 			.alert.alert-primary.alert-dismissible.shadow-sm.mb-4.ps-3.ps-md-7(role="alert")
 				i.d-none.d-md-inline.fas.fa-info-circle.fa-lg.d-inline-block(style="position: absolute; top: 0; left: 0; width: 36px; margin-left: 0.4rem; margin-top: 1.3rem;")
@@ -617,7 +756,7 @@ mixin blockRangeFilters
 		.float-start.me-4
 			div(id="time-range-buttons")
 				div.mb-2
-					span.border-dotted(title="Analyze blocks over the last N days (approximated using average block time).", data-bs-toggle="tooltip") Time Range
+					span.border-dotted.text-uppercase.fw-light.text-card-highlight(title="Analyze blocks over the last N days (approximated using average block time).", data-bs-toggle="tooltip") Time Range
 				div.btn-group
 					a.btn.btn-primary.block-count-btn(href="javascript:void(0)", data-blockCount="1440") 1 day
 					a.btn.btn-outline-primary.block-count-btn(href="javascript:void(0)", data-blockCount="4320") 3 day
@@ -627,7 +766,7 @@ mixin blockRangeFilters
 		.float-start.me-4
 			div(id="block-selections-buttons")
 				div.mb-2
-					span.border-dotted(title="Choose from a list of pre-configured 'interesting' historical block ranges.", data-bs-toggle="tooltip") Interesting History
+					span.border-dotted.text-uppercase.fw-light.text-card-highlight(title="Choose from a list of pre-configured 'interesting' historical block ranges.", data-bs-toggle="tooltip") Interesting History
 
 				div.dropdown
 					button.btn.btn-outline-primary.dropdown-toggle(type="button", id="preconfigured-dropdown", data-bs-toggle="dropdown", aria-haspopup="true", aria-expanded="false") Selections
@@ -637,7 +776,7 @@ mixin blockRangeFilters
 		.float-start
 			div(id="time-range-buttons")
 				div.mb-2
-					span.border-dotted(title="Manually enter a range of blocks to analyze.", data-bs-toggle="tooltip") Custom Block Range
+					span.border-dotted.text-uppercase.fw-light.text-card-highlight(title="Manually enter a range of blocks to analyze.", data-bs-toggle="tooltip") Custom Block Range
 
 				form.form-inline.me-3(id="custom-range-form")
 					div.input-group
@@ -689,11 +828,11 @@ mixin pagination(limit, offset, sort, itemCount, baseUrl, justification="start",
 
 
 mixin graphPageScriptSetup(dateAdapterNeeded=false)
-	script(src="./js/chart.min.js", integrity="sha384-tq9x30vl+bH08RGJ5c7oIlrHDpeF9rYdRFdNQYMOY/VpHt4t0hXYd3Kj23QT9gFN")
+	script(src=`./js/chart.min.js?v=${cacheId}`, integrity="sha384-ovAl4wbIXnEbY76lSb6GrprFBkoYeu4RKYYNMsADThIn2AweWPOyJqoyR/8/kgML")
 
 	if (dateAdapterNeeded)
-		script(src="./js/moment.min.js", integrity="sha384-CJyhAlbbRZX14Q8KxKBt0na1ad4KBs9PklAiNk2Efxs9sgimbIZm9kYLJQeNMUfM")
-		script(src="./js/chartjs-adapter-moment.min.js", integrity="sha384-Z9r2EsEmivx0l8T8TvYoqqGcpO0cCjKbqVXB8tYUa0hIWKtGVl0TmaF263CjS6XR")
+		script(src=`./js/moment.min.js?v=${cacheId}`, integrity="sha384-CJyhAlbbRZX14Q8KxKBt0na1ad4KBs9PklAiNk2Efxs9sgimbIZm9kYLJQeNMUfM")
+		script(src=`./js/chartjs-adapter-moment.min.js?v=${cacheId}`, integrity="sha384-Z9r2EsEmivx0l8T8TvYoqqGcpO0cCjKbqVXB8tYUa0hIWKtGVl0TmaF263CjS6XR")
 
 	if (userSettings.uiTheme && userSettings.uiTheme == "dark")
 		script.

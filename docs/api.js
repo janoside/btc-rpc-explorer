@@ -50,8 +50,29 @@ module.exports = {
 		{
 			"category":"blockchain",
 			"url":"/api/blockchain/coins",
-			"desc":"Returns the current supply of Groestlcoin. An estimate using a checkpoint can be returned in 2 cases: on 'slow' devices, and before the UTXO set summary is loaded.",
+			"desc":"Returns the current supply of Groestlcoin. An estimate using a checkpoint can be returned in 2 cases: on 'slow' devices, and before the UTXO Set snapshot is loaded.",
 			"returnType":"number"
+		},
+
+		{
+			"category":"blockchain",
+			"url":"/api/blockchain/utxo-set",
+			"desc":"Returns the latest UTXO Set snapshot. Warning: This call can be very slow, depending on node hardware and index configurations.",
+			"returnType":"json"
+		},
+
+
+
+
+
+		// addresses
+		{
+			"category":"address",
+			"url":"/api/address/:address",
+			"desc":"Returns a summary of data pertaining to the given address. The output of this call will depend heavily on the configured 'Address API' (see .env-sample file).",
+			"optionalParams": {"limit":"Number of transactions to return", "offset":"Offset into transactions", "sort":"Sorting direction for transactions ('desc'=new first, 'asc'=old first)"},
+			"returnType":"json",
+			"testUrl":"/api/address/34rng4QwB5pHUbGDJw1JxjLwgEU8TQuEqv"
 		},
 
 
@@ -93,6 +114,17 @@ module.exports = {
 			"returnType":"boolean",
 			"testUrl":"/api/mining/next-block/includes/yourTxId"
 		},
+
+		{
+			"category":"mining",
+			"url":"/api/mining/miner-summary",
+			"desc":"Returns whether the specified transaction ID is included in the estimated next block to be mined (produced via getblocktemplate).",
+			"returnType":"json",
+			"optionalParams": {"since":"Use the form 'Nd' to specify the number of day to look back (e.g. 'since=7d' will analyze the last 7 days)", "startHeight+endHeight":"Use these 2 parameters to specify a custom start/end height (e.g. 'startHeight=0&endHeight=24' to analyze the first 25 blocks)"},
+			"testUrl":"/api/mining/miner-summary?since=1d"
+		},
+
+
 
 
 

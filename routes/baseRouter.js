@@ -168,7 +168,7 @@ router.get("/", asyncHandler(async (req, res, next) => {
 
 		if (false && getblockchaininfo.chain !== 'regtest') {
 			/*promises.push(new Promise(async (resolve, reject) => {
-				res.locals.txStats = await utils.timePromise("homepage.getTxCountStats", coreApi.getTxCountStats(targetBlocksPerDay / 4, -targetBlocksPerDay, "latest"));
+				res.locals.txStats = await utils.timePromise("homepage.getTxStats", coreApi.getTxStats(targetBlocksPerDay / 4, -targetBlocksPerDay, "latest"));
 
 				resolve();
 			}));*/
@@ -252,7 +252,7 @@ router.get("/", asyncHandler(async (req, res, next) => {
 		}
 
 		res.locals.difficultyAdjustmentData = {
-			estimateAvailable: !isNaN(diffAdjPercent),
+			estimateAvailable: blockCount > 30 && !isNaN(diffAdjPercent),
 
 			blockCount: blockCount,
 			blocksLeft: res.locals.blocksUntilDifficultyAdjustment,
@@ -289,7 +289,7 @@ router.get("/", asyncHandler(async (req, res, next) => {
 
 		await utils.timePromise("homepage.render", async () => {
 			res.render("index");
-		}, perfResults);
+		});
 
 		next();
 	}
@@ -337,7 +337,7 @@ router.get("/node-details", asyncHandler(async (req, res, next) => {
 
 		await utils.timePromise("node-details.render", async () => {
 			res.render("node-details");
-		}, perfResults);
+		});
 
 		next();
 	}
@@ -413,7 +413,7 @@ router.get("/peers", asyncHandler(async (req, res, next) => {
 
 		await utils.timePromise("peers.render", async () => {
 			res.render("peers");
-		}, perfResults);
+		});
 
 		next();
 	}
@@ -473,10 +473,24 @@ router.get("/disconnect", function(req, res, next) {
 router.get("/changeSetting", function(req, res, next) {
 	if (req.query.name) {
 		if (!req.session.userSettings) {
-			req.session.userSettings = {};
+			req.session.userSettings = Object.create(null);
 		}
 
-		req.session.userSettings[req.query.name] = req.query.value;
+		if (typeof req.query.name !== "string" || typeof req.query.value !== "string") {
+			res.redirect(req.headers.referer);
+
+			return;
+		}
+
+		if (req.query.name == "userTzOffset") {
+			if (parseFloat(req.query.value) == NaN) {
+				res.redirect(req.headers.referer);
+
+				return;
+			}
+		}
+
+		req.session.userSettings[req.query.name.toString()] = req.query.value.toString();
 
 		var userSettings = JSON.parse(req.cookies["user-settings"] || "{}");
 		userSettings[req.query.name] = req.query.value;
@@ -627,7 +641,7 @@ router.get("/blocks", asyncHandler(async (req, res, next) => {
 
 		await utils.timePromise("blocks.render", async () => {
 			res.render("blocks");
-		}, perfResults);
+		});
 
 		next();
 	}
@@ -1110,7 +1124,7 @@ router.get("/block-height/:blockHeight", asyncHandler(async (req, res, next) => 
 
 		await utils.timePromise("block-height.render", async () => {
 			res.render("block");
-		}, perfResults);
+		});
 
 		next();
 	}
@@ -1212,7 +1226,7 @@ router.get("/block/:blockHash", asyncHandler(async (req, res, next) => {
 
 		await utils.timePromise("block.render", async () => {
 			res.render("block");
-		}, perfResults);
+		});
 
 		next();
 	}
@@ -1386,15 +1400,17 @@ router.get("/tx/:transactionId", asyncHandler(async (req, res, next) => {
 
 		res.locals.result = {};
 
+		let txInputLimit = (res.locals.crawlerBot) ? 3 : -1;
+
 		var txPromise = req.query.blockHeight ?
 				async () => {
 					const block = await coreApi.getBlockByHeight(parseInt(req.query.blockHeight));
 					res.locals.block = block;
-					return await coreApi.getRawTransactionsWithInputs([txid], -1, block.hash);
+					return await coreApi.getRawTransactionsWithInputs([txid], txInputLimit, block.hash);
 				}
 				:
 				async () => {
-					return await coreApi.getRawTransactionsWithInputs([txid], -1);
+					return await coreApi.getRawTransactionsWithInputs([txid], txInputLimit);
 				};
 
 		const rawTxResult = await utils.timePromise("tx.getRawTransactionsWithInputs", txPromise, perfResults);
@@ -1416,6 +1432,7 @@ router.get("/tx/:transactionId", asyncHandler(async (req, res, next) => {
 		if (tx.confirmations == null) {
 			promises.push(utils.timePromise("tx.getMempoolTxDetails", async () => {
 				res.locals.mempoolDetails = await coreApi.getMempoolTxDetails(txid, true);
+
 			}, perfResults));
 
 		} else {
@@ -1471,7 +1488,7 @@ router.get("/tx/:transactionId", asyncHandler(async (req, res, next) => {
 
 		await utils.timePromise("tx.render", async () => {
 			res.render("transaction");
-		}, perfResults);
+		});
 
 		next();
 	}
@@ -1529,17 +1546,23 @@ router.get("/address/:address", asyncHandler(async (req, res, next) => {
 		var bech32Error = null;
 		var bech32mError = null;
 
-		try {
-			res.locals.addressObj = bitcoinjs.address.fromBase58GrsCheck(address);
-			addressEncoding = "base58";
+		if (address.match(/^[F32m].*$/)) {
+			try {
+				res.locals.addressObj = bitcoinjs.address.fromBase58Check(address);
+				res.locals.addressObj.hash = res.locals.addressObj.hash.toString("hex");
 
-		} catch (err) {
-			base58Error = err;
+				addressEncoding = "base58";
+
+			} catch (err) {
+				base58Error = err;
+			}
 		}
 
 		if (addressEncoding == "unknown") {
 			try {
 				res.locals.addressObj = bitcoinjs.address.fromBech32(address);
+				res.locals.addressObj.data = res.locals.addressObj.data.toString("hex");
+
 				addressEncoding = "bech32";
 
 			} catch (err) {
@@ -1550,6 +1573,8 @@ router.get("/address/:address", asyncHandler(async (req, res, next) => {
 		if (addressEncoding == "unknown") {
 			try {
 				res.locals.addressObj = bech32m.decode(address);
+				res.locals.addressObj.words = Buffer.from(res.locals.addressObj.words).toString("hex");
+
 				addressEncoding = "bech32m";
 
 			} catch (err) {
@@ -1761,7 +1786,7 @@ router.get("/address/:address", asyncHandler(async (req, res, next) => {
 
 		await utils.timePromise("address.render", async () => {
 			res.render("address");
-		}, perfResults);
+		});
 
 		next();
 	}
@@ -2113,40 +2138,54 @@ router.get("/mempool-transactions", asyncHandler(async (req, res, next) => {
 	}
 }));
 
-router.get("/tx-stats", function(req, res, next) {
-	var dataPoints = 100;
+router.get("/tx-stats", asyncHandler(async (req, res, next) => {
+	const promises = [];
+	const perfResults = {};
 
-	if (req.query.dataPoints) {
-		dataPoints = req.query.dataPoints;
-	}
+	res.locals.getblockchaininfo = await coreApi.getBlockchainInfo();
+	let tipHeight = res.locals.getblockchaininfo.blocks;
 
-	if (dataPoints > 250) {
-		dataPoints = 250;
-	}
+	// only re-calculate tx-stats every X blocks since it's data heavy
+	let heightInterval = 6;
+	let height = heightInterval * Math.floor(tipHeight / heightInterval);
 
-	var targetBlocksPerDay = 24 * 60 * 60 / global.coinConfig.targetBlockTimeSeconds;
+	promises.push(utils.timePromise("tx-stats.getTxStats-all", async () => {
+		const statsAll = await coreApi.getTxStats(250, 0, height);
 
-	coreApi.getTxCountStats(dataPoints, 0, "latest").then(function(result) {
-		res.locals.getblockchaininfo = result.getblockchaininfo;
-		res.locals.txStats = result.txCountStats;
+		res.locals.txStats = statsAll;
+	}, perfResults));
 
-		coreApi.getTxCountStats(targetBlocksPerDay / 4, -1440, "latest").then(function(result2) {
-			res.locals.txStatsDay = result2.txCountStats;
+	promises.push(utils.timePromise("tx-stats.getTxStats-day", async () => {
+		const statsDay = await coreApi.getTxStats(1440, height - 1440, height);
 
-			coreApi.getTxCountStats(targetBlocksPerDay / 4, -1440 * 7, "latest").then(function(result3) {
-				res.locals.txStatsWeek = result3.txCountStats;
+		res.locals.txStatsDay = statsDay;
+	}, perfResults));
 
-				coreApi.getTxCountStats(targetBlocksPerDay / 4, -1440 * 30, "latest").then(function(result4) {
-					res.locals.txStatsMonth = result4.txCountStats;
+	promises.push(utils.timePromise("tx-stats.getTxStats-week", async () => {
+		const statsWeek = await coreApi.getTxStats(1440, height - 1440 * 7, height);
 
-					res.render("tx-stats");
+		res.locals.txStatsWeek = statsWeek;
+	}, perfResults));
 
-					next();
-				});
-			});
-		});
-	});
-});
+	promises.push(utils.timePromise("tx-stats.getTxStats-month", async () => {
+		const statsMonth = await coreApi.getTxStats(1440, height - 1440 * 30, height);
+
+		res.locals.txStatsMonth = statsMonth;
+	}, perfResults));
+
+	promises.push(utils.timePromise("tx-stats.getTxStats-year", async () => {
+		const statsYear = await coreApi.getTxStats(1440 height - 1440 * 365, height);
+
+		res.locals.txStatsYear = statsYear;
+	}, perfResults));
+
+
+	await utils.awaitPromises(promises);
+
+	res.render("tx-stats");
+
+	next();
+}));
 
 router.get("/difficulty-history", function(req, res, next) {
 	coreApi.getBlockchainInfo().then(function(getblockchaininfo) {
@@ -2163,6 +2202,12 @@ router.get("/difficulty-history", function(req, res, next) {
 
 		next();
 	});
+});
+
+router.get("/utxo-set", function(req, res, next) {
+	res.render("utxo-set");
+
+	next();
 });
 
 router.get("/about", function(req, res, next) {

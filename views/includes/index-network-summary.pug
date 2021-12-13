@@ -11,7 +11,14 @@ if (exchangeRates)
 	+contentSection("Market")
 		- var colCount = 3 + (networkVolume ? 1 : 0) + (goldExchangeRates ? 1 : 0);
 		+summaryRow(colCount)
-			+summaryItem("Exchange Rate", `Source: ${new URL(coinConfig.exchangeRateData.jsonUrl).hostname}`)
+			- var tzDiff = -parseFloat(browserTzOffset);
+			if (userTzOffset != "unset")
+				- tzDiff = parseFloat(userTzOffset);
+
+			- var tzMoment = moment.utc(global.exchangeRatesUpdateTime).add(tzDiff, "hours");
+			- var timeText = tzMoment.format("h:mma");
+
+			+summaryItem("Exchange Rate", `Source: ${new URL(coinConfig.exchangeRateData.jsonUrl).hostname}<br/>Last Updated: ${timeText} (${new Decimal(new Date().getTime() - global.exchangeRatesUpdateTime.getTime()).dividedBy(1000).dividedBy(60).toDP(0)} min ago)`)
 				- var formatData = utils.formatExchangedCurrency(1.0, userSettings.localCurrency);
 
 				span.text-success
@@ -78,7 +85,7 @@ if (exchangeRates)
 				- var hashrate7dayData = utils.formatLargeNumber(hashrate7d, 1);
 
 				span.me-1 #{hashrate7dayData[0]}
-				small.border-dotted.me-2(title=`${hashrate7dayData[1].abbreviation}H = ${hashrate7dayData[1].name}-hash (x10^${hashrate7dayData[1].exponent})` data-bs-toggle='tooltip') #{hashrate7dayData[1].abbreviation}H/s
+				span.small.text-muted.border-dotted.me-2(title=`${hashrate7dayData[1].abbreviation}H = ${hashrate7dayData[1].name}-hash (x10^${hashrate7dayData[1].exponent})` data-bs-toggle='tooltip') #{hashrate7dayData[1].abbreviation}H/s
 
 				if (hashrate30d)
 					- var ratio = hashrate7d / hashrate30d;
@@ -88,11 +95,11 @@ if (exchangeRates)
 						span.border-dotted(title='7d hashrate vs 30d hashrate.' data-bs-toggle='tooltip')
 							if (ratio > 1)
 								- var ratioPercent = new Decimal(ratio).times(100).minus(100);
-								span.text-success +#{ratioPercent.toDP(1)}%
+								span.text-success +#{ratioPercent.toDP(2)}%
 
 							else
 								- var ratioPercent = new Decimal(100).minus(new Decimal(ratio).times(100));
-								span.text-danger -#{ratioPercent.toDP(1)}%
+								span.text-danger -#{ratioPercent.toDP(2)}%
 
 						| )
 
@@ -121,16 +128,17 @@ if (exchangeRates)
 						| )
 
 				else
-					small.border-dotted.text-muted(title="Estimate unavailable<br/>A difficulty epoch just ended. The first block of the new epoch must be mined before an estimate can be calculated.", data-bs-toggle="tooltip", data-bs-html="true") next block needed…
+					small.border-dotted.text-muted(title="Estimate pending...<br/>A new difficulty epoch just started. Difficulty adjustment estimates made with too little data can be very unreliable, so are not calculated.", data-bs-toggle="tooltip", data-bs-html="true")
+						i.fas.fa-hourglass-half
 
 		+summaryItem("Coins", utxoSetSummary ? null : `This value is estimated.`)
 			- var maxSupply = coinConfig.maxSupplyByNetwork[activeBlockchain];
 
 			if (utxoSetSummary)
 				span #{parseFloat(utxoSetSummary.total_amount).toLocaleString()}
-				small.ms-2.text-muted
+				span.small.ms-2.text-muted
 					| (
-					span.border-dotted(title=`${new Decimal(utxoSetSummary.total_amount).dividedBy(maxSupply).times(100).toDP(4)}% have been mined into circulation`, data-bs-toggle="tooltip") #{new Decimal(utxoSetSummary.total_amount).dividedBy(maxSupply).times(100).toDP(1)}%
+					span.border-dotted(title=`${new Decimal(utxoSetSummary.total_amount).dividedBy(maxSupply).times(100).toDP(5)}% have been mined into circulation`, data-bs-toggle="tooltip") #{new Decimal(utxoSetSummary.total_amount).dividedBy(maxSupply).times(100).toDP(2, Decimal.ROUND_DOWN)}%
 					| )
 
 			else
@@ -146,10 +154,35 @@ if (exchangeRates)
 
 	hr.mt-3.mb-3
 
-	+summaryRow((mempoolInfo == undefined ? 0 : 1) + (smartFeeEstimates ? ((smartFeeEstimates[1] ? 1 : 0) + (smartFeeEstimates[2] ? 1 : 0) + (smartFeeEstimates[3] ? 1 : 0)) : 0))
+	- var smartFeeEstimateBlocks = [];
+	- var smartFeeEstimateStrings = [];
+	if (smartFeeEstimates)
+		if (smartFeeEstimates[1])
+			- smartFeeEstimateBlocks.push(1);
+			- smartFeeEstimateStrings.push(smartFeeEstimates[1]);
+		if (smartFeeEstimates[2])
+			- smartFeeEstimateBlocks.push(2);
+			- smartFeeEstimateStrings.push(smartFeeEstimates[2]);
+		if (smartFeeEstimates[3])
+			- smartFeeEstimateBlocks.push(3);
+			- smartFeeEstimateStrings.push(smartFeeEstimates[3]);
+
+	+summaryRow((mempoolInfo == undefined ? 0 : 1) + (smartFeeEstimateStrings.length > 0 ? 1 : 0))
 		if (mempoolInfo)
-			+summaryItem("Mempool")
-				span(class=(mempoolInfo.size > 11000) ? "text-danger" : (mempoolInfo.size > 7000 ? "text-warning" : "text-success")) #{mempoolInfo.size.toLocaleString()}
+			- var thresholds = [11000, 7000];
+			- var colorClass_txCount = (mempoolInfo.size > 11000) ? "text-danger" : (mempoolInfo.size > 7000 ? "text-warning" : "text-success");
+			- var blockCount = new Decimal(mempoolInfo.bytes).dividedBy(coinConfig.maxBlockSize);
+			- var colorClass_blockCount = (blockCount > 20) ? "text-danger" : (blockCount > 10 ? "text-warning" : "text-success");
+
+			+summaryItem("Mempool", "The number of unconfirmed transactions in your node's mempool, and the number of blocks needed to confirm those transactions")
+				span(class=colorClass_txCount) #{mempoolInfo.size.toLocaleString()}
+				span.text-tiny.text-muted.ms-1 tx
+
+				span.fw-light.text-muted.mx-2 &ndash;
+
+				span(class=colorClass_blockCount) #{blockCount.toDP(2)}
+				span.text-tiny.text-muted.ms-1 blocks
+
 
 		if (false)
 			+summaryItem("Next Block (est.)")
@@ -161,20 +194,11 @@ if (exchangeRates)
 					i.fas.fa-circle
 				small.ms-2.text-muted gro/vB
 
-		if (smartFeeEstimates && smartFeeEstimates[1])
-			+summaryItem("Smart Fee (1 min)")
-				| #{smartFeeEstimates[1]}
-				small.ms-2.text-muted gro/vB
+		if (smartFeeEstimateStrings.length > 0)
+			+summaryItem(`Smart Fees (${smartFeeEstimateBlocks.join(", ")})`, `The recommended fee rate to target confirmation in ${smartFeeEstimateBlocks.join(", ")} blocks`, "gro/vB")
+				| #{smartFeeEstimateStrings.join(", ")}
 
-		if (smartFeeEstimates && smartFeeEstimates[2])
-			+summaryItem("Smart Fee (2 min)")
-				| #{smartFeeEstimates[2]}
-				small.ms-2.text-muted gro/vB
 
-		if (smartFeeEstimates && smartFeeEstimates[3])
-			+summaryItem("Smart Fee (3 min)")
-				| #{smartFeeEstimates[3]}
-				small.ms-2.text-muted gro/vB
 
 	if (userSettings.homepageShowTechDetails == "true")
 		hr.mt-3.mb-3
