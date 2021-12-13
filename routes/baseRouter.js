@@ -2174,7 +2174,7 @@ router.get("/tx-stats", asyncHandler(async (req, res, next) => {
 	}, perfResults));
 
 	promises.push(utils.timePromise("tx-stats.getTxStats-year", async () => {
-		const statsYear = await coreApi.getTxStats(1440 height - 1440 * 365, height);
+		const statsYear = await coreApi.getTxStats(1440, height - 1440 * 365, height);
 
 		res.locals.txStatsYear = statsYear;
 	}, perfResults));
