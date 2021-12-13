@@ -2,13 +2,11 @@
 
 ### Self-Hosted Groestlcoin block explorer for everyone running [Groestlcoin Core](https://github.com/groestlcoin/groestlcoin).
 
-[![npm version][npm-ver-img]][npm-ver-url] [![NPM downloads][npm-dl-alltime-img]][npm-dl-url]
-
 
 ---
 
 
-![homepage](./public/img/screenshots/homepage.png)
+![homepage](./public/img/preview.png)
 
 
 
