@@ -93,7 +93,7 @@ module.exports = {
 	knownTransactionsByNetwork: {
 		main: "c4d5b7cea3aed136e6e2beabcb4cdc21aa2d32b75a94eb74313154dac0615235",
 		test: "73f1a0a89f65311230290d63f9635d165096d4451cc7da7cdb6e1ac2bfc103f7",
-		signet: "39332e10af6fe491e8ae4ba1e2dd674698fedf8aa3c8c42bf71572debc1bb5b9"
+		signet: "fc0cdf6a0a1da19084a09bbb6f9d160a4265e3c64cd1b73e88be3902f81dc033"
 	},
 	miningPoolsConfigUrls:[
 		"https://raw.githubusercontent.com/btc21/Bitcoin-Known-Miners/master/miners.json",
@@ -131,7 +131,7 @@ module.exports = {
 	coinSupplyCheckpointsByNetwork: {
 		"main": [ 3763899, new Decimal(78427388) ],
 		"test": [ 2284501, new Decimal(71030393) ],
-		"signet": [ 29472, new Decimal(1473600) ],
+		"signet": [ 494013, new Decimal(55585929) ],
 		"regtest": [ 0, new Decimal(0) ]
 	},
 
@@ -143,13 +143,13 @@ module.exports = {
 		"main":    "00000ac5927c594d49cc0bdb81759d0da8297eb614683d3acb62f0703b639023",
 		"test":    "000000ffbb50fc9898cdd36ec163e6ba23230164c0052a28876255b7dcf2cd36",
 		"regtest": "000000ffbb50fc9898cdd36ec163e6ba23230164c0052a28876255b7dcf2cd36",
-		"signet":  "00000008819873e925422c1ff0f99f7cc9bbb232af63a077a480a3633bee1ef6"
+		"signet":  "0000007fcaa2a27993c6cde9e7818c254357af517b876ceba2f23592bb14ab31"
 	},
 	genesisCoinbaseTransactionIdsByNetwork: {
 		"main":    "3ce968df58f9c8a752306c4b7264afab93149dbc578bd08a42c446caaa6628bb",
 		"test":    "3ce968df58f9c8a752306c4b7264afab93149dbc578bd08a42c446caaa6628bb",
 		"regtest": "3ce968df58f9c8a752306c4b7264afab93149dbc578bd08a42c446caaa6628bb",
-		"signet":  "4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b"
+		"signet":  "3ce968df58f9c8a752306c4b7264afab93149dbc578bd08a42c446caaa6628bb"
 	},
 	genesisCoinbaseTransactionsByNetwork:{
 		"main": {
@@ -168,7 +168,7 @@ module.exports = {
 			],
 			"vout": [
 				{
-					"value": 0.00000000,
+					"value": 0,
 					"n": 0,
 					"scriptPubKey": {
 						"asm": "04678afdb0fe5548271967f1a67130b7105cd6a828e03909a67962e0ea1f61deb649f6bc3f4cef38c4f35504e51ec112de5c384df7ba0b8d578a4c702b6bf11d5f OP_CHECKSIG",
@@ -199,7 +199,7 @@ module.exports = {
 			],
 			"vout": [
 				{
-					"value": 0.00000000,
+					"value": 0,
 					"n": 0,
 					"scriptPubKey": {
 						"asm": "04678afdb0fe5548271967f1a67130b7105cd6a828e03909a67962e0ea1f61deb649f6bc3f4cef38c4f35504e51ec112de5c384df7ba0b8d578a4c702b6bf11d5f OP_CHECKSIG",
@@ -230,7 +230,7 @@ module.exports = {
 			],
 			"vout": [
 				{
-					"value": 0.00000000,
+					"value": 0,
 					"n": 0,
 					"scriptPubKey": {
 						"asm": "04678afdb0fe5548271967f1a67130b7105cd6a828e03909a67962e0ea1f61deb649f6bc3f4cef38c4f35504e51ec112de5c384df7ba0b8d578a4c702b6bf11d5f OP_CHECKSIG",
@@ -244,23 +244,23 @@ module.exports = {
 			"blocktime": 1395342829
 		},
 		"signet": {
-			"hex": "01000000010000000000000000000000000000000000000000000000000000000000000000ffffffff4d04ffff001d0104455468652054696d65732030332f4a616e2f32303039204368616e63656c6c6f72206f6e206272696e6b206f66207365636f6e64206261696c6f757420666f722062616e6b73ffffffff0100f2052a01000000434104678afdb0fe5548271967f1a67130b7105cd6a828e03909a67962e0ea1f61deb649f6bc3f4cef38c4f35504e51ec112de5c384df7ba0b8d578a4c702b6bf11d5fac00000000",
-			"txid": "4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b",
-			"hash": "4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b",
-			"version": 1,
-			"size": 204,
-			"vsize": 204,
-			"weight": 816,
+			"hex": "01000000010000000000000000000000000000000000000000000000000000000000000000ffffffff3a04ffff001d0104325072657373757265206d75737420626520707574206f6e20566c6164696d697220507574696e206f766572204372696d6561ffffffff010000000000000000434104678afdb0fe5548271967f1a67130b7105cd6a828e03909a67962e0ea1f61deb649f6bc3f4cef38c4f35504e51ec112de5c384df7ba0b8d578a4c702b6bf11d5fac00000000",
+			"txid": "3ce968df58f9c8a752306c4b7264afab93149dbc578bd08a42c446caaa6628bb",
+			"hash": "3ce968df58f9c8a752306c4b7264afab93149dbc578bd08a42c446caaa6628bb",
+			"version": 3,
+			"size": 266,
+			"vsize": 266,
+			"weight": 1064,
 			"locktime": 0,
 			"vin": [
 				{
-					"coinbase": "04ffff001d0104455468652054696d65732030332f4a616e2f32303039204368616e63656c6c6f72206f6e206272696e6b206f66207365636f6e64206261696c6f757420666f722062616e6b73",
+					"coinbase": "04ffff001d0104325072657373757265206d75737420626520707574206f6e20566c6164696d697220507574696e206f766572204372696d6561",
 					"sequence": 4294967295
 				}
 			],
 			"vout": [
 				{
-					"value": 50.00000000,
+					"value": 0,
 					"n": 0,
 					"scriptPubKey": {
 						"asm": "04678afdb0fe5548271967f1a67130b7105cd6a828e03909a67962e0ea1f61deb649f6bc3f4cef38c4f35504e51ec112de5c384df7ba0b8d578a4c702b6bf11d5f OP_CHECKSIG",
@@ -269,9 +269,9 @@ module.exports = {
 					}
 				}
 			],
-			"blockhash": "00000008819873e925422c1ff0f99f7cc9bbb232af63a077a480a3633bee1ef6",
-			"time": 1598918400,
-			"blocktime": 1598918400
+			"blockhash": "0000007fcaa2a27993c6cde9e7818c254357af517b876ceba2f23592bb14ab31",
+			"time": 1606082400,
+			"blocktime": 1606082400
 		}
 	},
 	genesisBlockStatsByNetwork:{
@@ -353,7 +353,7 @@ module.exports = {
 			"avgfee": 0,
 			"avgfeerate": 0,
 			"avgtxsize": 0,
-			"blockhash": "0f9188f13cb7b2c71f2a335e3a4fc328bf5beb436012afca590b1a11466e2206",
+			"blockhash": "000000ffbb50fc9898cdd36ec163e6ba23230164c0052a28876255b7dcf2cd36",
 			"feerate_percentiles": [
 				0,
 				0,
@@ -390,7 +390,7 @@ module.exports = {
 			"avgfee": 0,
 			"avgfeerate": 0,
 			"avgtxsize": 0,
-			"blockhash": "00000008819873e925422c1ff0f99f7cc9bbb232af63a077a480a3633bee1ef6",
+			"blockhash": "0000007fcaa2a27993c6cde9e7818c254357af517b876ceba2f23592bb14ab31",
 			"feerate_percentiles": [
 				0,
 				0,
@@ -404,17 +404,17 @@ module.exports = {
 			"maxfeerate": 0,
 			"maxtxsize": 0,
 			"medianfee": 0,
-			"mediantime": 1598918400,
+			"mediantime": 1606082400,
 			"mediantxsize": 0,
 			"minfee": 0,
 			"minfeerate": 0,
 			"mintxsize": 0,
 			"outs": 1,
-			"subsidy": 5000000000,
+			"subsidy": 0,
 			"swtotal_size": 0,
 			"swtotal_weight": 0,
 			"swtxs": 0,
-			"time": 1598918400,
+			"time": 1606082400,
 			"total_out": 0,
 			"total_size": 0,
 			"total_weight": 0,
