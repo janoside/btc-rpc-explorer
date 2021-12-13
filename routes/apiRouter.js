@@ -164,7 +164,7 @@ router.get("/blockchain/coins", function(req, res, next) {
 
 router.get("/blockchain/utxo-set", asyncHandler(async (req, res, next) => {
 	const utxoSetSummary = await coreApi.getUtxoSetSummary(true, true);
-	
+
 	res.json(utxoSetSummary);
 
 	next();
@@ -189,7 +189,7 @@ router.get("/address/:address", asyncHandler(async (req, res, next) => {
 
 		res.locals.maxTxOutputDisplayCount = config.site.addressPage.txOutputMaxDefaultDisplay;
 
-		
+
 		if (req.query.limit) {
 			limit = parseInt(req.query.limit);
 		}
@@ -207,7 +207,7 @@ router.get("/address/:address", asyncHandler(async (req, res, next) => {
 
 		const transactions = [];
 		const addressApiSupport = addressApi.getCurrentAddressApiFeatureSupport();
-		
+
 		const result = {};
 
 		let addressEncoding = "unknown";
@@ -216,7 +216,7 @@ router.get("/address/:address", asyncHandler(async (req, res, next) => {
 		let bech32Error = null;
 		let bech32mError = null;
 
-		if (address.match(/^[132m].*$/)) {
+		if (address.match(/^[F32m].*$/)) {
 			try {
 				let base58Data = bitcoinjs.address.fromBase58Check(address);
 				result.base58 = {hash:base58Data.hash.toString("hex"), version:base58Data.version};
@@ -315,7 +315,7 @@ router.get("/address/:address", asyncHandler(async (req, res, next) => {
 		}, perfResults));
 
 		await utils.awaitPromises(promises);
-		
+
 		res.json(result);
 
 		next();
@@ -552,7 +552,7 @@ router.get("/mining/miner-summary", asyncHandler(async (req, res, next) => {
 			let days = parseInt(match[1]);
 			let getblockchaininfo = await coreApi.getBlockchainInfo();
 
-			startHeight = getblockchaininfo.blocks - 144 * days;
+			startHeight = getblockchaininfo.blocks - 1440 * days;
 			endHeight = getblockchaininfo.blocks;
 		}
 	} else if (req.query.startHeight && req.query.endHeight) {

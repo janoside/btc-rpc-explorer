@@ -17,14 +17,14 @@ include ../includes/shared-mixins.pug
 					+summaryItem("Block Hash", "The top block hash at the time this UTXO Set snapshot was produced")
 						a(href=`./block/${utxoSetSummary.bestblock}`) #{utils.ellipsizeMiddle(utxoSetSummary.bestblock, 12)}
 						+copyTextButton(utxoSetSummary.bestblock)
-				
+
 				hr.mt-3.mb-3
 				
 				+summaryRow(2 + (utxoSetSummary.transactions ? 1 : 0) + (utxoSetSummary.disk_size ? 1 : 0) + (utxoSetSummary.total_unspendable_amount ? 1 : 0))
 					+summaryItem("UTXO Count", "The total number of UTXOs, or Unspent Transaction Outputs, across the entire blockchain")
 						| #{utxoSetSummary.txouts.toLocaleString()}
 
-					+summaryItem("Coins", "The sum of all spendable BTC units across the entire blockchain")
+					+summaryItem("Coins", "The sum of all spendable GRS units across the entire blockchain")
 						span #{parseFloat(utxoSetSummary.total_amount).toLocaleString()}
 						+copyTextButton(utxoSetSummary.total_amount)
 

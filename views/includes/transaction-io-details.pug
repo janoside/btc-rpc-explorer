@@ -37,7 +37,7 @@ mixin outputValueDisplay(tx, vout, voutIndex)
 					i.far.fa-check-circle.fa-sm.text-success.ms-2
 
 			else if (utxos[voutIndex] == null)
-				if (tx.txid == "4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b")
+				if (tx.txid == "3ce968df58f9c8a752306c4b7264afab93149dbc578bd08a42c446caaa6628bb")
 					span(title="This output is UNSPENDABLE, and therefore these coins do not exist!" data-bs-toggle="tooltip")
 						i.fas.fa-flag.fa-sm.text-warning.ms-2
 
@@ -65,7 +65,7 @@ mixin outputValueDisplay(tx, vout, voutIndex)
 					.clearfix
 						a.sz-xs-hidden.d-none.d-sm-inline.badge.fw-normal.card-highlight.border.text-decoration-none.me-2(data-bs-toggle="tooltip", title=`Input #${txVinIndex.toLocaleString()}`, style="white-space: nowrap;")
 							i.d-inline.fas.fa-arrow-right.text-danger
-							
+
 							span.d-none.d-sm-inline.font-monospace.ms-1 #{txVinIndex.toLocaleString()}
 
 						a.sz-xs-only.d-inline.d-sm-none.text-decoration-none.me-1(data-bs-toggle="tooltip", title=`Input #${txVinIndex.toLocaleString()}`, style="white-space: nowrap;")
@@ -88,7 +88,7 @@ mixin outputValueDisplay(tx, vout, voutIndex)
 						if (txVin.coinbase)
 							+successBadge
 								span(title="Coinbase transactions are special transactions created by the miner of a block. They distribute the block reward (subsidy) as the miner chooses, along with all of the fees paid by transactions included in the block.", data-bs-toggle="tooltip") coinbase
-							
+
 							.mt-2
 								+hexDataDisplay(txVin.coinbase)
 
@@ -102,8 +102,8 @@ mixin outputValueDisplay(tx, vout, voutIndex)
 									if (deltaTYears > 5)
 										span.me-2.d-none.d-sm-inline(title=`This UTXO was very old! It existed for ${parseInt(deltaTYears)}+ years - from ${moment.utc(new Date(vout.utxoTime * 1000)).format('MMM D, Y')} until ${moment.utc(new Date(tx.time * 1000)).format('MMM D, Y')} - before being spent (destroyed) in this transaction!`, data-bs-toggle="tooltip")
 											+funItemIcon
-									
-								
+
+
 								span.mt-1
 									a.sz-xl-plus.d-none.d-xl-inline(href=`./tx/${txInput.txid}#output-${txVin.vout}`) #{utils.ellipsizeMiddle(txInput.txid, 22)}
 										span.text-muted  ##{txVin.vout}
@@ -130,18 +130,18 @@ mixin outputValueDisplay(tx, vout, voutIndex)
 										if (global.specialAddresses[voutAddresses[0]])
 											- var specialAddressInfo = global.specialAddresses[voutAddresses[0]];
 											if (specialAddressInfo.type == "minerPayout")
-												span  
+												span
 												a.d-none.d-sm-inline(data-bs-toggle="tooltip", title=`Miner payout address: ${specialAddressInfo.minerInfo.name}`)
 													+funItemIcon
 
 									.d-block.d-sm-none
 										div(class=`tx-input-address-${tx.txid}`, style="display: none;")
 											a.sz-xs-sm.small(href=`./address/${voutAddresses[0]}`, class=(txIOHighlightAddress == voutAddresses[0] ? "text-info" : null)) #{utils.ellipsizeMiddle(voutAddresses[0], 24)}
-											
+
 											if (txIOHighlightAddress == voutAddresses[0])
 												span(title="Current address", data-bs-toggle="tooltip")
 													i.fas.fa-arrow-left.text-warning.ms-1.text-info
-													
+
 											if (tx.vin.length > 1 || txVinIndex > 0)
 												hr.mb-1
 
@@ -152,7 +152,7 @@ mixin outputValueDisplay(tx, vout, voutIndex)
 											a(href=`./tx/${txInput.txid}#output-${txVin.vout}`) #{utils.ellipsize(txInput.txid, 20)}[#{txVin.vout}]
 
 							else
-									
+
 
 					if (tx.vin.length > 1)
 						hr.d-none.d-sm-block
@@ -192,7 +192,7 @@ mixin outputValueDisplay(tx, vout, voutIndex)
 								span.border-dotted.me-1(title="The total input amount for this transaction is approximately equal to this value, plus the mining fee paid.", data-bs-toggle="tooltip") ~+
 								span.fw-bold
 									+valueDisplay(totalIOValues.output)
-		
+
 
 
 	.d-xs-block.d-sm-none
@@ -234,7 +234,7 @@ mixin outputValueDisplay(tx, vout, voutIndex)
 				.clearfix.mb-0.mb-sm-2.mb-md-3
 					a.xs-hidden.d-none.d-sm-inline.badge.card-highlight.border.text-decoration-none.fw-normal.me-2(data-bs-toggle="tooltip", title=`Output #${voutIndex.toLocaleString()}`, style="white-space: nowrap;")
 						i.d-inline.fas.fa-arrow-right.text-success
-						
+
 						span.d-none.d-sm-inline.font-monospace.ms-1 #{voutIndex.toLocaleString()}
 
 					a.xs-only.d-inline.d-sm-none.text-decoration-none.fw-normal.me-1(data-bs-toggle="tooltip", title=`Output #${voutIndex.toLocaleString()}`, style="white-space: nowrap;")
@@ -244,7 +244,7 @@ mixin outputValueDisplay(tx, vout, voutIndex)
 						if (vout.scriptPubKey.hex && vout.scriptPubKey.hex.startsWith('6a24aa21a9ed'))
 							span
 								+primaryBadge("OP_RETURN")
-								
+
 								a(href="https://github.com/bitcoin/bips/blob/master/bip-0141.mediawiki#commitment-structure", data-bs-toggle="tooltip", title="Read about the SegWit Commitment", target="_blank")
 									+darkBadge
 										span.small SegWit
@@ -259,13 +259,13 @@ mixin outputValueDisplay(tx, vout, voutIndex)
 
 							.my-2
 								+hexDataDisplay(vout.scriptPubKey.asm.substring("OP_RETURN ".length))
-						
+
 						else if (vout.scriptPubKey.type)
 							span.d-none.d-sm-inline
 								+darkBadge
 									span(title=`Output Type: ${utils.outputTypeName(vout.scriptPubKey.type)}`, data-bs-toggle="tooltip") #{utils.outputTypeAbbreviation(vout.scriptPubKey.type)}
 
-						
+
 
 						if (voutAddresses.length == 0)
 							// xs display only, output type when we have no address (e.g. op_return)
@@ -278,12 +278,12 @@ mixin outputValueDisplay(tx, vout, voutIndex)
 									.xs-sm.d-inline-block.d-md-none.small.border.rounded-1.px-1.card-highlight.mt-1
 										- var asm = vout.scriptPubKey.asm.substring("OP_RETURN ".length);
 										span.text-tiny.fw-light #{utils.formatHex(asm, "utf8")}
-							
+
 							else if (vout.scriptPubKey.type)
 								span.small.xs-only.d-inline.d-sm-none
 									+darkBadge
 										span(title=`Output Type: ${utils.outputTypeName(vout.scriptPubKey.type)}`, data-bs-toggle="tooltip") #{utils.outputTypeAbbreviation(vout.scriptPubKey.type)}
-							
+
 
 					span.ms-2.float-end
 						+outputValueDisplay(tx, vout, voutIndex)
@@ -313,17 +313,17 @@ mixin outputValueDisplay(tx, vout, voutIndex)
 								if (global.specialAddresses[addr])
 									- var specialAddressInfo = global.specialAddresses[addr];
 									if (specialAddressInfo.type == "minerPayout")
-										span  
+										span
 										a.d-none.d-sm-inline(data-bs-toggle="tooltip", title=`Miner payout address: ${specialAddressInfo.minerInfo.name}`)
 											+funItemIcon
 
 								.d-none.d-sm-block.mb-2
 
-					
+
 
 					if (vout.scriptPubKey)
 						if (voutAddresses.length > 0)
-							
+
 
 						else if (false)
 							.mb-tiny
@@ -340,7 +340,7 @@ mixin outputValueDisplay(tx, vout, voutIndex)
 					.mb-0
 
 		if (hiddenRowCount > 0)
-			a.small(href="javascript:void(0)", onclick=("showAllTxOutputs(this, '" + tx.txid + "');")) 
+			a.small(href="javascript:void(0)", onclick=("showAllTxOutputs(this, '" + tx.txid + "');"))
 				i.far.fa-plus-square.text-card-highlight.me-1
 				| Show remaining #{hiddenRowCount.toLocaleString()} outputs
 
@@ -351,6 +351,3 @@ mixin outputValueDisplay(tx, vout, voutIndex)
 						span.fw-bold
 							i.d-inline.d-lg-none.fas.fa-arrow-right.text-success.me-2
 							+valueDisplay(totalIOValues.output)
-
-
-

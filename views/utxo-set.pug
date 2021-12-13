@@ -2,41 +2,41 @@ extends layout
 
 block headContent
 	title UTXO Set
-	
+
 block content
 	+pageTitle("UTXO Set", "\"Run the Numbers\"")
 
 	+dismissableInfoAlert("utxoSetPageNoteDismissed", "About the UTXO Set...")
 		h6.mb-2 About the UTXO Set
 
-		.mb-2 A <b>UTXO</b>, or Unspent Transaction Output, defines a spendable unit of BTC. Every UTXO, when spent, is effectively destroyed and replaced with multiple other UTXOs of different values (see simplified example below), a process analogous to smelting and re-forging physical coins each time they are spent (impractical in the physical world, but easy when working with bits of data).
-		
+		.mb-2 A <b>UTXO</b>, or Unspent Transaction Output, defines a spendable unit of GRS. Every UTXO, when spent, is effectively destroyed and replaced with multiple other UTXOs of different values (see simplified example below), a process analogous to smelting and re-forging physical coins each time they are spent (impractical in the physical world, but easy when working with bits of data).
+
 		.my-4
 			.d-block.d-md-none.text-center
-				.badge.bg-light.text-dark UTXO #1 (1 BTC)
+				.badge.bg-light.text-dark UTXO #1 (1 GRS)
 				div &darr;
 				.badge.bg-danger spend (destroy)
 				div &darr;
 				div
-					.badge.bg-light.text-dark UTXO #2 (0.25 BTC)
+					.badge.bg-light.text-dark UTXO #2 (0.25 GRS)
 					br
-					.badge.bg-light.text-dark UTXO #3 (0.75 BTC)
+					.badge.bg-light.text-dark UTXO #3 (0.75 GRS)
 
 			.d-none.d-md-block.text-center.mb-3
 				.d-flex.justify-content-center
 					div
-						span.badge.bg-light.text-dark.border UTXO #1 (1 BTC)
+						span.badge.bg-light.text-dark.border UTXO #1 (1 GRS)
 					div
 						span.mx-2 &rarr;
 						.badge.bg-danger spend (destroy)
 						span.mx-2 &rarr;
 					div
-						span.badge.bg-light.text-dark UTXO #2 (0.25 BTC)
+						span.badge.bg-light.text-dark UTXO #2 (0.25 GRS)
 						br
-						span.badge.bg-light.text-dark UTXO #3 (0.75 BTC)
+						span.badge.bg-light.text-dark UTXO #3 (0.75 GRS)
 
-		.mb-2 With this in mind, the <b>UTXO Set</b> is the set of all UTXOs and defines all spendable BTC units.
-		.mb-2 Every BTC node is capable of <b>independently and trustlessly</b> verifying the entire UTXO Set! Your node has done (or is currently doing) that verification.
+		.mb-2 With this in mind, the <b>UTXO Set</b> is the set of all UTXOs and defines all spendable GRS units.
+		.mb-2 Every GRS node is capable of <b>independently and trustlessly</b> verifying the entire UTXO Set! Your node has done (or is currently doing) that verification.
 
 		| (Note that the verification process can be <i>quite</i> slow, depending on the node's hardware configuration and indexing options used.)
 
