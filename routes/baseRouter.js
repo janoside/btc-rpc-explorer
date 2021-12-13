@@ -252,7 +252,7 @@ router.get("/", asyncHandler(async (req, res, next) => {
 		}
 
 		res.locals.difficultyAdjustmentData = {
-			estimateAvailable: blockCount > 30 && !isNaN(diffAdjPercent),
+			estimateAvailable: !isNaN(diffAdjPercent),
 
 			blockCount: blockCount,
 			blocksLeft: res.locals.blocksUntilDifficultyAdjustment,
