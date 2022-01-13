@@ -514,7 +514,7 @@ function identifyMiner(coinbaseTx, blockHeight) {
 				}
 			}
 
-			if (miningPoolsConfig.block_heights) {
+			if (global.activeBlockchain == "main" && miningPoolsConfig.block_heights) {
 				for (var minerName in miningPoolsConfig.block_heights) {
 					var minerInfo = miningPoolsConfig.block_heights[minerName];
 					minerInfo.name = minerName;
