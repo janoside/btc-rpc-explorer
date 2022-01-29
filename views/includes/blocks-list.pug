@@ -69,8 +69,10 @@
 							a(href=`./block-height/${block.height}`) #{block.height.toLocaleString()}
 						
 
-						- var timeAgoTime = moment.utc(new Date()).diff(moment.utc(new Date(parseInt(block.time) * 1000)));
-						- var timeAgo = moment.duration(timeAgoTime);
+						// This variable was called "timeAgoTime" but it's been renamed to avoid confusing it with the "timeAgoTime" variable
+						// used to pass the block time into time-ago-text.pug.
+						- var timeAgoTimeBlocksList = moment.utc(new Date()).diff(moment.utc(new Date(parseInt(block.time) * 1000)));
+						- var timeAgo = moment.duration(timeAgoTimeBlocksList);
 
 						- var timeDiff = null;
 						
@@ -88,12 +90,17 @@
 
 						td.text-end
 
-							if (sort != "asc" && blockIndex == 0 && offset == 0 && timeAgoTime > (15 * 60 * 1000))
-								- var timeAgoTime = block.time;
-								span.text-danger.border-dotted(title="It's been > 15 min since this latest block.", data-bs-toggle="tooltip")
-									include ./time-ago-text.pug
+							- var timeAgoTime = block.time;
+							if (sort != "asc" && blockIndex == 0 && offset == 0)
+								-var latestBlock = true;
+								if (autoRefresh == "off" && timeAgoTimeBlocksList > (15 * 60 * 1000))
+									span.text-danger.border-dotted(title="It's been > 15 min since this latest block.", data-bs-toggle="tooltip")
+										include ./time-ago-text.pug
+								else
+									span(id="old-block-warning")
+										include ./time-ago-text.pug
 							else
-								- var timeAgoTime = block.time;
+								-var latestBlock = false;
 								include ./time-ago-text.pug
 
 						td.text-end.d-none.d-sm-table-cell
@@ -263,3 +270,121 @@
 									i.fas.fa-backspace.text-danger
 
 					- var lastBlock = block;
+
+if (autoRefresh == "on")
+	script.
+		var allowTimeAgoUpdates = true;
+		// We don't have access to the moments library on the client side. It's easy enough to implement
+		// minutes/hours/days/weeks, but beyond that it gets complex. The initial string representations
+		// are generated on the server side by moments: if we see "mo" (months) or "y" (years) anywhere
+		// we disable updates. No one is likely to notice, and this seems better than letting a page
+		// gradually accumulate inconsistencies where times gradually increment up from "4w 3d" to "4w 4d"
+		// instead of "1mo 1d" or similar.
+		var timeAgoSpans = document.querySelectorAll('[id=timeAgo]');
+		timeAgoSpans.forEach(item => {
+			if (item.textContent.includes("mo") || item.textContent.includes("y")) {
+				allowTimeAgoUpdates = false;
+			}
+		});
+
+		function updateTimeAgo() {
+			if (!allowTimeAgoUpdates)
+				return;
+
+			var now = new Date();
+			timeAgoSpans.forEach(item => {
+				var latestBlock = (item.getAttribute("data-latestblock") == "true");
+				var timeAgoTime = new Date(parseInt(item.getAttribute("data-timeagotime")) * 1000);
+				var timeAgoRawSeconds = Math.floor((now - timeAgoTime) / 1000);
+				// We use >= here instead of > in the non-auto-refresh case because it means the age changes to 15m
+				// and turns red simultaneously, which I think looks neater.
+				if (latestBlock && timeAgoRawSeconds >= (15 * 60)) {
+					warningSpan = document.getElementById('old-block-warning');
+					warningSpan.setAttribute("class", "text-danger border-dotted");
+					warningSpan.setAttribute("title", "It's been > 15 min since this latest block.");
+					warningSpan.setAttribute("data-bs-toggle", "tooltip");
+				}
+
+				var timeAgoHours = Math.floor(timeAgoRawSeconds / 3600);
+				var timeAgoMinutes = Math.floor((timeAgoRawSeconds - timeAgoHours * 3600) / 60);
+				var timeAgoString;
+				if (timeAgoHours < 1) {
+					if (timeAgoMinutes < 1)
+						timeAgoString = `${timeAgoRawSeconds}s`
+					else
+						timeAgoString = `${timeAgoMinutes}m`
+				} else {
+					if (timeAgoHours < 24) {
+						timeAgoString = `${timeAgoHours}h`
+						if (timeAgoMinutes > 0)
+							timeAgoString += ` ${timeAgoMinutes}m`;
+					} else {
+						// We use "hr" instead of "h" here to match the behaviour of time-ago-text.pug.
+						timeAgoDays = Math.floor(timeAgoHours / 24);
+						timeAgoHours -= timeAgoDays * 24;
+						if (timeAgoDays < 7) {
+							timeAgoString = `${timeAgoDays}d`;
+							if (timeAgoHours > 0)
+								timeAgoString += ` ${timeAgoHours}hr`;
+						} else {
+							timeAgoWeeks = Math.floor(timeAgoDays / 7);
+							timeAgoDays -= timeAgoWeeks * 7;
+							timeAgoString = `${timeAgoWeeks}w`
+							if (timeAgoHours > 0)
+								timeAgoString += ` ${timeAgoDays}d ${timeAgoHours}hr`
+							else if (timeAgoDays > 0)
+								timeAgoString += ` ${timeAgoDays}d`
+						}
+					}
+				}
+				item.textContent = timeAgoString;	
+			});
+
+			setTimeout(updateTimeAgo, 1000);
+		};
+
+		updateTimeAgo();
+
+	// Having currentBlockHeight defined here triggers polling of the current block height and a page refresh
+	// when it changes. This is used on the home page and on the block browser when it shows the most recent
+	// blocks.
+	if (periodicRefresh)
+		script.
+			function periodicRefresh() {
+				// Reload the page occasionally in order to force the network summary and predicted next block
+				// to refresh.
+				currentTime = new Date();
+				if ((currentTime - pageLoadTime) >= 5 * 60 * 1000) {
+					window.location.reload();
+				}
+			}
+	else
+		script.
+			function periodicRefresh() {
+			}
+	if (currentBlockHeight)
+		script.
+			var pageLoadTime = new Date();
+			function checkRefresh() {
+				// H/T: https://learnwithparam.com/blog/how-to-handle-fetch-errors/
+				fetch('/api/blocks/tip/height')
+					.then((response) => {
+						if (response.status >= 200 && response.status <= 299) {
+							return response.json();
+						} else {
+							throw Error(response.statusText);
+						}
+					})
+				.then((newBlockHeight) => {
+					// Refresh the page if the block height has changed.
+					if (newBlockHeight != !{currentBlockHeight}) {
+						window.location.reload();
+					}
+					periodicRefresh();
+					document.getElementById('connection-warning').style.display='none';
+				}).catch((error) => {
+					document.getElementById('connection-warning').style.display='block';
+				});
+				setTimeout(checkRefresh, 10 * 1000);
+			};
+			checkRefresh();

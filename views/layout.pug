@@ -183,7 +183,7 @@ html(lang="en")
 											i.fas.fa-moon
 
 									hr.dropdown-divider.mt-2.mb-2
-									span.dropdown-header Dislay Timezone
+									span.dropdown-header Display Timezone
 
 									- var items = ["fa", "sat"];
 									if (config.queryExchangeRates && global.exchangeRates)
@@ -196,6 +196,14 @@ html(lang="en")
 									p.px-3.pt-2.small.text-muted "Local" uses your browser's default offset:
 										span#browser-tz-offset.badge.bg-light.text-dark.ms-1.border
 										i.fas.fa-info-circle.ms-1(title="This value comes from your brower. If you wish to set a custom offset, you can do so below, in 'More settings...'", data-bs-toggle="tooltip")
+
+									hr.dropdown-divider.mt-2.mb-2
+									span.dropdown-header Auto Refresh
+									- var items = ["off", "on"];
+
+									.btn-group.ms-3
+										a.btn.btn-sm.px-3(href=`./changeSetting?name=autoRefresh&value=off`, class=(userSettings.autoRefresh == "off" ? "btn-primary" : "btn-outline-primary")) Off
+										a.btn.btn-sm.px-3(href=`./changeSetting?name=autoRefresh&value=on`, class=(userSettings.autoRefresh == "off" ? "btn-outline-primary" : "btn-primary")) On
 
 									hr.dropdown-divider.mt-2.mb-2
 

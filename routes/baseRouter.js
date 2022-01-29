@@ -277,7 +277,7 @@ router.get("/", asyncHandler(async (req, res, next) => {
 
 
 		await utils.timePromise("homepage.render", async () => {
-			res.render("index");
+			res.render("index", {"currentBlockHeight":currentBlock.height, "periodicRefresh":true});
 		}, perfResults);
 
 		next();
@@ -629,7 +629,12 @@ router.get("/blocks", asyncHandler(async (req, res, next) => {
 		await utils.awaitPromises(promises);
 
 		await utils.timePromise("blocks.render", async () => {
-			res.render("blocks");
+			// If this page shows the latest block at the top, provide the current block height to tell the page
+			// to auto-refresh (if enabled) when a new block arrives.
+			if (offset == 0 && sort == "desc")
+				res.render("blocks", {"currentBlockHeight":getblockchaininfo.blocks});
+			else
+				res.render("blocks");
 		}, perfResults);
 
 		next();
