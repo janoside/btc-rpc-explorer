@@ -13,7 +13,7 @@
 				th.text-end.text-card-highlight.fw-normal.text-uppercase Age
 
 				th.text-end.text-card-highlight.fw-normal.text-uppercase.d-none.d-sm-table-cell
-					span.border-dotted(title="<b>Time To Mine</b><br/>The time it took to mine this block after the previous block. <span class='text-success'>Fast</span> blocks (< 5min) and <span class='text-danger'>Slow</span> blocks (> 15min) are highlighted.", data-bs-toggle="tooltip", data-bs-html="true") TTM
+					span.border-dotted(title="<b>Time To Mine</b><br/>The time it took to mine this block after the previous block. <span class='text-success'>Fast</span> blocks (< 1min) and <span class='text-danger'>Slow</span> blocks (> 2min) are highlighted.", data-bs-toggle="tooltip", data-bs-html="true") TTM
 				th.text-start.text-card-highlight.fw-normal.text-uppercase Miner
 				th.text-end.text-card-highlight.fw-normal.text-uppercase
 					span.border-dotted(title="The number of transactions included in each block.", data-bs-toggle="tooltip") N(tx)
@@ -88,9 +88,9 @@
 
 						td.text-end
 
-							if (sort != "asc" && blockIndex == 0 && offset == 0 && timeAgoTime > (15 * 60 * 1000))
+							if (sort != "asc" && blockIndex == 0 && offset == 0 && timeAgoTime > (2 * 60 * 1000))
 								- var timeAgoTime = block.time;
-								span.text-danger.border-dotted(title="It's been > 15 min since this latest block.", data-bs-toggle="tooltip")
+								span.text-danger.border-dotted(title="It's been > 2 min since this latest block.", data-bs-toggle="tooltip")
 									include ./time-ago-text.pug
 							else
 								- var timeAgoTime = block.time;
@@ -99,9 +99,9 @@
 						td.text-end.d-none.d-sm-table-cell
 							if (timeDiff)
 								- var colorClass = "";
-								if (timeDiff < 300000)
+								if (timeDiff < 60000)
 									- var colorClass = "text-success";
-								if (timeDiff > 900000)
+								if (timeDiff > 120000)
 									- var colorClass = "text-danger";
 
 								span(class=colorClass)
