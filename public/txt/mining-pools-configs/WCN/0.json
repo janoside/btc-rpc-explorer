@@ -39,6 +39,10 @@
     "SOLOPOOLS.ORG": {
       "name": "Solopools.org",
       "link": "solopools.org"    
+    },
+    "Cminors-Pools": {
+      "name": "Cminors-pool",
+      "link": "au-merged.mine.cminors-pool.com"    
     }
   }
 }
