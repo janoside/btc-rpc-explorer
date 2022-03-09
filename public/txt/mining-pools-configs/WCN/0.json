@@ -43,6 +43,10 @@
     "Cminors-Pools": {
       "name": "Cminors-pool",
       "link": "au-merged.mine.cminors-pool.com"    
+    },
+    "Mining4People": {
+      "name": "Mining4People",
+      "link": "mining4people.com"    
     }
   }
 }
