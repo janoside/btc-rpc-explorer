@@ -1,3 +1,9 @@
+##### v3.?
+###### Unreleased
+
+* Misc fixes for erroneous data display on non-mainnet nodes
+
+
 ##### v3.3.0
 ###### 2021-12-07
 
