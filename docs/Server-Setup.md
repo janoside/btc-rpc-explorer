@@ -1,4 +1,4 @@
-### Setup of https://bitcoinexplorer.org on Ubuntu 20.04
+### Setup of https://explorer.widecoin.org on Ubuntu 20.04
 
     # update and install packages
     apt update
