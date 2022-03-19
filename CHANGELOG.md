@@ -2,7 +2,7 @@
 ###### 2021-04-14
 
 * Improvements to no-`txindex` support: now available for all versions of Widecoin Core
-* Move public sites to [BitcoinExplorer.org](https://bitcoinexplorer.org) (BIG thanks [@SatoshisDomains](https://twitter.com/SatoshisDomains))
+* Move public sites to [explorer.widecoin.org](https://explorer.widecoin.org) (BIG thanks [@SatoshisDomains](https://twitter.com/SatoshisDomains))
 * Add back the `/peers` tool in the "Tools" menu
 	* Note: The map on the peers tool now requires users set their own `BTCEXP_MAPBOX_APIKEY` in `.env`
 * Response compression
