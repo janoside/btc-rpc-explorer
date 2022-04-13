@@ -22,6 +22,7 @@ const coins = require("./../app/coins.js");
 const config = require("./../app/config.js");
 const coreApi = require("./../app/api/coreApi.js");
 const addressApi = require("./../app/api/addressApi.js");
+const xyzpubAddressApi = require("./../app/api/xyzpubAddressApi.js");
 const rpcApi = require("./../app/api/rpcApi.js");
 const apiDocs = require("./../docs/api.js");
 const btcQuotes = require("./../app/coins/btcQuotes.js");
@@ -327,6 +328,31 @@ router.get("/address/:address", asyncHandler(async (req, res, next) => {
 	}
 }));
 
+
+router.get("/xyzpub/:extendedPubkey", asyncHandler(async (req, res, next) => {
+	try {
+		const extendedPubkey = req.params.extendedPubkey;
+		let limit = -1;
+		if (req.query.limit) {
+			limit = parseInt(req.query.limit);
+		}
+		
+		const xyzpubResult = await xyzpubAddressApi.getXyzPubDetails(extendedPubkey, limit);
+		
+		if(xyzpubResult){
+			res.json(xyzpubResult);
+		}
+		else {
+			res.json({success:false});
+		}
+
+		next();
+	} catch (e) {
+		res.json({success:false, error: e.toString()});
+
+		next();
+	}
+}));
 
 
 
