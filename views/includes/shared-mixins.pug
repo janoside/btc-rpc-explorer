@@ -182,7 +182,8 @@ mixin txList(visibleTxs, txCount, limit, offset, inputsByTxid, options={})
 						.me-5.me-sm-n2
 							if (options.mempoolDetailsByTxid && options.mempoolDetailsByTxid[tx.txid])
 								- var mempoolDetails = options.mempoolDetailsByTxid[tx.txid].entry;
-								- var feeRate = new Decimal(mempoolDetails.fee).times(coinConfig.baseCurrencyUnit.multiplier).dividedBy(mempoolDetails.vsize);
+								- var mempoolDetailsFee = ((mempoolDetails.fees && mempoolDetails.fees.modified) ? mempoolDetails.fees.modified : (mempoolDetails.fee ? mempoolDetails.fee : 0));
+								- var feeRate = new Decimal(mempoolDetailsFee).times(coinConfig.baseCurrencyUnit.multiplier).dividedBy(mempoolDetails.vsize);
 								
 								+lightBadge
 									| #{parseInt(feeRate).toLocaleString()}
