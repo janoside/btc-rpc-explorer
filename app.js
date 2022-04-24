@@ -415,6 +415,22 @@ async function onRpcConnectionVerified(getnetworkinfo, getblockchaininfo) {
 	// UTXO pull
 	refreshUtxoSetSummary();
 	setInterval(refreshUtxoSetSummary, 30 * 60 * 1000);
+
+
+
+	if (false) {
+		var zmq = require("zeromq");
+		var sock = zmq.socket("sub");
+
+		sock.connect("tcp://192.168.1.1:28333");
+		console.log("Worker connected to port 28333");
+
+		sock.on("message", function(topic, message) {
+			console.log(Buffer.from(topic).toString("ascii") + " - " + Buffer.from(message).toString("hex"));
+		});
+
+		//sock.subscribe('rawtx');
+	}
 }
 
 var txindexCheckCount = 0;
