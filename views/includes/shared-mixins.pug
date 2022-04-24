@@ -1,6 +1,6 @@
 mixin themeCss
-	link(id="light-theme-link-tag", rel="stylesheet", href=`./style/light.css?v=${cacheId}`, integrity="sha384-G+XehzyDofsc9ZlqIF7hYXsaYijKshaTro74HxGnvEmvNiv2lRjGxO8g8HShNBQG")
-	link(id="dark-theme-link-tag", rel=(userSettings.uiTheme == "dark" ? "stylesheet" : false), href=`./style/dark.css?v=${cacheId}`, integrity="sha384-xjIBl325k0VYsT0wAem/8jzIxea9FDLsVmHZG8STGMhLu+rDq/xlWxo/iR6oJQ6w")
+	link(id="light-theme-link-tag", rel="stylesheet", href=`./style/light.css?v=${cacheId}`, integrity="sha384-pVyltRErny1kThw+BcjtLDkOEpGLSf8/1bsyqimIIA7fuoAobGDW8UfstUY8uWYZ")
+	link(id="dark-theme-link-tag", rel=(userSettings.uiTheme == "dark" ? "stylesheet" : false), href=`./style/dark.css?v=${cacheId}`, integrity="sha384-A2fwoNoA4lHJfgim7XUOLsWNI5V2MKx17vQ1Wn0vPdwVjhNZ21jWAh3KYxq2gsKG")
 
 
 mixin sharedScriptTags
@@ -81,7 +81,7 @@ mixin summaryRow(itemCount)
 
 	//h1 #{itemCount} #{JSON.stringify(locals.rowCounts)}
 
-	.row.row-cols-1(class=utils.objectProperties(locals.colCounts).map(x => `row-cols-${x}-${locals.colCounts[x]}`).join(" "))
+	.row.row-cols-1.summary-row(class=utils.objectProperties(locals.colCounts).map(x => `row-cols-${x}-${locals.colCounts[x]}`).join(" "))
 		block
 
 
