@@ -1,7 +1,10 @@
 ##### v3.?
 ###### Unreleased
 
+* Minor fixes preparing for Bitcoin Core v23
 * Misc fixes for erroneous data display on non-mainnet nodes
+* UI/UX tweak, especially on homepage
+* Updated dependencies
 
 
 ##### v3.3.0

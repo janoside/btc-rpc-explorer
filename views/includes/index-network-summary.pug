@@ -79,7 +79,7 @@ if (exchangeRates)
 				i.fas.fa-server.text-muted
 
 +contentSection
-	+summaryRow(1 + (hashrate7d ? 1 : 0) + (chainTxStats && chainTxStats[7 * targetBlocksPerDay] ? 1 : 0) + (difficultyAdjustmentData ? 1 : 0))
+	+summaryRow(2 + (hashrate7d ? 1 : 0) + (chainTxStats && chainTxStats[7 * targetBlocksPerDay] ? 1 : 0) + (difficultyAdjustmentData ? 1 : 0))
 		if (hashrate7d)
 			+summaryItem("7d Hashrate", "The average hashrate of the global mining network over the last 7 days. A comparison to the 30-day average is included to help gauge the rate of change.")
 				- var hashrate7dayData = utils.formatLargeNumber(hashrate7d, 1);
@@ -90,7 +90,7 @@ if (exchangeRates)
 				if (hashrate30d)
 					- var ratio = hashrate7d / hashrate30d;
 
-					small
+					span.text-tiny.text-muted
 						| (
 						span.border-dotted(title='7d hashrate vs 30d hashrate.' data-bs-toggle='tooltip')
 							if (ratio > 1)
@@ -102,6 +102,18 @@ if (exchangeRates)
 								span.text-danger -#{ratioPercent.toDP(2)}%
 
 						| )
+
+		+summaryItem("Difficulty")
+			- var difficultyData = utils.formatLargeNumber(getblockchaininfo.difficulty, 3);
+			
+			if (getblockchaininfo.difficulty > 1000)
+				span.border-dotted(title=parseFloat(getblockchaininfo.difficulty).toLocaleString(), data-bs-toggle="tooltip")
+					span #{difficultyData[0]}
+					span  x 10
+					sup #{difficultyData[1].exponent}
+
+			else
+				span #{new Decimal(getblockchaininfo.difficulty).toDP(3)}
 
 		if (chainTxStats && chainTxStats[7 * targetBlocksPerDay])
 			+summaryItem("7d Transactions", "The total number of transactions that have been confirmed in the blockchain over the last 7 days.")
@@ -122,7 +134,7 @@ if (exchangeRates)
 
 						| #{difficultyAdjustmentData.delta.toDP(2)}
 						small.ms-1 %
-					small.text-muted
+					span.text-tiny.text-muted
 						| (
 						span.border-dotted(title=`${difficultyAdjustmentData.blocksLeft.toLocaleString()} block(s)`, data-bs-toggle="tooltip") #{difficultyAdjustmentData.timeLeftStr}
 						| )
@@ -131,12 +143,12 @@ if (exchangeRates)
 					small.border-dotted.text-muted(title="Estimate pending...<br/>A new difficulty epoch just started. Difficulty adjustment estimates made with too little data can be very unreliable, so are not calculated.", data-bs-toggle="tooltip", data-bs-html="true")
 						i.fas.fa-hourglass-half
 
-		+summaryItem("Coins", utxoSetSummary ? null : `This value is estimated.`)
+		+summaryItem("Coins", utxoSetSummary ? null : (config.slowDeviceMode ? `Because this app is configured to conserve resources (SLOW_DEVICE_MODE=true), this value is estimated, using a checkpoint.` : `This value is estimated, using a checkpoint.`))
 			- var maxSupply = coinConfig.maxSupplyByNetwork[activeBlockchain];
 
 			if (utxoSetSummary)
 				span #{parseFloat(utxoSetSummary.total_amount).toLocaleString()}
-				span.small.ms-2.text-muted
+				span.text-tiny.ms-2.text-muted
 					| (
 					span.border-dotted(title=`${new Decimal(utxoSetSummary.total_amount).dividedBy(maxSupply).times(100).toDP(5)}% have been mined into circulation`, data-bs-toggle="tooltip") #{new Decimal(utxoSetSummary.total_amount).dividedBy(maxSupply).times(100).toDP(2, Decimal.ROUND_DOWN)}%
 					| )
@@ -145,7 +157,7 @@ if (exchangeRates)
 				- var estimatedSupply = utils.estimatedSupply(getblockchaininfo.blocks);
 
 				span #{parseInt(estimatedSupply).toLocaleString()}
-				small.ms-2.text-muted
+				span.text-tiny.ms-2.text-muted
 					| (
 					span.border-dotted(title=`${estimatedSupply.dividedBy(maxSupply).times(100).toDP(4)}% have been mined into circulation`, data-bs-toggle="tooltip") #{estimatedSupply.dividedBy(maxSupply).times(100).toDP(1)}%
 					| )
@@ -156,32 +168,46 @@ if (exchangeRates)
 
 	- var smartFeeEstimateBlocks = [];
 	- var smartFeeEstimateStrings = [];
+	- var smartFeeEstimateTimes = [];
 	if (smartFeeEstimates)
 		if (smartFeeEstimates[1])
 			- smartFeeEstimateBlocks.push(1);
 			- smartFeeEstimateStrings.push(smartFeeEstimates[1]);
+			- smartFeeEstimateTimes.push('asap');
 		if (smartFeeEstimates[6])
 			- smartFeeEstimateBlocks.push(6);
 			- smartFeeEstimateStrings.push(smartFeeEstimates[6]);
+			- smartFeeEstimateTimes.push('hr');
 		if (smartFeeEstimates[144])
 			- smartFeeEstimateBlocks.push(144);
 			- smartFeeEstimateStrings.push(smartFeeEstimates[144]);
+			- smartFeeEstimateTimes.push('day');
 
-	+summaryRow((mempoolInfo == undefined ? 0 : 1) + (smartFeeEstimateStrings.length > 0 ? 1 : 0))
+	+summaryRow((mempoolInfo == undefined ? 0 : 2) + (smartFeeEstimateStrings.length > 0 ? 1 : 0))
 		if (mempoolInfo)
 			- var thresholds = [11000, 7000];
 			- var colorClass_txCount = (mempoolInfo.size > 11000) ? "text-danger" : (mempoolInfo.size > 7000 ? "text-warning" : "text-success");
 			- var blockCount = new Decimal(mempoolInfo.bytes).dividedBy(coinConfig.maxBlockSize);
 			- var colorClass_blockCount = (blockCount > 20) ? "text-danger" : (blockCount > 10 ? "text-warning" : "text-success");
 			
-			+summaryItem("Mempool", "The number of unconfirmed transactions in your node's mempool, and the number of blocks needed to confirm those transactions")
+			+summaryItem("Mempool", "The number of unconfirmed transactions in your node's mempool, and the number of blocks needed to confirm those transactions", null, null, "summary", "./mempool-summary")
+				
 				span(class=colorClass_txCount) #{mempoolInfo.size.toLocaleString()}
 				span.text-tiny.text-muted.ms-1 tx
 
-				span.fw-light.text-muted.mx-2 &ndash;
+				span.fw-light.text-muted.mx-2 /
 
 				span(class=colorClass_blockCount) #{blockCount.toDP(2)}
 				span.text-tiny.text-muted.ms-1 blocks
+
+		if (mempoolInfo)
+			+summaryRow
+				+summaryItem("Next Block", "A prediction for what transactions will be included in the next block, yet to be mined. Based on the output of the RPC getblocktemplate.")
+
+					#index-next-block
+						.text-center.text-reset.pb-4
+							.mt-2
+							.spinner-border.spinner-border-sm
 
 
 		if (false)
@@ -195,8 +221,13 @@ if (exchangeRates)
 				small.ms-2.text-muted sat/vB
 
 		if (smartFeeEstimateStrings.length > 0)
-			+summaryItem(`Smart Fees (${smartFeeEstimateBlocks.join(", ")})`, `The recommended fee rate to target confirmation in ${smartFeeEstimateBlocks.join(", ")} blocks`, "sat/vB")
-				| #{smartFeeEstimateStrings.join(", ")}
+			+summaryItem(`Smart Fees`, `The recommended fee rate to target confirmation in ${smartFeeEstimateBlocks.join(", ")} blocks`, "sat/vB")
+				each x, xIndex in smartFeeEstimateStrings
+					if (xIndex > 0)
+						span.mx-2.text-muted /
+
+					| #{x}
+					span.text-tiny.text-muted.ms-1 (#{smartFeeEstimateTimes[xIndex]})
 
 		
 

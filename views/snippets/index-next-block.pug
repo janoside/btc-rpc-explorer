@@ -1,15 +1,32 @@
 include ../includes/shared-mixins.pug
 
-+contentSection
-	+summaryRow(3)
-		+summaryItem("Transactions")
-			| #{txCount.toLocaleString()}
 
-		+summaryItem("Fee Rates", "Minimum and maximum fee rates for transactions that are predicted to be included in the next block.", "sat/vB")
-			+numWithMutedDecimals(new Decimal(minFeeRate).toDP(2).toString())
-			span.mx-2 -
+
++summaryRow(1)
+	+summaryItem
+		
+
+		+numWithMutedDecimals(new Decimal(minFeeRate).toDP(2).toString())
+		span.mx-1 &dash;
+
+		if (maxFeeRate - minFeeRate > 10)
+			+numWithMutedDecimals(new Decimal(maxFeeRate).toDP(0).toString())
+
+		else
 			+numWithMutedDecimals(new Decimal(maxFeeRate).toDP(2).toString())
 
-			
-		+summaryItem("Total Fees", "Sum of fees for all transactions that are predicted to be included in the next block.")
-			+valueDisplay(totalFees)
+		span.text-tiny.text-muted.ms-1 sat/vB
+
+
+		br
+
+
+
+		| #{txCount.toLocaleString()}
+		span.text-tiny.text-muted.ms-1 tx
+		span.mx-2.text-muted /
+		
+
+		+valueDisplay(totalFees, {hideLessSignificantDigits:true})
+		span.text-tiny.text-muted.ms-1 (&Sigma; fees)
+

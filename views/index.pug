@@ -75,49 +75,7 @@ block content
 		
 		
 		
-		if (true || nextBlockTemplate)
-			if (false)
-				pre
-					code.json #{JSON.stringify(nextBlockFeeRateGroups, null, 4)}
-
-			.d-flex.justify-content-between
-				div
-					- var desc = "Prediction for the next block, based on the output of the getblocktemplate command";
-					+sectionTitle("Predicted Next Block", false, null, null, null, desc)
-
-				div
-					a.small.ms-2(href="./mining-template") Next block details &raquo;
-			
-			#index-next-block
-				+contentSection
-					+summaryRow(3)
-						+summaryItem("Transactions")
-							.text-center.text-reset
-								.spinner-border.spinner-border-sm
-
-						+summaryItem("Fee Rates", "Minimum and maximum fee rates for transactions that are predicted to be included in the next block.", "sat/vB")
-							.text-center
-								.spinner-border.spinner-border-sm
-							
-						+summaryItem("Total Fees", "Sum of fees for all transactions that are predicted to be included in the next block.")
-							.text-center
-								.spinner-border.spinner-border-sm
-
-				if (false)
-					.mt-4
-						.text-center
-							+summaryTitle("Fee Rate Breakdown")
-
-						.progress.mt-2
-							each group, groupIndex in nextBlockFeeRateGroups
-								if (group.totalWeight > 0)
-									- var intPercent = parseInt(100 * group.weightRatio);
-									if (intPercent < 10)
-										- intPercent = 10;
-									- var color = `hsl(${(333 * (groupIndex / nextBlockFeeRateGroups.length))}, 100%, 35%)`;
-									
-									.progress-bar(role="progressbar", style=`width: ${intPercent}%; background-color: ${color};`, aria-valuenow=`${intPercent}`, aria-valuemin="0", aria-valuemax="100")
-										| #{new Decimal(group.minFeeRate).toDP(1)}
+		
 						
 
 

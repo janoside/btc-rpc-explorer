@@ -85,7 +85,7 @@ mixin summaryRow(itemCount)
 		block
 
 
-mixin summaryTitle(title, titleDesc, subtitle, subtitleDesc)
+mixin summaryTitle(title, titleDesc, subtitle, subtitleDesc, linkText, linkUrl)
 	span.fs-6.text-uppercase.fw-light.text-card-highlight(class=(titleDesc ? "border-dotted" : false), class=(subtitle ? "me-2" : false), title=titleDesc, data-bs-toggle="tooltip", data-bs-html="true") #{title}
 	if (subtitle)
 		small.text-card-highlight.fw-light
@@ -93,14 +93,17 @@ mixin summaryTitle(title, titleDesc, subtitle, subtitleDesc)
 			span(class=(subtitleDesc ? "border-dotted" : false), title=subtitleDesc, data-bs-toggle="tooltip", data-bs-html="true") #{subtitle}
 			| )
 
+	if (linkText && linkUrl)
+		a.ms-2.text-tiny(href=linkUrl) #{linkText}
 
-mixin summaryItem(title, titleDesc, subtitle, subtitleDesc)
+
+mixin summaryItem(title, titleDesc, subtitle, subtitleDesc, linkText, linkUrl)
 	- var rowIndexes = utils.objectProperties(locals.colCounts).map(x => [x, locals.colCounts[x]]).map(x => [x[0], Math.floor(locals.summaryItemIndex / x[1])]);
 
 	.col(class=(locals.summaryItemIndex == (locals.summaryItemCount - 1) ? "mb-0" : "mb-3"), class=rowIndexes.map(x => `mb-${x[0]}-${(x[1] < (locals.rowCounts[x[0]] - 1) ? "4" : "0")}`))
 		//span.text-danger (#{JSON.stringify(locals.rowCounts)})
 		.text-start.text-md-center
-			+summaryTitle(title, titleDesc, subtitle, subtitleDesc)
+			+summaryTitle(title, titleDesc, subtitle, subtitleDesc, linkText, linkUrl)
 			
 
 		.lead.text-start.text-md-center
@@ -281,10 +284,10 @@ mixin pageTab(name, defaultActive=false)
 		block
 
 
-mixin valueDisplay(val)
+mixin valueDisplay(val, options={})
 	if (val > 0)
 		if (userSettings.displayCurrency == "btc")
-			+_valueDisplayBtc(val)
+			+_valueDisplayBtc(val, options)
 
 		else if (userSettings.displayCurrency == "sat")
 			+_valueDisplaySat(val, 1000000)
@@ -296,7 +299,7 @@ mixin valueDisplay(val)
 		span 0
 
 
-mixin _valueDisplayBtc(val)
+mixin _valueDisplayBtc(val, options={})
 	- var parts = utils.formatCurrencyAmount(val, userSettings.displayCurrency);
 
 	//span #{JSON.stringify(parts)}
@@ -304,7 +307,7 @@ mixin _valueDisplayBtc(val)
 	//span.d-inline.d-sm-none.fw-light.me-tiny ₿
 	
 	span #{parts.val}
-		if (parts.lessSignificantDigits)
+		if (parts.lessSignificantDigits && !options.hideLessSignificantDigits)
 			span.text-small.text-darken.ms-1 #{parts.lessSignificantDigits}
 
 	if (exchangeRates)
@@ -745,11 +748,11 @@ mixin numWithMutedDecimals(numString)
 		- var n = numString.substring(0, numString.indexOf("."));
 		- var dec = numString.substring(numString.indexOf("."));
 
-		span #{n}
+		span #{n.toLocaleString()}
 		small.text-muted #{dec}
 
 	else
-		span #{numString}
+		span #{parseInt(numString).toLocaleString()}
 				
 
 mixin blockRangeFilters
