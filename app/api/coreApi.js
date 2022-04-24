@@ -223,6 +223,10 @@ function getBlockchainInfo() {
 	return tryCacheThenRpcApi(miscCache, "getBlockchainInfo", 10 * ONE_SEC, rpcApi.getBlockchainInfo);
 }
 
+function getDeploymentInfo() {
+	return tryCacheThenRpcApi(miscCache, "getDeploymentInfo", 10 * ONE_SEC, rpcApi.getDeploymentInfo);
+}
+
 function getNetworkInfo() {
 	return tryCacheThenRpcApi(miscCache, "getNetworkInfo", 10 * ONE_SEC, rpcApi.getNetworkInfo);
 }
@@ -2142,6 +2146,7 @@ module.exports = {
 	getGenesisBlockHash: getGenesisBlockHash,
 	getGenesisCoinbaseTransactionId: getGenesisCoinbaseTransactionId,
 	getBlockchainInfo: getBlockchainInfo,
+	getDeploymentInfo: getDeploymentInfo,
 	getNetworkInfo: getNetworkInfo,
 	getNetTotals: getNetTotals,
 	getMempoolInfo: getMempoolInfo,

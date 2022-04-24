@@ -306,6 +306,10 @@ router.get("/node-details", asyncHandler(async (req, res, next) => {
 			res.locals.getblockchaininfo = await coreApi.getBlockchainInfo();
 		}, perfResults));
 
+		promises.push(utils.timePromise("node-details.getDeploymentInfo", async () => {
+			res.locals.getdeploymentinfo = await coreApi.getDeploymentInfo();
+		}, perfResults));
+
 		promises.push(utils.timePromise("node-details.getNetworkInfo", async () => {
 			res.locals.getnetworkinfo = await coreApi.getNetworkInfo();
 		}, perfResults));

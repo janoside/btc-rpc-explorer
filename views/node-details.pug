@@ -120,6 +120,57 @@ block content
 									else
 										i.fas.fa-times.text-danger
 
+
+				if (getdeploymentinfo && getdeploymentinfo.deployments)
+					- var forkUrls = {"bip34":"https://github.com/bitcoin/bips/blob/master/bip-0034.mediawiki", "bip65":"https://github.com/bitcoin/bips/blob/master/bip-0065.mediawiki", "bip66":"https://github.com/bitcoin/bips/blob/master/bip-0066.mediawiki", "csv":"https://github.com/bitcoin/bips/blob/master/bip-0112.mediawiki", "segwit":"https://github.com/bitcoin/bips/blob/master/bip-0141.mediawiki", "taproot":"https://github.com/bitcoin/bips/blob/master/bip-0341.mediawiki"};
+
+					+contentSection("Deployments")
+						+summaryRow(utils.objectProperties(getdeploymentinfo.deployments).length)
+							each item, itemName in getdeploymentinfo.deployments
+								// (title, titleDesc, subtitle, subtitleDesc, linkText, linkUrl)
+								+summaryItem(itemName)
+									if (item.active)
+										span.me-2
+											span.text-success active
+											span.text-tiny.text-muted.ms-2 (
+												a.border-dotted(href=`./block-height/${item.height}`, title=`${itemName} has been active since block ${item.height.toLocaleString()}`, data-bs-toggle="tooltip") #{item.height.toLocaleString()}
+												| +)
+
+									else
+										if (item.type == "bip8") || (item.type == "bip9")
+											- var bip = item.type;
+											- var bip_status = item[bip].status
+											span.me-2
+												span.text-warning.text-lowercase #{bip_status}
+												small.text-muted.ms-2 (
+													a.border-dotted(title=`${itemName.toUpperCase()} ${bip_status.replace("_", " ")} since block ${item[bip].since.toLocaleString()} with BIP${bip.charAt(3)} and LockinOnTimeout=${item[bip].lockinontimeout}`, data-bs-toggle="tooltip") #{item[bip].since}
+													| +)
+
+										if (item.type == "bip9" && item.bip9 && (item.bip9.start_time || item.bip9.timeout))
+											div.small.text-muted
+												if (item.bip9.start_time)
+													span.me-2 start:
+													+timestamp(item.bip9.start_time, false, "M/D")
+
+												if (item.bip9.timeout)
+													if (item.bip9.start_time)
+														span.me-1 ,
+													span.me-2 timeout:
+													+timestamp(item.bip9.timeout, false, "M/D")
+
+										if (item.type == "bip9" && item.bip9 && item.bip9.min_activation_height)
+											div.small.text-muted
+												span.border-dotted(title="Minimum activation block height", data-bs-toggle="tooltip") min height
+												span.me-2 :
+												| #{item.bip9.min_activation_height.toLocaleString()}
+
+									if (forkUrls[itemName])
+										small
+											a(href=forkUrls[itemName], title=`More info about ${itemName}`, data-bs-toggle="tooltip", target="_blank")
+												i.fas.fa-external-link-alt.small
+
+
+				// deprecated, as of v23.0, which now has this data in getdeploymentinfo.deployments (see above)
 				if (getblockchaininfo.softforks)
 					if (getblockchaininfo.bip9_softforks)
 						// old format: ~ v0.18.0

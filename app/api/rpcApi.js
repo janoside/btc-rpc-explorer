@@ -28,7 +28,8 @@ const rpcQueue = async.queue(function(task, callback) {
 
 const minRpcVersions = {
 	getblockstats: "0.17.0",
-	getindexinfo: "0.21.0"
+	getindexinfo: "0.21.0",
+	getdeploymentinfo: "23.0.0"
 };
 
 global.rpcStats = {};
@@ -77,6 +78,16 @@ function getIndexInfo() {
 	} else {
 		// unsupported
 		return unsupportedPromise(minRpcVersions.getindexinfo);
+	}
+}
+
+function getDeploymentInfo() {
+	if (semver.gte(global.btcNodeSemver, minRpcVersions.getdeploymentinfo)) {
+		return getRpcData("getdeploymentinfo");
+
+	} else {
+		// unsupported
+		return unsupportedPromise(minRpcVersions.getdeploymentinfo);
 	}
 }
 
@@ -590,6 +601,7 @@ module.exports = {
 	getRpcDataWithParams: getRpcDataWithParams,
 
 	getBlockchainInfo: getBlockchainInfo,
+	getDeploymentInfo: getDeploymentInfo,
 	getBlockCount: getBlockCount,
 	getNetworkInfo: getNetworkInfo,
 	getNetTotals: getNetTotals,
