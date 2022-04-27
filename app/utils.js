@@ -110,7 +110,7 @@ function getcurrentcmc() {
 	currentsupply = totalcurrentsupply; 
 	console.log('CMC Total Supply: '+ currentsupply);
 	//-----
-	request('http://api.widecoin.org:1123/getprice', function (error, response, body) {
+	request('https://api.widecoin.org/getprice', function (error, response, body) {
 	  if (!error && response.statusCode == 200) {
 		 var getjson = JSON.parse(body);
 		 console.log(getjson.result.price_usd);
@@ -155,7 +155,7 @@ function getcurrentsupply() {
 	//-----
 	var fs = require('fs');
 	var request = require('request');
-	request('http://api.widecoin.org:1123/supply', function (error, response, body) {
+	request('https://api.widecoin.org/supply', function (error, response, body) {
 	  if (!error && response.statusCode == 200) {
 		 var getjson = JSON.parse(body);
 		 console.log(getjson.result.supply);
