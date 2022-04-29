@@ -759,7 +759,7 @@ function geoLocateIpAddresses(ipAddresses, provider) {
 						} catch (err) {
 							debugLog("Failed IP-geo-lookup: " + result.key);
 
-							logError("39724gdge33a", error, {ip: result.key});
+							logError("39724gdge33a", err, {ip: result.key});
 
 							// we failed to get what we wanted, but there's no meaningful recourse,
 							// so we log the failure and continue without objection
