@@ -63,7 +63,7 @@ block content
 
 				#alert-included-next-block.alert.alert-primary(style="display: none;")
 					h6 Confirmation: Predicted in Next Block
-						i.fas.fa-check.text-success.ms-1
+						i.bi-check2.text-success.ms-1
 					.mb-2 This transaction is currently unconfirmed but, with the current mempool, it's predicted to be confirmed in the next block.
 					span It's currently transaction #<span id='next-block-index'></span> of <span id='next-block-count'></span>.
 
@@ -77,7 +77,7 @@ block content
 					.float-end
 						if (`${userSettings["txPageShowTechDetails"]}` == "false")
 							a.btn.btn-primary.btn-sm.me-2(href=`./changeSetting?name=txPageShowTechDetails&value=true`, title="Display technical details for this transaction.", data-bs-toggle="tooltip")
-								i.far.fa-plus-square.me-2
+								i.bi-plus-square.me-2
 								| Technical Details
 					
 
@@ -110,7 +110,7 @@ block content
 								else if (mempoolDetails.ancestors.length > 0)
 									span.border-dotted(title="RBF may be signaled explicitly or implicitly. This transaction does not explicitly opt in, but if any of its unconfirmed ancestor transactions are replaceable then this one is too.", data-bs-toggle="tooltip") Not explicit…
 									a.ms-2(href="https://github.com/bitcoin/bips/blob/master/bip-0125.mediawiki#summary", data-bs-toggle="tooltip", title="More info about RBF", target="_blank")
-										i.fas.fa-info-circle
+										i.bi-info-circle
 								else
 									span No
 
@@ -152,7 +152,7 @@ block content
 							+summaryItem("Fee Rate", null, "sat/vB")
 								if (!mempoolDetails && !global.txindexAvailable)
 									span.border-dotted(title="Determining the fee of confirmed transactions requires txindex to be enabled", data-bs-toggle="tooltip")
-										i.fas.fa-backspace.text-danger.me-2
+										i.bi-backspace.text-danger.me-2
 										| ?
 
 								else
@@ -163,7 +163,7 @@ block content
 							+summaryItem("Total Fee")
 								if (!mempoolDetails && !global.txindexAvailable)
 									span.border-dotted(title="Determining the fee of confirmed transactions requires txindex to be enabled", data-bs-toggle="tooltip")
-										i.fas.fa-backspace.text-danger.me-2
+										i.bi-backspace.text-danger.me-2
 										| ?
 
 								else
@@ -233,7 +233,7 @@ block content
 									+timestamp(result.getrawtransaction.locktime)
 									if (result.getrawtransaction.locktime > (new Date().getTime() / 1000))
 										span.border-dotted.ms-1(title=`This future-dated 'locktime' value is only possible because this is a coinbase transaction. Normally, locktime specifies the earliest that a transaction may be mined (included in a block). But, because this transaction was created by the miner in the process of mining a block, it is able to bypass some of the normal validity checks that nodes on the network perform on transactions.`, data-bs-toggle="tooltip")
-											i.fas.fa-flag.fa-sm.text-warning
+											i.bi-flag.text-tiny.text-warning
 
 						if (parseInt(daysDestroyed) > 0)
 							- var daysDestroyedDesc = `The sum of all input values multiplied by the number of days that input's UTXO existed before being spent. Large values can sometimes be interesting, indicating the spending of long-dormant coins. A 1 ${coinConfig.ticker} UTXO spent after 7 days dormant results in 7 days destroyed, as does a 7 ${coinConfig.ticker} UTXO spent after 1 day dormant.`;
@@ -263,8 +263,8 @@ block content
 
 							if (hasInputAddresses)
 								.d-inline.d-sm-none
-									a(href="javascript:void(0)", onclick=`$(this).find(".toggle-icon").toggleClass("fa-plus-square").toggleClass("fa-minus-square"); $(".tx-input-address-${tx.txid}").toggle();`)
-										i.toggle-icon.far.fa-plus-square.text-muted.text-end.fa-lg
+									a(href="javascript:void(0)", onclick=`$(this).find(".toggle-icon").toggleClass("bi-plus-square").toggleClass("bi-dash-square"); $(".tx-input-address-${tx.txid}").toggle();`)
+										i.toggle-icon.bi-plus-square.text-muted.text-end
 
 				+contentSection
 					- var tx = result.getrawtransaction;
@@ -310,7 +310,7 @@ block content
 								tr
 									th
 										a.badge.card-highlight.border(data-bs-toggle="tooltip", title=`Input #${vinIndex}`, style="white-space: nowrap;")
-											i.fas.fa-arrow-right.text-danger.me-1
+											i.bi-arrow-right.text-danger.me-1
 											span.font-monospace #{vinIndex.toLocaleString()}
 
 									td.word-wrap.text-break
@@ -352,7 +352,7 @@ block content
 								tr
 									th
 										a.badge.card-highlight.border.fw-normal(data-bs-toggle="tooltip", title=`Output #${(voutIndex + 1)}`, style="white-space: nowrap;")
-											i.fas.fa-arrow-right.text-success.me-1
+											i.bi-arrow-right.text-success.me-1
 											span.font-monospace #{voutIndex.toLocaleString()}
 
 									td.word-wrap

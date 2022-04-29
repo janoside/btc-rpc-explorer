@@ -72,11 +72,12 @@ if (exchangeRates)
 	.float-end
 		if (userSettings.homepageShowTechDetails == "true")
 			a.me-2(href="./changeSetting?name=homepageShowTechDetails&value=false", title="Hide technical network details", data-bs-toggle="tooltip", data-bs-placement="bottom")
-				i.fas.fa-server.text-muted
+				i.bi-hdd-stack.text-muted
 
 		else
 			a.me-2(href="./changeSetting?name=homepageShowTechDetails&value=true", title="Show technical network details", data-bs-toggle="tooltip", data-bs-placement="bottom")
-				i.fas.fa-server.text-muted
+				i.bi-hdd-stack.text-muted
+
 
 +contentSection
 	+summaryRow(2 + (hashrate7d ? 1 : 0) + (chainTxStats && chainTxStats[7 * targetBlocksPerDay] ? 1 : 0) + (difficultyAdjustmentData ? 1 : 0))
@@ -141,7 +142,7 @@ if (exchangeRates)
 
 				else
 					small.border-dotted.text-muted(title="Estimate pending...<br/>A new difficulty epoch just started. Difficulty adjustment estimates made with too little data can be very unreliable, so are not calculated.", data-bs-toggle="tooltip", data-bs-html="true")
-						i.fas.fa-hourglass-half
+						i.bi-hourglass-split
 
 		+summaryItem("Coins", utxoSetSummary ? null : (config.slowDeviceMode ? `Because this app is configured to conserve resources (SLOW_DEVICE_MODE=true), this value is estimated, using a checkpoint.` : `This value is estimated, using a checkpoint.`))
 			- var maxSupply = coinConfig.maxSupplyByNetwork[activeBlockchain];
@@ -214,10 +215,10 @@ if (exchangeRates)
 			+summaryItem("Next Block (est.)")
 				| #{new Decimal(nextBlockMinFeeRate).toDP(0)}
 				a(href=`./tx/${nextBlockMinFeeTxid}`)
-					i.fas.fa-circle
+					i.bi-circle
 				| - #{new Decimal(nextBlockMaxFeeRate).toDP(0)}
 				a(href=`./tx/${nextBlockMaxFeeTxid}`)
-					i.fas.fa-circle
+					i.bi-circle
 				small.ms-2.text-muted sat/vB
 
 		if (smartFeeEstimateStrings.length > 0)

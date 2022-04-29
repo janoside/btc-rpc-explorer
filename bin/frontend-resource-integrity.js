@@ -6,6 +6,7 @@ const dirs = [
 	"public/js/",
 	"public/style/",
 	"public/leaflet/",
+	"public/font/",
 ];
 
 const filetypeMatch = /^.*\.(js|css)$/;

@@ -2,12 +2,21 @@ mixin themeCss
 	link(id="light-theme-link-tag", rel=(userSettings.uiTheme != "dark" ? "stylesheet" : false), href=assetUrl(`./style/light.css`), integrity=assetIntegrity("light.css"), crossorigin="anonymous")
 	link(id="dark-theme-link-tag", rel=(userSettings.uiTheme == "dark" ? "stylesheet" : false), href=assetUrl(`./style/dark.css`), integrity=assetIntegrity("dark.css"), crossorigin="anonymous")
 
+	style.
+		@font-face {
+			font-family: "bootstrap-icons";
+
+			src:	url("!{assetUrl("./font/bootstrap-icons.woff2")}") format("woff2"),
+					url("!{assetUrl("./font/bootstrap-icons.woff")}") format("woff");
+		}
+
+	link(rel="stylesheet", href=assetUrl(`./style/bootstrap-icons.css`), integrity=assetIntegrity("bootstrap-icons.css"), crossorigin="anonymous")
+
 
 mixin sharedScriptTags
 	script(src=assetUrl(`./js/jquery.min.js`), integrity=assetIntegrity("jquery.min.js"), crossorigin="anonymous")
 	script(src=assetUrl(`./js/bootstrap.bundle.min.js`), integrity=assetIntegrity("bootstrap.bundle.min.js"), crossorigin="anonymous")
-	script(defer, src=assetUrl(`./js/fontawesome.min.js`), integrity=assetIntegrity("fontawesome.min.js"), crossorigin="anonymous")
-
+	
 	script(src=assetUrl(`./js/site.js`), integrity=assetIntegrity("site.js"), crossorigin="anonymous")
 
 
@@ -49,7 +58,7 @@ mixin sectionTitle(text, toggle=false, toggleUniqueClass, toggleUserSettingName,
 		if (toggle)
 			small(title=`Toggle ${text}`, data-bs-toggle="tooltip")
 				a.text-card-highlight.fs-6(href=`./changeSetting?name=${toggleUserSettingName}&value=false`)
-					i.toggle-plus-minus.far.ms-2(class=(toggleOpen ? "fa-minus-square" : "fa-plus-square"))
+					i.toggle-plus-minus.ms-2(class=(toggleOpen ? "bi-dash-square" : "bi-plus-square"))
 
 
 mixin contentSection(title, toggleable=false, toggleUserSettingName, defaultOpen=true, cardUi=true)
@@ -177,8 +186,8 @@ mixin txList(visibleTxs, txCount, limit, offset, inputsByTxid, options={})
 					if (hasInputAddresses)
 						.float-end
 							.d-block.d-sm-none
-								a(href="javascript:void(0)", onclick=`$(this).find(".toggle-icon").toggleClass("fa-plus-square").toggleClass("fa-minus-square"); $(".tx-input-address-${tx.txid}").toggle();`)
-									i.toggle-icon.far.fa-plus-square.text-card-highlight.text-end.fa-lg
+								a(href="javascript:void(0)", onclick=`$(this).find(".toggle-icon").toggleClass("bi-plus-square").toggleClass("bi-dash-square"); $(".tx-input-address-${tx.txid}").toggle();`)
+									i.toggle-icon.bi-plus-square.text-card-highlight.text-end
 
 
 					.float-start.float-sm-end.mt-n2.mt-sm-0.mb-2.mb-sm-0
@@ -210,7 +219,7 @@ mixin txList(visibleTxs, txCount, limit, offset, inputsByTxid, options={})
 								+darkBadge
 									if (txBlockHeight)
 										span(title=`${(options.currentBlockHeight - txBlockHeight + 1).toLocaleString()} confirmation${(options.currentBlockHeight - txBlockHeight > 1) ? "s" :""}`, data-bs-toggle="tooltip")
-											i.fas.fa-lock.fa-sm.me-1
+											i.bi-lock.me-1
 											- var confCount = options.currentBlockHeight - txBlockHeight + 1;
 											- var confData = utils.formatLargeNumber(confCount);
 											
@@ -222,7 +231,7 @@ mixin txList(visibleTxs, txCount, limit, offset, inputsByTxid, options={})
 
 									else
 										span(title=`Unconfirmed`, data-bs-toggle="tooltip")
-											i.fas.fa-unlock.fa-sm.text-danger.me-1
+											i.bi-unlock.text-danger.me-1
 											span.fw-light.text-danger 0
 
 							if (options.showDates && tx.time)
@@ -231,7 +240,7 @@ mixin txList(visibleTxs, txCount, limit, offset, inputsByTxid, options={})
 
 								.d-none.d-md-inline
 									+darkBadge
-										i.far.fa-clock.fa-sm.me-1
+										i.bi-clock.me-1
 
 										span.fw-light(title=titleStr, data-bs-toggle="tooltip")
 											+timeAgo(tx.time, true)
@@ -417,11 +426,11 @@ mixin valueDisplaySpecial(val, maxDecimals=-1, summarizeAlways=false, summarizeM
 mixin confirmations(confirmations, abbreviated=true)
 	if (confirmations < 6)
 		span.text-warning.border-dotted(title="Fewer than 6 confirmations is generally considered <b>unsettled</b> for high-value transactions because block <b>re-organizations</b> that could affect them have reasonable probability.", data-bs-toggle="tooltip", data-bs-html="true") #{confirmations.toLocaleString()}
-			i.fas.fa-unlock-alt.fa-sm.ms-1
+			i.bi-unlock.ms-1
 	else
 		span.border-dotted.text-success(title="6 confirmations is generally considered <b>settled</b>. High-value transactions may require more;<br/>Low-value transactions may require fewer.", data-bs-toggle="tooltip", data-bs-html="true")
 			| #{abbreviated && confirmations > 1000 ? `${Math.floor(confirmations/1000)}k` : confirmations.toLocaleString()}
-			i.fas.fa-check.ms-1
+			i.bi-check2.ms-1
 
 
 
@@ -463,8 +472,8 @@ mixin hexDataDisplay(hex, order="utf8,ascii,hex")
 		
 
 		div
-			a.text-muted.ms-2(href="javascript:void(0)", onclick=`$('#hex-display-expanded-${uniqueId}').toggle(); $(this).find(".toggle-plus-minus").toggleClass("fa-plus-square"); $(this).find(".toggle-plus-minus").toggleClass("fa-minus-square"); return false;`, title="Toggle More Encodings")
-				i.toggle-plus-minus.far.fa-plus-square.text-card-highlight
+			a.text-muted.ms-2(href="javascript:void(0)", onclick=`$('#hex-display-expanded-${uniqueId}').toggle(); $(this).find(".toggle-plus-minus").toggleClass("bi-plus-square"); $(this).find(".toggle-plus-minus").toggleClass("bi-dash-square"); return false;`, title="Toggle More Encodings")
+				i.toggle-plus-minus.bi-plus-square.text-card-highlight
 
 	
 
@@ -567,7 +576,7 @@ mixin primaryBadge(text, endMargin=true)
 
 mixin funAlert(html, text, referenceUrl)
 	.alert.alert-primary.shadow-sm.pb-0(role="alert", style="padding-left: 4rem;")
-		i.fas.fa-flag.fa-2x.fontawesome-shadow.text-warning.d-inline-block(style="position: absolute; top: 0; left: 0; width: 40px; margin-left: 0.8rem; margin-top: 1.2rem;")
+		i.bi-flag.fs-4.text-warning.d-inline-block(style="position: absolute; top: 0; left: 0; width: 40px; margin-left: 1.2rem; margin-top: 1.2rem;")
 
 		h5.mb-2.fw-light #{coinConfig.name} Fun
 
@@ -593,7 +602,7 @@ mixin funAlert(html, text, referenceUrl)
 
 
 mixin funItemIcon
-	i.fas.fa-flag.text-warning
+	i.bi-flag.text-warning
 
 
 mixin timeAgo(timeAgoTime, only1Element=false)
@@ -669,8 +678,8 @@ mixin blockCountdown(title, blocksLeft)
 
 			if (block)
 				a.text-body(href="javascript:void(0);", onclick=`$("#countdown-block-${countdownId}").toggle(); $(".countdown-togglers-${countdownId}").toggle();`)
-					i.far.fa-plus-square(class=`countdown-togglers-${countdownId}`)
-					i.far.fa-minus-square(class=`countdown-togglers-${countdownId}`, style="display: none;")
+					i.bi-plus-square(class=`countdown-togglers-${countdownId}`)
+					i.bi-dash-square(class=`countdown-togglers-${countdownId}`, style="display: none;")
 
 		if (block)
 			div(id=`countdown-block-${countdownId}`, style="display: none;")
@@ -684,11 +693,11 @@ mixin copyTextButton(text)
 	small.ms-2
 		if (false)
 			a(href="javascript:void(0)", title="Copy", data-clipboard-text=text, data-bs-toggle="tooltip", onclick=`copyTextToClipboard("${text}"); $(".icon-copy").toggle(); $(this).find(".icon-copied").toggle(); setTimeout(() => { $(this).find(".icon-copy").toggle(); $(this).find(".icon-copied").toggle(); }, 2000); return false;`)
-				i.far.fa-copy.text-info.icon-copy
-				i.fas.fa-check.text-success.icon-copied(style="display: none;")
+				i.bi-clipboard2.text-info.icon-copy
+				i.bi-clipboard2-check.text-success.icon-copied(style="display: none;")
 
 		a(href="javascript:void(0)", title="Copy", data-clipboard-text=text, data-bs-toggle="tooltip", onclick=`copyTextToClipboard("${text}"); $(this).attr("title", "Copied!").tooltip("_fixTitle").tooltip("show"); $(this).mouseleave(function() { $(this).tooltip("hide"); $(this).attr("data-bs-original-title", "Copy"); });`)
-			i.far.fa-copy.text-info
+			i.bi-clipboard2.text-info
 
 
 mixin dismissableInfoAlert(userSettingDismissedName, textToShowWhenClosed)
@@ -696,7 +705,7 @@ mixin dismissableInfoAlert(userSettingDismissedName, textToShowWhenClosed)
 	if (!hiddenByEnvVar && (!userSettings.hideInfoNotes || userSettings.hideInfoNotes == "false"))
 		if (userSettings[userSettingDismissedName] != "true")
 			.alert.alert-primary.alert-dismissible.shadow-sm.mb-4.ps-3.ps-md-7(role="alert")
-				i.d-none.d-md-inline.fas.fa-info-circle.fa-lg.d-inline-block(style="position: absolute; top: 0; left: 0; width: 36px; margin-left: 0.4rem; margin-top: 1.3rem;")
+				i.d-none.d-md-inline.bi-info-circle.fs-5.d-inline-block(style="position: absolute; top: 0; left: 0; width: 36px; margin-left: 0.75rem; margin-top: 1.0rem;")
 
 				block
 
@@ -707,12 +716,12 @@ mixin dismissableInfoAlert(userSettingDismissedName, textToShowWhenClosed)
 			.alert.alert-primary.shadow-sm.mb-4(role="alert")
 				.clearfix
 					.float-start
-						i.fas.fa-info-circle.fa-lg.me-3
+						i.bi-info-circle.me-3
 						| #{textToShowWhenClosed}
 
 					.float-end
 						a.text-muted(href=`./changeSetting?name=${userSettingDismissedName}&value=false`, aria-label="Close", style="text-decoration: none;", title="Open this note", data-bs-toggle="tooltip")
-							i.far.fa-plus-square.fa-lg
+							i.bi-plus-square
 
 
 mixin dismissableAlert(userSettingDismissedName, textToShowWhenClosed)
@@ -728,17 +737,17 @@ mixin dismissableAlert(userSettingDismissedName, textToShowWhenClosed)
 			.alert.alert-primary.shadow-sm.mb-4(role="alert")
 				.clearfix
 					.float-start
-						i.fas.fa-info-circle.fa-lg.me-3
+						i.bi-info-circle.me-3
 						| #{textToShowWhenClosed}
 
 					.float-end
 						a.text-muted(href=`./changeSetting?name=${userSettingDismissedName}&value=false`, aria-label="Close", style="text-decoration: none;", title="Open this note", data-bs-toggle="tooltip")
-							i.far.fa-plus-square.fa-lg
+							i.bi-plus-square
 
 
 mixin warningAlert
 	.alert.alert-warning.shadow-sm.mb-4.ps-3.ps-md-7(role="alert")
-		i.d-none.d-md-inline.fas.fa-exclamation-triangle.fa-lg.d-inline-block(style="position: absolute; top: 0; left: 0; width: 36px; margin-left: 0.4rem; margin-top: 1.3rem;")
+		i.d-none.d-md-inline.bi-exclamation-triangle.fs-5.d-inline-block(style="position: absolute; top: 0; left: 0; width: 36px; margin-left: 0.7rem; margin-top: 1.0rem;")
 
 		block
 
@@ -881,7 +890,7 @@ mixin quote(quote, quoteIndex=-1)
 			if (quote.url)
 				small.text-muted.ms-2 (
 					a(href=quote.url, target="_blank") ref
-						i.fas.fa-external-link-alt.fa-sm.ms-1
+						i.bi-box-arrow-up-right.ms-2
 					| )
 
 			if (quote.context)

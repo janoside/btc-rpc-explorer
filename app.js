@@ -223,10 +223,10 @@ const cdnItems = [
 	[`style/light.css`, `text/css`, "utf8"],
 	[`style/highlight.min.css`, `text/css`, "utf8"],
 	[`style/dataTables.bootstrap4.min.css`, `text/css`, "utf8"],
+	[`style/bootstrap-icons.css`, `text/css`, "utf8"],
 
 	[`js/bootstrap.bundle.min.js`, `text/javascript`, "utf8"],
 	[`js/chart.min.js`, `text/javascript`, "utf8"],
-	[`js/fontawesome.min.js`, `text/javascript`, "utf8"],
 	[`js/jquery.min.js`, `text/javascript`, "utf8"],
 	[`js/site.js`, `text/javascript`, "utf8"],
 	[`js/highlight.pack.js`, `text/javascript`, "utf8"],
@@ -237,19 +237,25 @@ const cdnItems = [
 	[`js/sentry.min.js`, `text/javascript`, "utf8"],
 	[`js/decimal.js`, `text/javascript`, "utf8"],
 
-	[`img/logo/logo.svg`, `image/svg+xml`, "utf8"],
-	[`img/logo/mainnet/logo.svg`, `image/svg+xml`, "utf8"],
-	[`img/logo/mainnet/apple-touch-icon.png`, `image/png`, "binary"],
-	[`img/logo/mainnet/favicon-16x16.png`, `image/png`, "binary"],
-	[`img/logo/mainnet/favicon-32x32.png`, `image/png`, "binary"],
-	[`img/logo/testnet/logo.svg`, `image/svg+xml`, "utf8"],
-	[`img/logo/signet/logo.svg`, `image/svg+xml`, "utf8"],
-	[`img/logo/regtest/logo.svg`, `image/svg+xml`, "utf8"],
+	[`img/network-mainnet/logo.svg`, `image/svg+xml`, "utf8"],
+	[`img/network-mainnet/coin-icon.svg`, `image/svg+xml`, "utf8"],
+	[`img/network-mainnet/apple-touch-icon.png`, `image/png`, "binary"],
+	[`img/network-mainnet/favicon-16x16.png`, `image/png`, "binary"],
+	[`img/network-mainnet/favicon-32x32.png`, `image/png`, "binary"],
+	[`img/network-testnet/logo.svg`, `image/svg+xml`, "utf8"],
+	[`img/network-testnet/coin-icon.svg`, `image/svg+xml`, "utf8"],
+	[`img/network-signet/logo.svg`, `image/svg+xml`, "utf8"],
+	[`img/network-signet/coin-icon.svg`, `image/svg+xml`, "utf8"],
+	[`img/network-regtest/logo.svg`, `image/svg+xml`, "utf8"],
+	[`img/network-regtest/coin-icon.svg`, `image/svg+xml`, "utf8"],
 
-	[`img/logo/mainnet/favicon.ico`, `image/x-icon`, "binary"],
-	[`img/logo/testnet/favicon.ico`, `image/x-icon`, "binary"],
-	[`img/logo/signet/favicon.ico`, `image/x-icon`, "binary"],
-	[`img/logo/regtest/favicon.ico`, `image/x-icon`, "binary"],
+	[`img/network-mainnet/favicon.ico`, `image/x-icon`, "binary"],
+	[`img/network-testnet/favicon.ico`, `image/x-icon`, "binary"],
+	[`img/network-signet/favicon.ico`, `image/x-icon`, "binary"],
+	[`img/network-regtest/favicon.ico`, `image/x-icon`, "binary"],
+
+	[`font/bootstrap-icons.woff`, `font/woff`, "binary"],
+	[`font/bootstrap-icons.woff2`, `font/woff2`, "binary"],
 
 	[`leaflet/leaflet.js`, `text/javascript`, "utf8"],
 	[`leaflet/leaflet.css`, `text/css`, "utf8"],
@@ -748,7 +754,7 @@ expressApp.onStartup = async () => {
 			} catch (e) {
 				errorItems.push(filepath);
 
-				debugErrorLog(`Error uploading asset to S3: ${JSON.stringify(item)}`, e);
+				debugErrorLog(`Error uploading asset to S3: ${JSON.stringify(filepath)}`, e);
 			}
 		};
 

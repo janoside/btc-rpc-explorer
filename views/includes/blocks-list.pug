@@ -48,7 +48,7 @@
 					tr
 						td.text-center(colspan="100%")
 							h6.my-3 
-								i.fas.fa-backspace.text-danger.me-2
+								i.bi-backspace.text-danger.me-2
 								| Blocks older than this point have been 
 								i pruned
 								| , meaning that some or all data that is non-essential for blockchain verification has been deleted.
@@ -64,7 +64,7 @@
 
 							if (block.height % 2016 == 0)
 								span.me-1(title=`This is the first block of difficulty era #${(block.height / 2016).toLocaleString()}`, data-bs-toggle="tooltip")
-									i.fas.fa-info-circle
+									i.bi-info-circle
 
 							a(href=`./block-height/${block.height}`) #{block.height.toLocaleString()}
 						
@@ -142,7 +142,7 @@
 
 							else if (block.height < global.pruneHeight)
 								span(title="This data is unavailable due to blockchain pruning", data-bs-toggle="tooltip")
-									i.fas.fa-backspace.text-danger
+									i.bi-backspace.text-danger
 										
 							else
 								span.badge.bg-secondary Unknown
@@ -185,7 +185,7 @@
 									
 							else
 								span(title="This data is unavailable due to blockchain pruning", data-bs-toggle="tooltip")
-									i.fas.fa-backspace.text-danger
+									i.bi-backspace.text-danger
 
 							// idea: show typical tx fee, maybe also optimized fee if not segwit
 							if (false)
@@ -205,7 +205,7 @@
 
 							else
 								span(title="This data is unavailable due to blockchain pruning", data-bs-toggle="tooltip")
-									i.fas.fa-backspace.text-danger
+									i.bi-backspace.text-danger
 
 
 							
@@ -238,13 +238,13 @@
 
 										- var bSizeK = parseInt(block.size / 1000);
 										span.ms-1(data-bs-toggle="tooltip", title=`Size: ${bSizeK.toLocaleString()} kB`)
-											i.fas.fa-ellipsis-h.text-muted
+											i.bi-three-dots.text-muted
 
 										div.progress(style="height: 4px;")
 											div.progress-bar(role="progressbar", style=`width: ${fullPercent}%;`, aria-valuenow=parseInt(100 * block.weight / coinConfig.maxBlockWeight), aria-valuemin="0" ,aria-valuemax="100")
 								else
 									span(title="This data is unavailable due to blockchain pruning", data-bs-toggle="tooltip")
-										i.fas.fa-backspace.text-danger
+										i.bi-backspace.text-danger
 
 						else if (block.size)
 							td.text-end
@@ -260,6 +260,6 @@
 						else
 							td.text-end
 								span(title="This data is unavailable due to blockchain pruning", data-bs-toggle="tooltip")
-									i.fas.fa-backspace.text-danger
+									i.bi-backspace.text-danger
 
 					- var lastBlock = block;

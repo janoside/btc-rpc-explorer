@@ -35,16 +35,16 @@ html(lang="en")
 		if (!network.endsWith("net") && network != "regtest")
 			- network = (network + "net"); // handles "main" -> "mainnet" and "test" -> "testnet"
 
-		link(rel="apple-touch-icon", sizes="180x180", href=assetUrl(`./img/logo/${network}/apple-touch-icon.png`))
-		link(rel="icon", type="image/png", sizes="32x32", href=assetUrl(`./img/logo/${network}/favicon-32x32.png`))
-		link(rel="icon", type="image/png", sizes="16x16", href=assetUrl(`./img/logo/${network}/favicon-16x16.png`))
-		link(rel="manifest", href=`./img/logo/${network}/site.webmanifest`)
-		link(rel="mask-icon", href=`./img/logo/${network}/safari-pinned-tab.svg`, color="#f7931a")
-		link(rel="shortcut icon", href=assetUrl(`./img/logo/${network}/favicon.ico`))
+		link(rel="apple-touch-icon", sizes="180x180", href=assetUrl(`./img/network-${network}/apple-touch-icon.png`))
+		link(rel="icon", type="image/png", sizes="32x32", href=assetUrl(`./img/network-${network}/favicon-32x32.png`))
+		link(rel="icon", type="image/png", sizes="16x16", href=assetUrl(`./img/network-${network}/favicon-16x16.png`))
+		link(rel="manifest", href=`./img/network-${network}/site.webmanifest`)
+		link(rel="mask-icon", href=`./img/network-${network}/safari-pinned-tab.svg`, color="#f7931a")
+		link(rel="shortcut icon", href=assetUrl(`./img/network-${network}/favicon.ico`))
 		meta(name="apple-mobile-web-app-title", content="BTC Explorer")
 		meta(name="application-name", content="BTC Explorer")
 		meta(name="msapplication-TileColor", content="#022e70")
-		meta(name="msapplication-config", content=`./img/logo/${network}/browserconfig.xml`)
+		meta(name="msapplication-config", content=`./img/network-${network}/browserconfig.xml`)
 		meta(name="theme-color" content="#022e70")
 
 		include includes/debug-overrides.pug
@@ -60,7 +60,7 @@ html(lang="en")
 						if (coinConfig.logoUrlsByNetwork && coinConfig.logoUrlsByNetwork[activeBlockchain])
 							img.header-image(src=assetUrl(coinConfig.logoUrlsByNetwork[activeBlockchain]), alt="logo")
 						else
-							img.header-image(src=assetUrl("./img/logo/mainnet/logo.svg"), alt="logo")
+							img.header-image(src=assetUrl("./img/network-mainnet/logo.svg"), alt="logo")
 
 						if (coinConfig.siteTitlesByNetwork && coinConfig.siteTitlesByNetwork[activeBlockchain])
 							span.fw-light #{coinConfig.siteTitlesByNetwork[activeBlockchain]}
@@ -92,14 +92,11 @@ html(lang="en")
 							
 							
 						
-
 						ul.navbar-nav
 							if (config.demoSite && homepage)
 								li.nav-item.dropdown.me-0.me-md-2.mt-2.mt-md-0.text-center.text-md-start
 									a.nav-link.dropdown-toggle.bg-header-footer-highlight.rounded(href="javascript:void(0)", role="button", data-bs-toggle="dropdown", aria-haspopup="true", aria-expanded="false")
-										span.fa-layers.fa-fw.me-2.ms-1
-											i.fas.fa-circle.fa-lg.text-white(data-fa-transform="shrink-2")
-											i.fab.fa-bitcoin.fa-lg(style=`color: ${coinConfig.coinColorsByNetwork[activeBlockchain]}`)
+										img.align-text-top.me-1(src=assetUrl(coinConfig.coinIconUrlsByNetwork[activeBlockchain]), style="width: 20px;")
 
 									div.dropdown-menu.dropdown-menu-end.shadow(aria-label="Demo Sites")
 										span.dropdown-header Public Demo Sites
@@ -108,17 +105,14 @@ html(lang="en")
 										
 										each demoSite in demoSites
 											a.dropdown-item(href=coinConfig.demoSiteUrlsByNetwork[demoSite])
-												span.fa-layers.fa-fw.ms-2
-													i.fas.fa-circle.fa-lg.me-2.text-white(data-fa-transform="shrink-2")
-													i.fab.fa-bitcoin.fa-lg.me-2(style=`color: ${coinConfig.coinColorsByNetwork[demoSite]}`)
+												img.align-text-top.me-2(src=assetUrl(coinConfig.coinIconUrlsByNetwork[demoSite]), style="width: 20px;")
 												
 												| #{coinConfig.siteTitlesByNetwork[demoSite].replace("Explorer", "").replace("Bitcoin", "Mainnet")}
 
 							if (config.siteTools)
 								li.nav-item.dropdown.me-0.me-md-2.mt-2.mt-md-0.text-center.text-md-start
 									a.nav-link.rounded.bg-header-footer-highlight.text-white.dropdown-toggle(href="javascript:void(0)", role="button", data-bs-toggle="dropdown", aria-haspopup="true", aria-expanded="false")
-										i.fas.fa-tools.me-2.ms-1
-										| Tools
+										i.bi-tools.me-2.ms-1
 
 									div.dropdown-menu.dropdown-menu-end.shadow(aria-label="Tools Items")
 										each section, sectionIndex in config.site.toolSections
@@ -131,12 +125,12 @@ html(lang="en")
 												- var item = config.siteTools[itemIndex];
 
 												a.dropdown-item(href=item.url)
-													i(class=item.fontawesome, style="width: 20px; margin-right: 10px;")
+													i(class=item.iconClass, style="width: 20px; margin-right: 10px;")
 													span  #{item.name}
 
 							li.nav-item.dropdown.me-0.me-md-3.mt-2.mt-md-0.text-center.text-md-start
 								a.nav-link.rounded.bg-header-footer-highlight.text-white.dropdown-toggle(href="javascript:void(0)", id="navbarDropdown", role="button", data-bs-toggle="dropdown", aria-haspopup="true", aria-expanded="false") 
-									i.fas.fa-cog.me-2.ms-1
+									i.bi-gear.me-2.ms-1
 								
 								.dropdown-menu.dropdown-menu-end.shadow(aria-labelledby="navbarDropdown")
 									span.dropdown-header Display Currency
@@ -167,7 +161,7 @@ html(lang="en")
 														span #{item}
 													.float-end
 														if (userSettings.localCurrency == item.toLowerCase())
-															i.fas.fa-check
+															i.bi-check2
 
 									hr.dropdown-divider.mt-2.mb-2
 									span.dropdown-header Theme
@@ -178,9 +172,9 @@ html(lang="en")
 
 									.btn-group.ms-3
 										a.btn.btn-sm.px-3(id="theme-toggler-light", href=`javascript:void(0);` onclick=`toggleTheme(); return false;`, class=(userSettings.uiTheme == "light" ? "btn-primary" : "btn-outline-primary"))
-											i.fas.fa-sun.text-warning
+											i.bi-sun-fill.text-warning
 										a.btn.btn-sm.px-3(id="theme-toggler-dark",href=`javascript:void(0);` onclick=`toggleTheme(); return false;`, class=(userSettings.uiTheme == "light" ? "btn-outline-primary" : "btn-primary"))
-											i.fas.fa-moon
+											i.bi-moon
 
 									hr.dropdown-divider.mt-2.mb-2
 									span.dropdown-header Dislay Timezone
@@ -195,7 +189,7 @@ html(lang="en")
 
 									p.px-3.pt-2.small.text-muted "Local" uses your browser's default offset:
 										span#browser-tz-offset.badge.bg-light.text-dark.ms-1.border
-										i.fas.fa-info-circle.ms-1(title="This value comes from your brower. If you wish to set a custom offset, you can do so below, in 'More settings...'", data-bs-toggle="tooltip")
+										i.bi-info-circle.ms-1(title="This value comes from your brower. If you wish to set a custom offset, you can do so below, in 'More settings...'", data-bs-toggle="tooltip")
 
 									hr.dropdown-divider.mt-2.mb-2
 
@@ -211,7 +205,7 @@ html(lang="en")
 						input.form-control(type="text", name="query", placeholder="block height/hash, txid, address", value=(query))
 						
 						button.btn.btn-primary(type="submit")
-							i.fas.fa-search
+							i.bi-search
 
 				form.form-inline.d-lg-none.w-100.mt-2.mt-md-0(method="post", action="./search")
 					input(type="hidden", name="_csrf", value=csrfToken)
@@ -219,7 +213,7 @@ html(lang="en")
 						input.form-control(type="text", name="query", placeholder="height/hash/txid...", value=(query))
 						
 						button.btn.btn-primary(type="submit")
-							i.fas.fa-search
+							i.bi-search
 		
 
 
@@ -267,11 +261,11 @@ html(lang="en")
 								if (global.sourcecodeProjectMetadata)
 									div.mt-2
 										a.btn.btn-primary.btn-sm.me-3.mb-1.text-decoration-none(href="https://github.com/janoside/btc-rpc-explorer")
-											i.fas.fa-star.fontawesome-shadow.text-warning.me-2
+											i.bi-star-fill.text-warning.me-2
 											span.badge.bg-white.text-dark #{global.sourcecodeProjectMetadata.stargazers_count}
 
 										a.btn.btn-primary.btn-sm.me-3.mb-1.text-decoration-none(href="https://github.com/janoside/btc-rpc-explorer/fork")
-											i.fas.fa-code-branch.fontawesome-shadow.me-2
+											i.bi-bezier2.me-2
 											span.badge.bg-white.text-dark #{global.sourcecodeProjectMetadata.forks_count}
 
 					.col-lg-3
@@ -322,14 +316,14 @@ html(lang="en")
 							.ms-2
 								span(style="font-size: 1.5rem;")
 									if (global.sourcecodeProjectMetadata)
-										a.text-white.mb-1.me-3(href="https://github.com/janoside/btc-rpc-explorer", title="View source code on Github", data-bs-toggle="tooltip")
-											i.fab.fa-github
+										a.text-white.mb-1.me-3(href="https://github.com/janoside/btc-rpc-explorer", title="View source code", data-bs-toggle="tooltip")
+											i.bi-git
 
 									a.text-danger.mb-1.me-3(href="https://donate.bitcoinexplorer.org", target="_blank", title="Support this project with a donation", data-bs-toggle="tooltip")
-										i.fas.fa-heart.text-danger
+										i.bi-heart-fill.text-danger
 
 									a.text-white.mb-1(href="https://twitter.com/BitcoinExplorer", target="_blank", title="Follow @BitcoinExplorer on Twitter", data-bs-toggle="tooltip")
-										i.fab.fa-twitter.text-twitter
+										i.bi-twitter.text-twitter
 								
 								
 

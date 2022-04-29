@@ -2,9 +2,11 @@
 ###### Unreleased
 
 * Minor fixes for running against Bitcoin Core v23
+* URL change: /mining-template -> /next-block (redirect is included for compatibility)
 * Support for serving static assets via a configurable CDN
 * Misc fixes for erroneous data display on non-mainnet nodes
-* UI/UX tweak, especially on homepage
+* Switch from fontawesome to bootstrap-icons v1.8.0
+* UI/UX tweaks
 * Updated dependencies
 
 

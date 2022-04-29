@@ -440,6 +440,16 @@ module.exports = {
 			summary: "Far-future dated Locktime value.",
 			alertBodyHtml: "The 'locktime' value of a transaction usually specifies the earliest time that a transaction may be mined (included in a block). The value can take one of two forms: a block height (if the value is &leq; 500M), or a unix timestamp. The locktime value of this transaction seemingly indicates that the transaction cannot be mined until the year 2076. But, because this is a coinbase transaction (created by a miner in the process of mining a block), its locktime value does not need to honor the usual purpose, and may instead be representing some other data from the miner. This situation arises fairly regularly in coinbase transactions."
 		},
+		{
+			type: "tx",
+			date: "2015-06-21",
+			chain: "main",
+			txid: "71c3da4e13f5b61c2cf05e9b5a22f3be989142b870c1cf7779a1d7b3f139d422",
+			blockHeight: 361935,
+			summary: "Value provably destroyed in OP_RETURN output.",
+			alertBodyHtml: "OP_RETURN outputs are special-case outputs that immediately abort script evaluation with a failure result. Therefore, any value assigned to an OP_RETURN output is provably unspendable. In fact, as an optimization, such values are purged from node software's databases since they are certain to be unspendable in all future transactions.",
+			referenceUrl: "https://bitcoin.stackexchange.com/a/109748/3397"
+		},
 
 
 

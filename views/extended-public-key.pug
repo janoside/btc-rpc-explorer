@@ -51,7 +51,7 @@ block content
 								td #{item.keyType}
 									if (item.key == extendedPubkey)
 										span(title="The current extended public key", data-bs-toggle="tooltip")
-											i.fas.fa-arrow-left.text-warning.ms-2
+											i.bi-arrow-left.text-warning.ms-2
 
 								td
 									a(href=`./xyzpub/${item.key}`, class=((item.key == extendedPubkey) ? "text-info" : false)) #{utils.ellipsizeMiddle(item.key, 16)}

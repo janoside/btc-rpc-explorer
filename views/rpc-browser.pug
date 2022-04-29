@@ -25,14 +25,14 @@ block content
 						.float-start.ms-2
 							if (session.favoriteRpcCommands && session.favoriteRpcCommands.includes(method))
 								a.me-2(href=`./session-data?action=remove-rpc-favorite&data=${method}`, title="Remove from Favorites", data-bs-toggle="tooltip")
-									i.fas.fa-star.text-warning
+									i.bi-star-fill.text-warning
 							else
 								a.me-2(href=`./session-data?action=add-rpc-favorite&data=${method}`, title="Add as a Favorite", data-bs-toggle="tooltip")
-									i.far.fa-star.text-warning
+									i.bi-star.text-warning
 
 							span.small.text-muted (
 								a(href=`https://developer.bitcoin.org/reference/rpc/${method}.html`, target="_blank") Developer Docs
-									i.fas.fa-external-link-alt.ms-2
+									i.bi-box-arrow-up-right.ms-2
 								| )
 							
 
@@ -80,7 +80,7 @@ block content
 														- var detailsLines = "";
 														each detailsLine in argX.detailsLines
 															- detailsLines = (detailsLines + "<br/>" + detailsLine);
-														i.fas.fa-info-circle(data-bs-toggle="tooltip", title=detailsLines)
+														i.bi-info-circle(data-bs-toggle="tooltip", title=detailsLines)
 															
 
 
@@ -132,7 +132,7 @@ block content
 				if (session.favoriteRpcCommands && session.favoriteRpcCommands.length > 0)
 					.clearfix
 						.float-start
-							i.fas.fa-star.me-2
+							i.bi-star.me-2
 						.float-start
 							+sectionTitle(`Favorites (${session.favoriteRpcCommands.length.toLocaleString()})`)
 					+contentSection
@@ -144,7 +144,7 @@ block content
 				if (session.recentRpcCommands && session.recentRpcCommands.length > 0)
 					.clearfix
 						.float-start
-							i.fas.fa-history.me-2
+							i.bi-clock-history.me-2
 						.float-start
 							+sectionTitle(`Recent (${session.recentRpcCommands.length.toLocaleString()})`)
 					+contentSection

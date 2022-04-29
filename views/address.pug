@@ -57,7 +57,7 @@ block content
 						.float-end
 							if (`${userSettings["addressPageShowTechDetails"]}` == "false")
 								a.btn.btn-primary.btn-sm.me-2(href=`./changeSetting?name=addressPageShowTechDetails&value=true`, title="Display technical details for this address.", data-bs-toggle="tooltip")
-									i.far.fa-plus-square.me-2
+									i.bi-plus-square.me-2
 									| Technical Details
 
 
@@ -187,11 +187,11 @@ block content
 									div.dropdown-menu.dropdown-menu-end
 										a.dropdown-item(href=`./address/${address}`)
 											if (sort == "desc")
-												i.fa.fa-check 
+												i.bi-check2 
 											span  Newest First
 										a.dropdown-item(href=`./address/${address}?sort=asc`)
 											if (sort != "desc")
-												i.fa.fa-check 
+												i.bi-check2 
 											span  Oldest First
 
 							else if (txids && txids.length > 1 && addressApiSupport.sortDesc && !addressApiSupport.sortAsc)
@@ -202,7 +202,7 @@ block content
 						if (conflictedTxidResults)
 							div.alert.alert-warning.pb-0
 								div.float-start(style="width: 55px; height: 50px; font-size: 18px;")
-									i.fas.fa-exclamation-triangle.fa-2x(style="margin-top: 10px;")
+									i.bi-exclamation-triangle(style="margin-top: 10px;")
 								h4.alert-heading.h6.fw-bold Trust Warning
 								p
 									span The transaction history for this address was requested from mulitple Electrum servers and the results did not match. The results below were obtained only from 

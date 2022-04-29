@@ -885,6 +885,11 @@ router.get("/block-stats", asyncHandler(async (req, res, next) => {
 }));
 
 router.get("/mining-template", asyncHandler(async (req, res, next) => {
+	// url changed
+	res.redirect("./next-block");
+}));
+
+router.get("/next-block", asyncHandler(async (req, res, next) => {
 	const blockTemplate = await coreApi.getBlockTemplate();
 
 	res.locals.minFeeRate = 1000000;
@@ -935,8 +940,8 @@ router.get("/mining-template", asyncHandler(async (req, res, next) => {
 	res.locals.blockTemplate = blockTemplate;
 
 	
-	await utils.timePromise("mining-template.render", async () => {
-		res.render("mining-template");
+	await utils.timePromise("next-block.render", async () => {
+		res.render("next-block");
 	});
 
 	next();

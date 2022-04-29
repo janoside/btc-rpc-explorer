@@ -1,13 +1,13 @@
 extends layout
 
 block headContent
-	title Mining Template
+	title Next Block
 
 block content
-	+pageTitle("Mining Template")
+	+pageTitle("Next Block")
 
-	+dismissableInfoAlert("miningTemplatePageNoteDismissed", "About Mining Template...")
-		.mb-2 The Mining Template tool displays the output from the <b>getblocktemplate</b> command which is often used by miners for building a candidate for the "next block". The transactions shown here were selected from your node's mempool and generally represent those with the highest (effective) fees.
+	+dismissableInfoAlert("miningTemplatePageNoteDismissed", "About Next Block...")
+		.mb-2 The Next Block tool displays the output from the <b>getblocktemplate</b> command which is often used by miners for building a candidate for the next block. The transactions shown here were selected from your node's mempool and generally represent those with the highest (effective) fees.
 		div These details are just a best-guess based on the current mempool and will change with each refresh.
 
 	+pageTabs(["Details", "JSON"])
