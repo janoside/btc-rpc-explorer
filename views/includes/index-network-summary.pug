@@ -200,7 +200,7 @@ if (exchangeRates)
 				span(class=colorClass_blockCount) #{blockCount.toDP(2)}
 				span.text-tiny.text-muted.ms-1 blocks
 
-		if (mempoolInfo)
+		if (mempoolInfo && global.activeBlockchain != "signet")
 			+summaryRow
 				+summaryItem("Next Block", "A prediction for what transactions will be included in the next block, yet to be mined. Based on the output of the RPC getblocktemplate.")
 
