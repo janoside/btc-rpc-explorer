@@ -734,7 +734,12 @@ expressApp.onStartup = async () => {
 					let fileData = fs.readFileSync(absoluteFilepath, {encoding: encoding, flag:'r'});
 					let fileBuffer = new Buffer(fileData, encoding);
 
-					await s3Bucket.put(fileBuffer, s3path, contentType);
+					let options = {
+						"ContentType": contentType,
+						"CacheControl": "max-age=315360000"
+					};
+
+					await s3Bucket.put(fileBuffer, s3path, options);
 
 					uploadedItems.push(filepath);
 

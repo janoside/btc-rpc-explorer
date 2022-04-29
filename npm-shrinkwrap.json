@@ -9,7 +9,7 @@
 			"version": "3.3.0",
 			"license": "MIT",
 			"dependencies": {
-				"@janoside/app-utils": "github:janoside/app-utils#22bfc2fd",
+				"@janoside/app-utils": "github:janoside/app-utils#148cd2fb1ff3c002f15ae99a2548c87cfb4b3514",
 				"async": "^3.2.2",
 				"axios": "^0.27.2",
 				"basic-auth": "^2.0.1",
@@ -117,7 +117,8 @@
 		},
 		"node_modules/@janoside/app-utils": {
 			"version": "1.0.0",
-			"resolved": "git+ssh://git@github.com/janoside/app-utils.git#22bfc2fdacba2a8f5383e1e918d10abc519c3df3",
+			"resolved": "git+ssh://git@github.com/janoside/app-utils.git#148cd2fb1ff3c002f15ae99a2548c87cfb4b3514",
+			"integrity": "sha512-2YRJvlr11JJaeg7Uq8xURQtXD8E5ROQX32ZFbOea7gHB8lJdNk4bkTR7O+aOCt3SSnSU0KPFVh3QWgISED7i6g==",
 			"license": "MIT",
 			"dependencies": {
 				"aws-sdk": "^2.987.0",
@@ -5321,8 +5322,9 @@
 			}
 		},
 		"@janoside/app-utils": {
-			"version": "git+ssh://git@github.com/janoside/app-utils.git#22bfc2fdacba2a8f5383e1e918d10abc519c3df3",
-			"from": "@janoside/app-utils@github:janoside/app-utils#22bfc2fd",
+			"version": "git+ssh://git@github.com/janoside/app-utils.git#148cd2fb1ff3c002f15ae99a2548c87cfb4b3514",
+			"integrity": "sha512-2YRJvlr11JJaeg7Uq8xURQtXD8E5ROQX32ZFbOea7gHB8lJdNk4bkTR7O+aOCt3SSnSU0KPFVh3QWgISED7i6g==",
+			"from": "@janoside/app-utils@github:janoside/app-utils#148cd2fb1ff3c002f15ae99a2548c87cfb4b3514",
 			"requires": {
 				"aws-sdk": "^2.987.0",
 				"axios": "^0.26.1",
