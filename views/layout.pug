@@ -204,7 +204,7 @@ html(lang="en")
 					.input-group
 						input.form-control(type="text", name="query", placeholder="block height/hash, txid, address", value=(query))
 						
-						button.btn.btn-primary(type="submit")
+						button.btn.btn-primary(type="submit", aria-label="Search")
 							i.bi-search
 
 				form.form-inline.d-lg-none.w-100.mt-2.mt-md-0(method="post", action="./search")
@@ -212,7 +212,7 @@ html(lang="en")
 					.input-group
 						input.form-control(type="text", name="query", placeholder="height/hash/txid...", value=(query))
 						
-						button.btn.btn-primary(type="submit")
+						button.btn.btn-primary(type="submit", aria-label="Search")
 							i.bi-search
 		
 
@@ -245,7 +245,7 @@ html(lang="en")
 			.container
 				if (!crawlerBot)
 					.mb-4
-						iframe(id="quoteIframe", src="./snippet/quote/random", onload="iframeLoaded('quoteIframe');", scrolling="no", height="0", style="width: 100%;")
+						iframe(id="quoteIframe", title="A Bitcoin Quote of the Day", src="./snippet/quote/random", onload="iframeLoaded('quoteIframe');", scrolling="no", height="0", style="width: 100%;")
 
 				hr
 

@@ -67,7 +67,7 @@ block content
 							.input-group.input-group
 								input.form-control.form-control(id="mempoolquery", type="text", name="mempoolquery", placeholder="txid", value=(mempoolquery), title="<span class='text-warning'>Transaction not found</span>", data-bs-trigger="manual", data-bs-html="true", data-bs-placement="bottom")
 								
-								button.btn.btn-primary(type="submit")
+								button.btn.btn-primary(type="submit", aria-label="Search")
 									i.bi-search
 
 					.me-4.d-inline-block.mb-3
@@ -79,7 +79,7 @@ block content
 							.input-group.input-group
 								input.form-control.form-control(id="customFeeRate", type="text", name="customFeeRate", placeholder="sat/vB", value=(customFeeRate))
 								
-								button.btn.btn-primary(type="submit")
+								button.btn.btn-primary(type="submit", aria-label="Search")
 									i.bi-search
 
 			hr.mt-1.mb-3
