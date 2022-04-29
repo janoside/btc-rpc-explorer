@@ -3,16 +3,19 @@ const fs = require("fs");
 const path = require("path");
 
 const dirs = [
-	path.join(process.cwd(), "public/js/"),
-	path.join(process.cwd(), "public/style/"),
+	"public/js/",
+	"public/style/",
+	"public/leaflet/",
 ];
 
 const filetypeMatch = /^.*\.(js|css)$/;
 
+const hashesByFilename = {};
+
 dirs.forEach(dirPath => {
 	console.log("\nDirectory: " + dirPath);
 
-	fs.readdirSync(dirPath).forEach(file => {
+	fs.readdirSync(path.join(process.cwd(), dirPath)).forEach(file => {
 		if (file.match(filetypeMatch)) {
 			var content = fs.readFileSync(path.join(dirPath, file));
 
@@ -20,9 +23,15 @@ dirs.forEach(dirPath => {
 
 			data = hash.update(content, 'utf-8');
 
-			gen_hash= data.digest('base64');
+			gen_hash = data.digest('base64');
 
-			console.log("File: " + file + " -> " + gen_hash);
+			console.log("\t" + file + " -> " + gen_hash);
+
+			hashesByFilename[file] = `sha384-${gen_hash}`;
 		}
 	});
 });
+
+fs.writeFileSync(path.join(process.cwd(), "public/txt/resource-integrity.json"), JSON.stringify(hashesByFilename, null, 4));
+
+console.log("\npublic/txt/resource-integrity.json written.\n");

@@ -11,7 +11,7 @@ html(lang="en")
 		meta(name="description" content="Open-source, easy-to-use, educational Bitcoin explorer whose only dependency is your Bitcoin Core node.")
 		
 		if (!homepage)
-			link(rel="stylesheet", href=`./style/highlight.min.css?v=${appVersion}`, integrity="sha384-s4RLYRjGGbVqKOyMGGwfxUTMOO6D7r2eom7hWZQ6BjK2Df4ZyfzLXEkonSm0KLIQ")
+			link(rel="stylesheet", href=assetUrl(`./style/highlight.min.css`), integrity=assetIntegrity("highlight.min.css"), crossorigin="anonymous")
 
 
 		+themeCss
@@ -35,12 +35,12 @@ html(lang="en")
 		if (!network.endsWith("net") && network != "regtest")
 			- network = (network + "net"); // handles "main" -> "mainnet" and "test" -> "testnet"
 
-		link(rel="apple-touch-icon", sizes="180x180", href=`./img/logo/${network}/apple-touch-icon.png`)
-		link(rel="icon", type="image/png", sizes="32x32", href=`./img/logo/${network}/favicon-32x32.png`)
-		link(rel="icon", type="image/png", sizes="16x16", href=`./img/logo/${network}/favicon-16x16.png`)
+		link(rel="apple-touch-icon", sizes="180x180", href=assetUrl(`./img/logo/${network}/apple-touch-icon.png`))
+		link(rel="icon", type="image/png", sizes="32x32", href=assetUrl(`./img/logo/${network}/favicon-32x32.png`))
+		link(rel="icon", type="image/png", sizes="16x16", href=assetUrl(`./img/logo/${network}/favicon-16x16.png`))
 		link(rel="manifest", href=`./img/logo/${network}/site.webmanifest`)
 		link(rel="mask-icon", href=`./img/logo/${network}/safari-pinned-tab.svg`, color="#f7931a")
-		link(rel="shortcut icon", href=`./img/logo/${network}/favicon.ico`)
+		link(rel="shortcut icon", href=assetUrl(`./img/logo/${network}/favicon.ico`))
 		meta(name="apple-mobile-web-app-title", content="BTC Explorer")
 		meta(name="application-name", content="BTC Explorer")
 		meta(name="msapplication-TileColor", content="#022e70")
@@ -58,9 +58,9 @@ html(lang="en")
 				a.navbar-brand(href="./")
 					span
 						if (coinConfig.logoUrlsByNetwork && coinConfig.logoUrlsByNetwork[activeBlockchain])
-							img.header-image(src=coinConfig.logoUrlsByNetwork[activeBlockchain], alt="logo")
+							img.header-image(src=assetUrl(coinConfig.logoUrlsByNetwork[activeBlockchain]), alt="logo")
 						else
-							img.header-image(src="./img/logo/mainnet/logo.svg", alt="logo")
+							img.header-image(src=assetUrl("./img/logo/mainnet/logo.svg"), alt="logo")
 
 						if (coinConfig.siteTitlesByNetwork && coinConfig.siteTitlesByNetwork[activeBlockchain])
 							span.fw-light #{coinConfig.siteTitlesByNetwork[activeBlockchain]}
@@ -313,7 +313,7 @@ html(lang="en")
 										
 										each demoSite in demoSites
 											a.me-2(href=coinConfig.demoSiteUrlsByNetwork[demoSite], title=coinConfig.siteTitlesByNetwork[demoSite], data-bs-toggle="tooltip")
-												img(src=coinConfig.logoUrlsByNetwork[demoSite], alt=coinConfig.siteTitlesByNetwork[demoSite], style="width: 40px; height: 40px;")
+												img(src=assetUrl(coinConfig.logoUrlsByNetwork[demoSite]), alt=coinConfig.siteTitlesByNetwork[demoSite], style="width: 40px; height: 40px;")
 
 					.col-lg-3
 						.mb-4
@@ -386,7 +386,7 @@ html(lang="en")
 				console.log(`Performance ID: ${perfId}`);
 
 		if (!homepage)
-			script(src="./js/highlight.pack.js", integrity="sha384-OGoFdvlhYqw3L+BFpHxdz5136RO9tUlt7OZ2qQZ0N6Z9Qqx0rCQBsg9ko7X4vC64")
+			script(src=assetUrl(`./js/highlight.pack.js`), integrity=assetIntegrity("highlight.pack.js"), crossorigin="anonymous")
 			script.
 				document.addEventListener("DOMContentLoaded", function(event) {
 					hljs.highlightAll();
@@ -398,7 +398,7 @@ html(lang="en")
 			
 
 		if (config.credentials.sentryUrl && config.credentials.sentryUrl.length > 0)
-			script(src="./js/sentry.min.js", integrity="sha384-da/Bo2Ah6Uw3mlhl6VINMblg2SyGbSnULKrukse3P5D9PTJi4np9HoKvR19D7zOL", crossorigin="anonymous")
+			script(src=assetUrl("./js/sentry.min.js"), integrity=assetIntegrity("sentry.min.js"), crossorigin="anonymous")
 			script.
 				Sentry.init({ dsn: '#{config.credentials.sentryUrl}' });
 

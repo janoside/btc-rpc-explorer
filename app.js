@@ -96,6 +96,11 @@ const markdown = require("markdown-it")();
 const v8 = require("v8");
 var compression = require("compression");
 
+const appUtils = require("@janoside/app-utils");
+const s3Utils = appUtils.s3Utils;
+
+const s3Bucket = s3Utils.createBucket(config.cdn.s3Bucket, config.cdn.s3BucketPath);
+
 require("./app/currencies.js");
 
 const package_json = require('./package.json');
@@ -210,6 +215,51 @@ expressApp.use(config.baseUrl, express.static(path.join(__dirname, 'public'), {
 if (config.baseUrl != '/') {
 	expressApp.get('/', (req, res) => res.redirect(config.baseUrl));
 }
+
+
+// if a CDN is configured, these assets will be uploaded at launch, then referenced from there
+const cdnItems = [
+	[`style/dark.css`, `text/css`, "utf8"],
+	[`style/light.css`, `text/css`, "utf8"],
+	[`style/highlight.min.css`, `text/css`, "utf8"],
+	[`style/dataTables.bootstrap4.min.css`, `text/css`, "utf8"],
+
+	[`js/bootstrap.bundle.min.js`, `text/javascript`, "utf8"],
+	[`js/chart.min.js`, `text/javascript`, "utf8"],
+	[`js/fontawesome.min.js`, `text/javascript`, "utf8"],
+	[`js/jquery.min.js`, `text/javascript`, "utf8"],
+	[`js/site.js`, `text/javascript`, "utf8"],
+	[`js/highlight.pack.js`, `text/javascript`, "utf8"],
+	[`js/chartjs-adapter-moment.min.js`, `text/javascript`, "utf8"],
+	[`js/jquery.dataTables.min.js`, `text/javascript`, "utf8"],
+	[`js/dataTables.bootstrap4.min.js`, `text/javascript`, "utf8"],
+	[`js/moment.min.js`, `text/javascript`, "utf8"],
+	[`js/sentry.min.js`, `text/javascript`, "utf8"],
+	[`js/decimal.js`, `text/javascript`, "utf8"],
+
+	[`img/logo/logo.svg`, `image/svg+xml`, "utf8"],
+	[`img/logo/mainnet/logo.svg`, `image/svg+xml`, "utf8"],
+	[`img/logo/mainnet/apple-touch-icon.png`, `image/png`, "binary"],
+	[`img/logo/mainnet/favicon-16x16.png`, `image/png`, "binary"],
+	[`img/logo/mainnet/favicon-32x32.png`, `image/png`, "binary"],
+	[`img/logo/testnet/logo.svg`, `image/svg+xml`, "utf8"],
+	[`img/logo/signet/logo.svg`, `image/svg+xml`, "utf8"],
+	[`img/logo/regtest/logo.svg`, `image/svg+xml`, "utf8"],
+
+	[`img/logo/mainnet/favicon.ico`, `image/x-icon`, "binary"],
+	[`img/logo/testnet/favicon.ico`, `image/x-icon`, "binary"],
+	[`img/logo/signet/favicon.ico`, `image/x-icon`, "binary"],
+	[`img/logo/regtest/favicon.ico`, `image/x-icon`, "binary"],
+
+	[`leaflet/leaflet.js`, `text/javascript`, "utf8"],
+	[`leaflet/leaflet.css`, `text/css`, "utf8"],
+];
+
+const cdnFilepathMap = {};
+cdnItems.forEach(item => {
+	cdnFilepathMap[item[0]] = true;
+});
+
 
 process.on("unhandledRejection", (reason, p) => {
 	debugLog("Unhandled Rejection at: Promise", p, "reason:", reason, "stack:", (reason != null ? reason.stack : "null"));
@@ -589,7 +639,7 @@ function refreshNetworkVolumes() {
 }
 
 
-expressApp.onStartup = function() {
+expressApp.onStartup = async () => {
 	global.appStartTime = new Date().getTime();
 	
 	global.config = config;
@@ -626,27 +676,29 @@ expressApp.onStartup = function() {
 	
 
 	if (global.sourcecodeVersion == null && fs.existsSync('.git')) {
-		simpleGit(".").log(["-n 1"], function(err, log) {
-			if (err) {
-				utils.logError("3fehge9ee", err, {desc:"Error accessing git repo"});
+		try {
+			let log = await simpleGit(".").log(["-n 1"]);
 
-				global.cacheId = global.appVersion;
-				debugLog(`Error getting sourcecode version, continuing to use default cacheId '${global.cacheId}'`);
+			global.sourcecodeVersion = log.all[0].hash.substring(0, 10);
+			global.sourcecodeDate = log.all[0].date.substring(0, "0000-00-00".length);
 
-				debugLog(`Starting ${global.coinConfig.ticker} RPC Explorer, v${global.appVersion} (code: unknown commit) at http://${config.host}:${config.port}${config.baseUrl}`);
+			global.cacheId = `${global.sourcecodeDate}-${global.sourcecodeVersion}`;
 
-			} else {
-				global.sourcecodeVersion = log.all[0].hash.substring(0, 10);
-				global.cacheId = log.all[0].hash.substring(0, 10);
-				global.sourcecodeDate = log.all[0].date.substring(0, "0000-00-00".length);
+			debugLog(`Using sourcecode metadata as cacheId: '${global.cacheId}'`);
 
-				debugLog(`Using sourcecode version as cacheId: '${global.cacheId}'`);
+			debugLog(`Starting ${global.coinConfig.ticker} RPC Explorer, v${global.appVersion} (commit: '${global.sourcecodeVersion}', date: ${global.sourcecodeDate}) at http://${config.host}:${config.port}${config.baseUrl}`);
 
-				debugLog(`Starting ${global.coinConfig.ticker} RPC Explorer, v${global.appVersion} (commit: '${global.sourcecodeVersion}', date: ${global.sourcecodeDate}) at http://${config.host}:${config.port}${config.baseUrl}`);
-			}
 
-			expressApp.continueStartup();
-		});
+		} catch (err) {
+			utils.logError("3fehge9ee", err, {desc:"Error accessing git repo"});
+
+			global.cacheId = global.appVersion;
+			debugLog(`Error getting sourcecode version, continuing to use default cacheId '${global.cacheId}'`);
+
+			debugLog(`Starting ${global.coinConfig.ticker} RPC Explorer, v${global.appVersion} (code: unknown commit) at http://${config.host}:${config.port}${config.baseUrl}`);
+		}
+		
+		expressApp.continueStartup();
 
 	} else {
 		global.cacheId = global.appVersion;
@@ -655,6 +707,60 @@ expressApp.onStartup = function() {
 		debugLog(`Starting ${global.coinConfig.ticker} RPC Explorer, v${global.appVersion} at http://${config.host}:${config.port}${config.baseUrl}`);
 
 		expressApp.continueStartup();
+	}
+
+	if (config.cdn.active && config.cdn.s3Bucket) {
+		debugLog(`Configuring CDN assets; uploading ${cdnItems.length} assets to S3...`);
+
+		const s3Path = (filepath) => { return `${global.cacheId}/${filepath}`; }
+
+		const uploadedItems = [];
+		const existingItems = [];
+		const errorItems = [];
+
+		const uploadAssetIfNeeded = async (filepath, contentType, encoding) => {
+			try {
+				let absoluteFilepath = path.join(process.cwd(), "public", filepath);
+				let s3path = s3Path(filepath);
+				
+				const existingAsset = await s3Bucket.get(s3path);
+
+				if (existingAsset) {
+					existingItems.push(filepath);
+
+					//debugLog(`Asset ${filepath} already in S3, skipping upload.`);
+
+				} else {
+					let fileData = fs.readFileSync(absoluteFilepath, {encoding: encoding, flag:'r'});
+					let fileBuffer = new Buffer(fileData, encoding);
+
+					await s3Bucket.put(fileBuffer, s3path, contentType);
+
+					uploadedItems.push(filepath);
+
+					//debugLog(`Uploaded ${filepath} to S3.`);
+				}
+			} catch (e) {
+				errorItems.push(filepath);
+
+				debugErrorLog(`Error uploading asset to S3: ${JSON.stringify(item)}`, e);
+			}
+		};
+
+		const promises = [];
+		for (let i = 0; i < cdnItems.length; i++) {
+			let item = cdnItems[i];
+
+			let filepath = item[0];
+			let contentType = item[1];
+			let encoding = item[2];
+
+			promises.push(uploadAssetIfNeeded(filepath, contentType, encoding));
+		}
+
+		await utils.awaitPromises(promises);
+
+		debugLog(`Done uploading assets to S3:\n\tAlready present: ${existingItems.length}\n\tNewly uploaded: ${uploadedItems.length}\n\tError items: ${errorItems.length}`);
 	}
 }
 
@@ -940,6 +1046,32 @@ expressApp.locals.Decimal = Decimal;
 expressApp.locals.utils = utils;
 expressApp.locals.markdown = src => markdown.render(src);
 
+expressApp.locals.assetUrl = (path) => {
+	// trim off leading "./"
+	let normalizedPath = path.substring(2);
+
+	//console.log("assetUrl: " + path + " -> " + normalizedPath);
+
+	if (config.cdn.active && cdnFilepathMap[normalizedPath]) {
+		return `${config.cdn.baseUrl}/${global.cacheId}/${normalizedPath}`;
+
+	} else {
+		return `${path}?v=${global.cacheId}`;
+	}
+};
+
+// debug setting to skip js/css integrity checks
+const skipIntegrityChecks = false;
+const resourceIntegrityHashes = JSON.parse(fs.readFileSync(path.join(process.cwd(), "public/txt/resource-integrity.json")));
+
+expressApp.locals.assetIntegrity = (filename) => {
+	if (!skipIntegrityChecks && resourceIntegrityHashes[filename]) {
+		return resourceIntegrityHashes[filename];
+
+	} else {
+		return "";
+	}
+};
 
 
 module.exports = expressApp;

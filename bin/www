@@ -13,10 +13,16 @@ debug(`Set max_old_space_size to ${maxOldSpaceSize} MB`);
 app.set('port', process.env.PORT || process.env.BTCEXP_PORT || 3002);
 app.set('host', process.env.BTCEXP_HOST || '127.0.0.1');
 
-const server = app.listen(app.get('port'), app.get('host'), function() {
-	debug('Express server listening on ' + server.address().address + ':' + server.address().port);
+const server = app.listen(app.get('port'), app.get('host'), () => {
+	debug('Express server starting on ' + server.address().address + ':' + server.address().port);
 
 	if (app.onStartup) {
-		app.onStartup();
+		(async function() {
+			await app.onStartup();
+
+		})();
+		
 	}
+
+	debug('Express server startup complete.');
 });

@@ -3,11 +3,11 @@ extends layout
 block headContent
 	title Peers
 
-	link(rel="stylesheet", href="./style/dataTables.bootstrap4.min.css", integrity="sha384-EkHEUZ6lErauT712zSr0DZ2uuCmi3DoQj6ecNdHQXpMpFNGAQ48WjfXCE5n20W+R")
+	link(rel="stylesheet", href=assetUrl("./style/dataTables.bootstrap4.min.css"), integrity=assetIntegrity("dataTables.bootstrap4.min.css"), crossorigin="anonymous")
 
-	link(rel="stylesheet", href="./leaflet/leaflet.css", integrity="sha384-6wKUKNzA6h/S6gZ1lWQppeGaVXvK1AUAsEznGBghzlEu1fNcxJGYVRiroSHr+OwU")
+	link(rel="stylesheet", href=assetUrl("./leaflet/leaflet.css"), integrity=assetIntegrity("leaflet.css"), crossorigin="anonymous")
 
-	script(src="./leaflet/leaflet.js", integrity="sha384-RFZC58YeKApoNsIbBxf4z6JJXmh+geBSgkCQXFyh+4tiFSJmJBt+2FbjxW7Ar16M")
+	script(src=assetUrl("./leaflet/leaflet.js"), integrity=assetIntegrity("leaflet.js"), crossorigin="anonymous")
 
 	style.
 		.versions-hidden-rows, .services-hidden-rows {
@@ -193,8 +193,8 @@ block content
 
 	
 block endOfBody
-	script(src="./js/jquery.dataTables.min.js", integrity="sha384-rgWRqC0OFPisxlUvl332tiM/qmaNxnlY46eksSZD84t+s2vZlqGeHrncwIRX7CGp")
-	script(src="./js/dataTables.bootstrap4.min.js", integrity="sha384-uiSTMvD1kcI19sAHJDVf68medP9HA2E2PzGis9Efmfsdb8p9+mvbQNgFhzii1MEX")
+	script(src=assetUrl("./js/jquery.dataTables.min.js"), integrity=assetIntegrity("jquery.dataTables.min.js"), crossorigin="anonymous")
+	script(src=assetUrl("./js/dataTables.bootstrap4.min.js"), integrity=assetIntegrity("dataTables.bootstrap4.min.js"), crossorigin="anonymous")
 
 	script.
 		$(document).ready(function() {

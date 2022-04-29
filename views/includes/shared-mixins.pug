@@ -1,14 +1,14 @@
 mixin themeCss
-	link(id="light-theme-link-tag", rel="stylesheet", href=`./style/light.css?v=${cacheId}`, integrity="sha384-pVyltRErny1kThw+BcjtLDkOEpGLSf8/1bsyqimIIA7fuoAobGDW8UfstUY8uWYZ")
-	link(id="dark-theme-link-tag", rel=(userSettings.uiTheme == "dark" ? "stylesheet" : false), href=`./style/dark.css?v=${cacheId}`, integrity="sha384-A2fwoNoA4lHJfgim7XUOLsWNI5V2MKx17vQ1Wn0vPdwVjhNZ21jWAh3KYxq2gsKG")
+	link(id="light-theme-link-tag", rel=(userSettings.uiTheme != "dark" ? "stylesheet" : false), href=assetUrl(`./style/light.css`), integrity=assetIntegrity("light.css"), crossorigin="anonymous")
+	link(id="dark-theme-link-tag", rel=(userSettings.uiTheme == "dark" ? "stylesheet" : false), href=assetUrl(`./style/dark.css`), integrity=assetIntegrity("dark.css"), crossorigin="anonymous")
 
 
 mixin sharedScriptTags
-	script(src=`./js/jquery.min.js?v=${cacheId}`, integrity="sha384-vtXRMe3mGCbOeY7l30aIg8H9p3GdeSe4IFlP6G8JMa7o7lXvnz3GFKzPxzJdPfGK")
-	script(src=`./js/bootstrap.bundle.min.js?v=${cacheId}`, integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p")
-	script(defer, src=`./js/fontawesome.min.js?v=${cacheId}`, integrity="sha384-haqrlim99xjfMxRP6EWtafs0sB1WKcMdynwZleuUSwJR0mDeRYbhtY+KPMr+JL6f")
+	script(src=assetUrl(`./js/jquery.min.js`), integrity=assetIntegrity("jquery.min.js"), crossorigin="anonymous")
+	script(src=assetUrl(`./js/bootstrap.bundle.min.js`), integrity=assetIntegrity("bootstrap.bundle.min.js"), crossorigin="anonymous")
+	script(defer, src=assetUrl(`./js/fontawesome.min.js`), integrity=assetIntegrity("fontawesome.min.js"), crossorigin="anonymous")
 
-	script(src=`./js/site.js?v=${cacheId}`, integrity="sha384-RNCa5sCPh1hkJyKAu8z5Hai8r9IxpVBF2W6GFhSb2JSuSlECW8d85ufzyXBSRwLZ")
+	script(src=assetUrl(`./js/site.js`), integrity=assetIntegrity("site.js"), crossorigin="anonymous")
 
 
 mixin pageTitle(text, subtext, copyableSubtext=false)
@@ -836,11 +836,11 @@ mixin pagination(limit, offset, sort, itemCount, baseUrl, justification="start",
 
 
 mixin graphPageScriptSetup(dateAdapterNeeded=false)
-	script(src=`./js/chart.min.js?v=${cacheId}`, integrity="sha384-ovAl4wbIXnEbY76lSb6GrprFBkoYeu4RKYYNMsADThIn2AweWPOyJqoyR/8/kgML")
+	script(src=assetUrl(`./js/chart.min.js`), integrity=assetIntegrity("chart.min.js"), crossorigin="anonymous")
 	
 	if (dateAdapterNeeded)
-		script(src=`./js/moment.min.js?v=${cacheId}`, integrity="sha384-CJyhAlbbRZX14Q8KxKBt0na1ad4KBs9PklAiNk2Efxs9sgimbIZm9kYLJQeNMUfM")
-		script(src=`./js/chartjs-adapter-moment.min.js?v=${cacheId}`, integrity="sha384-Z9r2EsEmivx0l8T8TvYoqqGcpO0cCjKbqVXB8tYUa0hIWKtGVl0TmaF263CjS6XR")
+		script(src=assetUrl(`./js/moment.min.js`), integrity=assetIntegrity("moment.min.js"), crossorigin="anonymous")
+		script(src=assetUrl(`./js/chartjs-adapter-moment.min.js`), integrity=assetIntegrity("chartjs-adapter-moment.min.js"), crossorigin="anonymous")
 	
 	if (userSettings.uiTheme && userSettings.uiTheme == "dark")
 		script.
@@ -851,7 +851,7 @@ mixin graphPageScriptSetup(dateAdapterNeeded=false)
 			Chart.defaults.color='black';
 			var gridLineColor = "#dddddd";
 
-	script(src='./js/decimal.js')
+	script(src=assetUrl('./js/decimal.js'))
 
 
 mixin quote(quote, quoteIndex=-1)

@@ -12,7 +12,7 @@ html(lang="en")
 		meta(name="description" content="Open-source, easy-to-use, educational Bitcoin explorer whose only dependency is your Bitcoin Core node.")
 		
 		if (!homepage)
-			link(rel="stylesheet", href=`./style/highlight.min.css?v=${appVersion}`, integrity="sha384-s4RLYRjGGbVqKOyMGGwfxUTMOO6D7r2eom7hWZQ6BjK2Df4ZyfzLXEkonSm0KLIQ")
+			link(rel="stylesheet", href=assetUrl(`./style/highlight.min.css`), integrity=assetIntegrity("highlight.min.css"), crossorigin="anonymous")
 
 
 		+themeCss
@@ -32,9 +32,9 @@ html(lang="en")
 		meta(property="twitter:image:src" content=(metaImgUrl != undefined ? metaImgUrl : "https://bitcoinexplorer.org/img/preview.png"))
 		meta(property="twitter:domain" content="bitcoinexplorer.org")
 
-		link(rel="apple-touch-icon", sizes="180x180", href="./img/logo/apple-touch-icon.png")
-		link(rel="icon", type="image/png", sizes="32x32", href="./img/logo/favicon-32x32.png")
-		link(rel="icon", type="image/png", sizes="16x16", href="./img/logo/favicon-16x16.png")
+		link(rel="apple-touch-icon", sizes="180x180", href=assetUrl("./img/logo/apple-touch-icon.png"))
+		link(rel="icon", type="image/png", sizes="32x32", href=assetUrl("./img/logo/favicon-32x32.png"))
+		link(rel="icon", type="image/png", sizes="16x16", href=assetUrl("./img/logo/favicon-16x16.png"))
 		link(rel="manifest", href="./img/logo/site.webmanifest")
 		link(rel="mask-icon", href="./img/logo/safari-pinned-tab.svg", color="#f7931a")
 		link(rel="shortcut icon", href="./img/logo/favicon.ico")
@@ -78,7 +78,7 @@ html(lang="en")
 			});
 
 		if (!homepage)
-			script(src="./js/highlight.pack.js", integrity="sha384-OGoFdvlhYqw3L+BFpHxdz5136RO9tUlt7OZ2qQZ0N6Z9Qqx0rCQBsg9ko7X4vC64")
+			script(src=assetUrl(`./js/highlight.pack.js`), integrity=assetIntegrity("highlight.pack.js"), crossorigin="anonymous")
 			script.
 				document.addEventListener("DOMContentLoaded", function(event) {
 					hljs.highlightAll();
@@ -86,7 +86,7 @@ html(lang="en")
 
 		
 		if (config.credentials.sentryUrl && config.credentials.sentryUrl.length > 0)
-			script(src="./js/sentry.min.js", integrity="sha384-da/Bo2Ah6Uw3mlhl6VINMblg2SyGbSnULKrukse3P5D9PTJi4np9HoKvR19D7zOL", crossorigin="anonymous")
+			script(src=assetUrl("./js/sentry.min.js"), integrity=assetIntegrity("sentry.min.js"), crossorigin="anonymous")
 			script.
 				Sentry.init({ dsn: '#{config.credentials.sentryUrl}' });
 

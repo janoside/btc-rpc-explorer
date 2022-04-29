@@ -1,7 +1,8 @@
 ##### v3.?
 ###### Unreleased
 
-* Minor fixes preparing for Bitcoin Core v23
+* Minor fixes for running against Bitcoin Core v23
+* Support for serving static assets via a configurable CDN
 * Misc fixes for erroneous data display on non-mainnet nodes
 * UI/UX tweak, especially on homepage
 * Updated dependencies
