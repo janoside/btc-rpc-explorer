@@ -12,6 +12,10 @@
             "name": "1THash",
             "link": "https://www.1thash.top"
         },
+        "terrapool.io": {
+            "name": "Terra Pool",
+            "link": "https://terrapool.io/"
+        },
         "/BTC.COM/" : {
             "name" : "BTC.com",
             "link" : "https://pool.btc.com"
@@ -64,6 +68,10 @@
             "name" : "Bitcoin.com",
             "link" : "https://www.bitcoin.com/"
         },
+        "BlockfillsPool" : {
+            "name": "BlockFills",
+            "link": "https://www.blockfills.com/mining/"
+        },
         "Mined By 175btc.com" : {
             "name" : "175btc",
             "link" : "https://www.175btc.com/"
@@ -83,6 +91,10 @@
         "BitMinter" : {
             "name" : "BitMinter",
             "link" : "https://bitminter.com/"
+        },
+        "/ultimus/": {
+            "name": "Ultimus Pool",
+            "link": "https://www.ultimuspool.com/en"
         },
         "/Bitcoin-Russia.ru/" : {
             "name" : "BitcoinRussia",
@@ -119,6 +131,10 @@
         "MaxBTC" : {
             "name" : "MaxBTC",
             "link" : "https://maxbtc.com/"
+        },
+        "KuCoinPool" : {
+            "name" : "KuCoin Pool",
+            "link" : "https://www.kucoin.com/mining-pool"
         },
         "triplemining" : {
             "name" : "TripleMining",
@@ -622,6 +638,10 @@
             "name" : "Polmine",
             "link" : "https://polmine.pl/"
         },
+        "1PzVut5X6Nx7Mv4JHHKPtVM9Jr9LJ4Rbry" : {
+            "name": "BlockFills",
+            "link": "https://www.blockfills.com/mining/"
+        },
         "1CK6KHY6MHgYvmRQ4PAafKYDrg1ejbH1cE" : {
             "name" : "SlushPool",
             "link" : "https://slushpool.com/"
@@ -653,6 +673,10 @@
         "19PkHafEN18mquJ9ChwZt5YEFoCdPP5vYB" : {
             "name" : "BitMinter",
             "link" : "https://bitminter.com/"
+        },
+        "32P5KVSbZYAkVmSHxDd2oBXaSk372rbV7L": {
+            "name": "Terra Pool",
+            "link": "https://terrapool.io/"
         },
         "15xiShqUqerfjFdyfgBH1K7Gwp6cbYmsTW" : {
             "name" : "EclipseMC",
@@ -1146,6 +1170,10 @@
             "name": "AntPool",
             "link": "https://www.antpool.com/"
         },
+        "1EMVSMe1VJUuqv7D7SFzctnVXk4KdjXATi": {
+            "name": "Ultimus Pool",
+            "link": "https://www.ultimuspool.com/en"
+        },
         "3QYvfQoG9Gs9Vfvbpw6947muSqhoGagvF6": {
             "name": "Rawpool",
             "link": "https://www.rawpool.com"
@@ -1209,6 +1237,10 @@
         "1FFxkVijzvUPUeHgkFjBk2Qw8j3wQY2cDw" : {
             "name" : "Foundry USA",
             "link" : "https://foundrydigital.com/"
+        },
+        "1ArTPjj6pV3aNRhLPjJVPYoxB98VLBzUmb" : {
+            "name" : "KuCoin Pool",
+            "link" : "https://www.kucoin.com/mining-pool"
         }
     }
 }

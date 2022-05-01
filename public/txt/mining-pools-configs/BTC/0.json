@@ -417,7 +417,11 @@
 			"link" : "http://www.dpool.top/"
 		},
 		"/Rawpool.com/": {
-			"name" : "Rawpool.com",
+			"name" : "Rawpool",
+			"link" : "https://www.rawpool.com/"
+		},
+		"/Rawpool/": {
+			"name" : "Rawpool",
 			"link" : "https://www.rawpool.com/"
 		},
 		"/haominer/": {
@@ -587,6 +591,26 @@
 		"KuCoinPool": {
 			"name": "KuCoinPool",
 			"link": "https://www.kucoin.com/mining-pool/"
+		},
+		"terrapool.io": {
+			"name": "Terra Pool",
+			"link": "https://terrapool.io/"
+		},
+		"BlockfillsPool": {
+			"name": "BlockFills",
+			"link": "https://www.blockfills.com/mining/"
+		},
+		"/ultimus/": {
+			"name": "Ultimus Pool",
+			"link": "https://www.ultimuspool.com/en"
+		},
+		"/ULTIMUS/": {
+			"name": "Ultimus Pool",
+			"link": "https://www.ultimuspool.com/"
+		},
+		"Entrustus": {
+			"name": "Entrust Charity Pool",
+			"link": "pool.entustus.org"
 		}
 	},
 	"payout_addresses" : {
@@ -955,7 +979,7 @@
 			"link" : "http://www.dpool.top/"
 		},
 		"1FbBbv5oYqFKwiPm4CAqvAy8345n8AQ74b" : {
-			"name" : "Rawpool.com",
+			"name" : "Rawpool",
 			"link" : "https://www.rawpool.com/"
 		},
 		"1LsFmhnne74EmU4q4aobfxfrWY4wfMVd8w" : {
@@ -1305,6 +1329,46 @@
 		"33SAB6pzbhEGPbfY6NVgRDV7jVfspZ3A3Z": {
 			"name" : "Carbon Negative (unidentified)",
 			"link" : "https://github.com/0xB10C/known-mining-pools/issues/48"
+		},
+		"1PzVut5X6Nx7Mv4JHHKPtVM9Jr9LJ4Rbry" : {
+			"name": "BlockFills",
+			"link": "https://www.blockfills.com/mining/"
+		},
+		"32P5KVSbZYAkVmSHxDd2oBXaSk372rbV7L": {
+			"name": "Terra Pool",
+			"link": "https://terrapool.io/"
+		},
+	   	"1EMVSMe1VJUuqv7D7SFzctnVXk4KdjXATi": {
+			"name": "Ultimus Pool",
+			"link": "https://www.ultimuspool.com/en"
+		},
+		"1E8CZo2S3CqWg1VZSJNFCTbtT8hZPuQ2kB" : {
+			"name" : "Poolin",
+			"link" : "https://www.poolin.com/"
+		},
+		"14sA8jqYQgMRQV9zUtGFvpeMEw7YDn77SK" : {
+			"name" : "Poolin",
+			"link" : "https://www.poolin.com/"
+		},
+		"1GNgwA8JfG7Kc8akJ8opdNWJUihqUztfPe" : {
+			"name" : "Poolin",
+			"link" : "https://www.poolin.com/"
+		},
+		"17tUZLvy3X2557JGhceXRiij2TNYuhRr4r" : {
+			"name" : "Poolin",
+			"link" : "https://www.poolin.com/"
+		},
+		"122pN8zvqTxJaA8fRY1PDBu4QYodqE5m2X": {
+			"name" : "Binance Pool",
+			"link" : "https://pool.binance.com/"
+		},
+		"3L8Ck6bm3sve1vJGKo6Ht2k167YKSKi8TZ": {
+			"name" : "Binance Pool",
+			"link" : "https://pool.binance.com/"
+		},
+		"3C9sAKXrBVpJVe3b738yik4LPHpPmceBgd": {
+			"name" : "Ultimus Pool",
+			"link" : "https://www.ultimuspool.com/"
 		}
 	},
 	"unknown_miner_payout_addresses": {
