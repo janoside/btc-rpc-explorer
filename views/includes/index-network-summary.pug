@@ -104,7 +104,7 @@ if (exchangeRates)
 
 						| )
 
-		+summaryItem("Difficulty")
+		+summaryItem("Difficulty", null, null, null, "icon:bi-clock-history", "./difficulty-history", "View difficulty history")
 			- var difficultyData = utils.formatLargeNumber(getblockchaininfo.difficulty, 3);
 			
 			if (getblockchaininfo.difficulty > 1000)
@@ -115,6 +115,24 @@ if (exchangeRates)
 
 			else
 				span #{new Decimal(getblockchaininfo.difficulty).toDP(3)}
+
+			if (global.athDifficulty)
+				span.text-tiny.text-muted.ms-1
+					| (
+
+					- var diffX = getblockchaininfo.difficulty;
+					if (global.athDifficulty == diffX)
+						span.border-dotted(title='The current difficulty is an All-Time High!' data-bs-toggle='tooltip')
+							span.text-success ATH!
+					else
+						- var diffDrop = new Decimal(global.athDifficulty).minus(diffX).dividedBy(global.athDifficulty).times(100).toDP(2);
+
+						span.border-dotted(title=`The current difficulty is ${diffDrop}% lower than the All-Time High.` data-bs-toggle='tooltip')
+							span.text-danger -#{diffDrop}%
+
+					| )
+				
+
 
 		if (chainTxStats && chainTxStats[7 * targetBlocksPerDay])
 			+summaryItem("7d Transactions", "The total number of transactions that have been confirmed in the blockchain over the last 7 days.")
@@ -191,19 +209,22 @@ if (exchangeRates)
 			- var blockCount = new Decimal(mempoolInfo.bytes).dividedBy(coinConfig.maxBlockSize);
 			- var colorClass_blockCount = (blockCount > 20) ? "text-danger" : (blockCount > 10 ? "text-warning" : "text-success");
 			
-			+summaryItem("Mempool", "The number of unconfirmed transactions in your node's mempool, and the number of blocks needed to confirm those transactions", null, null, "summary", "./mempool-summary")
+			+summaryItem("Mempool", "The number of unconfirmed transactions in your node's mempool, and the number of blocks needed to confirm those transactions", null, null, "icon:bi-hourglass-split", "./mempool-summary", "View mempool summary details")
 				
 				span(class=colorClass_txCount) #{mempoolInfo.size.toLocaleString()}
 				span.text-tiny.text-muted.ms-1 tx
 
-				span.fw-light.text-muted.mx-2 /
-
-				span(class=colorClass_blockCount) #{blockCount.toDP(2)}
-				span.text-tiny.text-muted.ms-1 blocks
+				span.small.text-muted.ms-2
+					| (
+					span.border-dotted(title="Number of blocks needed to clear your node's mempool.", data-bs-toggle="tooltip")
+						span(class=colorClass_blockCount) #{blockCount.toDP(2)}
+						span.text-tiny.text-muted.ms-1
+							i.bi-box
+					| )
 
 		if (mempoolInfo && global.activeBlockchain != "signet")
 			+summaryRow
-				+summaryItem("Next Block", "A prediction for what transactions will be included in the next block, yet to be mined. Based on the output of the RPC getblocktemplate.")
+				+summaryItem("Next Block", "A prediction for what transactions will be included in the next block, yet to be mined. Based on the output of the RPC getblocktemplate.", null, null, "icon:bi-minecart-loaded", "./next-block", "View next block details")
 
 					#index-next-block
 						.text-center.text-reset.pb-4

@@ -94,7 +94,7 @@ mixin summaryRow(itemCount)
 		block
 
 
-mixin summaryTitle(title, titleDesc, subtitle, subtitleDesc, linkText, linkUrl)
+mixin summaryTitle(title, titleDesc, subtitle, subtitleDesc, linkText, linkUrl, linkDesc)
 	span.fs-6.text-uppercase.fw-light.text-card-highlight(class=(titleDesc ? "border-dotted" : false), class=(subtitle ? "me-2" : false), title=titleDesc, data-bs-toggle="tooltip", data-bs-html="true") #{title}
 	if (subtitle)
 		small.text-card-highlight.fw-light
@@ -103,16 +103,22 @@ mixin summaryTitle(title, titleDesc, subtitle, subtitleDesc, linkText, linkUrl)
 			| )
 
 	if (linkText && linkUrl)
-		a.ms-2.text-tiny(href=linkUrl) #{linkText}
+		if (linkText.startsWith("text:"))
+			a.ms-2.text-tiny(href=linkUrl, data-bs-toggle="tooltip", title=linkDesc) #{linkText.substring("text:".length)}
+
+		else if (linkText.startsWith("icon:"))
+			small
+				a.ms-2(href=linkUrl, data-bs-toggle="tooltip", title=linkDesc)
+					i(class=linkText.substring("icon:".length))
 
 
-mixin summaryItem(title, titleDesc, subtitle, subtitleDesc, linkText, linkUrl)
+mixin summaryItem(title, titleDesc, subtitle, subtitleDesc, linkText, linkUrl, linkDesc)
 	- var rowIndexes = utils.objectProperties(locals.colCounts).map(x => [x, locals.colCounts[x]]).map(x => [x[0], Math.floor(locals.summaryItemIndex / x[1])]);
 
 	.col(class=(locals.summaryItemIndex == (locals.summaryItemCount - 1) ? "mb-0" : "mb-3"), class=rowIndexes.map(x => `mb-${x[0]}-${(x[1] < (locals.rowCounts[x[0]] - 1) ? "4" : "0")}`))
 		//span.text-danger (#{JSON.stringify(locals.rowCounts)})
 		.text-start.text-md-center
-			+summaryTitle(title, titleDesc, subtitle, subtitleDesc, linkText, linkUrl)
+			+summaryTitle(title, titleDesc, subtitle, subtitleDesc, linkText, linkUrl, linkDesc)
 			
 
 		.lead.text-start.text-md-center

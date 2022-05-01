@@ -281,7 +281,7 @@ function getBlockStatsByHeight(height) {
 }
 
 
-const utxoSetFileCache = utils.fileCache(config.filesystemCacheDir, `utxo-set.json`);
+const utxoSetFileCache = utils.fileCache(config.filesystemCacheDir, `utxo-set`);
 
 function getUtxoSetSummary(useCoinStatsIndexIfAvailable=true, useCacheIfAvailable=true) {
 	return tryCacheThenRpcApi(miscCache, "getUtxoSetSummary", FIFTEEN_MIN, async () => {
@@ -328,7 +328,10 @@ async function getNextBlockEstimate() {
 	let maxFeeTxid = null;
 
 	var parentTxIndexes = new Set();
+	let templateWeight = 0;
 	blockTemplate.transactions.forEach(tx => {
+		templateWeight += tx.weight;
+
 		if (tx.depends && tx.depends.length > 0) {
 			tx.depends.forEach(index => {
 				parentTxIndexes.add(index);
@@ -414,6 +417,7 @@ async function getNextBlockEstimate() {
 
 	return {
 		blockTemplate: blockTemplate,
+		weight: templateWeight,
 		feeRateGroups: feeRateGroups,
 		totalFees: totalFees,
 		minFeeRate: minFeeRate,
@@ -425,6 +429,57 @@ async function getNextBlockEstimate() {
 
 function getBlockTemplate() {
 	return tryCacheThenRpcApi(miscCache, "getblocktemplate", 5 * ONE_SEC, rpcApi.getBlockTemplate);
+}
+
+
+
+const difficultyFileCache = utils.fileCache(config.filesystemCacheDir, `difficulty-by-blockheight`, 2);
+global.difficultyByBlockheightCache = difficultyFileCache.tryLoadJson() || {};
+global.difficultyByBlockheightCacheDirty = false;
+
+(function () {
+	const writeDifficultyCache = () => {
+		if (global.difficultyByBlockheightCacheDirty) {
+			difficultyFileCache.writeJson(global.difficultyByBlockheightCache);
+		}
+	};
+
+	setInterval(writeDifficultyCache, 60000);
+})();
+
+async function getDifficultyByBlockHeights(blockHeights) {
+	const results = {};
+	const neededBlockHeights = [];
+
+	for (var i = 0; i < blockHeights.length; i++) {
+		let blockHeight = blockHeights[i];
+		let blockHeightStr = `${blockHeight}`;
+
+		if (global.difficultyByBlockheightCache[blockHeightStr]) {
+			results[blockHeight] = global.difficultyByBlockheightCache[blockHeightStr];
+
+		} else {
+			neededBlockHeights.push(blockHeight);
+		}
+	}
+
+	const blockHeaders = await getBlockHeadersByHeight(neededBlockHeights);
+
+	blockHeaders.forEach(header => {
+		global.difficultyByBlockheightCache[`${header.height}`] = {
+			difficulty: header.difficulty,
+			time: header.time
+		};
+
+		global.difficultyByBlockheightCacheDirty = true;
+
+		results[header.height] = {
+			difficulty: header.difficulty,
+			time: header.time
+		};
+	});
+
+	return results;
 }
 
 async function getTxStats(dataPtCount, blockStart, blockEnd) {
@@ -1364,7 +1419,7 @@ function getCachedMempoolTxSummaries() {
 }
 
 
-const mempoolTxFileCache = utils.fileCache(config.filesystemCacheDir, `mempool-tx-summaries.json`);
+const mempoolTxFileCache = utils.fileCache(config.filesystemCacheDir, `mempool-tx-summaries`);
 
 function getMempoolTxSummaries(allTxids, statusId, statusFunc) {
 	return new Promise(async (resolve, reject) => {
@@ -2191,5 +2246,6 @@ module.exports = {
 	getCachedMempoolTxSummaries: getCachedMempoolTxSummaries,
 	getMempoolTxSummaries: getMempoolTxSummaries,
 	getBlockTemplate: getBlockTemplate,
-	getNextBlockEstimate: getNextBlockEstimate
+	getNextBlockEstimate: getNextBlockEstimate,
+	getDifficultyByBlockHeights: getDifficultyByBlockHeights
 };

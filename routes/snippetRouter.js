@@ -58,6 +58,8 @@ router.get("/next-block", asyncHandler(async (req, res, next) => {
 
 		result.txCount = nextBlockEstimate.blockTemplate.transactions.length;
 
+		result.totalWeight = nextBlockEstimate.weight;
+
 		result.minFeeRate = nextBlockEstimate.minFeeRate;
 		result.maxFeeRate = nextBlockEstimate.maxFeeRate;
 		result.minFeeTxid = nextBlockEstimate.minFeeTxid;
@@ -71,6 +73,7 @@ router.get("/next-block", asyncHandler(async (req, res, next) => {
 	res.locals.minFeeRate = result.minFeeRate;
 	res.locals.maxFeeRate = result.maxFeeRate;
 	res.locals.txCount = result.txCount;
+	res.locals.totalWeight = result.totalWeight;
 	res.locals.totalFees = result.totalFees;
 
 	res.render("snippets/index-next-block");

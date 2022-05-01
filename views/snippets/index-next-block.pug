@@ -17,16 +17,36 @@ include ../includes/shared-mixins.pug
 
 		span.text-tiny.text-muted.ms-1 sat/vB
 
-
 		br
+
+
+		
 
 
 
 		| #{txCount.toLocaleString()}
 		span.text-tiny.text-muted.ms-1 tx
 		span.mx-2.text-muted /
-		
 
-		+valueDisplay(totalFees, {hideLessSignificantDigits:true})
-		span.text-tiny.text-muted.ms-1 (&Sigma; fees)
+		- var full = new Decimal(totalWeight).dividedBy(coinConfig.maxBlockWeight).times(100);
+		- var full2 = full.toDP(0);
+
+		
+		if (full >= 99 || full2 == 99)
+			span.text-success.small.border-dotted(title="The predicted next block is full.", data-bs-toggle="tooltip")
+				| Full
+				i.bi-check2.ms-1
+
+		else
+			span.text-primary.small.border-dotted(title=`The predicted next block is ~${full2}% full.`, data-bs-toggle="tooltip")
+				| #{full2}%
+
+
+
+		span.mx-2.text-muted /
+
+		span.small.border-dotted(title="Σ fees", data-bs-toggle="tooltip")
+			span.me-1 &Sigma;
+			+valueDisplay(totalFees, {hideLessSignificantDigits:true})
+		
 

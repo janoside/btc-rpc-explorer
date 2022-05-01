@@ -92,50 +92,12 @@ router.get("/mempool-txs/:txids", function(req, res, next) {
 });
 
 
-const difficultyFileCache = utils.fileCache(config.filesystemCacheDir, `difficulty-by-blockheight.json`);
-let difficultyByBlockheightCache = difficultyFileCache.tryLoadJson() || {};
-let difficultyByBlockheightCacheDirty = false;
-
-(function () {
-	const writeDifficultyCache = () => {
-		if (difficultyByBlockheightCacheDirty) {
-			difficultyFileCache.writeJson(difficultyByBlockheightCache);
-		}
-	};
-
-	setInterval(writeDifficultyCache, 60000);
-})();
 
 router.get("/difficulty-by-height/:blockHeights", asyncHandler(async (req, res, next) => {
-	const blockHeightStrs = req.params.blockHeights.split(",");
+	const blockHeights = req.params.blockHeights.split(",").map(x => parseInt(x));
+
+	let results = await coreApi.getDifficultyByBlockHeights(blockHeights);
 	
-	const blockHeights = [];
-	const results = {};
-	for (var i = 0; i < blockHeightStrs.length; i++) {
-		if (difficultyByBlockheightCache[blockHeightStrs[i]]) {
-			results[parseInt(blockHeightStrs[i])] = difficultyByBlockheightCache[blockHeightStrs[i]];
-
-		} else {
-			blockHeights.push(parseInt(blockHeightStrs[i]));
-		}
-	}
-
-	const blockHeaders = await coreApi.getBlockHeadersByHeight(blockHeights);
-
-	blockHeaders.forEach(header => {
-		difficultyByBlockheightCache[`${header.height}`] = {
-			difficulty: header.difficulty,
-			time: header.time
-		};
-
-		difficultyByBlockheightCacheDirty = true;
-
-		results[header.height] = {
-			difficulty: header.difficulty,
-			time: header.time
-		};
-	});
-
 	res.json(results);
 
 	next();

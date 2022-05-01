@@ -1102,8 +1102,18 @@ const timeFunction = (uid, f, perfResults=null) => {
 	}
 };
 
-const fileCache = (cacheDir, filename) => {
-	const filepath = `${cacheDir}/${filename}`;
+const fileCache = (cacheDir, cacheName, cacheVersion=1) => {
+	const filename = (version) => { return ((version > 1) ? [cacheName, `v${version}`].join("-") : cacheName) + ".json"; };
+	const filepath = `${cacheDir}/${filename(cacheVersion)}`;
+
+	if (cacheVersion > 1) {
+		// remove old versions
+		for (let i = 1; i < cacheVersion; i++) {
+			if (fs.existsSync(`${cacheDir}/${filename(i)}`)) {
+				fs.unlinkSync(`${cacheDir}/${filename(i)}`);
+			}
+		}
+	}
 
 	return {
 		tryLoadJson: () => {
@@ -1129,7 +1139,7 @@ const fileCache = (cacheDir, filename) => {
 				fs.mkdirSync(cacheDir);
 			}
 
-			fs.writeFileSync(filepath, JSON.stringify(obj));
+			fs.writeFileSync(filepath, JSON.stringify(obj, null, 4));
 		}
 	};
 };

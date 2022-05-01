@@ -451,6 +451,8 @@ async function onRpcConnectionVerified(getnetworkinfo, getblockchaininfo) {
 	loadHistoricalDataForChain(global.activeBlockchain);
 
 	if (global.activeBlockchain == "main") {
+		loadDifficultyHistory(getblockchaininfo.blocks);
+
 		if (global.exchangeRates == null) {
 			utils.refreshExchangeRates();
 		}
@@ -487,6 +489,33 @@ async function onRpcConnectionVerified(getnetworkinfo, getblockchaininfo) {
 
 		//sock.subscribe('rawtx');
 	}
+}
+
+async function loadDifficultyHistory(tipBlockHeight) {
+	if (config.slowDeviceMode) {
+		debugLog("Skipping performance-intensive task: load difficulty history. This is skipped due to the flag 'slowDeviceMode' which defaults to 'true' to protect slow nodes. Set this flag to 'false' to enjoy difficulty history details.");
+
+		return;
+	}
+
+	let height = 0;
+	let heights = [];
+
+	while (height <= tipBlockHeight) {
+		heights.push(height);
+		height += global.coinConfig.difficultyAdjustmentBlockCount;
+	}
+
+	global.difficultyHistory = await coreApi.getDifficultyByBlockHeights(heights);
+	
+	global.athDifficulty = 0;
+	for (let i = 0; i < heights.length; i++) {
+		if (global.difficultyHistory[`${heights[i]}`].difficulty > global.athDifficulty) {	
+			global.athDifficulty = global.difficultyHistory[heights[i]].difficulty;
+		}
+	}
+
+	debugLog("ATH difficulty: " + global.athDifficulty);
 }
 
 var txindexCheckCount = 0;
@@ -554,13 +583,13 @@ async function assessTxindexAvailability() {
 async function refreshUtxoSetSummary() {
 	if (config.slowDeviceMode) {
 		if (!global.getindexinfo || !global.getindexinfo.coinstatsindex) {
-		global.utxoSetSummary = null;
-		global.utxoSetSummaryPending = false;
+			global.utxoSetSummary = null;
+			global.utxoSetSummaryPending = false;
 
-		debugLog("Skipping performance-intensive task: fetch UTXO set summary. This is skipped due to the flag 'slowDeviceMode' which defaults to 'true' to protect slow nodes. Set this flag to 'false' to enjoy UTXO set summary details.");
+			debugLog("Skipping performance-intensive task: fetch UTXO set summary. This is skipped due to the flag 'slowDeviceMode' which defaults to 'true' to protect slow nodes. Set this flag to 'false' to enjoy UTXO set summary details.");
 
-		return;
-	}
+			return;
+		}
 	}
 
 	// flag that we're working on calculating UTXO details (to differentiate cases where we don't have the details and we're not going to try computing them)
@@ -738,7 +767,7 @@ expressApp.onStartup = async () => {
 
 				} else {
 					let fileData = fs.readFileSync(absoluteFilepath, {encoding: encoding, flag:'r'});
-					let fileBuffer = new Buffer(fileData, encoding);
+					let fileBuffer = Buffer.from(fileData, encoding);
 
 					let options = {
 						"ContentType": contentType,

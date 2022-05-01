@@ -253,7 +253,7 @@ module.exports = {
 	/* 9 */		{name:"Mining Summary", url:"./mining-summary", desc:"Summary of recent data about miners.", iconClass:"bi-hammer"},
 	/* 10 */	{name:"Block Stats", url:"./block-stats", desc:"Summary data for blocks in configurable range.", iconClass:"bi-stack"},
 	/* 11 */	{name:"Block Analysis", url:"./block-analysis", desc:"Summary analysis for all transactions in a block.", iconClass:"bi-chevron-double-down"},
-	/* 12 */	{name:"Difficulty History", url:"./difficulty-history", desc:"Details of difficulty changes over time.", iconClass:"bi-graph-up-arrow"},
+	/* 12 */	{name:"Difficulty History", url:"./difficulty-history", desc:"Details of difficulty changes over time.", iconClass:"bi-clock-history"},
 
 	/* 13 */	{name:"Whitepaper Extractor", url:"./bitcoin-whitepaper", desc:"Extract the Bitcoin whitepaper from data embedded within the blockchain.", iconClass:"bi-file-earmark-text"},
 	
