@@ -450,6 +450,16 @@ module.exports = {
 			alertBodyHtml: "OP_RETURN outputs are special-case outputs that immediately abort script evaluation with a failure result. Therefore, any value assigned to an OP_RETURN output is provably unspendable. In fact, as an optimization, such values are purged from node software's databases since they are certain to be unspendable in all future transactions.",
 			referenceUrl: "https://bitcoin.stackexchange.com/a/109748/3397"
 		},
+		{
+			type: "tx",
+			date: "2022-01-13",
+			chain: "main",
+			txid: "37d5ec4bca7bd077992a6dd8679ab676a22986e63ebaf2c6ea1aebe5e5f5e817",
+			blockHeight: 718448,
+			summary: "Unspendable output due to invalid public key.",
+			alertBodyHtml: "The Script for Output #0 of this transaction has a public key that does not conform to the <a href='https://github.com/bitcoin/bips/blob/master/bip-0340.mediawiki#Public_Key_Generation'>BIP-340</a> specification (\"Schnorr Signatures for secp256k1\"). The value assinged to this output (0.0002 BTC) is therefore burned forever.",
+			referenceUrl: "https://suredbits.com/taproot-funds-burned-on-the-bitcoin-blockchain/"
+		},
 
 
 
