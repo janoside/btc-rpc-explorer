@@ -9,11 +9,11 @@
 		"test": "node ./bin/test.js",
 		"miners": "node ./bin/refresh-mining-pool-configs.js",
 		"integrity": "node ./bin/frontend-resource-integrity.js",
-		"css-light-debug": "sass --style expanded --source-map scss --precision 6 ./public/scss/light.scss ./public/style/light.css",
-		"css-dark-debug": "sass --style expanded --source-map scss --precision 6 ./public/scss/dark.scss ./public/style/dark.css",
+		"css-light-debug": "sass --style expanded --source-map scss ./public/scss/light.scss ./public/style/light.css",
+		"css-dark-debug": "sass --style expanded --source-map scss ./public/scss/dark.scss ./public/style/dark.css",
 		"css-debug": "npm-run-all css-light-debug css-dark-debug",
-		"css-light": "sass --style compressed --precision 6 ./public/scss/light.scss ./public/style/light.css",
-		"css-dark": "sass --style compressed --precision 6 ./public/scss/dark.scss ./public/style/dark.css",
+		"css-light": "sass --style compressed ./public/scss/light.scss ./public/style/light.css",
+		"css-dark": "sass --style compressed ./public/scss/dark.scss ./public/style/dark.css",
 		"css": "npm-run-all css-light css-dark"
 	},
 	"keywords": [
@@ -73,6 +73,6 @@
 	},
 	"devDependencies": {
 		"npm-run-all": "^4.1.5",
-		"sass": "^1.44.0"
+		"sass": "^1.51.0"
 	}
 }
