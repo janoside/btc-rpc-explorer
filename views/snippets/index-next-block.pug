@@ -45,8 +45,8 @@ include ../includes/shared-mixins.pug
 
 		span.mx-2.text-muted /
 
-		span.small.border-dotted(title="Σ fees", data-bs-toggle="tooltip")
-			span.me-1 &Sigma;
+		span.small
+			span.me-1.border-dotted(title="Σ fees", data-bs-toggle="tooltip") &Sigma;
 			+valueDisplay(totalFees, {hideLessSignificantDigits:true})
 		
 
