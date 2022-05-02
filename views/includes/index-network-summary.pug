@@ -86,12 +86,12 @@ if (exchangeRates)
 				- var hashrate7dayData = utils.formatLargeNumber(hashrate7d, 1);
 
 				span.me-1 #{hashrate7dayData[0]}
-				span.small.text-muted.border-dotted.me-2(title=`${hashrate7dayData[1].abbreviation}H = ${hashrate7dayData[1].name}-hash (x10^${hashrate7dayData[1].exponent})` data-bs-toggle='tooltip') #{hashrate7dayData[1].abbreviation}H/s
+				span.small.text-muted.border-dotted(title=`${hashrate7dayData[1].abbreviation}H = ${hashrate7dayData[1].name}-hash (x10^${hashrate7dayData[1].exponent})` data-bs-toggle='tooltip') #{hashrate7dayData[1].abbreviation}H/s
 
 				if (hashrate30d)
 					- var ratio = hashrate7d / hashrate30d;
 
-					span.text-tiny.text-muted
+					span.text-tiny.text-muted.ms-2
 						| (
 						span.border-dotted(title='7d hashrate vs 30d hashrate.' data-bs-toggle='tooltip')
 							if (ratio > 1)
@@ -117,13 +117,13 @@ if (exchangeRates)
 				span #{new Decimal(getblockchaininfo.difficulty).toDP(3)}
 
 			if (global.athDifficulty)
-				span.text-tiny.text-muted.ms-1
+				span.text-tiny.text-muted.ms-2
 					| (
 
 					- var diffX = getblockchaininfo.difficulty;
 					if (global.athDifficulty == diffX)
 						span.border-dotted(title='The current difficulty is an All-Time High!' data-bs-toggle='tooltip')
-							span.text-success ATH!
+							span.text-success ATH
 					else
 						- var diffDrop = new Decimal(global.athDifficulty).minus(diffX).dividedBy(global.athDifficulty).times(100).toDP(2);
 
@@ -147,13 +147,14 @@ if (exchangeRates)
 
 			+summaryItem("Difficulty Δ", difficultyAdjustmentData.estimateAvailable ? desc : null)
 				if (difficultyAdjustmentData.estimateAvailable)
-					span.me-2(class=(difficultyAdjustmentData.delta >= 0 ? "text-success" : "text-danger"))
+					span(class=(difficultyAdjustmentData.delta >= 0 ? "text-success" : "text-danger"))
 						if (difficultyAdjustmentData.sign == "+")
 							| +
 
 						| #{difficultyAdjustmentData.delta.toDP(2)}
 						small.ms-1 %
-					span.text-tiny.text-muted
+
+					span.text-tiny.text-muted.ms-2
 						| (
 						span.border-dotted(title=`${difficultyAdjustmentData.blocksLeft.toLocaleString()} block(s)`, data-bs-toggle="tooltip") #{difficultyAdjustmentData.timeLeftStr}
 						| )
