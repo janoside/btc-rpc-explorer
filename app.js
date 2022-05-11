@@ -99,7 +99,10 @@ var compression = require("compression");
 const appUtils = require("@janoside/app-utils");
 const s3Utils = appUtils.s3Utils;
 
-const s3Bucket = s3Utils.createBucket(config.cdn.s3Bucket, config.cdn.s3BucketPath);
+let cdnS3Bucket = null;
+if (config.cdn.active) {
+	cdnS3Bucket = s3Utils.createBucket(config.cdn.s3Bucket, config.cdn.s3BucketPath);
+}
 
 require("./app/currencies.js");
 
@@ -769,7 +772,7 @@ expressApp.onStartup = async () => {
 				let absoluteFilepath = path.join(process.cwd(), "public", filepath);
 				let s3path = s3Path(filepath);
 				
-				const existingAsset = await s3Bucket.get(s3path);
+				const existingAsset = await cdnS3Bucket.get(s3path);
 
 				if (existingAsset) {
 					existingItems.push(filepath);
@@ -785,7 +788,7 @@ expressApp.onStartup = async () => {
 						"CacheControl": "max-age=315360000"
 					};
 
-					await s3Bucket.put(fileBuffer, s3path, options);
+					await cdnS3Bucket.put(fileBuffer, s3path, options);
 
 					uploadedItems.push(filepath);
 
