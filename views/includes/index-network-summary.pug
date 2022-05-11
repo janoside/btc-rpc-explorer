@@ -125,7 +125,7 @@ if (exchangeRates)
 						span.border-dotted(title='The current difficulty is an All-Time High!' data-bs-toggle='tooltip')
 							span.text-success ATH
 					else
-						- var diffDrop = new Decimal(global.athDifficulty).minus(diffX).dividedBy(global.athDifficulty).times(100).toDP(2);
+						- var diffDrop = new Decimal(global.athDifficulty).minus(diffX).dividedBy(global.athDifficulty).times(-100).toDP(2);
 
 						span.border-dotted(title=`The current difficulty is ${diffDrop}% lower than the All-Time High.` data-bs-toggle='tooltip')
 							span.text-danger -#{diffDrop}%

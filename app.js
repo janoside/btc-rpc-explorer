@@ -453,6 +453,11 @@ async function onRpcConnectionVerified(getnetworkinfo, getblockchaininfo) {
 	if (global.activeBlockchain == "main") {
 		loadDifficultyHistory(getblockchaininfo.blocks);
 
+		// refresh difficulty history periodically
+		// TODO: refresh difficulty history when there's a new block and height % 2016 == 0
+		setInterval(loadDifficultyHistory, 15 * 60 * 1000);
+
+
 		if (global.exchangeRates == null) {
 			utils.refreshExchangeRates();
 		}
@@ -491,7 +496,13 @@ async function onRpcConnectionVerified(getnetworkinfo, getblockchaininfo) {
 	}
 }
 
-async function loadDifficultyHistory(tipBlockHeight) {
+async function loadDifficultyHistory(tipBlockHeight=null) {
+	if (!tipBlockHeight) {
+		let getblockchaininfo = await coreApi.getBlockchainInfo();
+
+		tipBlockHeight = getblockchaininfo.blocks;
+	}
+
 	if (config.slowDeviceMode) {
 		debugLog("Skipping performance-intensive task: load difficulty history. This is skipped due to the flag 'slowDeviceMode' which defaults to 'true' to protect slow nodes. Set this flag to 'false' to enjoy difficulty history details.");
 
