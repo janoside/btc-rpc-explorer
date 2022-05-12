@@ -203,7 +203,8 @@ router.get("/get-mempool-summary", asyncHandler(async (req, res, next) => {
 		delete mempoolSummaryStatuses[statusId];
 
 	} else {
-		res.json({});
+		res.writeHead(204);
+		res.end("no summary for that id");
 
 		next();
 	}
@@ -275,7 +276,8 @@ router.get("/get-mining-summary", asyncHandler(async (req, res, next) => {
 		delete miningSummaryStatuses[statusId];
 
 	} else {
-		res.json({});
+		res.writeHead(204);
+		res.end("no summary for that id");
 
 		next();
 	}

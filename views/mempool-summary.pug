@@ -237,7 +237,7 @@ block endOfBody
 							url: `./internal-api/get-mempool-summary?statusId=${statusId}`
 
 						}).done((summaryResult) => {
-							if (summaryResult.count) {
+							if (summaryResult && summaryResult.count) {
 								summary = summaryResult;
 							
 								$("#json-content").text(JSON.stringify(summaryResult, null, 4));
