@@ -122,14 +122,38 @@ router.get("/block/:hashOrHeight", asyncHandler(async (req, res, next) => {
 /// TRANSACTIONS
 
 router.get("/tx/:txid", function(req, res, next) {
-	var txid = utils.asHash(req.params.txid);
+	let txid = utils.asHash(req.params.txid);
 
-	var promises = [];
+	let promises = [];
 
-	promises.push(coreApi.getRawTransactionsWithInputs([txid]));
+	let txInputLimit = (res.locals.crawlerBot) ? 3 : -1;
+
+	promises.push(coreApi.getRawTransactionsWithInputs([txid], txInputLimit));
 
 	Promise.all(promises).then(function(results) {
-		res.json(results[0].transactions[0]);
+		let outJson = results[0].transactions[0];
+		let txInputs = results[0].txInputsByTransaction[txid] || {};
+		const satsPerBtc = 100000000;
+		
+		let inputBtc = 0;
+		if(txInputs[0]){
+			for (var key in txInputs) {	
+				var item = txInputs[key];
+				inputBtc += item["value"] * satsPerBtc;
+				outJson.vin[key].scriptSig.address = item.scriptPubKey.address;
+				outJson.vin[key].scriptSig["type"] = item.scriptPubKey["type"];
+				outJson.vin[key]["value"] = item["value"];
+			}
+		}
+		
+		let outputBtc = 0;
+		for (var key in outJson.vout) {	
+			var item = outJson.vout[key];
+			outputBtc += item["value"] * satsPerBtc;
+		}
+		outJson.fee = {"amount": (inputBtc - outputBtc)/satsPerBtc, "unit": "BTC"};
+		
+		res.json(outJson);
 
 		next();
 
