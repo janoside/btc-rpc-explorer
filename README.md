@@ -66,6 +66,8 @@ If you're running on mainnet with the default datadir and port, the default conf
 
 #### Install via `npm`:
 
+*Note: npm v7+ is required*
+
 ```bash
 npm install -g btc-rpc-explorer
 btc-rpc-explorer
