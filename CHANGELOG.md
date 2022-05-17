@@ -6,6 +6,7 @@
 * Homepage additions
 	* Show difficulty ATH comparison
 	* Show "Next Block" fullness
+* Tweaks to API, see [/api/changelog](./api/changelog)
 * Support for serving static assets via a configurable CDN
 * Misc fixes for erroneous data display on non-mainnet nodes
 * Switch from fontawesome to bootstrap-icons v1.8.0

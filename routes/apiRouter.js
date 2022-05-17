@@ -133,25 +133,31 @@ router.get("/tx/:txid", function(req, res, next) {
 	Promise.all(promises).then(function(results) {
 		let outJson = results[0].transactions[0];
 		let txInputs = results[0].txInputsByTransaction[txid] || {};
-		const satsPerBtc = 100000000;
 		
 		let inputBtc = 0;
-		if(txInputs[0]){
-			for (var key in txInputs) {	
-				var item = txInputs[key];
-				inputBtc += item["value"] * satsPerBtc;
+		if (txInputs[0]) {
+			for (let key in txInputs) {
+				let item = txInputs[key];
+
+				inputBtc += item["value"] * global.coinConfig.baseCurrencyUnit.multiplier;
+
 				outJson.vin[key].scriptSig.address = item.scriptPubKey.address;
-				outJson.vin[key].scriptSig["type"] = item.scriptPubKey["type"];
-				outJson.vin[key]["value"] = item["value"];
+				outJson.vin[key].scriptSig.type = item.scriptPubKey.type;
+				outJson.vin[key].value = item.value;
 			}
 		}
 		
 		let outputBtc = 0;
-		for (var key in outJson.vout) {	
-			var item = outJson.vout[key];
-			outputBtc += item["value"] * satsPerBtc;
+		for (let key in outJson.vout) {	
+			let item = outJson.vout[key];
+			
+			outputBtc += item.value * global.coinConfig.baseCurrencyUnit.multiplier;
 		}
-		outJson.fee = {"amount": (inputBtc - outputBtc)/satsPerBtc, "unit": "BTC"};
+
+		outJson.fee = {
+			"amount": (inputBtc - outputBtc) / global.coinConfig.baseCurrencyUnit.multiplier,
+			"unit": "BTC"
+		};
 		
 		res.json(outJson);
 
