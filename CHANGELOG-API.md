@@ -3,10 +3,13 @@ This changelog specifically tracks changes to the Public API available at `/api`
 ##### v1.2.0
 ###### Unreleased
 
+* Added /api/xyzpub/txids/:xyzpub
+* Added /api/xyzpub/addresses/:xyzpub
 * /api/tx/:txid
     * Added result.vin[i].scriptSig.address
     * Added result.vin[i].scriptSig.type
     * Added result.fee, including result.fee.amount and result.fee.unit
+* Changed path: /api/util/xyzpub/:xyzpub -> /api/xyzpub/:xyzpub (auto-redirect included)
 
 
 

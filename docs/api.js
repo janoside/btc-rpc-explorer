@@ -1,5 +1,6 @@
 module.exports = {
-	"version": "1.1.0",
+	"version": "1.2.0",
+
 	"routes":[
 		// blocks
 		{
@@ -67,12 +68,56 @@ module.exports = {
 
 		// addresses
 		{
-			"category":"address",
+			"category":"addresses",
 			"url":"/api/address/:address",
 			"desc":"Returns a summary of data pertaining to the given address. The output of this call will depend heavily on the configured 'Address API' (see .env-sample file).",
-			"optionalParams": {"limit":"Number of transactions to return", "offset":"Offset into transactions", "sort":"Sorting direction for transactions ('desc'=new first, 'asc'=old first)"},
+			"optionalParams": {
+				"limit":"Number of transactions to return",
+				"offset":"Offset into transactions",
+				"sort":"Sorting direction for transactions ('desc'=new first, 'asc'=old first)"
+			},
 			"returnType":"json",
 			"testUrl":"/api/address/34rng4QwB5pHUbGDJw1JxjLwgEU8TQuEqv"
+		},
+
+
+
+
+
+		// xyz-pubs
+		{
+			"category":"xpubs",
+			"url":"/api/xyzpub/:extendedPubkey",
+			"desc":"Returns details for the specified extended public key, including related keys and addresses.",
+			"returnType":"json",
+			"optionalParams": {
+				"limit":"The number of addresses to return",
+				"offset":"Offset into the list of addresses"
+			},
+			"testUrl": "/api/util/xyzpub/xpub6EuV33a2DXxAhoJTRTnr8qnysu81AA4YHpLY6o8NiGkEJ8KADJ35T64eJsStWsmRf1xXkEANVjXFXnaUKbRtFwuSPCLfDdZwYNZToh4LBCd"
+		},
+		{
+			"category":"xpubs",
+			"url":"/api/xyzpub/addresses/:xyzpub",
+			"desc":"Returns a list of addresses derived from the given [xyz]pub.",
+			"optionalParams": {
+				"receiveOrChange":"0 for 'receive' addresses (default); 1 for 'change' addresses",
+				"limit":"Number of addresses to return",
+				"offset":"Offset into addresses"
+			},
+			"returnType":"json",
+			"testUrl":"/api/xyzpub/addresses/xpub6EuV33a2DXxAhoJTRTnr8qnysu81AA4YHpLY6o8NiGkEJ8KADJ35T64eJsStWsmRf1xXkEANVjXFXnaUKbRtFwuSPCLfDdZwYNZToh4LBCd"
+		},
+		{
+			"category":"xpubs",
+			"url":"/api/xyzpub/txids/:xyzpub",
+			"desc":"Returns a list of transaction IDs associated with the given [xyz]pub.",
+			"optionalParams": {
+				"gapLimit":"Limit of empty addresses to end searching for transactions (default: 20)",
+				"addressLimit":"Forced limit on the number of addresses to search through (both 'receive' and 'change' addresses up to this number will be searched)"
+			},
+			"returnType":"json",
+			"testUrl":"/api/xyzpub/txids/xpub6EuV33a2DXxAhoJTRTnr8qnysu81AA4YHpLY6o8NiGkEJ8KADJ35T64eJsStWsmRf1xXkEANVjXFXnaUKbRtFwuSPCLfDdZwYNZToh4LBCd"
 		},
 
 
@@ -120,7 +165,10 @@ module.exports = {
 			"url":"/api/mining/miner-summary",
 			"desc":"Returns whether the specified transaction ID is included in the estimated next block to be mined (produced via getblocktemplate).",
 			"returnType":"json",
-			"optionalParams": {"since":"Use the form 'Nd' to specify the number of day to look back (e.g. 'since=7d' will analyze the last 7 days)", "startHeight+endHeight":"Use these 2 parameters to specify a custom start/end height (e.g. 'startHeight=0&endHeight=24' to analyze the first 25 blocks)"},
+			"optionalParams": {
+				"since":"Use the form 'Nd' to specify the number of day to look back (e.g. 'since=7d' will analyze the last 7 days)",
+				"startHeight+endHeight":"Use these 2 parameters to specify a custom start/end height (e.g. 'startHeight=0&endHeight=24' to analyze the first 25 blocks)"
+			},
 			"testUrl":"/api/mining/miner-summary?since=1d"
 		},
 
@@ -142,19 +190,6 @@ module.exports = {
 			"desc":"Returns recommended fee rates in sats/vB for next block, ~30 min, 1 hr, and 1 day.",
 			"returnType":"json",
 			"example": {"nextBlock":17,"30min":9,"60min":9,"1day":9}
-		},
-
-
-
-
-		// util
-		{
-			"category":"util",
-			"url":"/api/util/xyzpub/:extendedPubkey",
-			"desc":"Returns details for the specified extended public key, including related keys and addresses.",
-			"returnType":"json",
-			"optionalParams": {"limit":"The number of addresses to return", "offset":"Offset into the list of addresses"},
-			"testUrl": "/api/util/xyzpub/xpub6EuV33a2DXxAhoJTRTnr8qnysu81AA4YHpLY6o8NiGkEJ8KADJ35T64eJsStWsmRf1xXkEANVjXFXnaUKbRtFwuSPCLfDdZwYNZToh4LBCd"
 		},
 
 
