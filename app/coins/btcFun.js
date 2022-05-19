@@ -460,6 +460,16 @@ module.exports = {
 			alertBodyHtml: "The Script for Output #0 of this transaction has a public key that does not conform to the <a href='https://github.com/bitcoin/bips/blob/master/bip-0340.mediawiki#Public_Key_Generation'>BIP-340</a> specification (\"Schnorr Signatures for secp256k1\"). The value assinged to this output (0.0002 BTC) is therefore burned forever.",
 			referenceUrl: "https://suredbits.com/taproot-funds-burned-on-the-bitcoin-blockchain/"
 		},
+		{
+			type: "tx",
+			date: "2022-05-18",
+			chain: "main",
+			txid: "80ab328c77cbd554598c3a7b322af520a77d1687b27badfa969d2c419de785d7",
+			blockHeight: 736943,
+			summary: "Lightning Network penalty transaction",
+			alertBodyHtml: "As a technical experiment and as a playful donation, User <a href='https://twitter.com/fiatjaf'>fiatjaf</a> intentionally created a situation where his lightning node would be penalized and forfeit funds to his channel counterparty. The second input to this transaction represents the penalty close, wherein all of the funds on fiatjaf's side of the channel were forfeited to his counterparty.",
+			referenceUrl: "http://fiatjaf.com/73095980.html"
+		},
 
 
 
