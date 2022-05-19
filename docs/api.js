@@ -44,6 +44,14 @@ module.exports = {
 			"returnType":"json",
 			"testUrl": "/api/tx/f4184fc596403b9d638783cf57adfe4c75c605f6356fbc91338530e9831e9e16"
 		},
+		{
+			"category":"transactions",
+			"url":"/api/txs/volume/24h",
+			"desc":"Returns total output of all transactions over the last 24hrs.",
+			"returnType":"json",
+			"testUrl": "/api/txs/volume/24h"
+		},		
+		
 
 
 
