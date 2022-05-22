@@ -229,7 +229,7 @@ module.exports = {
 			{name: "Mempool", items: [4, 16, 5]},
 			{name: "Analysis", items: [9, 18, 10, 11, 12, 3]},
 			{name: "Technical", items: [15, 6, 7, 1]},
-			{name: "Fun", items: [8, 17, 13]},
+			{name: "Fun", items: [8, 17, 19, 13]},
 		]
 	},
 
@@ -265,6 +265,8 @@ module.exports = {
 	/* 17 */	{name:"Quotes", url:"./quotes", desc:"Curated list of Bitcoin-related quotes.", iconClass:"bi-chat-quote"},
 
 	/* 18 */	{name:"UTXO Set", url:"./utxo-set", desc:"View the latest UTXO Set.", iconClass:"bi-list-columns"},
+
+	/* 19 */	{name:"Holidays", url:"./holidays", desc:"Curated list of Bitcoin 'Holidays'.", iconClass:"bi-calendar-heart"},
 	]
 };
 

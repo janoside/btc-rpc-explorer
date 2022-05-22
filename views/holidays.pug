@@ -1,0 +1,39 @@
+extends layout
+
+block headContent
+	title #{coinConfig.name} Holidays
+
+block content
+	+pageTitle(`${coinConfig.name} Holidays`)
+
+
+	+dismissableInfoAlert("holidaysNoteDismissed", "About Bitcoin Holidays...")
+		h6.mb-2 About Bitcoin Holidays
+
+		| This is a curated list of Bitcoin 'Holidays' that commemorate key moments in Bitcoin's history. Suggestions are welcome via an issue or PR on <a href='https://github.com/janoside/btc-rpc-explorer' target='_blank'>GitHub</a>.
+
+
+	- var months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+	- var currentMonth = -1;
+
+	each day in btcHolidays.sortedDays
+		- var month = parseInt(day.substring(0, 2)) - 1;
+
+		if (currentMonth != month)
+			- currentMonth = month;
+
+			h2.mt-5 #{months[currentMonth]}
+
+		each item in btcHolidays.byDay[day]
+			- var dom = parseInt(day.substring(3));
+
+			.mb-2
+				+contentSection
+					h6 #{months[currentMonth]} #{dom}, #{item.date.substring(0, 4)}
+					h6.fs-6.text-uppercase.fw-light.text-card-highlight #{item.name}
+				
+					.mb-0 !{item.desc}
+
+				if (false)
+					pre
+						code.json #{JSON.stringify(item, null, 4)}

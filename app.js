@@ -90,6 +90,7 @@ const addressApi = require("./app/api/addressApi.js");
 const electrumAddressApi = require("./app/api/electrumAddressApi.js");
 const appStats = require("./app/appStats.js");
 const btcQuotes = require("./app/coins/btcQuotes.js");
+const btcHolidays = require("./app/coins/btcHolidays.js");
 const auth = require('./app/auth.js');
 const sso = require('./app/sso.js');
 const markdown = require("markdown-it")();
@@ -368,6 +369,29 @@ function loadHistoricalDataForChain(chain) {
 	}
 }
 
+function loadHolidays(chain) {
+	debugLog(`Loading holiday data`);
+
+	global.btcHolidays = btcHolidays;
+	global.btcHolidays.byDay = {};
+	global.btcHolidays.sortedDays = [];
+
+	global.btcHolidays.items.forEach(function(item) {
+		let day = item.date.substring(5);
+
+		if (!global.btcHolidays.sortedDays.includes(day)) {
+			global.btcHolidays.sortedDays.push(day);
+			global.btcHolidays.sortedDays.sort();
+		}
+
+		if (global.btcHolidays.byDay[day] == undefined) {
+			global.btcHolidays.byDay[day] = [];
+		}
+
+		global.btcHolidays.byDay[day].push(item);
+	});
+}
+
 function verifyRpcConnection() {
 	if (!global.activeBlockchain) {
 		debugLog(`Verifying RPC connection...`);
@@ -452,6 +476,8 @@ async function onRpcConnectionVerified(getnetworkinfo, getblockchaininfo) {
 	
 	// load historical/fun items for this chain
 	loadHistoricalDataForChain(global.activeBlockchain);
+
+	loadHolidays();
 
 	if (global.activeBlockchain == "main") {
 		loadDifficultyHistory(getblockchaininfo.blocks);

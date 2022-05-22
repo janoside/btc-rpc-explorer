@@ -4,6 +4,32 @@ block headContent
 	title Bitcoin Explorer
 	
 block content
+
+
+	- var tzDiff = -parseFloat(browserTzOffset);
+	if (userTzOffset != "unset")
+		- tzDiff = parseFloat(userTzOffset);
+
+	- var tzMoment = moment.utc(new Date()).add(tzDiff, "hours");
+	- var tzDay = tzMoment.format("MM-DD");
+
+	if (global.btcHolidays.byDay[tzDay])
+		
+		- var day = tzDay;
+		- var dom = parseInt(day.substring(3));
+		- var months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+		- var currentMonth = parseInt(day.substring(0, 2)) - 1;
+
+		.mb-2
+			+contentSection
+				h4
+					i.bi-star-fill.text-warning
+					span.ms-2 Today is...
+				each item in global.btcHolidays.byDay[tzDay]
+					h6.fs-6.text-uppercase.fw-light.text-card-highlight #{item.name}!
+				
+					.mb-0 !{item.desc}
+
 	if (getblockchaininfo == null)
 		div.alert.alert-danger
 			h5.mb-3 Unable to get basic blockchain data

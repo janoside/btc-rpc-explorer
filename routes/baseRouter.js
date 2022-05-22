@@ -2280,6 +2280,14 @@ router.get("/quotes", function(req, res, next) {
 	next();
 });
 
+router.get("/holidays", function(req, res, next) {
+	res.locals.btcHolidays = global.btcHolidays;
+
+	res.render("holidays");
+
+	next();
+});
+
 router.get("/quote/:quoteIndex", function(req, res, next) {
 	res.locals.quoteIndex = parseInt(req.params.quoteIndex);
 	res.locals.btcQuotes = btcQuotes.items;
