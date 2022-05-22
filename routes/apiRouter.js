@@ -901,9 +901,61 @@ router.get("/quotes/all", function(req, res, next) {
 });
 
 router.get("/quotes/:quoteIndex", function(req, res, next) {
-	var index = parseInt(req.params.quoteIndex);
+	if (!req.params.quoteIndex.match(/\d+/)) {
+		return;
+	}
+
+	let index = parseInt(req.params.quoteIndex);
 	
 	res.json(btcQuotes.items[index]);
+
+	next();
+});
+
+router.get("/holidays/all", function(req, res, next) {
+	res.json(global.btcHolidays.sortedItems);
+
+	next();
+});
+
+router.get("/holidays/today", function(req, res, next) {
+	let momentObj = moment.utc(new Date());
+	if (req.query.tzOffset) {
+		momentObj = momentObj.add(parseInt(req.query.tzOffset), "hours")
+	}
+
+	let day = momentObj.format("MM-DD");
+	if (global.btcHolidays.byDay[day]) {
+		res.json({day: day, holidays: global.btcHolidays.byDay[day]});
+
+	} else {
+		res.json({day: day, holidays: []});
+	}
+
+	next();
+});
+
+router.get("/holidays/:day", function(req, res, next) {
+	if (!req.params.day.match(/^(\d{4}-)?\d{2}-\d{2}$/)) {
+		return;
+	}
+
+	let day = req.params.day;
+
+	if (req.params.day.match(/^\d{4}-\d{2}-\d{2}$/)) {
+		// strip off year
+		day = day.substring(5);
+
+	} else if (req.params.day.match(/^\d{2}-\d{2}$/)) {
+		// already correct format
+	}
+	
+	if (global.btcHolidays.byDay[day]) {
+		res.json({day: day, holidays: global.btcHolidays.byDay[day]});
+
+	} else {
+		res.json({day: day, holidays: []});
+	}
 
 	next();
 });

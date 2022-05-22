@@ -7,14 +7,9 @@ module.exports = {
 			desc: "On this day in 2010, Lazlo Hanyecz, paid Jeremy Sturdivant 10,000 BTC for two pizzas costing ~41 USD. The famous <a href='./tx/a1075db55d416d3ca199f55b6084e2115b9345e16c5cf302fc80e9d5fbf5d48d@57043'>\"Bitcoin Pizza\" transaction</a> was one of the earliest real-world BTC transactions and is celebrated as helping start the Bitcoin economy."
 		},
 		{
-			name: "Shitcoin Day",
-			date: "2013-07-03",
-			desc: "This day marks the beginning of the first ever \"utility token\" ICO, called Mastercoin (later rebranded as Omni)."
-		},
-		{
 			name: "SegWit Lock-In Day",
 			date: "2017-08-08",
-			desc: "Segregated Witness is officially locked in by the UASF client on the Bitcoin network."
+			desc: "On this day in 2017, the Segregated Witness upgrade was locked in on the Bitcoin network by the UASF client."
 		},
 		{
 			name: "Bitcoin Infinity Day",
@@ -69,12 +64,12 @@ module.exports = {
 		{
 			name: "Lightning Pizza Day",
 			date: "2018-02-25",
-			desc: "Eight years after buying pizza with the famous <a href='./tx/a1075db55d416d3ca199f55b6084e2115b9345e16c5cf302fc80e9d5fbf5d48d@57043'>\"Bitcoin Pizza\" transaction</a>, Lazlo Hanyecz returned to buy pizza over the Lightning Network."
+			desc: "On this day in 2018, eight years after buying pizza with the famous <a href='./tx/a1075db55d416d3ca199f55b6084e2115b9345e16c5cf302fc80e9d5fbf5d48d@57043'>\"Bitcoin Pizza\" transaction</a>, Lazlo Hanyecz returned to buy pizza over the Lightning Network."
 		},
 		{
 			name: "Mt. Gox Death Day",
 			date: "2013-02-24",
-			desc: "On this day in 2013, Mt. Gox, the largest Bitcoin exchange in the world, went offline due to insolvency, after losing 640,000 BTC."
+			desc: "On this day in 2013, Mt. Gox, the largest bitcoin exchange in the world, went offline due to insolvency, after losing 640,000 BTC."
 		},
 		{
 			name: "Gold Parity Day",

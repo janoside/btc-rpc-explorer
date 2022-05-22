@@ -22,11 +22,12 @@ block content
 
 		.mb-2
 			+contentSection
-				h4
+				h5
 					i.bi-star-fill.text-warning
-					span.ms-2 Today is...
+					span.ms-2.fw-light.text-muted Today is...
 				each item in global.btcHolidays.byDay[tzDay]
-					h6.fs-6.text-uppercase.fw-light.text-card-highlight #{item.name}!
+					h6.fs-5.text-uppercase.fw-light.text-card-highlight.mt-3 #{item.name}!
+						span.ms-2 (#{months[currentMonth]} #{dom})
 				
 					.mb-0 !{item.desc}
 

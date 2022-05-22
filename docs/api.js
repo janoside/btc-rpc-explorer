@@ -255,6 +255,32 @@ module.exports = {
 			"returnType":"json"
 		},
 
+		{
+			"category":"fun",
+			"url":"/api/holidays/all",
+			"desc":"Returns the full curated list of Bitcoin Holidays.",
+			"returnType":"json"
+		},
+
+		{
+			"category":"fun",
+			"url":"/api/holidays/today",
+			"desc":"Returns the Bitcoin Holidays celebrated 'today' (i.e. at the time the API call is made).",
+			"optionalParams": {
+				"tzOffset":"The number of hours to offset from UTC for the caller's local timezone, e.g. \"-5\" for EST"
+			},
+			"returnType":"json",
+			"testUrl": "/api/holidays/today?tzOffset=-5"
+		},
+
+		{
+			"category":"fun",
+			"url":"/api/holidays/:day",
+			"desc":"Returns the Bitcoin Holidays celebrated on the specified day, using on of the following formats: yyyy-MM-DD, MM-DD.",
+			"returnType":"json",
+			"testUrl": "/api/holidays/01-03"
+		},
+
 
 
 

@@ -375,6 +375,8 @@ function loadHolidays(chain) {
 	global.btcHolidays = btcHolidays;
 	global.btcHolidays.byDay = {};
 	global.btcHolidays.sortedDays = [];
+	global.btcHolidays.sortedItems = [...btcHolidays.items];
+	global.btcHolidays.sortedItems.sort((a, b) => a.date.localeCompare(b.date));
 
 	global.btcHolidays.items.forEach(function(item) {
 		let day = item.date.substring(5);
