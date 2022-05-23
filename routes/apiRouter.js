@@ -159,31 +159,44 @@ router.get("/tx/:txid", function(req, res, next) {
 			"amount": (inputBtc - outputBtc) / global.coinConfig.baseCurrencyUnit.multiplier,
 			"unit": "BTC"
 		};
+
+		if (global.specialTransactions && global.specialTransactions[txid]) {
+			let funInfo = global.specialTransactions[txid];
+
+			outJson.fun = funInfo;
+		}
 		
 		res.json(outJson);
 
 		next();
 
 	}).catch(function(err) {
+		utils.logError("10328fwgdaqw", err);
+
 		res.json({success:false, error:err});
 
 		next();
 	});
 });
 
-router.get("/txs/volume/24h", function(req, res, next) {
+router.get("/tx/volume/24h", function(req, res, next) {
 	try {
-		if(networkVolume && networkVolume.d1 && networkVolume.d1.amt){
-			let currencyValue = parseInt(networkVolume.d1.amt)
-			res.json({"24h": currencyValue});	
+		if (networkVolume && networkVolume.d1 && networkVolume.d1.amt) {
+			let currencyValue = parseInt(networkVolume.d1.amt);
+
+			res.json({"24h": currencyValue});
+
+		} else {
+			res.json({success:false, error: "Volume data not yet loaded."});
 		}
-		else {
-			res.json({success:false, error: "Volume data not yet loaded."});		
-		}
-		next();	
-	}
-	catch (err) {
+
+		next();
+
+	} catch (err) {
+		utils.logError("39024y484", err);
+
 		res.json({success:false, error:err});
+		
 		next();
 	}
 });

@@ -6,7 +6,7 @@ module.exports = {
 		{
 			"category":"blocks",
 			"url":"/api/block/:hash",
-			"desc":"Returns the details of a block by hash.",
+			"desc":"Returns the details of the block with the given hash.",
 			"returnType":"json",
 			"testUrl":"/api/block/0000000000000000001c8018d9cb3b742ef25114f27563e3fc4a1902167f9893"
 		},
@@ -14,7 +14,7 @@ module.exports = {
 		{
 			"category":"blocks",
 			"url":"/api/block/:height",
-			"desc":"Returns the details of a block by height.",
+			"desc":"Returns the details of the block at the given height.",
 			"returnType":"json",
 			"testUrl":"/api/block/123456"
 		},
@@ -40,16 +40,17 @@ module.exports = {
 		{
 			"category":"transactions",
 			"url":"/api/tx/:txid",
-			"desc":"Returns the details of a transaction.",
+			"desc":"Returns the details of the transaction with the given txid.",
 			"returnType":"json",
 			"testUrl": "/api/tx/f4184fc596403b9d638783cf57adfe4c75c605f6356fbc91338530e9831e9e16"
 		},
 		{
 			"category":"transactions",
-			"url":"/api/txs/volume/24h",
+			"url":"/api/tx/volume/24h",
 			"desc":"Returns total output of all transactions over the last 24hrs.",
 			"returnType":"json",
-			"testUrl": "/api/txs/volume/24h"
+			"testUrl": "/api/tx/volume/24h",
+			"hideInSlowMode": true
 		},		
 		
 
@@ -62,7 +63,6 @@ module.exports = {
 			"desc":"Returns the current supply of Bitcoin. An estimate using a checkpoint can be returned in 2 cases: on 'slow' devices, and before the UTXO Set snapshot is loaded.",
 			"returnType":"number"
 		},
-
 		{
 			"category":"blockchain",
 			"url":"/api/blockchain/utxo-set",
@@ -138,28 +138,24 @@ module.exports = {
 			"desc":"Returns the network hash rate, estimated over the last 1, 7, 30, 90, and 365 days.",
 			"returnType":"json"
 		},
-
 		{
 			"category":"mining",
 			"url":"/api/mining/diff-adj-estimate",
 			"desc":"Returns the current estimate for the next difficulty adjustment as a percentage.",
 			"returnType":"number"
 		},
-
 		{
 			"category":"mining",
 			"url":"/api/mining/next-block",
 			"desc":"Returns a summary for the estimated next block to be mined (produced via getblocktemplate).",
 			"returnType":"json"
 		},
-
 		{
 			"category":"mining",
 			"url":"/api/mining/next-block/txids",
 			"desc":"Returns a list of the transaction IDs included in the estimated next block to be mined (produced via getblocktemplate).",
 			"returnType":"json"
 		},
-
 		{
 			"category":"mining",
 			"url":"/api/mining/next-block/includes/:txid",
@@ -167,7 +163,6 @@ module.exports = {
 			"returnType":"boolean",
 			"testUrl":"/api/mining/next-block/includes/yourTxId"
 		},
-
 		{
 			"category":"mining",
 			"url":"/api/mining/miner-summary",
@@ -191,7 +186,6 @@ module.exports = {
 			"desc":"Returns the number of transactions in Bitcoin Core's mempool.",
 			"returnType":"integer"
 		},
-
 		{
 			"category":"mempool",
 			"url":"/api/mempool/fees",
@@ -209,7 +203,6 @@ module.exports = {
 			"desc":"Returns the price of 1 BTC, in USD, EUR, GBP, and XAU",
 			"returnType":"json"
 		},
-
 		{
 			"category":"price",
 			"url":"/api/price/:currency",
@@ -218,7 +211,6 @@ module.exports = {
 			"returnType":"number",
 			"testUrl": "/api/price/usd"
 		},
-
 		{
 			"category":"price",
 			"url":"/api/price/:currency/marketcap",
@@ -227,7 +219,6 @@ module.exports = {
 			"returnType":"number",
 			"testUrl": "/api/price/usd/marketcap"
 		},
-
 		{
 			"category":"price",
 			"url":"/api/price/:currency/sats",
@@ -247,7 +238,6 @@ module.exports = {
 			"desc":"Returns the full curated list of Bitcoin quotes.",
 			"returnType":"json"
 		},
-
 		{
 			"category":"fun",
 			"url":"/api/quotes/:index",
@@ -255,21 +245,18 @@ module.exports = {
 			"returnType":"json",
 			"testUrl": "/api/quotes/0"
 		},
-
 		{
 			"category":"fun",
 			"url":"/api/quotes/random",
 			"desc":"Returns a random Bitcoin quote from the curated list.",
 			"returnType":"json"
 		},
-
 		{
 			"category":"fun",
 			"url":"/api/holidays/all",
 			"desc":"Returns the full curated list of Bitcoin Holidays.",
 			"returnType":"json"
 		},
-
 		{
 			"category":"fun",
 			"url":"/api/holidays/today",
@@ -280,7 +267,6 @@ module.exports = {
 			"returnType":"json",
 			"testUrl": "/api/holidays/today?tzOffset=-5"
 		},
-
 		{
 			"category":"fun",
 			"url":"/api/holidays/:day",
