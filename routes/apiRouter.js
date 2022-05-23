@@ -171,7 +171,22 @@ router.get("/tx/:txid", function(req, res, next) {
 	});
 });
 
-
+router.get("/txs/volume/24h", function(req, res, next) {
+	try {
+		if(networkVolume && networkVolume.d1 && networkVolume.d1.amt){
+			let currencyValue = parseInt(networkVolume.d1.amt)
+			res.json({"24h": currencyValue});	
+		}
+		else {
+			res.json({success:false, error: "Volume data not yet loaded."});		
+		}
+		next();	
+	}
+	catch (err) {
+		res.json({success:false, error:err});
+		next();
+	}
+});
 
 
 /// BLOCKCHAIN
