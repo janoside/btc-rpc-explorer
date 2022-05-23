@@ -223,7 +223,7 @@ module.exports = {
 		{
 			"category":"price",
 			"url":"/api/price/:currency/sats",
-			"desc":"Returns the price of 1 unit in 'currency' (e.g. $1) in satoshis",
+			"desc":"Returns the price of 1 unit of the specified currency (e.g. 1 \"usd\") in satoshis",
 			"params":[{name: "currency", "options": ["usd", "eur", "gbp", "xau"]}],
 			"returnType":"number",
 			"testUrl": "/api/price/usd/sats"
@@ -276,7 +276,7 @@ module.exports = {
 		{
 			"category":"fun",
 			"url":"/api/holidays/:day",
-			"desc":"Returns the Bitcoin Holidays celebrated on the specified day, using on of the following formats: yyyy-MM-DD, MM-DD.",
+			"desc":"Returns the Bitcoin Holidays celebrated on the specified day, using one of the following formats: yyyy-MM-DD, MM-DD.",
 			"returnType":"json",
 			"testUrl": "/api/holidays/01-03"
 		},
