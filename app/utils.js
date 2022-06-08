@@ -50,7 +50,8 @@ const crawlerBotUserAgentStrings = {
 	"aol": new RegExp("aolbuild", "i"),
 	"moz": new RegExp("dotbot", "i"),
 	"semrush": new RegExp("SemrushBot", "i"),
-	"majestic": new RegExp("MJ12bot", "i")
+	"majestic": new RegExp("MJ12bot", "i"),
+	"python-requests": new RegExp("python-requests", "i")
 };
 
 const ipMemoryCache = {};

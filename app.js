@@ -1048,12 +1048,13 @@ expressApp.use(function(req, res, next) {
 	var time = Date.now() - req.startTime;
 	var userAgent = req.headers['user-agent'];
 	var crawler = utils.getCrawlerFromUserAgentString(userAgent);
+	let ip = req.connection.remoteAddress;
 
 	if (crawler) {
-		debugAccessLog(`Finished action '${req.path}' (${res.statusCode}) in ${time}ms for crawler '${crawler}' / '${userAgent}'`);
+		debugAccessLog(`Finished action '${req.path}' (${res.statusCode}) in ${time}ms for crawler '${crawler}' / '${userAgent}', ip=${ip}`);
 
 	} else {
-	debugAccessLog(`Finished action '${req.path}' (${res.statusCode}) in ${time}ms for UA '${userAgent}'`);
+		debugAccessLog(`Finished action '${req.path}' (${res.statusCode}) in ${time}ms for UA '${userAgent}', ip=${ip}`);
 	}
 
 	if (!res.headersSent) {
