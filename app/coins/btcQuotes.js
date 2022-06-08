@@ -423,6 +423,12 @@ module.exports = {
 			speaker: "Jimmy Song",
 			url: "https://jimmysong.medium.com/why-bitcoin-is-different-e17b813fd947",
 			date: "2018-04-02"
+		},
+		{
+			text: "There is no link between the informational realm and the physical realm. Proof of work is the only thing that creates this link in a probabilistic fashion, because it creates information that speaks for itself.",
+			speaker: "Gigi",
+			url: "https://youtu.be/w6VdgEz0NV4?t=1113",
+			date: "2022-05-12"
 		}
 		/*{
 			text: "Bitcoin is a technological tour de force.",
