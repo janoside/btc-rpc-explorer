@@ -1048,7 +1048,7 @@ expressApp.use(function(req, res, next) {
 	var time = Date.now() - req.startTime;
 	var userAgent = req.headers['user-agent'];
 	var crawler = utils.getCrawlerFromUserAgentString(userAgent);
-	let ip = req.connection.remoteAddress;
+	let ip = (req.headers['x-forwarded-for'] || req.connection.remoteAddress || '').split(',')[0].trim();
 
 	if (crawler) {
 		debugAccessLog(`Finished action '${req.path}' (${res.statusCode}) in ${time}ms for crawler '${crawler}' / '${userAgent}', ip=${ip}`);
