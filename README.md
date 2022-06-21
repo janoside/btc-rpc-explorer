@@ -45,7 +45,7 @@ See [CHANGELOG.md](/CHANGELOG.md).
 
 1. Install `Bitcoin Core` - [instructions](https://bitcoin.org/en/full-node). Ensure that `Bitcoin Core`'s' RPC server is enabled (`server=1`).
 2. Allow `Bitcoin Core` to synchronize with the Bitcoin network (you *can* use this tool while sychronizing, but some pages may fail).
-3. Install Node.js (12.9+ required, 14+ recommended).
+3. Install Node.js (12.9+ required, 16+ recommended).
 
 ### Note about pruning and indexing configurations
 
