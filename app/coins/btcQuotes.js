@@ -51,7 +51,7 @@ module.exports = {
 			url: "https://bitcointalk.org/index.php?topic=721.msg8114#msg8114"
 		},
 		{
-			text: "Lost coins only make everyone else's coins worth slightly more.  Think of it as a donation to everyone.",
+			text: "Lost coins only make everyone else's coins worth slightly more. Think of it as a donation to everyone.",
 			speaker: "Satoshi",
 			date: "2010-06-21",
 			url: "https://bitcointalk.org/index.php?topic=198.msg1647#msg1647"
@@ -216,22 +216,10 @@ module.exports = {
 			url: "https://www.metzdowd.com/pipermail/cryptography/2009-January/015014.html"
 		},
 		{
-			text: "I'm sure that in 20 years there will either be very large transaction volume or no volume.",
-			speaker: "Satoshi",
-			date: "2010-02-14",
-			url: "https://bitcointalk.org/index.php?topic=48.msg329#msg329"
-		},
-		{
 			text: "In a few decades when the reward gets too small, the transaction fee will become the main compensation for nodes.",
 			speaker: "Satoshi",
 			date: "2010-02-14",
 			url: "https://bitcointalk.org/index.php?topic=48.msg329#msg329"
-		},
-		{
-			text: "Lost coins only make everyone else's coins worth slightly more. Think of it as a donation to everyone.",
-			speaker: "Satoshi",
-			date: "2010-06-21",
-			url: "https://bitcointalk.org/index.php?topic=198.msg1647#msg1647"
 		},
 		{
 			text: "The utility of the exchanges made possible by Bitcoin will far exceed the cost of electricity used. Therefore, not having Bitcoin would be the net waste.",
