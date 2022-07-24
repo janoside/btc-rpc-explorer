@@ -14,7 +14,7 @@ block content
 			li Technical quirks and oddities
 			li Cultural references
 
-		//-.mb-0 Help curating this list is welcome! You can submit new items by opening an issue or PR on <a href="https://github.com/david/wcn-rpc-explorer">Github</a>.
+		.mb-0 Help curating this list is welcome! You can submit new items by opening an issue or PR on <a href="https://github.com/janoside/btc-rpc-explorer">Github</a>.
 
 
 	+contentSection
@@ -22,9 +22,9 @@ block content
 			table.table.table-borderless.table-striped
 				thead
 					tr
-						th Date
-						th Item
-						th Reference
+						th.text-card-highlight.text-uppercase.fw-light Date
+						th.text-card-highlight.text-uppercase.fw-light Item
+						th.text-card-highlight.text-uppercase.fw-light Reference
 				tbody
 					each item, index in coinConfig.historicalData
 						if (item.chain == activeBlockchain)

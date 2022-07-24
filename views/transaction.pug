@@ -18,7 +18,7 @@ block content
 					+summaryItem("Block")
 						a(href=`./block/${block.hash}`) ##{block.height.toLocaleString()}
 
-					+summaryItem("Date")
+					+summaryItem("Date / Time")
 						if (block.time)
 							+timestamp(block.time)
 
@@ -60,7 +60,13 @@ block content
 
 		div.tab-content
 			+pageTab("Details", true)
-				
+
+				#alert-included-next-block.alert.alert-primary(style="display: none;")
+					h6 Confirmation: Predicted in Next Block
+						i.fas.fa-check.text-success.ms-1
+					.mb-2 This transaction is currently unconfirmed but, with the current mempool, it's predicted to be confirmed in the next block.
+					span It's currently transaction #<span id='next-block-index'></span> of <span id='next-block-count'></span>.
+
 				if (global.specialTransactions && global.specialTransactions[txid])
 					- var stInfo = global.specialTransactions[txid];
 
@@ -80,14 +86,14 @@ block content
 					- isTxConfirmed = false;
 
 				if (isCoinbaseTx)
-					- var minerInfo = utils.getMinerFromCoinbaseTx(result.getrawtransaction);
+					- var minerInfo = utils.identifyMiner(result.getrawtransaction, result.getblock.height);
 
 				+contentSection("Summary")
 					+summaryRow((isTxConfirmed ? 2 : 3) + (isCoinbaseTx ? 1 : 2) + (isCoinbaseTx && minerInfo ? 1 : 0))
 						if (!isTxConfirmed)
 							+summaryItem("Status")
 								span.text-danger Unconfirmed
-
+									
 							+summaryItem("First Seen", "The time when this transaction entered your node's mempool.")
 								+timestamp(mempoolDetails.entry.time)
 
@@ -102,7 +108,7 @@ block content
 									span.text-success Yes
 
 								else if (mempoolDetails.ancestors.length > 0)
-									span.border-dotted(title="RBF may be signaled explicitly or implicitly. This transaction does not explicitly opt in, but if any of its unconfirmed ancestor transactions are replaceable then this one is too.", data-bs-toggle="tooltip") No explicit opt-in
+									span.border-dotted(title="RBF may be signaled explicitly or implicitly. This transaction does not explicitly opt in, but if any of its unconfirmed ancestor transactions are replaceable then this one is too.", data-bs-toggle="tooltip") Not explicit…
 									a.ms-2(href="https://github.com/bitcoin/bips/blob/master/bip-0125.mediawiki#summary", data-bs-toggle="tooltip", title="More info about RBF", target="_blank")
 										i.fas.fa-info-circle
 								else
@@ -116,17 +122,21 @@ block content
 									+confirmations(tx.confirmations)
 									| )
 							
-							+summaryItem("Date")
+							+summaryItem("Date / Time")
 								if (tx.time)
-									td.font-monospace
-										+timestamp(result.getrawtransaction.time)
+									+timestamp(result.getrawtransaction.time)
 										
 
 						if (isCoinbaseTx)
 							if (minerInfo)
 								+summaryItem("Miner")
-									if (minerInfo.identifiedBy)
-										span(data-bs-toggle="tooltip", title=`Identified by: ${minerInfo.identifiedBy}`)
+									if (minerInfo.type == "address-only")
+										span.badge.bg-secondary
+											span(data-bs-toggle="tooltip", title=`Unknown Miner Payout Address: ${minerInfo.name}`) #{utils.ellipsizeMiddle(minerInfo.name, 16)}
+											+copyTextButton(minerInfo.name)
+
+									else if (minerInfo.identifiedBy)
+										span(data-bs-toggle="tooltip", data-bs-html="true", title=`Identified by: ${minerInfo.identifiedBy}${minerInfo.note ? ("<br/><br/>" + minerInfo.note) : ""}`)
 											+primaryBadge(minerInfo.name, false)
 
 									else
@@ -178,13 +188,30 @@ block content
 						- var blockRewardMax = coinConfig.blockRewardFunction(result.getblock.height, activeBlockchain);
 						- var valueDestroyed = (isCoinbaseTx && parseFloat(totalOutputValue) < parseFloat(blockRewardMax));
 
-					+summaryRow(2 + (tx.weight ? 1 : 0) + (valueDestroyed ? 1 : 0) + (tx.locktime > 0 ? 1 : 0) + (parseInt(daysDestroyed) > 0 ? 1 : 0))
+					- var showLocktime = false;
+					if (tx.locktime > 500000000 && result.getrawtransaction.locktime > (new Date().getTime() / 1000))
+						// future-dated locktime date
+						- showLocktime = true;
+
+					if (tx.locktime > 0 && !isTxConfirmed)
+						// unconfirmed locktime block height
+						- showLocktime = true;
+
+					+summaryRow(3 + (tx.weight ? 1 : 0) + (valueDestroyed ? 1 : 0) + (showLocktime ? 1 : 0) + (parseInt(daysDestroyed) > 0 ? 1 : 0))
 						+summaryItem("Version")
 							| #{result.getrawtransaction.version}
 
-						+summaryItem("Size")
+						+summaryItem("Size", null, "vB")
 							span #{tx.vsize.toLocaleString()}
-							small.ms-1 vB
+
+							if (tx.size != tx.vsize)
+								span.small.text-muted.ms-2 (
+									span.border-dotted(title=`Raw size: ${tx.size} B`, data-bs-toggle="tooltip") #{tx.size.toLocaleString()}
+									| )
+
+						+summaryItem("Raw Data", `The raw transaction consisting of ${result.getrawtransaction.hex.length.toLocaleString()} hexadecimal bytes.`, "hex")
+							| #{utils.ellipsizeMiddle(result.getrawtransaction.hex, 12)}
+							+copyTextButton(result.getrawtransaction.hex)
 
 						if (tx.weight)
 							+summaryItem("Weight", null, "wu", "Weight Units")
@@ -196,19 +223,17 @@ block content
 								span.text-danger
 									+valueDisplay(currencyValue)
 
-						if (tx.locktime > 0)
-							+summaryItem("Locktime")
-								if (tx.locktime < 500000000)
-									span.me-1 Spendable:
-									a(href=`./block-height/${result.getrawtransaction.locktime}`) #{result.getrawtransaction.locktime.toLocaleString()}
-									span +
-									a.ms-2(href="https://developer.bitcoin.org/devguide/transactions.html#locktime-and-sequence-number", data-bs-toggle="tooltip", title="Read more about locktime", target="_blank")
-										i.fas.fa-external-link-alt.small
+						if (showLocktime)
+							+summaryItem("Locktime", "A specification of the earliest that a transaction may be mined. If this value is &leq; 500M, the value is interpreted as a block height; otherwise, it is interpreted as a unix timestamp.")
+								if (tx.locktime < 500000000 && !isTxConfirmed)
+									span.me-1 
+									a.border-dotted(href=`./block-height/${result.getrawtransaction.locktime}`, title=`May be mined at this block height, or later`, data-bs-toggle="tooltip") #{result.getrawtransaction.locktime.toLocaleString()}
+
 								else
-									span Spendable: #{moment.utc(new Date(result.getrawtransaction.locktime * 1000)).format("Y-MM-DD HH:mm:ss")}
-										small.ms-1 utc
-									a.ms-2(href="https://developer.bitcoin.org/devguide/transactions.html#locktime-and-sequence-number", data-bs-toggle="tooltip", title="Read more about locktime", target="_blank")
-										i.fas.fa-external-link-alt.fs-6
+									+timestamp(result.getrawtransaction.locktime)
+									if (result.getrawtransaction.locktime > (new Date().getTime() / 1000))
+										span.border-dotted.ms-1(title=`This future-dated 'locktime' value is only possible because this is a coinbase transaction. Normally, locktime specifies the earliest that a transaction may be mined (included in a block). But, because this transaction was created by the miner in the process of mining a block, it is able to bypass some of the normal validity checks that nodes on the network perform on transactions.`, data-bs-toggle="tooltip")
+											i.fas.fa-flag.fa-sm.text-warning
 
 						if (parseInt(daysDestroyed) > 0)
 							- var daysDestroyedDesc = `The sum of all input values multiplied by the number of days that input's UTXO existed before being spent. Large values can sometimes be interesting, indicating the spending of long-dormant coins. A 1 ${coinConfig.ticker} UTXO spent after 7 days dormant results in 7 days destroyed, as does a 7 ${coinConfig.ticker} UTXO spent after 1 day dormant.`;
@@ -219,123 +244,143 @@ block content
 
 				
 				- var inputsOutputsSectionTitle = `${tx.vin.length.toLocaleString()} Input${tx.vin.length == 1 ? "" : "s"}, ${tx.vout.length.toLocaleString()} Output${tx.vout.length == 1 ? "" : "s"}`;
-				+contentSection(inputsOutputsSectionTitle)
+				
+				+sectionTitleBlock
+					.clearfix
+						.float-start #{inputsOutputsSectionTitle}
+						.float-end
+							- var hasInputAddresses = false;
+							- var txInputs = result.txInputs;
+							if (tx && tx.vin && txInputs)
+								each txVin, txVinIndex in tx.vin
+									if (!txVin.coinbase)
+										- var vout = null;
+										if (txInputs[txVinIndex])
+											- var voutAddresses = utils.getVoutAddresses(txInputs[txVinIndex]);
+
+											if (voutAddresses.length > 0)
+												- hasInputAddresses = true;
+
+							if (hasInputAddresses)
+								.d-inline.d-sm-none
+									a(href="javascript:void(0)", onclick=`$(this).find(".toggle-icon").toggleClass("fa-plus-square").toggleClass("fa-minus-square"); $(".tx-input-address-${tx.txid}").toggle();`)
+										i.toggle-icon.far.fa-plus-square.text-muted.text-end.fa-lg
+
+				+contentSection
 					- var tx = result.getrawtransaction;
 					- var txInputs = result.txInputs;
 					- var blockHeight = -1;
 					if (result && result.getblock)
 						- blockHeight = result.getblock.height;
+
 					include includes/transaction-io-details.pug
 						
 
 				if (mempoolDetails)
 					if (mempoolDetails.ancestors.length > 0)
-						div.card.shadow-sm.mb-3
-							div.card-body.px-2.px-md-3
-								h3.h6.mb-0
-									span #{mempoolDetails.ancestors.length.toLocaleString()} 
-									if (mempoolDetails.ancestors.length == 1)
-										span Ancestor
-									else
-										span Ancestors
-								hr
+						- var ancestorDesc = "Ancestor Transactions are transactions whose outputs are being spent by this transaction. All ancestors must be confirmed before this transaction can be confirmed (though they can be confirmed in the same block).";
+						+sectionTitle(`${mempoolDetails.ancestors.length.toLocaleString()} Unconfirmed Ancestor Transaction${mempoolDetails.ancestors.length == 1 ? "" : "s"}`, false, null, null, null, ancestorDesc)
 
-								ol.mb-0
-									each ancestorTxid, ancestorIndex in mempoolDetails.ancestors
-										li
-											a.font-monospace(href=`./tx/${ancestorTxid}`) #{ancestorTxid}
+						+contentSection
+							ol.mb-0
+								each ancestorTxid, ancestorIndex in mempoolDetails.ancestors
+									li
+										a(href=`./tx/${ancestorTxid}`) #{ancestorTxid}
 
 					if (mempoolDetails.descendants.length > 0)
-						div.card.shadow-sm.mb-3
-							div.card-body.px-2.px-md-3
-								h3.h6.mb-0
-									span #{mempoolDetails.descendants.length.toLocaleString()} 
-									if (mempoolDetails.descendants.length == 1)
-										span Descendant
-									else
-										span Descendants
-								hr
+						- var descendantDesc = "Descendant Transactions are transactions that spend outputs created by this transaction. This transaction (and all other ancestors transactions) must be confirmed before a descendant transaction can be confirmed (though they can be confirmed in the same block).";
+						+sectionTitle(`${mempoolDetails.descendants.length.toLocaleString()} Unconfirmed Descendant Transaction${mempoolDetails.descendants.length == 1 ? "" : "s"}`, false, null, null, null, descendantDesc)
 
+						+contentSection
 								ol.mb-0
 									each descendantTxid, descendantIndex in mempoolDetails.descendants
 										li
-											a.font-monospace(href=`./tx/${descendantTxid}`) #{descendantTxid}
+											a(href=`./tx/${descendantTxid}`) #{descendantTxid}
 
 			
 			+pageTab("Scripts")
 				+contentSection("Input Scripts")
-					table.table.table-borderless.table-striped
+					table.table
 						thead
 							tr
 								th(style="width: 50px;")
-								th Input
+								th.text-card-highlight.text-uppercase.fw-normal Input
 						tbody
 							each vin, vinIndex in result.getrawtransaction.vin
 								tr
-									th.font-monospace
-										a.badge.card-highlight.border.fw-normal(data-bs-toggle="tooltip", title=`Input #${vinIndex}`, style="white-space: nowrap;")
-											span.me-1 &gt;
-											| #{vinIndex.toLocaleString()}
+									th
+										a.badge.card-highlight.border(data-bs-toggle="tooltip", title=`Input #${vinIndex}`, style="white-space: nowrap;")
+											i.fas.fa-arrow-right.text-danger.me-1
+											span.font-monospace #{vinIndex.toLocaleString()}
 
-									td.word-wrap.text-break.font-monospace
+									td.word-wrap.text-break
 										if (vin.coinbase)
-											div.font-monospace(style="line-height: 1.75em;")
-												.badge.bg-success.me-2 coinbase
-												br
-												span.font-data #{vin.coinbase}
-												br
-												span.fw-bold.me-2 Ascii
-												span.font-plaintext #{utils.hex2ascii(vin.coinbase)}
+											.mb-3(style="line-height: 1.75em;")
+												+successBadge("coinbase")
+
+												.mt-2
+													+hexDataDisplay(vin.coinbase)
 
 										if (vin.scriptSig && vin.scriptSig.asm)
 											.mb-2
 												.mb-2
 													+darkBadge("scriptSig")
-												span.font-data #{vin.scriptSig.asm}
+
+												.d-inline-block.small.border.rounded-1.p-1.px-2.card-highlight.word-wrap #{vin.scriptSig.asm}
 
 
 										if (vin.txinwitness && vin.txinwitness.length > 0)
 											.mb-2
 												+darkBadge("witness")
 
-											each witnessItem in vin.txinwitness
-												span.font-data.me-3 #{witnessItem}
+											each witnessItem, witnessIndex in vin.txinwitness
+												div(class=(witnessIndex > 0 ? "mt-2" : false))
+												+hexDataDisplay(witnessItem)
+												//.d-inline-block.small.border.rounded-1.p-1.px-2.card-highlight.word-wrap(class=(witnessIndex < (vin.txinwitness.length - 1) ? "mb-2" : false)) #{witnessItem}
 
 										
 						
 
 				+contentSection("Output Scripts")
-					table.table.table-borderless.table-striped
+					table.table
 						thead
 							tr
 								th(style="width: 50px;")
-								th Script Pub Key (asm)
+								th.text-card-highlight.text-uppercase.fw-normal Script Pub Key
 						tbody
 							each vout, voutIndex in result.getrawtransaction.vout
 								tr
-									th.font-monospace
+									th
 										a.badge.card-highlight.border.fw-normal(data-bs-toggle="tooltip", title=`Output #${(voutIndex + 1)}`, style="white-space: nowrap;")
-											span.me-1 &lt;
-											span.fw-normal #{voutIndex.toLocaleString()}
+											i.fas.fa-arrow-right.text-success.me-1
+											span.font-monospace #{voutIndex.toLocaleString()}
 
-									td.font-monospace.word-wrap
+									td.word-wrap
 										if (vout.scriptPubKey && vout.scriptPubKey.asm)
 											- var chunks = vout.scriptPubKey.asm.split(" ");
-											each chunk in chunks
-												span.me-2
-													if (chunk.startsWith("OP_"))
-														+primaryBadge(chunk)
-													else
-														span.font-data #{chunk}
 
-											if (vout.scriptPubKey.asm.startsWith("OP_RETURN"))
-												br
-												span.fw-bold.me-2 Ascii
-												span.font-data #{utils.hex2ascii(vout.scriptPubKey.asm)}
-						
+											if (chunks[0] == "OP_RETURN")
+												.mb-2
+													+primaryBadge(chunks[0])
+
+												- var asm = vout.scriptPubKey.asm;
+												- asm = asm.substring("OP_RETURN ".length);
+												+hexDataDisplay(asm)
+
+											else
+												each chunk, chunkIndex in chunks
+													.mb-2
+														if (chunk.startsWith("OP_"))
+															+primaryBadge(chunk)
+
+														else
+															+hexDataDisplay(chunk, "hex,utf8,ascii")
+
+											
+
 
 			+pageTab("JSON")
-				- var pillTabs = ["Transaction", "UTXOs"];
+				- var pillTabs = ["Transaction", "Block Header", "UTXOs"];
 				if (mempoolDetails)
 					- pillTabs.push("Mempool Details");
 
@@ -345,21 +390,43 @@ block content
 					+pageTab("Transaction", true)
 						+contentSection("Transaction")
 							pre
-								code.text-json.json.bg-body(data-lang="json") #{JSON.stringify(result.getrawtransaction, null, 4)}
+								code.text-json.json(data-lang="json") #{JSON.stringify(result.getrawtransaction, null, 4)}
+
+
+					+pageTab("Block Header")
+						+contentSection("Block Header")
+							pre
+								code.text-json.json(data-lang="json") #{JSON.stringify(result.getblock, null, 4)}
 
 					
 					+pageTab("UTXOs")
 						+contentSection("UTXOs")
 							pre
-								code.text-json.json.bg-body(data-lang="json") #{JSON.stringify(utxos, null, 4)}
+								code.text-json.json(data-lang="json") #{JSON.stringify(utxos, null, 4)}
 								
 
 					if (mempoolDetails)
 						+pageTab("Mempool Details")
 							+contentSection("Mempool Details")
 								pre
-									code.json.bg-body(data-lang="json") #{JSON.stringify(mempoolDetails, null, 4)}
+									code.json(data-lang="json") #{JSON.stringify(mempoolDetails, null, 4)}
 
 				//pre #{JSON.stringify(result.txInputs, null, 4)}
 
 		
+block endOfBody
+
+	script.
+		var txid = "!{txid}";
+		$(document).ready(function() {
+			$.ajax({
+				url: `./api/mining/next-block/includes/${txid}`
+
+			}).done(res => {
+				if (res.included) {
+					$("#next-block-index").text((res.index + 1).toLocaleString());
+					$("#next-block-count").text(res.txCount.toLocaleString());
+					$("#alert-included-next-block").show();
+				}
+			});
+		});

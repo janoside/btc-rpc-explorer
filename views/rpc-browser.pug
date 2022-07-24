@@ -18,9 +18,18 @@ block content
 				if (methodhelp)
 					.clearfix.mb-4
 						.float-start
-							+sectionTitle(`Command: ${method}`)
+							+sectionTitleBlock
+								span.me-2 Command:
+								a(href=`./rpc-browser?method=${method}`) #{method}
 
-						.float-start.ms-3
+						.float-start.ms-2
+							if (session.favoriteRpcCommands && session.favoriteRpcCommands.includes(method))
+								a.me-2(href=`./session-data?action=remove-rpc-favorite&data=${method}`, title="Remove from Favorites", data-bs-toggle="tooltip")
+									i.fas.fa-star.text-warning
+							else
+								a.me-2(href=`./session-data?action=add-rpc-favorite&data=${method}`, title="Add as a Favorite", data-bs-toggle="tooltip")
+									i.far.fa-star.text-warning
+
 							span.small.text-muted (
 								a(href=`https://developer.bitcoin.org/reference/rpc/${method}.html`, target="_blank") Developer Docs
 									i.fas.fa-external-link-alt.ms-2
@@ -38,7 +47,12 @@ block content
 						+pageTab("Execute", true)
 
 							if (methodResult)
-								+contentSection("Result")
+								+sectionTitleBlock
+									span.me-2 Result
+									if (executionMillis)
+										small.text-muted (#{executionMillis.toLocaleString()} ms)
+
+								+contentSection
 									pre
 										code.json #{JSON.stringify(methodResult, null, 4)}
 
@@ -57,8 +71,8 @@ block content
 											.mb-3
 												label(for=("arg_" + argX.name))
 													div
-														span.font-monospace.fw-bold #{argX.name}
-														span.font-monospace : 
+														span.fw-bold #{argX.name}
+														span.me-1 :
 															span  #{argX.properties.join(", ")}
 													if (argX.description)
 														span.text-muted Description: #{argX.description}
@@ -115,12 +129,36 @@ block content
 						.mb-2 This tool lists all RPC commands that your node makes publicly visible. Clicking on any command in the list will display additional information about that command and provide an interactive tool for submitting the command to your node.
 
 			.col-md-3
+				if (session.favoriteRpcCommands && session.favoriteRpcCommands.length > 0)
+					.clearfix
+						.float-start
+							i.fas.fa-star.me-2
+						.float-start
+							+sectionTitle(`Favorites (${session.favoriteRpcCommands.length.toLocaleString()})`)
+					+contentSection
+						ol.mb-0.ps-4
+							each methodX, methodIndex in session.favoriteRpcCommands
+								li
+									a(href=`./rpc-browser?method=${methodX}`, style=(methodX == method ? "font-weight: bold; font-style: italic;" : false)) #{methodX}
+
+				if (session.recentRpcCommands && session.recentRpcCommands.length > 0)
+					.clearfix
+						.float-start
+							i.fas.fa-history.me-2
+						.float-start
+							+sectionTitle(`Recent (${session.recentRpcCommands.length.toLocaleString()})`)
+					+contentSection
+						ol.mb-0.ps-4
+							each methodX, methodIndex in session.recentRpcCommands
+								li
+									a(href=`./rpc-browser?method=${methodX}`, style=(methodX == method ? "font-weight: bold; font-style: italic;" : false)) #{methodX}
+
 				each section, sectionIndex in gethelp
 					+contentSection(`${section.name} (${section.methods.length})`)
 						ol.mb-0.ps-4
 							each methodX, methodIndex in section.methods
 								li
-									a(href=`./rpc-browser?method=${methodX.name}`, style=(methodX.name == method ? "font-weight: bold; font-style: italic;" : false)) #{methodX.name}
+									a(href=`./rpc-browser?method=${methodX.name}`, class=(methodX.name == method ? "text-info" : false), style=(methodX.name == method ? "font-weight: bold; font-style: italic;" : false)) #{methodX.name}
 							
 							
 

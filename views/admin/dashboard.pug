@@ -1,18 +1,20 @@
 extends ../layout
 
+include ./admin-mixins.pug
+
 block headContent
 	title Admin Dashboard
 
 block content
+	+adminNav
+
+
 	+pageTitle("Admin Dashboard")
 
 	+pageTabs(["Details", "JSON"])
 
 	.tab-content
 		+pageTab("Details", true)
-
-			+contentSection("Tools")
-				a.btn.btn-primary(href="./admin/resetUserSettings") Reset User Settings
 
 			+contentSection("Basics")
 				+summaryRow(3)
@@ -25,10 +27,6 @@ block content
 
 					+summaryItem("Node Env")
 						| #{process.env.NODE_ENV || "development"}
-
-			+contentSection("User Settings")
-				pre
-					code.json #{JSON.stringify(userSettings, null, 4)}
 
 			+contentSection("App Config")
 				pre
@@ -46,7 +44,7 @@ block content
 								th.text-end Available Size
 
 						tbody
-							tr.text-end.font-monospace
+							tr.text-end
 								td
 									- var data = utils.formatLargeNumber(memstats.total_heap_size, 2);
 									span #{data[0]}
@@ -87,7 +85,7 @@ block content
 
 							tbody
 								each item, itemName in cacheStats
-									tr.font-monospace
+									tr
 										td #{itemName}
 										td.text-end #{item.hit.toLocaleString()}
 										td.text-end #{item.miss.toLocaleString()}
@@ -119,7 +117,7 @@ block content
 
 						tbody
 							each item, itemName in rpcStats
-								tr.font-monospace
+								tr
 									td #{itemName}
 									td.text-end #{item.count.toLocaleString()}
 									td.text-end #{(item.time / 1000).toLocaleString()}
@@ -146,7 +144,7 @@ block content
 
 							tbody
 								each item, itemName in electrumStats.base
-									tr.font-monospace
+									tr
 										td #{itemName}
 										td.text-end #{item.count.toLocaleString()}
 
@@ -177,7 +175,7 @@ block content
 
 							tbody
 								each item, itemName in electrumStats.rpc
-									tr.font-monospace
+									tr
 										td #{itemName}
 										td.text-end #{item.count.toLocaleString()}
 										td.text-end #{(item.time / 1000).toLocaleString()}
@@ -201,15 +199,24 @@ block content
 						table.table.table-borderless.table-striped
 							thead
 								tr
-									th Error ID
+									th Error
 									th.text-end Count
 									th.text-end First Seen
 									th.text-end Last Seen
 
 							tbody
 								each item, itemName in errorStats
-									tr.font-monospace
-										td #{itemName}
+									tr
+										td
+											div #{itemName}
+											div
+												each propData, propName in item.properties
+													div.ms-4 #{propName}
+														br
+														each propCount, propValue in propData
+															span.badge.bg-primary.me-1.fw-light #{propValue}
+																span.badge.bg-light.text-dark.ms-1 #{propCount}
+
 										td.text-end #{item.count.toLocaleString()}
 										td.text-end #{moment.duration(new Date().getTime() - item.firstSeen).format()} ago
 										td.text-end #{moment.duration(new Date().getTime() - item.lastSeen).format()} ago

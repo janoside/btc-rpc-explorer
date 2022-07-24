@@ -1,0 +1,55 @@
+include ../includes/shared-mixins.pug
+
+.mt-3
+	+pageTabs(["Details", "JSON"])
+
+
+	div.tab-content
+		+pageTab("Details", true)
+			+contentSection
+				+summaryRow(3)
+					+summaryItem("Last Updated", "The time this UTXO Set snapshot was produced")
+						+timestamp(utxoSetSummary.lastUpdated / 1000, true)
+
+					+summaryItem("Block Height", "The top block height at the time this UTXO Set snapshot was produced")
+						a(href=`./block-height/${utxoSetSummary.height}`) #{utxoSetSummary.height.toLocaleString()}
+
+					+summaryItem("Block Hash", "The top block hash at the time this UTXO Set snapshot was produced")
+						a(href=`./block/${utxoSetSummary.bestblock}`) #{utils.ellipsizeMiddle(utxoSetSummary.bestblock, 12)}
+						+copyTextButton(utxoSetSummary.bestblock)
+				
+				hr.mt-3.mb-3
+				
+				+summaryRow(2 + (utxoSetSummary.transactions ? 1 : 0) + (utxoSetSummary.disk_size ? 1 : 0) + (utxoSetSummary.total_unspendable_amount ? 1 : 0))
+					+summaryItem("UTXO Count", "The total number of UTXOs, or Unspent Transaction Outputs, across the entire blockchain")
+						| #{utxoSetSummary.txouts.toLocaleString()}
+
+					+summaryItem("Coins", "The sum of all spendable BTC units across the entire blockchain")
+						span #{parseFloat(utxoSetSummary.total_amount).toLocaleString()}
+						+copyTextButton(utxoSetSummary.total_amount)
+
+					if (utxoSetSummary.transactions)
+						+summaryItem("Total Transactions", "The total number of transactions that have unspent outputs")
+							| #{utxoSetSummary.transactions.toLocaleString()}
+
+					if (utxoSetSummary.total_unspendable_amount)
+						+summaryItem("Unspendable Coins", "The total amount of coins permanently excluded from the UTXO Set (only available if coinstatsindex is used)")
+							span #{parseFloat(utxoSetSummary.total_unspendable_amount).toLocaleString()}
+
+					if (utxoSetSummary.disk_size)
+						+summaryItem("Disk Size", "The estimated size of the UTXO Set on disk")
+							- var diskSize = utils.formatLargeNumber(utxoSetSummary.disk_size);
+
+							| #{new Decimal(diskSize[0]).toDP(3)} #{diskSize[1].abbreviation}B
+
+			if (utxoSetSummary.usingCoinStatsIndex)
+				span.small.text-muted Note: The above UTXO Set snapshot was produced using this node's <b>coin-stats index</b>; using this index affects which properties are available. Comparing the data above to a UTXO Set snapshot produced on a node without the coin-stats index enabled will look slightly different.
+
+			else
+				span.small.text-muted Note: This node does not have the <b>coin-stats index</b> enabled so this UTXO Set snapshot was built without it. Comparing the data above to a UTXO Set snapshot produced on a node WITH the coin-stats index enabled will look slightly different.
+
+
+		+pageTab("JSON", false)
+			+contentSection
+				pre
+					code.json #{JSON.stringify(utxoSetSummary, null, 4)}

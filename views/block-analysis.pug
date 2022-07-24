@@ -65,11 +65,11 @@ block content
 						table.table.table-striped.table-borderless.mb-0
 							thead
 								tr
-									th Transaction
-									th.text-end Output Value
+									th.text-card-highlight.text-uppercase.fw-light Transaction
+									th.text-end.text-card-highlight.text-uppercase.fw-light Output Value
 
 							tbody(id="tbody-top-value-tx")
-								tr.font-monospace.row-prototype(style="display: none;")
+								tr.row-prototype(style="display: none;")
 									td.data-tx-link
 									td.text-end.data-tx-value
 
@@ -81,12 +81,13 @@ block content
 						table.table.table-striped.table-borderless.mb-0
 							thead
 								tr
-									th Transaction
-									th.text-end Size
-										small.fw-normal.text-muted.ms-2 (vB)
+									th.text-card-highlight.text-uppercase.fw-light Transaction
+									th.text-end.text-card-highlight.fw-light
+										span.text-uppercase Size
+										small.ms-2 (vB)
 
 							tbody(id="tbody-top-size-tx")
-								tr.font-monospace.row-prototype(style="display: none;")
+								tr.row-prototype(style="display: none;")
 									td.data-tx-link
 									td.text-end.data-tx-value
 
@@ -100,11 +101,11 @@ block content
 							table.table.table-striped.table-borderless.mb-0
 								thead
 									tr
-										th Transaction
-										th.text-end Fee
+										th.text-card-highlight.text-uppercase.fw-light Transaction
+										th.text-end.text-card-highlight.text-uppercase.fw-light Fee
 
 								tbody(id="tbody-top-fee-tx")
-									tr.font-monospace.row-prototype(style="display: none;")
+									tr.row-prototype(style="display: none;")
 										td.data-tx-link
 										td.text-end.data-tx-value
 
@@ -117,12 +118,13 @@ block content
 							table.table.table-striped.table-borderless.mb-0
 								thead
 									tr
-										th Transaction
-										th.text-end Fee Rate
-											small.text-muted.fw-normal.ms-2 (sat/vB)
+										th.text-card-highlight.text-uppercase.fw-light Transaction
+										th.text-end.text-card-highlight.fw-light
+											span.text-uppercase Fee Rate
+											small.ms-2 (sat/vB)
 
 								tbody(id="tbody-top-fee-rate-tx")
-									tr.font-monospace.row-prototype(style="display: none;")
+									tr.row-prototype(style="display: none;")
 										td.data-tx-link
 										td.text-end.data-tx-value
 
@@ -137,7 +139,7 @@ block content
 							span#no-input-types-data.text-muted(style="display: none;") No data
 							table.table.table-striped.table-borderless.mb-0
 								tbody(id="tbody-input-types")
-									tr.font-monospace.row-prototype(style="display: none;")
+									tr.row-prototype(style="display: none;")
 										td
 											+darkBadge
 												span.data-type
@@ -152,7 +154,7 @@ block content
 					.card-body
 						table.table.table-striped.table-borderless.mb-0
 							tbody(id="tbody-output-types")
-								tr.font-monospace.row-prototype(style="display: none;")
+								tr.row-prototype(style="display: none;")
 									td
 										+darkBadge
 											span.data-type
@@ -474,35 +476,43 @@ block endOfBody
 						borderWidth: 2,
 						backgroundColor: 'rgba(0,0,0,0)',
 						data: data,
-						pointRadius: 1
+						pointRadius: 0,
+						borderJoinStyle: "round"
 					}]
 				},
 				options: {
-					legend: { display: false },
+					interaction: {
+						intersect: false,
+						mode: 'index',
+					},
+					plugins: {
+						legend: { display: false },
+					},
 					scales: {
-						xAxes: [{
+						x: {
 							type: 'linear',
 							position: 'bottom',
 							scaleLabel: {
 								display: true,
 								labelString: 'Index in Block'
 							},
-							gridLines: {
+							grid: {
 								color: gridLineColor
-							}
+							},
 							//ticks: {
 							//	stepSize: 100,
 							//}
-						}],
-						yAxes: [{
+						},
+						y: {
+							type: "logarithmic",
 							scaleLabel: {
 								display: true,
 								labelString: yLabelStr,
 							},
-							gridLines: {
+							grid: {
 								color: gridLineColor
-							}
-						}]
+							},
+						}
 					}
 				}
 			});
@@ -526,23 +536,26 @@ block endOfBody
 					}]
 				},
 				options: {
-					legend: {
-						display: false
+					plugins: {
+						legend: {
+							display: false
+						},
 					},
 					scales: {
-						xAxes: [{
-							gridLines: {
+						x: {
+							grid: {
 								color: gridLineColor
-							}
-						}],
-						yAxes: [{
+							},
+						},
+						y: {
+							type: "logarithmic",
 							ticks: {
 								beginAtZero:true
 							},
-							gridLines: {
+							grid: {
 								color: gridLineColor
-							}
-						}]
+							},
+						}
 					}
 				}
 			});
@@ -555,7 +568,7 @@ block endOfBody
 				return;
 			}
 
-			var url = `./api/block-tx-summaries/${blockHash}/${blockHeight}/${chunks[chunkIndex]}`;
+			var url = `./internal-api/block-tx-summaries/${blockHash}/${blockHeight}/${chunks[chunkIndex]}`;
 			
 			//console.log(url);
 

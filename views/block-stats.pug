@@ -1,7 +1,7 @@
 extends layout
 
 block headContent
-	title Block Block
+	title Block Stats
 
 block content
 	+pageTitle("Block Stats")
@@ -9,15 +9,15 @@ block content
 	if (rpcApiUnsupportedError)
 		div.alert.alert-danger(style="margin-bottom: 200px;")
 			span Your node version doesn't support the 
-				span.font-monospace #{rpcApiUnsupportedError.rpc}
+				span #{rpcApiUnsupportedError.rpc}
 				span  RPC. To use this tool you need to upgrade to 
-				span.font-monospace v#{rpcApiUnsupportedError.version}
+				span v#{rpcApiUnsupportedError.version}
 				span  or later.
 
 	else
 
 		+dismissableInfoAlert("blockStatsPageNoteDismissed", "About Block Stats...")
-			| !{markdown("The **Block Stats** tool queries a range of blocks from Widecoin Core and summarizes the data via graphs. These graphs sometimes expose interesting trends and sometimes show boring, steady-state operation of the network.")}
+			| !{markdown("The **Block Stats** tool queries a range of blocks from Bitcoin Core and summarizes the data via graphs. These graphs sometimes expose interesting trends and sometimes show boring, steady-state operation of the network.")}
 			| Use the <b>Filters</b> section below to select the range of blocks to analyze and select the subset of graphs displayed.
 
 				
@@ -34,7 +34,7 @@ block content
 			hr
 
 			div.mb-2
-				span.border-dotted(title="Select the list of graphs to be displayed.", data-bs-toggle="tooltip") Active Graphs
+				span.border-dotted.text-card-highlight.text-uppercase.fw-light(title="Select the list of graphs to be displayed.", data-bs-toggle="tooltip") Active Graphs
 
 			.clearfix
 				each graphId, graphIndex in graphIds
@@ -222,13 +222,13 @@ block endOfBody
 
 				createGraph("sw-txs", ["swtxs"], [summary.swtxs], [blue]);
 
-				createGraph("subsidy", ["subsidy"], [summary.subsidy], [blue]);
+				createGraph("subsidy", ["subsidy"], [summary.subsidy], [blue], false);
 
-				createGraph("mediantime", ["mediantime"], [summary.mediantime], [blue]);
+				createGraph("mediantime", ["mediantime"], [summary.mediantime], [blue], false);
 
 				createGraph("txs", ["txs"], [summary.txs], [blue]);
 
-				createGraph("utxo_increase", ["utxo_increase"], [summary.utxo_increase], [blue]);
+				createGraph("utxo_increase", ["utxo_increase"], [summary.utxo_increase], [blue], false);
 
 				
 
@@ -247,7 +247,7 @@ block endOfBody
 				return;
 			}
 
-			var url = `./api/block-stats-by-height/${chunks[chunkIndex]}`;
+			var url = `./internal-api/block-stats-by-height/${chunks[chunkIndex]}`;
 			
 			//console.log(url);
 
@@ -344,7 +344,7 @@ block endOfBody
 		}
 
 		var graphsById = {};
-		function createGraph(chartid, names, datas, colors) {
+		function createGraph(chartid, names, datas, colors, logYAxis=true) {
 			var datasets = [];
 			var yaxes = [];
 
@@ -355,7 +355,8 @@ block endOfBody
 					borderWidth: 2,
 					borderColor: colors[i],
 					backgroundColor: 'rgba(0, 0, 0, 0)',
-					pointRadius: 1
+					pointRadius: 1,
+					borderJoinStyle: "round"
 				});
 
 				yaxes.push({
@@ -363,9 +364,9 @@ block endOfBody
 						display: false,
 						//labelString: names[i]
 					},
-					gridLines: {
+					grid: {
 						color: gridLineColor
-					}
+					},
 				});
 			}
 
@@ -384,35 +385,40 @@ block endOfBody
 					},
 					options: {
 						// disable all animations
-						animation: { duration: 0 },
-						hover: { animationDuration: 0 },
-						responsiveAnimationDuration: 0,
+						animation: false,
 
-						legend: {
-							display: (datasets.length > 1)
+						interaction: {
+							intersect: false,
+							mode: 'index',
+						},
+
+						plugins: {
+							legend: {
+								display: (datasets.length > 1)
+							},
 						},
 						scales: {
-							xAxes: [{
+							x: {
 								type: 'linear',
 								position: 'bottom',
 								scaleLabel: {
 									display: true,
 									labelString: 'Block'
 								},
-								gridLines: {
+								grid: {
 									color: gridLineColor
-								}
-							}],
-							yAxes: [{
-								type: 'linear',
+								},
+							},
+							y: {
+								type: logYAxis ? "logarithmic" : "linear",
 								position: 'left',
 								scaleLabel: {
 									display: false,
 								},
-								gridLines: {
+								grid: {
 									color: gridLineColor
-								}
-							}],
+								},
+							},
 						}
 					}
 				});

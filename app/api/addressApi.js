@@ -67,7 +67,7 @@ function getAddressDetails(address, scriptPubkey, sort, limit, offset) {
 				resolve({addressDetails:null, errors:["No address API configured"]});
 			}));
 		}
-		console.log('test electrumx01');
+
 		Promise.all(promises).then(function(results) {
 			if (results && results.length > 0) {
 				resolve(results[0]);

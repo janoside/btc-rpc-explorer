@@ -50,6 +50,10 @@ function getBlockchainInfo() {
 	
 }
 
+function getBlockCount() {
+	return getRpcData("getblockcount");
+}
+
 function getNetworkInfo() {
 	return getRpcData("getnetworkinfo");
 }
@@ -82,6 +86,10 @@ function getUptimeSeconds() {
 
 function getPeerInfo() {
 	return getRpcData("getpeerinfo");
+}
+
+function getBlockTemplate() {
+	return getRpcDataWithParams({method:"getblocktemplate", parameters:[{"rules": ["segwit"]}]});
 }
 
 function getAllMempoolTxids() {
@@ -128,8 +136,13 @@ function getBlockStatsByHeight(height) {
 	}
 }
 
-function getUtxoSetSummary() {
-	return getRpcData("gettxoutsetinfo");
+function getUtxoSetSummary(useCoinStatsIndexIfAvailable=true) {
+	if (useCoinStatsIndexIfAvailable && global.getindexinfo && global.getindexinfo.coinstatsindex) {
+		return getRpcDataWithParams({method:"gettxoutsetinfo", parameters:["muhash"]});
+
+	} else {
+		return getRpcData("gettxoutsetinfo");
+	}
 }
 
 function getRawMempool() {
@@ -177,8 +190,13 @@ function getRawMempoolEntry(txid) {
 	});
 }
 
-function getChainTxStats(blockCount) {
-	return getRpcDataWithParams({method:"getchaintxstats", parameters:[blockCount]});
+function getChainTxStats(blockCount, blockhashEnd=null) {
+	let params = [blockCount];
+	if (blockhashEnd) {
+		params.push(blockhashEnd);
+	}
+
+	return getRpcDataWithParams({method:"getchaintxstats", parameters:params});
 }
 
 function getBlockByHeight(blockHeight) {
@@ -225,7 +243,7 @@ function getBlockByHash(blockHash) {
 			return getRawTransaction(block.tx[0], blockHash).then(function(tx) {
 				block.coinbaseTx = tx;
 				block.totalFees = utils.getBlockTotalFeesFromCoinbaseTxAndBlockHeight(tx, block.height);
-				block.miner = utils.getMinerFromCoinbaseTx(tx);
+				block.miner = utils.identifyMiner(tx, block.height);
 				return block;
 			})
 		}).catch(function(err) {
@@ -240,7 +258,6 @@ function getBlockByHash(blockHash) {
 }
 
 function getAddress(address) {
-	//console.log("add11: "+ address);
 	return getRpcDataWithParams({method:"validateaddress", parameters:[address]});
 }
 
@@ -428,49 +445,49 @@ function getRpcData(cmd, verifyingConnection=false) {
 	return new Promise(function(resolve, reject) {
 		debugLog(`RPC: ${cmd}`);
 
-		let rpcCall = function(callback) {
+		let rpcCall = async function(callback) {
 			var client = (cmd == "gettxoutsetinfo" ? global.rpcClientNoTimeout : global.rpcClient);
 
-			client.command(cmd, function(err, result, resHeaders) {
-				try {
-					if (err) {
+			try {
+				const result = await client.command(cmd);//, function(err, result, resHeaders) {
+
+				if (Array.isArray(result) && result.length == 1) {
+					var result0 = result[0];
+					
+					if (result0 && result0.name && result0.name == "RpcError") {
 						logStats(cmd, false, new Date().getTime() - startTime, false);
 
-						throw new Error(`RpcError: type=failure-01`);
+						debugLog("RpcErrorResult-01: " + JSON.stringify(result0));
+
+						throw new Error(`RpcError: type=errorResponse-01`);
 					}
-
-					if (Array.isArray(result) && result.length == 1) {
-						var result0 = result[0];
-						
-						if (result0 && result0.name && result0.name == "RpcError") {
-							logStats(cmd, false, new Date().getTime() - startTime, false);
-
-							throw new Error(`RpcError: type=errorResponse-01`);
-						}
-					}
-
-					if (result.name && result.name == "RpcError") {
-						logStats(cmd, false, new Date().getTime() - startTime, false);
-
-						throw new Error(`RpcError: type=errorResponse-02`);
-					}
-
-					resolve(result);
-
-					logStats(cmd, false, new Date().getTime() - startTime, true);
-
-					callback();
-
-				} catch (e) {
-					e.userData = {error:err, request:cmd, result:result};
-
-					utils.logError("9u4278t5h7rfhgf", e, {error:err, request:cmd, result:result});
-
-					reject(e);
-
-					callback();
 				}
-			});
+
+				if (result && result.name && result.name == "RpcError") {
+					logStats(cmd, false, new Date().getTime() - startTime, false);
+
+					debugLog("RpcErrorResult-02: " + JSON.stringify(result));
+
+					throw new Error(`RpcError: type=errorResponse-02`);
+				}
+
+				resolve(result);
+
+				logStats(cmd, false, new Date().getTime() - startTime, true);
+
+				callback();
+
+			} catch (err) {
+				err.userData = {request:cmd};
+
+				utils.logError("RpcError-001", err, {request:cmd});
+
+				logStats(cmd, false, new Date().getTime() - startTime, false);
+
+				reject(err);
+
+				callback();
+			}
 		};
 		
 		rpcQueue.push({rpcCall:rpcCall});
@@ -487,47 +504,47 @@ function getRpcDataWithParams(request, verifyingConnection=false) {
 	return new Promise(function(resolve, reject) {
 		debugLog(`RPC: ${JSON.stringify(request)}`);
 
-		let rpcCall = function(callback) {
-			global.rpcClient.command([request], function(err, result, resHeaders) {
-				try {
-					if (err != null) {
+		let rpcCall = async function(callback) {
+			try {
+				const result = await global.rpcClient.command([request]);//, function(err, result, resHeaders) {
+
+				if (Array.isArray(result) && result.length == 1) {
+					var result0 = result[0];
+
+					if (result0 && result0.name && result0.name == "RpcError") {
 						logStats(request.method, true, new Date().getTime() - startTime, false);
 
-						throw new Error(`RpcError: type=failure-02`);
+						debugLog("RpcErrorResult-03: request=" + JSON.stringify(request) + ", result=" + JSON.stringify(result0));
+
+						throw new Error(`RpcError: type=errorResponse-03`);
 					}
-
-					if (Array.isArray(result) && result.length == 1) {
-						var result0 = result[0];
-
-						if (result0 && result0.name && result0.name == "RpcError") {
-							logStats(request.method, true, new Date().getTime() - startTime, false);
-
-							throw new Error(`RpcError: type=errorResponse-03`);
-						}
-					}
-
-					if (result.name && result.name == "RpcError") {
-						logStats(request.method, true, new Date().getTime() - startTime, false);
-
-						throw new Error(`RpcError: type=errorResponse-04`);
-					}
-
-					resolve(result[0]);
-
-					logStats(request.method, true, new Date().getTime() - startTime, true);
-
-					callback();
-
-				} catch (e) {
-					e.userData = {error:err, request:request, result:result};
-
-					utils.logError("283h7ewsede", e, {error:err, request:request, result:result});
-
-					reject(e);
-
-					callback();
 				}
-			});
+
+				if (result && result.name && result.name == "RpcError") {
+					logStats(request.method, true, new Date().getTime() - startTime, false);
+
+					debugLog("RpcErrorResult-04: " + JSON.stringify(result));
+
+					throw new Error(`RpcError: type=errorResponse-04`);
+				}
+
+				resolve(result[0]);
+
+				logStats(request.method, true, new Date().getTime() - startTime, true);
+
+				callback();
+
+			} catch (err) {
+				err.userData = {request:request};
+
+				utils.logError("RpcError-002", err, {request:`${request.method}${request.parameters ? ("(" + JSON.stringify(request.parameters) + ")") : ""}`});
+
+				logStats(request.method, true, new Date().getTime() - startTime, false);
+
+				reject(err);
+
+				callback();
+			}
 		};
 		
 		rpcQueue.push({rpcCall:rpcCall});
@@ -573,6 +590,7 @@ module.exports = {
 	getRpcDataWithParams: getRpcDataWithParams,
 
 	getBlockchainInfo: getBlockchainInfo,
+	getBlockCount: getBlockCount,
 	getNetworkInfo: getNetworkInfo,
 	getNetTotals: getNetTotals,
 	getMempoolInfo: getMempoolInfo,
@@ -600,6 +618,7 @@ module.exports = {
 	getBlockHeaderByHeight: getBlockHeaderByHeight,
 	getBlockHashByHeight: getBlockHashByHeight,
 	getTxOut: getTxOut,
+	getBlockTemplate: getBlockTemplate,
 
 	minRpcVersions: minRpcVersions
 };

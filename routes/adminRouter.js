@@ -11,7 +11,6 @@ const csurf = require('csurf');
 const router = express.Router();
 const util = require('util');
 const moment = require('moment');
-const bitcoinCore = require("bitcoin-core");
 const qrcode = require('qrcode');
 const bitcoinjs = require('bitcoinjs-lib');
 const sha256 = require("crypto-js/sha256");
@@ -78,11 +77,29 @@ router.get("/dashboard", function(req, res, next) {
 	next();
 });
 
-router.get("/stats", function(req, res, next) {
-	res.locals.stats = statTracker.currentStats();
+router.get("/os-stats", function(req, res, next) {
 	res.locals.appStats = appStats.getAllAppStats();
 	res.locals.appStatNames = appStats.statNames;
+	
 
+	res.render("admin/os-stats");
+
+	next();
+});
+
+router.get("/perf-log", function(req, res, next) {
+	res.locals.perfLog = utils.perfLog;
+
+	res.render("admin/perf-log");
+
+	next();
+});
+
+
+router.get("/app-stats", function(req, res, next) {
+	res.locals.stats = statTracker.currentStats();
+	
+	
 	res.locals.performanceStats = [];
 	for (const [key, value] of Object.entries(res.locals.stats.performance)) {
 		res.locals.performanceStats.push([key, value]);
@@ -113,17 +130,17 @@ router.get("/stats", function(req, res, next) {
 	});
 	
 
-	res.render("admin/stats");
+	res.render("admin/app-stats");
 
 	next();
 });
 
 
 router.get('/resetUserSettings', (req, res) => {
-	req.session.userSettings = {};
-
-	var userSettings = {};
-
+	req.session.userSettings = Object.create(null);
+ 
+	var userSettings = Object.create(null);
+	
 	res.cookie("user-settings", JSON.stringify(userSettings));
 
 	res.redirect(req.headers.referer);

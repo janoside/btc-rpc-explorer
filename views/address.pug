@@ -75,7 +75,7 @@ block content
 					- if (x.ismine) { flags.push(["Mine", "This address is owned by your node."]); }
 					- if (x.iswatchonly) { flags.push(["Watch-Only"]); }
 
-					- var summaryRowItemCount = (addressDetails ? ((addressDetails.txCount != null ? 1 : 0) + (addressDetails.balanceSat ? 1 : 0) + (addressDetails.unconfirmedBalanceSat ? 1 : 0) + (addressDetails.totalReceivedSat ? 1 : 0)) : 0) + (flags.length > 0 ? 1 : 0);
+					- var summaryRowItemCount = ((addressEncoding && addressEncoding != "unknown") ? 1 : 0) + (addressDetails ? ((addressDetails.txCount != null ? 1 : 0) + (addressDetails.balanceSat ? 1 : 0) + (addressDetails.unconfirmedBalanceSat ? 1 : 0) + (addressDetails.totalReceivedSat ? 1 : 0)) : 0) + (flags.length > 0 ? 1 : 0);
 					if (summaryRowItemCount > 0)
 						.clearfix
 							.float-start
@@ -86,6 +86,10 @@ block content
 						
 						+contentSection
 							+summaryRow(summaryRowItemCount)
+								if (addressEncoding && addressEncoding != "unknown")
+									+summaryItem("Encoding")
+										| #{addressEncoding}
+
 								if (addressDetails && addressDetails.txCount != null)
 									+summaryItem("Transactions")
 										| #{addressDetails.txCount.toLocaleString()}
@@ -130,21 +134,22 @@ block content
 											span.badge.bg-primary(class=(flagIndex > 0 ? "ms-1" : false), title=(flagItem.length > 1 ? flagItem[1] : false), data-bs-toggle=(flagItem.length > 1 ? "tooltip" : false)) #{flagItem[0]}
 
 					+contentSection("Technical Details", true, "addressPageShowTechDetails")
-						+summaryRow(1 + (addressObj.hash ? 1 : 0) + (addressObj.hasOwnProperty("version") ? 1 : 0) + (result.validateaddress.hasOwnProperty("witness_version") ? 1 : 0) + (result.validateaddress.witness_program ? 1 : 0) + (electrumScripthash ? 1 : 0))
-							if (addressObj.hasOwnProperty("version"))
+						+summaryRow(1 + ((addressObj && addressObj.hash) ? 1 : 0) + ((addressObj && utils.objHasProperty(addressObj, "version")) ? 1 : 0) + (utils.objHasProperty(result.validateaddress, "witness_version") ? 1 : 0) + (result.validateaddress.witness_program ? 1 : 0) + (electrumScripthash ? 1 : 0))
+							
+							if (addressObj && addressObj.hasOwnProperty("version"))
 								+summaryItem("Version")
 									| #{addressObj.version}
 
-							if (addressObj.hash)
+							if (addressObj && addressObj.hash)
 								+summaryItem("Hash 160")
-									| #{utils.ellipsizeMiddle(addressObj.hash.toString("hex"), 12)}
-									+copyTextButton(addressObj.hash.toString("hex"))
+									| #{utils.ellipsizeMiddle(addressObj.hash, 12)}
+									+copyTextButton(addressObj.hash)
 
 							+summaryItem("Script Pub Key")
 								| #{utils.ellipsizeMiddle(result.validateaddress.scriptPubKey, 12)}
 								+copyTextButton(result.validateaddress.scriptPubKey)
 
-							if (result.validateaddress.hasOwnProperty("witness_version"))
+							if (utils.objHasProperty(result.validateaddress, "witness_version"))
 								+summaryItem("Witness Version")
 									| #{result.validateaddress.witness_version}
 
@@ -207,7 +212,7 @@ block content
 						if (true)
 							if (addressApiError && addressApiError.error && addressApiError.error.code && addressApiError.error.code == -32600)
 								span Failed to retrieve transaction history from Electrum. See 
-								a(href="https://github.com/david/wcn-rpc-explorer/issues/67") Issue #67
+								a(href="https://github.com/janoside/btc-rpc-explorer/issues/67") Issue #67
 								span  for more information.
 
 
@@ -220,12 +225,12 @@ block content
 									each err, errIndex in addressDetailsErrors
 										if (err.e && err.e && err.e.message == "history too large")
 											span Failed to retrieve transaction history from ElectrumX because this address is involved in too many transactions (more than ElectrumX currently supports retrieving). See 
-											a(href="https://github.com/david/wcn-rpc-explorer/issues/67") Issue #67
+											a(href="https://github.com/janoside/btc-rpc-explorer/issues/67") Issue #67
 											span  for more information.
 										
 										else if (err.e && err.e.message && err.e.message == "failed to get confirmed status") 
 											span Failed to retrieve transaction history from Electrum Rust Server (electrs). See&nbsp;
-											a(href="https://github.com/david/wcn-rpc-explorer/issues/67") Issue #67
+											a(href="https://github.com/janoside/btc-rpc-explorer/issues/67") Issue #67
 											span  for more information.
 											.mt-2
 												| As a workaround, consider starting electrs with a custom&nbsp;
@@ -235,7 +240,7 @@ block content
 										else if (err == "No address API configured")
 											.mb-2 No address API is configured.
 											.mb-0 See 
-												| <a href="https://github.com/david/wcn-rpc-explorer/blob/master/.env-sample">the example configuration file</a>
+												| <a href="https://github.com/janoside/btc-rpc-explorer/blob/master/.env-sample">the example configuration file</a>
 												|  for help setting up an address API.
 
 										else
@@ -250,7 +255,7 @@ block content
 											tr
 												td.text-end
 													small.text-muted #{(txidIndex + offset + 1).toLocaleString()}
-												td.font-monospace
+												td
 													- var blockHeight = addressDetails.blockHeightsByTxid[txid];
 													- var blockHeightParam = blockHeight > 0 ? `@${blockHeight}` : "";
 													a(href=`./tx/${txid}${blockHeightParam}`) #{txid}
@@ -261,7 +266,7 @@ block content
 
 							else
 								- var txIOHighlightAddress = address;
-								- var options = {blockHeightsByTxid: blockHeightsByTxid, showDates: true, highlightAddress: address, addrGainsByTxid: addrGainsByTx, addrLossesByTxid: addrLossesByTx};
+								- var options = {currentBlockHeight: getblockchaininfo.blocks, blockHeightsByTxid: blockHeightsByTxid, showDates: true, showConfirmations: true, highlightAddress: address, addrGainsByTxid: addrGainsByTx, addrLossesByTxid: addrLossesByTx, hidePagination:crawlerBot};
 								+txList(transactions, addressDetails.txCount, limit, offset, txInputsByTransaction, options)
 
 							
@@ -272,12 +277,16 @@ block content
 					+contentSection("validateaddress")
 						pre
 							code.json #{JSON.stringify(result.validateaddress, null, 4)}
-								
 
 					if (addressDetails)
 						+contentSection("addressDetails")
 							pre
 								code.json #{JSON.stringify(addressDetails, null, 4)}
+
+					if (addressObj)
+						+contentSection("addressObj")
+							pre
+								code.json #{JSON.stringify(addressObj, null, 4)}
 									
 
 		
