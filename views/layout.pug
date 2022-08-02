@@ -1,3 +1,5 @@
+include ./includes/shared-mixins.pug
+
 doctype html
 html(lang="en")
 	head
@@ -6,51 +8,49 @@ html(lang="en")
 		meta(name="csrf-token", content=csrfToken)
 		meta(name="viewport", content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0, shrink-to-fit=no")
 
-		meta(name="description" content="Open-source, easy-to-use, educational Widecoin explorer whose only dependency is your Widecoin Core node.")
+		meta(name="description" content="Open-source, easy-to-use, educational Bitcoin explorer whose only dependency is your Bitcoin Core node.")
 		
 		if (!homepage)
-			link(rel="stylesheet", href="./style/highlight.min.css", integrity="")
+			link(rel="stylesheet", href=`./style/highlight.min.css?v=${appVersion}`, integrity="")
 
 
-		if (userSettings.uiTheme == "light")
-			link(rel="stylesheet", href="./style/light.css", integrity="")
-				
-		else
-			link(rel="stylesheet", href="./style/dark.css", integrity="")
+		+themeCss
 		
 
 		link(id="canonical" rel="canonical" href="https://explorer.widecoin.org")
 
-		meta(property="og:title" content="Widecoin Explorer")
-		meta(property="og:description" content="Open-source, easy-to-use, educational Widecoin explorer whose only dependency is your Widecoin Core node.")
+		meta(property="og:title" content=(metaTitle != undefined ? metaTitle : "Explorer.widecoin.org - Open-Source Widecoin Explorer"))
+		meta(property="og:description" content=(metaDesc != undefined ? metaDesc : "Open-source, easy-to-use, educational Widecoin explorer whose only dependency is your Bitcoin Core node."))
 		meta(property="og:image" content="https://explorer.widecoin.org/img/preview.png")
 
 		meta(property="twitter:card" content="summary_large_image")
 		meta(property="twitter:site" content="@widecoin1")
 		meta(property="twitter:creator" content="@widecoin1")
-		meta(property="twitter:title" content="explorer.widecoin.org")
-		meta(property="twitter:description" content="Open-source, easy-to-use, educational Widecoin explorer whose only dependency is your Widecoin Core node.")
-		meta(property="twitter:image:src" content="https://explorer.widecoin.org/img/preview.png")
-		meta(property="twitter:domain" content="https://explorer.widecoin.org")
+		meta(property="twitter:title" content=(metaTitle != undefined ? metaTitle : "Explorer.widecoin.org"))
+		meta(property="twitter:description" content=(metaDesc != undefined ? metaDesc : "Open-source, easy-to-use, educational Widecoin explorer whose only dependency is your Bitcoin Core node."))
+		meta(property="twitter:image:src" content=(metaImgUrl != undefined ? metaImgUrl : "https://explorer.widecoin.org/img/preview.png"))
+		meta(property="twitter:domain" content="explorer.widecoin.org")
 
-		link(rel="apple-touch-icon", sizes="180x180", href="./img/logo/apple-touch-icon.png")
-		link(rel="icon", type="image/png", sizes="32x32", href="./img/logo/favicon-32x32.png")
-		link(rel="icon", type="image/png", sizes="16x16", href="./img/logo/favicon-16x16.png")
-		link(rel="manifest", href="./img/logo/site.webmanifest")
-		link(rel="mask-icon", href="./img/logo/safari-pinned-tab.svg", color="#f7931a")
-		link(rel="shortcut icon", href="./img/logo/favicon.ico")
-		meta(name="apple-mobile-web-app-title", content="WCN Explorer")
-		meta(name="application-name", content="WCN Explorer")
+		- var network = global.activeBlockchain || "main";
+		if (!network.endsWith("net") && network != "regtest")
+			- network = (network + "net"); // handles "main" -> "mainnet" and "test" -> "testnet"
+
+		link(rel="apple-touch-icon", sizes="180x180", href=`./img/logo/${network}/apple-touch-icon.png`)
+		link(rel="icon", type="image/png", sizes="32x32", href=`./img/logo/${network}/favicon-32x32.png`)
+		link(rel="icon", type="image/png", sizes="16x16", href=`./img/logo/${network}/favicon-16x16.png`)
+		link(rel="manifest", href=`./img/logo/${network}/site.webmanifest`)
+		link(rel="mask-icon", href=`./img/logo/${network}/safari-pinned-tab.svg`, color="#f7931a")
+		link(rel="shortcut icon", href=`./img/logo/${network}/favicon.ico`)
+		meta(name="apple-mobile-web-app-title", content="BTC Explorer")
+		meta(name="application-name", content="BTC Explorer")
 		meta(name="msapplication-TileColor", content="#022e70")
-		meta(name="msapplication-config", content="./img/logo/browserconfig.xml")
+		meta(name="msapplication-config", content=`./img/logo/${network}/browserconfig.xml`)
 		meta(name="theme-color" content="#022e70")
 
 		include includes/debug-overrides.pug
 
 		block headContent
 			title Explorer
-	
-	include ./includes/shared-mixins.pug
 
 	body.bg-header-footer
 		nav.navbar.navbar-expand-md.navbar-dark.bg-header-footer
@@ -60,12 +60,17 @@ html(lang="en")
 						if (coinConfig.logoUrlsByNetwork && coinConfig.logoUrlsByNetwork[activeBlockchain])
 							img.header-image(src=coinConfig.logoUrlsByNetwork[activeBlockchain], alt="logo")
 						else
-							img.header-image(src="./img/logo/logo.svg", alt="logo")
+							img.header-image(src="./img/logo/mainnet/logo.svg", alt="logo")
 
 						if (coinConfig.siteTitlesByNetwork && coinConfig.siteTitlesByNetwork[activeBlockchain])
 							span.fw-light #{coinConfig.siteTitlesByNetwork[activeBlockchain]}
 						else
 							span.fw-light Widecoin Explorer
+
+				if (false && config.demoSite)
+					- var networkNameMap = {"main": "Mainnet", "test": "Testnet", "signet": "Signet"};
+					span.badge.bg-primary(title=`This is a public demo, but this tool is designed to be installed and run by all Bitcoiners...<br/><i>Don't Trust, Verify</i>!`, data-bs-toggle="tooltip", data-bs-html="true")
+						span Public Demo
 						
 				button.navbar-toggler.navbar-toggler-end(type="button", data-bs-toggle="collapse", data-bs-target="#navbarNav", aria-label="collapse navigation")
 					span.navbar-toggler-icon
@@ -108,7 +113,7 @@ html(lang="en")
 													i.fab.fa-bitcoin.fa-lg.me-2(style=`color: ${coinConfig.coinColorsByNetwork[demoSite]}`)
 												
 												| #{coinConfig.siteTitlesByNetwork[demoSite].replace("Explorer", "").replace("Bitcoin", "Mainnet")}
-							// Tool Menu
+
 							if (config.siteTools)
 								li.nav-item.dropdown.me-0.me-md-2.mt-2.mt-md-0.text-center.text-md-start
 									a.nav-link.rounded.bg-header-footer-highlight.text-white.dropdown-toggle(href="javascript:void(0)", role="button", data-bs-toggle="dropdown", aria-haspopup="true", aria-expanded="false")
@@ -164,32 +169,61 @@ html(lang="en")
 														if (userSettings.localCurrency == item.toLowerCase())
 															i.fas.fa-check
 
-									//-hr.dropdown-divider.mt-2.mb-2
+									hr.dropdown-divider.mt-2.mb-2
+									span.dropdown-header Theme
 
-									//-a.dropdown-item(href=`./user-settings`) More settings...
+									- var items = ["fa", "sat"];
+									if (config.queryExchangeRates && global.exchangeRates)
+										- items.push("local");
+
+									.btn-group.ms-3
+										a.btn.btn-sm.px-3(id="theme-toggler-light", href=`javascript:void(0);` onclick=`toggleTheme(); return false;`, class=(userSettings.uiTheme == "light" ? "btn-primary" : "btn-outline-primary"))
+											i.fas.fa-sun.text-warning
+										a.btn.btn-sm.px-3(id="theme-toggler-dark",href=`javascript:void(0);` onclick=`toggleTheme(); return false;`, class=(userSettings.uiTheme == "light" ? "btn-outline-primary" : "btn-primary"))
+											i.fas.fa-moon
+
+									hr.dropdown-divider.mt-2.mb-2
+									span.dropdown-header Dislay Timezone
+
+									- var items = ["fa", "sat"];
+									if (config.queryExchangeRates && global.exchangeRates)
+										- items.push("local");
+
+									.btn-group.ms-3
+										a.btn.btn-sm.px-3(href=`./changeSetting?name=uiTimezone&value=utc`, class=(userSettings.uiTimezone == "utc" ? "btn-primary" : "btn-outline-primary")) UTC
+										a.btn.btn-sm.px-3(href=`./changeSetting?name=uiTimezone&value=local`, class=(userSettings.uiTimezone == "utc" ? "btn-outline-primary" : "btn-primary")) Local
+
+									p.px-3.pt-2.small.text-muted "Local" uses your browser's default offset:
+										span#browser-tz-offset.badge.bg-light.text-dark.ms-1.border
+										i.fas.fa-info-circle.ms-1(title="This value comes from your brower. If you wish to set a custom offset, you can do so below, in 'More settings...'", data-bs-toggle="tooltip")
+
+									//hr.dropdown-divider.mt-2.mb-2
+
+									//a.dropdown-item(href=`./user-settings`) More settings...
+									//a.dropdown-item(href=`./admin/dashboard`) Admin Dashboard
 
 
 							
 
 				form.form-inline.d-none.d-lg-inline(method="post", action="./search", style="width: 325px;")
 					input(type="hidden", name="_csrf", value=csrfToken)
-					.input-group.input-group
-						input.form-control.form-control(type="text", name="query", placeholder="block height/hash, txid, address", value=(query))
+					.input-group
+						input.form-control(type="text", name="query", placeholder="block height/hash, txid, address", value=(query))
 						
 						button.btn.btn-primary(type="submit")
 							i.fas.fa-search
 
 				form.form-inline.d-lg-none.w-100.mt-2.mt-md-0(method="post", action="./search")
 					input(type="hidden", name="_csrf", value=csrfToken)
-					.input-group.input-group
-						input.form-control.form-control(type="text", name="query", placeholder="height/hash/txid...", value=(query))
+					.input-group
+						input.form-control(type="text", name="query", placeholder="height/hash/txid...", value=(query))
 						
 						button.btn.btn-primary(type="submit")
 							i.fas.fa-search
 		
 
 
-		div.pb-4.pt-3.pt-md-4.bg-main(style=("background-color: " + bodyBgColor))
+		div.pb-4.pt-3.pt-md-4.bg-main
 			div.container.px-2.px-sm-3.mb-large
 				if (pageErrors && pageErrors.length > 0)
 					include includes/page-errors-modal.pug
@@ -222,127 +256,59 @@ html(lang="en")
 						h9 <span style="font-weight: bold;color:white;">Widecoin</span> (WCN) : WcPNtDxj5UdwZ6JKb92pKFMQ43MboQ4py3 <Br>
 						h9 <span style="font-weight: bold;color:white;">Bitcoin</span> (BTC) : 1KgoViPr71NBqDzojepyt6SmSKncojwbs2 <Br>
 						h9 <a href="https://widecoin.org/donation/" style="text-decoration: none;" target="_blank"><span style="font-weight: bold;color:white;">Donation with other currencies</span></a><Br>
-						h9 &copy; <script type="text/javascript">document.write(new Date().getFullYear());</script> by Widecoin
-						//-h9 &copy; 2021 by Widecoin
-						//-.text-start
-							- var darkTheme = (userSettings.uiTheme == "dark");
-							a.btn.fa-lg.bg-header-footer-highlight.me-2(href=`./changeSetting?name=uiTheme&value=${darkTheme ? "light" : "dark"}`, title=`Active Theme: <b>${darkTheme ? "Dark" : "Light"}</b><br/>Click to switch to <b>${darkTheme ? "Light" : "Dark"}</b>`, data-bs-toggle="tooltip", data-bs-html="true")
-
-								i.fas.fa-sun.text-warning.me-1
-								
-								span.me-1
-									if (darkTheme)
-										i.fas.fa-toggle-on.text-primary
-									else
-										i.fas.fa-toggle-on.fa-rotate-180.text-warning
-
-								i.fas.fa-moon.text-primary
-
-
-							.btn-group.dropup.me-2
-								button.btn.dropdown-toggle.bg-header-footer-highlight.text-white(type="button" data-bs-toggle="dropdown" aria-expanded="false")
-									i.fas.fa-shield-alt.me-1
-
-								ul.dropdown-menu.shadow(aria-label="Admin Tools Items")
-									span.dropdown-header Admin Tools
-
-									a.dropdown-item(href="./admin/dashboard") Dashboard
-									a.dropdown-item(href="./admin/stats") Stats
-							
-								
-					//-.col-5
-						.text-end
-							span(style="font-size: 1.5rem;")
-								if (global.sourcecodeProjectMetadata)
-									a.text-white.mb-1.me-3(href="https://github.com/david/wcn-rpc-explorer", title="View source code on Github", data-bs-toggle="tooltip")
-										i.fab.fa-github
-
-								-a.text-danger.mb-1.me-3(href="https://donate.bitcoinexplorer.org", target="_blank", title="Support this project with a donation", data-bs-toggle="tooltip")
-									i.fas.fa-heart.text-danger
-
-								-a.text-white.mb-1(href="https://twitter.com/BitcoinExplorer", target="_blank", title="Follow @BitcoinExplorer on Twitter", data-bs-toggle="tooltip")
-									i.fab.fa-twitter.text-twitter
-
-
-				//-hr
-
-				
-				//-.row.mt-4.mb-6
-					.col-lg-4
-						.mb-4
-							h6 Project
-
-							.ms-2
-								a.footer-link(href="https://explorer.widecoin.org") Widecoin Explorer
-									
-								if (global.sourcecodeProjectMetadata)
-									div.mt-2
-										a.btn.btn-primary.btn-sm.me-3.mb-1.text-decoration-none(href="https://github.com/david/wcn-rpc-explorer")
-											i.fas.fa-star.fontawesome-shadow.text-warning.me-2
-											span.badge.bg-white.text-dark #{global.sourcecodeProjectMetadata.stargazers_count}
-
-										a.btn.btn-primary.btn-sm.me-3.mb-1.text-decoration-none(href="https://github.com/david/wcn-rpc-explorer/fork")
-											i.fas.fa-code-branch.fontawesome-shadow.me-2
-											span.badge.bg-white.text-dark #{global.sourcecodeProjectMetadata.forks_count}
-
-					.col-lg-4
-						.mb-4
-							h6 App Details
-
-							.ms-2
-								span version: #{global.appVersion}
-								if (sourcecodeVersion)
-									br
-									//span commit: 
-									//	a.footer-link(href=`https://github.com/david/wcn-rpc-explorer/commit/${sourcecodeVersion}`) #{sourcecodeVersion}
-								
-								//br
-								span released: #{sourcecodeDate}
-								//span(style="font-size: 0.9em;")  (
-								//	a.footer-link(href="./changelog") changelog
-								//	span )
-
-					.col-lg-4
-						if (config.demoSite)
-							.mb-4
-								h6 Public Demos
-
-								.ms-2
-									if (coinConfig.demoSiteUrlsByNetwork && coinConfig.demoSiteUrlsByNetwork.main)
-										a.footer-link(href=coinConfig.demoSiteUrlsByNetwork.main) #{coinConfig.demoSiteUrlsByNetwork.main}
-									else
-										a.footer-link(href="https://bitcoinexplorer.org") https://bitcoinexplorer.org
-									
-									div.mt-2
-										- var demoSites = ["main", "test", "signet"];
-										
-										each demoSite in demoSites
-											a.me-2(href=coinConfig.demoSiteUrlsByNetwork[demoSite], title=coinConfig.siteTitlesByNetwork[demoSite], data-bs-toggle="tooltip")
-												img(src=coinConfig.logoUrlsByNetwork[demoSite], alt=coinConfig.siteTitlesByNetwork[demoSite], style="width: 40px; height: 40px;")
-								
-								
-
-		
-		script(src="./js/jquery.min.js", integrity="")
-		script(src="./js/bootstrap.bundle.min.js", integrity="")
-		script(defer, src="./js/fontawesome.min.js", integrity="")
-
-		script(src="./js/site.js", integrity="")
+						h9 &copy; <script type="text/javascript">document.write(new Date().getFullYear());</script> by Widecoin	<br>	
+						h9 Version: #{global.appVersion}
+		+sharedScriptTags
 		
 		script.
-			document.addEventListener("DOMContentLoaded", function(event) {
-				// enable tooltips everywhere
-				var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-				var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
-					return new bootstrap.Tooltip(tooltipTriggerEl);
-				});
+			var serverTzOffset = "!{new Decimal(new Date().getTimezoneOffset()).dividedBy(60)}";
+			var browserTzOffset = "!{browserTzOffset}";
+			var currentBrowserTzOffset = (new Date().getTimezoneOffset() / 60).toString();
+			var userTzOffset = "!{userTzOffset}";
+			
+			document.addEventListener("DOMContentLoaded", function(event) {''
+				enableTooltipsAndPopovers();
 
-				// enable popovers everywhere
-				var popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'));
-				var popoverList = popoverTriggerList.map(function (popoverTriggerEl) {
-					return new bootstrap.Popover(popoverTriggerEl);
-				});
+				onLoad_tabSelection();
+
+				//console.log(Intl.DateTimeFormat().resolvedOptions().timeZone);
+				console.log("Manual TZ Offset: " + userTzOffset);
+				console.log("Browser TZ Offset: " + browserTzOffset);
+
+				var displayTz = -1 * browserTzOffset;
+				$("#browser-tz-offset").text(`${displayTz >= 0 ? "+" : ""}${displayTz} hr`);
+
+				if (browserTzOffset != currentBrowserTzOffset) {
+					browserTzOffset = currentBrowserTzOffset;
+
+					$.get(`./changeSetting?name=browserTzOffset&value=${browserTzOffset}`, function(data) {
+						console.log("Browser timezone saved.");
+
+						if (userTzOffset == "unset") {
+							$(".date-text").each((i, obj) => {
+								var timestampUtc = $(obj).attr("data-timestamp-utc");
+								var includeAgo = $(obj).attr("data-date-ago");
+								var formatStr = $(obj).attr("data-date-format");
+								if (formatStr) {
+									formatStr = `&formatString=${formatStr}`;
+								}
+								
+								$.get(`./snippet/timestamp?timestamp=${timestampUtc}&includeAgo=${includeAgo}${formatStr}`, function(data) {
+									$(obj).html(data);
+
+									enableTooltipsAndPopovers();
+								});
+							});
+						}
+					});
+				}
 			});
+
+		if (perfResults)
+			script.
+				var perfId = !{JSON.stringify(perfId)};
+
+				console.log(`Performance ID: ${perfId}`);
 
 		if (!homepage)
 			script(src="./js/highlight.pack.js", integrity="")

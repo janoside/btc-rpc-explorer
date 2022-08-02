@@ -1,0 +1,140 @@
+extends layout
+
+block headContent
+	title Extended Public Key
+
+block content
+	+pageTitle("Extended Public Key", extendedPubkey, true)
+
+	+dismissableInfoAlert("xpubPageNoteDismissed", "About Extended Public Keys...")
+		.mb-3 !{markdown("**Extended Public Keys** (colloquially \"XPUBs\") are **parent** public keys from which many **children** public keys can be mathematically *derived* using the [BIP32](https://github.com/bitcoin/bips/blob/master/bip-0032.mediawiki) standard. Each **child** key represents a Bitcoin address. Therefore, an XPUB represents a unique set of Bitcoin addresses.")}
+		.mb-n3 !{markdown("Wallet software often presents users with an XPUB. Exposure of your XPUB, although it doesn't risk theft of your bitcoin, **harms your privacy** by allowing anyone with access to your XPUB to know all of your addresses and the details of all transactions sent to and from them. This page is meant to demonstrate that fact - search for any XPUB (xpub, ypub, zpub...) and this tool will display all of the addresses derived from that key.")}
+
+	+contentSection("Summary")
+		+summaryRow(3 + (balance ? 1 : 0) + (changeBalance ? 1 : 0) + (xpub ? 1 : 0))
+			+summaryItem("Key Type", "A simple shorthand for the type of extended public key. Each type (xpub, ypub, zpub...) is interpreted slightly differently, resulting in a different sequence of addresses.")
+				| #{keyType}
+
+			+summaryItem("Output Type", "The type of output (address) that is produced from this extended public key.<br/><br/>In the technical terms of BIPs 44, 49, and 84 which define the scheme for deriving addresses, this item is referred to as the 'purpose'.")
+				if (pubkeyTypeDesc)
+					span.border-dotted(title=pubkeyTypeDesc, data-bs-toggle="tooltip") #{pubkeyType}
+				else
+					| #{pubkeyType}
+
+			+summaryItem("BIP32 Path", "BIP32 defines a standard for deriving child keys from an extended parent key. This 'path', also known as the 'derivation path', comes from that standard and instructs software how to generate child keys.")
+				| #{bip32Path}
+
+			if (balance)
+				+summaryItem("Balance")
+
+			if (changeBalance)
+				+summaryItem("Change Balance")
+
+
+	if (relatedKeys)
+		+contentSection(`Extended Public Key "Family"`)
+			p The below "family" of extended public keys all share public key data, but each corresponds to a different <b>BIP32 path</b> and generates a different type of output address. Each key includes the first address from its BIP32 sequence. Clicking on a key will show its full details, including the full list of addresses.
+
+			.table-responsive
+				table.table.table-borderless.table-striped.mb-0
+					thead
+						tr
+							th Key Type
+							th Extended Public Key
+							th Output Type
+							th BIP32 Path
+							th First Address
+
+					tbody
+						each item in relatedKeys
+							tr
+								td #{item.keyType}
+									if (item.key == extendedPubkey)
+										span(title="The current extended public key", data-bs-toggle="tooltip")
+											i.fas.fa-arrow-left.text-warning.ms-2
+
+								td
+									a(href=`./xyzpub/${item.key}`, class=((item.key == extendedPubkey) ? "text-info" : false)) #{utils.ellipsizeMiddle(item.key, 16)}
+									+copyTextButton(item.key)
+
+								td #{item.outputType}
+								td #{item.bip32Path}
+								td
+									- var firstAddress = item.firstAddresses[0];
+									a(href=`./address/${firstAddress}`) #{utils.ellipsizeMiddle(firstAddress, 20)}
+									+copyTextButton(firstAddress)
+
+			if (false)
+				+summaryRow(relatedKeys.length)
+					each item in relatedKeys
+						+summaryItem(`${item.keyType} (${item.outputType})`)
+							a(href=`./xyzpub/${item.key}`) #{utils.ellipsizeMiddle(item.key, 16)}
+							+copyTextButton(item.key)
+							.mt-2
+							
+							div.small.text-muted First #{item.firstAddresses.length.toLocaleString()} addresses:
+
+							each addr in item.firstAddresses
+								a(href=`./address/${addr}`) #{utils.ellipsizeMiddle(addr, 16)}
+								+copyTextButton(addr)
+								br
+
+	if (false)
+		.row
+			.col
+				pre
+					code.json #{JSON.stringify(relatedKeys, null, 4)}
+
+	.row
+		.col
+			+contentSection("Receive Addresses")
+				.table-responsive
+					table.table.table-borderless.table-striped.mb-0
+						thead
+							tr
+								th.text-end Index
+								th Address
+								//th N(tx)
+								//th Balance
+						tbody
+							each address, addressIndex in receiveAddresses
+								tr
+									td.text-end
+										.text-muted ##{(offset + addressIndex).toLocaleString()}
+
+									td
+										a(href=`./address/${address}`) #{utils.ellipsizeMiddle(address, 24)}
+										+copyTextButton(address)
+
+									//td -
+									//td -
+
+
+		.col
+			+contentSection("Change Addresses")
+				.table-responsive
+					table.table.table-borderless.table-striped.mb-0
+						thead
+							tr
+								th.text-end Index
+								th Address
+								//th N(tx)
+								//th Balance
+						tbody
+							each address, addressIndex in changeAddresses
+								tr
+									td.text-end
+										.text-muted ##{(offset + addressIndex).toLocaleString()}
+									td
+										a(href=`./address/${address}`) #{utils.ellipsizeMiddle(address, 24)}
+										+copyTextButton(address)
+
+									//td -
+									//td -
+
+
+	.mt-4
+		.text-center.mb-2 Browse more addresses...
+		+pagination(limit, offset, null, 1000, paginationBaseUrl, "center", true)
+
+

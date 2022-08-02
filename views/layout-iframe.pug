@@ -1,0 +1,103 @@
+include ./includes/shared-mixins.pug
+
+doctype html
+html(lang="en")
+	head
+		meta(charset="utf-8")
+		base(href=config.baseUrl)
+		base(target="_parent")
+		meta(name="csrf-token", content=csrfToken)
+		meta(name="viewport", content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0, shrink-to-fit=no")
+
+		meta(name="description" content="Open-source, easy-to-use, educational Widecoin explorer whose only dependency is your Widecoin Core node.")
+		
+		if (!homepage)
+			link(rel="stylesheet", href=`./style/highlight.min.css?v=${appVersion}`, integrity="")
+
+
+		+themeCss
+
+
+		link(id="canonical" rel="canonical" href="https://explorer.widecoin.org")
+
+		meta(property="og:title" content=(metaTitle != undefined ? metaTitle : "Explorer.widecoin.org - Open-Source Widecoin Explorer"))
+		meta(property="og:description" content=(metaDesc != undefined ? metaDesc : "Open-source, easy-to-use, educational Widecoin explorer whose only dependency is your Widecoin Core node."))
+		meta(property="og:image" content="https://explorer.widecoin.org/img/preview.png")
+
+		meta(property="twitter:card" content="summary_large_image")
+		meta(property="twitter:site" content="@widecoin1")
+		meta(property="twitter:creator" content="@widecoin1")
+		meta(property="twitter:title" content=(metaTitle != undefined ? metaTitle : "Explorer.widecoin.org.org"))
+		meta(property="twitter:description" content=(metaDesc != undefined ? metaDesc : "Open-source, easy-to-use, educational Widecoin explorer whose only dependency is your Widecoin Core node."))
+		meta(property="twitter:image:src" content=(metaImgUrl != undefined ? metaImgUrl : "https://explorer.widecoin.org/img/preview.png"))
+		meta(property="twitter:domain" content="Explorer.widecoin.org")
+
+		link(rel="apple-touch-icon", sizes="180x180", href="./img/logo/apple-touch-icon.png")
+		link(rel="icon", type="image/png", sizes="32x32", href="./img/logo/favicon-32x32.png")
+		link(rel="icon", type="image/png", sizes="16x16", href="./img/logo/favicon-16x16.png")
+		link(rel="manifest", href="./img/logo/site.webmanifest")
+		link(rel="mask-icon", href="./img/logo/safari-pinned-tab.svg", color="#f7931a")
+		link(rel="shortcut icon", href="./img/logo/favicon.ico")
+		meta(name="apple-mobile-web-app-title", content="BTC Explorer")
+		meta(name="application-name", content="BTC Explorer")
+		meta(name="msapplication-TileColor", content="#022e70")
+		meta(name="msapplication-config", content="./img/logo/browserconfig.xml")
+		meta(name="theme-color" content="#022e70")
+
+		include includes/debug-overrides.pug
+
+		block headContent
+			title Explorer
+	
+	include ./includes/shared-mixins.pug
+
+	body(style="background-color: transparent;")
+		div
+			div.px-2.px-sm-3
+				block content
+
+		
+								
+
+		+sharedScriptTags
+
+
+		script.
+			document.addEventListener("DOMContentLoaded", function(event) {
+				// enable tooltips everywhere
+				var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+				var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+					return new bootstrap.Tooltip(tooltipTriggerEl);
+				});
+
+				// enable popovers everywhere
+				var popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'));
+				var popoverList = popoverTriggerList.map(function (popoverTriggerEl) {
+					return new bootstrap.Popover(popoverTriggerEl);
+				});
+			});
+
+		if (!homepage)
+			script(src="./js/highlight.pack.js", integrity="")
+			script.
+				document.addEventListener("DOMContentLoaded", function(event) {
+					hljs.highlightAll();
+				});
+
+		
+		if (config.credentials.sentryUrl && config.credentials.sentryUrl.length > 0)
+			script(src="./js/sentry.min.js", integrity="", crossorigin="anonymous")
+			script.
+				Sentry.init({ dsn: '#{config.credentials.sentryUrl}' });
+
+		if (config.credentials.googleAnalyticsTrackingId && config.credentials.googleAnalyticsTrackingId.trim().length > 0)
+			script(async, src=("https://www.googletagmanager.com/gtag/js?id=" + config.credentials.googleAnalyticsTrackingId))
+			script.
+				window.dataLayer = window.dataLayer || [];
+				function gtag(){dataLayer.push(arguments);}
+				gtag('js', new Date());
+
+				gtag('config', '#{config.credentials.googleAnalyticsTrackingId}');
+
+		
+		block endOfBody

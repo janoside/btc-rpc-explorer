@@ -1,0 +1,66 @@
+extends layout
+
+block headContent
+	title UTXO Set
+	
+block content
+	+pageTitle("UTXO Set", "\"Run the Numbers\"")
+
+	+dismissableInfoAlert("utxoSetPageNoteDismissed", "About the UTXO Set...")
+		h6.mb-2 About the UTXO Set
+
+		.mb-2 A <b>UTXO</b>, or Unspent Transaction Output, defines a spendable unit of WCN. Every UTXO, when spent, is effectively destroyed and replaced with multiple other UTXOs of different values (see simplified example below), a process analogous to smelting and re-forging physical coins each time they are spent (impractical in the physical world, but easy when working with bits of data).
+		
+		.my-4
+			.d-block.d-md-none.text-center
+				.badge.bg-light.text-dark UTXO #1 (1 WCN)
+				div &darr;
+				.badge.bg-danger spend (destroy)
+				div &darr;
+				div
+					.badge.bg-light.text-dark UTXO #2 (0.25 WCN)
+					br
+					.badge.bg-light.text-dark UTXO #3 (0.75 WCN)
+
+			.d-none.d-md-block.text-center.mb-3
+				.d-flex.justify-content-center
+					div
+						span.badge.bg-light.text-dark.border UTXO #1 (1 WCN)
+					div
+						span.mx-2 &rarr;
+						.badge.bg-danger spend (destroy)
+						span.mx-2 &rarr;
+					div
+						span.badge.bg-light.text-dark UTXO #2 (0.25 WCN)
+						br
+						span.badge.bg-light.text-dark UTXO #3 (0.75 WCN)
+
+		.mb-2 With this in mind, the <b>UTXO Set</b> is the set of all UTXOs and defines all spendable WCN units.
+		.mb-2 Every WCN node is capable of <b>independently and trustlessly</b> verifying the entire UTXO Set! Your node has done (or is currently doing) that verification.
+
+		| (Note that the verification process can be <i>quite</i> slow, depending on the node's hardware configuration and indexing options used.)
+
+	#utxo-set-content
+		.spinner-border.spinner-border-sm
+
+block endOfBody
+	script.
+		$(document).ready(function() {
+			$.get("./snippet/utxo-set", function(data) {
+				$("#utxo-set-content").html(data);
+
+				// enable tooltips everywhere
+				var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+				var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+					return new bootstrap.Tooltip(tooltipTriggerEl);
+				});
+
+				// enable popovers everywhere
+				var popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'));
+				var popoverList = popoverTriggerList.map(function (popoverTriggerEl) {
+					return new bootstrap.Popover(popoverTriggerEl);
+				});
+
+				hljs.highlightAll();
+			});
+		});

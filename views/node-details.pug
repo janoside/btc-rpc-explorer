@@ -107,8 +107,15 @@ block content
 											i.fas.fa-times.text-danger
 
 								li
+									span.me-2 coinstatsindex
+									if (getindexinfo && getindexinfo["coinstatsindex"])
+										i.fas.fa-check.text-success
+									else
+										i.fas.fa-times.text-danger
+
+								li
 									span.me-2 blockfilterindex
-									if (getindexinfo["basic block filter index"])
+									if (getindexinfo && getindexinfo["basic block filter index"])
 										i.fas.fa-check.text-success
 									else
 										i.fas.fa-times.text-danger
@@ -148,17 +155,43 @@ block content
 											span.me-2
 												span.text-success active
 												small.text-muted.ms-2 (
-													a.border-dotted(href=`./block-height/${item.height}`, title=`${itemName} has been active since block ${item.height}`, data-bs-toggle="tooltip") #{item.height.toLocaleString()}
+													a.border-dotted(href=`./block-height/${item.height}`, title=`${itemName} has been active since block ${item.height.toLocaleString()}`, data-bs-toggle="tooltip") #{item.height.toLocaleString()}
 													| +)
 
-										else if (item.type == "bip9")
-											span.me-2.ms-2 #{item.type} - #{JSON.stringify(item.bip9)}
+										else if (item.type == "bip8") || (item.type == "bip9")
+											- var bip = item.type;
+											- var bip_status = item[bip].status
+											span.me-2
+												span.text-warning.text-lowercase #{bip_status}
+												small.text-muted.ms-2 (
+													a.border-dotted(title=`${itemName.toUpperCase()} ${bip_status.replace("_", " ")} since block ${item[bip].since.toLocaleString()} with BIP${bip.charAt(3)} and LockinOnTimeout=${item[bip].lockinontimeout}`, data-bs-toggle="tooltip") #{item[bip].since}
+													| +)
 
-										
 										if (forkUrls[itemName])
 											small
 												a(href=forkUrls[itemName], title=`More info about ${itemName}`, data-bs-toggle="tooltip", target="_blank")
 													i.fas.fa-external-link-alt.small
+
+										if (item.type == "bip9" && item.bip9 && (item.bip9.start_time || item.bip9.timeout))
+											div.small.text-muted
+												if (item.bip9.start_time)
+													span.me-2 start:
+													+timestamp(item.bip9.start_time, false, "M/D")
+
+												if (item.bip9.timeout)
+													if (item.bip9.start_time)
+														span.me-1 ,
+													span.me-2 timeout:
+													+timestamp(item.bip9.timeout, false, "M/D")
+
+										if (item.type == "bip9" && item.bip9 && item.bip9.min_activation_height)
+											div.small.text-muted
+												span.border-dotted(title="Minimum activation block height", data-bs-toggle="tooltip") min height
+												span.me-2 :
+												| #{item.bip9.min_activation_height.toLocaleString()}
+
+										
+										
 
 
 				+contentSection("Network")

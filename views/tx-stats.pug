@@ -15,9 +15,13 @@ block content
 			#{JSON.stringify(txStats.txCounts.length)}
 
 		if (true)
-			div.row
-				div.col-lg-6
-					+contentSection("1day Transactions")
+			+contentSection("Transaction Counts")
+				.row
+					.col-lg-6.mb-3
+						.d-flex.flex-row
+							h6.text-card-highlight.fw-light.mb-3
+								span.text-uppercase Last ~24 Hrs
+								span.small.ms-2 (#{new Decimal(txStatsDay.avgTimespan).dividedBy(60).toDP(1)} min/pt)
 						script var txCountDataDay = [];
 						each item, index in txStatsDay.txCounts
 							script txCountDataDay.push({x:#{item.x}, y:#{item.y}});
@@ -25,42 +29,73 @@ block content
 						- var graphData = {id:"graphDay", dataVar:"txCountDataDay", labels:txStatsDay.txLabels, title:"Transactions, 24hr", xaxisTitle:"Block", xaxisStep:5, yaxisTitle:"Tx Count"};
 						include ./includes/line-graph.pug
 
-							
+					.col-lg-6.mb-3
+						.d-flex.flex-row
+							h6.text-card-highlight.fw-light.mb-3
+								span.text-uppercase Last ~7 Days
+								span.small.ms-2 (#{new Decimal(txStatsWeek.avgTimespan).dividedBy(60).toDP(1)} min/pt)
 
-				div.col-lg-6
-					+contentSection("7day Transactions")
 						script var txCountDataWeek = [];
 						each item, index in txStatsWeek.txCounts
 							script txCountDataWeek.push({x:#{item.x}, y:#{item.y}});
 
 						- var graphData = {id:"graphWeek", dataVar:"txCountDataWeek", labels:txStatsWeek.txLabels, title:"Transactions, 7day", xaxisTitle:"Block", xaxisStep:100, yaxisTitle:"Tx Count"};
 						include ./includes/line-graph.pug
-	
 
-				div.col-lg-6
-					+contentSection("30day Transactions")
+					.col-lg-6.mb-3
+						.d-flex.flex-row
+							h6.text-card-highlight.fw-light.mb-3
+								span.text-uppercase Last ~30 Days
+								span.small.ms-2 (#{new Decimal(txStatsMonth.avgTimespan).dividedBy(60).dividedBy(60).toDP(1)} hr/pt)
+
 						script var txCountDataMonth = [];
 						each item, index in txStatsMonth.txCounts
 							script txCountDataMonth.push({x:#{item.x}, y:#{item.y}});
 
 						- var graphData = {id:"graphMonth", dataVar:"txCountDataMonth", labels:txStatsMonth.txLabels, title:"Transactions, 30day", xaxisTitle:"Block", xaxisStep:500, yaxisTitle:"Tx Count"};
 						include ./includes/line-graph.pug
-							
 
-				div.col-lg-6
-					+contentSection("All-Time Transactions")
+					.col-lg-6.mb-3
+						.d-flex.flex-row
+							h6.text-card-highlight.fw-light.mb-3
+								span.text-uppercase Last ~365 Days
+								span.small.ms-2 (#{new Decimal(txStatsYear.avgTimespan).dividedBy(60).dividedBy(60).dividedBy(24).toDP(1)} day/pt)
+
+						script var txCountDataYear = [];
+						each item, index in txStatsYear.txCounts
+							script txCountDataYear.push({x:#{item.x}, y:#{item.y}});
+
+						- var graphData = {id:"graphYear", dataVar:"txCountDataYear", labels:txStatsYear.txLabels, title:"Transactions, 365day", xaxisTitle:"Block", xaxisStep:500, yaxisTitle:"Tx Count"};
+						include ./includes/line-graph.pug
+
+					.col
+						.d-flex.flex-row
+							h6.text-card-highlight.fw-light.mb-3
+								span.text-uppercase All Time
+								span.small.ms-2 (#{new Decimal(txStats.avgTimespan).dividedBy(60).dividedBy(60).dividedBy(24).toDP(1)} day/pt)
+
 						script var txCountDataAlltime = [];
 						each item, index in txStats.txCounts
 							script txCountDataAlltime.push({x:#{item.x}, y:#{item.y}});
 
-						- var graphData = {id:"graphAlltime", dataVar:"txCountDataAlltime", labels:txStatsMonth.txLabels, title:"Transactions, All time", xaxisTitle:"Block", xaxisStep:500, yaxisTitle:"Tx Count"};
+						- var graphData = {id:"graphAlltime", dataVar:"txCountDataAlltime", labels:txStats.txLabels, title:"Transactions, All time", xaxisTitle:"Block", xaxisStep:500, yaxisTitle:"Tx Count"};
 						include ./includes/line-graph.pug
 
 
+			.d-flex.flex-row
+				div
+					+sectionTitle("Transaction Rates")
+				div
+					span.small.ms-1 (tx/sec)
 
-			div.row
-				div.col-lg-6
-					+contentSection("1day Tx Rate")
+			+contentSection
+				.row
+					.col-lg-6.mb-3
+						.d-flex.flex-row
+							h6.text-card-highlight.fw-light.mb-3
+								span.text-uppercase Last ~24 Hrs
+								span.small.ms-2 (#{new Decimal(txStatsDay.avgTimespan).dividedBy(60).toDP(1)} min/pt)
+
 						script var txRateDataDay = [];
 						each item, index in txStatsDay.txRates
 							script txRateDataDay.push({x:#{item.x}, y:#{item.y}});
@@ -68,10 +103,12 @@ block content
 						- var graphData = {id:"graphRateDay", dataVar:"txRateDataDay", labels:txStatsDay.txLabels, title:"Tx Rate, 24hr", xaxisTitle:"Block", xaxisStep:5, yaxisTitle:"Tx Per Sec"};
 						include ./includes/line-graph.pug
 
-							
+					.col-lg-6.mb-3
+						.d-flex.flex-row
+							h6.text-card-highlight.fw-light.mb-3
+								span.text-uppercase Last ~7 Days
+								span.small.ms-2 (#{new Decimal(txStatsWeek.avgTimespan).dividedBy(60).toDP(1)} min/pt)
 
-				div.col-lg-6
-					+contentSection("7day Tx Rate")
 						script var txRateDataWeek = [];
 						each item, index in txStatsWeek.txRates
 							script txRateDataWeek.push({x:#{item.x}, y:#{item.y}});
@@ -79,10 +116,12 @@ block content
 						- var graphData = {id:"graphRateWeek", dataVar:"txRateDataWeek", labels:txStatsWeek.txLabels, title:"Tx Rate, 7day", xaxisTitle:"Block", xaxisStep:100, yaxisTitle:"Tx Per Sec"};
 						include ./includes/line-graph.pug
 
-							
-
-				div.col-lg-6
-					+contentSection("30day Tx Rate")
+					.col-lg-6.mb-3
+						.d-flex.flex-row
+							h6.text-card-highlight.fw-light.mb-3
+								span.text-uppercase Last ~30 Days
+								span.small.ms-2 (#{new Decimal(txStatsMonth.avgTimespan).dividedBy(60).dividedBy(60).toDP(1)} hr/pt)
+								
 						script var txRateDataMonth = [];
 						each item, index in txStatsMonth.txRates
 							script txRateDataMonth.push({x:#{item.x}, y:#{item.y}});
@@ -90,16 +129,32 @@ block content
 						- var graphData = {id:"graphRateMonth", dataVar:"txRateDataMonth", labels:txStatsMonth.txLabels, title:"Tx Rate, 30day", xaxisTitle:"Block", xaxisStep:500, yaxisTitle:"Tx Per Sec"};
 						include ./includes/line-graph.pug
 
-							
+					.col-lg-6.mb-3
+						.d-flex.flex-row
+							h6.text-card-highlight.fw-light.mb-3
+								span.text-uppercase Last ~365 Days
+								span.small.ms-2 (#{new Decimal(txStatsYear.avgTimespan).dividedBy(60).dividedBy(60).dividedBy(24).toDP(1)} day/pt)
 
-				div.col-lg-6
-					+contentSection("All-Time Tx Rate")
+						script var txRateDataYear = [];
+						each item, index in txStatsYear.txRates
+							script txRateDataYear.push({x:#{item.x}, y:#{item.y}});
+
+						- var graphData = {id:"graphRateYear", dataVar:"txRateDataYear", labels:txStatsYear.txLabels, title:"Tx Rate, 365day", xaxisTitle:"Block", xaxisStep:500, yaxisTitle:"Tx Per Sec"};
+						include ./includes/line-graph.pug
+
+					.col
+						.d-flex.flex-row
+							h6.text-card-highlight.fw-light.mb-3
+								span.text-uppercase All Time
+								span.small.ms-2 (#{new Decimal(txStats.avgTimespan).dividedBy(60).dividedBy(60).dividedBy(24).toDP(1)} day/pt)
+
 						script var txRateDataAlltime = [];
 						each item, index in txStats.txRates
 							script txRateDataAlltime.push({x:#{item.x}, y:#{item.y}});
 
-						- var graphData = {id:"graphRateAlltime", dataVar:"txRateDataAlltime", labels:txStatsMonth.txLabels, title:"Tx Rate, All time", xaxisTitle:"Block", xaxisStep:500, yaxisTitle:"Tx Per Sec"};
+						- var graphData = {id:"graphRateAlltime", dataVar:"txRateDataAlltime", labels:txStats.txLabels, title:"Tx Rate, All time", xaxisTitle:"Block", xaxisStep:500, yaxisTitle:"Tx Per Sec"};
 						include ./includes/line-graph.pug
+
 								
 							
 

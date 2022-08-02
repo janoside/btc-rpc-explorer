@@ -2,13 +2,13 @@
   "coinbase_tags": {
     "/nodeStratum/": {
       "name": "Miningp01",
-      "link": "http://miningp01.widecoin.org:8181"
+      "link": "http://miningp01.widecoin.org"
     },
     "KriptoKyng Pool": {
       "name": "KriptoKyng",
       "link": "https://kriptokyng.com"
     },
-     "pool.rplant.xyz": {
+    "pool.rplant.xyz": {
       "name": "Rplant",
       "link": "https://pool.rplant.xyz"
     },
@@ -48,5 +48,19 @@
       "name": "Mining4People",
       "link": "mining4people.com"    
     }
-  }
+  },
+    "payout_addresses": {
+      "WRBwmEmJrQVZpHjpV6HzVxmGDoFi2v2Nv8": {
+        "name": "Miningp01",
+        "link": "http://miningp01.widecoin.org/",
+      "wc1qkcgnrpddh8splmlx5atm457dgjeau997c9jln4": {
+          "name": "KriptoKyng",
+          "link": "https://kriptokyng.com"
+      }
+    }
+  },
+  "unknown_miner_payout_addresses": {
+		"somePayoutAddress": {
+		}
+	}
 }

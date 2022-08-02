@@ -5,6 +5,7 @@ $main-bg: #f0f4f7;
 
 $border-color: #e4e7eb;
 $card-border-color: $border-color;
+$card-highlight-color: #567997;
 
 
 $nav-tabs-border-color: #adb5bd;
@@ -18,10 +19,12 @@ $alert-border-scale: -60%;
 
 
 
+$table-striped-bg: rgba(0, 0, 0, 0.04);
 
 
 @import "./main";
-@import "../../node_modules/bootstrap/scss/bootstrap";
+
+
 
 
 
@@ -30,7 +33,7 @@ $alert-border-scale: -60%;
 }
 
 .bg-header-footer {
-	background-color: #E49F02 !important;
+	background-color: #212529 !important;
 }
 
 .bg-header-footer-highlight {
@@ -38,7 +41,7 @@ $alert-border-scale: -60%;
 }
 
 .bg-header-footer {
-	background-color: #E49F02 !important;
+	background-color: #162740 !important;
 }
 
 .bg-header-footer-highlight {
@@ -47,6 +50,26 @@ $alert-border-scale: -60%;
 
 .bg-gradient-body-to-main {
 	background: linear-gradient(0deg, $main-bg 0%, $body-bg 100%);
+}
+
+.bg-card-highlight-badge {
+	background-color: darken($card-bg, 10%) !important;
+}
+
+.bg-tx-separator {
+	background-color: #dce1e5;
+}
+
+.border-card-highlight-badge {
+	border-color: darken($card-bg, 16%) !important;
+}
+
+.text-card-highlight {
+	color: $card-highlight-color !important;
+}
+
+.border-dotted {
+	border-bottom: dotted 1px #979ca5;
 }
 
 .card-highlight {

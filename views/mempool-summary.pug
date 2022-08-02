@@ -50,17 +50,18 @@ block content
 			.clearfix
 				.float-start
 					.me-4.d-inline-block.mb-3
-						h6 Fee Rate
-							small.fw-light.ms-1 (sat/vB)
+						h6.text-card-highlight.fw-light
+							span.text-uppercase Fee Rate
+							small.ms-1 (sat/vB)
 
-						- var feeRatesToEstimate = [1, 5, 15, 25, 50, 75, 100, 150];
+						- var feeRatesToEstimate = [1, 2, 3, 4, 5, 15, 25, 50, 75, 100, 150];
 
 						div.btn-group
 							each feeRateToEstimate in feeRatesToEstimate
 								a.btn.btn-outline-primary.fee-rate-btn(href="javascript:void(0)", onclick=`estimateMempoolDepth(parseInt($(this).attr("data-fee-rate"))); return false;`, data-fee-rate=feeRateToEstimate) #{feeRateToEstimate}
 
 					.me-4.d-inline-block.mb-3
-						h6 Transaction ID
+						h6.text-card-highlight.text-uppercase.fw-light Transaction ID
 
 						form.form-inline(method="post", action="javascript:void(0)", onsubmit=`estimateTransactionMempoolDepth($("#mempoolquery").val()); return false;` style="width: 325px;")
 							.input-group.input-group
@@ -70,8 +71,9 @@ block content
 									i.fas.fa-search
 
 					.me-4.d-inline-block.mb-3
-						h6 Custom Fee Rate
-							small.fw-light.ms-1 (sat/vB)
+						h6.text-card-highlight.fw-light
+							span.text-uppercase Custom Fee Rate
+							small.ms-1 (sat/vB)
 
 						form.form-inline(method="post", action="javascript:void(0)", onsubmit=`estimateMempoolDepth($("#customFeeRate").val()); return false;` style="width: 200px;")
 							.input-group.input-group
@@ -104,26 +106,27 @@ block content
 					table.table.table-striped.table-borderless.mb-3
 						thead
 							tr
-								th Fee Rate
-								th.text-end N(tx)
-								th.text-end
-									span.border-dotted(title="The number of blocks worth of transactions that transactions in this fee-rate bucket comprise.", data-bs-toggle="tooltip") N(blocks)
+								th.text-card-highlight.text-uppercase.fw-light Fee Rate
+								th.text-end.text-card-highlight.text-uppercase.fw-light N(tx)
+								th.text-end.text-card-highlight.text-uppercase.fw-light
+									span.border-dotted(title="The number of blocks filled by all transactions in this fee-rate bucket.", data-bs-toggle="tooltip") N(blocks)
 
-								th.text-end
-									span.border-dotted(title="The running total of the number of blocks needed to confirm this and higher fee-rate buckets.", data-bs-toggle="tooltip") Σ N(blocks)
-								th.text-end Total Fees
-								th.text-end Avg Fee
-								th.text-end Avg Fee Rate
-									small.fw-normal.text-muted.ms-2 (sat/vB)
+								th.text-end.text-card-highlight.text-uppercase.fw-light
+									span.border-dotted(title="The running total of the number of blocks filled by transactions at this fee-rate and higher.", data-bs-toggle="tooltip") Σ N(blocks)
+								th.text-end.text-card-highlight.text-uppercase.fw-light Σ Fees
+								th.text-end.text-card-highlight.text-uppercase.fw-light Avg Fee
+								th.text-end.text-card-highlight.fw-light
+									span.text-uppercase Avg Fee Rate
+									small.ms-1 (sat/vB)
 						tbody(id="fee-rate-table-body")
 							tr(id="fee-rate-table-row-prototype", style="display: none;")
-								td.font-monospace.data-label
-								td.font-monospace.text-end.data-count
-								td.font-monospace.text-end.data-block-count
-								td.font-monospace.text-end.data-sum-block-count
-								td.font-monospace.text-end.data-total-fees
-								td.font-monospace.text-end.data-avg-fee
-								td.font-monospace.text-end.data-fee-rate
+								td.data-label
+								td.text-end.data-count
+								td.text-end.data-block-count
+								td.text-end.data-sum-block-count
+								td.text-end.data-total-fees
+								td.text-end.data-avg-fee
+								td.text-end.data-fee-rate
 
 							tr(id="empty-row-to-fix-striped-coloring", style="display: none;")
 
@@ -139,20 +142,38 @@ block content
 
 			.row
 				.col
+					+contentSection("Highest Fee Rate Transactions")
+						.table-responsive
+							table.table.table-striped.table-borderless.mb-3
+								thead
+									tr
+										th.text-card-highlight.text-uppercase.fw-light Txid
+										th.text-end.text-card-highlight.fw-light
+											span.text-uppercase Fee Rate
+											span.ms-2 (sat/vB)
+
+								tbody(id="topfee-tx-table-body")
+									tr(id="topfee-tx-table-row-prototype", style="display: none;")
+										td.data-txid
+										td.text-end.data-feerate
+
+									tr(id="empty-row-to-fix-striped-coloring", style="display: none;")
+
+				.col
 					+contentSection("Oldest Transactions")
 						.table-responsive
 							table.table.table-striped.table-borderless.mb-3
 								thead
 									tr
-										th Txid
-										th.text-end
+										th.text-card-highlight.text-uppercase.fw-light Txid
+										th.text-end.text-card-highlight.text-uppercase.fw-light
 											span.border-dotted(title="How long ago this transaction was first seen by your node.", data-bs-toggle="tooltip")
 												| Age
 
 								tbody(id="oldest-tx-table-body")
 									tr(id="oldest-tx-table-row-prototype", style="display: none;")
-										td.font-monospace.data-txid
-										td.font-monospace.text-end.data-age
+										td.data-txid
+										td.text-end.data-age
 
 									tr(id="empty-row-to-fix-striped-coloring", style="display: none;")
 
@@ -162,13 +183,13 @@ block content
 							table.table.table-striped.table-borderless.mb-3
 								thead
 									tr
-										th Txid
-										th.text-end Size
+										th.text-card-highlight.text-uppercase.fw-light Txid
+										th.text-end.text-card-highlight.text-uppercase.fw-light Size
 
 								tbody(id="largest-tx-table-body")
 									tr(id="largest-tx-table-row-prototype", style="display: none;")
-										td.font-monospace.data-txid
-										td.font-monospace.text-end.data-size
+										td.data-txid
+										td.text-end.data-size
 
 									tr(id="empty-row-to-fix-striped-coloring", style="display: none;")
 
@@ -198,7 +219,7 @@ block endOfBody
 
 		function updateStatus() {
 			$.ajax({
-				url: `./api/mempool-summary-status?statusId=${statusId}`
+				url: `./internal-api/mempool-summary-status?statusId=${statusId}`
 
 			}).done((res) => {
 				if (!res.count) {
@@ -212,11 +233,9 @@ block endOfBody
 				$("#progress-text").html(`<span class='fw-bold d-inline-block' style="width: 55px;">${percent.toDP(1)}%</span><span class='small fw-light ms-3'>(${res.done.toLocaleString()} of ${res.count.toLocaleString()})</span>`);
 
 				if (res.done == res.count) {
-					clearInterval(statusInterval);
-
 					if (summary == null) {
 						$.ajax({
-							url: `./api/get-mempool-summary?statusId=${statusId}`
+							url: `./internal-api/get-mempool-summary?statusId=${statusId}`
 
 						}).done((summaryResult) => {
 							if (summaryResult.count) {
@@ -227,6 +246,8 @@ block endOfBody
 								hljs.highlightAll();
 
 								displaySummaryData(summaryResult);
+
+								clearInterval(statusInterval);
 							}
 						}).always(() => {
 							// nothing
@@ -240,7 +261,7 @@ block endOfBody
 
 		function loadMempool() {
 			$.ajax({
-				url: `./api/build-mempool-summary?statusId=${statusId}`
+				url: `./internal-api/build-mempool-summary?statusId=${statusId}`
 
 			}).done((buildResult) => {
 				// we update status elsewhere, this call just kicks off the build
@@ -259,6 +280,7 @@ block endOfBody
 			var txSizeGraphData = buildTxSizeGraphData(summary);
 			var txAgeGraphData = buildTxAgeGraphData(summary);
 
+			fillTopfeeTxTable(summary);
 			fillOldestTxTable(summary);
 			fillLargestTxTable(summary);
 
@@ -284,7 +306,7 @@ block endOfBody
 			$("#avg-fee-rate").text(summary.averageFeePerByte);
 
 			$.ajax({
-				url: `./api/utils/formatLargeNumber/${summary.totalBytes},1`
+				url: `./internal-api/utils/formatLargeNumber/${summary.totalBytes},1`
 
 			}).done(function(result) {
 				$("#mem-usage").html(`<span>${result[0]} <small>${result[1].abbreviation}B</small></span>`);
@@ -304,30 +326,68 @@ block endOfBody
 			var mempoolBarChart = new Chart(ctx1, {
 				type: 'bar',
 				data: {
-					labels: feeRateGraphData.feeBucketLabels,
-					datasets: [{
-						data: feeRateGraphData.feeBucketTxCounts,
-						backgroundColor: feeRateGraphData.bgColors
-					}]
+					labels: feeRateGraphData.feeBucketLabels.reverse(),
+					datasets: [
+						/*{
+							data: feeRateGraphData.lineData,
+							type: "line",
+							yAxisID: "axis-block-count",
+							borderColor: "white",
+							lineTension: 0,
+							borderWidth: 2,
+							pointRadius: 2
+						},*/
+						{
+							data: feeRateGraphData.blockCounts.reverse(),
+							backgroundColor: feeRateGraphData.bgColors,
+							//yAxisID: "axis-tx-count",
+						},
+					]
 				},
 				options: {
-					legend: {
-						display: false
+					interaction: {
+						intersect: false,
+						mode: 'index',
+					},
+					plugins: {
+						legend: {
+							display: false
+						},
 					},
 					scales: {
-						xAxes: [{
-							gridLines: {
+						x: {
+							grid: {
 								color: gridLineColor
-							}
-						}],
-						yAxes: [{
-							ticks: {
-								beginAtZero:true
 							},
-							gridLines: {
+							title: {
+								display: true,
+								text: "Fee Rate (sat/vB)"
+							},
+						},
+						y: {
+							id: "axis-tx-count",
+							title: {
+								display: true,
+								text: "Block Count"
+							},
+							type: 'logarithmic',
+							ticks: {
+								beginAtZero:true,
+							},
+							grid: {
 								color: gridLineColor
 							}
-						}]
+						},
+						/*{
+							id: "axis-block-count",
+							position: "left",
+							ticks: {
+								beginAtZero:true,
+							},
+							grid: {
+								color: gridLineColor
+							}
+						}*/
 					}
 				}
 			});
@@ -344,23 +404,38 @@ block endOfBody
 					}]
 				},
 				options: {
-					legend: {
-						display: false
+					interaction: {
+						intersect: false,
+						mode: 'index',
+					},
+					plugins: {
+						legend: {
+							display: false
+						},
 					},
 					scales: {
-						xAxes: [{
-							gridLines: {
+						x: {
+							title: {
+								display: true,
+								text: "Transaction Size (bytes)"
+							},
+							grid: {
 								color: gridLineColor
 							}
-						}],
-						yAxes: [{
+						},
+						y: {
+							title: {
+								display: true,
+								text: "Transaction Count"
+							},
+							type: "logarithmic",
 							ticks: {
 								beginAtZero:true
 							},
-							gridLines: {
+							grid: {
 								color: gridLineColor
 							}
-						}]
+						}
 					}
 				}
 			});
@@ -377,23 +452,38 @@ block endOfBody
 					}]
 				},
 				options: {
-					legend: {
-						display: false
+					interaction: {
+						intersect: false,
+						mode: 'index',
+					},
+					plugins: {
+						legend: {
+							display: false
+						},
 					},
 					scales: {
-						xAxes: [{
-							gridLines: {
+						x: {
+							title: {
+								display: true,
+								text: "Transaction Age"
+							},
+							grid: {
 								color: gridLineColor
 							}
-						}],
-						yAxes: [{
+						},
+						y: {
+							title: {
+								display: true,
+								text: "Transaction Count"
+							},
+							type: "logarithmic",
 							ticks: {
 								beginAtZero:true
 							},
-							gridLines: {
+							grid: {
 								color: gridLineColor
 							}
-						}]
+						}
 					}
 				}
 			});
@@ -435,6 +525,24 @@ block endOfBody
 
 			$("#main-content").show();
 			$("#progress-wrapper").hide();
+		}
+
+		function fillTopfeeTxTable(summary) {
+			for (var i = 0; i < summary.highestFeeTxs.length; i++) {
+				var topfeeTx = summary.highestFeeTxs[i];
+
+				var row = $("#topfee-tx-table-row-prototype").clone();
+				row.attr("id", null);
+				row.addClass("topfee-tx-table-row");
+
+				row.find(".data-txid").html(`<a href="./tx/${topfeeTx.txid}">${topfeeTx.txid.substring(0, 16)}...</a>`);
+
+				row.find(".data-feerate").text(new Decimal(topfeeTx.feePerByte).times(100000000).times(4).toDP(1));
+
+				row.show();
+
+				$("#topfee-tx-table-body").append(row);
+			}
 		}
 
 		function fillOldestTxTable(summary) {
@@ -485,27 +593,43 @@ block endOfBody
 		}
 
 		function buildFeeRateGraphData(summary) {
-			var feeBucketLabels = [("[0 - " + summary["satoshiPerByteBucketMaxima"][0] + ")")];
+			var feeBucketLabels = [];
 			
+			var blockCounts = [];
 			for (var i = 0; i < summary["satoshiPerByteBuckets"].length; i++) {
 				var item = summary["satoshiPerByteBuckets"][i];
-				if (i > 0 && i < summary["satoshiPerByteBuckets"].length - 1) {
-					feeBucketLabels.push(("[" + summary["satoshiPerByteBucketMaxima"][i - 1] + " - " + summary["satoshiPerByteBucketMaxima"][i] + ")"));
+
+				if (i < summary["satoshiPerByteBuckets"].length - 1) {
+					feeBucketLabels.push(item.minFeeRate);
+					blockCounts.push(item.totalWeight / 4000000);
 				}
+			}
+
+			feeBucketLabels.shift();
+
+			var lineData = [];
+			var totalWeight = 0;
+			for (var i = summary.satoshiPerByteBuckets.length - 1; i >= 0; i--) {
+				lineData.push(summary.satoshiPerByteBuckets[i].totalWeight / 4000000 + totalWeight);
+				totalWeight += summary.satoshiPerByteBuckets[i].totalWeight / 4000000;
 			}
 
 			feeBucketLabels.push((summary.satoshiPerByteBucketMaxima[summary.satoshiPerByteBucketMaxima.length - 1] + "+"));
 				
-			var feeBucketTxCounts = summary["satoshiPerByteBucketCounts"];
 			var totalfeeBuckets = summary["satoshiPerByteBucketTotalFees"];
-
-			var graphData = {feeBucketLabels:[], bgColors:[], feeBucketTxCounts:feeBucketTxCounts};
+			
+			var graphData = {
+				feeBucketLabels:feeBucketLabels.map(x => [x]),
+				bgColors:[],
+				lineData:lineData,
+				blockCounts:blockCounts
+			};
 
 			for (var i = 0; i < feeBucketLabels.length; i++) {
 				var feeBucketLabel = feeBucketLabels[i];
-				var percentTx = Math.round(100 * feeBucketTxCounts[i] / summary.count).toLocaleString();
+				//var percentTx = Math.round(100 * feeBucketTxCounts[i] / summary.count).toLocaleString();
 				
-				graphData.feeBucketLabels.push([feeBucketLabel, `${feeBucketTxCounts[i]} tx (${percentTx}%)`]);
+				//graphData.feeBucketLabels.push([feeBucketLabel]);//, `${feeBucketTxCounts[i]} tx (${percentTx}%)`]);
 				graphData.bgColors.push(`hsl(${(333 * i / feeBucketLabels.length)}, 100%, 50%)`);
 			}
 
@@ -520,7 +644,7 @@ block endOfBody
 				var sizeBucketLabel = summary.sizeBucketLabels[i];
 				var percentTx = Math.round(100 * summary.sizeBucketTxCounts[i] / summary.count).toLocaleString();
 
-				sizeBucketLabels.push([`${sizeBucketLabel} bytes`, `${summary.sizeBucketTxCounts[i]} tx (${percentTx}%)`]);
+				sizeBucketLabels.push([`${sizeBucketLabel}`]);
 				bgColors.push(`hsl(${(333 * i / summary.sizeBucketLabels.length)}, 100%, 50%)`);
 			}
 
@@ -539,7 +663,7 @@ block endOfBody
 				var ageBucketLabel = summary.ageBucketLabels[i];
 				var percentTx = Math.round(100 * summary.ageBucketTxCounts[i] / summary.count).toLocaleString();
 
-				ageBucketLabels.push([`${ageBucketLabel}`, `${summary.ageBucketTxCounts[i]} tx (${percentTx}%)`]);
+				ageBucketLabels.push([`${ageBucketLabel}`]);
 				bgColors.push(`hsl(${(333 * i / summary.ageBucketLabels.length)}, 100%, 50%)`);
 			}
 
@@ -558,7 +682,7 @@ block endOfBody
 			var satsPerBitcoin = 100000000; // TODO: magic number - replace with coinConfig.baseCurrencyUnit.multiplier
 			
 			$.ajax({
-				url: `./api/mempool-tx-summaries/${txid}`
+				url: `./internal-api/mempool-tx-summaries/${txid}`
 
 			}).done(function(resultList) {
 				if (resultList && resultList.length > 0) {
@@ -591,7 +715,7 @@ block endOfBody
 				var item = summary.satoshiPerByteBuckets[i];
 
 				var blockCount = new Decimal(item.totalWeight).dividedBy(4000000); // TODO: magic number: block weight
-
+				
 				if (feeRate >= (item.minFeeRate || 1) && feeRate < (item.maxFeeRate || 10000000)) {
 					// in this bucket
 					var minBlocks = sumBlockCount;

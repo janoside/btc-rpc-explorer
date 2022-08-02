@@ -8,9 +8,12 @@ const csurf = require('csurf');
 const router = express.Router();
 const util = require('util');
 const moment = require('moment');
-const bitcoinCore = require("bitcoin-core");
+const bitcoinCore = require("btc-rpc-client");
 const qrcode = require('qrcode');
 const bitcoinjs = require('bitcoinjs-lib');
+const bip32 = require('bip32');
+const bs58check = require('bs58check');
+const { bech32, bech32m } = require("bech32");
 const sha256 = require("crypto-js/sha256");
 const hexEnc = require("crypto-js/enc-hex");
 const Decimal = require("decimal.js");
@@ -24,6 +27,7 @@ const config = require("./../app/config.js");
 const coreApi = require("./../app/api/coreApi.js");
 const addressApi = require("./../app/api/addressApi.js");
 const rpcApi = require("./../app/api/rpcApi.js");
+const btcQuotes = require("./../app/coins/btcQuotes.js");
 
 const forceCsrf = csurf({ ignoreMethods: [] });
 
@@ -50,6 +54,9 @@ router.get("/", asyncHandler(async (req, res, next) => {
 			return;
 		}
 
+		const { perfId, perfResults } = utils.perfLogNewItem({action:"homepage"});
+		res.locals.perfId = perfId;
+
 		res.locals.homepage = true;
 		
 		// don't need timestamp on homepage "blocks-list", this flag disables
@@ -66,21 +73,20 @@ router.get("/", asyncHandler(async (req, res, next) => {
 
 		var promises = [];
 
-		// promiseResults[0]
-		promises.push(new Promise(async (resolve, reject) => {
-			res.locals.mempoolInfo = await utils.timePromise("promises.index.getMempoolInfo", coreApi.getMempoolInfo());
-			
-			resolve();
-		}));
+		promises.push(utils.timePromise("homepage.getMempoolInfo", async () => {
+			res.locals.mempoolInfo = await coreApi.getMempoolInfo();
+		}, perfResults));
 
-		promises.push(new Promise(async (resolve, reject) => {
-			res.locals.miningInfo = await utils.timePromise("promises.index.getMiningInfo", coreApi.getMiningInfo());
+		promises.push(utils.timePromise("homepage.getMempoolInfo", async () => {
+			res.locals.mempoolInfo = await coreApi.getMempoolInfo();
+		}, perfResults));
 
-			resolve();
-		}));
+		promises.push(utils.timePromise("homepage.getMiningInfo", async () => {
+			res.locals.miningInfo = await coreApi.getMiningInfo();
+		}, perfResults));
 
-		promises.push(new Promise(async (resolve, reject) => {
-			const rawSmartFeeEstimates = await utils.timePromise("promises.index.getSmartFeeEstimates", coreApi.getSmartFeeEstimates("CONSERVATIVE", feeConfTargets));
+		promises.push(utils.timePromise("homepage.getSmartFeeEstimates", async () => {
+			const rawSmartFeeEstimates = await coreApi.getSmartFeeEstimates("CONSERVATIVE", feeConfTargets);
 
 			var smartFeeEstimates = {};
 
@@ -96,24 +102,23 @@ router.get("/", asyncHandler(async (req, res, next) => {
 			}
 
 			res.locals.smartFeeEstimates = smartFeeEstimates;
+		}, perfResults));
 
-			resolve();
-		}));
+		promises.push(utils.timePromise("homepage.getNetworkHashrate", async () => {
+			res.locals.hashrate7d = await coreApi.getNetworkHashrate(1008);
+		}, perfResults));
 
-		promises.push(new Promise(async (resolve, reject) => {
-			res.locals.hashrate7d = await utils.timePromise("promises.index.getNetworkHashrate-1008", coreApi.getNetworkHashrate(1008));
-
-			resolve();
-		}));
-
-		promises.push(new Promise(async (resolve, reject) => {
-			res.locals.hashrate30d = await utils.timePromise("promises.index.getNetworkHashrate-4320", coreApi.getNetworkHashrate(4320));
-
-			resolve();
-		}));
+		promises.push(utils.timePromise("homepage.getNetworkHashrate", async () => {
+			res.locals.hashrate30d = await coreApi.getNetworkHashrate(4320);
+		}, perfResults));
 
 
-		const getblockchaininfo = await utils.timePromise("promises.index.getBlockchainInfo", coreApi.getBlockchainInfo());
+
+		const getblockchaininfo = await utils.timePromise("homepage.getBlockchainInfo", async () => {
+			return await coreApi.getBlockchainInfo();
+		}, perfResults);
+
+
 		res.locals.getblockchaininfo = getblockchaininfo;
 
 		res.locals.difficultyPeriod = parseInt(Math.floor(getblockchaininfo.blocks / coinConfig.difficultyAdjustmentBlockCount));
@@ -131,8 +136,8 @@ router.get("/", asyncHandler(async (req, res, next) => {
 			blockHeights.push(0);
 		}
 
-		promises.push(new Promise(async (resolve, reject) => {
-			const rawblockstats = await utils.timePromise("promises.index.getBlocksStatsByHeight", coreApi.getBlocksStatsByHeight(blockHeights));
+		promises.push(utils.timePromise("homepage.getBlocksStatsByHeight", async () => {
+			const rawblockstats = await coreApi.getBlocksStatsByHeight(blockHeights);
 
 			if (rawblockstats && rawblockstats.length > 0 && rawblockstats[0] != null) {
 				res.locals.blockstatsByHeight = {};
@@ -143,32 +148,27 @@ router.get("/", asyncHandler(async (req, res, next) => {
 					res.locals.blockstatsByHeight[blockstats.height] = blockstats;
 				}
 			}
+		}, perfResults));
 
-			resolve();
-		}));
-
-		promises.push(new Promise(async (resolve, reject) => {
+		promises.push(utils.timePromise("homepage.getBlockHeaderByHeight", async () => {
 			let h = coinConfig.difficultyAdjustmentBlockCount * res.locals.difficultyPeriod;
-			res.locals.difficultyPeriodFirstBlockHeader = await utils.timePromise("promises.index.getBlockHeaderByHeight", coreApi.getBlockHeaderByHeight(h));
+			res.locals.difficultyPeriodFirstBlockHeader = await coreApi.getBlockHeaderByHeight(h);
+		}, perfResults));
+
+		promises.push(utils.timePromise("homepage.getBlocksByHeight", async () => {
+			const latestBlocks = await coreApi.getBlocksByHeight(blockHeights);
 			
-			resolve();
-		}));
-
-		promises.push(new Promise(async (resolve, reject) => {
-			const latestBlocks = await utils.timePromise(`promises.index.getBlocksByHeight`, coreApi.getBlocksByHeight(blockHeights));
-
 			res.locals.latestBlocks = latestBlocks;
 			res.locals.blocksUntilDifficultyAdjustment = ((res.locals.difficultyPeriod + 1) * coinConfig.difficultyAdjustmentBlockCount) - latestBlocks[0].height;
-			
-			resolve();
 		}));
 
+		
 		var targetBlocksPerDay = 24 * 60 * 60 / global.coinConfig.targetBlockTimeSeconds;
 		res.locals.targetBlocksPerDay = targetBlocksPerDay;
 
-		if (getblockchaininfo.chain !== 'regtest') {
+		if (false && getblockchaininfo.chain !== 'regtest') {
 			/*promises.push(new Promise(async (resolve, reject) => {
-				res.locals.txStats = await utils.timePromise("promises.index.getTxCountStats", coreApi.getTxCountStats(targetBlocksPerDay / 4, -targetBlocksPerDay, "latest"));
+				res.locals.txStats = await utils.timePromise("homepage.getTxStats", coreApi.getTxStats(targetBlocksPerDay / 4, -targetBlocksPerDay, "latest"));
 				
 				resolve();
 			}));*/
@@ -178,66 +178,45 @@ router.get("/", asyncHandler(async (req, res, next) => {
 
 			res.locals.chainTxStats = {};
 			for (var i = 0; i < chainTxStatsIntervals.length; i++) {
-				promises.push(new Promise(async (resolve, reject) => {
-					res.locals.chainTxStats[chainTxStatsIntervals[i][0]] = await utils.timePromise(`promises.index.getChainTxStats-${chainTxStatsIntervals[i][0]}`, coreApi.getChainTxStats(chainTxStatsIntervals[i][0]));
-					
-					resolve();
-				}));
+				promises.push(utils.timePromise(`homepage.getChainTxStats.${chainTxStatsIntervals[i][0]}`, async () => {
+					res.locals.chainTxStats[chainTxStatsIntervals[i][0]] = await coreApi.getChainTxStats(chainTxStatsIntervals[i][0]);
+				}, perfResults));
 			}
 
 			chainTxStatsIntervals.push([-1, "All time"]);
 			res.locals.chainTxStatsIntervals = chainTxStatsIntervals;
 
-			promises.push(new Promise(async (resolve, reject) => {
-				res.locals.chainTxStats[-1] = await utils.timePromise(`promises.index.getChainTxStats-allTime`, coreApi.getChainTxStats(getblockchaininfo.blocks - 1));
-				
-				resolve();
-			}));
+			promises.push(utils.timePromise("homepage.getChainTxStats.allTime", async () => {
+				res.locals.chainTxStats[-1] = await coreApi.getChainTxStats(getblockchaininfo.blocks - 1);
+			}, perfResults));
 		}
 
-		/*promises.push(new Promise(async (resolve, reject) => {
-			global.rpcClient.command('getblocktemplate', {"rules": ["segwit"]}, function(err, result, resHeaders) {
-				if (err) {
-					return reject(err);
-				}
-
-				res.locals.nextBlockTemplate = result;
-
-				var minFeeRate = 1000000;
-				var maxFeeRate = 0;
-				var minFeeTxid = null;
-				var maxFeeTxid = null;
-
-				result.transactions.forEach(tx => {
-					var feeRate = tx.fee / tx.weight * 4;
-					
-					if (feeRate < minFeeRate) {
-						minFeeRate = feeRate;
-						minFeeTxid = tx.txid;
-					}
-
-					if (feeRate > maxFeeRate) {
-						maxFeeRate = feeRate;
-						maxFeeTxid = tx.txid;
-					}
-				});
-
-				res.locals.nextBlockMinFeeRate = minFeeRate;
-				res.locals.nextBlockMaxFeeRate = maxFeeRate;
-				res.locals.nextBlockMinFeeTxid = minFeeTxid;
-				res.locals.nextBlockMaxFeeTxid = maxFeeTxid;
-
-				resolve();
-			});
-		}));*/
+		/*promises.push(utils.timePromise("homepage.getblocktemplate", async () => {
+			let nextBlockEstimate = await utils.timePromise("homepage.getNextBlockEstimate", async () => {
+				return await coreApi.getNextBlockEstimate();
+			}, perfResults);
 
 
-		await Promise.all(promises);
+			res.locals.nextBlockTemplate = nextBlockEstimate.blockTemplate;
+			res.locals.nextBlockFeeRateGroups = nextBlockEstimate.feeRateGroups;
+
+			res.locals.nextBlockMinFeeRate = nextBlockEstimate.minFeeRate;
+			res.locals.nextBlockMaxFeeRate = nextBlockEstimate.maxFeeRate;
+			res.locals.nextBlockMinFeeTxid = nextBlockEstimate.minFeeTxid;
+			res.locals.nextBlockMaxFeeTxid = nextBlockEstimate.maxFeeTxid;
+
+			res.locals.nextBlockTotalFees = nextBlockEstimate.totalFees;
+		
+		}, perfResults));*/
+
+
+		await utils.awaitPromises(promises);
 		
 		
 		var firstBlockHeader = res.locals.difficultyPeriodFirstBlockHeader;
 		var currentBlock = res.locals.latestBlocks[0];
 		var heightDiff = currentBlock.height - firstBlockHeader.height;
+		var blockCount = heightDiff + 1;
 		var timeDiff = currentBlock.mediantime - firstBlockHeader.mediantime;
 		var timePerBlock = timeDiff / heightDiff;
 		var timePerBlockDuration = moment.duration(timePerBlock * 1000);
@@ -246,23 +225,36 @@ router.get("/", asyncHandler(async (req, res, next) => {
 		var duaDP1 = daysUntilAdjustment.toDP(1);
 		var daysUntilAdjustmentStr = daysUntilAdjustment > 1 ? `~${duaDP1} day${duaDP1 == "1" ? "" : "s"}` : "< 1 day";
 		var hoursUntilAdjustmentStr = hoursUntilAdjustment > 1 ? `~${hoursUntilAdjustment.toDP(0)} hr${hoursUntilAdjustment.toDP(1) == "1" ? "" : "s"}` : "< 1 hr";
+		var nowTime = new Date().getTime() / 1000;
+		var dt = nowTime - firstBlockHeader.time;
+		var timePerBlock2 = dt / heightDiff;
+		var predictedBlockCount = dt / coinConfig.targetBlockTimeSeconds;
 
-		if (timePerBlock > 600) {
-			var diffAdjPercent = new Decimal(timeDiff / heightDiff / 600).times(100).minus(100);
+		var blockRatioPercent = new Decimal(blockCount / predictedBlockCount).times(100);
+		if (blockRatioPercent > 400) {
+			blockRatioPercent = new Decimal(400);
+		}
+		if (blockRatioPercent < 25) {
+			blockRatioPercent = new Decimal(25);
+		}
+
+		if (predictedBlockCount > blockCount) {
+			var diffAdjPercent = new Decimal(100).minus(blockRatioPercent).times(-1);
 			var diffAdjText = `Blocks during the current difficulty epoch have taken this long, on average, to be mined. If this pace continues, then in ${res.locals.blocksUntilDifficultyAdjustment.toLocaleString()} block${res.locals.blocksUntilDifficultyAdjustment == 1 ? "" : "s"} (${daysUntilAdjustmentStr}) the difficulty will adjust downward: -${diffAdjPercent.toDP(1)}%`;
 			var diffAdjSign = "-";
 			var textColorClass = "text-danger";
 
 		} else {
-			var diffAdjPercent = new Decimal(100).minus(new Decimal(timeDiff / heightDiff / 600).times(100));
+			var diffAdjPercent = blockRatioPercent.minus(new Decimal(100));
 			var diffAdjText = `Blocks during the current difficulty epoch have taken this long, on average, to be mined. If this pace continues, then in ${res.locals.blocksUntilDifficultyAdjustment.toLocaleString()} block${res.locals.blocksUntilDifficultyAdjustment == 1 ? "" : "s"} (${daysUntilAdjustmentStr}) the difficulty will adjust upward: +${diffAdjPercent.toDP(1)}%`;
 			var diffAdjSign = "+";
 			var textColorClass = "text-success";
 		}
 
 		res.locals.difficultyAdjustmentData = {
-			estimateAvailable: !isNaN(diffAdjPercent),
+			estimateAvailable: blockCount > 30 && !isNaN(diffAdjPercent),
 
+			blockCount: blockCount,
 			blocksLeft: res.locals.blocksUntilDifficultyAdjustment,
 			daysLeftStr: daysUntilAdjustmentStr,
 			timeLeftStr: (daysUntilAdjustment < 1 ? hoursUntilAdjustmentStr : daysUntilAdjustmentStr),
@@ -270,13 +262,23 @@ router.get("/", asyncHandler(async (req, res, next) => {
 			currentEpoch: res.locals.difficultyPeriod,
 
 			delta: diffAdjPercent,
-			sign: diffAdjSign
+			sign: diffAdjSign,
+
+			timePerBlock: timePerBlock,
+			firstBlockTime: firstBlockHeader.time,
+			nowTime: nowTime,
+			dt: dt,
+			predictedBlockCount: predictedBlockCount,
 
 			//nameDesc: `Estimate for the difficulty adjustment that will occur in ${res.locals.blocksUntilDifficultyAdjustment.toLocaleString()} block${res.locals.blocksUntilDifficultyAdjustment == 1 ? "" : "s"} (${daysUntilAdjustmentStr}). This is calculated using the average block time over the last ${heightDiff} block(s). This estimate becomes more reliable as the difficulty epoch nears its end.`,
 		};
 
+		res.locals.perfResults = perfResults;
 
-		res.render("index");
+
+		await utils.timePromise("homepage.render", async () => {
+			res.render("index");
+		}, perfResults);
 
 		next();
 
@@ -285,7 +287,9 @@ router.get("/", asyncHandler(async (req, res, next) => {
 					
 		res.locals.userMessage = "Error building page: " + err;
 
-		res.render("index");
+		await utils.timePromise("homepage.render", async () => {
+			res.render("index");
+		});
 
 		next();
 	}
@@ -293,36 +297,37 @@ router.get("/", asyncHandler(async (req, res, next) => {
 
 router.get("/node-details", asyncHandler(async (req, res, next) => {
 	try {
+		const { perfId, perfResults } = utils.perfLogNewItem({action:"node-details"});
+		res.locals.perfId = perfId;
+
 		const promises = [];
 
-		promises.push(new Promise(async (resolve, reject) => {
-			res.locals.getblockchaininfo = await utils.timePromise("promises.node-details.getBlockchainInfo", coreApi.getBlockchainInfo());
+		promises.push(utils.timePromise("node-details.getBlockchainInfo", async () => {
+			res.locals.getblockchaininfo = await coreApi.getBlockchainInfo();
+		}, perfResults));
 
-			resolve();
-		}));
+		promises.push(utils.timePromise("node-details.getNetworkInfo", async () => {
+			res.locals.getnetworkinfo = await coreApi.getNetworkInfo();
+		}, perfResults));
 
-		promises.push(new Promise(async (resolve, reject) => {
-			res.locals.getnetworkinfo = await utils.timePromise("promises.node-details.getNetworkInfo", coreApi.getNetworkInfo());
+		promises.push(utils.timePromise("node-details.getUptimeSeconds", async () => {
+			res.locals.uptimeSeconds = await coreApi.getUptimeSeconds();
+		}, perfResults));
 
-			resolve();
-		}));
+		promises.push(utils.timePromise("node-details.getNetTotals", async () => {
+			res.locals.getnettotals = await coreApi.getNetTotals();
+		}, perfResults));
 
-		promises.push(new Promise(async (resolve, reject) => {
-			res.locals.uptimeSeconds = await utils.timePromise("promises.node-details.getUptimeSeconds", coreApi.getUptimeSeconds());
 
-			resolve();
-		}));
+		await utils.awaitPromises(promises);
 
-		promises.push(new Promise(async (resolve, reject) => {
-			res.locals.getnettotals = await utils.timePromise("promises.node-details.getNetTotals", coreApi.getNetTotals());
 
-			resolve();
-		}));
+		res.locals.perfResults = perfResults;
 
-		await Promise.all(promises);
-
-		res.render("node-details");
-
+		await utils.timePromise("node-details.render", async () => {
+			res.render("node-details");
+		}, perfResults);
+		
 		next();
 
 	} catch (err) {
@@ -330,7 +335,9 @@ router.get("/node-details", asyncHandler(async (req, res, next) => {
 					
 		res.locals.userMessage = "Error building page: " + err;
 
-		res.render("node-details");
+		await utils.timePromise("node-details.render", async () => {
+			res.render("node-details");
+		});
 
 		next();
 	}
@@ -340,37 +347,9 @@ router.get("/mempool-summary", asyncHandler(async (req, res, next) => {
 	try {
 		res.locals.satoshiPerByteBucketMaxima = coinConfig.feeSatoshiPerByteBucketMaxima;
 
-		const promises = [];
-
-		promises.push(new Promise(async (resolve, reject) => {
-			res.locals.mempoolinfo = await utils.timePromise("promises.mempool-summary.getMempoolInfo", coreApi.getMempoolInfo());
-
-			resolve();
-		}));
-
-		promises.push(new Promise(async (resolve, reject) => {
-			const mempooltxids = await utils.timePromise("promises.mempool-summary.getAllMempoolTxids", coreApi.getAllMempoolTxids());
-
-			var debugMaxCount = 0;
-
-			if (debugMaxCount > 0) {
-				var debugtxids = [];
-				for (var i = 0; i < Math.min(debugMaxCount, mempooltxids.length); i++) {
-					debugtxids.push(mempooltxids[i]);
-				}
-
-				res.locals.mempooltxidChunks = utils.splitArrayIntoChunks(debugtxids, 25);
-
-			} else {
-				res.locals.mempooltxidChunks = utils.splitArrayIntoChunks(mempooltxids, 25);
-			}
-
-			resolve();
-		}));
-
-		await Promise.all(promises);
-
-		res.render("mempool-summary");
+		await utils.timePromise("mempool-summary/render", async () => {
+			res.render("mempool-summary");
+		});
 
 		next();
 
@@ -387,15 +366,17 @@ router.get("/mempool-summary", asyncHandler(async (req, res, next) => {
 
 router.get("/peers", asyncHandler(async (req, res, next) => {
 	try {
+		const { perfId, perfResults } = utils.perfLogNewItem({action:"peers"});
+		res.locals.perfId = perfId;
+
 		const promises = [];
 
-		promises.push(new Promise(async (resolve, reject) => {
-			res.locals.peerSummary = await utils.timePromise("promises.peers.getPeerSummary", coreApi.getPeerSummary());
+		promises.push(utils.timePromise("peers.getPeerSummary", async () => {
+			res.locals.peerSummary = await coreApi.getPeerSummary();
+		}, perfResults));
 
-			resolve();
-		}));
-
-		await Promise.all(promises);
+		
+		await utils.awaitPromises(promises);
 
 		var peerSummary = res.locals.peerSummary;
 
@@ -411,12 +392,17 @@ router.get("/peers", asyncHandler(async (req, res, next) => {
 		}
 
 		if (peerIps.length > 0) {
-			res.locals.peerIpSummary = await utils.timePromise("promises.peers.geoLocateIpAddresses", utils.geoLocateIpAddresses(peerIps));
+			res.locals.peerIpSummary = await utils.timePromise("peers.geoLocateIpAddresses", async () => {
+				return await utils.geoLocateIpAddresses(peerIps)
+			}, perfResults);
+			
 			res.locals.mapBoxComApiAccessKey = config.credentials.mapBoxComApiAccessKey;
 		}
 
 
-		res.render("peers");
+		await utils.timePromise("peers.render", async () => {
+			res.render("peers");
+		}, perfResults);
 
 		next();
 
@@ -425,7 +411,9 @@ router.get("/peers", asyncHandler(async (req, res, next) => {
 					
 		res.locals.userMessage = "Error: " + err;
 
-		res.render("peers");
+		await utils.timePromise("peers.render", async () => {
+			res.render("peers");
+		});
 
 		next();
 	}
@@ -485,10 +473,24 @@ router.get("/disconnect", function(req, res, next) {
 router.get("/changeSetting", function(req, res, next) {
 	if (req.query.name) {
 		if (!req.session.userSettings) {
-			req.session.userSettings = {};
+			req.session.userSettings = Object.create(null);
 		}
 
-		req.session.userSettings[req.query.name] = req.query.value;
+		if (typeof req.query.name !== "string" || typeof req.query.value !== "string") {
+			res.redirect(req.headers.referer);
+
+			return;
+		}
+
+		if (req.query.name == "userTzOffset") {
+			if (parseFloat(req.query.value) == NaN) {
+				res.redirect(req.headers.referer);
+
+				return;
+			}
+		}
+
+		req.session.userSettings[req.query.name.toString()] = req.query.value.toString();
 
 		var userSettings = JSON.parse(req.cookies["user-settings"] || "{}");
 		userSettings[req.query.name] = req.query.value;
@@ -499,14 +501,50 @@ router.get("/changeSetting", function(req, res, next) {
 	res.redirect(req.headers.referer);
 });
 
-router.get("/user-settings", function(req, res, next) {
-	res.render("user-settings");
+router.get("/session-data", function(req, res, next) {
+	if (req.query.action && req.query.data) {
+		let action = req.query.action;
+		let data = req.query.data;
+
+		if (action == "add-rpc-favorite") {
+			if (!req.session.favoriteRpcCommands) {
+				req.session.favoriteRpcCommands = [];
+			}
+
+			if (!req.session.favoriteRpcCommands.includes(data)) {
+				req.session.favoriteRpcCommands.push(data);
+			}
+
+			req.session.favoriteRpcCommands.sort();
+		}
+
+		if (action == "remove-rpc-favorite") {
+			if (!req.session.favoriteRpcCommands) {
+				req.session.favoriteRpcCommands = [];
+			}
+
+			if (req.session.favoriteRpcCommands.includes(data)) {
+				req.session.favoriteRpcCommands.splice(req.session.favoriteRpcCommands.indexOf(data), 1);
+			}
+		}
+	}
+
+	res.redirect(req.headers.referer);
+});
+
+router.get("/user-settings", asyncHandler(async (req, res, next) => {
+	await utils.timePromise("user-settings.render", async () => {
+		res.render("user-settings");
+	});
 
 	next();
-});
+}));
 
 router.get("/blocks", asyncHandler(async (req, res, next) => {
 	try {
+		const { perfId, perfResults } = utils.perfLogNewItem({action:"blocks"});
+		res.locals.perfId = perfId;
+
 		var limit = config.site.browseBlocksPageSize;
 		var offset = 0;
 		var sort = "desc";
@@ -531,7 +569,7 @@ router.get("/blocks", asyncHandler(async (req, res, next) => {
 		// if pruning is active, global.pruneHeight is used when displaying this page
 		// global.pruneHeight is updated whenever we send a getblockchaininfo RPC to the node
 
-		var getblockchaininfo = await utils.timePromise("promises.blocks.geoLocateIpAddresses", coreApi.getBlockchainInfo());
+		var getblockchaininfo = await utils.timePromise("blocks.geoLocateIpAddresses", coreApi.getBlockchainInfo, perfResults);
 
 		res.locals.blockCount = getblockchaininfo.blocks;
 		res.locals.blockOffset = offset;
@@ -558,15 +596,14 @@ router.get("/blocks", asyncHandler(async (req, res, next) => {
 
 		var promises = [];
 
-		promises.push(new Promise(async (resolve, reject) => {
-			res.locals.blocks = await utils.timePromise("promises.blocks.getBlocksByHeight", coreApi.getBlocksByHeight(blockHeights));
+		promises.push(utils.timePromise("blocks.getBlocksByHeight", async () => {
+			res.locals.blocks = await coreApi.getBlocksByHeight(blockHeights);
+		}, perfResults));
 
-			resolve();
-		}));
-
-		promises.push(new Promise(async (resolve, reject) => {
+		
+		promises.push(utils.timePromise("blocks.getBlocksByHeight", async () => {
 			try {
-				var rawblockstats = await utils.timePromise("promises.blocks.getBlocksStatsByHeight", coreApi.getBlocksStatsByHeight(blockHeights));
+				var rawblockstats = await coreApi.getBlocksStatsByHeight(blockHeights);
 
 				if (rawblockstats != null && rawblockstats.length > 0 && rawblockstats[0] != null) {
 					res.locals.blockstatsByHeight = {};
@@ -577,25 +614,23 @@ router.get("/blocks", asyncHandler(async (req, res, next) => {
 						res.locals.blockstatsByHeight[blockstats.height] = blockstats;
 					}
 				}
-
-				resolve();
-
 			} catch (err) {
 				if (!global.prunedBlockchain) {
-					reject(err);
+					throw err;
 
 				} else {
 					// failure may be due to pruning, let it pass
-					// TODO: be more discerning here
-					resolve();
+					// TODO: be more discerning here...consider throwing something
 				}
 			}
-		}));
+		}, perfResults));
 
 
-		await Promise.all(promises);
+		await utils.awaitPromises(promises);
 
-		res.render("blocks");
+		await utils.timePromise("blocks.render", async () => {
+			res.render("blocks");
+		}, perfResults);
 
 		next();
 
@@ -604,7 +639,9 @@ router.get("/blocks", asyncHandler(async (req, res, next) => {
 
 		res.locals.userMessage = "Error: " + err;
 
-		res.render("blocks");
+		await utils.timePromise("blocks.render", async () => {
+			res.render("blocks");
+		});
 
 		next();
 	}
@@ -612,11 +649,13 @@ router.get("/blocks", asyncHandler(async (req, res, next) => {
 
 router.get("/mining-summary", asyncHandler(async (req, res, next) => {
 	try {
-		var getblockchaininfo = await utils.timePromise("promises.mining-summary.getBlockchainInfo", coreApi.getBlockchainInfo());
+		var getblockchaininfo = await utils.timePromise("mining-summary.getBlockchainInfo", coreApi.getBlockchainInfo);
 
 		res.locals.currentBlockHeight = getblockchaininfo.blocks;
 
-		res.render("mining-summary");
+		await utils.timePromise("mining-summary.render", async () => {
+			res.render("mining-summary");
+		});
 
 		next();
 
@@ -631,26 +670,273 @@ router.get("/mining-summary", asyncHandler(async (req, res, next) => {
 	}
 }));
 
-router.get("/block-stats", function(req, res, next) {
+router.get("/xyzpub/:extendedPubkey", asyncHandler(async (req, res, next) => {
+	try {
+		const extendedPubkey = req.params.extendedPubkey;
+		res.locals.extendedPubkey = extendedPubkey;
+
+		
+		let limit = 20;
+		if (req.query.limit) {
+			limit = parseInt(req.query.limit);
+		}
+		res.locals.limit = limit;
+
+		let offset = 0;
+		if (req.query.offset) {
+			offset = parseInt(req.query.offset);
+		}
+		res.locals.offset = offset;
+
+		
+		res.locals.paginationBaseUrl = `./xyzpub/${extendedPubkey}`;
+
+		res.locals.metaTitle = `Extended Public Key: ${utils.ellipsizeMiddle(extendedPubkey, 24)}`;
+
+
+		res.locals.relatedKeys = [];
+
+		const receiveAddresses = [];
+		const changeAddresses = [];
+
+		const xpub_tpub = global.activeBlockchain == "main" ? "xpub" : "tpub";
+		const ypub_upub = global.activeBlockchain == "main" ? "ypub" : "upub";
+		const zpub_vpub = global.activeBlockchain == "main" ? "zpub" : "vpub";
+
+		res.locals.pubkeyType = "Unknown";
+		res.locals.bip32Path = "Unknown";
+		res.locals.pubkeyTypeDesc = null;
+		res.locals.keyType = extendedPubkey.substring(0, 4);
+
+		// if xpub/ypub/zpub convert to address under path m/0/0
+		if (extendedPubkey.match(/^(xpub|tpub).*$/)) {
+			res.locals.pubkeyType = "P2PKH";
+			res.locals.pubkeyTypeDesc = "Pay to Public Key Hash";
+			res.locals.bip32Path = "m/44'/0'";
+
+			
+			let xpub = extendedPubkey;
+			if (!extendedPubkey.startsWith(xpub_tpub)) {
+				xpub = utils.xpubChangeVersionBytes(extendedPubkey, xpub_tpub);
+			}
+
+			res.locals.receiveAddresses = utils.bip32Addresses(extendedPubkey, "p2pkh", 0, limit, offset);
+			res.locals.changeAddresses = utils.bip32Addresses(extendedPubkey, "p2pkh", 1, limit, offset);
+
+			if (!extendedPubkey.startsWith(xpub_tpub)) {
+				res.locals.relatedKeys.push({
+					keyType: xpub_tpub,
+					key: utils.xpubChangeVersionBytes(xpub, xpub_tpub),
+					bip32Path: "m/44'/0'",
+					outputType: "P2PKH",
+					firstAddresses: utils.bip32Addresses(xpub, "p2pkh", 0, 3, 0)
+				});
+			}
+
+			res.locals.relatedKeys.push({
+				keyType: xpub_tpub,
+				key: extendedPubkey,
+				bip32Path: "m/44'/0'",
+				outputType: "P2PKH",
+				firstAddresses: utils.bip32Addresses(xpub, "p2pkh", 0, 3, 0)
+			});
+
+			res.locals.relatedKeys.push({
+				keyType: ypub_upub,
+				key: utils.xpubChangeVersionBytes(xpub, ypub_upub),
+				bip32Path: "m/49'/0'",
+				outputType: "P2WPKH in P2SH",
+				firstAddresses: utils.bip32Addresses(xpub, "p2sh(p2wpkh)", 0, 3, 0)
+			});
+
+			res.locals.relatedKeys.push({
+				keyType: zpub_vpub,
+				key: utils.xpubChangeVersionBytes(xpub, zpub_vpub),
+				bip32Path: "m/84'/0'",
+				outputType: "P2WPKH",
+				firstAddresses: utils.bip32Addresses(xpub, "p2wpkh", 0, 3, 0)
+			});
+
+		} else if (extendedPubkey.match(/^(ypub|upub).*$/)) {
+			res.locals.pubkeyType = "P2WPKH in P2SH";
+			res.locals.pubkeyTypeDesc = "Pay to Witness Public Key Hash (P2WPKH) wrapped inside Pay to Script Hash (P2SH), aka Wrapped Segwit";
+			res.locals.bip32Path = "m/49'/0'";
+
+			const xpub = utils.xpubChangeVersionBytes(extendedPubkey, xpub_tpub);
+
+			res.locals.receiveAddresses = utils.bip32Addresses(xpub, "p2sh(p2wpkh)", 0, limit, offset);
+			res.locals.changeAddresses = utils.bip32Addresses(xpub, "p2sh(p2wpkh)", 1, limit, offset);
+
+			res.locals.relatedKeys.push({
+				keyType: xpub_tpub,
+				key: xpub,
+				bip32Path: "m/44'/0'",
+				outputType: "P2PKH",
+				firstAddresses: utils.bip32Addresses(xpub, "p2pkh", 0, 3, 0)
+			});
+
+			res.locals.relatedKeys.push({
+				keyType: ypub_upub,
+				key: extendedPubkey,
+				bip32Path: "m/49'/0'",
+				outputType: "P2WPKH in P2SH",
+				firstAddresses: utils.bip32Addresses(xpub, "p2sh(p2wpkh)", 0, 3, 0)
+			});
+
+			res.locals.relatedKeys.push({
+				keyType: zpub_vpub,
+				key: utils.xpubChangeVersionBytes(xpub, zpub_vpub),
+				bip32Path: "m/84'/0'",
+				outputType: "P2WPKH",
+				firstAddresses: utils.bip32Addresses(xpub, "p2wpkh", 0, 3, 0)
+			});
+
+		} else if (extendedPubkey.match(/^(zpub|vpub).*$/)) {
+			res.locals.pubkeyType = "P2WPKH";
+			res.locals.pubkeyTypeDesc = "Pay to Witness Public Key Hash, aka Native Segwit";
+			res.locals.bip32Path = "m/84'/0'";
+
+			const xpub = utils.xpubChangeVersionBytes(extendedPubkey, xpub_tpub);
+
+			res.locals.receiveAddresses = utils.bip32Addresses(xpub, "p2wpkh", 0, limit, offset);
+			res.locals.changeAddresses = utils.bip32Addresses(xpub, "p2wpkh", 1, limit, offset);
+
+			res.locals.relatedKeys.push({
+				keyType: xpub_tpub,
+				key: xpub,
+				bip32Path: "m/44'/0'",
+				outputType: "P2PKH",
+				firstAddresses: utils.bip32Addresses(xpub, "p2pkh", 0, 3, 0)
+			});
+
+			res.locals.relatedKeys.push({
+				keyType: ypub_upub,
+				key: utils.xpubChangeVersionBytes(xpub, ypub_upub),
+				bip32Path: "m/49'/0'",
+				outputType: "P2WPKH in P2SH",
+				firstAddresses: utils.bip32Addresses(xpub, "p2sh(p2wpkh)", 0, 3, 0)
+			});
+
+			res.locals.relatedKeys.push({
+				keyType: zpub_vpub,
+				key: extendedPubkey,
+				bip32Path: "m/84'/0'",
+				outputType: "P2WPKH",
+				firstAddresses: utils.bip32Addresses(xpub, "p2wpkh", 0, 3, 0)
+			});
+
+		} else if (extendedPubkey.startsWith("Ypub")) {
+			res.locals.pubkeyType = "Multi-Sig P2WSH in P2SH";
+			res.locals.bip32Path = "-";
+
+		} else if (extendedPubkey.startsWith("Zpub")) {
+			res.locals.pubkeyType = "Multi-Sig P2WSH";
+			res.locals.bip32Path = "-";
+		}
+
+
+		await utils.timePromise("extended-public-key.render", async () => {
+			res.render("extended-public-key");
+		});
+
+		next();
+
+	} catch (err) {
+		res.locals.pageErrors.push(utils.logError("23r08uyhe7ege", err));
+
+		res.locals.userMessage = "Error: " + err;
+
+		await utils.timePromise("extended-public-key.render", async () => {
+			res.render("extended-public-key");
+		});
+
+		next();
+	}
+}));
+
+router.get("/block-stats", asyncHandler(async (req, res, next) => {
 	if (semver.lt(global.btcNodeSemver, rpcApi.minRpcVersions.getblockstats)) {
 		res.locals.rpcApiUnsupportedError = {rpc:"getblockstats", version:rpcApi.minRpcVersions.getblockstats};
 	}
 
-	coreApi.getBlockchainInfo().then(function(getblockchaininfo) {
+	try {
+		const getblockchaininfo = await coreApi.getBlockchainInfo();
 		res.locals.currentBlockHeight = getblockchaininfo.blocks;
 
-		res.render("block-stats");
+		await utils.timePromise("block-stats.render", async () => {
+			res.render("block-stats");
+		});
 
 		next();
 
-	}).catch(function(err) {
+	} catch(err) {
 		res.locals.userMessage = "Error: " + err;
 
-		res.render("block-stats");
+		await utils.timePromise("block-stats.render", async () => {
+			res.render("block-stats");
+		});
 
 		next();
+	};
+}));
+
+router.get("/mining-template", asyncHandler(async (req, res, next) => {
+	const blockTemplate = await coreApi.getBlockTemplate();
+
+	res.locals.minFeeRate = 1000000;
+	res.locals.maxFeeRate = -1;
+
+	const parentTxIndexes = new Set();
+	blockTemplate.transactions.forEach(tx => {
+		if (tx.depends && tx.depends.length > 0) {
+			tx.depends.forEach(index => {
+				parentTxIndexes.add(index);
+			});
+		}
 	});
-});
+
+	var txIndex = 1;
+	blockTemplate.transactions.forEach(tx => {
+		let feeRate = tx.fee / tx.weight * 4;
+
+		if (tx.depends && tx.depends.length > 0) {
+			var totalFee = tx.fee;
+			var totalWeight = tx.weight;
+
+			tx.depends.forEach(index => {
+				totalFee += blockTemplate.transactions[index - 1].fee;
+				totalWeight += blockTemplate.transactions[index - 1].weight;
+			});
+
+			tx.avgFeeRate = totalFee / totalWeight * 4;
+		}
+
+		// txs that are ancestors should not be included in min/max
+		// calculations since their native fee rate is different than
+		// their effective fee rate (which takes descendant fee rates
+		// into account)
+		if (!parentTxIndexes.has(txIndex) && (!tx.depends || tx.depends.length == 0)) {
+			if (feeRate > res.locals.maxFeeRate) {
+				res.locals.maxFeeRate = feeRate;
+			}
+
+			if (feeRate < res.locals.minFeeRate) {
+				res.locals.minFeeRate = feeRate;
+			}
+		}
+
+		txIndex++;
+	});
+
+	res.locals.blockTemplate = blockTemplate;
+
+	
+	await utils.timePromise("mining-template.render", async () => {
+		res.render("mining-template");
+	});
+
+	next();
+}));
 
 router.get("/search", function(req, res, next) {
 	res.render("search");
@@ -671,7 +957,22 @@ router.post("/search", function(req, res, next) {
 	var rawCaseQuery = req.body.query.trim();
 
 	req.session.query = req.body.query;
+	
+	// xpub/ypub/zpub -> redirect: /xyzpub/XXX
+	if (rawCaseQuery.match(/^(xpub|ypub|zpub|Ypub|Zpub).*$/)) {
+		res.redirect(`./xyzpub/${rawCaseQuery}`);
+		
+		return;
+	}
 
+	// tpub/upub/vpub -> redirect: /xyzpub/XXX
+	if (rawCaseQuery.match(/^(tpub|upub|vpub|Upub|Vpub).*$/)) {
+		res.redirect(`./xyzpub/${rawCaseQuery}`);
+		
+		return;
+	}
+	
+	
 	// Support txid@height lookups
 	if (/^[a-f0-9]{64}@\d+$/.test(query)) {
 		return res.redirect("./tx/" + query);
@@ -709,7 +1010,7 @@ router.post("/search", function(req, res, next) {
 		coreApi.getAddress(rawCaseQuery).then(function(validateaddress) {
 			if (validateaddress && validateaddress.isvalid) {
 				res.redirect("./address/" + rawCaseQuery);
-				//console.log("testing123:"+ rawCaseQuery);
+
 				return;
 			}
 
@@ -722,6 +1023,9 @@ router.post("/search", function(req, res, next) {
 
 router.get("/block-height/:blockHeight", asyncHandler(async (req, res, next) => {
 	try {
+		const { perfId, perfResults } = utils.perfLogNewItem({action:"block-height"});
+		res.locals.perfId = perfId;
+
 		var blockHeight = parseInt(req.params.blockHeight);
 
 		res.locals.blockHeight = blockHeight;
@@ -730,6 +1034,8 @@ router.get("/block-height/:blockHeight", asyncHandler(async (req, res, next) => 
 
 		var limit = config.site.blockTxPageSize;
 		var offset = 0;
+
+		res.locals.maxTxOutputDisplayCount = 15;
 
 		if (req.query.limit) {
 			limit = parseInt(req.query.limit);
@@ -750,28 +1056,28 @@ router.get("/block-height/:blockHeight", asyncHandler(async (req, res, next) => 
 		res.locals.offset = offset;
 		res.locals.paginationBaseUrl = "./block-height/" + blockHeight;
 
-		const result = await utils.timePromise("promises.block-height.getBlockByHeight", coreApi.getBlockByHeight(blockHeight));
+
+		const result = await utils.timePromise("block-height.getBlockByHeight", async () => {
+			return await coreApi.getBlockByHeight(blockHeight);
+		}, perfResults);
+
 		res.locals.result.getblockbyheight = result;
 
 		var promises = [];
 
-		promises.push(new Promise(async (resolve, reject) => {
-			const blockWithTransactions = await utils.timePromise("promises.block-height.getBlockByHashWithTransactions", coreApi.getBlockByHashWithTransactions(result.hash, limit, offset));
+		promises.push(utils.timePromise("block-height.getBlockByHashWithTransactions", async () => {
+			const blockWithTransactions = await coreApi.getBlockByHashWithTransactions(result.hash, limit, offset);
 
 			res.locals.result.getblock = blockWithTransactions.getblock;
 			res.locals.result.transactions = blockWithTransactions.transactions;
 			res.locals.result.txInputsByTransaction = blockWithTransactions.txInputsByTransaction;
+		}, perfResults));
 
-			resolve();
-		}));
-
-		promises.push(new Promise(async (resolve, reject) => {
+		promises.push(utils.timePromise("block-height.getBlockStats", async () => {
 			try {
-				const blockStats = await utils.timePromise("promises.block-height.getBlockStats", coreApi.getBlockStats(result.hash));
+				const blockStats = await coreApi.getBlockStats(result.hash);
 				
 				res.locals.result.blockstats = blockStats;
-
-				resolve();
 
 			} catch (err) {
 				if (global.prunedBlockchain) {
@@ -779,17 +1085,35 @@ router.get("/block-height/:blockHeight", asyncHandler(async (req, res, next) => 
 					debugLog('Failed loading block stats', err);
 					res.locals.result.blockstats = null;
 
-					resolve();
-
 				} else {
 					throw err;
 				}
 			}
-		}));
+		}, perfResults));
 
-		await Promise.all(promises);
+		await utils.awaitPromises(promises);
 
-		res.render("block");
+
+		if (global.specialBlocks && global.specialBlocks[res.locals.result.getblock.hash]) {
+			let funInfo = global.specialBlocks[res.locals.result.getblock.hash];
+
+			res.locals.metaTitle = funInfo.summary;
+
+			if (funInfo.alertBodyHtml) {
+				res.locals.metaDesc = funInfo.alertBodyHtml.replace(/<\/?("[^"]*"|'[^']*'|[^>])*(>|$)/g, "");
+
+			} else {
+				res.locals.metaDesc = "";
+			}
+		} else {
+			res.locals.metaTitle = `Bitcoin Block #${blockHeight.toLocaleString()}`;
+			res.locals.metaDesc = "";
+		}
+		
+
+		await utils.timePromise("block-height.render", async () => {
+			res.render("block");
+		}, perfResults);
 
 		next();
 
@@ -798,7 +1122,9 @@ router.get("/block-height/:blockHeight", asyncHandler(async (req, res, next) => 
 
 		res.locals.pageErrors.push(utils.logError("389wer07eghdd", err));
 
-		res.render("block");
+		await utils.timePromise("block-height.render", async () => {
+			res.render("block");
+		});
 
 		next();
 	}
@@ -806,6 +1132,9 @@ router.get("/block-height/:blockHeight", asyncHandler(async (req, res, next) => 
 
 router.get("/block/:blockHash", asyncHandler(async (req, res, next) => {
 	try {
+		const { perfId, perfResults } = utils.perfLogNewItem({action:"block"});
+		res.locals.perfId = perfId;
+
 		var blockHash = utils.asHash(req.params.blockHash);
 
 		res.locals.blockHash = blockHash;
@@ -814,6 +1143,8 @@ router.get("/block/:blockHash", asyncHandler(async (req, res, next) => {
 
 		var limit = config.site.blockTxPageSize;
 		var offset = 0;
+
+		res.locals.maxTxOutputDisplayCount = 15;
 
 		if (req.query.limit) {
 			limit = parseInt(req.query.limit);
@@ -836,40 +1167,55 @@ router.get("/block/:blockHash", asyncHandler(async (req, res, next) => {
 
 		var promises = [];
 
-		promises.push(new Promise(async (resolve, reject) => {
-			const blockWithTransactions = await utils.timePromise("promises.block-hash.getBlockByHashWithTransactions", coreApi.getBlockByHashWithTransactions(blockHash, limit, offset));
-			
+		promises.push(utils.timePromise("block.getBlockByHashWithTransactions", async () => {
+			const blockWithTransactions = await coreApi.getBlockByHashWithTransactions(blockHash, limit, offset);
+
 			res.locals.result.getblock = blockWithTransactions.getblock;
 			res.locals.result.transactions = blockWithTransactions.transactions;
 			res.locals.result.txInputsByTransaction = blockWithTransactions.txInputsByTransaction;
+		}, perfResults));
 
-			resolve();
-		}));
-
-		promises.push(new Promise(async (resolve, reject) => {
+		promises.push(utils.timePromise("block.getBlockStats", async () => {
 			try {
-				const blockStats = await utils.timePromise("promises.block-hash.getBlockStats", coreApi.getBlockStats(blockHash));
+				const blockStats = await coreApi.getBlockStats(blockHash);
 				
 				res.locals.result.blockstats = blockStats;
-
-				resolve();
 
 			} catch (err) {
 				if (global.prunedBlockchain) {
 					// unavailable, likely due to pruning
 					debugLog('Failed loading block stats, likely due to pruning', err);
 
-					resolve();
-
 				} else {
-					reject(err);
+					throw err;
 				}
 			}
-		}));
+		}, perfResults));
 
-		await Promise.all(promises);
+		await utils.awaitPromises(promises);
+
+
+		if (global.specialBlocks && global.specialBlocks[res.locals.result.getblock.hash]) {
+			let funInfo = global.specialBlocks[res.locals.result.getblock.hash];
+
+			res.locals.metaTitle = funInfo.summary;
+
+			if (funInfo.alertBodyHtml) {
+				res.locals.metaDesc = funInfo.alertBodyHtml.replace(/<\/?("[^"]*"|'[^']*'|[^>])*(>|$)/g, "");
+
+			} else {
+				res.locals.metaDesc = "";
+			}
+
+		} else {
+			res.locals.metaTitle = `Bitcoin Block ${utils.ellipsizeMiddle(res.locals.result.getblock.hash, 16)}`;
+			res.locals.metaDesc = "";
+		}
+
 		
-		res.render("block");
+		await utils.timePromise("block.render", async () => {
+			res.render("block");
+		}, perfResults);
 
 		next();
 
@@ -878,7 +1224,96 @@ router.get("/block/:blockHash", asyncHandler(async (req, res, next) => {
 
 		res.locals.pageErrors.push(utils.logError("32824yhr2973t3d", err));
 
-		res.render("block");
+		await utils.timePromise("block.render", async () => {
+			res.render("block");
+		});
+
+		next();
+	}
+}));
+
+router.get("/predicted-blocks", asyncHandler(async (req, res, next) => {
+	try {
+		res.locals.satoshiPerByteBucketMaxima = coinConfig.feeSatoshiPerByteBucketMaxima;
+
+		res.render("predicted-blocks");
+
+		next();
+
+	} catch (err) {
+		utils.logError("2083ryw0efghsu", err);
+					
+		res.locals.userMessage = "Error building page: " + err;
+
+		res.render("predicted-blocks");
+
+		next();
+	}
+}));
+
+router.get("/predicted-blocks-old", asyncHandler(async (req, res, next) => {
+	try {
+		const mempoolTxids = await utils.timePromise("predicted-blocks.getAllMempoolTxids", coreApi.getAllMempoolTxids());
+		let mempoolTxSummaries = await coreApi.getMempoolTxSummaries(mempoolTxids, Math.random().toString(36).substr(2, 5), (x) => {});
+
+		const blockTemplate = {weight: 0, totalFees: new Decimal(0), vB: 0, txCount:0, txids: []};
+		const blocks = [];
+		
+		mempoolTxSummaries.sort((a, b) => {
+			let aFeeRate = (a.f + a.af) / (a.w + a.asz * 4);
+			let bFeeRate = (b.f + b.af) / (b.w + b.asz * 4);
+
+			if (aFeeRate > bFeeRate) {
+				return -1;
+
+			} else if (aFeeRate < bFeeRate) {
+				return 1;
+
+			} else {
+				return a.key.localeCompare(b.key);
+			}
+		});
+
+		res.locals.topTxs = mempoolTxSummaries.slice(0, 20);
+
+		let currentBlock = Object.assign({}, blockTemplate);
+
+		for (var i = 0; i < mempoolTxSummaries.length; i++) {
+			const tx = mempoolTxSummaries[i];
+
+			tx.frw = tx.f / tx.w;
+			tx.fr = tx.f / tx.sz;
+
+			if ((currentBlock.weight + tx.w) > coinConfig.maxBlockWeight) {
+				// this tx doesn't fit in the current block we're building
+				// so let's finish this one up and add it to the list
+				currentBlock.avgFee = currentBlock.totalFees.dividedBy(currentBlock.txCount);
+				currentBlock.avgFeeRate = currentBlock.totalFees.dividedBy(currentBlock.vB);
+
+				blocks.push(currentBlock);
+
+				// ...and start a new block
+				currentBlock = Object.assign({}, blockTemplate);
+				console.log(JSON.stringify(currentBlock));
+			}
+
+			currentBlock.txCount++;
+			currentBlock.weight += tx.w;
+			currentBlock.totalFees = currentBlock.totalFees.plus(new Decimal(tx.f));
+			currentBlock.vB += tx.sz;
+			//currentBlock.txids.push(tx.key);
+		}
+
+		res.locals.projectedBlocks = blocks;
+
+		res.render("predicted-blocks");
+
+		next();
+
+	} catch (err) {
+		res.locals.pageErrors.push(utils.logError("234efuewgew", err));
+
+		res.render("predicted-blocks");
 
 		next();
 	}
@@ -942,6 +1377,9 @@ router.get("/tx/:transactionId@:blockHeight", asyncHandler(async (req, res, next
 
 router.get("/tx/:transactionId", asyncHandler(async (req, res, next) => {
 	try {
+		const { perfId, perfResults } = utils.perfLogNewItem({action:"transaction"});
+		res.locals.perfId = perfId;
+
 		var txid = utils.asHash(req.params.transactionId);
 
 		var output = -1;
@@ -952,22 +1390,30 @@ router.get("/tx/:transactionId", asyncHandler(async (req, res, next) => {
 		res.locals.txid = txid;
 		res.locals.output = output;
 
+		res.locals.maxTxOutputDisplayCount = 40;
+
+		const promises = [];
 
 		if (req.query.blockHeight) {
-			res.locals.blockHeight = req.query.blockHeight;
+			res.locals.blockHeight = parseInt(req.query.blockHeight);
 		}
 
 		res.locals.result = {};
 
-		var txPromise = req.query.blockHeight ? 
-				coreApi.getBlockByHeight(parseInt(req.query.blockHeight))
-				.then(block => {
-					res.locals.block = block;
-					return coreApi.getRawTransactionsWithInputs([txid], -1, block.hash)
-				})
-				: coreApi.getRawTransactionsWithInputs([txid], -1);
+		let txInputLimit = (res.locals.crawlerBot) ? 3 : -1;
 
-		const rawTxResult = await utils.timePromise("promises.tx.getRawTransactionsWithInputs", txPromise);
+		var txPromise = req.query.blockHeight ? 
+				async () => {
+					const block = await coreApi.getBlockByHeight(parseInt(req.query.blockHeight));
+					res.locals.block = block;
+					return await coreApi.getRawTransactionsWithInputs([txid], txInputLimit, block.hash);
+				}
+				:
+				async () => {
+					return await coreApi.getRawTransactionsWithInputs([txid], txInputLimit);
+				};
+
+		const rawTxResult = await utils.timePromise("tx.getRawTransactionsWithInputs", txPromise, perfResults);
 
 		var tx = rawTxResult.transactions[0];
 
@@ -978,38 +1424,46 @@ router.get("/tx/:transactionId", asyncHandler(async (req, res, next) => {
 		res.locals.result.getrawtransaction = tx;
 		res.locals.result.txInputs = rawTxResult.txInputsByTransaction[txid] || {};
 
-		var promises = [];
 
-		promises.push(new Promise(async (resolve, reject) => {
-			const utxos = await utils.timePromise("promises.tx.getTxUtxos", coreApi.getTxUtxos(tx));
-			
-			res.locals.utxos = utxos;
-				
-			resolve();
-		}));
+		promises.push(utils.timePromise("tx.getTxUtxos", async () => {
+			res.locals.utxos = await coreApi.getTxUtxos(tx);
+		}, perfResults));
 
 		if (tx.confirmations == null) {
-			promises.push(new Promise(async (resolve, reject) => {
-				const mempoolDetails = await utils.timePromise("promises.tx.getMempoolTxDetails", coreApi.getMempoolTxDetails(txid, true));
+			promises.push(utils.timePromise("tx.getMempoolTxDetails", async () => {
+				res.locals.mempoolDetails = await coreApi.getMempoolTxDetails(txid, true);
 
-				res.locals.mempoolDetails = mempoolDetails;
-					
-				resolve();
-			}));
+			}, perfResults));
+			
 		} else {
-			promises.push(new Promise(async (resolve, reject) => {
-				global.rpcClient.command('getblockheader', tx.blockhash, function(err3, result3, resHeaders3) {
-					if (err3) return reject(err3);
-					res.locals.result.getblock = result3;
-
-					resolve();
-				});
-			}));
+			promises.push(utils.timePromise("tx.getblockheader", async () => {
+				res.locals.result.getblock = await global.rpcClient.command('getblockheader', tx.blockhash);
+			}, perfResults));
 		}
 
-		await Promise.all(promises);
+		await utils.awaitPromises(promises);
+
+		if (global.specialTransactions && global.specialTransactions[txid]) {
+			let funInfo = global.specialTransactions[txid];
+
+			res.locals.metaTitle = funInfo.summary;
+
+			if (funInfo.alertBodyHtml) {
+				res.locals.metaDesc = funInfo.alertBodyHtml.replace(/<\/?("[^"]*"|'[^']*'|[^>])*(>|$)/g, "");
+
+			} else {
+				res.locals.metaDesc = "";
+			}
+		} else {
+			res.locals.metaTitle = `Bitcoin Transaction ${utils.ellipsizeMiddle(txid, 16)}`;
+			res.locals.metaDesc = "";
+		}
+
+		res.locals.perfResults = perfResults;
 		
-		res.render("transaction");
+		await utils.timePromise("tx.render", async () => {
+			res.render("transaction");
+		}, perfResults);
 
 		next();
 
@@ -1032,308 +1486,311 @@ router.get("/tx/:transactionId", asyncHandler(async (req, res, next) => {
 
 		utils.logError("1237y4ewssgt", err);
 
-		res.render("transaction");
+		await utils.timePromise("tx.render", async () => {
+			res.render("transaction");
+		});
 
 		next();
 	}
 }));
 
-router.get("/address/:address", function(req, res, next) {
-	var limit = config.site.addressTxPageSize;
-	var offset = 0;
-	var sort = "desc";
-
-	
-	if (req.query.limit) {
-		limit = parseInt(req.query.limit);
-
-		// for demo sites, limit page sizes
-		if (config.demoSite && limit > config.site.addressTxPageSize) {
-			limit = config.site.addressTxPageSize;
-
-			res.locals.userMessage = "Transaction page size limited to " + config.site.addressTxPageSize + ". If this is your site, you can change or disable this limit in the site config.";
-		}
-	}
-
-	if (req.query.offset) {
-		offset = parseInt(req.query.offset);
-	}
-
-	if (req.query.sort) {
-		sort = req.query.sort;
-	}
-
-
-	var address = utils.asAddress(req.params.address);
-
-	res.locals.address = address;
-	res.locals.limit = limit;
-	res.locals.offset = offset;
-	res.locals.sort = sort;
-	res.locals.paginationBaseUrl = `./address/${address}?sort=${sort}`;
-	res.locals.transactions = [];
-	res.locals.addressApiSupport = addressApi.getCurrentAddressApiFeatureSupport();
-	
-	res.locals.result = {};
-
-	var parseAddressErrors = [];
-
+router.get("/address/:address", asyncHandler(async (req, res, next) => {
 	try {
-		res.locals.addressObj = bitcoinjs.address.fromBase58Check(address);
+		const { perfId, perfResults } = utils.perfLogNewItem({action:"address"});
+		res.locals.perfId = perfId;
 
-	} catch (err) {
-		if (!err.toString().startsWith("Error: Non-base58 character")) {
-			parseAddressErrors.push(utils.logError("u3gr02gwef", err));
-		}
-	}
+		var limit = config.site.addressTxPageSize;
+		var offset = 0;
+		var sort = "desc";
 
-	try {
-		res.locals.addressObj = bitcoinjs.address.fromBech32(address);
-
-	} catch (err2) {
-		if (!err2.toString().startsWith("Error: Mixed-case string " + address)) {
-			parseAddressErrors.push(utils.logError("u02qg02yqge", err2));
-		}
+		res.locals.maxTxOutputDisplayCount = config.site.addressPage.txOutputMaxDefaultDisplay;
 
 		
-	}
+		if (req.query.limit) {
+			limit = parseInt(req.query.limit);
 
-	if (res.locals.addressObj == null) {
-		parseAddressErrors.forEach(function(x) {
-			res.locals.pageErrors.push(x);
-		});
-	}
+			// for demo sites, limit page sizes
+			if (config.demoSite && limit > config.site.addressTxPageSize) {
+				limit = config.site.addressTxPageSize;
 
-	if (global.miningPoolsConfigs) {
-		for (var i = 0; i < global.miningPoolsConfigs.length; i++) {
-			//if (global.miningPoolsConfigs[i].payout_addresses[address]) {
-			//	res.locals.payoutAddressForMiner = global.miningPoolsConfigs[i].payout_addresses[address];
-			//}
+				res.locals.userMessage = "Transaction page size limited to " + config.site.addressTxPageSize + ". If this is your site, you can change or disable this limit in the site config.";
+			}
 		}
-	}
 
-	coreApi.getAddress(address).then(function(validateaddressResult) {
+		if (req.query.offset) {
+			offset = parseInt(req.query.offset);
+		}
+
+		if (req.query.sort) {
+			sort = req.query.sort;
+		}
+
+
+		var address = utils.asAddress(req.params.address);
+
+		res.locals.metaTitle = `Bitcoin Address ${address}`;
+
+		res.locals.address = address;
+		res.locals.limit = limit;
+		res.locals.offset = offset;
+		res.locals.sort = sort;
+		res.locals.paginationBaseUrl = `./address/${address}?sort=${sort}`;
+		res.locals.transactions = [];
+		res.locals.addressApiSupport = addressApi.getCurrentAddressApiFeatureSupport();
+		
+		res.locals.result = {};
+
+		var addressEncoding = "unknown";
+
+		var base58Error = null;
+		var bech32Error = null;
+		var bech32mError = null;
+
+		if (address.match(/^[132m].*$/)) {
+			try {
+				res.locals.addressObj = bitcoinjs.address.fromBase58Check(address);
+				res.locals.addressObj.hash = res.locals.addressObj.hash.toString("hex");
+
+				addressEncoding = "base58";
+
+			} catch (err) {
+				base58Error = err;
+			}
+		}
+
+		if (addressEncoding == "unknown") {
+			try {
+				res.locals.addressObj = bitcoinjs.address.fromBech32(address);
+				res.locals.addressObj.data = res.locals.addressObj.data.toString("hex");
+
+				addressEncoding = "bech32";
+
+			} catch (err) {
+				bech32Error = err;
+			}
+		}
+
+		if (addressEncoding == "unknown") {
+			try {
+				res.locals.addressObj = bech32m.decode(address);
+				res.locals.addressObj.words = Buffer.from(res.locals.addressObj.words).toString("hex");
+
+				addressEncoding = "bech32m";
+
+			} catch (err) {
+				bech32mError = err;
+			}
+		}
+		
+
+		if (res.locals.addressObj == null || addressEncoding == "unknown") {
+			if (base58Error) {
+				res.locals.pageErrors.push(utils.logError("AddressParseError-001", base58Error));
+			}
+
+			if (bech32Error) {
+				res.locals.pageErrors.push(utils.logError("AddressParseError-002", bech32Error));
+			}
+
+			if (bech32mError) {
+				res.locals.pageErrors.push(utils.logError("AddressParseError-003", bech32mError));
+			}
+		}
+
+		res.locals.addressEncoding = addressEncoding;
+
+		if (global.miningPoolsConfigs) {
+			for (var i = 0; i < global.miningPoolsConfigs.length; i++) {
+				if (global.miningPoolsConfigs[i].payout_addresses[address]) {
+					res.locals.payoutAddressForMiner = global.miningPoolsConfigs[i].payout_addresses[address];
+				}
+			}
+		}
+
+
+
+		const validateaddressResult = await coreApi.getAddress(address);
 		res.locals.result.validateaddress = validateaddressResult;
 
 		var promises = [];
+
 		if (!res.locals.crawlerBot) {
 			var addrScripthash = hexEnc.stringify(sha256(hexEnc.parse(validateaddressResult.scriptPubKey)));
 			addrScripthash = addrScripthash.match(/.{2}/g).reverse().join("");
 
 			res.locals.electrumScripthash = addrScripthash;
 
-			promises.push(new Promise(function(resolve, reject) {
-				addressApi.getAddressDetails(address, validateaddressResult.scriptPubKey, sort, limit, offset).then(function(addressDetailsResult) {
-					var addressDetails = addressDetailsResult.addressDetails;
+			promises.push(utils.timePromise("address.getAddressDetails", async () => {
+				const addressDetailsResult = await addressApi.getAddressDetails(address, validateaddressResult.scriptPubKey, sort, limit, offset);
+				var addressDetails = addressDetailsResult.addressDetails;
 
-					if (addressDetailsResult.errors) {
-						res.locals.addressDetailsErrors = addressDetailsResult.errors;
+				if (addressDetailsResult.errors) {
+					res.locals.addressDetailsErrors = addressDetailsResult.errors;
+				}
+
+				if (addressDetails) {
+					res.locals.addressDetails = addressDetails;
+
+					if (addressDetails.balanceSat == 0) {
+						// make sure zero balances pass the falsey check in the UI
+						addressDetails.balanceSat = "0";
 					}
 
-					if (addressDetails) {
-						res.locals.addressDetails = addressDetails;
+					if (addressDetails.txCount == 0) {
+						// make sure txCount=0 pass the falsey check in the UI
+						addressDetails.txCount = "0";
+					}
 
-						if (addressDetails.balanceSat == 0) {
-							// make sure zero balances pass the falsey check in the UI
-							addressDetails.balanceSat = "0";
+					if (addressDetails.txids) {
+						var txids = addressDetails.txids;
+
+						// if the active addressApi gives us blockHeightsByTxid, it saves us work, so try to use it
+						var blockHeightsByTxid = {};
+						if (addressDetails.blockHeightsByTxid) {
+							blockHeightsByTxid = addressDetails.blockHeightsByTxid;
 						}
 
-						if (addressDetails.txCount == 0) {
-							// make sure txCount=0 pass the falsey check in the UI
-							addressDetails.txCount = "0";
+						res.locals.txids = txids;
+
+						const rawTxResult = await (global.txindexAvailable
+							? coreApi.getRawTransactionsWithInputs(txids, 5)
+							: coreApi.getRawTransactionsByHeights(txids, blockHeightsByTxid)
+								.then(transactions => ({ transactions, txInputsByTransaction: {} }))
+						);
+						
+						res.locals.transactions = rawTxResult.transactions;
+						res.locals.txInputsByTransaction = rawTxResult.txInputsByTransaction;
+
+						
+						// for coinbase txs, we need the block height in order to calculate subsidy to display
+						var coinbaseTxs = [];
+						for (var i = 0; i < rawTxResult.transactions.length; i++) {
+							var tx = rawTxResult.transactions[i];
+
+							for (var j = 0; j < tx.vin.length; j++) {
+								if (tx.vin[j].coinbase) {
+									// addressApi sometimes has blockHeightByTxid already available, otherwise we need to query for it
+									if (!blockHeightsByTxid[tx.txid]) {
+										coinbaseTxs.push(tx);
+									}
+								}
+							}
 						}
 
-						if (addressDetails.txids) {
-							var txids = addressDetails.txids;
 
-							// if the active addressApi gives us blockHeightsByTxid, it saves us work, so try to use it
-							var blockHeightsByTxid = {};
-							if (addressDetails.blockHeightsByTxid) {
-								blockHeightsByTxid = addressDetails.blockHeightsByTxid;
+						var coinbaseTxBlockHashes = [];
+						var blockHashesByTxid = {};
+						coinbaseTxs.forEach(function(tx) {
+							coinbaseTxBlockHashes.push(tx.blockhash);
+							blockHashesByTxid[tx.txid] = tx.blockhash;
+						});
+
+						var blockHeightsPromises = [];
+						if (coinbaseTxs.length > 0) {
+							// we need to query some blockHeights by hash for some coinbase txs
+							blockHeightsPromises.push(utils.timePromise("address.getBlocksByHash", async () => {
+								const blocksByHashResult = await coreApi.getBlocksByHash(coinbaseTxBlockHashes);
+								for (var txid in blockHashesByTxid) {
+									if (blockHashesByTxid.hasOwnProperty(txid)) {
+										blockHeightsByTxid[txid] = blocksByHashResult[blockHashesByTxid[txid]].height;
+									}
+								}
+							}, perfResults));
+						}
+
+						await utils.awaitPromises(blockHeightsPromises);
+
+						var addrGainsByTx = {};
+						var addrLossesByTx = {};
+
+						res.locals.addrGainsByTx = addrGainsByTx;
+						res.locals.addrLossesByTx = addrLossesByTx;
+
+						var handledTxids = [];
+
+						for (var i = 0; i < rawTxResult.transactions.length; i++) {
+							var tx = rawTxResult.transactions[i];
+							var txInputs = rawTxResult.txInputsByTransaction[tx.txid] || {};
+							
+							if (handledTxids.includes(tx.txid)) {
+								continue;
 							}
 
-							res.locals.txids = txids;
+							handledTxids.push(tx.txid);
 
-							(global.txindexAvailable
-								? coreApi.getRawTransactionsWithInputs(txids, 5)
-								: coreApi.getRawTransactionsByHeights(txids, blockHeightsByTxid)
-									.then(transactions => ({ transactions, txInputsByTransaction: {} }))
-							).then(function(rawTxResult) {
-								res.locals.transactions = rawTxResult.transactions;
-								res.locals.txInputsByTransaction = rawTxResult.txInputsByTransaction;
+							for (var j = 0; j < tx.vout.length; j++) {
+								if (tx.vout[j].value > 0 && tx.vout[j].scriptPubKey) {
+									if (utils.getVoutAddresses(tx.vout[j]).includes(address)) {
+										if (addrGainsByTx[tx.txid] == null) {
+											addrGainsByTx[tx.txid] = new Decimal(0);
+										}
 
-								// for coinbase txs, we need the block height in order to calculate subsidy to display
-								var coinbaseTxs = [];
-								for (var i = 0; i < rawTxResult.transactions.length; i++) {
-									var tx = rawTxResult.transactions[i];
+										addrGainsByTx[tx.txid] = addrGainsByTx[tx.txid].plus(new Decimal(tx.vout[j].value));
+									}
+								}
+							}
 
-									for (var j = 0; j < tx.vin.length; j++) {
-										if (tx.vin[j].coinbase) {
-											// addressApi sometimes has blockHeightByTxid already available, otherwise we need to query for it
-											if (!blockHeightsByTxid[tx.txid]) {
-												coinbaseTxs.push(tx);
+							for (var j = 0; j < tx.vin.length; j++) {
+								var txInput = txInputs[j];
+								var vinJ = tx.vin[j];
+
+								if (txInput != null) {
+									if (txInput && txInput.scriptPubKey) {
+										if (utils.getVoutAddresses(txInput).includes(address)) {
+											if (addrLossesByTx[tx.txid] == null) {
+												addrLossesByTx[tx.txid] = new Decimal(0);
 											}
+
+											addrLossesByTx[tx.txid] = addrLossesByTx[tx.txid].plus(new Decimal(txInput.value));
 										}
 									}
 								}
+							}
 
-
-								var coinbaseTxBlockHashes = [];
-								var blockHashesByTxid = {};
-								coinbaseTxs.forEach(function(tx) {
-									coinbaseTxBlockHashes.push(tx.blockhash);
-									blockHashesByTxid[tx.txid] = tx.blockhash;
-								});
-
-								var blockHeightsPromises = [];
-								if (coinbaseTxs.length > 0) {
-									// we need to query some blockHeights by hash for some coinbase txs
-									blockHeightsPromises.push(new Promise(function(resolve2, reject2) {
-										coreApi.getBlocksByHash(coinbaseTxBlockHashes).then(function(blocksByHashResult) {
-											for (var txid in blockHashesByTxid) {
-												if (blockHashesByTxid.hasOwnProperty(txid)) {
-													blockHeightsByTxid[txid] = blocksByHashResult[blockHashesByTxid[txid]].height;
-												}
-											}
-
-											resolve2();
-
-										}).catch(function(err) {
-											res.locals.pageErrors.push(utils.logError("78ewrgwetg3", err));
-
-											reject2(err);
-										});
-									}));
-								}
-
-								Promise.all(blockHeightsPromises).then(function() {
-									var addrGainsByTx = {};
-									var addrLossesByTx = {};
-
-									res.locals.addrGainsByTx = addrGainsByTx;
-									res.locals.addrLossesByTx = addrLossesByTx;
-
-									var handledTxids = [];
-
-									for (var i = 0; i < rawTxResult.transactions.length; i++) {
-										var tx = rawTxResult.transactions[i];
-										var txInputs = rawTxResult.txInputsByTransaction[tx.txid] || {};
-										
-										if (handledTxids.includes(tx.txid)) {
-											continue;
-										}
-
-										handledTxids.push(tx.txid);
-
-										for (var j = 0; j < tx.vout.length; j++) {
-											if (tx.vout[j].value > 0 && tx.vout[j].scriptPubKey && tx.vout[j].scriptPubKey.addresses && tx.vout[j].scriptPubKey.addresses.includes(address)) {
-												if (addrGainsByTx[tx.txid] == null) {
-													addrGainsByTx[tx.txid] = new Decimal(0);
-												}
-
-												addrGainsByTx[tx.txid] = addrGainsByTx[tx.txid].plus(new Decimal(tx.vout[j].value));
-											}
-										}
-
-										for (var j = 0; j < tx.vin.length; j++) {
-											var txInput = txInputs[j];
-											var vinJ = tx.vin[j];
-
-											if (txInput != null) {
-												if (txInput && txInput.scriptPubKey && txInput.scriptPubKey.addresses && txInput.scriptPubKey.addresses.includes(address)) {
-													if (addrLossesByTx[tx.txid] == null) {
-														addrLossesByTx[tx.txid] = new Decimal(0);
-													}
-
-													addrLossesByTx[tx.txid] = addrLossesByTx[tx.txid].plus(new Decimal(txInput.value));
-												}
-											}
-										}
-
-										//debugLog("tx: " + JSON.stringify(tx));
-										//debugLog("txInputs: " + JSON.stringify(txInputs));
-									}
-
-									res.locals.blockHeightsByTxid = blockHeightsByTxid;
-
-									resolve();
-
-								}).catch(function(err) {
-									res.locals.pageErrors.push(utils.logError("230wefrhg0egt3", err));
-
-									reject(err);
-								});
-							}).catch(function(err) {
-								res.locals.pageErrors.push(utils.logError("asdgf07uh23", err));
-								// the transactions failed loading, render with just the txids list.
-								resolve();
-							});
-						} else {
-							// no addressDetails.txids available
-							resolve();
+							//debugLog("tx: " + JSON.stringify(tx));
+							//debugLog("txInputs: " + JSON.stringify(txInputs));
 						}
-					} else {
-						// no addressDetails available
-						resolve();
+
+						res.locals.blockHeightsByTxid = blockHeightsByTxid;
 					}
-				}).catch(function(err) {
-					res.locals.pageErrors.push(utils.logError("23t07ug2wghefud", err));
+				}
+			}, perfResults));
 
-					res.locals.addressApiError = err;
-
-					reject(err);
-				});
-			}));
-
-			promises.push(new Promise(function(resolve, reject) {
-				coreApi.getBlockchainInfo().then(function(getblockchaininfo) {
-					res.locals.getblockchaininfo = getblockchaininfo;
-
-					resolve();
-
-				}).catch(function(err) {
-					res.locals.pageErrors.push(utils.logError("132r80h32rh", err));
-
-					reject(err);
-				});
-			}));
+			promises.push(utils.timePromise("address.getBlockchainInfo", async () => {
+				res.locals.getblockchaininfo = await coreApi.getBlockchainInfo();
+			}, perfResults));
 		}
 
-		promises.push(new Promise(function(resolve, reject) {
+		promises.push(utils.timePromise("address.qrcode.toDataURL", async () => {
 			qrcode.toDataURL(address, function(err, url) {
 				if (err) {
 					res.locals.pageErrors.push(utils.logError("93ygfew0ygf2gf2", err));
 				}
 
 				res.locals.addressQrCodeUrl = url;
-
-				resolve();
 			});
-		}));
+		}, perfResults));
 
-		Promise.all(promises.map(utils.reflectPromise)).then(function() {
-			res.render("address");
-
-			next();
-
-		}).catch(function(err) {
-			res.locals.pageErrors.push(utils.logError("32197rgh327g2", err));
-
-			res.render("address");
-
-			next();
-		});
+		await utils.awaitPromises(promises);
 		
-	}).catch(function(err) {
-		res.locals.pageErrors.push(utils.logError("2108hs0gsdfe", err, {address:address}));
+		await utils.timePromise("address.render", async () => {
+			res.render("address");
+		}, perfResults);
+
+		next();
+
+	} catch (e) {
+		res.locals.pageErrors.push(utils.logError("2108hs0gsdfe", e, {address:address}));
 
 		res.locals.userMessageMarkdown = `Failed to load address: **${address}**`;
 
-		res.render("address");
+		await utils.timePromise("address.render", async () => {
+			res.render("address");
+		});
 
 		next();
-	});
-});
+	}
+}));
 
 router.get("/rpc-terminal", function(req, res, next) {
 	if (!config.demoSite && !req.authenticated) {
@@ -1349,7 +1806,7 @@ router.get("/rpc-terminal", function(req, res, next) {
 	next();
 });
 
-router.post("/rpc-terminal", function(req, res, next) {
+router.post("/rpc-terminal", asyncHandler(async (req, res, next) => {
 	if (!config.demoSite && !req.authenticated) {
 		res.send("RPC Terminal / Browser require authentication. Set an authentication password via the 'BTCEXP_BASIC_AUTH_PASSWORD' environment variable (see .env-sample file for more info).");
 
@@ -1362,11 +1819,12 @@ router.post("/rpc-terminal", function(req, res, next) {
 	var cmd = params.shift();
 	var parsedParams = [];
 
-	params.forEach(function(param, i) {
-		if (!isNaN(param)) {
-			parsedParams.push(parseInt(param));
+	params.forEach((param, i) => {
+		try {
+			parsedParams.push(JSON.parse(param));
 
-		} else {
+		} catch (e) {
+			// add as string
 			parsedParams.push(param);
 		}
 	});
@@ -1381,38 +1839,33 @@ router.post("/rpc-terminal", function(req, res, next) {
 		return;
 	}
 
-	global.rpcClientNoTimeout.command([{method:cmd, parameters:parsedParams}], function(err, result, resHeaders) {
-		debugLog("Result[1]: " + JSON.stringify(result, null, 4));
-		debugLog("Error[2]: " + JSON.stringify(err, null, 4));
-		debugLog("Headers[3]: " + JSON.stringify(resHeaders, null, 4));
+	try {
+		const result = await global.rpcClientNoTimeout.command([{method:cmd, parameters:parsedParams}]);//, function(err, result, resHeaders) {
+		
+		if (result) {
+			debugLog("Result[1]: " + JSON.stringify(result, null, 4));
 
-		if (err) {
-			debugLog(JSON.stringify(err, null, 4));
-
-			res.write(JSON.stringify(err, null, 4), function() {
-				res.end();
-			});
-
-			next();
-
-		} else if (result) {
 			res.write(JSON.stringify(result, null, 4), function() {
 				res.end();
 			});
-
-			next();
 
 		} else {
 			res.write(JSON.stringify({"Error":"No response from node"}, null, 4), function() {
 				res.end();
 			});
-
-			next();
 		}
-	});
-});
+	} catch (err) {
+		debugLog(JSON.stringify(err, null, 4));
 
-router.get("/rpc-browser", function(req, res, next) {
+		res.write(JSON.stringify(err, null, 4), function() {
+			res.end();
+		});
+	}
+
+	next();
+}));
+
+router.get("/rpc-browser", asyncHandler(async (req, res, next) => {
 	if (!config.demoSite && !req.authenticated) {
 		res.send("RPC Terminal / Browser require authentication. Set an authentication password via the 'BTCEXP_BASIC_AUTH_PASSWORD' environment variable (see .env-sample file for more info).");
 
@@ -1421,132 +1874,164 @@ router.get("/rpc-browser", function(req, res, next) {
 		return;
 	}
 
-	coreApi.getHelp().then(function(result) {
-		res.locals.gethelp = result;
+	try {
+		const helpContent = await coreApi.getHelp();
+		res.locals.gethelp = helpContent;
 
+		var method = "unknown";
+		var argValues = [];
 		if (req.query.method) {
+			method = req.query.method;
+
+			if (!req.session.recentRpcCommands) {
+				req.session.recentRpcCommands = [];
+			}
+
+			if (!req.session.recentRpcCommands.includes(method)) {
+				req.session.recentRpcCommands.unshift(method);
+				
+				while (req.session.recentRpcCommands.length > 5) {
+					req.session.recentRpcCommands.pop();
+				}
+			}
+
 			res.locals.method = req.query.method;
 
-			coreApi.getRpcMethodHelp(req.query.method.trim()).then(function(result2) {
-				res.locals.methodhelp = result2;
+			const methodHelp = await coreApi.getRpcMethodHelp(req.query.method.trim());
+			res.locals.methodhelp = methodHelp;
 
-				if (req.query.execute) {
-					var argDetails = result2.args;
-					var argValues = [];
+			if (req.query.execute) {
+				var argDetails = methodHelp.args;
+				
+				if (req.query.args) {
+					debugLog("ARGS: " + JSON.stringify(req.query.args));
 
-					if (req.query.args) {
-						for (var i = 0; i < req.query.args.length; i++) {
-							var argProperties = argDetails[i].properties;
+					for (var i = 0; i < req.query.args.length; i++) {
+						var argProperties = argDetails[i].properties;
+						debugLog(`ARG_PROPS[${i}]: ` + JSON.stringify(argProperties));
 
-							for (var j = 0; j < argProperties.length; j++) {
-								if (argProperties[j] === "numeric") {
-									if (req.query.args[i] == null || req.query.args[i] == "") {
-										argValues.push(null);
-
-									} else {
-										argValues.push(parseInt(req.query.args[i]));
-									}
-
-									break;
-
-								} else if (argProperties[j] === "boolean") {
-									if (req.query.args[i]) {
-										argValues.push(req.query.args[i] == "true");
-									}
-
-									break;
-
-								} else if (argProperties[j] === "string" || argProperties[j] === "numeric or string" || argProperties[j] === "string or numeric") {
-									if (req.query.args[i]) {
-										argValues.push(req.query.args[i].replace(/[\r]/g, ''));
-									}
-
-									break;
-
-								} else if (argProperties[j] === "array") {
-									if (req.query.args[i]) {
-										argValues.push(JSON.parse(req.query.args[i]));
-									}
-									
-									break;
+						for (var j = 0; j < argProperties.length; j++) {
+							if (argProperties[j] === "numeric") {
+								if (req.query.args[i] == null || req.query.args[i] == "") {
+									argValues.push(null);
 
 								} else {
-									debugLog(`Unknown argument property: ${argProperties[j]}`);
+									argValues.push(parseInt(req.query.args[i]));
 								}
-							}
-						}
-					}
 
-					res.locals.argValues = argValues;
+								break;
 
-					if (config.rpcBlacklist.includes(req.query.method.toLowerCase())) {
-						res.locals.methodResult = "Sorry, that RPC command is blacklisted. If this is your server, you may allow this command by removing it from the 'rpcBlacklist' setting in config.js.";
-
-						res.render("rpc-browser");
-
-						next();
-
-						return;
-					}
-
-					forceCsrf(req, res, err => {
-						if (err) {
-							return next(err);
-						}
-
-						debugLog("Executing RPC '" + req.query.method + "' with params: " + JSON.stringify(argValues));
-
-						global.rpcClientNoTimeout.command([{method:req.query.method, parameters:argValues}], function(err3, result3, resHeaders3) {
-							debugLog("RPC Response: err=" + err3 + ", headers=" + resHeaders3 + ", result=" + JSON.stringify(result3));
-
-							if (err3) {
-								res.locals.pageErrors.push(utils.logError("23roewuhfdghe", err3, {method:req.query.method, params:argValues, result:result3, headers:resHeaders3}));
-
-								if (result3) {
-									res.locals.methodResult = {error:("" + err3), result:result3};
-
-								} else {
-									res.locals.methodResult = {error:("" + err3)};
+							} else if (argProperties[j] === "boolean") {
+								if (req.query.args[i]) {
+									argValues.push(req.query.args[i] == "true");
 								}
-							} else if (result3) {
-								res.locals.methodResult = result3;
+
+								break;
+
+							} else if (argProperties[j] === "string" || argProperties[j] === "numeric or string" || argProperties[j] === "string or numeric") {
+								if (req.query.args[i]) {
+									argValues.push(req.query.args[i].replace(/[\r]/g, ''));
+								}
+
+								break;
+
+							} else if (argProperties[j] === "array" || argProperties[j] === "json array") {
+								if (req.query.args[i]) {
+									argValues.push(JSON.parse(req.query.args[i]));
+								}
+								
+								break;
+
+							} else if (argProperties[j] === "json object") {
+								if (req.query.args[i]) {
+									argValues.push(JSON.parse(req.query.args[i]));
+								}
+								
+								break;
 
 							} else {
-								res.locals.methodResult = {"Error":"No response from node."};
+								debugLog(`Unknown argument property: ${argProperties[j]}`);
 							}
+						}
+					}
+				}
 
-							res.render("rpc-browser");
+				res.locals.argValues = argValues;
 
-							next();
-						});
-					});
-				} else {
+				if (config.rpcBlacklist.includes(req.query.method.toLowerCase())) {
+					res.locals.methodResult = "Sorry, that RPC command is blacklisted. If this is your server, you may allow this command by removing it from the 'rpcBlacklist' setting in config.js.";
+
 					res.render("rpc-browser");
 
 					next();
+
+					return;
 				}
-			}).catch(function(err) {
-				res.locals.userMessage = "Error loading help content for method " + req.query.method + ": " + err;
 
-				res.render("rpc-browser");
+				//var csurfPromise = 
 
-				next();
-			});
+				await new Promise((resolve, reject) => {
+					forceCsrf(req, res, async (err) => {
+						if (err) {
+							reject(err);
 
-		} else {
-			res.render("rpc-browser");
+						} else {
+							resolve();
+						}
+					});
+				});
 
-			next();
+				debugLog("Executing RPC '" + req.query.method + "' with params: " + JSON.stringify(argValues));
+
+				try {
+					const startTimeNanos = utils.startTimeNanos();
+					const result = await global.rpcClientNoTimeout.command([{method:req.query.method, parameters:argValues}]);//, function(err3, result3, resHeaders3) {
+					const dtMillis = utils.dtMillis(startTimeNanos);
+
+					res.locals.executionMillis = dtMillis;
+
+					debugLog("RPC Response: result=" + JSON.stringify(result));
+
+					if (result) {
+						res.locals.methodResult = result;
+
+					} else {
+						res.locals.methodResult = {"Error":"No response from node."};
+					}
+
+					//res.render("rpc-browser");
+
+					//next();
+
+				} catch (err) {
+					res.locals.pageErrors.push(utils.logError("23roewuhfdghe", err, {method:req.query.method, params:argValues}));
+
+					res.locals.methodResult = {error:("" + err)};
+
+					//res.render("rpc-browser");
+
+					//next();
+				}
+
+				/*forceCsrf(req, res, async (err) => {
+					if (err) {
+						return next(err);
+					}
+
+					
+				});*/
+			}
 		}
-
-	}).catch(function(err) {
+	} catch (err) {
+		res.locals.pageErrors.push(utils.logError("23ewyf0weee", err, {method:method, params:argValues}));
+		
 		res.locals.userMessage = "Error loading help content: " + err;
+	}
 
-		res.render("rpc-browser");
+	res.render("rpc-browser");
 
-		next();
-	});
-});
+	next();
+}));
 
 router.get("/terminal", function(req, res, next) {
 	res.render("terminal");
@@ -1601,7 +2086,11 @@ router.get("/mempool-transactions", asyncHandler(async (req, res, next) => {
 		res.locals.sort = sort;
 		res.locals.paginationBaseUrl = "./mempool-transactions";
 
-		const mempoolData = await utils.timePromise("promises.mempool-tx.getMempoolTxids", coreApi.getMempoolTxids(limit, offset));
+		const perfResults = {};
+
+		const mempoolData = await utils.timePromise("mempool-tx.getMempoolTxids", async () => {
+			return await coreApi.getMempoolTxids(limit, offset)
+		}, perfResults);
 
 		const txids = mempoolData.txids;
 		res.locals.txCount = mempoolData.txCount;
@@ -1609,32 +2098,30 @@ router.get("/mempool-transactions", asyncHandler(async (req, res, next) => {
 		
 		const promises = [];
 
-		promises.push(new Promise(async (resolve, reject) => {
-			const transactionData = await utils.timePromise("promises.mempool-tx.getRawTransactionsWithInputs", coreApi.getRawTransactionsWithInputs(txids, config.slowDeviceMode ? 3 : 5));
+		promises.push(utils.timePromise("mempool-tx.getRawTransactionsWithInputs", async () => {
+			const transactionData = await coreApi.getRawTransactionsWithInputs(txids, config.slowDeviceMode ? 3 : 5);
 
 			res.locals.transactions = transactionData.transactions;
 			res.locals.txInputsByTransaction = transactionData.txInputsByTransaction;
-			
-			resolve();
-		}));
+		}, perfResults));
 
 		res.locals.mempoolDetailsByTxid = {};
 
 		txids.forEach(txid => {
-			promises.push(new Promise(async (resolve, reject) => {
-				const mempoolTxidDetails = await utils.timePromise("promises.mempool-tx.getMempoolTxDetails", coreApi.getMempoolTxDetails(txid, false));
+			promises.push(utils.timePromise("mempool-tx.getRawTransactionsWithInputs", async () => {
+				const mempoolTxidDetails = await coreApi.getMempoolTxDetails(txid, false);
 
 				res.locals.mempoolDetailsByTxid[txid] = mempoolTxidDetails;
-
-				resolve();
-			}));
+			}, perfResults));
 		});
 
 
-		await Promise.all(promises);
+		await utils.awaitPromises(promises);
 
 
-		res.render("mempool-transactions");
+		await utils.timePromise("mempool-transactions.render", async () => {
+			res.render("mempool-transactions");
+		});
 
 		next();
 
@@ -1643,46 +2130,62 @@ router.get("/mempool-transactions", asyncHandler(async (req, res, next) => {
 					
 		res.locals.userMessage = "Error building page: " + err;
 
-		res.render("mempool-transactions");
+		await utils.timePromise("mempool-transactions.render", async () => {
+			res.render("mempool-transactions");
+		});
 
 		next();
 	}
 }));
 
-router.get("/tx-stats", function(req, res, next) {
-	var dataPoints = 100;
+router.get("/tx-stats", asyncHandler(async (req, res, next) => {
+	const promises = [];
+	const perfResults = {};
 
-	if (req.query.dataPoints) {
-		dataPoints = req.query.dataPoints;
-	}
+	res.locals.getblockchaininfo = await coreApi.getBlockchainInfo();
+	let tipHeight = res.locals.getblockchaininfo.blocks;
 
-	if (dataPoints > 250) {
-		dataPoints = 250;
-	}
+	// only re-calculate tx-stats every X blocks since it's data heavy
+	let heightInterval = 6;
+	let height = heightInterval * Math.floor(tipHeight / heightInterval);
 
-	var targetBlocksPerDay = 24 * 60 * 60 / global.coinConfig.targetBlockTimeSeconds;
+	promises.push(utils.timePromise("tx-stats.getTxStats-all", async () => {
+		const statsAll = await coreApi.getTxStats(250, 0, height);
 
-	coreApi.getTxCountStats(dataPoints, 0, "latest").then(function(result) {
-		res.locals.getblockchaininfo = result.getblockchaininfo;
-		res.locals.txStats = result.txCountStats;
+		res.locals.txStats = statsAll;
+	}, perfResults));
 
-		coreApi.getTxCountStats(targetBlocksPerDay / 4, -144, "latest").then(function(result2) {
-			res.locals.txStatsDay = result2.txCountStats;
+	promises.push(utils.timePromise("tx-stats.getTxStats-day", async () => {
+		const statsDay = await coreApi.getTxStats(144, height - 144, height);
+		
+		res.locals.txStatsDay = statsDay;
+	}, perfResults));
 
-			coreApi.getTxCountStats(targetBlocksPerDay / 4, -144 * 7, "latest").then(function(result3) {
-				res.locals.txStatsWeek = result3.txCountStats;
+	promises.push(utils.timePromise("tx-stats.getTxStats-week", async () => {
+		const statsWeek = await coreApi.getTxStats(200, height - 144 * 7, height);
 
-				coreApi.getTxCountStats(targetBlocksPerDay / 4, -144 * 30, "latest").then(function(result4) {
-					res.locals.txStatsMonth = result4.txCountStats;
+		res.locals.txStatsWeek = statsWeek;
+	}, perfResults));
 
-					res.render("tx-stats");
+	promises.push(utils.timePromise("tx-stats.getTxStats-month", async () => {
+		const statsMonth = await coreApi.getTxStats(250, height - 144 * 30, height);
 
-					next();
-				});
-			});
-		});
-	});
-});
+		res.locals.txStatsMonth = statsMonth;
+	}, perfResults));
+
+	promises.push(utils.timePromise("tx-stats.getTxStats-year", async () => {
+		const statsYear = await coreApi.getTxStats(250, height - 144 * 365, height);
+
+		res.locals.txStatsYear = statsYear;
+	}, perfResults));
+
+
+	await utils.awaitPromises(promises);
+
+	res.render("tx-stats");
+
+	next();
+}));
 
 router.get("/difficulty-history", function(req, res, next) {
 	coreApi.getBlockchainInfo().then(function(getblockchaininfo) {
@@ -1699,6 +2202,12 @@ router.get("/difficulty-history", function(req, res, next) {
 
 		next();
 	});
+});
+
+router.get("/utxo-set", function(req, res, next) {
+	res.render("utxo-set");
+
+	next();
 });
 
 router.get("/about", function(req, res, next) {
@@ -1749,6 +2258,23 @@ router.get("/fun", function(req, res, next) {
 	res.locals.historicalData = sortedList;
 	
 	res.render("fun");
+
+	next();
+});
+
+router.get("/quotes", function(req, res, next) {
+	res.locals.btcQuotes = btcQuotes.items;
+
+	res.render("quotes");
+
+	next();
+});
+
+router.get("/quote/:quoteIndex", function(req, res, next) {
+	res.locals.quoteIndex = parseInt(req.params.quoteIndex);
+	res.locals.btcQuotes = btcQuotes.items;
+
+	res.render("quote");
 
 	next();
 });

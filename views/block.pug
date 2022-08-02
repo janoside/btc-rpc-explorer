@@ -9,30 +9,29 @@ block headContent
 block content
 	if (result.getblock)
 
-		.mb-3
-			.clearfix
-				.float-start
-					if (result.getblock.previousblockhash)
-						a.btn.btn-sm.btn-primary.ms-2(href=`./block/${result.getblock.previousblockhash}`, title=`Block ${(result.getblock.height - 1).toLocaleString()}`, data-bs-toggle="tooltip") &laquo; Prev Block
-
-					else if (result.getblock.hash == genesisBlockHash)
-						span.btn.btn-sm.btn-success.ms-2 Genesis Block!
-
-					if (result.getblock.nextblockhash)
-						a.btn.btn-sm.btn-primary.ms-2(href=`./block/${result.getblock.nextblockhash}`, title=`Block ${(result.getblock.height + 1).toLocaleString()}`, data-bs-toggle="tooltip") Next Block
-							span.ms-1 &raquo;
-					else
-						span.btn.btn-sm.btn-success.ms-2 Latest Block!
-
-				.float-end
-					if (result.getblock.tx != null && result.getblock.tx.length > 0)
-						a.btn.btn-primary.btn-sm.me-2(href=`./block-analysis/${result.getblock.hash}`, title="See a summary analysis of all transactions in this block.", data-bs-toggle="tooltip")
-							i.fas.fa-angle-double-down.me-2
-							| Block Analysis
-
-		hr
-
 		+pageTitle(`Block #${result.getblock.height.toLocaleString()}`, result.getblock.hash, true)
+			if (result.getblock.previousblockhash)
+				a.btn.btn-sm.btn-primary.ms-2(href=`./block/${result.getblock.previousblockhash}`, title=`Block ${(result.getblock.height - 1).toLocaleString()}`, data-bs-toggle="tooltip") &larr;
+					span.d-none.d-md-inline.ms-1 Prev Block
+
+			else if (result.getblock.hash == genesisBlockHash)
+				span.btn.btn-sm.btn-success.d-none.d-md-inline-block.ms-2 Genesis Block!
+				span.btn.btn-sm.btn-success.d-inline-block.d-md-none.ms-2 Genesis!
+
+			if (result.getblock.nextblockhash)
+				a.btn.btn-sm.btn-primary.ms-2(href=`./block/${result.getblock.nextblockhash}`, title=`Block ${(result.getblock.height + 1).toLocaleString()}`, data-bs-toggle="tooltip")
+					span.d-none.d-md-inline.ms-1 Next Block
+					span.ms-md-1 &rarr;
+			else
+				span.btn.btn-sm.btn-success.d-none.d-md-inline-block.ms-2 Latest Block!
+				span.btn.btn-sm.btn-success.d-inline-block.d-md-none.ms-2 Latest!
+
+
+
+			if (result.getblock.tx != null && result.getblock.tx.length > 0)
+				a.btn.btn-primary.btn-sm.d-none.d-md-inline-block.ms-3(href=`./block-analysis/${result.getblock.hash}`, title="See a summary analysis of all transactions in this block.", data-bs-toggle="tooltip")
+					i.fas.fa-angle-double-down.me-2
+					| Block Analysis
 		
 		
 
@@ -67,7 +66,7 @@ block content
 
 				+contentSection("Summary")
 					+summaryRow(2 + (result.getblock.miner ? 1 : 0) + (result.blockstats ? 1 : 0))
-						+summaryItem("Date")
+						+summaryItem("Date / Time")
 							+timestamp(result.getblock.time, true)
 							
 
@@ -77,8 +76,13 @@ block content
 
 						if (result.getblock.miner)
 							+summaryItem("Miner")
-								if (result.getblock.miner.identifiedBy)
-									span.badge.bg-primary(data-bs-toggle="tooltip", title=`Identified by: ${result.getblock.miner.identifiedBy}`) #{result.getblock.miner.name}
+								if (result.getblock.miner.type == "address-only")
+									span.badge.bg-secondary
+										span(data-bs-toggle="tooltip", title=`Unknown Miner Payout Address: ${result.getblock.miner.name}`) #{utils.ellipsizeMiddle(result.getblock.miner.name, 16)}
+										+copyTextButton(result.getblock.miner.name)
+
+								else if (result.getblock.miner.identifiedBy)
+									span.badge.bg-primary(data-bs-toggle="tooltip", data-bs-html="true", title=`Identified by: ${result.getblock.miner.identifiedBy}${result.getblock.miner.note ? ("<br/><br/>" + result.getblock.miner.note) : ""}`) #{result.getblock.miner.name}
 
 								else
 									small.badge.bg-primary #{result.getblock.miner.name}
@@ -192,10 +196,14 @@ block content
 						+summaryItem("Difficulty")
 							- var difficultyData = utils.formatLargeNumber(result.getblock.difficulty, 3);
 							
-							span.border-dotted(title=parseFloat(result.getblock.difficulty).toLocaleString(), data-bs-toggle="tooltip")
-								span #{difficultyData[0]}
-								span  x 10
-								sup #{difficultyData[1].exponent}
+							if (result.getblock.difficulty > 1000)
+								span.border-dotted(title=parseFloat(result.getblock.difficulty).toLocaleString(), data-bs-toggle="tooltip")
+									span #{difficultyData[0]}
+									span  x 10
+									sup #{difficultyData[1].exponent}
+
+							else
+								span #{new Decimal(result.getblock.difficulty).toDP(3)}
 
 						if (result.blockstats && result.blockstats.utxo_increase)
 							+summaryItem("UTXO Δ")
@@ -249,7 +257,7 @@ block content
 						
 				else
 					+contentSection(`${txCount.toLocaleString()} Transaction${txCount == 1 ? "" : "s"}`, false, "blockPageShowTxDetails", true, false)
-						+txList(result.transactions, txCount, limit, offset, result.txInputsByTransaction, {sharedBlockHeight: result.getblock.height})
+						+txList(result.transactions, txCount, limit, offset, result.txInputsByTransaction, {sharedBlockHeight: result.getblock.height, hidePagination:crawlerBot})
 						
 									
 							

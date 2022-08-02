@@ -52,7 +52,7 @@ global.miningSummaryLruCache = cacheUtils.lruCache(config.slowDeviceMode ? 500 :
 global.lruCaches = [ global.miscLruCache, global.blockLruCache, global.txLruCache, global.miningSummaryLruCache ];
 
 (function () {
-	let pruneCaches = function() {
+	const pruneCaches = () => {
 		let totalLengthBefore = 0;
 		global.lruCaches.forEach(x => (totalLengthBefore += x.length));
 
@@ -90,7 +90,7 @@ if (!config.noInmemoryRpcCache) {
 		miss: 0
 	};
 
-	var onMemoryCacheEvent = function(cacheType, eventType, cacheKey) {
+	const onMemoryCacheEvent = function(cacheType, eventType, cacheKey) {
 		global.cacheStats.memory[eventType]++;
 		statTracker.trackEvent(`caches.memory.${eventType}`);
 		//debugLog(`cache.${cacheType}.${eventType}: ${cacheKey}`);
@@ -110,19 +110,19 @@ if (redisCache.active) {
 		error: 0
 	};
 
-	var onRedisCacheEvent = function(cacheType, eventType, cacheKey) {
+	const onRedisCacheEvent = function(cacheType, eventType, cacheKey) {
 		global.cacheStats.redis[eventType]++;
 		statTracker.trackEvent(`caches.redis.${eventType}`);
 		//debugLog(`cache.${cacheType}.${eventType}: ${cacheKey}`);
 	}
 
 	// md5 of the active RPC credentials serves as part of the key; this enables
-	// multiple instances of wcn-rpc-explorer (eg mainnet + testnet) to share
+	// multiple instances of btc-rpc-explorer (eg mainnet + testnet) to share
 	// a single redis instance peacefully
-	var rpcHostPort = `${config.credentials.rpc.host}:${config.credentials.rpc.port}`;
-	var rpcCredKeyComponent = md5(JSON.stringify(config.credentials.rpc)).substring(0, 8);
+	const rpcHostPort = `${config.credentials.rpc.host}:${config.credentials.rpc.port}`;
+	const rpcCredKeyComponent = md5(JSON.stringify(config.credentials.rpc)).substring(0, 8);
 	
-	var redisCacheObj = redisCache.createCache(`${cacheKeyVersion}-${rpcCredKeyComponent}`, onRedisCacheEvent);
+	const redisCacheObj = redisCache.createCache(`${cacheKeyVersion}-${rpcCredKeyComponent}`, onRedisCacheEvent);
 
 	miscCaches.push(redisCacheObj);
 	blockCaches.push(redisCacheObj);
@@ -181,8 +181,14 @@ function tryCacheThenRpcApi(cache, cacheKey, cacheMaxAge, rpcApiFunction, cacheC
 		cache.get(cacheKey).then(function(result) {
 			cacheResult = result;
 
-			finallyFunc();
-			
+			try {
+				finallyFunc();
+
+			} catch (e) {
+				utils.logError("823hredhee", e);
+
+				reject(e);
+			}
 		}).catch(function(err) {
 			utils.logError("nds9fc2eg621tf3", err, {cacheKey:cacheKey});
 
@@ -246,9 +252,9 @@ function getUptimeSeconds() {
 	return tryCacheThenRpcApi(miscCache, "getUptimeSeconds", ONE_SEC, rpcApi.getUptimeSeconds);
 }
 
-function getChainTxStats(blockCount) {
-	return tryCacheThenRpcApi(miscCache, "getChainTxStats-" + blockCount, FIFTEEN_MIN, function() {
-		return rpcApi.getChainTxStats(blockCount);
+function getChainTxStats(blockCount, blockhashEnd) {
+	return tryCacheThenRpcApi(miscCache, "getChainTxStats-" + blockCount + "-" + blockhashEnd, FIFTEEN_MIN, function() {
+		return rpcApi.getChainTxStats(blockCount, blockhashEnd);
 	});
 }
 
@@ -270,83 +276,243 @@ function getBlockStatsByHeight(height) {
 	});
 }
 
-function getUtxoSetSummary() {
-	return tryCacheThenRpcApi(miscCache, "getUtxoSetSummary", FIFTEEN_MIN, rpcApi.getUtxoSetSummary);
+
+const utxoSetFileCache = utils.fileCache(config.filesystemCacheDir, `utxo-set.json`);
+
+function getUtxoSetSummary(useCoinStatsIndexIfAvailable=true, useCacheIfAvailable=true) {
+	return tryCacheThenRpcApi(miscCache, "getUtxoSetSummary", FIFTEEN_MIN, async () => {
+		let utxoSetSummary = utxoSetFileCache.tryLoadJson();
+
+		if (utxoSetSummary && useCacheIfAvailable) {
+			return utxoSetSummary;
+
+		} else {
+			utxoSetSummary = await rpcApi.getUtxoSetSummary(useCoinStatsIndexIfAvailable);
+
+			if (utxoSetSummary && utxoSetSummary.total_amount) {
+				if (useCoinStatsIndexIfAvailable && global.getindexinfo && global.getindexinfo.coinstatsindex) {
+					utxoSetSummary.usingCoinStatsIndex = true;
+
+				} else {
+					utxoSetSummary.usingCoinStatsIndex = false;
+				}
+
+				utxoSetSummary.lastUpdated = Date.now();
+
+				try {
+					utxoSetFileCache.writeJson(utxoSetSummary);
+					
+				} catch (e) {
+					utils.logError("h32uheifehues", e);
+				}
+
+				return utxoSetSummary;
+
+			} else {
+				return null;
+			}
+		}
+	});
 }
 
-function getTxCountStats(dataPtCount, blockStart, blockEnd) {
-	return new Promise(function(resolve, reject) {
-		var dataPoints = dataPtCount;
+async function getNextBlockEstimate() {
+	const blockTemplate = await getBlockTemplate();
 
-		getBlockchainInfo().then(function(getblockchaininfo) {
-			if (typeof blockStart === "string") {
-				if (["genesis", "first", "zero"].includes(blockStart)) {
-					blockStart = 0;
-				}
-			}
+	let minFeeRate = 1000000;
+	let maxFeeRate = 0;
+	let minFeeTxid = null;
+	let maxFeeTxid = null;
 
-			if (typeof blockEnd === "string") {
-				if (["latest", "tip", "newest"].includes(blockEnd)) {
-					blockEnd = getblockchaininfo.blocks;
-				}
-			}
+	var parentTxIndexes = new Set();
+	blockTemplate.transactions.forEach(tx => {
+		if (tx.depends && tx.depends.length > 0) {
+			tx.depends.forEach(index => {
+				parentTxIndexes.add(index);
+			});
+		}
+	});
 
-			if (blockStart > blockEnd) {
-				reject(`Error 37rhw0e7ufdsgf: blockStart (${blockStart}) > blockEnd (${blockEnd})`);
+	var txIndex = 1;
+	blockTemplate.transactions.forEach(tx => {
+		var feeRate = tx.fee / tx.weight * 4;
+		if (tx.depends && tx.depends.length > 0) {
+			var totalFee = tx.fee;
+			var totalWeight = tx.weight;
 
-				return;
-			}
-
-			if (blockStart < 0) {
-				blockStart += getblockchaininfo.blocks;
-			}
-
-			if (blockEnd < 0) {
-				blockEnd += getblockchaininfo.blocks;
-			}
-
-			var chainTxStatsIntervals = [];
-			for (var i = 0; i < dataPoints; i++) {
-				chainTxStatsIntervals.push(parseInt(Math.max(10, getblockchaininfo.blocks - blockStart - i * (blockEnd - blockStart) / (dataPoints - 1) - 1)));
-			}
-
-			var promises = [];
-			for (var i = 0; i < chainTxStatsIntervals.length; i++) {
-				promises.push(getChainTxStats(chainTxStatsIntervals[i]));
-			}
-
-			Promise.all(promises).then(function(results) {
-				if (results[0].name == "RpcError" && results[0].code == -8) {
-					// recently started node - no meaningful data to return
-					resolve(null);
-
-					return;
-				}
-
-				var txStats = {
-					txCounts: [],
-					txLabels: [],
-					txRates: []
-				};
-
-				for (var i = results.length - 1; i >= 0; i--) {
-					if (results[i].window_tx_count) {
-						txStats.txCounts.push( {x:(getblockchaininfo.blocks - results[i].window_block_count), y: (results[i].txcount - results[i].window_tx_count)} );
-						txStats.txRates.push( {x:(getblockchaininfo.blocks - results[i].window_block_count), y: (results[i].txrate)} );
-						txStats.txLabels.push(i);
-					}
-				}
-				
-				resolve({txCountStats:txStats, getblockchaininfo:getblockchaininfo, totalTxCount:results[0].txcount});
-
-			}).catch(function(err) {
-				reject(err);
+			tx.depends.forEach(index => {
+				totalFee += blockTemplate.transactions[index - 1].fee;
+				totalWeight += blockTemplate.transactions[index - 1].weight;
 			});
 
-		}).catch(function(err) {
-			reject(err);
-		});
+			tx.avgFeeRate = totalFee / totalWeight * 4;
+		}
+
+		// txs that are ancestors should not be included in min/max
+		// calculations since their native fee rate is different than
+		// their effective fee rate (which takes descendant fee rates
+		// into account)
+		if (!parentTxIndexes.has(txIndex) && (!tx.depends || tx.depends.length == 0)) {
+			if (feeRate < minFeeRate) {
+				minFeeRate = feeRate;
+				minFeeTxid = tx.txid;
+			}
+
+			if (feeRate > maxFeeRate) {
+				maxFeeRate = feeRate;
+				maxFeeTxid = tx.txid;
+			}
+		}
+
+		txIndex++;
 	});
+
+	const feeRateGroups = [];
+	var groupCount = 10;
+	for (var i = 0; i < groupCount; i++) {
+		feeRateGroups.push({
+			minFeeRate: minFeeRate + i * (maxFeeRate - minFeeRate) / groupCount,
+			maxFeeRate: minFeeRate + (i + 1) * (maxFeeRate - minFeeRate) / groupCount,
+			totalWeight: 0,
+			txidCount: 0,
+			//txids: []
+		});
+	}
+
+	var txIncluded = 0;
+	blockTemplate.transactions.forEach(tx => {
+		var feeRate = tx.avgFeeRate ? tx.avgFeeRate : (tx.fee / tx.weight * 4);
+
+		for (var i = 0; i < feeRateGroups.length; i++) {
+			if (feeRate >= feeRateGroups[i].minFeeRate) {
+				if (feeRate < feeRateGroups[i].maxFeeRate) {
+					feeRateGroups[i].totalWeight += tx.weight;
+					feeRateGroups[i].txidCount++;
+					
+					//res.locals.nextBlockFeeRateGroups[i].txids.push(tx.txid);
+
+					txIncluded++;
+
+					break;
+				}
+			}
+		}
+	});
+
+	feeRateGroups.forEach(group => {
+		group.weightRatio = group.totalWeight / blockTemplate.weightlimit;
+	});
+
+
+
+	const subsidy = coinConfig.blockRewardFunction(blockTemplate.height, global.activeBlockchain);
+
+	const totalFees = new Decimal(blockTemplate.coinbasevalue).dividedBy(coinConfig.baseCurrencyUnit.multiplier).minus(new Decimal(subsidy));
+
+	return {
+		blockTemplate: blockTemplate,
+		feeRateGroups: feeRateGroups,
+		totalFees: totalFees,
+		minFeeRate: minFeeRate,
+		maxFeeRate: maxFeeRate,
+		minFeeTxid: minFeeTxid,
+		maxFeeTxid: maxFeeTxid
+	};
+}
+
+function getBlockTemplate() {
+	return tryCacheThenRpcApi(miscCache, "getblocktemplate", 5 * ONE_SEC, rpcApi.getBlockTemplate);
+}
+
+async function getTxStats(dataPtCount, blockStart, blockEnd) {
+	let cacheKey = `txStats-${dataPtCount}-${blockStart}-${blockEnd}`;
+
+	let cacheResult = await miscCache.get(cacheKey);
+	if (cacheResult) {
+		console.log("CACHE RESULT");
+		return cacheResult;
+	}
+
+	let getblockchaininfo = await getBlockchainInfo();
+	
+	if (typeof blockStart === "string") {
+		if (["genesis", "first", "zero"].includes(blockStart)) {
+			blockStart = 0;
+		}
+	}
+
+	if (typeof blockEnd === "string") {
+		if (["latest", "tip", "newest"].includes(blockEnd)) {
+			blockEnd = getblockchaininfo.blocks;
+		}
+	}
+
+	if (blockStart > blockEnd) {
+		throw new Error(`Error 37rhw0e7ufdsgf: blockStart (${blockStart}) > blockEnd (${blockEnd})`);
+	}
+
+	if (blockStart < 0) {
+		blockStart += getblockchaininfo.blocks;
+	}
+
+	if (blockEnd < 0) {
+		blockEnd += getblockchaininfo.blocks;
+	}
+
+	const promises = [];
+
+	const blockCount = Math.floor((blockEnd - blockStart) / dataPtCount) || 1;
+	if (dataPtCount > (blockEnd - blockStart)) {
+		dataPtCount = (blockEnd - blockStart);
+	}
+	
+	for (let i = 0; i < dataPtCount; i++) {
+		let blockHeightEnd = blockStart + (i + 1) * blockCount;
+		
+		promises.push((async () => {
+			let blockhashEnd = await getBlockHashByHeight(blockHeightEnd);
+
+			// Math.min below is to handle the edge case where we're starting from genesis block, which doesn't behave the same as others
+			return await rpcApi.getChainTxStats(Math.min(blockCount, blockHeightEnd - 1), blockhashEnd);
+
+		})());
+	}
+
+	const results = await Promise.all(promises);
+
+	//console.log(results);
+
+	if (results.length == 0 || (results[0].name == "RpcError" && results[0].code == -8)) {
+		// recently started node - no meaningful data to return
+		return null;
+	}
+
+	let summary = {
+		txCounts: [],
+		txLabels: [],
+		txRates: [],
+		timespans: [],
+		blocksPerPoint: blockCount
+	};
+
+	let totalTimespan = 0;
+	for (let i = results.length - 1; i >= 0; i--) {
+		if (results[i].window_tx_count) {
+			summary.txCounts.push( {x:(blockStart + i * blockCount), y: results[i].window_tx_count} );
+			summary.txRates.push( {x:(blockStart + i * blockCount), y: results[i].txrate} );
+			summary.timespans.push( {x:(blockStart + i * blockCount), y: results[i].window_interval});
+			summary.txLabels.push(i);
+
+			totalTimespan += results[i].window_interval;
+		}
+	}
+
+	summary.avgTimespan = (totalTimespan / results.length);
+
+	miscCache.set(cacheKey, summary, 60 * ONE_MIN);
+
+	//console.log(summary);
+	
+	return summary;
 }
 
 function getSmartFeeEstimates(mode, confTargetBlockCounts) {
@@ -691,21 +857,14 @@ function getSummarizedTransactionOutput(txid, voutIndex) {
 	return tryCacheThenRpcApi(txCache, `txoSummary-${txid}-${voutIndex}`, FIFTEEN_MIN, rpcApiFunction, function() { return true; });
 }
 
-function getTxUtxos(tx) {
-	return new Promise(function(resolve, reject) {
-		var promises = [];
+async function getTxUtxos(tx) {
+	const promises = [];
 
-		for (var i = 0; i < tx.vout.length; i++) {
-			promises.push(getUtxo(tx.txid, i));
-		}
+	for (let i = 0; i < tx.vout.length; i++) {
+		promises.push(getUtxo(tx.txid, i));
+	}
 
-		Promise.all(promises).then(function(results) {
-			resolve(results);
-
-		}).catch(function(err) {
-			reject(err);
-		});
-	});
+	return Promise.all(promises);
 }
 
 function getUtxo(txid, outputIndex) {
@@ -715,7 +874,7 @@ function getUtxo(txid, outputIndex) {
 
 		}).then(function(result) {
 			// to avoid cache misses, rpcApi.getUtxo returns "0" instead of null
-			if (result == "0") {
+			if (typeof result == "string" && result == "0") {
 				resolve(null);
 
 				return;
@@ -805,10 +964,9 @@ function summarizeBlockAnalysisData(blockHeight, tx, inputs) {
 
 	if (txSummary.coinbase) {
 		var subsidy = global.coinConfig.blockRewardFunction(blockHeight, global.activeBlockchain);
-		//subsidy = 10;
-		//console.log('subsidyapi='+subsidy);
+
 		txSummary.totalInput = txSummary.totalInput.plus(new Decimal(subsidy));
-		//console.log('txSummary.totalInput='+txSummary.totalInput);
+
 		txSummary.vin.push({
 			coinbase: true,
 			value: subsidy
@@ -832,7 +990,7 @@ function summarizeBlockAnalysisData(blockHeight, tx, inputs) {
 				txSummaryVin.value = inputVout.value;
 				txSummaryVin.type = inputVout.scriptPubKey.type;
 				txSummaryVin.reqSigs = inputVout.scriptPubKey.reqSigs;
-				txSummaryVin.addressCount = (inputVout.scriptPubKey.addresses ? inputVout.scriptPubKey.addresses.length : 0);
+				txSummaryVin.addressCount = utils.getVoutAddresses(inputVout).length;
 			}
 
 			txSummary.vin.push(txSummaryVin);
@@ -850,7 +1008,7 @@ function summarizeBlockAnalysisData(blockHeight, tx, inputs) {
 			value: tx.vout[i].value,
 			type: tx.vout[i].scriptPubKey.type,
 			reqSigs: tx.vout[i].scriptPubKey.reqSigs,
-			addressCount: tx.vout[i].scriptPubKey.addresses ? tx.vout[i].scriptPubKey.addresses.length : 0
+			addressCount: utils.getVoutAddresses(tx.vout[i]).length
 		});
 	}
 
@@ -950,7 +1108,7 @@ function getBlockByHashWithTransactions(blockHash, txLimit, txOffset) {
 				if (txsResult.transactions && txsResult.transactions.length > 0) {
 					block.coinbaseTx = txsResult.transactions[0];
 					block.totalFees = utils.getBlockTotalFeesFromCoinbaseTxAndBlockHeight(block.coinbaseTx, block.height);
-					block.miner = utils.getMinerFromCoinbaseTx(block.coinbaseTx);
+					block.miner = utils.identifyMiner(block.coinbaseTx, block.height);
 				}
 
 				// if we're on page 2+, drop the coinbase tx that was added in order to get miner info
@@ -997,10 +1155,13 @@ function buildMiningSummary(statusId, startBlock, endBlock, statusFunc) {
 
 			const markItemsDone = (count) => {
 				doneCount += count;
-				statusFunc({count: 3 * blockCount + 1, done: doneCount});
+				if (statusFunc) {
+					statusFunc({count: 3 * blockCount + 1, done: doneCount});
+				}
 			};
 
 			const summariesByHeight = {};
+			const minerInfoByName = {};
 			
 
 			for (var i = startBlock; i <= endBlock; i++) {
@@ -1032,12 +1193,24 @@ function buildMiningSummary(statusId, startBlock, endBlock, statusFunc) {
 
 							const coinbaseTx = await getRawTransaction(block.tx[0]);
 
-							const minerInfo = utils.getMinerFromCoinbaseTx(coinbaseTx);
+							const minerInfo = utils.identifyMiner(coinbaseTx, height);
 							const totalFees = utils.getBlockTotalFeesFromCoinbaseTxAndBlockHeight(coinbaseTx, height);
 							const subsidy = coinConfig.blockRewardFunction(height, global.activeBlockchain);
 
+							var minerName = "Unknown";
+							if (minerInfo) {
+								if (minerInfo.type == "address-only") {
+									minerName = "address-only:" + minerInfo.name;
+
+								} else {
+									minerName = minerInfo.name;
+								}
+							}
+
+							minerInfoByName[minerName] = minerInfo;
+
 							let heightSummary = {
-								mn: (minerInfo ? minerInfo.name : "TBC"),
+								mn: minerName,
 								tx: block.tx.length,
 								f: totalFees,
 								s: subsidy,
@@ -1088,7 +1261,7 @@ function buildMiningSummary(statusId, startBlock, endBlock, statusFunc) {
 					summary.minerNamesSortedByBlockCount.push(miner);
 
 					summary.miners[miner] = {
-						name: miner, blocks: [], totalFees: new Decimal(0), totalSubsidy: new Decimal(0), totalTransactions: 0, totalWeight: 0, subsidyCount: 0
+						name: miner, details: minerInfoByName[miner], blocks: [], totalFees: new Decimal(0), totalSubsidy: new Decimal(0), totalTransactions: 0, totalWeight: 0, subsidyCount: 0
 					};
 				}
 
@@ -1113,7 +1286,9 @@ function buildMiningSummary(statusId, startBlock, endBlock, statusFunc) {
 
 
 			// we're done, send final status update
-			statusFunc({count: 3 * blockCount + 1, done: 3 * blockCount + 1});
+			if (statusFunc) {
+				statusFunc({count: 3 * blockCount + 1, done: 3 * blockCount + 1});
+			}
 
 
 			resolve(summary);
@@ -1128,13 +1303,71 @@ function buildMiningSummary(statusId, startBlock, endBlock, statusFunc) {
 
 
 
-const mempoolTxSummaryCache = {};
+let mempoolTxSummaryCache = {};
 
-function buildMempoolSummary(statusId, ageBuckets, sizeBuckets, statusFunc) {
+function getCachedMempoolTxSummaries() {
 	return new Promise(async (resolve, reject) => {
 		try {
-			const allTxids = await utils.timePromise("promises.mempool-summary.getAllMempoolTxids", getAllMempoolTxids());
+			const allTxids = await utils.timePromise("coreApi_mempool_summary_getAllMempoolTxids", getAllMempoolTxids);
 			
+			//const txids = allTxids.slice(0, 50); // for debugging
+			const txids = allTxids;
+
+			const txidCount = txids.length;
+			
+			const results = [];
+			const txidKeysForCachePurge = {};
+
+			for (var i = 0; i < txids.length; i++) {
+				const txid = txids[i];
+				const key = txid.substring(0, 6);
+				txidKeysForCachePurge[key] = 1;
+
+				if (mempoolTxSummaryCache[key]) {
+					const itemSummary = Object.assign({}, mempoolTxSummaryCache[key]);
+					itemSummary.key = key;
+
+					results.push(itemSummary);
+
+				} else {
+					// nothing
+				}
+			}
+
+
+			// cleanup cache, but we don't need to wait for it to finish before resolving
+			new Promise((resolve, reject) => {
+				// purge items from cache that are no longer present in mempool
+				var keysToDelete = [];
+				for (var key in mempoolTxSummaryCache) {
+					if (!txidKeysForCachePurge[key]) {
+						keysToDelete.push(key);
+					}
+				}
+
+				keysToDelete.forEach(x => { delete mempoolTxSummaryCache[x] });
+			});
+			
+
+			resolve(results);
+
+		} catch (err) {
+			utils.logError("asodfuhou33", err);
+
+			reject(err);
+		}
+	});
+}
+
+
+const mempoolTxFileCache = utils.fileCache(config.filesystemCacheDir, `mempool-tx-summaries.json`);
+
+function getMempoolTxSummaries(allTxids, statusId, statusFunc) {
+	return new Promise(async (resolve, reject) => {
+		try {
+			mempoolTxSummaryCache = (mempoolTxFileCache.tryLoadJson() || {});
+			
+
 			//const txids = allTxids.slice(0, 50); // for debugging
 			const txids = allTxids;
 
@@ -1146,8 +1379,6 @@ function buildMempoolSummary(statusId, ageBuckets, sizeBuckets, statusFunc) {
 			const promises = [];
 			const results = [];
 			const txidKeysForCachePurge = {};
-
-			
 
 			for (var i = 0; i < txids.length; i++) {
 				const txid = txids[i];
@@ -1169,12 +1400,14 @@ function buildMempoolSummary(statusId, ageBuckets, sizeBuckets, statusFunc) {
 							const item = await getMempoolTxDetails(txid, false);
 							const itemSummary = {
 								f: item.entry.fees.modified,
-								sz: item.entry.vsize ? item.entry.vsize : item.entry.size,
+								
 								af: item.entry.fees.ancestor,
-								df: item.entry.fees.descendant,
-								dsz: item.entry.descendantsize,
+								asz: item.entry.ancestorsize,
+
+								a: item.entry.depends.map(x => x.substring(0, 6)),
+
 								t: item.entry.time,
-								w: item.entry.weight ? item.entry.weight : item.entry.size * 4
+								w: item.entry.weight ? item.entry.weight : item.entry.size * 4,
 							};
 
 							mempoolTxSummaryCache[key] = itemSummary;
@@ -1217,7 +1450,35 @@ function buildMempoolSummary(statusId, ageBuckets, sizeBuckets, statusFunc) {
 
 			keysToDelete.forEach(x => { delete mempoolTxSummaryCache[x] });
 
+			mempoolTxSummaryCache.lastUpdated = new Date();
 
+			try {
+				mempoolTxFileCache.writeJson(mempoolTxSummaryCache);
+				
+			} catch (e) {
+				utils.logError("h32uheifehues", e);
+			}
+
+			resolve(results);
+
+		} catch (err) {
+			utils.logError("asodfuhou33", err);
+
+			reject(err);
+		}
+	});
+}
+
+function buildMempoolSummary(statusId, ageBuckets, sizeBuckets, statusFunc) {
+	return new Promise(async (resolve, reject) => {
+		try {
+			const allTxids = await utils.timePromise("coreApi_mempool_summary_getAllMempoolTxids", getAllMempoolTxids);
+
+			const txSummaries = await getMempoolTxSummaries(allTxids, statusId, statusFunc);
+
+			const txids = allTxids;
+
+			
 			var summary = [];
 
 			var maxFee = 0;
@@ -1226,13 +1487,14 @@ function buildMempoolSummary(statusId, ageBuckets, sizeBuckets, statusFunc) {
 			var maxSize = 0;
 			var ages = [];
 			var sizes = [];
+			var topfees = [];
 
-			for (var i = 0; i < results.length; i++) {
-				var summary = results[i];
+			for (var i = 0; i < txSummaries.length; i++) {
+				var summary = txSummaries[i];
 
 				var fee = summary.f;
-				var size = summary.sz;
-				var feePerByte = summary.f / size;
+				var size = summary.w / 4; // TOOD: hack
+				var feePerByte = summary.f / summary.w;
 				var age = Date.now() / 1000 - summary.t;
 
 				if (fee > maxFee) {
@@ -1243,9 +1505,6 @@ function buildMempoolSummary(statusId, ageBuckets, sizeBuckets, statusFunc) {
 					maxFeePerByte = feePerByte;
 				}
 
-				ages.push({age:age, txidKey:summary.key});
-				sizes.push({size:size, txidKey:summary.key});
-
 				if (age > maxAge) {
 					maxAge = age;
 				}
@@ -1253,6 +1512,10 @@ function buildMempoolSummary(statusId, ageBuckets, sizeBuckets, statusFunc) {
 				if (size > maxSize) {
 					maxSize = size;
 				}
+
+				ages.push({age:age, txidKey:summary.key});
+				sizes.push({size:size, txidKey:summary.key});
+				topfees.push({feePerByte:feePerByte, txidKey:summary.key});
 			}
 
 			ages.sort(function(a, b) {
@@ -1273,32 +1536,47 @@ function buildMempoolSummary(statusId, ageBuckets, sizeBuckets, statusFunc) {
 				}
 			});
 
+			topfees.sort(function(a, b) {
+				if (a.feePerByte != b.feePerByte) {
+					return b.feePerByte - a.feePerByte;
+
+				} else {
+					return a.txidKey.localeCompare(b.txidKey);
+				}
+			});
+
 			maxSize = 2000;
 
-			const satoshiPerByteBucketMaxima = coinConfig.feeSatoshiPerByteBucketMaxima;
+			const feeBucketMaxCount = 250;
+			const feeSatoshiBuckets = [];
+			for (let i = 0; i < feeBucketMaxCount; i++) {
+				feeSatoshiBuckets.push(i);
+			}
+
+			let satoshiPerByteBucketMaxima = feeSatoshiBuckets;
 
 			var bucketCount = satoshiPerByteBucketMaxima.length + 1;
 
 			var satoshiPerByteBuckets = [];
 			var satoshiPerByteBucketLabels = [];
 
-			satoshiPerByteBucketLabels[0] = ("[0 - " + satoshiPerByteBucketMaxima[0] + ")");
-			for (var i = 0; i < bucketCount; i++) {
-				satoshiPerByteBuckets[i] = {
+			//satoshiPerByteBucketLabels[0] = ("[0 - " + satoshiPerByteBucketMaxima[0] + ")");
+			for (var i = 1; i < bucketCount; i++) {
+				satoshiPerByteBuckets.push({
 					count: 0,
 					totalFees: 0,
 					totalBytes: 0,
 					totalWeight: 0,
 					minFeeRate: satoshiPerByteBucketMaxima[i - 1],
 					maxFeeRate: satoshiPerByteBucketMaxima[i]
-				};
+				});
 
 				if (i > 0 && i < bucketCount - 1) {
-					satoshiPerByteBucketLabels[i] = ("[" + satoshiPerByteBucketMaxima[i - 1] + " - " + satoshiPerByteBucketMaxima[i] + ")");
+					satoshiPerByteBucketLabels.push("[" + satoshiPerByteBucketMaxima[i - 1] + " - " + satoshiPerByteBucketMaxima[i] + ")");
 				}
 			}
 
-			var ageBucketCount = ageBuckets;
+			var ageBucketCount = sizeBuckets;
 			var ageBucketTxCounts = [];
 			var ageBucketLabels = [];
 
@@ -1306,20 +1584,36 @@ function buildMempoolSummary(statusId, ageBuckets, sizeBuckets, statusFunc) {
 			var sizeBucketTxCounts = [];
 			var sizeBucketLabels = [];
 
+			var topfeeBucketCount = sizeBuckets;
+			var topfeeBucketTxCounts = [];
+			var topfeeBucketLabels = [];
+
 			for (var i = 0; i < ageBucketCount; i++) {
 				var rangeMin = i * maxAge / ageBucketCount;
 				var rangeMax = (i + 1) * maxAge / ageBucketCount;
 
 				ageBucketTxCounts.push(0);
 
-				if (maxAge > 600) {
+				if (maxAge > 60 * 60 * 24) {
+					var rangeMinutesMin = new Decimal(rangeMin / 60 / 60 / 24).toFixed(1);
+					var rangeMinutesMax = new Decimal(rangeMax / 60 / 60 / 24).toFixed(1);
+
+					ageBucketLabels.push(rangeMinutesMax + "d");
+
+				} else if (maxAge > 60 * 60) {
+					var rangeMinutesMin = new Decimal(rangeMin / 60 / 60).toFixed(1);
+					var rangeMinutesMax = new Decimal(rangeMax / 60 / 60).toFixed(1);
+
+					ageBucketLabels.push(rangeMinutesMax + "m");
+
+				} else if (maxAge > 60 * 10) {
 					var rangeMinutesMin = new Decimal(rangeMin / 60).toFixed(1);
 					var rangeMinutesMax = new Decimal(rangeMax / 60).toFixed(1);
 
-					ageBucketLabels.push(rangeMinutesMin + " - " + rangeMinutesMax + " min");
+					ageBucketLabels.push(rangeMinutesMax + "m");
 
 				} else {
-					ageBucketLabels.push(parseInt(rangeMin) + " - " + parseInt(rangeMax) + " sec");
+					ageBucketLabels.push(parseInt(rangeMax) + "s");
 				}
 			}
 
@@ -1329,8 +1623,11 @@ function buildMempoolSummary(statusId, ageBuckets, sizeBuckets, statusFunc) {
 				if (i == sizeBucketCount - 1) {
 					sizeBucketLabels.push(parseInt(i * maxSize / sizeBucketCount) + "+");
 
-				} else {
+				} else if (i == 0) {
 					sizeBucketLabels.push(parseInt(i * maxSize / sizeBucketCount) + " - " + parseInt((i + 1) * maxSize / sizeBucketCount));
+
+				} else {
+					sizeBucketLabels.push(parseInt((i + 1) * maxSize / sizeBucketCount));
 				}
 			}
 
@@ -1350,17 +1647,18 @@ function buildMempoolSummary(statusId, ageBuckets, sizeBuckets, statusFunc) {
 				"sizeBucketTxCounts": sizeBucketTxCounts,
 				"sizeBucketLabels": sizeBucketLabels,
 				"oldestTxs": ages.slice(0, oldestLargestCount),
-				"largestTxs": sizes.slice(0, oldestLargestCount)
+				"largestTxs": sizes.slice(0, oldestLargestCount),
+				"highestFeeTxs": topfees.slice(0, oldestLargestCount)
 			};
 
 
 			for (var i = 0; i < oldestLargestCount; i++) {
 				let oldTx = summary.oldestTxs[i];
 				let largeTx = summary.largestTxs[i];
+				let topfeeTx = summary.highestFeeTxs[i];
 
-				for (var j = 0; j < txids.length; j++) {
+				for (var j = 0; j < txSummaries.length; j++) {
 					if (oldTx && txids[j].startsWith(oldTx.txidKey)) {
-					//if (txids[j].startsWith(oldTx.txidKey)) {
 						oldTx.txid = txids[j];
 
 						break;
@@ -1369,26 +1667,33 @@ function buildMempoolSummary(statusId, ageBuckets, sizeBuckets, statusFunc) {
 
 				for (var j = 0; j < txids.length; j++) {
 					if (largeTx && txids[j].startsWith(largeTx.txidKey)) {
-					//if (txids[j].startsWith(largeTx.txidKey)) {
 						largeTx.txid = txids[j];
+
+						break;
+					}
+				}
+
+				for (var j = 0; j < txSummaries.length; j++) {
+					if (topfeeTx && txids[j].startsWith(topfeeTx.txidKey)) {
+						topfeeTx.txid = txids[j];
 
 						break;
 					}
 				}
 			}
 
-			for (var x = 0; x < results.length; x++) {
-				var txMempoolInfo = results[x];
+			for (var x = 0; x < txSummaries.length; x++) {
+				var txMempoolInfo = txSummaries[x];
 				var fee = txMempoolInfo.f;
-				var size = txMempoolInfo.sz;
+				var size = txMempoolInfo.w / 4;
 				var weight = txMempoolInfo.w;
-				var feePerByte = txMempoolInfo.f / size;
+				var feePerByte = txMempoolInfo.f / weight;
 				var satoshiPerByte = feePerByte * 100000000; // TODO: magic number - replace with coinConfig.baseCurrencyUnit.multiplier
 				var age = Date.now() / 1000 - txMempoolInfo.t;
 
 				var addedToBucket = false;
-				for (var i = 0; i < satoshiPerByteBucketMaxima.length; i++) {
-					if (satoshiPerByteBucketMaxima[i] > satoshiPerByte) {
+				for (var i = 0; i < satoshiPerByteBuckets.length; i++) {
+					if (satoshiPerByteBuckets[i].maxFeeRate > satoshiPerByte) {
 						satoshiPerByteBuckets[i]["count"]++;
 						satoshiPerByteBuckets[i]["totalFees"] += fee;
 						satoshiPerByteBuckets[i]["totalBytes"] += size;
@@ -1401,10 +1706,10 @@ function buildMempoolSummary(statusId, ageBuckets, sizeBuckets, statusFunc) {
 				}
 
 				if (!addedToBucket) {
-					satoshiPerByteBuckets[bucketCount - 1]["count"]++;
-					satoshiPerByteBuckets[bucketCount - 1]["totalFees"] += fee;
-					satoshiPerByteBuckets[bucketCount - 1]["totalBytes"] += size;
-					satoshiPerByteBuckets[bucketCount - 1]["totalWeight"] += weight;
+					satoshiPerByteBuckets[bucketCount - 2]["count"]++;
+					satoshiPerByteBuckets[bucketCount - 2]["totalFees"] += fee;
+					satoshiPerByteBuckets[bucketCount - 2]["totalBytes"] += size;
+					satoshiPerByteBuckets[bucketCount - 2]["totalWeight"] += weight;
 				}
 
 				summary["count"]++;
@@ -1419,25 +1724,285 @@ function buildMempoolSummary(statusId, ageBuckets, sizeBuckets, statusFunc) {
 				sizeBucketTxCounts[sizeBucketIndex]++;
 			}
 
+			var topTargetPercent = 0.25;
+			var totWeight = 0;
+			var topIndex = -1;
+			for (var i = satoshiPerByteBuckets.length - 1; i >= 0; i--) {
+				totWeight += satoshiPerByteBuckets[i].totalWeight;
+
+				if (totWeight / summary.totalWeight * 100 > topTargetPercent) {
+					topIndex = i;
+
+					break;
+				}
+			}
+
+			summary.satoshiPerByteBucketLabels = summary.satoshiPerByteBucketLabels.slice(0, topIndex);
+
+			if (topIndex < feeBucketMaxCount) {
+				summary.satoshiPerByteBucketLabels.push(topIndex + "+");
+			}
+
+			
+			if (topIndex < satoshiPerByteBuckets.length) {
+				satoshiPerByteBuckets[topIndex].buckets = 0;
+
+				// merge the top buckets into one
+				for (var i = topIndex + 1; i < satoshiPerByteBuckets.length; i++) {
+					satoshiPerByteBuckets[topIndex].count += satoshiPerByteBuckets[i].count;
+					satoshiPerByteBuckets[topIndex].totalFees += satoshiPerByteBuckets[i].totalFees;
+					satoshiPerByteBuckets[topIndex].totalBytes += satoshiPerByteBuckets[i].totalBytes;
+					satoshiPerByteBuckets[topIndex].totalWeight += satoshiPerByteBuckets[i].totalWeight;
+					satoshiPerByteBuckets[topIndex].buckets++;
+				}
+
+				satoshiPerByteBuckets = satoshiPerByteBuckets.slice(0, topIndex + 1);
+				satoshiPerByteBucketMaxima = satoshiPerByteBucketMaxima.slice(0, topIndex + 1);
+			}
+
 			summary["averageFee"] = summary["totalFees"] / summary["count"];
 			summary["averageFeePerByte"] = summary["totalFees"] / summary["totalBytes"];
 
 			summary["satoshiPerByteBucketMaxima"] = satoshiPerByteBucketMaxima;
+			summary.satoshiPerByteBuckets = satoshiPerByteBuckets;
 			summary["satoshiPerByteBucketCounts"] = [];
 			summary["satoshiPerByteBucketTotalFees"] = [];
 
-			for (var i = 0; i < bucketCount; i++) {
+			for (var i = 0; i < satoshiPerByteBuckets.length; i++) {
 				summary["satoshiPerByteBucketCounts"].push(summary["satoshiPerByteBuckets"][i]["count"]);
 				summary["satoshiPerByteBucketTotalFees"].push(summary["satoshiPerByteBuckets"][i]["totalFees"]);
 			}
 
 
-			// we're done, send final status update
-			doneCount = txidCount;
-			statusUpdate();
+			// we're done, make sure statusFunc knows it
+			statusFunc({count: txSummaries.length, done: txSummaries.length});
 
 
 			resolve(summary);
+
+		} catch (err) {
+			utils.logError("23947ryfuedge", err);
+
+			reject(err);
+		}
+	});
+}
+
+function buildPredictedBlocks(statusId, statusFunc) {
+	return new Promise(async (resolve, reject) => {
+		try {
+			const allTxids = await utils.timePromise("coreApi_mempool_summary_getAllMempoolTxids", getAllMempoolTxids);
+
+			const txSummaries = await getMempoolTxSummaries(allTxids, statusId, statusFunc);
+
+			const blockTemplate = {
+				weight: 0,
+				totalFees: new Decimal(0),
+				vB: 0,
+				txCount:0,
+				minFeeRate: 1000000,
+				maxFeeRate: -1,
+				feeRates: [],
+				weightByFeeRate: {},
+				txids: []
+			};
+
+			const blocks = [];
+			
+			txSummaries.sort((a, b) => {
+				let aFeeRate = (a.af) / (a.asz * 4);
+				let bFeeRate = (b.af) / (b.asz * 4);
+
+				if (aFeeRate > bFeeRate) {
+					return -1;
+
+				} else if (aFeeRate < bFeeRate) {
+					return 1;
+
+				} else {
+					return a.key.localeCompare(b.key);
+				}
+			});
+
+			const txSummariesByKey = {};
+
+			for (let i = 0; i < txSummaries.length; i++) {
+				let tx = txSummaries[i];
+				let feeRate = 4 * 100000000 * (tx.f + tx.af) / (tx.w + tx.asz * 4);
+				//console.log("fr: " + feeRate);
+
+				txSummariesByKey[tx.key] = tx;
+			}
+
+			//res.locals.topTxs = txSummaries.slice(0, 20);
+
+			let loopCounter = 0;
+
+			const unAddedTxIndexes = [];
+			const addedTxids = {};
+			
+			for (let i = 0; i < txSummaries.length; i++) {
+				unAddedTxIndexes.push(i);
+			}
+			
+			while (unAddedTxIndexes.length > 0 && blocks.length < 20) {
+				//console.log("txids: " + addedTxids.length);
+
+				var currentBlock = {
+					weight: 0,
+					totalFees: new Decimal(0),
+					vB: 0,
+					txCount:0,
+					minFeeRate: 1000000,
+					maxFeeRate: -1,
+					feeRates: [],
+					weightByFeeRate: {},
+					txids: new Set(),
+					txs: []
+				};
+
+				let indexesToRemove = [];
+
+				for (let i = 0; i < unAddedTxIndexes.length; i++) {
+					loopCounter++;
+					if (loopCounter % 1000 == 0) {
+						console.log("lop: " + loopCounter);
+					}
+
+					const tx = txSummaries[unAddedTxIndexes[i]];
+
+					// this tx has already been added somewhere, possibly by a descendant with a
+					// higher fee so we flag for removal and move on
+					if (addedTxids[tx.key]) {
+						indexesToRemove.push(i);
+
+						continue;
+					}
+
+					let weightWithAncestors = (tx.asz * 4);
+					
+					// TODO?? check if any of our ancestors have already been added to a block
+					// and if so, exclude their data from being included along with us
+					
+
+					tx.frw = (tx.af) / tx.asz; // ancestor fee and size include current tx
+					
+					if (currentBlock.weight + coinConfig.minTxWeight > coinConfig.maxBlockWeight) {
+						// no more transactions can possibly be added, break to save time
+						break;
+					}
+
+					if ((currentBlock.weight + weightWithAncestors) <= coinConfig.maxBlockWeight) {
+						//console.log("adding tx: " + JSON.stringify(tx));
+
+						let startSize = currentBlock.txids.size;
+						
+						currentBlock.txids.add(tx.key);
+						tx.a.forEach(ancesTxidKey => currentBlock.txids.add(ancesTxidKey));
+
+						let sizeChange = currentBlock.txids.size - startSize;
+						if (sizeChange != (1 + tx.a.length)) {
+							console.log("DUPLICATEEEE");
+						}
+
+						currentBlock.weight += weightWithAncestors;
+						currentBlock.totalFees = currentBlock.totalFees.plus(new Decimal(tx.f)).plus(new Decimal(tx.af));
+						currentBlock.vB += weightWithAncestors / 4;
+
+						let feeRate = tx.frw * 100000000;
+
+						if (feeRate > currentBlock.maxFeeRate) {
+							currentBlock.maxFeeRate = feeRate;
+							currentBlock.maxFeeRateTx = tx.key;
+						}
+
+						if (feeRate < currentBlock.minFeeRate) {
+							currentBlock.minFeeRate = feeRate;
+							currentBlock.minFeeRateTx = tx.key;
+						}
+
+						let feeRateGroup = feeRate;
+						
+						if (feeRateGroup > 100) {
+							feeRateGroup = Math.floor(feeRateGroup / 20) * 20;
+						}
+						
+						if (feeRateGroup > 20) {
+							feeRateGroup = Math.floor(feeRateGroup / 10) * 10;
+						}
+
+						if (feeRateGroup > 5) {
+							feeRateGroup = Math.floor(feeRateGroup / 5) * 5;
+
+						} else {
+							console.log(JSON.stringify(tx));
+						}
+
+						feeRateGroup = Math.floor(feeRateGroup);
+						
+						if (!currentBlock.feeRates.includes(feeRateGroup)) {
+							currentBlock.feeRates.push(feeRateGroup);
+							currentBlock.weightByFeeRate[feeRateGroup] = 0;
+						}
+
+						currentBlock.weightByFeeRate[feeRateGroup] += weightWithAncestors;
+
+						addedTxids[tx.key] = true;
+						tx.a.forEach(ancesTxidKey => addedTxids[ancesTxidKey] = true);
+
+						//currentBlock.txids.push(tx.key);
+
+						indexesToRemove.push(i);
+
+
+
+						if (currentBlock.txs.length < 100) {
+							currentBlock.txs.push({txid:tx.key, feeRate:feeRate});
+
+							tx.a.forEach(ancesTxidKey => {
+								let ancesTx = txSummariesByKey[ancesTxidKey];
+
+								if (ancesTx) {
+									ancesTx.childOf = tx.key;
+									currentBlock.txs.push({txid:ancesTx.key, childOf:tx.key});
+
+								} else {
+									console.log("WTF");
+								}
+
+								
+							});
+						}
+					}
+				}
+
+				for (let i = indexesToRemove.length - 1; i >= 0; i--) {
+					unAddedTxIndexes.splice(indexesToRemove[i], 1);
+				}
+
+				// we went through all txs and no more fit in the current block
+				// so let's finish this one up and add it to the list
+				currentBlock.txCount = currentBlock.txids.size;
+				currentBlock.avgFee = currentBlock.totalFees.dividedBy(currentBlock.txCount).toDP(8);
+				currentBlock.avgFeeRate = currentBlock.totalFees.dividedBy(currentBlock.vB).times(100000000).toDP(1);
+
+				blocks.push(currentBlock);
+
+				// ...and start a new block
+				//currentBlock = Object.assign({}, blockTemplate);
+				
+				console.log("block finished: " + JSON.stringify(currentBlock));
+			}
+
+			console.log("loops: " + loopCounter);
+
+			//console.log("all blocks: " + JSON.stringify(blocks, null, 4));
+			
+			// we're done, make sure statusFunc knows it
+			statusFunc({count: txSummaries.length, done: txSummaries.length});
+
+
+			resolve(blocks);
 
 		} catch (err) {
 			utils.logError("23947ryfuedge", err);
@@ -1603,7 +2168,7 @@ module.exports = {
 	getPeerSummary: getPeerSummary,
 	getChainTxStats: getChainTxStats,
 	getMempoolTxids: getMempoolTxids,
-	getTxCountStats: getTxCountStats,
+	getTxStats: getTxStats,
 	getSmartFeeEstimates: getSmartFeeEstimates,
 	getSmartFeeEstimate: getSmartFeeEstimate,
 	getUtxoSetSummary: getUtxoSetSummary,
@@ -1616,5 +2181,10 @@ module.exports = {
 	getBlockHeadersByHeight: getBlockHeadersByHeight,
 	getTxOut: getTxOut,
 	buildMempoolSummary: buildMempoolSummary,
-	buildMiningSummary: buildMiningSummary
+	buildPredictedBlocks: buildPredictedBlocks,
+	buildMiningSummary: buildMiningSummary,
+	getCachedMempoolTxSummaries: getCachedMempoolTxSummaries,
+	getMempoolTxSummaries: getMempoolTxSummaries,
+	getBlockTemplate: getBlockTemplate,
+	getNextBlockEstimate: getNextBlockEstimate
 };

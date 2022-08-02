@@ -1,9 +1,9 @@
-$body-bg: #041f47;
-$body-color: #fafcfc;
+$body-bg: #051c3e;
+$body-color: #f7fafa;
 
 $main-bg: darken($body-bg, 6%);
 
-$text-muted: #b7bfc7;
+$text-muted: #b2bac2;
 
 $dark: #22272b;
 
@@ -14,6 +14,7 @@ $dark: #22272b;
 
 $blue: #0d6efd;
 $link-color: $blue;
+$card-highlight-color: #406fb4;
 
 
 
@@ -76,8 +77,16 @@ $modal-content-color: $body-color;
 
 
 
+$toast-color:                       $body-color;
+$toast-background-color:            lighten($body-bg, 15%);
+$toast-border-color:                rgba(255, 255, 255, .1);
+$toast-header-color:                $body-color;
+$toast-header-background-color:     lighten($body-bg, 7%);
+$toast-header-border-color:         rgba(0, 0, 0, .05) !default;
+
+
+
 @import "./main";
-@import "../../node_modules/bootstrap/scss/bootstrap";
 
 
 
@@ -108,22 +117,50 @@ $modal-content-color: $body-color;
 	border-width: 2px;
 }
 
+.alert-success {
+	color: $body-color;
+	background-color: darken(#198754, 10%);
+	border-color: lighten(#198754, 5%);
+	border-width: 2px;
+}
+
+.alert-info {
+	color: $body-color;
+	background-color: darken(#cff4fc, 60%);
+	border-color: darken(#cff4fc, 50%);
+	border-width: 2px;
+}
+
 
 
 .bg-main {
 	background-color: $main-bg !important;
 }
 
+$header-footer-bg: #112138;
+
 .bg-header-footer {
-	background-color: #162740 !important;
+	background-color: $header-footer-bg !important;
 }
 
 .bg-header-footer-highlight {
-	background-color: lighten(#162740, 15%) !important;
+	background-color: lighten($header-footer-bg, 12%) !important;
 }
 
 .bg-gradient-body-to-main {
 	background: linear-gradient(0deg, $main-bg 0%, $body-bg 100%);
+}
+
+.bg-card-highlight-badge {
+	background-color: $body-bg !important;
+}
+
+.bg-tx-separator {
+	background-color: #131a24;
+}
+
+.border-card-highlight-badge {
+	border-color: #183662 !important;
 }
 
 .border-dark {
@@ -134,6 +171,14 @@ $modal-content-color: $body-color;
 	background-color: lighten($card-bg, 5%);
 	border: solid 1px lighten($card-bg, 10%) !important;
 	color: $body-color;
+}
+
+.text-card-highlight {
+	color: $card-highlight-color !important;
+}
+
+.border-dotted {
+	border-bottom: dotted 1px #6688bc;
 }
 
 code {

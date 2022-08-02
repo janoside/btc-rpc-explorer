@@ -6,6 +6,7 @@ const debugLog = debug("btcexp:config");
 const fs = require('fs');
 const crypto = require('crypto');
 const url = require('url');
+const path = require('path');
 
 let baseUrl = (process.env.BTCEXP_BASEURL || "/").trim();
 if (!baseUrl.startsWith("/")) {
@@ -19,7 +20,6 @@ const coins = require("./coins.js");
 const credentials = require("./credentials.js");
 
 const currentCoin = process.env.BTCEXP_COIN || "WCN";
-const defaultTheme = process.env.BTCEXP_UI_THEME || "dark";
 
 const rpcCred = credentials.rpc;
 
@@ -35,7 +35,7 @@ if (rpcCred.cookie && !rpcCred.username && !rpcCred.password && fs.existsSync(rp
 
 const cookieSecret = process.env.BTCEXP_COOKIE_SECRET
  || (rpcCred.password && crypto.createHmac('sha256', JSON.stringify(rpcCred))
-                               .update('wcn-rpc-explorer-cookie-secret').digest('hex'))
+                               .update('btc-rpc-explorer-cookie-secret').digest('hex'))
  || "0x000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f";
 
 
@@ -54,6 +54,7 @@ for (let i = 0; i < electrumServerUriStrings.length; i++) {
 	"BTCEXP_NO_INMEMORY_RPC_CACHE",
 	"BTCEXP_RPC_ALLOWALL",
 	"BTCEXP_ELECTRUM_TXINDEX",
+	"BTCEXP_UI_HIDE_INFO_NOTES",
 
 ].forEach(function(item) {
 	if (process.env[item] === undefined) {
@@ -81,12 +82,18 @@ const slowDeviceMode = (process.env.BTCEXP_SLOW_DEVICE_MODE.toLowerCase() == "tr
 
 module.exports = {
 	host: process.env.BTCEXP_HOST || "127.0.0.1",
-	port: process.env.PORT || process.env.BTCEXP_PORT || 3002,
+	port: process.env.PORT || process.env.BTCEXP_PORT || 5000,
 
 	baseUrl: baseUrl,
 
 	coin: currentCoin,
-	defaultTheme: defaultTheme,
+
+	displayDefaults: {
+		displayCurrency: (process.env.BTCEXP_DISPLAY_CURRENCY || "wcn"),
+		localCurrency: (process.env.BTCEXP_LOCAL_CURRENCY || "usd"),
+		theme: (process.env.BTCEXP_UI_THEME || "dark"),
+		timezone: (process.env.BTCEXP_UI_TIMEZONE || "local")
+	},
 
 	cookieSecret: cookieSecret,
 
@@ -97,6 +104,8 @@ module.exports = {
 	noInmemoryRpcCache: (process.env.BTCEXP_NO_INMEMORY_RPC_CACHE.toLowerCase() == "true"),
 	
 	rpcConcurrency: (process.env.BTCEXP_RPC_CONCURRENCY || (slowDeviceMode ? 3 : 10)),
+
+	filesystemCacheDir: (process.env.BTCEXP_FILESYSTEM_CACHE_DIR || path.join(process.cwd(),"./cache")),
 
 	noTxIndexSearchDepth: (+process.env.BTCEXP_NOTXINDEX_SEARCH_DEPTH || 3),
 
@@ -182,38 +191,36 @@ module.exports = {
 	redisUrl:process.env.BTCEXP_REDIS_URL,
 
 	site: {
+		hideInfoNotes: process.env.BTCEXP_UI_HIDE_INFO_NOTES,
 		homepage:{
-			recentBlocksCount: (process.env.BTCEXP_UI_HOME_PAGE_LATEST_BLOCKS_COUNT || (slowDeviceMode ? 5 : 10))
+			recentBlocksCount: parseInt(process.env.BTCEXP_UI_HOME_PAGE_LATEST_BLOCKS_COUNT || (slowDeviceMode ? 5 : 10))
 		},
 		blockTxPageSize: (slowDeviceMode ? 10 : 20),
 		addressTxPageSize: 10,
 		txMaxInput: (slowDeviceMode ? 3 : 15),
-		browseBlocksPageSize: (process.env.BTCEXP_UI_BLOCKS_PAGE_BLOCK_COUNT || (slowDeviceMode ? 10 : 25)),
+		browseBlocksPageSize: parseInt(process.env.BTCEXP_UI_BLOCKS_PAGE_BLOCK_COUNT || (slowDeviceMode ? 10 : 25)),
 		browseMempoolTransactionsPageSize: (slowDeviceMode ? 10 : 25),
 		addressPage:{
 			txOutputMaxDefaultDisplay:10
 		},
 		valueDisplayMaxLargeDigits: 4,
-		prioritizedToolIdsList: [0, 10, 11, 9, 3, 4, 12, 2, 5, 1, 6, 7, 13, 8],
+		prioritizedToolIdsList: [0, 10, 11, 9, 3, 4, 16, 12, 2, 5, 15, 1, 6, 7, 13, 8],
 		toolSections: [
 			{name: "Basics", items: [0, 2]},
-			{name: "Mempool", items: [4]},
-			//{name: "Mempool", items: [5,4]},
-			//{name: "Analysis", items: [9, 10, 11, 12, 3]},
-			{name: "Analysis", items: [9, 10, 11, 12]},
-			{name: "Technical", items: [1]},
-			// Disable RPC Browser 6 ,7 
-			//{name: "Technical", items: [6, 7, 1]},
-			// Disable Widecoin fun and whitepaper
-			//{name: "Fun", items: [8, 13]},
+			{name: "Mempool", items: [16, 5]},
+			//{name: "Mempool", items: [4, 16, 5]},
+			{name: "Analysis", items: [9, 18, 10, 11, 12, 3]},
+			{name: "Technical", items: [15, 1]},
+			//{name: "Technical", items: [15, 6, 7, 1]},
+			//{name: "Fun", items: [8, 17, 13]},
 		]
 	},
 
 	credentials: credentials,
 
 	siteTools:[
-	/* 0 */		{name:"Node Details", url:"./node-details", desc:"Summary of this node: version, network, uptime, etc.", fontawesome:"fas fa-info-circle"},
-	/* 1 */		{name:"Peers", url:"./peers", desc:"Detailed info about the peers connected to this node.", fontawesome:"fas fa-sitemap"},
+	/* 0 */		{name:"Node Details", url:"./node-details", desc:"Node basics (version, uptime, etc)", fontawesome:"fas fa-info-circle"},
+	/* 1 */		{name:"Peers", url:"./peers", desc:"Details about the peers connected to this node.", fontawesome:"fas fa-sitemap"},
 
 	/* 2 */		{name:"Browse Blocks", url:"./blocks", desc:"Browse all blocks in the blockchain.", fontawesome:"fas fa-cubes"},
 	/* 3 */		{name:"Transaction Stats", url:"./tx-stats", desc:"See graphs of total transaction volume and transaction rates.", fontawesome:"fas fa-chart-bar"},
@@ -224,14 +231,23 @@ module.exports = {
 	/* 6 */		{name:"RPC Browser", url:"./rpc-browser", desc:"Browse the RPC functionality of this node. See docs and execute commands.", fontawesome:"fas fa-book"},
 	/* 7 */		{name:"RPC Terminal", url:"./rpc-terminal", desc:"Directly execute RPCs against this node.", fontawesome:"fas fa-terminal"},
 
-	/* 8 */		{name:(coins[currentCoin].name + " Fun"), url:"./fun", desc:"See fun/interesting historical blockchain data.", fontawesome:"fas fa-flag"},
+	/* 8 */		{name:(coins[currentCoin].name + " Fun"), url:"./fun", desc:"Curated fun/interesting historical blockchain data.", fontawesome:"fas fa-flag"},
 
 	/* 9 */		{name:"Mining Summary", url:"./mining-summary", desc:"Summary of recent data about miners.", fontawesome:"fas fa-chart-pie"},
 	/* 10 */	{name:"Block Stats", url:"./block-stats", desc:"Summary data for blocks in configurable range.", fontawesome:"fas fa-layer-group"},
 	/* 11 */	{name:"Block Analysis", url:"./block-analysis", desc:"Summary analysis for all transactions in a block.", fontawesome:"fas fa-angle-double-down"},
-	/* 12 */	{name:"Difficulty History", url:"./difficulty-history", desc:"Graph of difficulty changes over time.", fontawesome:"fas fa-chart-line"},
+	/* 12 */	{name:"Difficulty History", url:"./difficulty-history", desc:"Details of difficulty changes over time.", fontawesome:"fas fa-chart-line"},
 
-	/* 13 */	{name:"Whitepaper Extracter", url:"./widecoin-whitepaper", desc:"Tool that extracts the Bitcoin whitepaper from data embedded in the blockchain.", fontawesome:"far fa-file-alt"},
+	/* 13 */	{name:"Whitepaper Extractor", url:"./bitcoin-whitepaper", desc:"Extract the Bitcoin whitepaper from data embedded within the blockchain.", fontawesome:"far fa-file-alt"},
+	
+	/* 14 */	{name:"Predicted Blocks", url:"./predicted-blocks", desc:"View predicted future blocks based on the current mempool.", fontawesome:"fas fa-arrow-circle-right"},
+
+	/* 15 */	{name:"API", url:"./api/docs", desc:"View docs for the public API.", fontawesome:"fas fa-toolbox"},
+
+	/* 16 */	{name:"Mining Template", url:"./mining-template", desc:"View a template for the the next block based on the current mempool.", fontawesome:"fas fa-filter"},
+	/* 17 */	{name:"Quotes", url:"./quotes", desc:"Curated list of Bitcoin-related quotes.", fontawesome:"fas fa-comment-dots"},
+
+	/* 18 */	{name:"UTXO Set", url:"./utxo-set", desc:"View the latest UTXO Set.", fontawesome:"fas fa-coins"},
 	]
 };
 

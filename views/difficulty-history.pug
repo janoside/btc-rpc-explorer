@@ -15,7 +15,7 @@ block content
 			li The adjustment aims to maintain an average block-mining time of #{coinConfig.targetBlockTimeMinutes} minutes.
 			li An increase in the difficulty indicates that the average block-mining time during the previous adjustment epoch was less than #{coinConfig.targetBlockTimeMinutes} minutes (due to more miners joining the network and searching for blocks).
 			li A decrease in difficulty indicates miners have left the network so finding each block is adjusted to be easier for the smaller number remaining.
-			li The numeric Difficulty is a multiple of the difficulty of finding the easiest block (Block #0) - e.g. blocks in BTC mainnet epoch 308 are over 16 trillion times harder to mine than those in epoch 0.
+			li The numeric Difficulty is a multiple of the difficulty of finding the easiest block (Block #0) - e.g. blocks in WCN mainnet epoch 308 are over 16 trillion times harder to mine than those in epoch 0.
 
 			
 
@@ -29,14 +29,22 @@ block content
 
 
 	div#main-content(style="display: none;")
+		- var yearItems = [["All Time", 10000], ["8 yr", 8], ["4 yr", 4], ["2 yr", 2], ["1 yr", 1]];
+
 		+pageTabs(["Details", "Data"])
 
 		.tab-content
 			+pageTab("Details", true)
+
 				.row
 					.col
 						+contentSection("Difficulty History")
-							canvas(id="graph-diff-hist")
+							.btn-group.mb-3
+								each yearItem in yearItems
+									a.btn.btn-outline-primary(id=`diff-hist-selector-${yearItem[1]}`, class="diff-hist-selector", href=`javascript:void(0)`, onclick=`$('.graph-diff-hist').hide(); $('#graph-diff-hist-${yearItem[1]}').show(); $(".diff-hist-selector").addClass("btn-outline-primary").removeClass("btn-primary"); $(this).toggleClass("btn-outline-primary").addClass("btn-primary"); return false;`) #{yearItem[0]}
+
+							each yearItem in yearItems
+								canvas(id=`graph-diff-hist-${yearItem[1]}`, class='graph-diff-hist')
 
 								
 
@@ -47,7 +55,7 @@ block content
 								+sectionTitle("Difficulty Δ")
 							.float-start
 								small.text-muted.ms-2
-									| (clamped to ±100%)
+									| (%, clamped to ±100%)
 
 						+contentSection
 							canvas(id="graph-diff-change")
@@ -56,42 +64,31 @@ block content
 			+pageTab("Data")
 				.row
 					.col
-						+contentSection("Difficulty")
+						+contentSection("Raw Data")
 							.table-responsive
 								table.table.table-striped.table-borderless.mb-3
 									thead
 										tr
-											th Epoch
+											th.text-end.text-card-highlight.text-uppercase.fw-light Epoch
+											th.text-end.text-card-highlight.text-uppercase.fw-light Start Block
+											th.text-end.text-card-highlight.fw-light
+												span.text-uppercase Start Date
+												small.ms-1 (utc)
 											//th Date
 											//th.text-end Block Start
-											th.text-end Difficulty
+											th.text-end.text-card-highlight.text-uppercase.fw-light Difficulty
+											th.text-end.text-card-highlight.text-uppercase.fw-light Difficulty Δ
+												small.ms-1 (%)
 											
 									tbody(id="difficulty-table-body")
 										tr(id="difficulty-table-row-prototype", style="display: none;")
-											td.font-monospace.data-epoch
-											//td.font-monospace.data-date
-											//td.font-monospace.text-end.data-block-start
-											td.font-monospace.text-end.data-difficulty
-
-										tr(id="empty-row-to-fix-striped-coloring", style="display: none;")
-
-					.col
-						+contentSection("Difficulty Δ")
-							.table-responsive
-								table.table.table-striped.table-borderless.mb-3
-									thead
-										tr
-											th Epoch
-											//th Date
-											//th.text-end Block Start
-											th.text-end Difficulty Δ
-											
-									tbody(id="difficulty-delta-table-body")
-										tr(id="difficulty-delta-table-row-prototype", style="display: none;")
-											td.font-monospace.data-epoch
-											//td.font-monospace.data-date
-											//td.font-monospace.text-end.data-block-start
-											td.font-monospace.text-end.data-difficulty-delta
+											td.text-end.data-epoch
+											td.text-end.data-start-block
+											td.text-end.data-start-date
+											//td.data-date
+											//td.text-end.data-block-start
+											td.text-end.data-difficulty
+											td.text-end.data-difficulty-delta
 
 										tr(id="empty-row-to-fix-striped-coloring", style="display: none;")
 	
@@ -103,45 +100,45 @@ block endOfBody
 	script(src='./js/decimal.js')
 
 	script.
-		Chart.defaults.global.defaultFontSize = 14;
+		Chart.defaults.defaultFontSize = 14;
 
 	
 	script.
 		var blockCount = !{blockCount};
+		var yearItems = !{JSON.stringify(yearItems)};
 		
 		var heights = [];
 		var height = 0;
+		var chunkSize = 10;
+		var summary = null;
+
 		while (height <= blockCount) {
 			heights.push([height]);
 			height += !{coinConfig.difficultyAdjustmentBlockCount};
 		}
 
 		$(document).ready(function() {
-			loadData(heights, 1, heights.length);
-		});
-
-		function loadData(heightChunks, chunkSize, count) {
-			var chunkStrs = [];
+			var heightChunks = [];
 			
-			for (var i = 0; i < heightChunks.length; i++) {
-				var heightChunk = heightChunks[i];
+			var currentChunk = [];
+			heightChunks.push(currentChunk);
 
-				var chunkStr = "";
-
-				for (var j = 0; j < heightChunk.length; j++) {
-					if (j > 0) {
-						chunkStr += ",";
-					}
-
-					chunkStr += heightChunk[j];
+			for (var i = 0; i < heights.length; i++) {
+				if (currentChunk.length == chunkSize) {
+					currentChunk = [];
+					heightChunks.push(currentChunk);
 				}
 
-				chunkStrs.push(chunkStr);
+				currentChunk.push(heights[i]);
 			}
 
-			//alert(JSON.stringify(chunks));
+			loadData(heightChunks.map(x => x.join(",")));
+		});
 
-			var results = [];
+		function loadData(chunkStrs) {
+			//console.log(JSON.stringify(chunkStrs));
+
+			var results = {heights:[]};
 
 			var statusCallback = function(chunkIndexDone, chunkCount) {
 				//console.log("Done: " + Math.min(((chunkIndexDone + 1) * chunkSize), count) + " of " + count);
@@ -149,37 +146,64 @@ block endOfBody
 				var wPercent = `${parseInt(100 * (chunkIndexDone + 1) / parseFloat(chunkCount))}%`;
 				
 				$("#data-progress").css("width", wPercent);
-				$("#progress-text").text(`${Math.min(((chunkIndexDone + 1) * chunkSize), count).toLocaleString()} of ${count.toLocaleString()} (${wPercent})`);
+				$("#progress-text").text(`${Math.min(((chunkIndexDone + 1) * chunkSize), chunkStrs.length).toLocaleString()} of ${chunkStrs.length.toLocaleString()} (${wPercent})`);
 			};
 
 			var finishedCallback = function() {
-				var summary = summarizeData(results);
+				summary = summarizeData(results);
 
 				fillDifficultyTable(summary);
-				fillDifficultyDeltaTable(summary);
 
-				createGraph("graph-diff-hist", [summary.graphData], "Difficulty");
+				for (var i = 0; i < yearItems.length; i++) {
+					createGraph(`graph-diff-hist-${yearItems[i][1]}`, [summary.graphData_years[yearItems[i][1]]], "Difficulty", true);
+				}
 
-				createGraph("graph-diff-change", [summary.changeGraphData], "Difficulty Change %");
+				createGraph("graph-diff-change", [summary.changeGraphData], "Difficulty Change %", false);
 
 				//createGraph("graph-diff-hist-2", summary.epochChunks, "Difficulty 2");
 				
 				$("#main-content").show();
 				$("#progress-wrapper").hide();
+
+				// only show the first graph (All Time)
+				$(`.graph-diff-hist`).hide();
+				$(`#graph-diff-hist-${yearItems[0][1]}`).show();
+
+				$(`#diff-hist-selector-${yearItems[0][1]}`).removeClass("btn-outline-primary").addClass("btn-primary");
 			};
 
 			getData(results, chunkStrs, 0, statusCallback, finishedCallback);
 		}
 
+		function graphDiffHistory(numYears) {
+			let data = [];
+			let yearCount = 0;
+			for (let i = summary.graphData_years.length - 1; i >= 0; i--) {
+				data = data.concat(summary.graphData_years[i]);
+
+				yearCount++;
+				if (yearCount == numYears) {
+					break;
+				}
+			}
+
+			createGraph("graph-diff-hist", [data], "Difficulty", true);
+		}
+
 		function fillDifficultyTable(summary) {
 			for (var i = 0; i < summary.difficultyData.length; i++) {
 				var item = summary.difficultyData[i];
+				var deltaItem = summary.difficultyDeltaData[i];
 
 				var row = $("#difficulty-table-row-prototype").clone();
 				row.attr("id", null);
 				//row.addClass("fee-rate-table-row");
 
+				var startBlock = 2016 * i;
+
 				row.find(".data-epoch").text(item.epoch);
+				row.find(".data-start-block").html(`<a href="./block-height/${startBlock}">${startBlock.toLocaleString()}</a>`);
+				row.find(".data-start-date").text(new Date(item.date * 1000).toISOString().slice(0, 10));
 				//row.find(".data-date").text(item.count.toLocaleString());
 				//row.find(".data-block-start").text(sumBlockCount.toDP(2));
 
@@ -188,6 +212,19 @@ block endOfBody
 
 				} else {
 					row.find(".data-difficulty").text(new Decimal(item.difficulty).toDP(3));
+				}
+
+				if (deltaItem.difficultyDelta) {
+					if (deltaItem.difficultyDelta > 0) {
+						row.find(".data-difficulty-delta").text("+" + (new Decimal(deltaItem.difficultyDelta).toDP(2)));
+						row.find(".data-difficulty-delta").addClass("text-success");
+
+					} else if (deltaItem.difficultyDelta < 0) {
+						row.find(".data-difficulty-delta").text(new Decimal(deltaItem.difficultyDelta).toDP(2));
+						row.find(".data-difficulty-delta").addClass("text-danger");
+					}
+				} else {
+					row.find(".data-difficulty-delta").text("-");
 				}
 				
 				
@@ -229,7 +266,12 @@ block endOfBody
 			}
 		}
 
-		function createGraph(graphId, datas, yLabelStr) {
+		var chartsById = {};
+		function createGraph(graphId, datas, yLabelStr, logY) {
+			if (chartsById[graphId]) {
+				chartsById[graphId].destroy();
+			}
+
 			var datasets = [];
 
 			for (var i = 0; i < datas.length; i++) {
@@ -238,7 +280,7 @@ block endOfBody
 					borderWidth: 2,
 					backgroundColor: 'rgba(0,0,0,0)',
 					data: datas[i],
-					pointRadius: 1
+					pointRadius: 0
 				});
 			}
 
@@ -249,28 +291,35 @@ block endOfBody
 					datasets: datasets
 				},
 				options: {
-					legend: { display: false },
+					interaction: {
+						intersect: false,
+						mode: 'index',
+					},
+					plugins: {
+						legend: { display: false },
+					},
 					scales: {
-						xAxes: [{
+						x: {
 							type: 'linear',
 							position: 'bottom',
 							scaleLabel: {
 								display: true,
 								labelString: 'Difficulty Epoch'
 							},
-							gridLines: {
+							grid: {
 								color: gridLineColor
-							}
+							},
 							//ticks: {
 							//	stepSize: 100,
 							//}
-						}],
-						yAxes: [{
+						},
+						y: {
+							type: logY ? "logarithmic" : "linear",
 							scaleLabel: {
 								display: true,
 								labelString: yLabelStr
 							},
-							gridLines: {
+							grid: {
 								color: gridLineColor
 							},
 							ticks: {
@@ -284,10 +333,12 @@ block endOfBody
 									}
 								}
 							}
-						}]
+						}
 					}
 				}
 			});
+
+			chartsById[graphId] = graph;
 		}
 
 		function getData(results, chunks, chunkIndex, statusCallback, finishedCallback) {
@@ -297,7 +348,7 @@ block endOfBody
 				return;
 			}
 
-			var url = `./api/block-headers-by-height/${chunks[chunkIndex]}`;
+			var url = `./internal-api/difficulty-by-height/${chunks[chunkIndex]}`;
 			
 			//console.log(url);
 
@@ -305,8 +356,10 @@ block endOfBody
 				url: url
 
 			}).done(function(result) {
-				for (var i = 0; i < result.length; i++) {
-					results.push(result[i]);
+				for (var height in result) {
+					results.heights.push(parseInt(height));
+
+					results[height] = result[height];
 				}
 
 				statusCallback(chunkIndex, chunks.length);
@@ -316,26 +369,43 @@ block endOfBody
 		}
 
 		function summarizeData(raw) {
+			raw.heights.sort((a, b) => { a - b });
+			
 			var summary = {};
 			summary.difficultyData = [];
 			summary.difficultyDeltaData = [];
 
 			summary.graphData = [];
+			summary.graphData_years = {};
+			for (let i = 0; i < yearItems.length; i++) {
+				summary.graphData_years[yearItems[i][1]] = [];
+			}
 			summary.changeGraphData = [];
 
-			for (var i = 0; i < raw.length; i++) {
-				summary.difficultyData.push({epoch:i, difficulty:raw[i].difficulty});
+			for (var i = 0; i < raw.heights.length; i++) {
+				var heightStr = `${raw.heights[i]}`;
+				var previousHeightStr = `${raw.heights[i - 1]}`;
 
-				summary.graphData.push({x:i, y:raw[i].difficulty});
+				summary.difficultyData.push({epoch:i, date:raw[heightStr].time, difficulty:raw[heightStr].difficulty});
+
+				summary.graphData.push({x:i, y:raw[heightStr].difficulty});
+
+				var yearIndex = Math.floor((raw.heights.length - i) / 26);
+				for (let j = 0; j < yearItems.length; j++) {
+					if (yearIndex < yearItems[j][1]) {
+						summary.graphData_years[yearItems[j][1]].push({x:i, y:raw[heightStr].difficulty});
+					}
+				}
+
 
 				if (i == 0) {
-					summary.changeGraphData.push({x:i, y:raw[i].difficulty});
+					summary.changeGraphData.push({x:i, y:raw[heightStr].difficulty});
 
 					summary.difficultyDeltaData.push({epoch:i});
 
 				} else {
-					var d1 = raw[i].difficulty;
-					var d0 = raw[i - 1].difficulty
+					var d1 = raw[heightStr].difficulty;
+					var d0 = raw[previousHeightStr].difficulty
 
 					var deltaPercent = 100 * (d1 / d0 - 1);
 
@@ -363,6 +433,8 @@ block endOfBody
 					summary.changeGraphData.push({x:i, y:deltaPercent});
 				}
 			}
+
+			console.log(summary.graphData_years);
 
 			/*
 			var epochChunkCount = 3;
