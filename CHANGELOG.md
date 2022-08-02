@@ -244,7 +244,7 @@
 * Start of RPC API versioning support
 * Tweaked styling across site
 * Homepage UI tweaks
-	* Remove "Bitcoin Explorer" H1 (it's redundant)
+	* Remove "Widecoin Explorer" H1 (it's redundant)
 	* Hide the "Date" (timestamp) column for recent blocks (the Age+TTM is more valuable)
 * Updated miner configs
 * Lots of minor bug fixes

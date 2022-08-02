@@ -101,13 +101,13 @@ module.exports = {
 		//"https://raw.githubusercontent.com/btccom/Blockchain-Known-Pools/master/pools.json",
 		//"https://raw.githubusercontent.com/blockchain/Blockchain-Known-Pools/master/pools.json"
 	],
-	maxBlockWeight: 4000000,
-	maxBlockSize: 1000000,
+	maxBlockWeight: 32000000,
+	maxBlockSize: 8000000,
 	minTxBytes: 166, // ref: https://en.bitcoin.it/wiki/Maximum_transaction_rate
 	minTxWeight: 166 * 4, // hack
-	difficultyAdjustmentBlockCount: 2016,
+	difficultyAdjustmentBlockCount: 120,
 	maxSupplyByNetwork: {
-		"main": new Decimal(35000000), // ref: https://bitcoin.stackexchange.com/a/38998
+		"main": new Decimal(35000000.31308491), // ref: https://bitcoin.stackexchange.com/a/38998
 		"test": new Decimal(35000000),
 		"regtest": new Decimal(35000000),
 		"signet": new Decimal(35000000)
@@ -136,7 +136,7 @@ module.exports = {
 	},
 
 	utxoSetCheckpointsByNetwork: {
-		"main": {"height":702329,"bestblock":"00000000000000000005d323e8b476eac408e88002591b5ed7381ec9baaf2d13","transactions":45854214,"txouts":75356871,"bogosize":5640223435,"hash_serialized_2":"727879e512dde3c87ec4b3b4185d8212506a5eee517694a34785c0a63a7d78b9","disk_size":4582442992,"total_amount":"18826856.29247566","lastUpdated":1632692076775}
+		"main": {"height":702329,"bestblock":"0000000000000748f3d619925cb8f20ad02d7c808c2dbbbfeb561affb2918ed4","transactions":45854214,"txouts":75356871,"bogosize":5640223435,"hash_serialized_2":"727879e512dde3c87ec4b3b4185d8212506a5eee517694a34785c0a63a7d78b9","disk_size":4582442992,"total_amount":"18826856.29247566","lastUpdated":1632692076775}
 	},
 	
 	genesisBlockHashesByNetwork:{
@@ -539,9 +539,10 @@ module.exports = {
 		}
 	},
 	blockRewardFunction:function(blockHeight, chain) {
-		let halvingBlockInterval = (chain == "regtest" ? 150 : 210000);
+		let halvingBlockInterval = (chain == "regtest" ? 150 : 2102400);
 		let index = Math.floor(blockHeight / halvingBlockInterval);
-
+		//let index2 =Math.floor(blockHeight / halvingBlockInterval).toFixed(2);
+		//console.log(index2);
 		return blockRewardEras[index];
 	},
 	// Updated for WCN

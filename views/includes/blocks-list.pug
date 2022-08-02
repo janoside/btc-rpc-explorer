@@ -165,6 +165,7 @@
 										
 
 									if (block.totalFees == null)
+										// Not that 
 										- block.totalFees = Decimal(blockstatsByHeight[block.height].totalfee).dividedBy(coinConfig.baseCurrencyUnit.multiplier)
 
 								else
@@ -198,8 +199,8 @@
 								- var currencyValueDecimals = 3;
 
 								if (userSettings.displayCurrency == "wcn")
+									// Trx Fee
 									+valueDisplaySpecial(block.totalFees, 4)
-
 								else
 									+valueDisplay(block.totalFees)
 

@@ -50,7 +50,7 @@ module.exports = {
 		{
 			"category":"blockchain",
 			"url":"/api/blockchain/coins",
-			"desc":"Returns the current supply of Bitcoin. An estimate using a checkpoint can be returned in 2 cases: on 'slow' devices, and before the UTXO Set snapshot is loaded.",
+			"desc":"Returns the current supply of Widecoin. An estimate using a checkpoint can be returned in 2 cases: on 'slow' devices, and before the UTXO Set snapshot is loaded.",
 			"returnType":"number"
 		},
 
@@ -132,7 +132,7 @@ module.exports = {
 		{
 			"category":"mempool",
 			"url":"/api/mempool/count",
-			"desc":"Returns the number of transactions in Bitcoin Core's mempool.",
+			"desc":"Returns the number of transactions in Widecoin Core's mempool.",
 			"returnType":"integer"
 		},
 
@@ -163,14 +163,14 @@ module.exports = {
 		{
 			"category":"price",
 			"url":"/api/price",
-			"desc":"Returns the price of 1 BTC, in USD, EUR, GBP, and XAU",
+			"desc":"Returns the price of 1 WCN, in USD, EUR, GBP, and XAU",
 			"returnType":"json"
 		},
 
 		{
 			"category":"price",
 			"url":"/api/price/:currency",
-			"desc":"Returns the price of 1 BTC, in one of USD, EUR, GBP, XAU",
+			"desc":"Returns the price of 1 WCN, in one of USD, EUR, GBP, XAU",
 			"params":[{name: "currency", "options": ["usd", "eur", "gbp", "xau"]}],
 			"returnType":"number",
 			"testUrl": "/api/price/usd"
@@ -179,7 +179,7 @@ module.exports = {
 		{
 			"category":"price",
 			"url":"/api/price/:currency/marketcap",
-			"desc":"Returns the market cap of Bitcoin, in one of USD, EUR, GBP, XAU",
+			"desc":"Returns the market cap of Widecoin, in one of USD, EUR, GBP, XAU",
 			"params":[{name: "currency", "options": ["usd", "eur", "gbp", "xau"]}],
 			"returnType":"number",
 			"testUrl": "/api/price/usd/marketcap"
@@ -201,14 +201,14 @@ module.exports = {
 		{
 			"category":"fun",
 			"url":"/api/quotes/all",
-			"desc":"Returns the full curated list of Bitcoin quotes.",
+			"desc":"Returns the full curated list of Widecoin quotes.",
 			"returnType":"json"
 		},
 
 		{
 			"category":"fun",
 			"url":"/api/quotes/:index",
-			"desc":"Returns the Bitcoin quote with the given index from the curated list.",
+			"desc":"Returns the Widecoin quote with the given index from the curated list.",
 			"returnType":"json",
 			"testUrl": "/api/quotes/0"
 		},
@@ -216,7 +216,7 @@ module.exports = {
 		{
 			"category":"fun",
 			"url":"/api/quotes/random",
-			"desc":"Returns a random Bitcoin quote from the curated list.",
+			"desc":"Returns a random Widecoin quote from the curated list.",
 			"returnType":"json"
 		},
 
