@@ -1,9 +1,9 @@
 const buildNormalizingRegexes = (baseUrl) => {
 	return [
 		{ regex: new RegExp(`^${baseUrl}$`, "i"), action:"index" },
-		{ regex: new RegExp(`^${baseUrl}block\-height\/.*`, "i"), action: "block-height" },
+		{ regex: new RegExp(`^${baseUrl}block-height\/.*`, "i"), action: "block-height" },
 		{ regex: new RegExp(`^${baseUrl}block\/.*`, "i"), action: "block-hash" },
-		{ regex: new RegExp(`^${baseUrl}block\-analysis\/.*`, "i"), action: "block-analysis" },
+		{ regex: new RegExp(`^${baseUrl}block-analysis\/.*`, "i"), action: "block-analysis" },
 		{ regex: new RegExp(`^${baseUrl}tx\/.*`, "i"), action: "transaction" },
 		{ regex: new RegExp(`^${baseUrl}address\/.*`, "i"), action: "address" },
 

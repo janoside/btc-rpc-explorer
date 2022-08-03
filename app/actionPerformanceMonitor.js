@@ -53,7 +53,7 @@ const validateConfig = (cfg) => {
 	const config = (cfg || {});
 
 	if (!config.ignoredEndsWithActions) {
-		config.ignoredEndsWithActions = "\.js|\.css|\.svg|\.png";
+		config.ignoredEndsWithActions = /\.js|\.css|\.svg|\.png/;
 	}
 
 	config.ignoredEndsWithActionsRegex = new RegExp(config.ignoredEndsWithActions + "$", "i");
