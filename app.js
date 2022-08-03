@@ -159,7 +159,7 @@ const systemMonitor = require("./app/systemMonitor.js");
 
 const normalizeActions = require("./app/normalizeActions.js");
 expressApp.use(require("./app/actionPerformanceMonitor.js")(statTracker, {
-	ignoredEndsWithActions: "\.js|\.css|\.svg|\.png|\.woff2",
+	ignoredEndsWithActions: /\.js|\.css|\.svg|\.png|\.woff2/,
 	ignoredStartsWithActions: `${config.baseUrl}snippet`,
 	normalizeAction: (action) => {
 		return normalizeActions(config.baseUrl, action);
