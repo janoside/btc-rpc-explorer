@@ -12,6 +12,11 @@ module.exports = {
 			desc: "On this day in 2017, the Segregated Witness upgrade was locked in on the Bitcoin network by the UASF client."
 		},
 		{
+			name: "Bitcoin Independence Day (UASF Day)",
+			date: "2017-08-01",
+			desc: "On this day in 2017, members of the community scheduled activation of a User-Activated Soft Fork (UASF) in a modified version of the Bitcoin Core software. This modification represented an ultimatum to SegWit-reluctant miners: either signal for SegWit activation or your blocks will be ignored. This community effort seemingly called the miners \"SegWit2X bluff\" and resulted in SegWit activation on the network in short order. Read more <a href='https://bitcoinmagazine.com/culture/bitcoin-independence-day-how-this-watershed-day-defines-community-consensus'>here</a>."
+		},
+		{
 			name: "Bitcoin Infinity Day",
 			date: "2021-08-21",
 			desc: "8/21 is playfully celebrated as representing the meme \"Everything there is divided by 21,000,000\" (∞/21M)."
@@ -105,6 +110,21 @@ module.exports = {
 			name: "Diffe-Hellman Day",
 			date: "1976-11-01",
 			desc: "On this day in 1976, Whitfield Diffie and Martin E. Hellman released their proposal for a breakthrough in cryptographic communication: the first implementation of public/private key pairs for secure communication over public channels. This cryptographic building block is one of the key underpinnings of the Bitcoin network. Read their 1976 paper titled \"New Directions in Cryptography\" <a href='https://ee.stanford.edu/~hellman/publications/24.pdf'>here</a>."
+		},
+		{
+			name: "Halving #1 Day",
+			date: "2012-11-28",
+			desc: "On this day in 2012, the first-ever \"Halving\" cut the subsidy from 50 BTC to 25 BTC."
+		},
+		{
+			name: "Halving #2 Day",
+			date: "2016-07-09",
+			desc: "On this day in 2016, the second \"Halving\" cut the subsidy from 25 BTC to 12.5 BTC."
+		},
+		{
+			name: "Halving #3 Day",
+			date: "2020-05-11",
+			desc: "On this day in 2020, the third \"Halving\" cut the subsidy from 12.5 BTC to 6.25 BTC."
 		}
 	]
 };
