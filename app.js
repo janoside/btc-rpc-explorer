@@ -263,6 +263,11 @@ const cdnItems = [
 
 	[`leaflet/leaflet.js`, `text/javascript`, "utf8"],
 	[`leaflet/leaflet.css`, `text/css`, "utf8"],
+	[`leaflet/images/layers.png`, `image/png`, "binary"],
+	[`leaflet/images/layers-2x.png`, `image/png`, "binary"],
+	[`leaflet/images/marker-icon-2x.png`, `image/png`, "binary"],
+	[`leaflet/images/marker-icon.png`, `image/png`, "binary"],
+	[`leaflet/images/marker-shadow.png`, `image/png`, "binary"],
 ];
 
 const cdnFilepathMap = {};
