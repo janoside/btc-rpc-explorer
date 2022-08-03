@@ -429,6 +429,13 @@ module.exports = {
 			speaker: "Gigi",
 			url: "https://youtu.be/w6VdgEz0NV4?t=1113",
 			date: "2022-05-12"
+		},
+		{
+			text: "It seems that #bitcoin attracts a great number of very technically gifted people... It also seems to pull in people that are more likely to ask questions or develop their own opinion, and want to make a difference.",
+			speaker: "Adam Back",
+			url: "https://twitter.com/TheBestBizzShow/status/1540380367173156866",
+			date: "2022-06-24"
+
 		}
 		/*{
 			text: "Bitcoin is a technological tour de force.",
