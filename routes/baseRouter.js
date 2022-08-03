@@ -2292,6 +2292,14 @@ router.get("/quote/:quoteIndex", function(req, res, next) {
 	res.locals.quoteIndex = parseInt(req.params.quoteIndex);
 	res.locals.btcQuotes = btcQuotes.items;
 
+	if (btcQuotes.items[res.locals.quoteIndex].duplicateIndex) {
+		let duplicateIndex = btcQuotes.items[res.locals.quoteIndex].duplicateIndex;
+
+		res.redirect(`${config.baseUrl}quote/${duplicateIndex}`);
+
+		return;
+	}
+
 	res.render("quote");
 
 	next();
