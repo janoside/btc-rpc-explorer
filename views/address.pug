@@ -4,6 +4,11 @@ block headContent
 	title Address #{address}
 
 block content
+	div(align="center")
+		script(async, src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2900084726921838", crossorigin="anonymous")
+		ins.adsbygoogle(style="display:inline-block;width:728px;height:90px", data-ad-client="ca-pub-2900084726921838", data-ad-slot="1164912161")
+		script.
+			(adsbygoogle = window.adsbygoogle || []).push({});
 	if (result && result.validateaddress)
 		if (!result.validateaddress.isvalid)
 			div.alert.alert-danger.mb-huge
