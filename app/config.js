@@ -261,7 +261,7 @@ module.exports = {
 
 	/* 15 */	{name:"API", url:"./api/docs", desc:"View docs for the public API.", iconClass:"bi-braces-asterisk"},
 
-	/* 16 */	{name:"Next Block", url:"./next-block", desc:"View a prediction for the the next block, based on the current mempool.", iconClass:"bi-minecart-loaded"},
+	/* 16 */	{name:"Next Block", url:"./next-block", desc:"View a prediction for the next block, based on the current mempool.", iconClass:"bi-minecart-loaded"},
 	/* 17 */	{name:"Quotes", url:"./quotes", desc:"Curated list of Bitcoin-related quotes.", iconClass:"bi-chat-quote"},
 
 	/* 18 */	{name:"UTXO Set", url:"./utxo-set", desc:"View the latest UTXO Set.", iconClass:"bi-list-columns"},
