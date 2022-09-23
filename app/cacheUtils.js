@@ -17,7 +17,7 @@ function createMemoryLruCache(cacheObj, onCacheEvent) {
 					onCacheEvent("memory", "miss", key);
 				}
 
-				resolve(cacheObj.get(key));
+				resolve(val);
 			});
 		},
 		set: (key, obj, maxAge) => {
