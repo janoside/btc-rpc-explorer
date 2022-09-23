@@ -13,6 +13,7 @@
 * Support for serving static assets via a configurable CDN
 * Misc fixes for erroneous data display on non-mainnet nodes
 * Switch from fontawesome to bootstrap-icons v1.8.0
+* Refreshed miner-identification database
 * UI/UX tweaks
 * Updated dependencies
 

@@ -24,6 +24,10 @@
             "name" : "BTC.com",
             "link" : "https://pool.btc.com"
         },
+        "btccom" : {
+            "name" : "BTC.com",
+            "link" : "https://pool.btc.com"
+        },
         "BTCPool" : {
             "name" : "BTCPool (unidentified)",
             "link" : "https://github.com/0xB10C/known-mining-pools/issues/28"
@@ -882,6 +886,10 @@
             "name" : "BTC.com",
             "link" : "https://pool.btc.com"
         },
+        "36cWgjEtxQSFgbHTJDw5AB96ZX7fJk1URd" : {
+            "name" : "BTC.com",
+            "link" : "https://pool.btc.com"
+        },
         "18EPLvrs2UE11kWBB3ABS7Crwj5tTBYPoa" : {
             "name" : "GoGreenLight",
             "link" : "https://www.gogreenlight.se/"
@@ -1059,6 +1067,10 @@
             "link": "https://www.poolin.com"
         },
         "14sA8jqYQgMRQV9zUtGFvpeMEw7YDn77SK" : {
+            "name": "Poolin",
+            "link": "https://www.poolin.com"
+        },
+        "1PtT8a79X2CbFSqwX2nCZjrvqaGRgfLxbz" : {
             "name": "Poolin",
             "link": "https://www.poolin.com"
         },

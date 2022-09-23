@@ -1,5 +1,9 @@
 {
     "coinbase_tags" : {
+        "/terrapool.io/": {
+            "name": "Terra Pool",
+            "link": "https://terrapool.io"
+        },
         "/LUXOR/": {
             "name": "Luxor",
             "link": "https://mining.luxor.tech"
@@ -22,7 +26,7 @@
         },
         "BITFARMS": {
             "name": "Bitfarms",
-            "link": "https://www.bitarms.io/"
+            "link": "https://www.bitfarms.io/"
         },
         "/Huobi/": {
             "name": "Huobi.pool",
@@ -185,8 +189,8 @@
             "link" : "http://give-me-coins.com/"
         },
         "/slush/" : {
-           "name" : "SlushPool",
-           "link" : "https://slushpool.com/"
+           "name" : "Braiins Pool",
+           "link" : "https://braiins.com/pool"
         },
         "Mined by AntPool" : {
             "name" : "AntPool",
@@ -559,6 +563,18 @@
         "Entrustus" : {
             "name": "Entrust Charity Pool",
             "link": "pool.entustus.org"
+        },
+        "okminer.com/euz" : {
+            "name": "OKMINER",
+            "link": "https://okminer.com/"
+        },
+        "btccom" : {
+            "name" : "BTC.com",
+            "link" : "https://pool.btc.com"
+        },
+        "btccomf" : {
+            "name" : "BTC.com",
+            "link" : "https://pool.btc.com"
         }
     },
     "payout_addresses" : {
@@ -615,12 +631,12 @@
             "link" : "https://polmine.pl/"
         },
         "1CK6KHY6MHgYvmRQ4PAafKYDrg1ejbH1cE" : {
-            "name" : "SlushPool",
-            "link" : "https://slushpool.com/"
+            "name" : "Braiins Pool",
+            "link" : "https://braiins.com/pool"
         },
         "1AqTMY7kmHZxBuLUR5wJjPFUvqGs23sesr" : {
-            "name" : "SlushPool",
-            "link" : "https://slushpool.com/"
+            "name" : "Braiins Pool",
+            "link" : "https://braiins.com/pool"
         },
         "1AcAj9p6zJn4xLXdvmdiuPCtY7YkBPTAJo" : {
             "name" : "BitFury",
@@ -663,6 +679,10 @@
             "link" : "https://www.hpt.com/"
         },
         "1BDbsWi3Mrcjp1wdop3PWFNCNZtu4R7Hjy" : {
+            "name" : "EMCDPool",
+            "link" : "https://pool.emcd.io"
+        },
+	"1MAAUXNSJEDaPtECd955CQct65BmTzwhj6" : {
             "name" : "EMCDPool",
             "link" : "https://pool.emcd.io"
         },
@@ -1250,9 +1270,25 @@
             "name" : "ULTIMUS POOL",
             "link" : "https://www.ultimuspool.com/"
         },
-        "1A32KFEX7JNPmU1PVjrtiXRrTQcesT3Nf1": {
+        "19VBqLkbMywnX5QMUg7LsHgbzsLh9as4MS": {
             "name": "MARA Pool",
             "link": "https://marapool.com"
+        },
+        "15xcAZ2HfaSwYbCV6GGbasBSAekBRRC5Q2": {
+            "name": "OKMINER",
+            "link": "https://okminer.com/"
+        },
+        "3Qqp7LwxmSjPwRaKkDToysJsM3xA4ThqFk": {
+            "name": "Terra Pool",
+            "link": "https://terrapool.io"
+        },
+        "32P5KVSbZYAkVmSHxDd2oBXaSk372rbV7L": {
+            "name": "Terra Pool",
+            "link": "https://terrapool.io"
+        },
+        "36cWgjEtxQSFgbHTJDw5AB96ZX7fJk1URd" : {
+            "name" : "BTC.com",
+            "link" : "https://pool.btc.com"
         }
     }
 }
