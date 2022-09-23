@@ -916,8 +916,18 @@ router.get("/price", function(req, res, next) {
 
 router.get("/quotes/random", function(req, res, next) {
 	var index = utils.randomInt(0, btcQuotes.items.length);
+
+	let quote = null;
+	let done = false;
+
+	while (!done) {
+		let quoteIndex = utils.randomInt(0, btcQuotes.items.length);
+		quote = btcQuotes.items[quoteIndex];
+
+		done = !utils.objHasProperty(quote, "duplicateIndex");
+	}
 	
-	res.json(btcQuotes.items[index]);
+	res.json(quote);
 
 	next();
 });
