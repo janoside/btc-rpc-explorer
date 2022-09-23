@@ -37,7 +37,7 @@ block endOfBody
 				postData._csrf = csrfToken;
 				
 				$.post(
-					"/terminal",
+					"./terminal",
 					postData,
 					function(response, textStatus, jqXHR) {
 						var t = new Date().getTime();
