@@ -6,14 +6,22 @@ include ../includes/shared-mixins.pug
 	+summaryItem
 		
 
-		+numWithMutedDecimals(new Decimal(minFeeRate).toDP(2).toString())
-		span.mx-1 &dash;
+		span.border-dotted(title="Minimum fee rate", data-bs-toggle="tooltip")
+			+numWithMutedDecimals(new Decimal(minFeeRate).toDP(2).toString())
+		
+		span.text-muted.fw-light.mx-2 /
+		
+		span.border-dotted(title="Median fee rate", data-bs-toggle="tooltip")
+			+numWithMutedDecimals(new Decimal(medianFeeRate).toDP(2).toString())
 
-		if (maxFeeRate - minFeeRate > 10)
-			+numWithMutedDecimals(new Decimal(maxFeeRate).toDP(0).toString())
+		span.text-muted.fw-light.mx-2 /
 
-		else
-			+numWithMutedDecimals(new Decimal(maxFeeRate).toDP(2).toString())
+		span.border-dotted(title="Maximum fee rate", data-bs-toggle="tooltip")
+			if (maxFeeRate - minFeeRate > 10)			
+				+numWithMutedDecimals(new Decimal(maxFeeRate).toDP(0).toString())
+
+			else
+				+numWithMutedDecimals(new Decimal(maxFeeRate).toDP(2).toString())
 
 		span.text-tiny.text-muted.ms-1 sat/vB
 

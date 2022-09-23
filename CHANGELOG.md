@@ -1,6 +1,7 @@
 ##### v3.?
 ###### Unreleased
 
+* Include median fee rate for next-block estimates, on homepage and at [/next-block](./next-block)
 * Minor fixes for running against Bitcoin Core v23
 * URL change: /mining-template -> /next-block (redirect is included for compatibility)
 * Homepage additions

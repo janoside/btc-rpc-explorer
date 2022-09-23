@@ -225,7 +225,7 @@ if (exchangeRates)
 
 		if (mempoolInfo && global.activeBlockchain != "signet")
 			+summaryRow
-				+summaryItem("Next Block", "A prediction for what transactions will be included in the next block, yet to be mined. Based on the output of the RPC getblocktemplate.", null, null, "icon:bi-minecart-loaded", "./next-block", "View next block details")
+				+summaryItem("Next Block", "A prediction for what transactions will be included in the next block, yet to be mined. Built from \"getblocktemplate\".", null, null, "icon:bi-minecart-loaded", "./next-block", "View next block details")
 
 					#index-next-block
 						.text-center.text-reset.pb-4

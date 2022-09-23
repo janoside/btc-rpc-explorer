@@ -326,8 +326,9 @@ async function getNextBlockEstimate() {
 	let maxFeeRate = 0;
 	let minFeeTxid = null;
 	let maxFeeTxid = null;
+	let medianFeeRate = 0;
 
-	var parentTxIndexes = new Set();
+	let parentTxIndexes = new Set();
 	let templateWeight = 0;
 	blockTemplate.transactions.forEach(tx => {
 		templateWeight += tx.weight;
@@ -339,7 +340,8 @@ async function getNextBlockEstimate() {
 		}
 	});
 
-	var txIndex = 1;
+	let txIndex = 1;
+	let feeRates = [];
 	blockTemplate.transactions.forEach(tx => {
 		var feeRate = tx.fee / tx.weight * 4;
 		if (tx.depends && tx.depends.length > 0) {
@@ -359,6 +361,8 @@ async function getNextBlockEstimate() {
 		// their effective fee rate (which takes descendant fee rates
 		// into account)
 		if (!parentTxIndexes.has(txIndex) && (!tx.depends || tx.depends.length == 0)) {
+			feeRates.push(feeRate);
+
 			if (feeRate < minFeeRate) {
 				minFeeRate = feeRate;
 				minFeeTxid = tx.txid;
@@ -372,6 +376,10 @@ async function getNextBlockEstimate() {
 
 		txIndex++;
 	});
+
+	if (feeRates.length > 0) {
+		medianFeeRate = feeRates[Math.floor(feeRates.length / 2)];
+	}
 
 	const feeRateGroups = [];
 	var groupCount = 10;
@@ -422,6 +430,7 @@ async function getNextBlockEstimate() {
 		totalFees: totalFees,
 		minFeeRate: minFeeRate,
 		maxFeeRate: maxFeeRate,
+		medianFeeRate: medianFeeRate,
 		minFeeTxid: minFeeTxid,
 		maxFeeTxid: maxFeeTxid
 	};

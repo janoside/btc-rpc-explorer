@@ -19,8 +19,24 @@ block content
 					+summaryItem("Transactions")
 						| #{blockTemplate.transactions.length.toLocaleString()}
 
-					+summaryItem("Fee Rates", null, "sat/vB")
-						| #{new Decimal(minFeeRate).toDP(2)} - #{new Decimal(maxFeeRate).toDP(2)}
+
+					+summaryItem("Fee Rates", "Minimum / Median / Maximum fee rates for transaction expected to be included in the next block.", "sat/vB")
+						if (maxFeeRate != -1)
+							span.border-dotted(title="Minimum fee rate", data-bs-toggle="tooltip")
+								+numWithMutedDecimals(new Decimal(minFeeRate).toDP(2).toString())
+							
+							span.text-muted.fw-light.mx-2 /
+							
+							span.border-dotted(title="Median fee rate", data-bs-toggle="tooltip")
+								+numWithMutedDecimals(new Decimal(medianFeeRate).toDP(2).toString())
+							
+							span.text-muted.fw-light.mx-2 /
+							
+							span.border-dotted(title="Maximum fee rate", data-bs-toggle="tooltip")
+								+numWithMutedDecimals(new Decimal(maxFeeRate).toDP(1).toString())
+
+						else
+							span -
 
 					+summaryItem("Total Fees")
 						- var subsidy = coinConfig.blockRewardFunction(blockTemplate.height, global.activeBlockchain);
