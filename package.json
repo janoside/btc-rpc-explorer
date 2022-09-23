@@ -50,7 +50,7 @@
 		"express": "^4.17.1",
 		"express-async-handler": "^1.1.4",
 		"express-session": "^1.17.2",
-		"lru-cache": "^6.0.0",
+		"lru-cache": "^7.0.0",
 		"markdown-it": "^13.0.0",
 		"md5": "^2.3.0",
 		"meow": "^9.0.0",

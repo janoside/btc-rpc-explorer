@@ -21,12 +21,12 @@ function createMemoryLruCache(cacheObj, onCacheEvent) {
 			});
 		},
 		set: (key, obj, maxAge) => {
-			cacheObj.set(key, obj, maxAge);
+			cacheObj.set(key, obj, {ttl: maxAge});
 
 			onCacheEvent("memory", "set", key);
 		},
 		del: (key) => {
-			cacheObj.del(key);
+			cacheObj.delete(key);
 
 			onCacheEvent("memory", "del", key);
 		}
@@ -66,7 +66,9 @@ function createTieredCache(cacheObjs) {
 }
 
 function lruCache(size) {
-	return new LRU(size);
+	return new LRU({
+		max: size
+	});
 }
 
 module.exports = {

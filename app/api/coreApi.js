@@ -53,31 +53,31 @@ global.lruCaches = [ global.miscLruCache, global.blockLruCache, global.txLruCach
 
 (function () {
 	const pruneCaches = () => {
-		let totalLengthBefore = 0;
-		global.lruCaches.forEach(x => (totalLengthBefore += x.length));
+		let totalSizeBefore = 0;
+		global.lruCaches.forEach(x => (totalSizeBefore += x.size));
 
-		global.lruCaches.forEach(x => x.prune());
+		global.lruCaches.forEach(x => x.purgeStale());
 
-		let totalLengthAfter = 0;
-		global.lruCaches.forEach(x => (totalLengthAfter += x.length));
+		let totalSizeAfter = 0;
+		global.lruCaches.forEach(x => (totalSizeAfter += x.size));
 
 
-		statTracker.trackEvent("caches.pruned-items", (totalLengthBefore - totalLengthAfter));
+		statTracker.trackEvent("caches.pruned-items", (totalSizeBefore - totalSizeAfter));
 		
-		statTracker.trackValue("caches.misc.length", global.miscLruCache.length);
+		statTracker.trackValue("caches.misc.size", global.miscLruCache.size);
 		statTracker.trackValue("caches.misc.itemCount", global.miscLruCache.itemCount);
 
-		statTracker.trackValue("caches.block.length", global.blockLruCache.length);
+		statTracker.trackValue("caches.block.size", global.blockLruCache.size);
 		statTracker.trackValue("caches.block.itemCount", global.blockLruCache.itemCount);
 
-		statTracker.trackValue("caches.tx.length", global.txLruCache.length);
+		statTracker.trackValue("caches.tx.size", global.txLruCache.size);
 		statTracker.trackValue("caches.tx.itemCount", global.txLruCache.itemCount);
 
-		statTracker.trackValue("caches.mining.length", global.miningSummaryLruCache.length);
+		statTracker.trackValue("caches.mining.size", global.miningSummaryLruCache.size);
 		statTracker.trackValue("caches.mining.itemCount", global.miningSummaryLruCache.itemCount);
 
 
-		debugLog(`Pruned caches: ${totalLengthBefore.toLocaleString()} -> ${totalLengthAfter.toLocaleString()}`);
+		debugLog(`Pruned caches: ${totalSizeBefore.toLocaleString()} -> ${totalSizeAfter.toLocaleString()}`);
 	};
 
 	setInterval(pruneCaches, 60000);
