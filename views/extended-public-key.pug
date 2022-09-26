@@ -85,29 +85,30 @@ block content
 				pre
 					code.json #{JSON.stringify(relatedKeys, null, 4)}
 
-	.row
-		.col
-			+contentSection("Receive Addresses")
-				.table-responsive
-					table.table.table-borderless.table-striped.mb-0
-						thead
-							tr
-								th.text-end Index
-								th Address
-								//th N(tx)
-								//th Balance
-						tbody
-							each address, addressIndex in receiveAddresses
+	if (receiveAddresses && changeAddresses)
+		.row
+			.col
+				+contentSection("Receive Addresses")
+					.table-responsive
+						table.table.table-borderless.table-striped.mb-0
+							thead
 								tr
-									td.text-end
-										.text-muted ##{(offset + addressIndex).toLocaleString()}
+									th.text-end Index
+									th Address
+									//th N(tx)
+									//th Balance
+							tbody
+								each address, addressIndex in receiveAddresses
+									tr
+										td.text-end
+											.text-muted ##{(offset + addressIndex).toLocaleString()}
 
-									td
-										a(href=`./address/${address}`) #{utils.ellipsizeMiddle(address, 24)}
-										+copyTextButton(address)
+										td
+											a(href=`./address/${address}`) #{utils.ellipsizeMiddle(address, 24)}
+											+copyTextButton(address)
 
-									//td -
-									//td -
+										//td -
+										//td -
 
 
 		.col
