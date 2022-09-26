@@ -892,7 +892,7 @@ router.get("/mining-template", asyncHandler(async (req, res, next) => {
 router.get("/next-block", asyncHandler(async (req, res, next) => {
 	const blockTemplate = await coreApi.getBlockTemplate();
 
-	res.locals.minFeeRate = -1;
+	res.locals.minFeeRate = 1000000;
 	res.locals.maxFeeRate = -1;
 	res.locals.medianFeeRate = -1;
 
