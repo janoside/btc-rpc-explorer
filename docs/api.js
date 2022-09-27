@@ -21,18 +21,18 @@ module.exports = {
 		
 		{
 			"category":"blocks",
-			"url":"/api/blockheader/:hash",
+			"url":"/api/block/header/:hash",
 			"desc":"Returns the details of the block header with the given hash.",
 			"returnType":"json",
-			"testUrl":"/api/blockheader/0000000000000000001c8018d9cb3b742ef25114f27563e3fc4a1902167f9893"
+			"testUrl":"/api/block/header/0000000000000000001c8018d9cb3b742ef25114f27563e3fc4a1902167f9893"
 		},
 
 		{
 			"category":"blocks",
-			"url":"/api/blockheader/:height",
+			"url":"/api/block/header/:height",
 			"desc":"Returns the details of the block header at the given height.",
 			"returnType":"json",
-			"testUrl":"/api/blockheader/123456"
+			"testUrl":"/api/block/header/123456"
 		},
 
 		{
