@@ -96,10 +96,10 @@ if (!config.noInmemoryRpcCache) {
 		//debugLog(`cache.${cacheType}.${eventType}: ${cacheKey}`);
 	}
 
-	miscCaches.push(cacheUtils.createMemoryLruCache(global.miscLruCache, onMemoryCacheEvent));
-	blockCaches.push(cacheUtils.createMemoryLruCache(global.blockLruCache, onMemoryCacheEvent));
-	txCaches.push(cacheUtils.createMemoryLruCache(global.txLruCache, onMemoryCacheEvent));
-	miningSummaryCaches.push(cacheUtils.createMemoryLruCache(global.miningSummaryLruCache, onMemoryCacheEvent));
+	miscCaches.push(cacheUtils.createMemoryLruCache("misc", global.miscLruCache, onMemoryCacheEvent));
+	blockCaches.push(cacheUtils.createMemoryLruCache("block", global.blockLruCache, onMemoryCacheEvent));
+	txCaches.push(cacheUtils.createMemoryLruCache("tx", global.txLruCache, onMemoryCacheEvent));
+	miningSummaryCaches.push(cacheUtils.createMemoryLruCache("mining", global.miningSummaryLruCache, onMemoryCacheEvent));
 }
 
 if (redisCache.active) {
