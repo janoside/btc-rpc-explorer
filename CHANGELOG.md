@@ -8,7 +8,7 @@
 	* Show difficulty ATH comparison
 	* Show "Next Block" fullness
 	* Show a banner if 'today' is a Bitcoin 'Holiday' (see more below)
-* Tweaks to API, see [/api/changelog](./api/changelog)
+* Several new API actions/changes; see [/api/changelog](./api/changelog)
 * New [/holidays](./holidays), a curated list of Bitcoin 'Holidays'
 * Support for serving static assets via a configurable CDN
 * Misc fixes for erroneous data display on non-mainnet nodes
