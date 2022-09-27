@@ -117,6 +117,29 @@ router.get("/block/:hashOrHeight", asyncHandler(async (req, res, next) => {
 	next();
 }));
 
+router.get("/blockheader/:hashOrHeight", asyncHandler(async (req, res, next) => {
+	const hashOrHeight = req.params.hashOrHeight;
+	let hash = (hashOrHeight.length == 64 ? hashOrHeight : null);
+
+	try {
+
+		if (hash == null) {
+			hash = await coreApi.getBlockHashByHeight(parseInt(hashOrHeight));
+		}
+
+		const block = await coreApi.getBlockHeaderByHash(hash);
+
+		res.json(block);
+
+	} catch (e) {
+		utils.logError("w8kwqpoauns", e);
+
+		res.json({success: false});
+	}
+
+	next();
+}));
+
 
 
 

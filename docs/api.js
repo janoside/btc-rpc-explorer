@@ -18,6 +18,22 @@ module.exports = {
 			"returnType":"json",
 			"testUrl":"/api/block/123456"
 		},
+		
+		{
+			"category":"blocks",
+			"url":"/api/blockheader/:hash",
+			"desc":"Returns the details of the block header with the given hash.",
+			"returnType":"json",
+			"testUrl":"/api/blockheader/0000000000000000001c8018d9cb3b742ef25114f27563e3fc4a1902167f9893"
+		},
+
+		{
+			"category":"blocks",
+			"url":"/api/blockheader/:height",
+			"desc":"Returns the details of the block header at the given height.",
+			"returnType":"json",
+			"testUrl":"/api/blockheader/123456"
+		},
 
 		{
 			"category":"blocks",
