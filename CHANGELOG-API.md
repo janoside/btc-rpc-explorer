@@ -5,6 +5,8 @@ This changelog specifically tracks changes to the Public API available at `/api`
 
 * Added: /api/xyzpub/txids/:xyzpub
 * Added: /api/xyzpub/addresses/:xyzpub
+* Added: /api/block/header/:height
+* Added: /api/block/header/:hash
 * Added: /api/holidays/all
 * Added: /api/holidays/today
 * Added: /api/holidays/:day
