@@ -470,7 +470,16 @@ module.exports = {
 			alertBodyHtml: "As a technical experiment and as a playful donation, User <a href='https://twitter.com/fiatjaf'>fiatjaf</a> intentionally created a situation where his lightning node would be penalized and forfeit funds to his channel counterparty. The second input to this transaction represents the penalty close, wherein all of the funds on fiatjaf's side of the channel were forfeited to his counterparty.",
 			referenceUrl: "http://fiatjaf.com/73095980.html"
 		},
-
+		{
+			type: "tx",
+			date: "2022-10-09",
+			chain: "main",
+			txid: "7393096d97bfee8660f4100ffd61874d62f9a65de9fb6acf740c4c386990ef73",
+			blockHash: 757922,
+			summary: "998-of-999 multisig taproot transaction",
+			alertBodyHtml: "User <a href='https://twitter.com/brqgoo'>Burak</a> created multi-sig transaction that required 998 signatures out of 999 public keys",
+			referenceUrl: "https://twitter.com/brqgoo/status/1579216353780957185"
+		},
 
 
 		// testnet
