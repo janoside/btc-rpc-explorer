@@ -144,26 +144,21 @@ router.get("/block/header/:hashOrHeight", asyncHandler(async (req, res, next) =>
 
 /// TRANSACTIONS
 
-router.get("/tx/:txid", function(req, res, next) {
+router.get("/tx/:txid", asyncHandler(async (req, res, next) => {
 	let txid = utils.asHash(req.params.txid);
-
 	let promises = [];
-
 	let txInputLimit = (res.locals.crawlerBot) ? 3 : -1;
 
-	promises.push(coreApi.getRawTransactionsWithInputs([txid], txInputLimit));
-
-	Promise.all(promises).then(function(results) {
-		let outJson = results[0].transactions[0];
-		let txInputs = results[0].txInputsByTransaction[txid] || {};
+	try {
+		var results = await coreApi.getRawTransactionsWithInputs([txid], txInputLimit);
+		let outJson = results.transactions[0];
+		let txInputs = results.txInputsByTransaction[txid] || {};
 		
 		let inputBtc = 0;
 		if (txInputs[0]) {
 			for (let key in txInputs) {
 				let item = txInputs[key];
-
 				inputBtc += item["value"] * global.coinConfig.baseCurrencyUnit.multiplier;
-
 				outJson.vin[key].scriptSig.address = item.scriptPubKey.address;
 				outJson.vin[key].scriptSig.type = item.scriptPubKey.type;
 				outJson.vin[key].value = item.value;
@@ -172,8 +167,7 @@ router.get("/tx/:txid", function(req, res, next) {
 		
 		let outputBtc = 0;
 		for (let key in outJson.vout) {	
-			let item = outJson.vout[key];
-			
+			let item = outJson.vout[key];			
 			outputBtc += item.value * global.coinConfig.baseCurrencyUnit.multiplier;
 		}
 
@@ -182,24 +176,25 @@ router.get("/tx/:txid", function(req, res, next) {
 			"unit": "BTC"
 		};
 
+		if (outJson.confirmations == null) {
+			outJson.mempool = await coreApi.getMempoolTxDetails(txid, false);		
+		} 
+
 		if (global.specialTransactions && global.specialTransactions[txid]) {
 			let funInfo = global.specialTransactions[txid];
-
 			outJson.fun = funInfo;
 		}
 		
 		res.json(outJson);
-
-		next();
-
-	}).catch(function(err) {
+		
+	} catch(err) {
 		utils.logError("10328fwgdaqw", err);
-
 		res.json({success:false, error:err});
+	};
+	
+	next();
 
-		next();
-	});
-});
+}));
 
 router.get("/tx/volume/24h", function(req, res, next) {
 	try {
