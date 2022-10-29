@@ -491,6 +491,10 @@
         "/pegapool/" : {
             "name": "Pega Pool",
             "link": "https://www.pega-pool.com"
+        },
+        "/_Titan.io_/" : {
+            "name": "TITAN",
+            "link": "https://titan.io"
         }
     },
     "payout_addresses" : {
@@ -885,6 +889,10 @@
         "1BGFwRzjCfRR7EvRHnzfHyFjGR8XiBDFKa":{
             "name":"Pega Pool",
             "link":"https://pega-pool.com/"
+        },
+        "14hLEtxozmmih6Gg5xrGZLfx51bEMj21NW":{
+            "name":"TITAN",
+            "link":"https://titan.io/"
         }
     }
 }
