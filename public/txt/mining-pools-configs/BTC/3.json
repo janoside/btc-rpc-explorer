@@ -487,6 +487,10 @@
         "/PureBTC.COM/" : {
             "name": "PureBTC.COM",
             "link": "https://purebtc.com"
+        },
+        "/pegapool/" : {
+            "name": "Pega Pool",
+            "link": "https://www.pega-pool.com"
         }
     },
     "payout_addresses" : {
@@ -877,6 +881,10 @@
         "11wC5KcbgrWRBb43cwADdVrxgyF8mndVC":{
             "name":"MiningCity",
             "link":"https://www.miningcity.com/"
+        },
+        "1BGFwRzjCfRR7EvRHnzfHyFjGR8XiBDFKa":{
+            "name":"Pega Pool",
+            "link":"https://pega-pool.com/"
         }
     }
 }
