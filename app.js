@@ -233,7 +233,7 @@ const cdnItems = [
 	[`js/chart.min.js`, `text/javascript`, "utf8"],
 	[`js/jquery.min.js`, `text/javascript`, "utf8"],
 	[`js/site.js`, `text/javascript`, "utf8"],
-	[`js/highlight.pack.js`, `text/javascript`, "utf8"],
+	[`js/highlight.min.js`, `text/javascript`, "utf8"],
 	[`js/chartjs-adapter-moment.min.js`, `text/javascript`, "utf8"],
 	[`js/jquery.dataTables.min.js`, `text/javascript`, "utf8"],
 	[`js/dataTables.bootstrap4.min.js`, `text/javascript`, "utf8"],
