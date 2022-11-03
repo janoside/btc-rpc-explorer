@@ -333,10 +333,20 @@ block content
 											.mb-2
 												+darkBadge("witness")
 
+											- var maxWitnessDisplayCount = 100;
 											each witnessItem, witnessIndex in vin.txinwitness
-												div(class=(witnessIndex > 0 ? "mt-2" : false))
-												+hexDataDisplay(witnessItem)
-												//.d-inline-block.small.border.rounded-1.p-1.px-2.card-highlight.word-wrap(class=(witnessIndex < (vin.txinwitness.length - 1) ? "mb-2" : false)) #{witnessItem}
+												if (witnessIndex < maxWitnessDisplayCount)
+													span.me-2(class=(witnessIndex > 0 ? "mt-2" : false))
+														span.text-tiny.text-muted.me-1 ##{witnessIndex.toLocaleString()}
+
+														if (witnessItem.length == 0)
+															span.text-muted.text-tiny (empty)
+														else
+															+hexDataDisplay(witnessItem)
+													//.d-inline-block.small.border.rounded-1.p-1.px-2.card-highlight.word-wrap(class=(witnessIndex < (vin.txinwitness.length - 1) ? "mb-2" : false)) #{witnessItem}
+
+											if (vin.txinwitness.length > maxWitnessDisplayCount)
+												span.text-muted.text-tiny.fw-bold (#{(vin.txinwitness.length - maxWitnessDisplayCount).toLocaleString()} more witness items)
 
 										
 						
@@ -380,38 +390,44 @@ block content
 
 
 			+pageTab("JSON")
-				- var pillTabs = ["Transaction", "Block Header", "UTXOs"];
-				if (mempoolDetails)
-					- pillTabs.push("Mempool Details");
-
-				+pillTabs(pillTabs)
-				
-				.tab-content
-					+pageTab("Transaction", true)
-						+contentSection("Transaction")
-							pre
-								code.text-json.json(data-lang="json") #{JSON.stringify(result.getrawtransaction, null, 4)}
-
-
-					+pageTab("Block Header")
-						+contentSection("Block Header")
-							pre
-								code.text-json.json(data-lang="json") #{JSON.stringify(result.getblock, null, 4)}
-
-					
-					+pageTab("UTXOs")
-						+contentSection("UTXOs")
-							pre
-								code.text-json.json(data-lang="json") #{JSON.stringify(utxos, null, 4)}
-								
-
+				if (result.getrawtransaction.hex.length <= 50000)
+					- var pillTabs = ["Transaction", "Block Header", "UTXOs"];
 					if (mempoolDetails)
-						+pageTab("Mempool Details")
-							+contentSection("Mempool Details")
-								pre
-									code.json(data-lang="json") #{JSON.stringify(mempoolDetails, null, 4)}
+						- pillTabs.push("Mempool Details");
 
-				//pre #{JSON.stringify(result.txInputs, null, 4)}
+					+pillTabs(pillTabs)
+					
+					.tab-content
+						+pageTab("Transaction", true)
+							+contentSection("Transaction")
+								pre
+									code.text-json.json(data-lang="json") #{JSON.stringify(result.getrawtransaction, null, 4)}
+
+
+						+pageTab("Block Header")
+							+contentSection("Block Header")
+								pre
+									code.text-json.json(data-lang="json") #{JSON.stringify(result.getblock, null, 4)}
+
+						
+						+pageTab("UTXOs")
+							+contentSection("UTXOs")
+								pre
+									code.text-json.json(data-lang="json") #{JSON.stringify(utxos, null, 4)}
+									
+
+						if (mempoolDetails)
+							+pageTab("Mempool Details")
+								+contentSection("Mempool Details")
+									pre
+										code.json(data-lang="json") #{JSON.stringify(mempoolDetails, null, 4)}
+
+					//pre #{JSON.stringify(result.txInputs, null, 4)}
+
+				else
+					span This transaction is very large. Displaying it's data here may cause problems. Instead, see it's raw data via the internal API:
+					br
+					a(href=`./api/tx/${txid}`) #{txid}
 
 		
 block endOfBody
