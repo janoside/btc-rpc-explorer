@@ -575,6 +575,10 @@
         "btccomf" : {
             "name" : "BTC.com",
             "link" : "https://pool.btc.com"
+        },
+        "PEGA Pool" : {
+            "name" : "PEGA Pool",
+            "link" : "https://www.pega-pool.com"
         }
     },
     "payout_addresses" : {
@@ -1289,6 +1293,10 @@
         "36cWgjEtxQSFgbHTJDw5AB96ZX7fJk1URd" : {
             "name" : "BTC.com",
             "link" : "https://pool.btc.com"
+        },
+        "1BGFwRzjCfRR7EvRHnzfHyFjGR8XiBDFKa" : {
+            "name" : "PEGA Pool",
+            "link" : "https://www.pega-pool.com"
         }
     }
 }
