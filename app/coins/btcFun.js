@@ -476,9 +476,19 @@ module.exports = {
 			chain: "main",
 			txid: "73be398c4bdc43709db7398106609eea2a7841aaf3a4fa2000dc18184faa2a7e",
 			blockHeight: 761249,
-			summary: "@brqgoo's LND-breaking transaction",
+			summary: "@brqgoo's (second) LND-breaking transaction",
 			alertBodyHtml: "This transaction caused grief for multiple Bitcoin software projects (including this one...) It's a very large transaction that includes a huge number of empty input-script witness items. The underlying issue was inconsistency in handling of stack size relating to OP_SUCCESSx opcodes.",
 			referenceUrl: "https://github.com/btcsuite/btcd/issues/1906"
+		},
+		{
+			type: "tx",
+			date: "2022-10-09",
+			chain: "main",
+			txid: "7393096d97bfee8660f4100ffd61874d62f9a65de9fb6acf740c4c386990ef73",
+			blockHeight: 757922,
+			summary: "@brqgoo's 998-of-999 tapscript multisig",
+			alertBodyHtml: "This transaction, which only needed $4.90 in fees to confirm, included a 998-of-999 tapscript multisig. It apparently broke LND (with the error \"script witness item is larger than the max allowed size\").",
+			referenceUrl: "https://github.com/lightningnetwork/lnd/issues/7002"
 		},
 
 
