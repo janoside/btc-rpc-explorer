@@ -470,6 +470,16 @@ module.exports = {
 			alertBodyHtml: "As a technical experiment and as a playful donation, User <a href='https://twitter.com/fiatjaf'>fiatjaf</a> intentionally created a situation where his lightning node would be penalized and forfeit funds to his channel counterparty. The second input to this transaction represents the penalty close, wherein all of the funds on fiatjaf's side of the channel were forfeited to his counterparty.",
 			referenceUrl: "http://fiatjaf.com/73095980.html"
 		},
+		{
+			type: "tx",
+			date: "2022-11-01",
+			chain: "main",
+			txid: "73be398c4bdc43709db7398106609eea2a7841aaf3a4fa2000dc18184faa2a7e",
+			blockHeight: 761249,
+			summary: "@brqgoo's LND-breaking transaction",
+			alertBodyHtml: "This transaction caused grief for multiple Bitcoin software projects (including this one...) It's a very large transaction that includes a huge number of empty input-script witness items. The underlying issue was inconsistency in handling of stack size relating to OP_SUCCESSx opcodes.",
+			referenceUrl: "https://github.com/btcsuite/btcd/issues/1906"
+		},
 
 
 
