@@ -30,7 +30,7 @@
 	"dependencies": {
 		"@janoside/app-utils": "github:janoside/app-utils#ed4c9740804e660dd4475cd36d6c1daf0c8e2d9d",
 		"async": "^3.2.2",
-		"axios": "^0.27.2",
+		"axios": "^1.1.3",
 		"basic-auth": "^2.0.1",
 		"bech32": "2.0.0",
 		"bitcoinjs-lib": "^5.2.0",
