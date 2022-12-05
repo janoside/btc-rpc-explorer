@@ -17,6 +17,8 @@ This changelog specifically tracks changes to the Public API available at `/api`
     * Added result.fee, including result.fee.amount and result.fee.unit
     * Added result.fun, when applicable, which includes special details about the tx
 * Changed path: /api/util/xyzpub/:xyzpub -> /api/xyzpub/:xyzpub (auto-redirect included)
+* Changed: /api/price[/...]
+    * Return values exclude thousands separators by default; they can be added with "?format=true"
 
 
 ##### v1.1.0

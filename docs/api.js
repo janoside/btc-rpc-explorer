@@ -217,7 +217,10 @@ module.exports = {
 			"category":"price",
 			"url":"/api/price",
 			"desc":"Returns the price of 1 BTC, in USD, EUR, GBP, and XAU",
-			"returnType":"json"
+			"returnType":"json",
+			"optionalParams": {
+				"format":"Set to 'true' to include thousands-separator formatting in results"
+			}
 		},
 		{
 			"category":"price",
@@ -225,7 +228,10 @@ module.exports = {
 			"desc":"Returns the price of 1 BTC, in one of USD, EUR, GBP, XAU",
 			"params":[{name: "currency", "options": ["usd", "eur", "gbp", "xau"]}],
 			"returnType":"number",
-			"testUrl": "/api/price/usd"
+			"testUrl": "/api/price/usd",
+			"optionalParams": {
+				"format":"Set to 'true' to include thousands-separator formatting in results"
+			}
 		},
 		{
 			"category":"price",

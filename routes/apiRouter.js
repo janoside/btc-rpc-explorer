@@ -845,8 +845,8 @@ router.get("/price/:currency/sats", function(req, res, next) {
 	if (global.exchangeRates != null && global.exchangeRates[currency] != null) {
 		var satsRateData = utils.satoshisPerUnitOfLocalCurrency(currency);
 		result = satsRateData.amtRaw;
-	}
-	else if (currency == "xau" && global.exchangeRates != null && global.goldExchangeRates != null) {
+
+	} else if (currency == "xau" && global.exchangeRates != null && global.goldExchangeRates != null) {
 		var dec = new Decimal(amount);
 		dec = dec.times(global.exchangeRates.usd).dividedBy(global.goldExchangeRates.usd);
 		var satCurrencyType = global.currencyTypes["sat"];
@@ -873,8 +873,8 @@ router.get("/price/:currency/marketcap", function(req, res, next) {
 		if (global.exchangeRates != null && global.exchangeRates[currency] != null) {
 			var formatData = utils.formatExchangedCurrency(amount, currency);
 			price = parseFloat(formatData.valRaw).toFixed(2);
-		}
-		else if (currency == "xau" && global.exchangeRates != null && global.goldExchangeRates != null) {
+
+		} else if (currency == "xau" && global.exchangeRates != null && global.goldExchangeRates != null) {
 			var dec = new Decimal(amount);
 			dec = dec.times(global.exchangeRates.usd).dividedBy(global.goldExchangeRates.usd);
 			var exchangedAmt = parseFloat(Math.round(dec * 100) / 100).toFixed(2);
@@ -892,10 +892,17 @@ router.get("/price/:currency", function(req, res, next) {
 	var result = 0;
 	var amount = 1.0;
 	var currency = req.params.currency.toLowerCase();
+	let format = (req.query.format == "true");
 
 	if (global.exchangeRates != null && global.exchangeRates[currency] != null) {
 		var formatData = utils.formatExchangedCurrency(amount, currency);
-		result = formatData.val;
+
+		if (format) {
+			result = formatData.val;
+
+		} else {
+			result = formatData.valRaw;
+		}
 	} else if (currency == "xau" && global.exchangeRates != null && global.goldExchangeRates != null) {
 		var dec = new Decimal(amount);
 		dec = dec.times(global.exchangeRates.usd).dividedBy(global.goldExchangeRates.usd);
@@ -911,12 +918,18 @@ router.get("/price/:currency", function(req, res, next) {
 router.get("/price", function(req, res, next) {
 	var amount = 1.0;
 	var result = {};
-
+	let format = (req.query.format == "true");
+	
 	["usd", "eur", "gbp", "xau"].forEach(currency => {
 		if (global.exchangeRates != null && global.exchangeRates[currency] != null) {
 			var formatData = utils.formatExchangedCurrency(amount, currency);
-			result[currency] = formatData.val;
 
+			if (format) {
+				result[currency] = formatData.val;
+
+			} else {
+				result[currency] = formatData.valRaw;
+			}
 		} else if (currency == "xau" && global.exchangeRates != null && global.goldExchangeRates != null) {
 			var dec = new Decimal(amount);
 			dec = dec.times(global.exchangeRates.usd).dividedBy(global.goldExchangeRates.usd);
