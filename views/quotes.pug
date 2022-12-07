@@ -15,5 +15,6 @@ block content
 
 
 	each quote, quoteIndex in btcQuotes
-		.mt-3.mb-4
-			+quote(quote, quoteIndex)
+		if (!quote.duplicateIndex)
+			.mt-3.mb-4
+				+quote(quote, quoteIndex)
