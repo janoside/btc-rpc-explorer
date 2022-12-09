@@ -576,7 +576,7 @@
             "name" : "BTC.com",
             "link" : "https://pool.btc.com"
         },
-        "PEGA Pool" : {
+        "/pegapool/" : {
             "name" : "PEGA Pool",
             "link" : "https://www.pega-pool.com"
         }

@@ -224,6 +224,10 @@
 			"name" : "NiceHash",
 			"link" : "https://solo.nicehash.com/"
 		},
+		"/NiceHash/" : {
+			"name" : "NiceHash",
+			"link" : "https://nicehash.com/"
+		},
 		"/BitClub Network/" : {
 			"name" : "BitClub",
 			"link" : "https://bitclubpool.com/"
@@ -611,6 +615,14 @@
 		"Entrustus": {
 			"name": "Entrust Charity Pool",
 			"link": "pool.entustus.org"
+		},
+		"/pegapool/" : {
+			"name": "Pega Pool",
+			"link": "https://www.pega-pool.com"
+		},
+		"Titan.io" : {
+			"name": "Titan",
+			"link": "https://titan.io"
 		}
 	},
 	"payout_addresses" : {
@@ -1369,6 +1381,10 @@
 		"3C9sAKXrBVpJVe3b738yik4LPHpPmceBgd": {
 			"name" : "Ultimus Pool",
 			"link" : "https://www.ultimuspool.com/"
+		},
+		"1BGFwRzjCfRR7EvRHnzfHyFjGR8XiBDFKa":{
+			"name":"Pega Pool",
+			"link":"https://pega-pool.com/"
 		}
 	},
 	"unknown_miner_payout_addresses": {
