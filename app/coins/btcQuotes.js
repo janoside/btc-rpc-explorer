@@ -387,7 +387,7 @@ module.exports = {
 			// 54
 			text: "[Lost] coins can never be recovered, and the total circulation is less.  Since the effective circulation is reduced, all the remaining coins are worth slightly more.  It's the opposite of when a government prints money and the value of existing money goes down.",
 			speaker: "Satoshi",
-			date: "2009-12-12",
+			date: "2009-12-10",
 			url: "https://bitcointalk.org/index.php?topic=13.msg46#msg46"
 		},
 		{
