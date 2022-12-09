@@ -204,6 +204,13 @@ module.exports = {
 		},
 		{
 			"category":"mempool",
+			"url":"/api/mempool/summary",
+			"desc":"Returns a summary of Bitcoin Core's mempool (full output from 'getmempoolinfo')",
+			"returnType":"json",
+			"example": {"loaded":true,"size":225,"bytes":76209,"usage":410496,"total_fee":0.01763495,"maxmempool":15000000,"mempoolminfee":0.00001,"minrelaytxfee":0.00001,"unbroadcastcount":0}
+		},
+		{
+			"category":"mempool",
 			"url":"/api/mempool/fees",
 			"desc":"Returns recommended fee rates in sats/vB for next block, ~30 min, 1 hr, and 1 day.",
 			"returnType":"json",

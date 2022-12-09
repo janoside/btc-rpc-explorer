@@ -17,9 +17,9 @@ const Decimal = require("decimal.js");
 const asyncHandler = require("express-async-handler");
 const markdown = require("markdown-it")();
 
-const utils = require('./../app/utils.js');
 const coins = require("./../app/coins.js");
 const config = require("./../app/config.js");
+const utils = require('./../app/utils.js');
 const coreApi = require("./../app/api/coreApi.js");
 const addressApi = require("./../app/api/addressApi.js");
 const xyzpubApi = require("./../app/api/xyzpubApi.js");
@@ -800,6 +800,12 @@ router.get("/mining/miner-summary", asyncHandler(async (req, res, next) => {
 router.get("/mempool/count", function(req, res, next) {
 	coreApi.getMempoolInfo().then(function(info){
 		res.send(info.size.toString());
+	}).catch(next);
+});
+
+router.get("/mempool/summary", function(req, res, next) {
+	coreApi.getMempoolInfo().then(function(info){
+		res.json(info);
 	}).catch(next);
 });
 
