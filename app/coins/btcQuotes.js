@@ -503,6 +503,13 @@ module.exports = {
 			url: "https://twitter.com/TheBestBizzShow/status/1540380367173156866",
 			date: "2022-06-24"
 
+		},
+		{
+			// 71
+			text: "Humans are driven by incentives. #Bitcoin is a monetary system, but it’s also an incentive for humans to master energy.",
+			speaker: "Brandon Quittem",
+			url: "https://twitter.com/BitcoinSapiens/status/1601401665231650816",
+			date: "2022-12-09"
 		}
 		/*{
 			text: "Bitcoin is a technological tour de force.",

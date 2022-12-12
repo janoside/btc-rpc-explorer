@@ -125,6 +125,11 @@ module.exports = {
 			name: "Halving #3 Day",
 			date: "2020-05-11",
 			desc: "On this day in 2020, the third \"Halving\" cut the subsidy from 12.5 BTC to 6.25 BTC."
+		},
+		{
+			name: "Goodbye Satoshi Day",
+			date: "2010-12-13",
+			desc: "On this day in 2010, Satoshi sent his final message on the BitcoinTalk forum. Then, he logged off, never to return."
 		}
 	]
 };
