@@ -223,7 +223,7 @@ block content
 							else if (addressDetailsErrors && addressDetailsErrors.length > 0)
 								+contentSection
 									each err, errIndex in addressDetailsErrors
-										if (err.e && err.e && err.e.message == "history too large")
+										if (err.e && err.e.message && err.e.message == "history too large")
 											span Failed to retrieve transaction history from ElectrumX because this address is involved in too many transactions (more than ElectrumX currently supports retrieving). See 
 											a(href="https://github.com/janoside/btc-rpc-explorer/issues/67") Issue #67
 											span  for more information.
