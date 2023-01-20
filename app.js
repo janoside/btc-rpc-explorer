@@ -1150,7 +1150,7 @@ expressApp.locals.assetUrl = (path) => {
 
 // debug setting to skip js/css integrity checks
 const skipIntegrityChecks = false;
-const resourceIntegrityHashes = JSON.parse(fs.readFileSync(path.join(process.cwd(), "public/txt/resource-integrity.json")));
+const resourceIntegrityHashes = require("./app/resourceIntegrityHashes.js");
 
 expressApp.locals.assetIntegrity = (filename) => {
 	if (!skipIntegrityChecks && resourceIntegrityHashes[filename]) {
