@@ -1,6 +1,6 @@
 module.exports =
 {
-    "bootstrap.bundle.min.js": "sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p",
+    "bootstrap.bundle.min.js": "sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4",
     "chart.min.js": "sha384-ovAl4wbIXnEbY76lSb6GrprFBkoYeu4RKYYNMsADThIn2AweWPOyJqoyR/8/kgML",
     "chartjs-adapter-moment.min.js": "sha384-Z9r2EsEmivx0l8T8TvYoqqGcpO0cCjKbqVXB8tYUa0hIWKtGVl0TmaF263CjS6XR",
     "dataTables.bootstrap4.min.js": "sha384-uiSTMvD1kcI19sAHJDVf68medP9HA2E2PzGis9Efmfsdb8p9+mvbQNgFhzii1MEX",
@@ -10,12 +10,13 @@ module.exports =
     "jquery.min.js": "sha384-vtXRMe3mGCbOeY7l30aIg8H9p3GdeSe4IFlP6G8JMa7o7lXvnz3GFKzPxzJdPfGK",
     "moment.min.js": "sha384-CJyhAlbbRZX14Q8KxKBt0na1ad4KBs9PklAiNk2Efxs9sgimbIZm9kYLJQeNMUfM",
     "sentry.min.js": "sha384-da/Bo2Ah6Uw3mlhl6VINMblg2SyGbSnULKrukse3P5D9PTJi4np9HoKvR19D7zOL",
-    "site.js": "sha384-RNCa5sCPh1hkJyKAu8z5Hai8r9IxpVBF2W6GFhSb2JSuSlECW8d85ufzyXBSRwLZ",
+    "site.js": "sha384-+oXWKXwPD9Fyf6EYrFPvPAPGVsB7INqoVZhse4PVoWQYgCsJ5M9bI0YWIsgYT0NR",
     "bootstrap-icons.css": "sha384-rJFhkIguED0Z4GX6r6ReHpTCkwWtiPHZnQtWVP0DQWcKHzeJAlYb1m/xdYkeEk+f",
-    "dark.css": "sha384-cbyBi/NO0/dmZ3u3CIAl6fgTWzV4mbneKcZkYuTdwuipj4DYou1zkCpAzp75XY/0",
+    "dark-v1.min.css": "sha384-7nc/D1JfDkQU5dNF5LLXrlAmfZQr9A0PgyeEBKNVtVnyww7HO1WJtyDIOO/voke9",
+    "dark.min.css": "sha384-sxp301bjQQECvsyHu5YyyaVhWt0GDycxrBuTBgZtQBMHT4GXRR26Kw3YZSm/Yz+7",
     "dataTables.bootstrap4.min.css": "sha384-EkHEUZ6lErauT712zSr0DZ2uuCmi3DoQj6ecNdHQXpMpFNGAQ48WjfXCE5n20W+R",
     "highlight.min.css": "sha384-s4RLYRjGGbVqKOyMGGwfxUTMOO6D7r2eom7hWZQ6BjK2Df4ZyfzLXEkonSm0KLIQ",
-    "light.css": "sha384-3CgKfbPgdn/RUkPGKfYkSy7jgoxqcupuIUhfcQGN0tFNCPMtk7O9wS2xjaaRewTQ",
+    "light.min.css": "sha384-QVXWEcOcEE0R8SmCLrC9ai5cEV4MGwHxjQSVr/TbGLBto2Hc/q18qJcIRAFEbMKh",
     "leaflet.css": "sha384-6wKUKNzA6h/S6gZ1lWQppeGaVXvK1AUAsEznGBghzlEu1fNcxJGYVRiroSHr+OwU",
     "leaflet.js": "sha384-RFZC58YeKApoNsIbBxf4z6JJXmh+geBSgkCQXFyh+4tiFSJmJBt+2FbjxW7Ar16M"
 };

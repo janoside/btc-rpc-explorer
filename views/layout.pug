@@ -171,10 +171,14 @@ html(lang="en")
 										- items.push("local");
 
 									.btn-group.ms-3
-										a.btn.btn-sm.px-3(id="theme-toggler-light", href=`javascript:void(0);` onclick=`toggleTheme(); return false;`, class=(userSettings.uiTheme == "light" ? "btn-primary" : "btn-outline-primary"))
-											i.bi-sun-fill.text-warning
-										a.btn.btn-sm.px-3(id="theme-toggler-dark",href=`javascript:void(0);` onclick=`toggleTheme(); return false;`, class=(userSettings.uiTheme == "light" ? "btn-outline-primary" : "btn-primary"))
-											i.bi-moon
+										- let themeNames = ["light", "dark", "dark-v1"];
+										- let themeIcons = ["bi-sun-fill", "bi-moon-fill", "bi-moon"];
+										- let themeIconColors = ["text-warning", "", ""];
+
+										each themeName, themeIndex in themeNames
+											a.btn.btn-sm.px-3(id=`theme-toggler-${themeName}`, href=`javascript:void(0);` onclick=`activateTheme('${themeName}'); return false;`, class=(userSettings.uiTheme == themeName ? "btn-primary" : "btn-outline-primary"))
+												i(class=themeIcons[themeIndex], class=themeIconColors[themeIndex])
+
 
 									hr.dropdown-divider.mt-2.mb-2
 									span.dropdown-header Display Timezone

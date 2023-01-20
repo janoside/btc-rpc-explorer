@@ -1,6 +1,7 @@
 mixin themeCss
-	link(id="light-theme-link-tag", rel=(userSettings.uiTheme != "dark" ? "stylesheet" : false), href=assetUrl(`./style/light.css`), integrity=assetIntegrity("light.css"), crossorigin="anonymous")
-	link(id="dark-theme-link-tag", rel=(userSettings.uiTheme == "dark" ? "stylesheet" : false), href=assetUrl(`./style/dark.css`), integrity=assetIntegrity("dark.css"), crossorigin="anonymous")
+	link(id="dark-v1-theme-link-tag", rel=(userSettings.uiTheme == "dark-v1" ? "stylesheet" : false), href=assetUrl(`./style/dark-v1.min.css`), integrity=assetIntegrity("dark-v1.min.css"), crossorigin="anonymous")
+	link(id="light-theme-link-tag", rel=(userSettings.uiTheme == "light" ? "stylesheet" : false), href=assetUrl(`./style/light.min.css`), integrity=assetIntegrity("light.min.css"), crossorigin="anonymous")
+	link(id="dark-theme-link-tag", rel=(userSettings.uiTheme == "dark" ? "stylesheet" : false), href=assetUrl(`./style/dark.min.css`), integrity=assetIntegrity("dark.min.css"), crossorigin="anonymous")
 
 	style.
 		@font-face {

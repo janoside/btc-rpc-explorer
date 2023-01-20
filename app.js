@@ -223,8 +223,9 @@ if (config.baseUrl != '/') {
 
 // if a CDN is configured, these assets will be uploaded at launch, then referenced from there
 const cdnItems = [
-	[`style/dark.css`, `text/css`, "utf8"],
-	[`style/light.css`, `text/css`, "utf8"],
+	[`style/dark.min.css`, `text/css`, "utf8"],
+	[`style/light.min.css`, `text/css`, "utf8"],
+	[`style/dark-v1.min.css`, `text/css`, "utf8"],
 	[`style/highlight.min.css`, `text/css`, "utf8"],
 	[`style/dataTables.bootstrap4.min.css`, `text/css`, "utf8"],
 	[`style/bootstrap-icons.css`, `text/css`, "utf8"],

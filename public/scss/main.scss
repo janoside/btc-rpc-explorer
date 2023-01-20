@@ -81,6 +81,10 @@ $dropdown-min-width: 11rem;
 	border-top: 0px;
 }
 
+.nav-item .nav-link:hover {
+	background-color: $bg-nav-link-hover;
+}
+
 
 .bg-content {
 	background-color: $body-bg !important;

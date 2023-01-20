@@ -53,18 +53,22 @@ function enableTooltipsAndPopovers() {
 	});
 }
 
-function toggleTheme() {
-	var darkThemeActivating = ($("#dark-theme-link-tag").attr("rel") != "stylesheet");
+function activateTheme(themeName) {
+	let themeNames = ["dark", "light", "dark-v1"];
+
+	const inactiveClass = "btn-outline-primary";
+	const activeClass = "btn-primary";
+
+	themeNames.forEach(x => {
+		$(`#${x}-theme-link-tag`).attr("rel", null);
+		$(`#theme-toggler-${x}`).removeClass(activeClass).addClass(inactiveClass);
+	});
+
+	$(`#${themeName}-theme-link-tag`).attr("rel", "stylesheet");
+	$(`#theme-toggler-${themeName}`).addClass(activeClass).removeClass(inactiveClass);
 	
-	$("#dark-theme-link-tag").attr("rel", darkThemeActivating ? "stylesheet" : null);
 
-	var c1 = darkThemeActivating ? "btn-outline-primary" : "btn-primary";
-	var c2 = darkThemeActivating ? "btn-primary" : "btn-outline-primary";
-
-	$("#theme-toggler-dark").removeClass(c1).addClass(c2);
-	$("#theme-toggler-light").removeClass(c2).addClass(c1);
-
-	$.get(`./changeSetting?name=uiTheme&value=${darkThemeActivating ? "dark" : "light"}`, function(data) {
+	$.get(`./changeSetting?name=uiTheme&value=${themeName}`, function(data) {
 		console.log("Theme updated.");
 	});
 }

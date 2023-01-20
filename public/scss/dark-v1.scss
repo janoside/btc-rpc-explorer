@@ -1,11 +1,11 @@
-$body-bg: #1a2433;
+$body-bg: #051c3e;
 $body-color: #f7fafa;
 
-$main-bg: darken($body-bg, 4%);
+$main-bg: darken($body-bg, 6%);
 
 $text-muted: #b2bac2;
 
-$dark: darken($body-bg, 8%);
+$dark: #22272b;
 
 /*$theme-colors: (
 	"dark": #292e33
@@ -13,19 +13,11 @@ $dark: darken($body-bg, 8%);
 
 
 $blue: #0d6efd;
-$light: darken(#f8f9fa, 5%);
 $link-color: $blue;
 $card-highlight-color: #406fb4;
 
-$table-striped-bg-factor: 0.15;
-
 $bg-nav-link-hover: lighten($body-bg, 5%);
 
-
-$input-bg: lighten($body-bg, 15%);
-$input-border-color: darken($input-bg, 10%);
-$form-control-bg: lighten($body-bg, 15%);
-$input-disabled-bg: darken($form-control-bg, 20%);
 
 
 
@@ -36,7 +28,7 @@ $card-border-color: $border-color;
 $link-hover-color:			#408cff;
 
 
-/*$table-striped-bg: lighten($body-bg, 2%);*/
+$table-striped-bg: lighten($body-bg, 4%);
 
 
 $pagination-bg: 					$body-bg;
@@ -50,7 +42,6 @@ $pagination-disabled-border-color: 	lighten($border-color, 5%);
 
 
 $tooltip-bg: lighten($body-bg, 15%);
-$tooltip-color: $body-color;
 
 
 $nav-tabs-link-active-color:		darken($body-color, 5%);
@@ -78,10 +69,9 @@ $dropdown-header-color: darken($body-color, 25%);
 $dropdown-box-shadow: 0 1.5rem 1rem rgba(#000, .35);
 
 
+$input-bg: darken(#fff, 0%);
 //$input-border-color: lighten($input-bg, 9%);
-$input-color: $body-color;
-$input-placeholder-color: darken($input-color, 20%);
-$input-group-addon-bg: darken($input-bg, 12%);
+$input-color: #212529;
 
 
 $modal-content-bg: $body-bg;
@@ -103,53 +93,51 @@ $toast-header-border-color:         rgba(0, 0, 0, .05) !default;
 
 
 
-
 .alert-primary {
 	color: $body-color;
-	background-color: darken($primary, 35%);
-	border-color: darken($primary, 20%);
+	background-color: lighten($body-bg, 8%);
+	border-color: lighten($body-bg, 20%);
 	border-width: 2px;
 }
 
 .alert-danger {
 	color: $body-color;
-	background-color: darken($danger, 30%);
-	border-color: darken($danger, 20%);
+	background-color: #7d323b;
+	border-color: #7d1f29;
 	border-width: 2px;
+}
+
+.alert-danger a {
+	color: $body-color;
+	text-decoration: underline;
 }
 
 .alert-warning {
 	color: $body-color;
-	background-color: darken($warning, 25%);
-	border-color: darken($warning, 15%);
+	background-color: #d9962b;
+	border-color: darken(#d9962b, 10%);
 	border-width: 2px;
 }
 
 .alert-success {
 	color: $body-color;
-	background-color: darken($success, 10%);
-	border-color: lighten($success, 5%);
+	background-color: darken(#198754, 10%);
+	border-color: lighten(#198754, 5%);
 	border-width: 2px;
 }
 
 .alert-info {
 	color: $body-color;
-	background-color: darken($info, 20%);
-	border-color: darken($info, 10%);
+	background-color: darken(#cff4fc, 60%);
+	border-color: darken(#cff4fc, 50%);
 	border-width: 2px;
 }
 
 
 
-
-.bg-background {
-	background-color: #000;
-}
-
 .bg-main {
 	background-color: $main-bg !important;
 }
-
 
 $header-footer-bg: #112138;
 
@@ -168,8 +156,6 @@ $header-footer-bg: #112138;
 .bg-card-highlight-badge {
 	background-color: $body-bg !important;
 }
-
-
 
 .bg-tx-separator {
 	background-color: #131a24;
