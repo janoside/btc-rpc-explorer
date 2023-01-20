@@ -1,5 +1,5 @@
-##### v3.?
-###### Unreleased
+##### v3.4.0
+###### Unreleased (beta)
 
 * Include median fee rate for next-block estimates, on homepage and at [/next-block](./next-block)
 * Minor fixes for running against Bitcoin Core v23
