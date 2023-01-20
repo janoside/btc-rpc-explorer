@@ -1,3 +1,4 @@
+module.exports =
 {
     "bootstrap.bundle.min.js": "sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p",
     "chart.min.js": "sha384-ovAl4wbIXnEbY76lSb6GrprFBkoYeu4RKYYNMsADThIn2AweWPOyJqoyR/8/kgML",
@@ -17,4 +18,4 @@
     "light.css": "sha384-3CgKfbPgdn/RUkPGKfYkSy7jgoxqcupuIUhfcQGN0tFNCPMtk7O9wS2xjaaRewTQ",
     "leaflet.css": "sha384-6wKUKNzA6h/S6gZ1lWQppeGaVXvK1AUAsEznGBghzlEu1fNcxJGYVRiroSHr+OwU",
     "leaflet.js": "sha384-RFZC58YeKApoNsIbBxf4z6JJXmh+geBSgkCQXFyh+4tiFSJmJBt+2FbjxW7Ar16M"
-}
+};

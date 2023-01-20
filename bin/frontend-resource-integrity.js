@@ -33,6 +33,8 @@ dirs.forEach(dirPath => {
 	});
 });
 
-fs.writeFileSync(path.join(process.cwd(), "public/txt/resource-integrity.json"), JSON.stringify(hashesByFilename, null, 4));
+let fileContent = "module.exports =\n" + JSON.stringify(hashesByFilename, null, 4) + ";";
+
+fs.writeFileSync(path.join(process.cwd(), "app/resourceIntegrityHashes.js"), fileContent);
 
 console.log("\npublic/txt/resource-integrity.json written.\n");
