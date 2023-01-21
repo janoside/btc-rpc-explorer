@@ -490,6 +490,16 @@ module.exports = {
 			alertBodyHtml: "This transaction, which only needed $4.90 in fees to confirm, included a 998-of-999 tapscript multisig. It apparently broke LND (with the error \"script witness item is larger than the max allowed size\").",
 			referenceUrl: "https://github.com/lightningnetwork/lnd/issues/7002"
 		},
+		{
+			type: "tx",
+			date: "2011-07-18",
+			chain: "main",
+			txid: "7a2a6f66e87ed4e72d85ba7a82eda1572605c3330c461e171f58d7ff2763ac63",
+			blockHeight: 136881,
+			summary: "Mt Gox's 'Proof of Solvency' transaction",
+			alertBodyHtml: "In order to address solvency concerns, early Bitcoin exchange Mt Gox performed a very large, public transaction from one of their addresses to another, thereby proving ownership of the large balance of coins (424,242.42424242 BTC).",
+			referenceUrl: "https://letstalkbitcoin.com/the-ghost-in-the-machine-at-mtgox"
+		},
 
 
 
