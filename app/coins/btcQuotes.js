@@ -510,6 +510,48 @@ module.exports = {
 			speaker: "Brandon Quittem",
 			url: "https://twitter.com/BitcoinSapiens/status/1601401665231650816",
 			date: "2022-12-09"
+		},
+		{
+			// 72
+			text: "Every day that goes by and Bitcoin hasn't collapsed due to legal or technical problems, that brings new information to the market. It increases the chance of Bitcoin's eventual success and justifies a higher price.",
+			speaker: "Hal Finney",
+			url: "https://bitcointalk.org/index.php?topic=11765.msg169026#msg169026",
+			date: "2011-06-04"
+		},
+		{
+			// 73
+			text: "The best way to make Bitcoin fail is to believe that its success is guaranteed... The big compromise in a strongly decentralized system is that it's all of our jobs to look out for it.",
+			speaker: "Greg Maxwell",
+			url: "https://twitter.com/Pledditor/status/1604752986554630144",
+			date: "2022-12-19"
+		},
+		{
+			// 74
+			text: "I don't believe we shall ever have good money again before we take it out of the hands of government. We can't take it violently. All we can do is by some sly, roundabout way introduce something they can't stop.",
+			speaker: "Friedrich Hayek",
+			url: "https://youtu.be/s-k_Fc63tZI?t=1159",
+			date: "1984-05-01"
+		},
+		{
+			// 75
+			text: "Stay Humble. Stack Sats.",
+			speaker: "Matt O'Dell",
+			url: "https://twitter.com/ODELL/status/1113039631078121472",
+			date: "2019-04-02"
+		},
+		{
+			// 76
+			text: "The proof-of-work chain is the solution to the synchronisation problem, and to knowing what the globally shared view is without having to trust anyone.",
+			speaker: "Satoshi",
+			url: "https://satoshi.nakamotoinstitute.org/emails/cryptography/threads/1/#014833",
+			date: "2008-11-08"
+		},
+		{
+			// 77
+			text: "The design and coding [of Bitcoin] started in 2007.",
+			speaker: "Satoshi",
+			url: "https://bitcointalk.org/index.php?topic=13.msg46#msg46",
+			date: "2009-12-10"
 		}
 		/*{
 			text: "Bitcoin is a technological tour de force.",
