@@ -31,6 +31,9 @@ const ONE_HR = 60 * ONE_MIN;
 const FIFTEEN_MIN = 15 * ONE_MIN;
 const ONE_DAY = 24 * ONE_HR;
 const ONE_YR = 365 * ONE_DAY;
+const SECONDS_PER_MIN = 60;
+const SECONDS_PER_HOUR = SECONDS_PER_MIN * 60;
+const SECONDS_PER_DAY = SECONDS_PER_HOUR * 24;
 
 
 
@@ -1035,6 +1038,7 @@ function summarizeBlockAnalysisData(blockHeight, tx, inputs) {
 
 	txSummary.vin = [];
 	txSummary.totalInput = new Decimal(0);
+	txSummary.totalDaysDestroyed = new Decimal(0);
 
 	if (txSummary.coinbase) {
 		var subsidy = global.coinConfig.blockRewardFunction(blockHeight, global.activeBlockchain);
@@ -1060,6 +1064,14 @@ function summarizeBlockAnalysisData(blockHeight, tx, inputs) {
 				var inputVout = inputs[i];
 
 				txSummary.totalInput = txSummary.totalInput.plus(new Decimal(inputVout.value));
+
+				let timeDestroyed = tx.time - inputVout.utxoTime;
+				let daysDestroyed = timeDestroyed / SECONDS_PER_DAY;
+
+				txSummary.totalDaysDestroyed = txSummary.totalDaysDestroyed.plus(new Decimal(inputVout.value).times(daysDestroyed));
+
+				//console.log(`tx:id=${tx.txid}, tx.time=${tx.time}, inputVout.time=${inputVout.time}, input=${i}, TD=${timeDestroyed}, DD=${daysDestroyed}`);
+				//console.log(`inputVout: ${JSON.stringify(inputVout)}`);
 
 				txSummaryVin.value = inputVout.value;
 				txSummaryVin.type = inputVout.scriptPubKey.type;

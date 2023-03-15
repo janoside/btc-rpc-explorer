@@ -3,6 +3,7 @@
 
 * Include median fee rate for next-block estimates, on homepage and at [/next-block](./next-block)
 * Minor fixes for running against Bitcoin Core v23
+* Block Analysis: include top "days destroyed" transactions
 * URL change: /mining-template -> /next-block (redirect is included for compatibility)
 * Homepage additions
 	* Show difficulty ATH comparison

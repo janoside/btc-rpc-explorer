@@ -50,8 +50,8 @@ block content
 
 	#main-content(style="display: none;")
 		.row
-			.col-xl-6
-				+contentSection("Top Value Transactions")
+			.col-xl-4
+				+contentSection("Highest Value Transactions")
 					.table-responsive
 						table.table.table-striped.table-borderless.mb-0
 							thead
@@ -66,8 +66,8 @@ block content
 
 								tr.hidden-row-to-fix-striping.d-none
 
-			.col-xl-6
-				+contentSection("Top Size Transactions")
+			.col-xl-4
+				+contentSection("Largest Transactions")
 					.table-responsive
 						table.table.table-striped.table-borderless.mb-0
 							thead
@@ -84,10 +84,28 @@ block content
 
 								tr.hidden-row-to-fix-striping.d-none
 
+			.col-xl-4
+				+contentSection("Highest Days Destroyed Transactions")
+					.table-responsive
+						table.table.table-striped.table-borderless.mb-0
+							thead
+								tr
+									th.text-card-highlight.text-uppercase.fw-light Transaction
+									th.text-end.text-card-highlight.fw-light
+										span.text-uppercase BTC Days Destroyed
+										small.border-bottom.ms-2(title="Bitcoin Days", data-bs-toggle="tooltip") (bd)
+
+							tbody(id="tbody-top-daysdestroyed-tx")
+								tr.row-prototype(style="display: none;")
+									td.data-tx-link
+									td.text-end.data-tx-value
+
+								tr.hidden-row-to-fix-striping.d-none
+
 
 			if (global.txindexAvailable)
 				.col-xl-6
-					+contentSection("Top Fee Transactions")
+					+contentSection("Highest Fee Transactions")
 						.table-responsive
 							table.table.table-striped.table-borderless.mb-0
 								thead
@@ -104,7 +122,7 @@ block content
 
 
 				.col-xl-6
-					+contentSection("Top Fee Rate Transactions")
+					+contentSection("Highest Fee Rate Transactions")
 						.table-responsive
 							table.table.table-striped.table-borderless.mb-0
 								thead
@@ -274,6 +292,7 @@ block endOfBody
 				var summary = summarizeData(results);
 
 				fillTopValueTxTable(summary);
+				fillTopDaysDestroyedTxTable(summary);
 				fillTopSizeTxTable(summary);
 
 				if (txindexAvailable) {
@@ -318,7 +337,7 @@ block endOfBody
 
 				row.removeClass("row-prototype");
 
-				row.find(".data-tx-link").html(`<a href='./tx/${item.txid}'>${item.txid.substring(0, 24)}…</a>`);
+				row.find(".data-tx-link").html(`<a href='./tx/${item.txid}'>${item.txid.substring(0, 12)}…</a>`);
 				row.find(".data-tx-value").text(item.value);
 				
 				updateCurrencyValue(row.find(".data-tx-value"), item.value);
@@ -326,6 +345,25 @@ block endOfBody
 				row.show();
 
 				$("#tbody-top-value-tx").append(row);
+			}
+		}
+
+		function fillTopDaysDestroyedTxTable(data) {
+			var count = Math.min(10, data.topDaysDestroyedTxs.length);
+			
+			for (var i = 0; i < count; i++) {
+				var item = data.topDaysDestroyedTxs[i];
+
+				var row = $("#tbody-top-daysdestroyed-tx .row-prototype").clone();
+
+				row.removeClass("row-prototype");
+
+				row.find(".data-tx-link").html(`<a href='./tx/${item.txid}'>${item.txid.substring(0, 12)}…</a>`);
+				row.find(".data-tx-value").text(item.displayValue);
+				
+				row.show();
+
+				$("#tbody-top-daysdestroyed-tx").append(row);
 			}
 		}
 
@@ -339,7 +377,7 @@ block endOfBody
 
 				row.removeClass("row-prototype");
 
-				row.find(".data-tx-link").html(`<a href='./tx/${item.txid}'>${item.txid.substring(0, 24)}…</a>`);
+				row.find(".data-tx-link").html(`<a href='./tx/${item.txid}'>${item.txid.substring(0, 12)}…</a>`);
 				row.find(".data-tx-value").text(item.value);
 				
 				updateCurrencyValue(row.find(".data-tx-value"), item.value);
@@ -360,7 +398,7 @@ block endOfBody
 
 				row.removeClass("row-prototype");
 
-				row.find(".data-tx-link").html(`<a href='./tx/${item.txid}'>${item.txid.substring(0, 24)}…</a>`);
+				row.find(".data-tx-link").html(`<a href='./tx/${item.txid}'>${item.txid.substring(0, 12)}…</a>`);
 				row.find(".data-tx-value").html(`<span>${parseInt(item.value).toLocaleString()}</span>`);
 				
 				row.show();
@@ -379,7 +417,7 @@ block endOfBody
 
 				row.removeClass("row-prototype");
 
-				row.find(".data-tx-link").html(`<a href='./tx/${item.txid}'>${item.txid.substring(0, 24)}…</a>`);
+				row.find(".data-tx-link").html(`<a href='./tx/${item.txid}'>${item.txid.substring(0, 12)}…</a>`);
 				row.find(".data-tx-value").html(`<span>${parseInt(item.value).toLocaleString()}</span>`);
 
 				row.show();
@@ -584,6 +622,9 @@ block endOfBody
 			
 			analysis.txValues = [];
 			analysis.txValueGraphData = [];
+
+			analysis.txDaysDestroyed = [];
+			analysis.txDaysDestroyedGraphData = [];
 			
 			analysis.txFees = [];
 			analysis.txFeeGraphData = [];
@@ -618,6 +659,9 @@ block endOfBody
 
 				analysis.txValues.push({txid:txSummary.txid, value:new Decimal(txSummary.totalOutput)});
 				analysis.txValueGraphData.push({x:i, y:new Decimal(txSummary.totalOutput).toNumber()});
+
+				analysis.txDaysDestroyed.push({txid:txSummary.txid, value:new Decimal(txSummary.totalDaysDestroyed), displayValue:new Decimal(txSummary.totalDaysDestroyed).toDP(1)});
+				analysis.txDaysDestroyedGraphData.push({x:i, y:new Decimal(txSummary.totalDaysDestroyed).toNumber()});
 				
 				analysis.txFees.push({txid:txSummary.txid, value:new Decimal(txSummary.totalFee)});
 				analysis.txFeeGraphData.push({x:i, y:new Decimal(txSummary.totalFee).toNumber()});
@@ -651,6 +695,10 @@ block endOfBody
 				return b.value.cmp(a.value);
 			});
 
+			analysis.txDaysDestroyed.sort(function(a, b) {
+				return b.value.cmp(a.value);
+			});
+
 			analysis.txFees.sort(function(a, b) {
 				return b.value.cmp(a.value);
 			});
@@ -664,11 +712,13 @@ block endOfBody
 			});
 
 			analysis.topValueTxs = analysis.txValues.slice(0, Math.min(100, analysis.txValues.length));
+			analysis.topDaysDestroyedTxs = analysis.txDaysDestroyed.slice(0, Math.min(100, analysis.txDaysDestroyed.length));
 			analysis.topFeeTxs = analysis.txFees.slice(0, Math.min(100, analysis.txFees.length));
 			analysis.topFeeRateTxs = analysis.txFeeRates.slice(0, Math.min(100, analysis.txFeeRates.length));
 			analysis.topSizeTxs = analysis.txSizes.slice(0, Math.min(100, analysis.txSizes.length));
 
 			var topValue = new Decimal(analysis.txValues[parseInt(analysis.txValues.length * 0.1)].value).times(satsMultiplier);
+			var topDaysDestroyed = new Decimal(analysis.txDaysDestroyed[parseInt(analysis.txDaysDestroyed.length * 0.1)].value);
 			var topFee = new Decimal(analysis.txFees[parseInt(analysis.txFees.length * 0.1)].value).times(satsMultiplier);
 			var topFeeRate = new Decimal(analysis.txFeeRates[parseInt(analysis.txFees.length * 0.1)].value);
 			var topSize = new Decimal(analysis.txSizes[parseInt(analysis.txSizes.length * 0.1)].value);
