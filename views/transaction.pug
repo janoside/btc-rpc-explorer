@@ -239,7 +239,7 @@ block content
 							- var daysDestroyedDesc = `The sum of all input values multiplied by the number of days that input's UTXO existed before being spent. Large values can sometimes be interesting, indicating the spending of long-dormant coins. A 1 ${coinConfig.ticker} UTXO spent after 7 days dormant results in 7 days destroyed, as does a 7 ${coinConfig.ticker} UTXO spent after 1 day dormant.`;
 							
 							+summaryItem("Days Destroyed", daysDestroyedDesc, `${coinConfig.ticker.toLowerCase().substring(0, 1)}d`, `${coinConfig.name} Days`)
-								| #{utils.addThousandsSeparators(daysDestroyed.toDP(daysDestroyed > 1 ? 0 : 1))}
+								| #{utils.addThousandsSeparators(daysDestroyed.toDP(1))}
 
 
 				
