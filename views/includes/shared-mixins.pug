@@ -858,7 +858,7 @@ mixin graphPageScriptSetup(dateAdapterNeeded=false)
 		script(src=assetUrl(`./js/moment.min.js`), integrity=assetIntegrity("moment.min.js"), crossorigin="anonymous")
 		script(src=assetUrl(`./js/chartjs-adapter-moment.min.js`), integrity=assetIntegrity("chartjs-adapter-moment.min.js"), crossorigin="anonymous")
 	
-	if (userSettings.uiTheme && userSettings.uiTheme == "dark")
+	if (userSettings.uiTheme && ["dark", "dark-v1"].includes(userSettings.uiTheme.toLowerCase()))
 		script.
 			Chart.defaults.color='white';
 			var gridLineColor = "#1a4280";
