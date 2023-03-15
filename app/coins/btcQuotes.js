@@ -552,6 +552,13 @@ module.exports = {
 			speaker: "Satoshi",
 			url: "https://bitcointalk.org/index.php?topic=13.msg46#msg46",
 			date: "2009-12-10"
+		},
+		{
+			// 78
+			text: "Tick tock, next block.",
+			speaker: "Brady Swenson",
+			url: "https://twitter.com/CitizenBitcoin/status/1624236733788299264",
+			date: "2019-10-18"
 		}
 		/*{
 			text: "Bitcoin is a technological tour de force.",
