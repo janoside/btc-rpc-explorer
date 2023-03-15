@@ -500,6 +500,16 @@ module.exports = {
 			alertBodyHtml: "In order to address solvency concerns, early Bitcoin exchange Mt Gox performed a very large, public transaction from one of their addresses to another, thereby proving ownership of the large balance of coins (424,242.42424242 BTC).",
 			referenceUrl: "https://letstalkbitcoin.com/the-ghost-in-the-machine-at-mtgox"
 		},
+		{
+			type: "tx",
+			date: "2022-12-14",
+			chain: "main",
+			txid: "6fb976ab49dcec017f1e201e84395983204ae1a7c2abf7ced0a85d692e442799",
+			blockHeight: 767430,
+			summary: "Ordinals Inscription #0",
+			alertBodyHtml: "A controversial 'digital artifact' project named Ordinals embeds content, named 'inscriptions', in the witness fields of transactions. This transaction includes the first such inscription, a PNG image, ever embedded in the mainnet BTC blockchain.",
+			referenceUrl: "https://ordinals.com/inscription/6fb976ab49dcec017f1e201e84395983204ae1a7c2abf7ced0a85d692e442799i0"
+		},
 
 
 
