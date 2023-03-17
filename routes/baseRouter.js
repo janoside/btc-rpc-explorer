@@ -2249,20 +2249,26 @@ router.get("/changelog", function(req, res, next) {
 });
 
 router.get("/fun", function(req, res, next) {
-	var sortedList = coins[config.coin].historicalData;
-	sortedList.sort(function(a, b) {
+	let viewType = "new-first";
+	if (req.query.viewType) {
+		viewType = req.query.viewType;
+	}
+
+	let listNewFirst = coins[config.coin].historicalData;
+	
+	listNewFirst.sort(function(a, b) {
 		if (a.date > b.date) {
-			return 1;
+			return -1;
 
 		} else if (a.date < b.date) {
-			return -1;
+			return 1;
 
 		} else {
 			var x = a.type.localeCompare(b.type);
 
 			if (x == 0) {
 				if (a.type == "blockheight") {
-					return a.blockHeight - b.blockHeight;
+					return b.blockHeight - a.blockHeight;
 
 				} else {
 					return x;
@@ -2273,7 +2279,46 @@ router.get("/fun", function(req, res, next) {
 		}
 	});
 
-	res.locals.historicalData = sortedList;
+	let listOldFirst = [...listNewFirst];
+	listOldFirst.reverse();
+
+	let listByYear = {};
+	let itemYears = [];
+
+	listNewFirst.forEach(item => {
+		let itemYear = item.date.substring(0, 4);
+
+		if (!itemYears.includes(itemYear)) {
+			itemYears.push(itemYear);
+			listByYear[itemYear] = [];
+		}
+
+		listByYear[itemYear].push(item);
+	});
+
+	let listByMonth = {};
+	let itemMonths = [];
+
+	listNewFirst.forEach(item => {
+		let itemMonth = item.date.substring(5, 7);
+
+		if (!itemMonths.includes(itemMonth)) {
+			itemMonths.push(itemMonth);
+			listByMonth[itemMonth] = [];
+		}
+
+		listByMonth[itemMonth].push(item);
+	});
+
+	itemMonths.sort();
+
+	res.locals.viewType = viewType;
+	res.locals.listNewFirst = listNewFirst;
+	res.locals.listOldFirst = listOldFirst;
+	res.locals.listByYear = listByYear;
+	res.locals.itemYears = itemYears;
+	res.locals.listByMonth = listByMonth;
+	res.locals.itemMonths = itemMonths;
 	
 	res.render("fun");
 
