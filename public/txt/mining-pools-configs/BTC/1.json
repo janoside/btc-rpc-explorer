@@ -265,8 +265,8 @@
       "link": "https://ckpool.org"
     },
     "1AqTMY7kmHZxBuLUR5wJjPFUvqGs23sesr": {
-      "name": "SlushPool",
-      "link": "https://slushpool.com"
+      "name": "Braiins Pool",
+      "link": "https://braiins.com/"
     },
     "1ArTPjj6pV3aNRhLPjJVPYoxB98VLBzUmb": {
       "name": "KuCoin Pool",
@@ -309,8 +309,8 @@
       "link": "https://104.197.8.250"
     },
     "1CK6KHY6MHgYvmRQ4PAafKYDrg1ejbH1cE": {
-      "name": "SlushPool",
-      "link": "https://slushpool.com"
+      "name": "Braiins Pool",
+      "link": "https://braiins.com/"
     },
     "1CNq2FAw6S5JfBiDkjkYJUVNQwjoeY4Zfi": {
       "name": "Telco 214",
@@ -598,7 +598,7 @@
     },
     "33SAB6pzbhEGPbfY6NVgRDV7jVfspZ3A3Z": {
       "name": "Carbon Negative (unidentified)",
-      "link": "https://github.com/0xB10C/known-mining-pools/issues/48"
+      "link": "https://github.com/bitcoin-data/mining-pools/issues/48"
     },
     "33TbzA5AMiTKUCmeVEdsnTj3GiVXuavCAH": {
       "name": "Poolin",
@@ -679,6 +679,10 @@
     "3KJrsjfg1dD6CrsTeHdHVH3KqMpvL2XWQn": {
       "name": "Poolin",
       "link": "https://www.poolin.com"
+    },
+    "3KZDwmJHB6QJ13QPXHaW7SS3yTESFPZoxb": {
+      "name": "Carbon Negative (unidentified)",
+      "link": "https://github.com/bitcoin-data/mining-pools/issues/48"
     },
     "3L8Ck6bm3sve1vJGKo6Ht2k167YKSKi8TZ": {
       "name": "Binance Pool",
@@ -1027,8 +1031,8 @@
       "link": "https://www.poolin.com"
     },
     "/slush/": {
-      "name": "SlushPool",
-      "link": "https://slushpool.com"
+      "name": "Braiins Pool",
+      "link": "https://braiins.com/"
     },
     "/solo.ckpool.org/": {
       "name": "Solo CK",

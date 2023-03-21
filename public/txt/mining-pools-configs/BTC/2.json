@@ -4,7 +4,7 @@
             "name": "Terra Pool",
             "link": "https://terrapool.io"
         },
-        "/LUXOR/": {
+        "/Powered by Luxor/": {
             "name": "Luxor",
             "link": "https://mining.luxor.tech"
         },
@@ -583,6 +583,10 @@
     },
     "payout_addresses" : {
         "1MkCDCzHpBsYQivp8MxjY5AkTGG1f2baoe": {
+            "name": "Luxor",
+            "link": "https://mining.luxor.tech"
+        },
+        "39bitUyBcUu3y3hRTtYprKbTp712t4ZWqK": {
             "name": "Luxor",
             "link": "https://mining.luxor.tech"
         },
