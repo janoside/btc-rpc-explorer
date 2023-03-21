@@ -59,7 +59,7 @@ module.exports = {
 		{
 			name: "Proof of Keys Day",
 			date: "2019-01-03",
-			desc: "On this day in 2019, to celebrate Bitcoin's 10th Birthday, Trace Mayer started an annual Proof-of-Keys Celebration. Participats declare monetary sovereignty by withdrawing their BTC into their own custory. Not your keys, not your bitcoin! You can read Trace Mayer's original tweet <a href='https://twitter.com/TraceMayer/status/1071870548421066753'>here</a>."
+			desc: "On this day in 2019, to celebrate Bitcoin's 10th Birthday, Trace Mayer started an annual Proof-of-Keys Celebration. Participats declare monetary sovereignty by withdrawing their BTC into their own custody. Not your keys, not your bitcoin! You can read Trace Mayer's original tweet <a href='https://twitter.com/TraceMayer/status/1071870548421066753'>here</a>."
 		},
 		{
 			name: "Genesis Transaction Day",
