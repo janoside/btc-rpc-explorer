@@ -16,7 +16,8 @@
 		"css-light": "sass --style compressed ./public/scss/light.scss ./public/style/light.min.css",
 		"css-dark": "sass --style compressed ./public/scss/dark.scss ./public/style/dark.min.css",
 		"css-dark-v1": "sass --style compressed ./public/scss/dark-v1.scss ./public/style/dark-v1.min.css",
-		"css": "npm-run-all css-light css-dark css-dark-v1"
+		"css": "npm-run-all css-light css-dark css-dark-v1",
+		"lint": "eslint app routes"
 	},
 	"keywords": [
 		"bitcoin",
@@ -76,6 +77,7 @@
 	},
 	"devDependencies": {
 		"npm-run-all": "^4.1.5",
-		"sass": "^1.51.0"
+		"sass": "^1.51.0",
+		"eslint": "^8.0.0"
 	}
 }
