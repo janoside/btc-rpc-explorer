@@ -11,8 +11,16 @@ const Decimal = require("decimal.js");
 const axios = require("axios");
 const qrcode = require("qrcode");
 const bs58check = require("bs58check");
-const bip32 = require('bip32');
+const ecc = require('tiny-secp256k1');
+const { BIP32Factory } = require('bip32');
+
+// You must wrap a tiny-secp256k1 compatible implementation
+const bip32 = BIP32Factory(ecc);
+
 const bitcoinjs = require('bitcoinjs-lib');
+
+
+
 
 const config = require("./config.js");
 const coins = require("./coins.js");
