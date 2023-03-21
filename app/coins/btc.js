@@ -98,7 +98,7 @@ module.exports = {
 	},
 	miningPoolsConfigUrls:[
 		"https://raw.githubusercontent.com/btc21/Bitcoin-Known-Miners/master/miners.json",
-		"https://github.com/bitcoin-data/mining-pools/raw/generated/pools.json",
+		"https://raw.githubusercontent.com/bitcoin-data/mining-pools/generated/pools.json",
 		"https://raw.githubusercontent.com/btccom/Blockchain-Known-Pools/master/pools.json",
 		"https://raw.githubusercontent.com/blockchain/Blockchain-Known-Pools/master/pools.json"
 	],
