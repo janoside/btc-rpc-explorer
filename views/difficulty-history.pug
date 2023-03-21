@@ -190,6 +190,11 @@ block endOfBody
 		}
 
 		function fillDifficultyTable(summary) {
+			summary.difficultyData.reverse();
+			summary.difficultyDeltaData.reverse();
+
+			let latestBlockStart = 2016 * (summary.difficultyData.length - 1);
+
 			for (var i = 0; i < summary.difficultyData.length; i++) {
 				var item = summary.difficultyData[i];
 				var deltaItem = summary.difficultyDeltaData[i];
@@ -198,7 +203,8 @@ block endOfBody
 				row.attr("id", null);
 				//row.addClass("fee-rate-table-row");
 
-				var startBlock = 2016 * i;
+				var startBlock = latestBlockStart - 2016 * i;
+				//var startBlock = 2016 * i;
 
 				row.find(".data-epoch").text(item.epoch);
 				row.find(".data-start-block").html(`<a href="./block-height/${startBlock}">${startBlock.toLocaleString()}</a>`);
