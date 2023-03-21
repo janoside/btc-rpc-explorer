@@ -18,14 +18,25 @@ block content
 			.mb-2 Check your connection details (host & port for Bitcoin Core), as well as your authentication details (username, password, etc).
 			.mb-0 All of these parameters need to be specified in a ".env" file or via commandline parameters. See the <a href="https://github.com/janoside/btc-rpc-explorer">project homepage</a> to review how to configure this explorer.
 
-	else if (message)
-		+contentSection
-			| #{message}
-
 	else
-		p Unknown error
+		+contentSection("Message")
+			if (message)
+				pre #{message}
+			else if (error.message)
+				| #{error.message}
+			else
+				span.text-muted (unavailable)
 
-	if (error && error.stack)
-		+contentSection(error.status ? `Status: ${error.status}` : null)
-			pre
-				code.json #{error.stack}
+		if (error.status)
+			+contentSection("Status")
+				| #{error.status}
+
+		+contentSection("Stack")
+			if (error.stack)
+				pre #{error.stack}
+
+			else
+				span.text-muted (unavailable)
+
+		+contentSection("Full Error")
+			pre #{JSON.stringify(error, null, 4)}
