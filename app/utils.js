@@ -258,10 +258,13 @@ function formatCurrencyAmountWithForcedDecimalPlaces(amount, formatType, forcedD
 
 			// with Issue #500, the idea was raised that stripping trailing zeroes can
 			// make values more difficult to parse visually; now the stripping is
-			// optional, off by default
-			let stripTrailingZeroes = false;
-			if (stripTrailingZeroes) {
-				baseStr = baseStr.replace(/0+$/, "");
+			// dynamic, based on the value - if any of the 4 least-significant digits
+			// are non-zero (i.e. sat-value is NOT evenly divisible by 10,000), then
+			// no stripping is performed, otherwise it is performed, to preserve some
+			// of the UX benefit of larger, "even" amounts (e.g. 0.1BTC).
+			let trailingZeroesStrippedStr = baseStr.replace(/0+$/, "");
+			if (baseStr.length - trailingZeroesStrippedStr.length >= 4) {
+				baseStr = trailingZeroesStrippedStr
 			}
 
 			//let baseStr = addThousandsSeparators(dec.toDP(decimalPlaces)); // old version, failed to properly format "1e-8" (left unchanged)
