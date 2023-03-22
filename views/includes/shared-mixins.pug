@@ -870,35 +870,34 @@ mixin graphPageScriptSetup(dateAdapterNeeded=false)
 	script(src=assetUrl('./js/decimal.js'))
 
 
-mixin quote(quote, quoteIndex=-1)
-	blockquote.blockquote
-		span.fs-4.font-serif "
+mixin quote(quote, quoteIndex=-1, quotePage=false)
+	blockquote.blockquote(class=(quotePage ? "text-center" : false ))
+		span.font-serif.fw-light(class=(quotePage ? "fs-1" : "fs-4"))
+			
+			span(style="font-size: 110%;") "&nbsp;
+			
+			if (quoteIndex >= 0)
+				a.text-reset(href=`./quote/${quoteIndex}`) #{quote.text}
+			else
+				span #{quote.text}
 		
-		if (quoteIndex >= 0)
-			a.fs-5.font-serif.text-reset(href=`./quote/${quoteIndex}`) #{quote.text}
-		else
-			span.fs-5.font-serif #{quote.text}
-		
-		span.fs-4.font-serif "
-		br
-		.ms-8.mt-2
+			span(style="font-size: 110%;") &nbsp;"
+
+		.ms-8.mt-2(class=(quotePage ? "fs-3" : "fs-5"))
 			if (quote.speaker.indexOf("https://twitter.com") >= 0)
 				- var account = quote.speaker.substring("https://twitter.com/".length);
 				| — 
 				a.fs-5(href=quote.speaker, target="_blank") @#{account}
 
 			else
-				span.fs-5 — #{quote.speaker}
+				span — #{quote.speaker}
 
-			if (quote.date)
-				small.fw-light , #{quote.date}
+			small.fw-light ,&nbsp;
+				if (quote.url)
+					a(href=quote.url, target="_blank") #{quote.date}
 
-			
-			if (quote.url)
-				small.text-muted.ms-2 (
-					a(href=quote.url, target="_blank") ref
-						i.bi-box-arrow-up-right.ms-2
-					| )
+				else
+					| #{quote.date}
 
 			if (quote.context)
 				div

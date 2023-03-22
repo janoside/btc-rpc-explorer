@@ -6,5 +6,5 @@ block headContent
 block content
 	+pageTitle(`${coinConfig.name} Quote #${quoteIndex}`)
 
-	.mt-3.mb-4.px-6
-		+quote(btcQuotes[quoteIndex])
+	+contentSection
+		+quote(btcQuotes[quoteIndex], -1, true)
