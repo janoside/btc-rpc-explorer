@@ -35,8 +35,14 @@ block content
 		- let months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
 		each itemMonth in itemMonths
-			+contentSection(`${months[parseInt(itemMonth) - 1]}`)
-				+itemTable(listByMonth[itemMonth])
+			- let visibleItemCount = 0;
+			each item, index in listByMonth[itemMonth]
+				if (item.chain == activeBlockchain)
+					- visibleItemCount = visibleItemCount + 1;
+
+			if (visibleItemCount > 0)
+				+contentSection(`${months[parseInt(itemMonth) - 1]}`)
+					+itemTable(listByMonth[itemMonth])
 
 	else if (viewType == "old-first")
 		+contentSection
