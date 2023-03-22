@@ -129,9 +129,9 @@ module.exports = {
 	},
 
 	rpcBlacklist:
-	  process.env.BTCEXP_RPC_ALLOWALL.toLowerCase() == "true"  ? []
-	: process.env.BTCEXP_RPC_BLACKLIST ? process.env.BTCEXP_RPC_BLACKLIST.split(',').filter(Boolean)
-	: [
+		process.env.BTCEXP_RPC_ALLOWALL.toLowerCase() == "true"  ? []
+		: process.env.BTCEXP_RPC_BLACKLIST ? process.env.BTCEXP_RPC_BLACKLIST.split(',').filter(Boolean)
+		: [
 		"addnode",
 		"backupwallet",
 		"bumpfee",

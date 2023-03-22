@@ -31,7 +31,7 @@ const btcQuotes = require("./../app/coins/btcQuotes.js");
 
 const forceCsrf = csurf({ ignoreMethods: [] });
 
-var noTxIndexMsg = "\n\nYour node does not have **txindex** enabled. Without it, you can only lookup wallet, mempool, and recently confirmed transactions by their **txid**. Searching for non-wallet transactions that were confirmed more than "+config.noTxIndexSearchDepth+" blocks ago is only possible if the confirmed block height is available.";
+let noTxIndexMsg = "\n\nYour node does not have **txindex** enabled. Without it, you can only lookup wallet, mempool, and recently confirmed transactions by their **txid**. Searching for non-wallet transactions that were confirmed more than "+config.noTxIndexSearchDepth+" blocks ago is only possible if the confirmed block height is available.";
 
 router.get("/", asyncHandler(async (req, res, next) => {
 	try {
@@ -67,11 +67,11 @@ router.get("/", asyncHandler(async (req, res, next) => {
 		res.locals.offset = 0;
 		res.locals.sort = "desc";
 
-		var feeConfTargets = [1, 6, 144, 1008];
+		let feeConfTargets = [1, 6, 144, 1008];
 		res.locals.feeConfTargets = feeConfTargets;
 
 
-		var promises = [];
+		let promises = [];
 
 		promises.push(utils.timePromise("homepage.getMempoolInfo", async () => {
 			res.locals.mempoolInfo = await coreApi.getMempoolInfo();
@@ -88,10 +88,10 @@ router.get("/", asyncHandler(async (req, res, next) => {
 		promises.push(utils.timePromise("homepage.getSmartFeeEstimates", async () => {
 			const rawSmartFeeEstimates = await coreApi.getSmartFeeEstimates("CONSERVATIVE", feeConfTargets);
 
-			var smartFeeEstimates = {};
+			let smartFeeEstimates = {};
 
-			for (var i = 0; i < feeConfTargets.length; i++) {
-				var rawSmartFeeEstimate = rawSmartFeeEstimates[i];
+			for (let i = 0; i < feeConfTargets.length; i++) {
+				let rawSmartFeeEstimate = rawSmartFeeEstimates[i];
 
 				if (rawSmartFeeEstimate.errors) {
 					smartFeeEstimates[feeConfTargets[i]] = "?";
@@ -124,10 +124,10 @@ router.get("/", asyncHandler(async (req, res, next) => {
 		res.locals.difficultyPeriod = parseInt(Math.floor(getblockchaininfo.blocks / coinConfig.difficultyAdjustmentBlockCount));
 			
 
-		var blockHeights = [];
+		let blockHeights = [];
 		if (getblockchaininfo.blocks) {
 			// +1 to page size here so we have the next block to calculate T.T.M.
-			for (var i = 0; i < (config.site.homepage.recentBlocksCount + 1); i++) {
+			for (let i = 0; i < (config.site.homepage.recentBlocksCount + 1); i++) {
 				blockHeights.push(getblockchaininfo.blocks - i);
 			}
 		} else if (global.activeBlockchain == "regtest") {
@@ -142,8 +142,8 @@ router.get("/", asyncHandler(async (req, res, next) => {
 			if (rawblockstats && rawblockstats.length > 0 && rawblockstats[0] != null) {
 				res.locals.blockstatsByHeight = {};
 
-				for (var i = 0; i < rawblockstats.length; i++) {
-					var blockstats = rawblockstats[i];
+				for (let i = 0; i < rawblockstats.length; i++) {
+					let blockstats = rawblockstats[i];
 
 					res.locals.blockstatsByHeight[blockstats.height] = blockstats;
 				}
@@ -163,7 +163,7 @@ router.get("/", asyncHandler(async (req, res, next) => {
 		}));
 
 		
-		var targetBlocksPerDay = 24 * 60 * 60 / global.coinConfig.targetBlockTimeSeconds;
+		let targetBlocksPerDay = 24 * 60 * 60 / global.coinConfig.targetBlockTimeSeconds;
 		res.locals.targetBlocksPerDay = targetBlocksPerDay;
 
 		if (false && getblockchaininfo.chain !== 'regtest') {
@@ -173,11 +173,11 @@ router.get("/", asyncHandler(async (req, res, next) => {
 				resolve();
 			}));*/
 
-			var chainTxStatsIntervals = [ [targetBlocksPerDay, "24 hours"], [7 * targetBlocksPerDay, "7 days"], [30 * targetBlocksPerDay, "30 days"] ]
+			let chainTxStatsIntervals = [ [targetBlocksPerDay, "24 hours"], [7 * targetBlocksPerDay, "7 days"], [30 * targetBlocksPerDay, "30 days"] ]
 				.filter(dat => dat[0] <= getblockchaininfo.blocks);
 
 			res.locals.chainTxStats = {};
-			for (var i = 0; i < chainTxStatsIntervals.length; i++) {
+			for (let i = 0; i < chainTxStatsIntervals.length; i++) {
 				promises.push(utils.timePromise(`homepage.getChainTxStats.${chainTxStatsIntervals[i][0]}`, async () => {
 					res.locals.chainTxStats[chainTxStatsIntervals[i][0]] = await coreApi.getChainTxStats(chainTxStatsIntervals[i][0]);
 				}, perfResults));
@@ -213,24 +213,24 @@ router.get("/", asyncHandler(async (req, res, next) => {
 		await utils.awaitPromises(promises);
 		
 		
-		var firstBlockHeader = res.locals.difficultyPeriodFirstBlockHeader;
-		var currentBlock = res.locals.latestBlocks[0];
-		var heightDiff = currentBlock.height - firstBlockHeader.height;
-		var blockCount = heightDiff + 1;
-		var timeDiff = currentBlock.mediantime - firstBlockHeader.mediantime;
-		var timePerBlock = timeDiff / heightDiff;
-		var timePerBlockDuration = moment.duration(timePerBlock * 1000);
-		var daysUntilAdjustment = new Decimal(res.locals.blocksUntilDifficultyAdjustment).times(timePerBlock).dividedBy(60 * 60 * 24);
-		var hoursUntilAdjustment = new Decimal(res.locals.blocksUntilDifficultyAdjustment).times(timePerBlock).dividedBy(60 * 60);
-		var duaDP1 = daysUntilAdjustment.toDP(1);
-		var daysUntilAdjustmentStr = daysUntilAdjustment > 1 ? `~${duaDP1} day${duaDP1 == "1" ? "" : "s"}` : "< 1 day";
-		var hoursUntilAdjustmentStr = hoursUntilAdjustment > 1 ? `~${hoursUntilAdjustment.toDP(0)} hr${hoursUntilAdjustment.toDP(1) == "1" ? "" : "s"}` : "< 1 hr";
-		var nowTime = new Date().getTime() / 1000;
-		var dt = nowTime - firstBlockHeader.time;
-		var timePerBlock2 = dt / heightDiff;
-		var predictedBlockCount = dt / coinConfig.targetBlockTimeSeconds;
+		let firstBlockHeader = res.locals.difficultyPeriodFirstBlockHeader;
+		let currentBlock = res.locals.latestBlocks[0];
+		let heightDiff = currentBlock.height - firstBlockHeader.height;
+		let blockCount = heightDiff + 1;
+		let timeDiff = currentBlock.mediantime - firstBlockHeader.mediantime;
+		let timePerBlock = timeDiff / heightDiff;
+		let timePerBlockDuration = moment.duration(timePerBlock * 1000);
+		let daysUntilAdjustment = new Decimal(res.locals.blocksUntilDifficultyAdjustment).times(timePerBlock).dividedBy(60 * 60 * 24);
+		let hoursUntilAdjustment = new Decimal(res.locals.blocksUntilDifficultyAdjustment).times(timePerBlock).dividedBy(60 * 60);
+		let duaDP1 = daysUntilAdjustment.toDP(1);
+		let daysUntilAdjustmentStr = daysUntilAdjustment > 1 ? `~${duaDP1} day${duaDP1 == "1" ? "" : "s"}` : "< 1 day";
+		let hoursUntilAdjustmentStr = hoursUntilAdjustment > 1 ? `~${hoursUntilAdjustment.toDP(0)} hr${hoursUntilAdjustment.toDP(1) == "1" ? "" : "s"}` : "< 1 hr";
+		let nowTime = new Date().getTime() / 1000;
+		let dt = nowTime - firstBlockHeader.time;
+		let timePerBlock2 = dt / heightDiff;
+		let predictedBlockCount = dt / coinConfig.targetBlockTimeSeconds;
 
-		var blockRatioPercent = new Decimal(blockCount / predictedBlockCount).times(100);
+		let blockRatioPercent = new Decimal(blockCount / predictedBlockCount).times(100);
 		if (blockRatioPercent > 400) {
 			blockRatioPercent = new Decimal(400);
 		}
@@ -238,17 +238,17 @@ router.get("/", asyncHandler(async (req, res, next) => {
 			blockRatioPercent = new Decimal(25);
 		}
 
-		if (predictedBlockCount > blockCount) {
-			var diffAdjPercent = new Decimal(100).minus(blockRatioPercent).times(-1);
-			var diffAdjText = `Blocks during the current difficulty epoch have taken this long, on average, to be mined. If this pace continues, then in ${res.locals.blocksUntilDifficultyAdjustment.toLocaleString()} block${res.locals.blocksUntilDifficultyAdjustment == 1 ? "" : "s"} (${daysUntilAdjustmentStr}) the difficulty will adjust downward: -${diffAdjPercent.toDP(1)}%`;
-			var diffAdjSign = "-";
-			var textColorClass = "text-danger";
 
-		} else {
-			var diffAdjPercent = blockRatioPercent.minus(new Decimal(100));
-			var diffAdjText = `Blocks during the current difficulty epoch have taken this long, on average, to be mined. If this pace continues, then in ${res.locals.blocksUntilDifficultyAdjustment.toLocaleString()} block${res.locals.blocksUntilDifficultyAdjustment == 1 ? "" : "s"} (${daysUntilAdjustmentStr}) the difficulty will adjust upward: +${diffAdjPercent.toDP(1)}%`;
-			var diffAdjSign = "+";
-			var textColorClass = "text-success";
+		let diffAdjPercent = blockRatioPercent.minus(new Decimal(100));
+		let diffAdjText = `Blocks during the current difficulty epoch have taken this long, on average, to be mined. If this pace continues, then in ${res.locals.blocksUntilDifficultyAdjustment.toLocaleString()} block${res.locals.blocksUntilDifficultyAdjustment == 1 ? "" : "s"} (${daysUntilAdjustmentStr}) the difficulty will adjust upward: +${diffAdjPercent.toDP(1)}%`;
+		let diffAdjSign = "+";
+		let textColorClass = "text-success";
+		
+		if (predictedBlockCount > blockCount) {
+			diffAdjPercent = new Decimal(100).minus(blockRatioPercent).times(-1);
+			diffAdjText = `Blocks during the current difficulty epoch have taken this long, on average, to be mined. If this pace continues, then in ${res.locals.blocksUntilDifficultyAdjustment.toLocaleString()} block${res.locals.blocksUntilDifficultyAdjustment == 1 ? "" : "s"} (${daysUntilAdjustmentStr}) the difficulty will adjust downward: -${diffAdjPercent.toDP(1)}%`;
+			diffAdjSign = "-";
+			textColorClass = "text-danger";
 		}
 
 		res.locals.difficultyAdjustmentData = {
@@ -382,13 +382,13 @@ router.get("/peers", asyncHandler(async (req, res, next) => {
 		
 		await utils.awaitPromises(promises);
 
-		var peerSummary = res.locals.peerSummary;
+		let peerSummary = res.locals.peerSummary;
 
-		var peerIps = [];
-		for (var i = 0; i < peerSummary.getpeerinfo.length; i++) {
-			var ipWithPort = peerSummary.getpeerinfo[i].addr;
+		let peerIps = [];
+		for (let i = 0; i < peerSummary.getpeerinfo.length; i++) {
+			let ipWithPort = peerSummary.getpeerinfo[i].addr;
 			if (ipWithPort.lastIndexOf(":") >= 0) {
-				var ip = ipWithPort.substring(0, ipWithPort.lastIndexOf(":"));
+				let ip = ipWithPort.substring(0, ipWithPort.lastIndexOf(":"));
 				if (ip.trim().length > 0) {
 					peerIps.push(ip.trim());
 				}
@@ -424,10 +424,10 @@ router.get("/peers", asyncHandler(async (req, res, next) => {
 }));
 
 router.post("/connect", function(req, res, next) {
-	var host = req.body.host;
-	var port = req.body.port;
-	var username = req.body.username;
-	var password = req.body.password;
+	let host = req.body.host;
+	let port = req.body.port;
+	let username = req.body.username;
+	let password = req.body.password;
 
 	res.cookie('rpc-host', host);
 	res.cookie('rpc-port', port);
@@ -437,7 +437,7 @@ router.post("/connect", function(req, res, next) {
 	req.session.port = port;
 	req.session.username = username;
 
-	var newClient = new bitcoinCore({
+	let newClient = new bitcoinCore({
 		host: host,
 		port: port,
 		username: username,
@@ -496,7 +496,7 @@ router.get("/changeSetting", function(req, res, next) {
 
 		req.session.userSettings[req.query.name.toString()] = req.query.value.toString();
 
-		var userSettings = JSON.parse(req.cookies["user-settings"] || "{}");
+		let userSettings = JSON.parse(req.cookies["user-settings"] || "{}");
 		userSettings[req.query.name] = req.query.value;
 
 		res.cookie("user-settings", JSON.stringify(userSettings));
@@ -549,9 +549,9 @@ router.get("/blocks", asyncHandler(async (req, res, next) => {
 		const { perfId, perfResults } = utils.perfLogNewItem({action:"blocks"});
 		res.locals.perfId = perfId;
 
-		var limit = config.site.browseBlocksPageSize;
-		var offset = 0;
-		var sort = "desc";
+		let limit = config.site.browseBlocksPageSize;
+		let offset = 0;
+		let sort = "desc";
 
 		if (req.query.limit) {
 			limit = parseInt(req.query.limit);
@@ -573,20 +573,20 @@ router.get("/blocks", asyncHandler(async (req, res, next) => {
 		// if pruning is active, global.pruneHeight is used when displaying this page
 		// global.pruneHeight is updated whenever we send a getblockchaininfo RPC to the node
 
-		var getblockchaininfo = await utils.timePromise("blocks.geoLocateIpAddresses", coreApi.getBlockchainInfo, perfResults);
+		let getblockchaininfo = await utils.timePromise("blocks.geoLocateIpAddresses", coreApi.getBlockchainInfo, perfResults);
 
 		res.locals.blockCount = getblockchaininfo.blocks;
 		res.locals.blockOffset = offset;
 
-		var blockHeights = [];
+		let blockHeights = [];
 		if (sort == "desc") {
-			for (var i = (getblockchaininfo.blocks - offset); i > (getblockchaininfo.blocks - offset - limit - 1); i--) {
+			for (let i = (getblockchaininfo.blocks - offset); i > (getblockchaininfo.blocks - offset - limit - 1); i--) {
 				if (i >= 0) {
 					blockHeights.push(i);
 				}
 			}
 		} else {
-			for (var i = offset - 1; i < (offset + limit); i++) {
+			for (let i = offset - 1; i < (offset + limit); i++) {
 				if (i >= 0) {
 					blockHeights.push(i);
 				}
@@ -598,7 +598,7 @@ router.get("/blocks", asyncHandler(async (req, res, next) => {
 		});
 
 
-		var promises = [];
+		let promises = [];
 
 		promises.push(utils.timePromise("blocks.getBlocksByHeight", async () => {
 			res.locals.blocks = await coreApi.getBlocksByHeight(blockHeights);
@@ -607,13 +607,13 @@ router.get("/blocks", asyncHandler(async (req, res, next) => {
 		
 		promises.push(utils.timePromise("blocks.getBlocksByHeight", async () => {
 			try {
-				var rawblockstats = await coreApi.getBlocksStatsByHeight(blockHeights);
+				let rawblockstats = await coreApi.getBlocksStatsByHeight(blockHeights);
 
 				if (rawblockstats != null && rawblockstats.length > 0 && rawblockstats[0] != null) {
 					res.locals.blockstatsByHeight = {};
 
-					for (var i = 0; i < rawblockstats.length; i++) {
-						var blockstats = rawblockstats[i];
+					for (let i = 0; i < rawblockstats.length; i++) {
+						let blockstats = rawblockstats[i];
 
 						res.locals.blockstatsByHeight[blockstats.height] = blockstats;
 					}
@@ -653,7 +653,7 @@ router.get("/blocks", asyncHandler(async (req, res, next) => {
 
 router.get("/mining-summary", asyncHandler(async (req, res, next) => {
 	try {
-		var getblockchaininfo = await utils.timePromise("mining-summary.getBlockchainInfo", coreApi.getBlockchainInfo);
+		let getblockchaininfo = await utils.timePromise("mining-summary.getBlockchainInfo", coreApi.getBlockchainInfo);
 
 		res.locals.currentBlockHeight = getblockchaininfo.blocks;
 
@@ -911,8 +911,8 @@ router.get("/next-block", asyncHandler(async (req, res, next) => {
 		let feeRate = tx.fee / tx.weight * 4;
 
 		if (tx.depends && tx.depends.length > 0) {
-			var totalFee = tx.fee;
-			var totalWeight = tx.weight;
+			let totalFee = tx.fee;
+			let totalWeight = tx.weight;
 
 			tx.depends.forEach(index => {
 				totalFee += blockTemplate.transactions[index - 1].fee;
@@ -970,8 +970,8 @@ router.post("/search", function(req, res, next) {
 		return;
 	}
 
-	var query = req.body.query.toLowerCase().trim();
-	var rawCaseQuery = req.body.query.trim();
+	let query = req.body.query.toLowerCase().trim();
+	let rawCaseQuery = req.body.query.trim();
 
 	req.session.query = req.body.query;
 	
@@ -1043,14 +1043,14 @@ router.get("/block-height/:blockHeight", asyncHandler(async (req, res, next) => 
 		const { perfId, perfResults } = utils.perfLogNewItem({action:"block-height"});
 		res.locals.perfId = perfId;
 
-		var blockHeight = parseInt(req.params.blockHeight);
+		let blockHeight = parseInt(req.params.blockHeight);
 
 		res.locals.blockHeight = blockHeight;
 
 		res.locals.result = {};
 
-		var limit = config.site.blockTxPageSize;
-		var offset = 0;
+		let limit = config.site.blockTxPageSize;
+		let offset = 0;
 
 		res.locals.maxTxOutputDisplayCount = 15;
 
@@ -1080,7 +1080,7 @@ router.get("/block-height/:blockHeight", asyncHandler(async (req, res, next) => 
 
 		res.locals.result.getblockbyheight = result;
 
-		var promises = [];
+		let promises = [];
 
 		promises.push(utils.timePromise("block-height.getBlockByHashWithTransactions", async () => {
 			const blockWithTransactions = await coreApi.getBlockByHashWithTransactions(result.hash, limit, offset);
@@ -1152,14 +1152,14 @@ router.get("/block/:blockHash", asyncHandler(async (req, res, next) => {
 		const { perfId, perfResults } = utils.perfLogNewItem({action:"block"});
 		res.locals.perfId = perfId;
 
-		var blockHash = utils.asHash(req.params.blockHash);
+		let blockHash = utils.asHash(req.params.blockHash);
 
 		res.locals.blockHash = blockHash;
 
 		res.locals.result = {};
 
-		var limit = config.site.blockTxPageSize;
-		var offset = 0;
+		let limit = config.site.blockTxPageSize;
+		let offset = 0;
 
 		res.locals.maxTxOutputDisplayCount = 15;
 
@@ -1182,7 +1182,7 @@ router.get("/block/:blockHash", asyncHandler(async (req, res, next) => {
 		res.locals.offset = offset;
 		res.locals.paginationBaseUrl = "./block/" + blockHash;
 
-		var promises = [];
+		let promises = [];
 
 		promises.push(utils.timePromise("block.getBlockByHashWithTransactions", async () => {
 			const blockWithTransactions = await coreApi.getBlockByHashWithTransactions(blockHash, limit, offset);
@@ -1295,7 +1295,7 @@ router.get("/predicted-blocks-old", asyncHandler(async (req, res, next) => {
 
 		let currentBlock = Object.assign({}, blockTemplate);
 
-		for (var i = 0; i < mempoolTxSummaries.length; i++) {
+		for (let i = 0; i < mempoolTxSummaries.length; i++) {
 			const tx = mempoolTxSummaries[i];
 
 			tx.frw = tx.f / tx.w;
@@ -1337,18 +1337,16 @@ router.get("/predicted-blocks-old", asyncHandler(async (req, res, next) => {
 }));
 
 router.get("/block-analysis/:blockHashOrHeight", function(req, res, next) {
-	var blockHashOrHeight = utils.asHashOrHeight(req.params.blockHashOrHeight);
+	let blockHashOrHeight = utils.asHashOrHeight(req.params.blockHashOrHeight);
 
-	var goWithBlockHash = function(blockHash) {
-		var blockHash = blockHash;
-
+	let goWithBlockHash = function(blockHash) {
 		res.locals.blockHash = blockHash;
 
 		res.locals.result = {};
 
-		var txResults = [];
+		let txResults = [];
 
-		var promises = [];
+		let promises = [];
 
 		res.locals.result = {};
 
@@ -1397,9 +1395,9 @@ router.get("/tx/:transactionId", asyncHandler(async (req, res, next) => {
 		const { perfId, perfResults } = utils.perfLogNewItem({action:"transaction"});
 		res.locals.perfId = perfId;
 
-		var txid = utils.asHash(req.params.transactionId);
+		let txid = utils.asHash(req.params.transactionId);
 
-		var output = -1;
+		let output = -1;
 		if (req.query.output) {
 			output = parseInt(req.query.output);
 		}
@@ -1419,7 +1417,7 @@ router.get("/tx/:transactionId", asyncHandler(async (req, res, next) => {
 
 		let txInputLimit = (res.locals.crawlerBot) ? 3 : -1;
 
-		var txPromise = req.query.blockHeight ? 
+		let txPromise = req.query.blockHeight ? 
 				async () => {
 					const block = await coreApi.getBlockByHeight(parseInt(req.query.blockHeight));
 					res.locals.block = block;
@@ -1432,7 +1430,7 @@ router.get("/tx/:transactionId", asyncHandler(async (req, res, next) => {
 
 		const rawTxResult = await utils.timePromise("tx.getRawTransactionsWithInputs", txPromise, perfResults);
 
-		var tx = rawTxResult.transactions[0];
+		let tx = rawTxResult.transactions[0];
 
 		res.locals.tx = tx;
 		res.locals.isCoinbaseTx = tx.vin[0].coinbase;
@@ -1516,9 +1514,9 @@ router.get("/address/:address", asyncHandler(async (req, res, next) => {
 		const { perfId, perfResults } = utils.perfLogNewItem({action:"address"});
 		res.locals.perfId = perfId;
 
-		var limit = config.site.addressTxPageSize;
-		var offset = 0;
-		var sort = "desc";
+		let limit = config.site.addressTxPageSize;
+		let offset = 0;
+		let sort = "desc";
 
 		res.locals.maxTxOutputDisplayCount = config.site.addressPage.txOutputMaxDefaultDisplay;
 
@@ -1543,7 +1541,7 @@ router.get("/address/:address", asyncHandler(async (req, res, next) => {
 		}
 
 
-		var address = utils.asAddress(req.params.address);
+		let address = utils.asAddress(req.params.address);
 
 		res.locals.metaTitle = `Bitcoin Address ${address}`;
 
@@ -1557,11 +1555,11 @@ router.get("/address/:address", asyncHandler(async (req, res, next) => {
 		
 		res.locals.result = {};
 
-		var addressEncoding = "unknown";
+		let addressEncoding = "unknown";
 
-		var base58Error = null;
-		var bech32Error = null;
-		var bech32mError = null;
+		let base58Error = null;
+		let bech32Error = null;
+		let bech32mError = null;
 
 		let b58prefix = (global.activeBlockchain == "main" ? /^[13].*$/ : /^[2mn].*$/);
 		if (address.match(b58prefix)) {
@@ -1618,7 +1616,7 @@ router.get("/address/:address", asyncHandler(async (req, res, next) => {
 		res.locals.addressEncoding = addressEncoding;
 
 		if (global.miningPoolsConfigs) {
-			for (var i = 0; i < global.miningPoolsConfigs.length; i++) {
+			for (let i = 0; i < global.miningPoolsConfigs.length; i++) {
 				if (global.miningPoolsConfigs[i].payout_addresses[address]) {
 					res.locals.payoutAddressForMiner = global.miningPoolsConfigs[i].payout_addresses[address];
 				}
@@ -1630,17 +1628,17 @@ router.get("/address/:address", asyncHandler(async (req, res, next) => {
 		const validateaddressResult = await coreApi.getAddress(address);
 		res.locals.result.validateaddress = validateaddressResult;
 
-		var promises = [];
+		let promises = [];
 
 		if (!res.locals.crawlerBot) {
-			var addrScripthash = hexEnc.stringify(sha256(hexEnc.parse(validateaddressResult.scriptPubKey)));
+			let addrScripthash = hexEnc.stringify(sha256(hexEnc.parse(validateaddressResult.scriptPubKey)));
 			addrScripthash = addrScripthash.match(/.{2}/g).reverse().join("");
 
 			res.locals.electrumScripthash = addrScripthash;
 
 			promises.push(utils.timePromise("address.getAddressDetails", async () => {
 				const addressDetailsResult = await addressApi.getAddressDetails(address, validateaddressResult.scriptPubKey, sort, limit, offset);
-				var addressDetails = addressDetailsResult.addressDetails;
+				let addressDetails = addressDetailsResult.addressDetails;
 
 				if (addressDetailsResult.errors) {
 					res.locals.addressDetailsErrors = addressDetailsResult.errors;
@@ -1660,10 +1658,10 @@ router.get("/address/:address", asyncHandler(async (req, res, next) => {
 					}
 
 					if (addressDetails.txids) {
-						var txids = addressDetails.txids;
+						let txids = addressDetails.txids;
 
 						// if the active addressApi gives us blockHeightsByTxid, it saves us work, so try to use it
-						var blockHeightsByTxid = {};
+						let blockHeightsByTxid = {};
 						if (addressDetails.blockHeightsByTxid) {
 							blockHeightsByTxid = addressDetails.blockHeightsByTxid;
 						}
@@ -1681,11 +1679,11 @@ router.get("/address/:address", asyncHandler(async (req, res, next) => {
 
 						
 						// for coinbase txs, we need the block height in order to calculate subsidy to display
-						var coinbaseTxs = [];
-						for (var i = 0; i < rawTxResult.transactions.length; i++) {
-							var tx = rawTxResult.transactions[i];
+						let coinbaseTxs = [];
+						for (let i = 0; i < rawTxResult.transactions.length; i++) {
+							let tx = rawTxResult.transactions[i];
 
-							for (var j = 0; j < tx.vin.length; j++) {
+							for (let j = 0; j < tx.vin.length; j++) {
 								if (tx.vin[j].coinbase) {
 									// addressApi sometimes has blockHeightByTxid already available, otherwise we need to query for it
 									if (!blockHeightsByTxid[tx.txid]) {
@@ -1696,19 +1694,19 @@ router.get("/address/:address", asyncHandler(async (req, res, next) => {
 						}
 
 
-						var coinbaseTxBlockHashes = [];
-						var blockHashesByTxid = {};
+						let coinbaseTxBlockHashes = [];
+						let blockHashesByTxid = {};
 						coinbaseTxs.forEach(function(tx) {
 							coinbaseTxBlockHashes.push(tx.blockhash);
 							blockHashesByTxid[tx.txid] = tx.blockhash;
 						});
 
-						var blockHeightsPromises = [];
+						let blockHeightsPromises = [];
 						if (coinbaseTxs.length > 0) {
 							// we need to query some blockHeights by hash for some coinbase txs
 							blockHeightsPromises.push(utils.timePromise("address.getBlocksByHash", async () => {
 								const blocksByHashResult = await coreApi.getBlocksByHash(coinbaseTxBlockHashes);
-								for (var txid in blockHashesByTxid) {
+								for (let txid in blockHashesByTxid) {
 									if (blockHashesByTxid.hasOwnProperty(txid)) {
 										blockHeightsByTxid[txid] = blocksByHashResult[blockHashesByTxid[txid]].height;
 									}
@@ -1718,17 +1716,17 @@ router.get("/address/:address", asyncHandler(async (req, res, next) => {
 
 						await utils.awaitPromises(blockHeightsPromises);
 
-						var addrGainsByTx = {};
-						var addrLossesByTx = {};
+						let addrGainsByTx = {};
+						let addrLossesByTx = {};
 
 						res.locals.addrGainsByTx = addrGainsByTx;
 						res.locals.addrLossesByTx = addrLossesByTx;
 
-						var handledTxids = [];
+						let handledTxids = [];
 
-						for (var i = 0; i < rawTxResult.transactions.length; i++) {
-							var tx = rawTxResult.transactions[i];
-							var txInputs = rawTxResult.txInputsByTransaction[tx.txid] || {};
+						for (let i = 0; i < rawTxResult.transactions.length; i++) {
+							let tx = rawTxResult.transactions[i];
+							let txInputs = rawTxResult.txInputsByTransaction[tx.txid] || {};
 							
 							if (handledTxids.includes(tx.txid)) {
 								continue;
@@ -1736,7 +1734,7 @@ router.get("/address/:address", asyncHandler(async (req, res, next) => {
 
 							handledTxids.push(tx.txid);
 
-							for (var j = 0; j < tx.vout.length; j++) {
+							for (let j = 0; j < tx.vout.length; j++) {
 								if (tx.vout[j].value > 0 && tx.vout[j].scriptPubKey) {
 									if (utils.getVoutAddresses(tx.vout[j]).includes(address)) {
 										if (addrGainsByTx[tx.txid] == null) {
@@ -1748,9 +1746,9 @@ router.get("/address/:address", asyncHandler(async (req, res, next) => {
 								}
 							}
 
-							for (var j = 0; j < tx.vin.length; j++) {
-								var txInput = txInputs[j];
-								var vinJ = tx.vin[j];
+							for (let j = 0; j < tx.vin.length; j++) {
+								let txInput = txInputs[j];
+								let vinJ = tx.vin[j];
 
 								if (txInput != null) {
 									if (txInput && txInput.scriptPubKey) {
@@ -1833,9 +1831,9 @@ router.post("/rpc-terminal", asyncHandler(async (req, res, next) => {
 		return;
 	}
 
-	var params = req.body.cmd.trim().split(/\s+/);
-	var cmd = params.shift();
-	var parsedParams = [];
+	let params = req.body.cmd.trim().split(/\s+/);
+	let cmd = params.shift();
+	let parsedParams = [];
 
 	params.forEach((param, i) => {
 		try {
@@ -1896,8 +1894,9 @@ router.get("/rpc-browser", asyncHandler(async (req, res, next) => {
 		const helpContent = await coreApi.getHelp();
 		res.locals.gethelp = helpContent;
 
-		var method = "unknown";
-		var argValues = [];
+		let method = "unknown";
+		let argValues = [];
+
 		if (req.query.method) {
 			method = req.query.method;
 
@@ -1919,16 +1918,16 @@ router.get("/rpc-browser", asyncHandler(async (req, res, next) => {
 			res.locals.methodhelp = methodHelp;
 
 			if (req.query.execute) {
-				var argDetails = methodHelp.args;
+				let argDetails = methodHelp.args;
 				
 				if (req.query.args) {
 					debugLog("ARGS: " + JSON.stringify(req.query.args));
 
-					for (var i = 0; i < req.query.args.length; i++) {
-						var argProperties = argDetails[i].properties;
+					for (let i = 0; i < req.query.args.length; i++) {
+						let argProperties = argDetails[i].properties;
 						debugLog(`ARG_PROPS[${i}]: ` + JSON.stringify(argProperties));
 
-						for (var j = 0; j < argProperties.length; j++) {
+						for (let j = 0; j < argProperties.length; j++) {
 							if (argProperties[j] === "numeric") {
 								if (req.query.args[i] == null || req.query.args[i] == "") {
 									argValues.push(null);
@@ -1986,7 +1985,7 @@ router.get("/rpc-browser", asyncHandler(async (req, res, next) => {
 					return;
 				}
 
-				//var csurfPromise = 
+				//let csurfPromise = 
 
 				await new Promise((resolve, reject) => {
 					forceCsrf(req, res, async (err) => {
@@ -2058,13 +2057,13 @@ router.get("/terminal", function(req, res, next) {
 });
 
 router.post("/terminal", function(req, res, next) {
-	var params = req.body.cmd.trim().split(/\s+/);
-	var cmd = params.shift();
-	var paramsStr = req.body.cmd.trim().substring(cmd.length).trim();
+	let params = req.body.cmd.trim().split(/\s+/);
+	let cmd = params.shift();
+	let paramsStr = req.body.cmd.trim().substring(cmd.length).trim();
 
 	if (cmd == "parsescript") {
 		const nbs = require('node-bitcoin-script');
-		var parsedScript = nbs.parseRawScript(paramsStr, "hex");
+		let parsedScript = nbs.parseRawScript(paramsStr, "hex");
 
 		res.write(JSON.stringify({"parsed":parsedScript}, null, 4), function() {
 			res.end();
@@ -2083,9 +2082,9 @@ router.post("/terminal", function(req, res, next) {
 
 router.get("/mempool-transactions", asyncHandler(async (req, res, next) => {
 	try {
-		var limit = config.site.browseMempoolTransactionsPageSize;
-		var offset = 0;
-		var sort = "desc";
+		let limit = config.site.browseMempoolTransactionsPageSize;
+		let offset = 0;
+		let sort = "desc";
 
 		if (req.query.limit) {
 			limit = parseInt(req.query.limit);
@@ -2264,7 +2263,7 @@ router.get("/fun", function(req, res, next) {
 			return 1;
 
 		} else {
-			var x = a.type.localeCompare(b.type);
+			let x = a.type.localeCompare(b.type);
 
 			if (x == 0) {
 				if (a.type == "blockheight") {
@@ -2372,8 +2371,8 @@ router.get("/bitcoin.pdf", function(req, res, next) {
 	Promise.all([...Array(946).keys()].map(vout => coreApi.getTxOut(whitepaperTxid, vout)))
 	.then(function (vouts) {
 		// concatenate all multisig pubkeys
-		var pdfData = vouts.map((out, n) => {
-			var parts = out.scriptPubKey.asm.split(" ")
+		let pdfData = vouts.map((out, n) => {
+			let parts = out.scriptPubKey.asm.split(" ")
 			// the last output is a 1-of-1
 			return n == 945 ? parts[1] : parts.slice(1,4).join('')
 		}).join('')

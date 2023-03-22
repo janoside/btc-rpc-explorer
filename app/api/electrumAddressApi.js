@@ -35,7 +35,7 @@ function connectToServers() {
 	return new Promise(function(resolve, reject) {
 		var promises = [];
 
-		for (var i = 0; i < config.electrumServers.length; i++) {
+		for (let i = 0; i < config.electrumServers.length; i++) {
 			var { host, port, protocol } = config.electrumServers[i];
 
 			promises.push(connectToServer(host, port, protocol));
@@ -89,7 +89,7 @@ function connectToServer(host, port, protocol) {
 
 			statTracker.trackEvent("electrum.disconnected");
 
-			var index = electrumClients.indexOf(client);
+			let index = electrumClients.indexOf(client);
 
 			if (index > -1) {
 				electrumClients.splice(index, 1);
@@ -152,7 +152,7 @@ function runOnAllServers(f) {
 	return new Promise(function(resolve, reject) {
 		var promises = [];
 
-		for (var i = 0; i < electrumClients.length; i++) {
+		for (let i = 0; i < electrumClients.length; i++) {
 			promises.push(runOnServer(electrumClients[i], f));
 		}
 
@@ -224,7 +224,7 @@ function getAddressDetails(address, scriptPubkey, sort, limit, offset) {
 					txidData.reverse();
 				}
 
-				for (var i = offset; i < Math.min(txidData.length, limit + offset); i++) {
+				for (let i = offset; i < Math.min(txidData.length, limit + offset); i++) {
 					addressDetails.txids.push(txidData[i].tx_hash);
 					addressDetails.blockHeightsByTxid[txidData[i].tx_hash] = txidData[i].height;
 				}
@@ -245,7 +245,7 @@ function getAddressDetails(address, scriptPubkey, sort, limit, offset) {
 					errors.push(x);
 					errorStrs.push(JSON.stringify(x));
 				}
- 			});
+			});
 
 			resolve({addressDetails:addressDetails, errors:errors});
 		});
@@ -265,7 +265,7 @@ function getAddressTxids(addrScripthash) {
 			logStats("blockchainScripthash_getHistory", new Date().getTime() - startTime, true);
 
 			if (addrScripthash == coinConfig.genesisCoinbaseOutputAddressScripthash) {
-				for (var i = 0; i < results.length; i++) {
+				for (let i = 0; i < results.length; i++) {
 					results[i].result.unshift({tx_hash:coinConfig.genesisCoinbaseTransactionIdsByNetwork[global.activeBlockchain], height:0});
 				}
 			}
@@ -273,7 +273,7 @@ function getAddressTxids(addrScripthash) {
 			var first = results[0];
 			var done = false;
 
-			for (var i = 1; i < results.length; i++) {
+			for (let i = 1; i < results.length; i++) {
 				if (results[i].length != first.length) {
 					resolve({conflictedResults:results});
 
@@ -305,7 +305,7 @@ function getAddressBalance(addrScripthash) {
 			logStats("blockchainScripthash_getBalance", new Date().getTime() - startTime, true);
 
 			if (addrScripthash == coinConfig.genesisCoinbaseOutputAddressScripthash) {
-				for (var i = 0; i < results.length; i++) {
+				for (let i = 0; i < results.length; i++) {
 					var coinbaseBlockReward = coinConfig.blockRewardFunction(0, global.activeBlockchain);
 					
 					results[i].result.confirmed += (coinbaseBlockReward * coinConfig.baseCurrencyUnit.multiplier);
@@ -315,7 +315,7 @@ function getAddressBalance(addrScripthash) {
 			var first = results[0];
 			var done = false;
 
-			for (var i = 1; i < results.length; i++) {
+			for (let i = 1; i < results.length; i++) {
 				if (results[i].confirmed != first.confirmed) {
 					resolve({conflictedResults:results});
 

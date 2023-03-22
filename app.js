@@ -95,7 +95,7 @@ const auth = require('./app/auth.js');
 const sso = require('./app/sso.js');
 const markdown = require("markdown-it")();
 const v8 = require("v8");
-var compression = require("compression");
+const compression = require("compression");
 
 const appUtils = require("@janoside/app-utils");
 const s3Utils = appUtils.s3Utils;
@@ -728,6 +728,8 @@ expressApp.onStartup = async () => {
 	global.config = config;
 	global.coinConfig = coins[config.coin];
 	global.coinConfigs = coins;
+
+	global.SATS_PER_BTC = global.coinConfig.baseCurrencyUnit.multiplier;
 
 	global.specialTransactions = {};
 	global.specialBlocks = {};

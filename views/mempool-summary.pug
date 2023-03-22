@@ -536,7 +536,7 @@ block endOfBody
 
 				row.find(".data-txid").html(`<a href="./tx/${topfeeTx.txid}">${topfeeTx.txid.substring(0, 16)}...</a>`);
 
-				row.find(".data-feerate").text(new Decimal(topfeeTx.feePerByte).times(100000000).times(4).toDP(1));
+				row.find(".data-feerate").text(new Decimal(topfeeTx.feePerByte).times(4).toDP(1));
 
 				row.show();
 
@@ -687,7 +687,7 @@ block endOfBody
 				if (resultList && resultList.length > 0) {
 					var result = resultList[0];
 
-					var feeRate = new Decimal(result.f).times(100000000).dividedBy(result.sz); // TODO: magic number, sat/BTC
+					var feeRate = new Decimal(result.f).dividedBy(result.sz); // TODO: magic number, sat/BTC
 
 					estimateMempoolDepth(feeRate);
 

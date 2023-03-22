@@ -391,9 +391,17 @@ block content
 
 			+pageTab("JSON")
 				if (result.getrawtransaction.hex.length <= 50000)
-					- var pillTabs = ["Transaction", "Block Header", "UTXOs"];
+					- var pillTabs = ["Transaction"];
+					
+					if (!mempoolDetails)
+						- pillTabs.push("Block Header");
+
+					- pillTabs.push("UTXOs");
+
 					if (mempoolDetails)
 						- pillTabs.push("Mempool Details");
+
+					else
 
 					+pillTabs(pillTabs)
 					
