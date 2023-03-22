@@ -252,9 +252,18 @@ function formatCurrencyAmountWithForcedDecimalPlaces(amount, formatType, forcedD
 
 		} else {
 			// toDP excludes trailing zeroes but doesn't "fix" numbers like 1e-8
-			// instead, we use toFixed and manually strip trailing zeroes
+			// instead, we use toFixed and (optionally) manually strip trailing zeroes
 			// old method is kept for reference since this is sensitive, high-volume code
-			let baseStr = addThousandsSeparators(dec.toFixed(decimalPlaces).replace(/0+$/, "").replace(/\.$/, ""));
+			let baseStr = addThousandsSeparators(dec.toFixed(decimalPlaces).replace(/\.$/, ""));
+
+			// with Issue #500, the idea was raised that stripping trailing zeroes can
+			// make values more difficult to parse visually; now the stripping is
+			// optional, off by default
+			let stripTrailingZeroes = false;
+			if (stripTrailingZeroes) {
+				baseStr = baseStr.replace(/0+$/, "");
+			}
+
 			//let baseStr = addThousandsSeparators(dec.toDP(decimalPlaces)); // old version, failed to properly format "1e-8" (left unchanged)
 
 			let returnVal = {currencyUnit:currencyType.name, simpleVal:baseStr, intVal:parseInt(dec)};
