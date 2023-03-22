@@ -85,6 +85,8 @@ mixin itemTable(items)
 										a(href=`./block/${item.blockHash}`) #{item.summary}
 									else if (item.type == "address")
 										a(href=`./address/${item.address}`) #{item.summary}
+									else if (item.type == "extendedPubKey")
+										a(href=`./xyzpub/${item.extendedPubKey}`) #{item.summary}
 									else if (item.type == "link")
 										a(href=item.url) #{item.summary}
 							
