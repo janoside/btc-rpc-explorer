@@ -159,18 +159,18 @@ function getUtxoSetSummary(useCoinStatsIndexIfAvailable=true) {
 function getRawMempool() {
 	return new Promise(function(resolve, reject) {
 		getRpcDataWithParams({method:"getrawmempool", parameters:[false]}).then(function(txids) {
-			var promises = [];
+			let promises = [];
 
-			for (var i = 0; i < txids.length; i++) {
-				var txid = txids[i];
+			for (let i = 0; i < txids.length; i++) {
+				let txid = txids[i];
 
 				promises.push(getRawMempoolEntry(txid));
 			}
 
 			Promise.all(promises).then(function(results) {
-				var finalResult = {};
+				let finalResult = {};
 
-				for (var i = 0; i < results.length; i++) {
+				for (let i = 0; i < results.length; i++) {
 					if (results[i] != null) {
 						finalResult[results[i].txid] = results[i];
 					}
@@ -277,7 +277,7 @@ function getRawTransaction(txid, blockhash) {
 		if (coins[config.coin].genesisCoinbaseTransactionIdsByNetwork[global.activeBlockchain] && txid == coins[config.coin].genesisCoinbaseTransactionIdsByNetwork[global.activeBlockchain]) {
 			// copy the "confirmations" field from genesis block to the genesis-coinbase tx
 			getBlockchainInfo().then(function(blockchainInfoResult) {
-				var result = coins[config.coin].genesisCoinbaseTransactionsByNetwork[global.activeBlockchain];
+				let result = coins[config.coin].genesisCoinbaseTransactionsByNetwork[global.activeBlockchain];
 				result.confirmations = blockchainInfoResult.blocks;
 
 				// hack: default regtest node returns "0" for number of blocks, despite including a genesis block;
@@ -293,7 +293,7 @@ function getRawTransaction(txid, blockhash) {
 			});
 
 		} else {
-			var extra_params = blockhash ? [ blockhash ] : [];
+			let extra_params = blockhash ? [ blockhash ] : [];
 			getRpcDataWithParams({method:"getrawtransaction", parameters:[txid, 1, ...extra_params]}).then(function(result) {
 				if (result == null || result.code && result.code < 0) {
 					return Promise.reject(result);
@@ -317,7 +317,7 @@ async function noTxIndexTransactionLookup(txid, walletOnly) {
 	// This is only available in Electrs and requires enabling BTCEXP_ELECTRUM_TXINDEX.
 	if (!walletOnly && (config.addressApi == "electrum" || config.addressApi == "electrumx") && config.electrumTxIndex) {
 		try {
-			var blockhash = await electrumAddressApi.lookupTxBlockHash(txid);
+			let blockhash = await electrumAddressApi.lookupTxBlockHash(txid);
 
 			return await getRawTransaction(txid, blockhash);
 
@@ -327,16 +327,16 @@ async function noTxIndexTransactionLookup(txid, walletOnly) {
 	}
 
 	// Try looking up in wallet transactions
-	for (var wallet of await listWallets()) {
+	for (let wallet of await listWallets()) {
 		try { return await getWalletTransaction(wallet, txid); }
 		catch (_) {}
 	}
 
 	// Try looking up in recent blocks
 	if (!walletOnly) {
-		var tip_height = await getRpcDataWithParams({method:"getblockcount", parameters:[]});
-		for (var height=tip_height; height>Math.max(tip_height - config.noTxIndexSearchDepth, 0); height--) {
-			var blockhash = await getRpcDataWithParams({method:"getblockhash", parameters:[height]});
+		let tip_height = await getRpcDataWithParams({method:"getblockcount", parameters:[]});
+		for (let height=tip_height; height>Math.max(tip_height - config.noTxIndexSearchDepth, 0); height--) {
+			let blockhash = await getRpcDataWithParams({method:"getblockhash", parameters:[height]});
 			try { return await getRawTransaction(txid, blockhash); }
 			catch (_) {}
 		}
@@ -383,9 +383,9 @@ function getUtxo(txid, outputIndex) {
 }
 
 function getMempoolTxDetails(txid, includeAncDec=true) {
-	var promises = [];
+	let promises = [];
 
-	var mempoolDetails = {};
+	let mempoolDetails = {};
 
 	promises.push(new Promise(function(resolve, reject) {
 		getRpcDataWithParams({method:"getmempoolentry", parameters:[txid]}).then(function(result) {
@@ -447,7 +447,7 @@ function getRpcMethodHelp(methodName) {
 
 
 function getRpcData(cmd, verifyingConnection=false) {
-	var startTime = new Date().getTime();
+	let startTime = new Date().getTime();
 
 	if (!verifyingConnection && !global.rpcConnected) {
 		return Promise.reject(new Error("No RPC connection available. Check your connection/authentication parameters."));
@@ -457,13 +457,13 @@ function getRpcData(cmd, verifyingConnection=false) {
 		debugLog(`RPC: ${cmd}`);
 
 		let rpcCall = async function(callback) {
-			var client = (cmd == "gettxoutsetinfo" ? global.rpcClientNoTimeout : global.rpcClient);
+			let client = (cmd == "gettxoutsetinfo" ? global.rpcClientNoTimeout : global.rpcClient);
 
 			try {
 				const result = await client.command(cmd);//, function(err, result, resHeaders) {
 
 				if (Array.isArray(result) && result.length == 1) {
-					var result0 = result[0];
+					let result0 = result[0];
 					
 					if (result0 && result0.name && result0.name == "RpcError") {
 						logStats(cmd, false, new Date().getTime() - startTime, false);
@@ -506,7 +506,7 @@ function getRpcData(cmd, verifyingConnection=false) {
 }
 
 function getRpcDataWithParams(request, verifyingConnection=false) {
-	var startTime = new Date().getTime();
+	let startTime = new Date().getTime();
 
 	if (!verifyingConnection && !global.rpcConnected) {
 		return Promise.reject(new Error("No RPC connection available. Check your connection/authentication parameters."));
@@ -520,7 +520,7 @@ function getRpcDataWithParams(request, verifyingConnection=false) {
 				const result = await global.rpcClient.command([request]);//, function(err, result, resHeaders) {
 
 				if (Array.isArray(result) && result.length == 1) {
-					var result0 = result[0];
+					let result0 = result[0];
 
 					if (result0 && result0.name && result0.name == "RpcError") {
 						logStats(request.method, true, new Date().getTime() - startTime, false);

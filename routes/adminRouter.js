@@ -139,7 +139,7 @@ router.get("/app-stats", function(req, res, next) {
 router.get('/resetUserSettings', (req, res) => {
 	req.session.userSettings = Object.create(null);
  
-	var userSettings = Object.create(null);
+	let userSettings = Object.create(null);
 	
 	res.cookie("user-settings", JSON.stringify(userSettings));
 

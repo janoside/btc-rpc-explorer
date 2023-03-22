@@ -30,7 +30,7 @@ router.get("/tx-display", asyncHandler(async (req, res, next) => {
 	res.locals.txInputsByTransaction = {};
 	res.locals.blockHeightsByTxid = {};
 
-	var txidOrder = [];
+	let txidOrder = [];
 
 	const promises = [];
 	for (const [txid, data] of Object.entries(global.coinConfig.testData.txDisplayTestList)) {
