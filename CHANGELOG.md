@@ -12,6 +12,7 @@
 * Several new API actions/changes; see [/api/changelog](./api/changelog)
 * New [/holidays](./holidays), a curated list of Bitcoin 'Holidays'
 * Support for different view options on [/fun](./fun)
+* On [/difficulty-history](./difficulty-history), make delta graph honor timespan filtering
 * Support for serving static assets via a configurable CDN
 * Misc fixes for erroneous data display on non-mainnet nodes
 * Switch from fontawesome to bootstrap-icons v1.8.0
