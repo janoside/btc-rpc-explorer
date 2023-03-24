@@ -24,7 +24,7 @@ block content
 			+summaryItem("BIP32 Path", "BIP32 defines a standard for deriving child keys from an extended parent key. This 'path', also known as the 'derivation path', comes from that standard and instructs software how to generate child keys.")
 				| #{bip32Path}
 
-			+summaryItem("Balance")
+			+summaryItem(`Balance (addr: ${offset}-${(offset + limit - 1)})`, "Sum of the balances of the current page of addresses (receive and change) derived from this extended public key.")
 				span(class=(balanceSat > 0 ? "text-success" : false))
 					- var currencyValue = new Decimal(balanceSat).dividedBy(coinConfig.baseCurrencyUnit.multiplier);
 					+valueDisplay(currencyValue)
