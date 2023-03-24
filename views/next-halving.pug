@@ -1,0 +1,34 @@
+extends layout
+
+block headContent
+	title Next Halving
+
+block content
+	if (nextHalvingData.nextHalvingIndex > -1)
+		+pageTitle(`Next Halving (#${nextHalvingData.nextHalvingIndex}, Block ${nextHalvingData.nextHalvingBlock.toLocaleString()})`)
+	else
+		+pageTitle("Next Halving")
+
+
+	+dismissableInfoAlert("nextHavlingNoteDismissed", "About Next Halving...")
+		h6.mb-2 About Next Halving
+
+		| This page shows details about the next halving. Halvings occur every #{nextHalvingData.halvingBlockInterval.toLocaleString()} blocks and cut the block subsidy (new supply creation) in half. So far #{nextHalvingData.halvingCount.toLocaleString()} halving#{halvingCount == 1 ? " has" : "s have"} occurred. After #{nextHalvingData.terminalHalvingCount} halvings, the block subsidy will drop to zero and no more halvings will occur.
+
+	if (nextHalvingData.nextHalvingIndex > -1)
+		+contentSection("Summary")
+			+summaryRow(2)
+				+summaryItem("Blocks Remaining")
+					| #{nextHalvingData.blocksUntilNextHalving.toLocaleString()}
+
+				+summaryItem("Date (Estimated)", "The date is estimated based on the number of blocks remaining and the current mining rate (up until the next difficulty adjustment).")
+					+timestamp(nextHalvingData.nextHalvingDate.getTime() / 1000)
+
+	else
+		.alert.alert-success All halvings are done.
+			if (global.activeBlockchain == "main")
+				span.ms-2 May humanity enjoy the Bitcoin Renaissance.
+
+
+	
+	//pre #{JSON.stringify(nextHalvingData, null, 4)}

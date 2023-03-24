@@ -9,6 +9,7 @@
 	* Show difficulty ATH comparison
 	* Show "Next Block" fullness
 	* Show a banner if 'today' is a Bitcoin 'Holiday' (see more below)
+* New [/next-halving](./next-halving) tool
 * Several new API actions/changes; see [/api/changelog](./api/changelog)
 * New [/holidays](./holidays), a curated list of Bitcoin 'Holidays'
 * Support for different view options on [/fun](./fun)

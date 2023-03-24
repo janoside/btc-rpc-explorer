@@ -13,6 +13,7 @@ const qrcode = require("qrcode");
 const bs58check = require("bs58check");
 const ecc = require('tiny-secp256k1');
 const { BIP32Factory } = require('bip32');
+const moment = require("moment");
 
 // You must wrap a tiny-secp256k1 compatible implementation
 const bip32 = BIP32Factory(ecc);
@@ -1315,6 +1316,114 @@ function bip32Addresses(extPubkey, addressType, account, limit=10, offset=0) {
 	return addresses;
 }
 
+function difficultyAdjustmentEstimates(eraStartBlockHeader, currentBlockHeader) {
+	let difficultyPeriod = parseInt(Math.floor(currentBlockHeader.height / coinConfig.difficultyAdjustmentBlockCount));
+	let blocksUntilDifficultyAdjustment = ((difficultyPeriod + 1) * coinConfig.difficultyAdjustmentBlockCount) - currentBlockHeader.height;
+
+	let heightDiff = currentBlockHeader.height - eraStartBlockHeader.height;
+	let blockCount = heightDiff + 1;
+	let timeDiff = currentBlockHeader.mediantime - eraStartBlockHeader.mediantime;
+	let timePerBlock = timeDiff / heightDiff;
+	let timePerBlockDuration = moment.duration(timePerBlock * 1000);
+	let daysUntilAdjustment = new Decimal(blocksUntilDifficultyAdjustment).times(timePerBlock).dividedBy(60 * 60 * 24);
+	let hoursUntilAdjustment = new Decimal(blocksUntilDifficultyAdjustment).times(timePerBlock).dividedBy(60 * 60);
+	let duaDP1 = daysUntilAdjustment.toDP(1);
+	let daysUntilAdjustmentStr = daysUntilAdjustment > 1 ? `~${duaDP1} day${duaDP1 == "1" ? "" : "s"}` : "< 1 day";
+	let hoursUntilAdjustmentStr = hoursUntilAdjustment > 1 ? `~${hoursUntilAdjustment.toDP(0)} hr${hoursUntilAdjustment.toDP(1) == "1" ? "" : "s"}` : "< 1 hr";
+	let nowTime = new Date().getTime() / 1000;
+	let dt = nowTime - eraStartBlockHeader.time;
+	let timePerBlock2 = dt / heightDiff;
+	let predictedBlockCount = dt / coinConfig.targetBlockTimeSeconds;
+
+	let blockRatioPercent = new Decimal(blockCount / predictedBlockCount).times(100);
+	if (blockRatioPercent > 400) {
+		blockRatioPercent = new Decimal(400);
+	}
+	if (blockRatioPercent < 25) {
+		blockRatioPercent = new Decimal(25);
+	}
+
+
+	let diffAdjPercent = blockRatioPercent.minus(new Decimal(100));
+	let diffAdjText = `Blocks during the current difficulty epoch have taken this long, on average, to be mined. If this pace continues, then in ${blocksUntilDifficultyAdjustment.toLocaleString()} block${blocksUntilDifficultyAdjustment == 1 ? "" : "s"} (${daysUntilAdjustmentStr}) the difficulty will adjust upward: +${diffAdjPercent.toDP(1)}%`;
+	let diffAdjSign = "+";
+	let textColorClass = "text-success";
+
+	if (predictedBlockCount > blockCount) {
+		diffAdjPercent = new Decimal(100).minus(blockRatioPercent).times(-1);
+		diffAdjText = `Blocks during the current difficulty epoch have taken this long, on average, to be mined. If this pace continues, then in ${blocksUntilDifficultyAdjustment.toLocaleString()} block${blocksUntilDifficultyAdjustment == 1 ? "" : "s"} (${daysUntilAdjustmentStr}) the difficulty will adjust downward: -${diffAdjPercent.toDP(1)}%`;
+		diffAdjSign = "-";
+		textColorClass = "text-danger";
+	}
+
+	return {
+		estimateAvailable: blockCount > 30 && !isNaN(diffAdjPercent),
+
+		blockCount: blockCount,
+		blocksLeft: blocksUntilDifficultyAdjustment,
+		daysLeftStr: daysUntilAdjustmentStr,
+		timeLeftStr: (daysUntilAdjustment < 1 ? hoursUntilAdjustmentStr : daysUntilAdjustmentStr),
+		calculationBlockCount: heightDiff,
+		currentEpoch: difficultyPeriod,
+
+		delta: diffAdjPercent,
+		sign: diffAdjSign,
+
+		timePerBlock: timePerBlock,
+		firstBlockTime: eraStartBlockHeader.time,
+		nowTime: nowTime,
+		dt: dt,
+		predictedBlockCount: predictedBlockCount,
+
+		//nameDesc: `Estimate for the difficulty adjustment that will occur in ${blocksUntilDifficultyAdjustment.toLocaleString()} block${blocksUntilDifficultyAdjustment == 1 ? "" : "s"} (${daysUntilAdjustmentStr}). This is calculated using the average block time over the last ${heightDiff} block(s). This estimate becomes more reliable as the difficulty epoch nears its end.`,
+	};
+}
+
+function nextHalvingEstimates(eraStartBlockHeader, currentBlockHeader) {
+	let blockCount = currentBlockHeader.height;
+	let halvingBlockInterval = coinConfig.halvingBlockIntervalsByNetwork[global.activeBlockchain];
+	let halvingCount = parseInt(blockCount / halvingBlockInterval);
+	let nextHalvingIndex = halvingCount + 1;
+	let targetBlockTimeSeconds = coinConfig.targetBlockTimeSeconds;
+	let nextHalvingBlock = (halvingBlockInterval * nextHalvingIndex);
+	let blocksUntilNextHalving = nextHalvingBlock - blockCount;
+	
+	let terminalHalvingCount = coinConfig.terminalHalvingCountByNetwork[global.activeBlockchain];
+	if (nextHalvingIndex > terminalHalvingCount) {
+		halvingCount = terminalHalvingCount;
+		nextHalvingIndex = -1;
+
+		return {
+			halvingCount: terminalHalvingCount,
+			nextHalvingIndex: -1
+		};
+	}
+
+	let difficultyAdjustmentData = difficultyAdjustmentEstimates(eraStartBlockHeader, currentBlockHeader);
+
+	let currDifficultyEraTimeDifferential = (coinConfig.targetBlockTimeSeconds - difficultyAdjustmentData.timePerBlock) * difficultyAdjustmentData.blocksLeft;
+
+
+	let secondsUntilNextHalving = blocksUntilNextHalving * targetBlockTimeSeconds - currDifficultyEraTimeDifferential;
+	let daysUntilNextHalving = secondsUntilNextHalving / 60 / 60 / 24;
+	let nextHalvingDate = new Date(new Date().getTime() + secondsUntilNextHalving * 1000);
+
+	return {
+		blockCount: blockCount,
+		halvingBlockInterval: halvingBlockInterval,
+		halvingCount: halvingCount,
+		nextHalvingIndex: nextHalvingIndex,
+		terminalHalvingCount: terminalHalvingCount,
+		nextHalvingBlock: nextHalvingBlock,
+		blocksUntilNextHalving: blocksUntilNextHalving,
+		targetBlockTimeSeconds: targetBlockTimeSeconds,
+		daysUntilNextHalving: daysUntilNextHalving,
+		nextHalvingDate: nextHalvingDate,
+
+		difficultyAdjustmentData: difficultyAdjustmentData
+	};
+}
+
 
 const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
@@ -1411,6 +1520,8 @@ module.exports = {
 	getVoutAddresses: getVoutAddresses,
 	xpubChangeVersionBytes: xpubChangeVersionBytes,
 	bip32Addresses: bip32Addresses,
+	difficultyAdjustmentEstimates: difficultyAdjustmentEstimates,
+	nextHalvingEstimates: nextHalvingEstimates,
 	sleep: sleep,
 	awaitPromises: awaitPromises,
 	perfLogNewItem: perfLogNewItem,

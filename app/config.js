@@ -227,7 +227,7 @@ module.exports = {
 		toolSections: [
 			{name: "Basics", items: [0, 2]},
 			{name: "Mempool", items: [4, 16, 5]},
-			{name: "Analysis", items: [9, 18, 10, 11, 12, 3]},
+			{name: "Analysis", items: [9, 18, 10, 11, 12, 3, 20]},
 			{name: "Technical", items: [15, 6, 7, 1]},
 			{name: "Fun", items: [8, 17, 19, 13]},
 		]
@@ -267,6 +267,8 @@ module.exports = {
 	/* 18 */	{name:"UTXO Set", url:"./utxo-set", desc:"View the latest UTXO Set.", iconClass:"bi-list-columns"},
 
 	/* 19 */	{name:"Holidays", url:"./holidays", desc:"Curated list of Bitcoin 'Holidays'.", iconClass:"bi-calendar-heart"},
+
+	/* 20 */	{name:"Next Halving", url:"./next-halving", desc:"Estimated details about the next halving.", iconClass:"bi-square-half"},
 	]
 };
 

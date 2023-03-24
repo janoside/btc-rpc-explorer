@@ -77,10 +77,6 @@ router.get("/", asyncHandler(async (req, res, next) => {
 			res.locals.mempoolInfo = await coreApi.getMempoolInfo();
 		}, perfResults));
 
-		promises.push(utils.timePromise("homepage.getMempoolInfo", async () => {
-			res.locals.mempoolInfo = await coreApi.getMempoolInfo();
-		}, perfResults));
-
 		promises.push(utils.timePromise("homepage.getMiningInfo", async () => {
 			res.locals.miningInfo = await coreApi.getMiningInfo();
 		}, perfResults));
@@ -131,8 +127,8 @@ router.get("/", asyncHandler(async (req, res, next) => {
 				blockHeights.push(getblockchaininfo.blocks - i);
 			}
 		} else if (global.activeBlockchain == "regtest") {
-			// hack: default regtest node returns getblockchaininfo.blocks=0, despite having a genesis block
-			// hack this to display the genesis block
+			// hack: default regtest node returns getblockchaininfo.blocks=0, despite
+			// having a genesis block; hack this to display the genesis block
 			blockHeights.push(0);
 		}
 
@@ -211,67 +207,13 @@ router.get("/", asyncHandler(async (req, res, next) => {
 
 
 		await utils.awaitPromises(promises);
-		
-		
-		let firstBlockHeader = res.locals.difficultyPeriodFirstBlockHeader;
+
+		let eraStartBlockHeader = res.locals.difficultyPeriodFirstBlockHeader;
 		let currentBlock = res.locals.latestBlocks[0];
-		let heightDiff = currentBlock.height - firstBlockHeader.height;
-		let blockCount = heightDiff + 1;
-		let timeDiff = currentBlock.mediantime - firstBlockHeader.mediantime;
-		let timePerBlock = timeDiff / heightDiff;
-		let timePerBlockDuration = moment.duration(timePerBlock * 1000);
-		let daysUntilAdjustment = new Decimal(res.locals.blocksUntilDifficultyAdjustment).times(timePerBlock).dividedBy(60 * 60 * 24);
-		let hoursUntilAdjustment = new Decimal(res.locals.blocksUntilDifficultyAdjustment).times(timePerBlock).dividedBy(60 * 60);
-		let duaDP1 = daysUntilAdjustment.toDP(1);
-		let daysUntilAdjustmentStr = daysUntilAdjustment > 1 ? `~${duaDP1} day${duaDP1 == "1" ? "" : "s"}` : "< 1 day";
-		let hoursUntilAdjustmentStr = hoursUntilAdjustment > 1 ? `~${hoursUntilAdjustment.toDP(0)} hr${hoursUntilAdjustment.toDP(1) == "1" ? "" : "s"}` : "< 1 hr";
-		let nowTime = new Date().getTime() / 1000;
-		let dt = nowTime - firstBlockHeader.time;
-		let timePerBlock2 = dt / heightDiff;
-		let predictedBlockCount = dt / coinConfig.targetBlockTimeSeconds;
 
-		let blockRatioPercent = new Decimal(blockCount / predictedBlockCount).times(100);
-		if (blockRatioPercent > 400) {
-			blockRatioPercent = new Decimal(400);
-		}
-		if (blockRatioPercent < 25) {
-			blockRatioPercent = new Decimal(25);
-		}
+		res.locals.difficultyAdjustmentData = utils.difficultyAdjustmentEstimates(eraStartBlockHeader, currentBlock);
 
 
-		let diffAdjPercent = blockRatioPercent.minus(new Decimal(100));
-		let diffAdjText = `Blocks during the current difficulty epoch have taken this long, on average, to be mined. If this pace continues, then in ${res.locals.blocksUntilDifficultyAdjustment.toLocaleString()} block${res.locals.blocksUntilDifficultyAdjustment == 1 ? "" : "s"} (${daysUntilAdjustmentStr}) the difficulty will adjust upward: +${diffAdjPercent.toDP(1)}%`;
-		let diffAdjSign = "+";
-		let textColorClass = "text-success";
-		
-		if (predictedBlockCount > blockCount) {
-			diffAdjPercent = new Decimal(100).minus(blockRatioPercent).times(-1);
-			diffAdjText = `Blocks during the current difficulty epoch have taken this long, on average, to be mined. If this pace continues, then in ${res.locals.blocksUntilDifficultyAdjustment.toLocaleString()} block${res.locals.blocksUntilDifficultyAdjustment == 1 ? "" : "s"} (${daysUntilAdjustmentStr}) the difficulty will adjust downward: -${diffAdjPercent.toDP(1)}%`;
-			diffAdjSign = "-";
-			textColorClass = "text-danger";
-		}
-
-		res.locals.difficultyAdjustmentData = {
-			estimateAvailable: blockCount > 30 && !isNaN(diffAdjPercent),
-
-			blockCount: blockCount,
-			blocksLeft: res.locals.blocksUntilDifficultyAdjustment,
-			daysLeftStr: daysUntilAdjustmentStr,
-			timeLeftStr: (daysUntilAdjustment < 1 ? hoursUntilAdjustmentStr : daysUntilAdjustmentStr),
-			calculationBlockCount: heightDiff,
-			currentEpoch: res.locals.difficultyPeriod,
-
-			delta: diffAdjPercent,
-			sign: diffAdjSign,
-
-			timePerBlock: timePerBlock,
-			firstBlockTime: firstBlockHeader.time,
-			nowTime: nowTime,
-			dt: dt,
-			predictedBlockCount: predictedBlockCount,
-
-			//nameDesc: `Estimate for the difficulty adjustment that will occur in ${res.locals.blocksUntilDifficultyAdjustment.toLocaleString()} block${res.locals.blocksUntilDifficultyAdjustment == 1 ? "" : "s"} (${daysUntilAdjustmentStr}). This is calculated using the average block time over the last ${heightDiff} block(s). This estimate becomes more reliable as the difficulty epoch nears its end.`,
-		};
 
 		res.locals.perfResults = perfResults;
 
@@ -1802,6 +1744,66 @@ router.get("/address/:address", asyncHandler(async (req, res, next) => {
 
 		await utils.timePromise("address.render", async () => {
 			res.render("address");
+		});
+
+		next();
+	}
+}));
+
+router.get("/next-halving", asyncHandler(async (req, res, next) => {
+	try {
+		const { perfId, perfResults } = utils.perfLogNewItem({action:"next-halving"});
+		res.locals.perfId = perfId;
+
+		const getblockchaininfo = await utils.timePromise("homepage.getBlockchainInfo", async () => {
+			return await coreApi.getBlockchainInfo();
+		}, perfResults);
+
+		let promises = [];
+
+		res.locals.getblockchaininfo = getblockchaininfo;
+		res.locals.difficultyPeriod = parseInt(Math.floor(getblockchaininfo.blocks / coinConfig.difficultyAdjustmentBlockCount));
+
+		let blockHeights = [];
+		if (getblockchaininfo.blocks) {
+			for (let i = 0; i < 1; i++) {
+				blockHeights.push(getblockchaininfo.blocks - i);
+			}
+		} else if (global.activeBlockchain == "regtest") {
+			// hack: default regtest node returns getblockchaininfo.blocks=0, despite
+			// having a genesis block; hack this to display the genesis block
+			blockHeights.push(0);
+		}
+
+		promises.push(utils.timePromise("homepage.getBlockHeaderByHeight", async () => {
+			let h = coinConfig.difficultyAdjustmentBlockCount * res.locals.difficultyPeriod;
+			res.locals.difficultyPeriodFirstBlockHeader = await coreApi.getBlockHeaderByHeight(h);
+		}, perfResults));
+
+		promises.push(utils.timePromise("homepage.getBlocksByHeight", async () => {
+			const latestBlocks = await coreApi.getBlocksByHeight(blockHeights);
+			
+			res.locals.latestBlocks = latestBlocks;
+		}));
+
+		await utils.awaitPromises(promises);
+
+
+		let nextHalvingData = utils.nextHalvingEstimates(res.locals.difficultyPeriodFirstBlockHeader, res.locals.latestBlocks[0]);
+
+		res.locals.nextHalvingData = nextHalvingData;
+
+		await utils.timePromise("next-halving.render", async () => {
+			res.render("next-halving");
+		}, perfResults);
+
+		next();
+
+	} catch (e) {
+		res.locals.pageErrors.push(utils.logError("013923hege3", e));
+
+		await utils.timePromise("next-halving.render", async () => {
+			res.render("next-halving");
 		});
 
 		next();
