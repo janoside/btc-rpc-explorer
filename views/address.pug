@@ -223,12 +223,16 @@ block content
 							else if (addressDetailsErrors && addressDetailsErrors.length > 0)
 								+contentSection
 									each err, errIndex in addressDetailsErrors
-										if (err.e && err.e && err.e.message == "history too large")
+										- let errorMsg = "";
+										if (err.e && err.e.message)
+											- errorMsg = err.e.message;
+											
+										if (errorMsg == "history too large")
 											span Failed to retrieve transaction history from ElectrumX because this address is involved in too many transactions (more than ElectrumX currently supports retrieving). See 
 											a(href="https://github.com/janoside/btc-rpc-explorer/issues/67") Issue #67
 											span  for more information.
-										
-										else if (err.e && err.e.message && err.e.message == "failed to get confirmed status") 
+
+										else if (errorMsg == "failed to get confirmed status") 
 											span Failed to retrieve transaction history from Electrum Rust Server (electrs). See&nbsp;
 											a(href="https://github.com/janoside/btc-rpc-explorer/issues/67") Issue #67
 											span  for more information.
@@ -237,6 +241,13 @@ block content
 												span.font-plaintext --txid-limit
 												span  argument, to support longer transaction histories.
 											
+
+										else if (errorMsg.endsWith("index entries, query may take too long"))
+											span Failed to retrieve transaction history from Electrum Rust Server (electrs). 
+												| Consider starting electrs with a custom 
+												span.font-plaintext --index-lookup-limit
+												span  argument, to support longer transaction histories.
+
 										else if (err == "No address API configured")
 											.mb-2 No address API is configured.
 											.mb-0 See 
