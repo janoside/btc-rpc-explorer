@@ -642,9 +642,6 @@ router.get("/xyzpub/:extendedPubkey", asyncHandler(async (req, res, next) => {
 
 		res.locals.relatedKeys = [];
 
-		const receiveAddresses = [];
-		const changeAddresses = [];
-
 		const xpub_tpub = global.activeBlockchain == "main" ? "xpub" : "tpub";
 		const ypub_upub = global.activeBlockchain == "main" ? "ypub" : "upub";
 		const zpub_vpub = global.activeBlockchain == "main" ? "zpub" : "vpub";
@@ -780,6 +777,34 @@ router.get("/xyzpub/:extendedPubkey", asyncHandler(async (req, res, next) => {
 			res.locals.bip32Path = "-";
 		}
 
+		// Cumulate balanceSat of all addresses
+		res.locals.balanceSat = 0;
+
+		// Loop over the 2 types addresses (first receive and then change)
+		let allAddresses = [res.locals.receiveAddresses, res.locals.changeAddresses];
+		res.locals.receiveAddresses = [];
+		res.locals.changeAddresses = [];
+		for (let i = 0; i < allAddresses.length; i++) {
+			// Duplicate addresses and change them to addressDetails objects with 3 properties (address, balanceSat, txCount)
+			let addresses = [...allAddresses[i]];
+			for (let j = 0; j < addresses.length; j++) {
+				const address = addresses[j];
+				const validateaddressResult = await coreApi.getAddress(address);
+
+				// No need to paginate request => use a high limit value
+				const addressDetailsResult = await addressApi.getAddressDetails(address, validateaddressResult.scriptPubKey, "desc", 100, 0);
+
+				// In case of errors, we just skip this address result
+				if (Array.isArray(addressDetailsResult.errors) && addressDetailsResult.errors.length == 0) {
+					res.locals.balanceSat += addressDetailsResult.addressDetails.balanceSat;
+					const addressDetails = { ...addressDetailsResult.addressDetails, address};
+					if (i == 0)
+						res.locals.receiveAddresses.push(addressDetails);
+					else
+						res.locals.changeAddresses.push(addressDetails);
+				}
+			}
+		}
 
 		await utils.timePromise("extended-public-key.render", async () => {
 			res.render("extended-public-key");
