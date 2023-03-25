@@ -791,13 +791,28 @@ router.get("/xyzpub/:extendedPubkey", asyncHandler(async (req, res, next) => {
 				const address = addresses[j];
 				const validateaddressResult = await coreApi.getAddress(address);
 
-				// No need to paginate request => use a high limit value
-				const addressDetailsResult = await addressApi.getAddressDetails(address, validateaddressResult.scriptPubKey, "desc", 100, 0);
+				let addressDetails = { address, balanceSat: 0, txCount: 0 };
+				let addressDetailsResult;
+				let offset = 0;
+				const limit = 10;
+				let errors = false;
 
-				// In case of errors, we just skip this address result
-				if (Array.isArray(addressDetailsResult.errors) && addressDetailsResult.errors.length == 0) {
-					res.locals.balanceSat += addressDetailsResult.addressDetails.balanceSat;
-					const addressDetails = { ...addressDetailsResult.addressDetails, address};
+				// Call getAddressDetails repeatedly while the number of transactions is equal to the limit
+				do {
+					addressDetailsResult = await addressApi.getAddressDetails(address, validateaddressResult.scriptPubKey, "desc", limit, offset);
+					if (Array.isArray(addressDetailsResult.errors) && addressDetailsResult.errors.length == 0) {
+						addressDetails.balanceSat += addressDetailsResult.addressDetails.balanceSat;
+						addressDetails.txCount += addressDetailsResult.addressDetails.txCount;
+						offset += addressDetails.txCount;
+					}
+					else {
+						errors = true;
+					}
+				} while (!errors && addressDetailsResult.addressDetails.txCount == limit)
+
+				// In case of any errors, we just skip this address
+				if (!errors) {
+					res.locals.balanceSat += addressDetails.balanceSat;
 					if (i == 0)
 						res.locals.receiveAddresses.push(addressDetails);
 					else

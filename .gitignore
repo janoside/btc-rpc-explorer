@@ -61,3 +61,6 @@ typings/
 cache/
 
 *.css.map
+
+# Visual Studio Code configuration files
+.vscode/
