@@ -803,7 +803,7 @@ router.get("/xyzpub/:extendedPubkey", asyncHandler(async (req, res, next) => {
 					if (Array.isArray(addressDetailsResult.errors) && addressDetailsResult.errors.length == 0) {
 						addressDetails.balanceSat += addressDetailsResult.addressDetails.balanceSat;
 						addressDetails.txCount += addressDetailsResult.addressDetails.txCount;
-						offset += addressDetails.txCount;
+						offset += addressDetailsResult.addressDetails.txCount;
 					}
 					else {
 						errors = true;
