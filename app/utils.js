@@ -14,6 +14,7 @@ const bs58check = require("bs58check");
 const ecc = require('tiny-secp256k1');
 const { BIP32Factory } = require('bip32');
 const moment = require("moment");
+const { bech32, bech32m } = require("bech32");
 
 // You must wrap a tiny-secp256k1 compatible implementation
 const bip32 = BIP32Factory(ecc);
@@ -1424,6 +1425,74 @@ function nextHalvingEstimates(eraStartBlockHeader, currentBlockHeader) {
 	};
 }
 
+function tryParseAddress(address) {
+	let base58Error = null;
+	let bech32Error = null;
+	let bech32mError = null;
+
+	let parsedAddress = null;
+
+	let b58prefix = (global.activeBlockchain == "main" ? /^[13].*$/ : /^[2mn].*$/);
+	if (address.match(b58prefix)) {
+		try {
+			parsedAddress = bitcoinjs.address.fromBase58Check(address);
+			parsedAddress.hash = parsedAddress.hash.toString("hex");
+
+			return {
+				encoding: "base58",
+				parsedAddress: parsedAddress
+			};
+
+		} catch (err) {
+			base58Error = err;
+		}
+	}
+
+	try {
+		parsedAddress = bitcoinjs.address.fromBech32(address);
+		parsedAddress.data = parsedAddress.data.toString("hex");
+
+		return {
+			encoding: "bech32",
+			parsedAddress: parsedAddress
+		};
+
+	} catch (err) {
+		bech32Error = err;
+	}
+
+
+	try {
+		parsedAddress = bech32m.decode(address);
+		parsedAddress.words = Buffer.from(parsedAddress.words).toString("hex");
+
+		return {
+			encoding: "bech32m",
+			parsedAddress: parsedAddress
+		};
+
+	} catch (err) {
+		bech32mError = err;
+	}
+	
+
+	let returnVal = {errors:[]};
+
+	if (base58Error) {
+		returnVal.errors.push(base58Error);
+	}
+
+	if (bech32Error) {
+		returnVal.errors.push(bech32Error);
+	}
+
+	if (bech32mError) {
+		returnVal.errors.push(bech32mError);
+	}
+
+	return returnVal;
+}
+
 
 const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
@@ -1493,6 +1562,7 @@ module.exports = {
 	formatLargeNumberSignificant: formatLargeNumberSignificant,
 	geoLocateIpAddresses: geoLocateIpAddresses,
 	getTxTotalInputOutputValues: getTxTotalInputOutputValues,
+	tryParseAddress: tryParseAddress,
 	rgbToHsl: rgbToHsl,
 	colorHexToRgb: colorHexToRgb,
 	colorHexToHsl: colorHexToHsl,

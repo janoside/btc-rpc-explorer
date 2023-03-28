@@ -962,7 +962,20 @@ router.post("/search", function(req, res, next) {
 		return res.redirect("./tx/" + query);
 	}
 
-	if (query.length == 64) {
+	let parseAddressData = utils.tryParseAddress(query);
+
+	if (false) {
+		if (parseAddressData.errors) {
+			parseAddressData.errors.forEach(err => {
+				utils.logError("asdfhuadf", err);
+			});
+		}
+	}
+
+	if (parseAddressData.parsedAddress) {
+		res.redirect("./address/" + rawCaseQuery);
+
+	} else if (query.length == 64) {
 		coreApi.getRawTransaction(query).then(function(tx) {
 			res.redirect("./tx/" + query);
 
@@ -991,17 +1004,9 @@ router.post("/search", function(req, res, next) {
 			res.redirect("./");
 		});
 	} else {
-		coreApi.getAddress(rawCaseQuery).then(function(validateaddress) {
-			if (validateaddress && validateaddress.isvalid) {
-				res.redirect("./address/" + rawCaseQuery);
+		req.session.userMessage = "No results found for query: " + rawCaseQuery;
 
-				return;
-			}
-
-			req.session.userMessage = "No results found for query: " + rawCaseQuery;
-
-			res.redirect("./");
-		});
+		res.redirect("./");
 	}
 });
 
@@ -1477,6 +1482,8 @@ router.get("/tx/:transactionId", asyncHandler(async (req, res, next) => {
 }));
 
 router.get("/address/:address", asyncHandler(async (req, res, next) => {
+	let address = utils.asAddress(req.params.address);
+
 	try {
 		const { perfId, perfResults } = utils.perfLogNewItem({action:"address"});
 		res.locals.perfId = perfId;
@@ -1508,8 +1515,6 @@ router.get("/address/:address", asyncHandler(async (req, res, next) => {
 		}
 
 
-		let address = utils.asAddress(req.params.address);
-
 		res.locals.metaTitle = `Bitcoin Address ${address}`;
 
 		res.locals.address = address;
@@ -1522,65 +1527,20 @@ router.get("/address/:address", asyncHandler(async (req, res, next) => {
 		
 		res.locals.result = {};
 
-		let addressEncoding = "unknown";
+		let parseAddressData = utils.tryParseAddress(address);
 
-		let base58Error = null;
-		let bech32Error = null;
-		let bech32mError = null;
+		if (parseAddressData.parsedAddress) {
+			//console.log("address.parse: " + JSON.stringify(parseAddressData));
 
-		let b58prefix = (global.activeBlockchain == "main" ? /^[13].*$/ : /^[2mn].*$/);
-		if (address.match(b58prefix)) {
-			try {
-				res.locals.addressObj = bitcoinjs.address.fromBase58Check(address);
-				res.locals.addressObj.hash = res.locals.addressObj.hash.toString("hex");
+			res.locals.addressObj = parseAddressData.parsedAddress;
+			res.locals.addressEncoding = parseAddressData.encoding;
 
-				addressEncoding = "base58";
-
-			} catch (err) {
-				base58Error = err;
-			}
+		} else if (parseAddressData.errors) {
+			parseAddressData.errors.forEach(err => {
+				res.locals.pageErrors.push(utils.logError("ParseAddressError", err));
+			});
 		}
 
-		if (addressEncoding == "unknown") {
-			try {
-				res.locals.addressObj = bitcoinjs.address.fromBech32(address);
-				res.locals.addressObj.data = res.locals.addressObj.data.toString("hex");
-
-				addressEncoding = "bech32";
-
-			} catch (err) {
-				bech32Error = err;
-			}
-		}
-
-		if (addressEncoding == "unknown") {
-			try {
-				res.locals.addressObj = bech32m.decode(address);
-				res.locals.addressObj.words = Buffer.from(res.locals.addressObj.words).toString("hex");
-
-				addressEncoding = "bech32m";
-
-			} catch (err) {
-				bech32mError = err;
-			}
-		}
-		
-
-		if (res.locals.addressObj == null || addressEncoding == "unknown") {
-			if (base58Error) {
-				res.locals.pageErrors.push(utils.logError("AddressParseError-001", base58Error));
-			}
-
-			if (bech32Error) {
-				res.locals.pageErrors.push(utils.logError("AddressParseError-002", bech32Error));
-			}
-
-			if (bech32mError) {
-				res.locals.pageErrors.push(utils.logError("AddressParseError-003", bech32mError));
-			}
-		}
-
-		res.locals.addressEncoding = addressEncoding;
 
 		if (global.miningPoolsConfigs) {
 			for (let i = 0; i < global.miningPoolsConfigs.length; i++) {
