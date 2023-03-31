@@ -10,7 +10,7 @@ module.exports =
     "jquery.min.js": "sha384-vtXRMe3mGCbOeY7l30aIg8H9p3GdeSe4IFlP6G8JMa7o7lXvnz3GFKzPxzJdPfGK",
     "moment.min.js": "sha384-CJyhAlbbRZX14Q8KxKBt0na1ad4KBs9PklAiNk2Efxs9sgimbIZm9kYLJQeNMUfM",
     "sentry.min.js": "sha384-da/Bo2Ah6Uw3mlhl6VINMblg2SyGbSnULKrukse3P5D9PTJi4np9HoKvR19D7zOL",
-    "site.js": "sha384-+oXWKXwPD9Fyf6EYrFPvPAPGVsB7INqoVZhse4PVoWQYgCsJ5M9bI0YWIsgYT0NR",
+    "site.js": "sha384-G8o2io5zIdQiiVN+4CAGGXPO4UvV8jGkSMlfddSPbqIUd3x5Rv01pNH6ec8QOATu",
     "bootstrap-icons.css": "sha384-rJFhkIguED0Z4GX6r6ReHpTCkwWtiPHZnQtWVP0DQWcKHzeJAlYb1m/xdYkeEk+f",
     "dark-v1.min.css": "sha384-7nc/D1JfDkQU5dNF5LLXrlAmfZQr9A0PgyeEBKNVtVnyww7HO1WJtyDIOO/voke9",
     "dark.min.css": "sha384-K1njself27eyYQZECXmxrP5uhM6YJtHrbxRi0s5FTvP3y5t3nvjL6lfaLNuHiAxt",

@@ -37,4 +37,4 @@ let fileContent = "module.exports =\n" + JSON.stringify(hashesByFilename, null, 
 
 fs.writeFileSync(path.join(process.cwd(), "app/resourceIntegrityHashes.js"), fileContent);
 
-console.log("\npublic/txt/resource-integrity.json written.\n");
+console.log("\napp/resourceIntegrityHashes.js written.\n");
