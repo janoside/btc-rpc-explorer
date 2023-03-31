@@ -8,7 +8,6 @@ const csurf = require('csurf');
 const router = express.Router();
 const util = require('util');
 const moment = require('moment');
-const bitcoinCore = require("btc-rpc-client");
 const bitcoinjs = require('bitcoinjs-lib');
 const bip32 = require('bip32');
 const bs58check = require('bs58check');

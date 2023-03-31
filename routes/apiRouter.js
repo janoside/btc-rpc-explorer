@@ -190,7 +190,7 @@ router.get("/tx/:txid", asyncHandler(async (req, res, next) => {
 	} catch(err) {
 		utils.logError("10328fwgdaqw", err);
 		res.json({success:false, error:err});
-	};
+	}
 	
 	next();
 

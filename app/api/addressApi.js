@@ -4,8 +4,6 @@ const config = require("./../config.js");
 const coins = require("../coins.js");
 const utils = require("../utils.js");
 
-const coinConfig = coins[config.coin];
-
 const electrumAddressApi = require("./electrumAddressApi.js");
 const blockchainAddressApi = require("./blockchainAddressApi.js");
 const blockchairAddressApi = require("./blockchairAddressApi.js");
