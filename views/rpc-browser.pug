@@ -110,7 +110,7 @@ block content
 
 						+pageTab("Help Content")
 							+contentSection("Help Content")
-								pre
+								pre(style="white-space: pre;")
 									code.json(data-lang="txt") #{methodhelp.string}
 
 						if (methodhelp.args && methodhelp.args.length > 0)

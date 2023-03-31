@@ -21,7 +21,7 @@ block content
 	else
 		+contentSection("Message")
 			if (message)
-				pre #{message}
+				pre.text-tiny(style="white-space: pre;") #{message}
 			else if (error.message)
 				| #{error.message}
 			else
@@ -33,10 +33,10 @@ block content
 
 		+contentSection("Stack")
 			if (error.stack)
-				pre #{error.stack}
+				pre.text-tiny(style="white-space: pre;") #{error.stack}
 
 			else
 				span.text-muted (unavailable)
 
-		+contentSection("Full Error")
+		+contentSection("Error Object")
 			pre #{JSON.stringify(error, null, 4)}
