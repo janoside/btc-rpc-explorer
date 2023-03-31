@@ -1510,6 +1510,16 @@ const awaitPromises = async (promises) => {
 	return promiseResults;
 };
 
+const obfuscateProperties = (obj, properties) => {
+	let objCopy = Object.assign({}, obj);
+
+	properties.forEach(name => {
+		objCopy[name] = "*****";
+	});
+
+	return objCopy;
+}
+
 const perfLog = [];
 let perfLogItemCount = 0;
 const perfLogMaxItems = 100;
@@ -1593,6 +1603,7 @@ module.exports = {
 	difficultyAdjustmentEstimates: difficultyAdjustmentEstimates,
 	nextHalvingEstimates: nextHalvingEstimates,
 	sleep: sleep,
+	obfuscateProperties: obfuscateProperties,
 	awaitPromises: awaitPromises,
 	perfLogNewItem: perfLogNewItem,
 	perfLog: perfLog,

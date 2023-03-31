@@ -72,6 +72,7 @@ const logger = require('morgan');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const session = require("express-session");
+const MemoryStore = require('memorystore')(session);
 const csurf = require("csurf");
 const config = require("./app/config.js");
 const simpleGit = require('simple-git');
@@ -203,11 +204,28 @@ if (process.env.BTCEXP_BASIC_AUTH_PASSWORD) {
 //expressApp.use(logger('dev'));
 expressApp.use(bodyParser.json());
 expressApp.use(bodyParser.urlencoded({ extended: false }));
-expressApp.use(session({
+
+
+const sessionConfig = {
 	secret: config.cookieSecret,
 	resave: false,
-	saveUninitialized: false
-}));
+	saveUninitialized: true,
+	cookie: {
+		secure: config.secureSite,
+		domain: config.siteDomain
+	}
+};
+
+// Helpful reference for production: nginx HTTPS proxy:
+// https://gist.github.com/nikmartin/5902176
+debugLog(`Session config: ${JSON.stringify(utils.obfuscateProperties(sessionConfig, ["secret"]))}`);
+
+sessionConfig.store = new MemoryStore({
+	checkPeriod: 86400000 // prune expired entries every 24h
+});
+
+
+expressApp.use(session(sessionConfig));
 
 expressApp.use(compression());
 
