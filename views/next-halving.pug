@@ -13,7 +13,7 @@ block content
 		| This page shows details about the next halving. Halvings occur every #{nextHalvingData.halvingBlockInterval.toLocaleString()} blocks and cut the block subsidy (new supply creation) in half. So far #{nextHalvingData.halvingCount.toLocaleString()} halving#{halvingCount == 1 ? " has" : "s have"} occurred. After #{nextHalvingData.terminalHalvingCount} halvings, the block subsidy will drop to zero and no more halvings will occur.
 
 	if (nextHalvingData.nextHalvingIndex > -1)
-		+contentSection("Next Halving")
+		+contentSection("Summary")
 			+summaryRow(3)
 				+summaryItem("Halving Number")
 					| #{nextHalvingData.nextHalvingIndex.toLocaleString()}
