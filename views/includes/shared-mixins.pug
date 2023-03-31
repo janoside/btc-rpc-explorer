@@ -549,7 +549,10 @@ mixin timestamp(timestamp, includeAgo=true, formatString)
 			- timeAgo = moment.duration(moment.utc(new Date(parseInt(timestamp) * 1000)).diff(moment.utc(new Date())));
 
 			small.text-muted.ms-2 (+
-				| #{timeAgo.format()}
+				- let format = timeAgo.format();
+				- let formatParts = format.split(",").map(x => x.trim());
+				- formatParts = formatParts.map(x => { return x.startsWith("0 ") ? "" : x; }).filter(x => x.length > 0);
+				| #{formatParts.join(", ")}
 				span )
 		else
 			small.text-muted.ms-2 (
