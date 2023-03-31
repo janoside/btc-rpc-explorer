@@ -460,7 +460,10 @@ function getRpcData(cmd, verifyingConnection=false) {
 			let client = (cmd == "gettxoutsetinfo" ? global.rpcClientNoTimeout : global.rpcClient);
 
 			try {
-				const result = await client.command(cmd);//, function(err, result, resHeaders) {
+				const rpcResult = await client.request(cmd, []);
+				const result = rpcResult.result;
+
+				//console.log(`RPC: request=${cmd}, result=${JSON.stringify(result)}`);
 
 				if (Array.isArray(result) && result.length == 1) {
 					let result0 = result[0];
@@ -517,7 +520,10 @@ function getRpcDataWithParams(request, verifyingConnection=false) {
 
 		let rpcCall = async function(callback) {
 			try {
-				const result = await global.rpcClient.command([request]);//, function(err, result, resHeaders) {
+				const rpcResult = await global.rpcClient.request(request.method, request.parameters);
+				const result = rpcResult.result;
+
+				//console.log(`RPC: request=${request}, result=${JSON.stringify(result)}`);
 
 				if (Array.isArray(result) && result.length == 1) {
 					let result0 = result[0];
@@ -539,7 +545,7 @@ function getRpcDataWithParams(request, verifyingConnection=false) {
 					throw new Error(`RpcError: type=errorResponse-04`);
 				}
 
-				resolve(result[0]);
+				resolve(result);
 
 				logStats(request.method, true, new Date().getTime() - startTime, true);
 

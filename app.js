@@ -79,7 +79,6 @@ const simpleGit = require('simple-git');
 const utils = require("./app/utils.js");
 const moment = require("moment");
 const Decimal = require('decimal.js');
-const bitcoinCore = require("btc-rpc-client");
 const pug = require("pug");
 const momentDurationFormat = require("moment-duration-format");
 const coreApi = require("./app/api/coreApi.js");
@@ -97,6 +96,7 @@ const sso = require('./app/sso.js');
 const markdown = require("markdown-it")();
 const v8 = require("v8");
 const compression = require("compression");
+const jayson = require('jayson/promise');
 
 const appUtils = require("@janoside/app-utils");
 const s3Utils = appUtils.s3Utils;
@@ -873,10 +873,13 @@ expressApp.onStartup = async () => {
 }
 
 expressApp.continueStartup = function() {
-	var rpcCred = config.credentials.rpc;
-	debugLog(`Connecting to RPC node at ${rpcCred.host}:${rpcCred.port}`);
+	let rpcCred = config.credentials.rpc;
+	debugLog(`Connecting to RPC node at [${rpcCred.host}]:${rpcCred.port}`);
 
-	var rpcClientProperties = {
+	let usernamePassword = `${rpcCred.username}:${rpcCred.password}`;
+	let authorizationHeader = `Basic ${btoa(usernamePassword)}`; // basic auth header format (base64 of "username:password")
+
+	let rpcClientProperties = {
 		host: rpcCred.host,
 		port: rpcCred.port,
 		username: rpcCred.username,
@@ -884,17 +887,29 @@ expressApp.continueStartup = function() {
 		timeout: rpcCred.timeout
 	};
 
-	global.rpcClient = new bitcoinCore(rpcClientProperties);
+	debugLog(`RPC Connection properties: ${JSON.stringify(utils.obfuscateProperties(rpcClientProperties, ["password"]), null, 4)}`);
 
-	var rpcClientNoTimeoutProperties = {
+	// add after logging to avoid logging base64'd credentials
+	rpcClientProperties.headers = {
+		"Authorization": authorizationHeader
+	};
+
+	// main RPC client
+	global.rpcClient = jayson.Client.http(rpcClientProperties);
+
+	let rpcClientNoTimeoutProperties = {
 		host: rpcCred.host,
 		port: rpcCred.port,
 		username: rpcCred.username,
 		password: rpcCred.password,
-		timeout: 0
+		timeout: 0,
+		headers: {
+			"Authorization": authorizationHeader
+		}
 	};
 
-	global.rpcClientNoTimeout = new bitcoinCore(rpcClientNoTimeoutProperties);
+	// no timeout RPC client, for long-running commands
+	global.rpcClientNoTimeout = jayson.Client.http(rpcClientNoTimeoutProperties);
 
 	// default values - after we connect via RPC, we update these
 	global.txindexAvailable = false;
@@ -909,7 +924,7 @@ expressApp.continueStartup = function() {
 
 
 	if (config.addressApi) {
-		var supportedAddressApis = addressApi.getSupportedAddressApis();
+		let supportedAddressApis = addressApi.getSupportedAddressApis();
 		if (!supportedAddressApis.includes(config.addressApi)) {
 			utils.logError("32907ghsd0ge", `Unrecognized value for BTCEXP_ADDRESS_API: '${config.addressApi}'. Valid options are: ${supportedAddressApis}`);
 		}

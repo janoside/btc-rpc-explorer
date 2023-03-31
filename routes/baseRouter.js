@@ -1423,7 +1423,8 @@ router.get("/tx/:transactionId", asyncHandler(async (req, res, next) => {
 			
 		} else {
 			promises.push(utils.timePromise("tx.getblockheader", async () => {
-				res.locals.result.getblock = await global.rpcClient.command('getblockheader', tx.blockhash);
+				let rpcResult = await rpcApi.getRpcDataWithParams({method:'getblockheader', parameters:[tx.blockhash]});
+				res.locals.result.getblock = rpcResult;
 			}, perfResults));
 		}
 
@@ -1842,7 +1843,8 @@ router.post("/rpc-terminal", asyncHandler(async (req, res, next) => {
 	}
 
 	try {
-		const result = await global.rpcClientNoTimeout.command([{method:cmd, parameters:parsedParams}]);//, function(err, result, resHeaders) {
+		const rpcResult = await rpcApi.getRpcDataWithParams({method:cmd, parameters:parsedParams});
+		const result = rpcResult;
 		
 		if (result) {
 			debugLog("Result[1]: " + JSON.stringify(result, null, 4));
@@ -1988,7 +1990,8 @@ router.get("/rpc-browser", asyncHandler(async (req, res, next) => {
 
 				try {
 					const startTimeNanos = utils.startTimeNanos();
-					const result = await global.rpcClientNoTimeout.command([{method:req.query.method, parameters:argValues}]);//, function(err3, result3, resHeaders3) {
+					const rpcResult = await rpcApi.getRpcDataWithParams({method:req.query.method, parameters:argValues});
+					const result = rpcResult;
 					const dtMillis = utils.dtMillis(startTimeNanos);
 
 					res.locals.executionMillis = dtMillis;
