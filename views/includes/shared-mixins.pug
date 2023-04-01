@@ -873,20 +873,26 @@ mixin graphPageScriptSetup(dateAdapterNeeded=false)
 	script(src=assetUrl('./js/decimal.js'))
 
 
-mixin quote(quote, quoteIndex=-1, quotePage=false)
-	blockquote.blockquote(class=(quotePage ? "text-center" : false ))
-		span.font-serif.fw-light(class=(quotePage ? "fs-1" : "fs-4"))
+mixin quote(quote, quoteIndex=-1, options={fontSize: 3, align:"start", includeQuotes:false})
+	- let fontSize = (options && options.fontSize) ? options.fontSize : 3;
+	- let align = (options && options.align) ? options.align : "start";
+	- let includeQuotes = (options && options.includeQuotes != null) ? options.includeQuotes : false;
+
+	blockquote.blockquote.mb-0(class=((align == "center") ? "text-center" : false ))
+		span.font-serif.fw-light(class=`fs-${fontSize}`)
 			
-			span(style="font-size: 110%;") "&nbsp;
+			if (options && options.includeQuotes)
+				span(style="font-size: 110%;") "&nbsp;
 			
 			if (quoteIndex >= 0)
 				a.text-reset(href=`./quote/${quoteIndex}`) #{quote.text}
 			else
 				span #{quote.text}
 		
-			span(style="font-size: 110%;") &nbsp;"
+			if (options && options.includeQuotes)
+				span(style="font-size: 110%;") &nbsp;"
 
-		.ms-8.mt-2(class=(quotePage ? "fs-3" : "fs-5"))
+		.ms-8.mt-2(class=`fs-${fontSize + 2}`)
 			if (quote.speaker.indexOf("https://twitter.com") >= 0)
 				- var account = quote.speaker.substring("https://twitter.com/".length);
 				| — 

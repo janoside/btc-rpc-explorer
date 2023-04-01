@@ -2314,7 +2314,73 @@ router.get("/fun", function(req, res, next) {
 });
 
 router.get("/quotes", function(req, res, next) {
-	res.locals.btcQuotes = btcQuotes.items;
+	let viewType = "new-first";
+	if (req.query.viewType) {
+		viewType = req.query.viewType;
+	}
+
+	let listNewFirst = btcQuotes.items;
+	for (let i = 0; i < listNewFirst.length; i++) {
+		listNewFirst[i].quoteIndex = i;
+	}
+	listNewFirst = listNewFirst.filter(x => { return !x.duplicateIndex; });
+	
+	listNewFirst.sort(function(a, b) {
+		let dateCompare = b.date.localeCompare(a.date);
+
+		if (dateCompare != 0) {
+			return dateCompare;
+		}
+
+		let speakerCompare = a.speaker.localeCompare(b.speaker);
+
+		if (speakerCompare != 0) {
+			return speakerCompare;
+		}
+
+		return a.text.localeCompare(b.text);
+	});
+
+	let listOldFirst = [...listNewFirst];
+	listOldFirst.reverse();
+
+	let listByYear = {};
+	let itemYears = [];
+
+	listNewFirst.forEach(item => {
+		let itemYear = item.date.substring(0, 4);
+
+		if (!itemYears.includes(itemYear)) {
+			itemYears.push(itemYear);
+			listByYear[itemYear] = [];
+		}
+
+		listByYear[itemYear].push(item);
+	});
+
+	let listByMonth = {};
+	let itemMonths = [];
+
+	listNewFirst.forEach(item => {
+		let itemMonth = item.date.substring(5, 7);
+
+		if (!itemMonths.includes(itemMonth)) {
+			itemMonths.push(itemMonth);
+			listByMonth[itemMonth] = [];
+		}
+
+		listByMonth[itemMonth].push(item);
+	});
+
+	itemMonths.sort();
+
+	res.locals.viewType = viewType;
+	res.locals.listNewFirst = listNewFirst;
+	res.locals.listOldFirst = listOldFirst;
+	res.locals.listByYear = listByYear;
+	res.locals.itemYears = itemYears;
+	res.locals.listByMonth = listByMonth;
+	res.locals.itemMonths = itemMonths;
 
 	res.render("quotes");
 
