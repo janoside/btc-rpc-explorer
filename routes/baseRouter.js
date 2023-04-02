@@ -1708,7 +1708,6 @@ router.get("/address/:address", asyncHandler(async (req, res, next) => {
 			try {
 				const url = await qrcode.toDataURL(address)
 				res.locals.addressQrCodeUrl = url;
-				throw Error("Doin ur mom doin doin ur mom")
 			} catch(err) {
 				res.locals.pageErrors.push(utils.logError("93ygfew0ygf2gf2", err));
 			}
