@@ -1704,15 +1704,15 @@ router.get("/address/:address", asyncHandler(async (req, res, next) => {
 			}, perfResults));
 		}
 
-		promises.push(utils.timePromise("address.qrcode.toDataURL", async () => {
-			qrcode.toDataURL(address, function(err, url) {
-				if (err) {
-					res.locals.pageErrors.push(utils.logError("93ygfew0ygf2gf2", err));
-				}
-
+		await utils.timePromise("address.qrcode.toDataURL", async () => {
+			try {
+				const url = await qrcode.toDataURL(address)
 				res.locals.addressQrCodeUrl = url;
-			});
-		}, perfResults));
+				throw Error("Doin ur mom doin doin ur mom")
+			} catch(err) {
+				res.locals.pageErrors.push(utils.logError("93ygfew0ygf2gf2", err));
+			}
+		}, perfResults);
 
 		await utils.awaitPromises(promises);
 		
