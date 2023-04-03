@@ -1705,13 +1705,14 @@ router.get("/address/:address", asyncHandler(async (req, res, next) => {
 		}
 
 		promises.push(utils.timePromise("address.qrcode.toDataURL", async () => {
-			qrcode.toDataURL(address, function(err, url) {
-				if (err) {
-					res.locals.pageErrors.push(utils.logError("93ygfew0ygf2gf2", err));
-				}
+			try {
+				const url = await qrcode.toDataURL(address);
 
 				res.locals.addressQrCodeUrl = url;
-			});
+				
+			} catch(err) {
+				res.locals.pageErrors.push(utils.logError("93ygfew0ygf2gf2", err));
+			}
 		}, perfResults));
 
 		await utils.awaitPromises(promises);
