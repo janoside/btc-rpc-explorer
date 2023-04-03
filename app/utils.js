@@ -1511,6 +1511,10 @@ const awaitPromises = async (promises) => {
 };
 
 const obfuscateProperties = (obj, properties) => {
+	if (process.env.BTCEXP_SKIP_LOG_OBFUSCATION) {
+		return obj;
+	}
+	
 	let objCopy = Object.assign({}, obj);
 
 	properties.forEach(name => {
