@@ -4,7 +4,11 @@ block headContent
 	title #{coinConfig.name} Quote ##{quoteIndex}
 
 block content
-	+pageTitle(`${coinConfig.name} Quote #${quoteIndex}`)
+	.d-flex.justify-content-between.mb-3
+		+pageTitle(`${coinConfig.name} Quote #${quoteIndex}`)
+
+		.text-end
+			a(href=`./quotes`) All Quotes
 
 	+contentSection
 		.px-3.py-2
