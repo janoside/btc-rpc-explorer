@@ -872,8 +872,15 @@ expressApp.onStartup = async () => {
 	}
 }
 
-expressApp.continueStartup = function() {
-	let rpcCred = config.credentials.rpc;
+function connectToRpcServer() {
+	// reload credentials, the main "config.credentials.rpc" can be stale
+	// since the username/password can be sourced from the auth cookie
+	// which changes each startup of bitcoind
+	let credentialsForRpcConnect = config.credentials.loadFreshRpcCredentials();
+
+	debugLog(`RPC Credentials: ${JSON.stringify(utils.obfuscateProperties(credentialsForRpcConnect, ["password"]), null, 4)}`);
+
+	let rpcCred = credentialsForRpcConnect;
 	debugLog(`Connecting to RPC node at [${rpcCred.host}]:${rpcCred.port}`);
 
 	let usernamePassword = `${rpcCred.username}:${rpcCred.password}`;
@@ -910,6 +917,22 @@ expressApp.continueStartup = function() {
 
 	// no timeout RPC client, for long-running commands
 	global.rpcClientNoTimeout = jayson.Client.http(rpcClientNoTimeoutProperties);
+}
+
+expressApp.continueStartup = function() {
+	connectToRpcServer();
+
+	// if using cookie auth, watch for changes to the file and reconnect
+	if (config.credentials.rpc.authType == "cookie") {
+		debugLog(`RPC authentication is cookie based; watching for changes to the auth cookie file...`);
+
+		fs.watchFile(config.credentials.rpc.authCookieFilepath, (curr, prev) => {
+			debugLog(`RPC auth cookie change detected; attempting reconnect...`);
+
+			connectToRpcServer();
+		});
+	}
+
 
 	// default values - after we connect via RPC, we update these
 	global.txindexAvailable = false;

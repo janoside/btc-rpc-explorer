@@ -35,15 +35,6 @@ const currentCoin = process.env.BTCEXP_COIN || "BTC";
 
 const rpcCred = credentials.rpc;
 
-if (rpcCred.cookie && !rpcCred.username && !rpcCred.password && fs.existsSync(rpcCred.cookie)) {
-	console.log(`Loading RPC cookie file: ${rpcCred.cookie}`);
-	
-	[ rpcCred.username, rpcCred.password ] = fs.readFileSync(rpcCred.cookie).toString().split(':', 2);
-	
-	if (!rpcCred.password) {
-		throw new Error(`Cookie file ${rpcCred.cookie} in unexpected format`);
-	}
-}
 
 const cookieSecret = process.env.BTCEXP_COOKIE_SECRET
  || (rpcCred.password && crypto.createHmac('sha256', JSON.stringify(rpcCred))
