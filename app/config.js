@@ -8,6 +8,8 @@ const crypto = require('crypto');
 const url = require('url');
 const path = require('path');
 
+const apiDocs = require("../docs/api.js");
+
 let baseUrl = (process.env.BTCEXP_BASEURL || "/").trim();
 if (!baseUrl.startsWith("/")) {
 	baseUrl = "/" + baseUrl;
@@ -90,6 +92,7 @@ module.exports = {
 	secureSite: process.env.BTCEXP_SECURE_SITE == "true",
 
 	baseUrl: baseUrl,
+	apiBaseUrl: apiDocs.baseUrl,
 
 	coin: currentCoin,
 
@@ -252,7 +255,7 @@ module.exports = {
 	
 	/* 14 */	{name:"Predicted Blocks", url:"./predicted-blocks", desc:"View predicted future blocks based on the current mempool.", iconClass:"bi-arrow-right-circle"},
 
-	/* 15 */	{name:"API", url:"./api/docs", desc:"View docs for the public API.", iconClass:"bi-braces-asterisk"},
+	/* 15 */	{name:"API", url:`.${apiDocs.baseUrl}/docs`, desc:"View docs for the public API.", iconClass:"bi-braces-asterisk"},
 
 	/* 16 */	{name:"Next Block", url:"./next-block", desc:"View a prediction for the next block, based on the current mempool.", iconClass:"bi-minecart-loaded"},
 	/* 17 */	{name:"Quotes", url:"./quotes", desc:"Curated list of Bitcoin-related quotes.", iconClass:"bi-chat-quote"},

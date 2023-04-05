@@ -34,6 +34,7 @@ const forceCsrf = csurf({ ignoreMethods: [] });
 
 router.get("/docs", function(req, res, next) {
 	res.locals.apiDocs = apiDocs;
+	res.locals.apiBaseUrl = apiDocs.baseUrl;
 	res.locals.route = req.query.route;
 
 	res.locals.categories = [];
@@ -73,11 +74,14 @@ router.get("/version", function(req, res, next) {
 
 /// BLOCKS
 
-router.get("/blocks/tip/height", asyncHandler(async (req, res, next) => {
+router.get("/blocks/tip", asyncHandler(async (req, res, next) => {
 	try {
-		const blockcount = await rpcApi.getBlockCount();
+		const getblockchaininfo = await coreApi.getBlockchainInfo();
 
-		res.send(blockcount.toString());
+		res.send({
+			height: getblockchaininfo.blocks,
+			hash: getblockchaininfo.bestblockhash
+		});
 
 	} catch (e) {
 		utils.logError("a39gfoeuew", e);
@@ -87,12 +91,6 @@ router.get("/blocks/tip/height", asyncHandler(async (req, res, next) => {
 
 	next();
 }));
-
-router.get("/blocks/tip/hash", function(req, res, next) {
-	coreApi.getBlockchainInfo().then(function(getblockchaininfo){
-		res.send(getblockchaininfo.bestblockhash.toString());
-	}).catch(next);
-});
 
 router.get("/block/:hashOrHeight", asyncHandler(async (req, res, next) => {
 	const hashOrHeight = req.params.hashOrHeight;
@@ -221,22 +219,33 @@ router.get("/tx/volume/24h", function(req, res, next) {
 
 /// BLOCKCHAIN
 
-router.get("/blockchain/coins", function(req, res, next) {	
+router.get("/blockchain/coins", asyncHandler(async (req, res, next) => {
 	if (global.utxoSetSummary) {
 		let supply = parseFloat(global.utxoSetSummary.total_amount).toString();
 
-		res.send(supply.toString());
+		res.send({
+			supply: supply.toString(),
+			type: "calculated"
+		});
 
 		next();
 
 	} else {
 		// estimated supply
-		coreApi.getBlockchainInfo().then(function(getblockchaininfo){
-			let estimatedSupply = utils.estimatedSupply(getblockchaininfo.blocks);
-			res.send(estimatedSupply.toString());
-		}).catch(next);
+
+		let getblockchaininfo = await coreApi.getBlockchainInfo();
+		let estimatedSupply = utils.estimatedSupply(getblockchaininfo.blocks);
+		let lastCheckpoint = coinConfig.utxoSetCheckpointsByNetwork[global.activeBlockchain];
+
+		res.send({
+			supply: estimatedSupply.toString(),
+			type: "estimated",
+			lastCheckpointHeight: lastCheckpoint.height
+		})
+
+		next();
 	}
-});
+}));
 
 router.get("/blockchain/utxo-set", asyncHandler(async (req, res, next) => {
 	const utxoSetSummary = await coreApi.getUtxoSetSummary(true, true);
@@ -244,6 +253,68 @@ router.get("/blockchain/utxo-set", asyncHandler(async (req, res, next) => {
 	res.json(utxoSetSummary);
 
 	next();
+}));
+
+router.get("/blockchain/next-halving", asyncHandler(async (req, res, next) => {
+	try {
+		const getblockchaininfo = await coreApi.getBlockchainInfo();
+
+		let promises = [];
+
+		res.locals.getblockchaininfo = getblockchaininfo;
+		res.locals.difficultyPeriod = parseInt(Math.floor(getblockchaininfo.blocks / coinConfig.difficultyAdjustmentBlockCount));
+
+		let blockHeights = [];
+		if (getblockchaininfo.blocks) {
+			for (let i = 0; i < 1; i++) {
+				blockHeights.push(getblockchaininfo.blocks - i);
+			}
+		} else if (global.activeBlockchain == "regtest") {
+			// hack: default regtest node returns getblockchaininfo.blocks=0, despite
+			// having a genesis block; hack this to display the genesis block
+			blockHeights.push(0);
+		}
+
+		promises.push(utils.timePromise("homepage.getBlockHeaderByHeight", async () => {
+			let h = coinConfig.difficultyAdjustmentBlockCount * res.locals.difficultyPeriod;
+			res.locals.difficultyPeriodFirstBlockHeader = await coreApi.getBlockHeaderByHeight(h);
+		}));
+
+		promises.push(utils.timePromise("homepage.getBlocksByHeight", async () => {
+			const latestBlocks = await coreApi.getBlocksByHeight(blockHeights);
+			
+			res.locals.latestBlocks = latestBlocks;
+		}));
+
+		await utils.awaitPromises(promises);
+
+
+		let nextHalvingData = utils.nextHalvingEstimates(res.locals.difficultyPeriodFirstBlockHeader, res.locals.latestBlocks[0]);
+
+		// timeAgo =  moment.duration(moment.utc(new Date()).diff(moment.utc(new Date())));
+		let timeAgo = moment.duration(moment.utc(nextHalvingData.nextHalvingDate).diff(moment.utc(new Date())));
+		let format = timeAgo.format();
+		let formatParts = format.split(",").map(x => x.trim());
+		formatParts = formatParts.map(x => { return x.startsWith("0 ") ? "" : x; }).filter(x => x.length > 0);
+
+		res.json({
+			nextHalvingIndex: nextHalvingData.nextHalvingIndex,
+			nextHalvingBlock: nextHalvingData.nextHalvingBlock,
+			nextHalvingSubsidy: coinConfig.blockRewardFunction(nextHalvingData.nextHalvingBlock, global.activeBlockchain),
+			blocksUntilNextHalving: nextHalvingData.blocksUntilNextHalving,
+			timeUntilNextHalving: formatParts.join(", "),
+			nextHalvingEstimatedDate: nextHalvingData.nextHalvingDate,
+		});
+
+		next();
+
+	} catch (e) {
+		utils.logError("013923hege3", e)
+		
+		res.json({success:false});
+
+		next();
+	}
 }));
 
 
@@ -793,12 +864,6 @@ router.get("/mining/miner-summary", asyncHandler(async (req, res, next) => {
 
 /// MEMPOOL
 
-router.get("/mempool/count", function(req, res, next) {
-	coreApi.getMempoolInfo().then(function(info){
-		res.send(info.size.toString());
-	}).catch(next);
-});
-
 router.get("/mempool/summary", function(req, res, next) {
 	coreApi.getMempoolInfo().then(function(info){
 		res.json(info);
@@ -840,30 +905,35 @@ router.get("/mempool/fees", function(req, res, next) {
 
 /// PRICE
 
-router.get("/price/:currency/sats", function(req, res, next) {
-	let result = 0;
-	let amount = 1.0;
-	let currency = req.params.currency.toLowerCase();
-	if (global.exchangeRates != null && global.exchangeRates[currency] != null) {
-		let satsRateData = utils.satoshisPerUnitOfLocalCurrency(currency);
-		result = satsRateData.amtRaw;
+const supportedCurrencies = ["usd", "eur", "gbp", "xau"];
 
-	} else if (currency == "xau" && global.exchangeRates != null && global.goldExchangeRates != null) {
-		let dec = new Decimal(amount);
-		dec = dec.times(global.exchangeRates.usd).dividedBy(global.goldExchangeRates.usd);
-		let satCurrencyType = global.currencyTypes["sat"];
-		let one = new Decimal(1);
-		dec = one.dividedBy(dec);
-		dec = dec.times(satCurrencyType.multiplier);
-		
-		result = dec.toFixed(0);
-	}
+router.get("/price/sats", function(req, res, next) {
+	let result = {};
+	let amount = 1.0;
+
+	supportedCurrencies.forEach(currency => {
+		if (global.exchangeRates != null && global.exchangeRates[currency] != null) {
+			let satsRateData = utils.satoshisPerUnitOfLocalCurrency(currency);
+			result[currency] = satsRateData.amtRaw;
+
+		} else if (currency == "xau" && global.exchangeRates != null && global.goldExchangeRates != null) {
+			let dec = new Decimal(amount);
+			dec = dec.times(global.exchangeRates.usd).dividedBy(global.goldExchangeRates.usd);
+			let satCurrencyType = global.currencyTypes["sat"];
+			let one = new Decimal(1);
+			dec = one.dividedBy(dec);
+			dec = dec.times(satCurrencyType.multiplier);
+			
+			result[currency] = dec.toFixed(0);
+		}
+	});
 	
-	res.send(result.toString());
+	res.json(result);
+
 	next();
 });
 
-router.get("/price/:currency/marketcap", function(req, res, next) {
+router.get("/price/marketcap", function(req, res, next) {
 	let result = 0;
 	
 	coreApi.getBlockchainInfo().then(function(getblockchaininfo){
@@ -871,50 +941,28 @@ router.get("/price/:currency/marketcap", function(req, res, next) {
 		let price = 0;
 
 		let amount = 1.0;
-		let currency = req.params.currency.toLowerCase();
-		if (global.exchangeRates != null && global.exchangeRates[currency] != null) {
-			let formatData = utils.formatExchangedCurrency(amount, currency);
-			price = parseFloat(formatData.valRaw).toFixed(2);
+		let result = {};
 
-		} else if (currency == "xau" && global.exchangeRates != null && global.goldExchangeRates != null) {
-			let dec = new Decimal(amount);
-			dec = dec.times(global.exchangeRates.usd).dividedBy(global.goldExchangeRates.usd);
-			let exchangedAmt = parseFloat(Math.round(dec * 100) / 100).toFixed(2);
-			price = exchangedAmt;
-		}
-	
-		result = estimatedSupply * price;
-		res.send(result.toFixed(2).toString());
+		supportedCurrencies.forEach(currency => {
+			if (global.exchangeRates != null && global.exchangeRates[currency] != null) {
+				let formatData = utils.formatExchangedCurrency(amount, currency);
+				price = parseFloat(formatData.valRaw).toFixed(2);
+
+			} else if (currency == "xau" && global.exchangeRates != null && global.goldExchangeRates != null) {
+				let dec = new Decimal(amount);
+				dec = dec.times(global.exchangeRates.usd).dividedBy(global.goldExchangeRates.usd);
+				let exchangedAmt = parseFloat(Math.round(dec * 100) / 100).toFixed(2);
+				price = exchangedAmt;
+			}
+		
+			result[currency] = estimatedSupply * price;
+		});
+
+		res.json(result);
+
 		next();
 
 	}).catch(next);
-});
-
-router.get("/price/:currency", function(req, res, next) {
-	let result = 0;
-	let amount = 1.0;
-	let currency = req.params.currency.toLowerCase();
-	let format = (req.query.format == "true");
-
-	if (global.exchangeRates != null && global.exchangeRates[currency] != null) {
-		let formatData = utils.formatExchangedCurrency(amount, currency);
-
-		if (format) {
-			result = formatData.val;
-
-		} else {
-			result = formatData.valRaw;
-		}
-	} else if (currency == "xau" && global.exchangeRates != null && global.goldExchangeRates != null) {
-		let dec = new Decimal(amount);
-		dec = dec.times(global.exchangeRates.usd).dividedBy(global.goldExchangeRates.usd);
-		let exchangedAmt = parseFloat(Math.round(dec * 100) / 100).toFixed(2);
-		result = utils.addThousandsSeparators(exchangedAmt);
-	}
-	
-	res.send(result.toString());
-
-	next();
 });
 
 router.get("/price", function(req, res, next) {
@@ -922,7 +970,7 @@ router.get("/price", function(req, res, next) {
 	let result = {};
 	let format = (req.query.format == "true");
 	
-	["usd", "eur", "gbp", "xau"].forEach(currency => {
+	supportedCurrencies.forEach(currency => {
 		if (global.exchangeRates != null && global.exchangeRates[currency] != null) {
 			let formatData = utils.formatExchangedCurrency(amount, currency);
 

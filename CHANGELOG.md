@@ -1,6 +1,7 @@
 ##### v3.4.0
 ###### Unreleased (beta)
 
+* Breaking changes to the API (see [./api/changelog](/api/changlog))
 * Include median fee rate for next-block estimates, on homepage and at [/next-block](./next-block)
 * Minor fixes for running against Bitcoin Core v23
 * Block Analysis: include top "days destroyed" transactions
