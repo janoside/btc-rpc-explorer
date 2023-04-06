@@ -499,7 +499,6 @@ async function getTxStats(dataPtCount, blockStart, blockEnd) {
 
 	let cacheResult = await miscCache.get(cacheKey);
 	if (cacheResult) {
-		console.log("CACHE RESULT");
 		return cacheResult;
 	}
 
