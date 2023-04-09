@@ -269,7 +269,7 @@ function formatCurrencyAmountWithForcedDecimalPlaces(amount, formatType, forcedD
 				baseStr = trailingZeroesStrippedStr
 
 				if (baseStr.endsWith(".")) {
-					baseStr = baseStr.substring(0, baseStr.length - 1);
+					baseStr = baseStr.slice(0, -1);
 				}
 			}
 
