@@ -585,21 +585,21 @@ module.exports = {
 			// 82
 			text: "If it's your keys, it's your bitcoin. If it's not your keys, it's not your bitcoin! That's a lesson that we all learned during Gox, so...let's try not to have to be taught that lesson again.",
 			speaker: "Andreas Antonopolous",
-			url: "https://youtube.com/clip/UgkxseTLx8gXRRvdvnQkP1pOAMddFCxC7KY2",
+			url: "https://youtu.be/uLpSM3HWU6U?t=4408",
 			date: "2016-04-14"
 		},
 		{
 			// 83
 			text: "I don't think we can affort two proof-of-work systems on this planet, but I think we might only need one.",
 			speaker: "Andreas Antonopolous",
-			url: "https://youtube.com/clip/Ugkxbwa0A5hdpa_rp5b7CU6_mE1nn_ztLODv",
+			url: "https://youtu.be/2T0OUIW89II?t=297",
 			date: "2017-12-12"
 		},
 		{
 			// 84
 			text: "We need one planetary scale proof-of-work system to offer us true, energy-dependent immutability. But maybe we can only afford one. Turns out, that might be Bitcoin's killer app.",
 			speaker: "Andreas Antonopolous",
-			url: "https://youtube.com/clip/UgkxteX61glga5v5FVqEaL6Y5UqsTamrQv7M",
+			url: "https://youtu.be/2T0OUIW89II?t=312",
 			date: "2017-12-12"
 		}
 		/*{
