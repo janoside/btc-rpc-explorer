@@ -267,6 +267,10 @@ function formatCurrencyAmountWithForcedDecimalPlaces(amount, formatType, forcedD
 			let trailingZeroesStrippedStr = baseStr.replace(/0+$/, "");
 			if (baseStr.length - trailingZeroesStrippedStr.length >= 4) {
 				baseStr = trailingZeroesStrippedStr
+
+				if (baseStr.endsWith(".")) {
+					baseStr = baseStr.substring(0, baseStr.length - 1);
+				}
 			}
 
 			//let baseStr = addThousandsSeparators(dec.toDP(decimalPlaces)); // old version, failed to properly format "1e-8" (left unchanged)
