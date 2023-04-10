@@ -519,8 +519,10 @@ function getRpcDataWithParams(request, verifyingConnection=false) {
 		debugLog(`RPC: ${JSON.stringify(request)}`);
 
 		let rpcCall = async function(callback) {
+			let client = (request.method == "gettxoutsetinfo" ? global.rpcClientNoTimeout : global.rpcClient);
+			
 			try {
-				const rpcResult = await global.rpcClient.request(request.method, request.parameters);
+				const rpcResult = await client.request(request.method, request.parameters);
 				const result = rpcResult.result;
 
 				//console.log(`RPC: request=${request}, result=${JSON.stringify(result)}`);
