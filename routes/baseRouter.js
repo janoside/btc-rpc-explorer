@@ -1879,12 +1879,13 @@ router.get("/rpc-browser", asyncHandler(async (req, res, next) => {
 		return;
 	}
 
+	let method = "unknown";
+	let argValues = [];
+
 	try {
 		const helpContent = await coreApi.getHelp();
 		res.locals.gethelp = helpContent;
 
-		let method = "unknown";
-		let argValues = [];
 
 		if (req.query.method) {
 			method = req.query.method;
@@ -1934,9 +1935,24 @@ router.get("/rpc-browser", asyncHandler(async (req, res, next) => {
 
 								break;
 
-							} else if (argProperties[j] === "string" || argProperties[j] === "numeric or string" || argProperties[j] === "string or numeric") {
+							} else if (argProperties[j] === "string") {
 								if (req.query.args[i]) {
 									argValues.push(req.query.args[i].replace(/[\r]/g, ''));
+								}
+
+								break;
+
+							} else if (argProperties[j] === "numeric or string" || argProperties[j] === "string or numeric") {
+								if (req.query.args[i]) {
+									let stringVal = req.query.args[i].replace(/[\r]/g, '');
+									let numberVal = parseInt(stringVal);
+
+									if (numberVal.toString() == numberVal) {
+										argValues.push(numberVal);
+
+									} else {
+										argValues.push(stringVal);
+									}
 								}
 
 								break;
