@@ -144,7 +144,24 @@ module.exports = {
 	},
 
 	utxoSetCheckpointsByNetwork: {
-		"main": {"height":702329,"bestblock":"00000000000000000005d323e8b476eac408e88002591b5ed7381ec9baaf2d13","transactions":45854214,"txouts":75356871,"bogosize":5640223435,"hash_serialized_2":"727879e512dde3c87ec4b3b4185d8212506a5eee517694a34785c0a63a7d78b9","disk_size":4582442992,"total_amount":"18826856.29247566","lastUpdated":1632692076775}
+		// this includes values from running gettxoutsetinfo with both "muhash" and "hash_serialized_2" params
+		"main": {
+			// "muhash"
+			"height": 784796,
+			"bestblock": "000000000000000000026ac332dc8ba0d425b844520acc808af88aac52748281",
+			"txouts": 87769791,
+			"bogosize": 6562752541,
+			"muhash": "90dc87ec3d3dc46a9883f1ce675cc8bcc3e6697c6c1dbb8665c192af35144099",
+			"total_amount": "19342261.957857",
+			"total_unspendable_amount": "219.292143",
+
+			// "hash_serialized_2"
+			"transactions": 52250541,
+			"disk_size": 5367051020,
+			"hash_serialized_2": "89afe21688f3a2cc01ef837c2b0454d4039830433d49c264856b2578eff2d62b",
+
+			"lastUpdated": 1681140656788
+		}
 	},
 	
 	genesisBlockHashesByNetwork:{
