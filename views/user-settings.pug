@@ -33,7 +33,7 @@ block content
 				.d-inline-block.text-end
 					form(method="get", action="./changeSetting")
 						input(type="hidden", name="name", value="userTzOffset")
-						input(type="text", name="value", value=userTzOffset)
+						input.form-control(type="text", name="value", value=userTzOffset)
 
 					span.small.text-muted (Example: for New York, enter "-5")
 
