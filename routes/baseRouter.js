@@ -4,7 +4,7 @@ const debug = require("debug");
 const debugLog = debug("btcexp:router");
 
 const express = require('express');
-const csurf = require('csurf');
+const csrfApi = require('csurf');
 const router = express.Router();
 const util = require('util');
 const moment = require('moment');
@@ -28,7 +28,7 @@ const addressApi = require("./../app/api/addressApi.js");
 const rpcApi = require("./../app/api/rpcApi.js");
 const btcQuotes = require("./../app/coins/btcQuotes.js");
 
-const forceCsrf = csurf({ ignoreMethods: [] });
+const forceCsrf = csrfApi({ ignoreMethods: [] });
 
 let noTxIndexMsg = "\n\nYour node does not have **txindex** enabled. Without it, you can only lookup wallet, mempool, and recently confirmed transactions by their **txid**. Searching for non-wallet transactions that were confirmed more than "+config.noTxIndexSearchDepth+" blocks ago is only possible if the confirmed block height is available.";
 
@@ -1990,7 +1990,7 @@ router.get("/rpc-browser", asyncHandler(async (req, res, next) => {
 					return;
 				}
 
-				//let csurfPromise = 
+				//let csrfPromise = 
 
 				await new Promise((resolve, reject) => {
 					forceCsrf(req, res, async (err) => {
