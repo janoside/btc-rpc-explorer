@@ -88,7 +88,6 @@ const slowDeviceMode = (process.env.BTCEXP_SLOW_DEVICE_MODE.toLowerCase() == "tr
 module.exports = {
 	host: process.env.BTCEXP_HOST || "127.0.0.1",
 	port: process.env.PORT || process.env.BTCEXP_PORT || 3002,
-	siteDomain: process.env.BTCEXP_SITE_DOMAIN || "localhost",
 	secureSite: process.env.BTCEXP_SECURE_SITE == "true",
 
 	baseUrl: baseUrl,

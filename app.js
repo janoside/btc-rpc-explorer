@@ -211,8 +211,7 @@ const sessionConfig = {
 	resave: false,
 	saveUninitialized: true,
 	cookie: {
-		secure: config.secureSite,
-		domain: config.siteDomain
+		secure: config.secureSite
 	}
 };
 
