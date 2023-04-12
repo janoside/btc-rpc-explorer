@@ -4,7 +4,6 @@ const debug = require("debug");
 const debugLog = debug("btcexp:router");
 
 const express = require('express');
-const csurf = require('csurf');
 const router = express.Router();
 const util = require('util');
 const moment = require('moment');
@@ -21,8 +20,6 @@ const config = require("./../app/config.js");
 const coreApi = require("./../app/api/coreApi.js");
 const addressApi = require("./../app/api/addressApi.js");
 const btcQuotes = require("./../app/coins/btcQuotes.js");
-
-const forceCsrf = csurf({ ignoreMethods: [] });
 
 
 
