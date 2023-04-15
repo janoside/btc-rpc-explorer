@@ -961,12 +961,12 @@ router.post("/search", function(req, res, next) {
 		return res.redirect("./tx/" + query);
 	}
 
-	let parseAddressData = utils.tryParseAddress(query);
+	let parseAddressData = utils.tryParseAddress(rawCaseQuery);
 
 	if (false) {
 		if (parseAddressData.errors) {
 			parseAddressData.errors.forEach(err => {
-				utils.logError("asdfhuadf", err);
+				utils.logError("19238rfehdusd", err, {address:query});
 			});
 		}
 	}
