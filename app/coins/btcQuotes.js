@@ -601,6 +601,20 @@ module.exports = {
 			speaker: "Andreas Antonopolous",
 			url: "https://youtu.be/2T0OUIW89II?t=312",
 			date: "2017-12-12"
+		},
+		{
+			// 85
+			text: "Bitcoin is the most valuable, most secure, and most credibly neutral internet-native asset in the world.",
+			speaker: "Andrew M. Bailey and Craig Warmke",
+			url: "https://www.resistance.money/bitcoin_is_king.pdf",
+			date: "2022-11-17"
+		},
+		{
+			// 86
+			text: "Bitcoin is King",
+			speaker: "Andrew M. Bailey and Craig Warmke",
+			url: "https://www.resistance.money/bitcoin_is_king.pdf",
+			date: "2022-11-17"
 		}
 		/*{
 			text: "Bitcoin is a technological tour de force.",
