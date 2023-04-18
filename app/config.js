@@ -119,6 +119,7 @@ module.exports = {
 	cdn: {
 		active: (cdnBaseUrl == "." ? false : true),
 		s3Bucket: process.env.BTCEXP_S3_BUCKET,
+		s3BucketRegion: process.env.BTCEXP_S3_BUCKET_REGION,
 		s3BucketPath: s3BucketPath,
 		baseUrl: cdnBaseUrl
 	},

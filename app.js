@@ -103,7 +103,7 @@ const s3Utils = appUtils.s3Utils;
 
 let cdnS3Bucket = null;
 if (config.cdn.active) {
-	cdnS3Bucket = s3Utils.createBucket(config.cdn.s3Bucket, config.cdn.s3BucketPath);
+	cdnS3Bucket = s3Utils.createBucket(config.cdn.s3Bucket, config.cdn.s3BucketRegion, config.cdn.s3BucketPath);
 }
 
 require("./app/currencies.js");
