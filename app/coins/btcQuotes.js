@@ -615,7 +615,14 @@ module.exports = {
 			speaker: "Andrew M. Bailey and Craig Warmke",
 			url: "https://www.resistance.money/bitcoin_is_king.pdf",
 			date: "2022-11-17"
-		}
+		},
+		{
+			// 87
+			text: "Amidst a sea of rent-seeking \"cryptocurrencies\" created by opportunistic venture capitalists, bitcoin stands alone as neutral, immutable money with rules, but no single ruler.",
+			speaker: "Nik Bhatia and Joe Consorti",
+			url: "https://thebitcoinlayer.substack.com/p/bitcoin-is-swallowing-the-world",
+			date: "2023-04-27"
+		},
 		/*{
 			text: "Bitcoin is a technological tour de force.",
 			speaker: "Bill Gates",
