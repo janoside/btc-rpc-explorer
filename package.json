@@ -55,7 +55,7 @@
 		"express-async-handler": "^1.1.4",
 		"express-session": "^1.17.2",
 		"jayson": "^4.0.0",
-		"lru-cache": "^8.0.0",
+		"lru-cache": "^9.0.0",
 		"markdown-it": "^13.0.0",
 		"md5": "^2.3.0",
 		"memorystore": "^1.6.7",

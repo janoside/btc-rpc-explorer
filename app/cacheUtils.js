@@ -6,7 +6,7 @@ const debugLog = debug("btcexp:cache");
 const utils = require("./utils.js");
 
 
-const LRU = require("lru-cache");
+const { LRUCache } = require("lru-cache");
 
 
 const watchKeysRegex = /regexToMatchCacheKeysForDebugLogging/;
@@ -90,7 +90,7 @@ function createTieredCache(cacheObjs) {
 }
 
 function lruCache(size) {
-	return new LRU({
+	return new LRUCache({
 		max: size
 	});
 }
