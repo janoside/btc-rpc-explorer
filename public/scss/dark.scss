@@ -97,6 +97,9 @@ $toast-header-background-color:     lighten($body-bg, 7%);
 $toast-header-border-color:         rgba(0, 0, 0, .05) !default;
 
 
+$progress-bg: darken($body-bg, 8%);
+
+
 
 @import "./main";
 
