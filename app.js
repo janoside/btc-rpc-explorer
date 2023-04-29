@@ -1040,6 +1040,7 @@ expressApp.use(function(req, res, next) {
 	userSettings.localCurrency = (userSettings.localCurrency || config.displayDefaults.localCurrency);
 	userSettings.uiTimezone = (userSettings.uiTimezone || config.displayDefaults.timezone);
 	userSettings.uiTheme = (userSettings.uiTheme || config.displayDefaults.theme);
+	userSettings.autoRefresh = (userSettings.autoRefresh || config.displayDefaults.autoRefresh);
 
 
 	// make available in templates
@@ -1049,6 +1050,7 @@ expressApp.use(function(req, res, next) {
 	res.locals.uiTheme = userSettings.uiTheme;
 	res.locals.userTzOffset = userSettings.userTzOffset || "unset";
 	res.locals.browserTzOffset = userSettings.browserTzOffset || "0";
+	res.locals.autoRefresh = userSettings.autoRefresh;
 
 
 	if (!["/", "/connect"].includes(req.originalUrl)) {

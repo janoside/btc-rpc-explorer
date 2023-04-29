@@ -196,6 +196,14 @@ html(lang="en")
 										i.bi-info-circle.ms-1(title="This value comes from your brower. If you wish to set a custom offset, you can do so below, in 'More settings...'", data-bs-toggle="tooltip")
 
 									hr.dropdown-divider.mt-2.mb-2
+									span.dropdown-header Auto Refresh
+									- var items = ["off", "on"];
+
+									.btn-group.ms-3
+										a.btn.btn-sm.px-3(href=`./changeSetting?name=autoRefresh&value=off`, class=(userSettings.autoRefresh == "off" ? "btn-primary" : "btn-outline-primary")) Off
+										a.btn.btn-sm.px-3(href=`./changeSetting?name=autoRefresh&value=on`, class=(userSettings.autoRefresh == "off" ? "btn-outline-primary" : "btn-primary")) On
+
+									hr.dropdown-divider.mt-2.mb-2
 
 									a.dropdown-item(href=`./user-settings`) More settings...
 									a.dropdown-item(href=`./admin/dashboard`) Admin Dashboard

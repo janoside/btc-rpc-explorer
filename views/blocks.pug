@@ -20,6 +20,9 @@ block content
 							a.page-link(href=(sort == "asc" ? "javascript:void(0)" : `./blocks?limit=${limit}&offset=0&sort=asc`))
 								span(aria-hidden="true") Oldest blocks first
 
+	if (autoRefresh == "on")
+		include includes/connection-warning.pug
+
 	if (blocks)
 		+contentSection
 			include includes/blocks-list.pug

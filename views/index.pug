@@ -96,6 +96,8 @@ block content
 				span.fw-bold Progress: 
 				span #{new Decimal(getblockchaininfo.verificationprogress).times(100).toDP(3)}%
 
+		if (autoRefresh == "on")
+			include includes/connection-warning.pug
 
 		
 		include includes/index-network-summary.pug
