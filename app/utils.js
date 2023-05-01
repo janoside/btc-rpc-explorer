@@ -511,17 +511,17 @@ function summarizeDuration(duration, options={}) {
 		str = str.replace(" years", "y");
 		str = str.replace(" year", "y");
 
-	str = str.replace(" months", "mo");
-	str = str.replace(" month", "mo");
+		str = str.replace(" months", "mo");
+		str = str.replace(" month", "mo");
 
-	str = str.replace(" weeks", "w");
-	str = str.replace(" week", "w");
+		str = str.replace(" weeks", "w");
+		str = str.replace(" week", "w");
 
-	str = str.replace(" days", "d");
-	str = str.replace(" day", "d");
+		str = str.replace(" days", "d");
+		str = str.replace(" day", "d");
 
-	str = str.replace(" hours", "hr");
-	str = str.replace(" hour", "hr");
+		str = str.replace(" hours", "hr");
+		str = str.replace(" hour", "hr");
 
 		str = str.replace(" minutes", "min");
 		str = str.replace(" minute", "min");
@@ -1429,7 +1429,7 @@ function difficultyAdjustmentEstimates(eraStartBlockHeader, currentBlockHeader) 
 	};
 }
 
-function nextHalvingEstimates(eraStartBlockHeader, currentBlockHeader) {
+function nextHalvingEstimates(eraStartBlockHeader, currentBlockHeader, difficultyAdjustmentDataArg=null) {
 	let blockCount = currentBlockHeader.height;
 	let halvingBlockInterval = coinConfig.halvingBlockIntervalsByNetwork[global.activeBlockchain];
 	let halvingCount = parseInt(blockCount / halvingBlockInterval);
@@ -1449,7 +1449,10 @@ function nextHalvingEstimates(eraStartBlockHeader, currentBlockHeader) {
 		};
 	}
 
-	let difficultyAdjustmentData = difficultyAdjustmentEstimates(eraStartBlockHeader, currentBlockHeader);
+	let difficultyAdjustmentData = difficultyAdjustmentDataArg;
+	if (!difficultyAdjustmentData) {
+		difficultyAdjustmentData = difficultyAdjustmentEstimates(eraStartBlockHeader, currentBlockHeader);
+	}
 
 	let currDifficultyEraTimeDifferential = (coinConfig.targetBlockTimeSeconds - difficultyAdjustmentData.timePerBlock) * difficultyAdjustmentData.blocksLeft;
 
