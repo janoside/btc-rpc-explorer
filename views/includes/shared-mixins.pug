@@ -250,7 +250,7 @@ mixin txList(visibleTxs, txCount, limit, offset, inputsByTxid, options={})
 										i.bi-clock.me-1
 
 										span.fw-light(title=titleStr, data-bs-toggle="tooltip")
-											+timeAgo(tx.time, true)
+											+timeAgo(tx.time, {oneElement:true})
 
 			
 			hr.mb-4.mx-n3
@@ -485,7 +485,9 @@ mixin hexDataDisplay(hex, order="utf8,ascii,hex")
 	
 
 
-mixin timestamp(timestamp, includeAgo=true, formatString)
+mixin timestamp(timestamp, options={includeAgo:true})
+	- let includeAgo = "includeAgo" in options ? options.includeAgo : false;
+
 	- var tzDiff = -parseFloat(browserTzOffset);
 	
 	if (userTzOffset != "unset")
@@ -508,10 +510,10 @@ mixin timestamp(timestamp, includeAgo=true, formatString)
 	else
 		- var titleStr = `${utcMoment.format("Y-MM-DD, HH:mm:ss")} utc`;
 
-	if (formatString)
+	if (options.formatString)
 		span.border-dotted(title=titleStr, data-bs-toggle="tooltip", data-bs-html="true")
-			span.date-text(id=`xyz-${utils.getRandomString(10, "aA1")}`, data-timestamp-utc=`${parseInt(timestamp)}`, data-date-format=formatString, data-date-ago=includeAgo.toString()) #{momentObj.format(formatString)}
-				if (["H", "m", "s"].some(str => formatString.includes(str)))
+			span.date-text(id=`xyz-${utils.getRandomString(10, "aA1")}`, data-timestamp-utc=`${parseInt(timestamp)}`, data-date-format=options.formatString, data-date-ago=includeAgo.toString()) #{momentObj.format(options.formatString)}
+				if (["H", "m", "s"].some(str => options.formatString.includes(str)))
 					span.text-tiny.text-tight-spacing.text-muted.ms-tiny UTC
 
 	else if (dateStr == nowDateStr)
@@ -543,21 +545,49 @@ mixin timestamp(timestamp, includeAgo=true, formatString)
 				span #{momentObj.format("YYYY-MM-DD")}
 
 	if (includeAgo)
-		- var timeAgo = moment.duration(moment.utc(new Date()).diff(moment.utc(new Date(parseInt(timestamp) * 1000))));
-		
-		if (timeAgo.asSeconds() < 0)
-			- timeAgo = moment.duration(moment.utc(new Date(parseInt(timestamp) * 1000)).diff(moment.utc(new Date())));
+		small.text-muted.ms-1 (
+			+timeAgo(timestamp)
+			| )
 
-			small.text-muted.ms-2 (+
-				- let format = timeAgo.format();
-				- let formatParts = format.split(",").map(x => x.trim());
-				- formatParts = formatParts.map(x => { return x.startsWith("0 ") ? "" : x; }).filter(x => x.length > 0);
-				| #{formatParts.join(", ")}
-				span )
+
+
+
+mixin timeAgo(timeAgoTime, options={oneElement:false})
+	- let oneElement = false;
+	if (options && "oneElement" in options)
+		- oneElement = options.oneElement;
+	
+	- let timeAgo = moment.duration(moment.utc(new Date()).diff(moment.utc(new Date(parseInt(timeAgoTime) * 1000))));
+	- let future = false;
+
+	if (timeAgo.asSeconds() < 0)
+		- future = true;
+		- timeAgo = moment.duration(moment.utc(new Date(parseInt(timeAgoTime) * 1000)).diff(moment.utc(new Date())));
+
+
+	if (future)
+		span +
+
+		
+	if (timeAgo.asHours() < 1)
+		if (timeAgo.asMinutes() < 1)
+			span #{timeAgo.seconds()}s
 		else
-			small.text-muted.ms-2 (
-				+timeAgo(timestamp, true)
-				span  ago)
+			span #{timeAgo.minutes()}m
+
+	else
+		if (timeAgo.asHours() >= 1 && timeAgo.asHours() < 24)
+			span #{timeAgo.hours()}h
+
+			if (!oneElement && timeAgo.minutes() > 0)
+				span.ms-1 #{timeAgo.minutes()}m
+
+		else
+			if (oneElement)
+				span #{utils.summarizeDuration(timeAgo, options)}
+			else
+				span #{utils.summarizeDuration(timeAgo, options)}
+
 
 
 mixin darkBadge(text)
@@ -614,28 +644,6 @@ mixin funAlert(html, text, referenceUrl)
 mixin funItemIcon
 	i.bi-flag.text-warning
 
-
-mixin timeAgo(timeAgoTime, only1Element=false)
-	- var timeAgo = moment.duration(moment.utc(new Date()).diff(moment.utc(new Date(parseInt(timeAgoTime) * 1000))));
-
-	if (timeAgo.asHours() < 1)
-		if (timeAgo.asMinutes() < 1)
-			span #{timeAgo.seconds()}s
-		else
-			span #{timeAgo.minutes()}m
-
-	else
-		if (timeAgo.asHours() >= 1 && timeAgo.asHours() < 24)
-			span #{timeAgo.hours()}h
-
-			if (!only1Element && timeAgo.minutes() > 0)
-				span.ms-1 #{timeAgo.minutes()}m
-
-		else
-			if (only1Element)
-				span #{utils.shortenTimeDiff(timeAgo.format()).split(/,?\s+/)[0]}
-			else
-				span #{utils.shortenTimeDiff(timeAgo.format())}
 
 
 mixin blockCountdown(title, blocksLeft)

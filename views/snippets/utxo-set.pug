@@ -9,7 +9,7 @@ include ../includes/shared-mixins.pug
 			+contentSection
 				+summaryRow(3)
 					+summaryItem("Last Updated", "The time this UTXO Set snapshot was produced")
-						+timestamp(utxoSetSummary.lastUpdated / 1000, true)
+						+timestamp(utxoSetSummary.lastUpdated / 1000)
 
 					+summaryItem("Block Height", "The top block height at the time this UTXO Set snapshot was produced")
 						a(href=`./block-height/${utxoSetSummary.height}`) #{utxoSetSummary.height.toLocaleString()}

@@ -67,7 +67,7 @@ block content
 				+contentSection("Summary")
 					+summaryRow(2 + (result.getblock.miner ? 1 : 0) + (result.blockstats ? 1 : 0))
 						+summaryItem("Date / Time")
-							+timestamp(result.getblock.time, true)
+							+timestamp(result.getblock.time)
 							
 
 						+summaryItem("Confirmations")

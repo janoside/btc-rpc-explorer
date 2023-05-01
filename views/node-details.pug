@@ -150,13 +150,13 @@ block content
 											div.small.text-muted
 												if (item.bip9.start_time)
 													span.me-2 start:
-													+timestamp(item.bip9.start_time, false, "M/D")
+													+timestamp(item.bip9.start_time, {includeAgo:false, formatString:"M/D"})
 
 												if (item.bip9.timeout)
 													if (item.bip9.start_time)
 														span.me-1 ,
 													span.me-2 timeout:
-													+timestamp(item.bip9.timeout, false, "M/D")
+													+timestamp(item.bip9.timeout, {includeAgo:false, formatString:"M/D"})
 
 										if (item.type == "bip9" && item.bip9 && item.bip9.min_activation_height)
 											div.small.text-muted
@@ -227,13 +227,13 @@ block content
 											div.small.text-muted
 												if (item.bip9.start_time)
 													span.me-2 start:
-													+timestamp(item.bip9.start_time, false, "M/D")
+													+timestamp(item.bip9.start_time, {includeAgo:false, formatString:"M/D"})
 
 												if (item.bip9.timeout)
 													if (item.bip9.start_time)
 														span.me-1 ,
 													span.me-2 timeout:
-													+timestamp(item.bip9.timeout, false, "M/D")
+													+timestamp(item.bip9.timeout, {includeAgo:false, formatString:"M/D"})
 
 										if (item.type == "bip9" && item.bip9 && item.bip9.min_activation_height)
 											div.small.text-muted

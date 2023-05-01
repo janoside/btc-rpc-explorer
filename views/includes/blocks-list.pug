@@ -83,18 +83,16 @@
 
 						//if (!hideTimestampColumn)
 						td.text-end.d-none.d-md-table-cell
-							+timestamp(block.time, false, null)
+							+timestamp(block.time, {includeAgo:false})
 							
 
 						td.text-end
 
 							if (sort != "asc" && blockIndex == 0 && offset == 0 && timeAgoTime > (15 * 60 * 1000))
-								- var timeAgoTime = block.time;
 								span.text-danger.border-dotted(title="It's been > 15 min since this latest block.", data-bs-toggle="tooltip")
-									include ./time-ago-text.pug
+									+timeAgo(block.time, {outputCommas:false})
 							else
-								- var timeAgoTime = block.time;
-								include ./time-ago-text.pug
+								+timeAgo(block.time, {outputCommas:false})
 
 						td.text-end.d-none.d-sm-table-cell
 							if (timeDiff)
