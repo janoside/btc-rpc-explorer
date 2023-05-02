@@ -485,9 +485,10 @@ mixin hexDataDisplay(hex, order="utf8,ascii,hex")
 	
 
 
-mixin timestamp(timestamp, options={includeAgo:true})
-	- let includeAgo = "includeAgo" in options ? options.includeAgo : false;
-
+mixin timestamp(timestamp, options={includeAgo:true, agoOptions:{}})
+	- let includeAgo = "includeAgo" in options ? options.includeAgo : true;
+	- let agoOptions = "agoOptions" in options ? options.agoOptions : {};
+	
 	- var tzDiff = -parseFloat(browserTzOffset);
 	
 	if (userTzOffset != "unset")
@@ -546,16 +547,20 @@ mixin timestamp(timestamp, options={includeAgo:true})
 
 	if (includeAgo)
 		small.text-muted.ms-1 (
-			+timeAgo(timestamp)
+			+timeAgo(timestamp, agoOptions)
 			| )
 
 
 
 
-mixin timeAgo(timeAgoTime, options={oneElement:false})
+mixin timeAgo(timeAgoTime, options={oneElement:false, agoText:true})
 	- let oneElement = false;
 	if (options && "oneElement" in options)
 		- oneElement = options.oneElement;
+
+	- let agoText = true;
+	if (options && "agoText" in options)
+		- agoText = options.agoText;
 	
 	- let timeAgo = moment.duration(moment.utc(new Date()).diff(moment.utc(new Date(parseInt(timeAgoTime) * 1000))));
 	- let future = false;
@@ -584,9 +589,12 @@ mixin timeAgo(timeAgoTime, options={oneElement:false})
 
 		else
 			if (oneElement)
-				span #{utils.summarizeDuration(timeAgo, options)}
+				span.border-dotted(title=utils.summarizeDuration(timeAgo), data-bs-toggle="tooltip") #{utils.summarizeDuration(timeAgo, options)}
 			else
 				span #{utils.summarizeDuration(timeAgo, options)}
+
+	if (!future && agoText)
+		|  ago
 
 
 

@@ -90,9 +90,9 @@
 
 							if (sort != "asc" && blockIndex == 0 && offset == 0 && timeAgoTime > (15 * 60 * 1000))
 								span.text-danger.border-dotted(title="It's been > 15 min since this latest block.", data-bs-toggle="tooltip")
-									+timeAgo(block.time, {outputCommas:false})
+									+timeAgo(block.time, {outputCommas:false, agoText:false})
 							else
-								+timeAgo(block.time, {outputCommas:false})
+								+timeAgo(block.time, {outputCommas:false, agoText:false})
 
 						td.text-end.d-none.d-sm-table-cell
 							if (timeDiff)

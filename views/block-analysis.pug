@@ -22,7 +22,7 @@ block content
 		+contentSection("Summary")
 			+summaryRow(3 + (result.getblock.weight ? 1 : (result.getblock.size ? 1 : 0)))
 				+summaryItem("Date")
-					+timestamp(result.getblock.time)
+					+timestamp(result.getblock.time, {agoOptions:{oneElement:true}})
 
 				if (result.getblock.weight)
 					+summaryItem("Weight", null, "wu", "Weight Units")
