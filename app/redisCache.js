@@ -1,50 +1,55 @@
 "use strict";
 
-const redis = require("redis");
-const bluebird = require("bluebird");
+const { createClient } = require("redis");
 
 const config = require("./config.js");
 const utils = require("./utils.js");
 
 let redisClient = null;
 if (config.redisUrl) {
-	bluebird.promisifyAll(redis.RedisClient.prototype);
-
-	redisClient = redis.createClient({url:config.redisUrl});
+	redisClient = createClient({url:config.redisUrl});
 }
 
 function createCache(keyPrefix, onCacheEvent) {
 	return {
-		get: function(key) {
+		get: async function(key) {
+			if (!redisClient.isOpen) {
+				await redisClient.connect();
+			}
+
 			const prefixedKey = `${keyPrefix}-${key}`;
 
-			return new Promise(function(resolve, reject) {
-				onCacheEvent("redis", "try", prefixedKey);
+			onCacheEvent("redis", "try", prefixedKey);
 
-				redisClient.getAsync(prefixedKey).then(function(result) {
-					if (result == null) {
-						onCacheEvent("redis", "miss", prefixedKey);
+			try {
+				let result = await redisClient.get(prefixedKey);
 
-						resolve(null);
+				if (result == null) {
+					onCacheEvent("redis", "miss", prefixedKey);
 
-					} else {
-						onCacheEvent("redis", "hit", prefixedKey);
+					return null;
 
-						resolve(JSON.parse(result));
-					}
-				}).catch(function(err) {
-					onCacheEvent("redis", "error", prefixedKey);
+				} else {
+					onCacheEvent("redis", "hit", prefixedKey);
 
-					utils.logError("328rhwefghsdgsdss", err);
+					return JSON.parse(result);
+				}
+			} catch (err) {
+				onCacheEvent("redis", "error", prefixedKey);
 
-					reject(err);
-				});
-			});
+				utils.logError("328rhwefghsdgsdss", err, {key:prefixedKey});
+
+				throw err;
+			}
 		},
-		set: function(key, obj, maxAgeMillis) {
+		set: async function(key, obj, maxAgeMillis) {
+			if (!redisClient.isOpen) {
+				await redisClient.connect();
+			}
+			
 			const prefixedKey = `${keyPrefix}-${key}`;
 
-			redisClient.set(prefixedKey, JSON.stringify(obj), "PX", maxAgeMillis);
+			await redisClient.set(prefixedKey, JSON.stringify(obj), "PX", maxAgeMillis);
 		}
 	};
 }

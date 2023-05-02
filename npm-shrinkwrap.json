@@ -16,7 +16,6 @@
 				"bech32": "2.0.0",
 				"bip32": "^4.0.0",
 				"bitcoinjs-lib": "^6.0.0",
-				"bluebird": "^3.7.2",
 				"body-parser": "^1.19.0",
 				"bootstrap": "^5.2.3",
 				"bs58check": "^3.0.1",
@@ -45,7 +44,7 @@
 				"pidusage": "^3.0.0",
 				"pug": "^3.0.2",
 				"qrcode": "^1.4.4",
-				"redis": "^3.0.2",
+				"redis": "^4.6.6",
 				"semver": "^7.3.5",
 				"serve-favicon": "^2.5.0",
 				"simple-git": "^3.7.1",
@@ -1661,6 +1660,59 @@
 				"url": "https://opencollective.com/popperjs"
 			}
 		},
+		"node_modules/@redis/bloom": {
+			"version": "1.2.0",
+			"resolved": "https://registry.npmjs.org/@redis/bloom/-/bloom-1.2.0.tgz",
+			"integrity": "sha512-HG2DFjYKbpNmVXsa0keLHp/3leGJz1mjh09f2RLGGLQZzSHpkmZWuwJbAvo3QcRY8p80m5+ZdXZdYOSBLlp7Cg==",
+			"peerDependencies": {
+				"@redis/client": "^1.0.0"
+			}
+		},
+		"node_modules/@redis/client": {
+			"version": "1.5.7",
+			"resolved": "https://registry.npmjs.org/@redis/client/-/client-1.5.7.tgz",
+			"integrity": "sha512-gaOBOuJPjK5fGtxSseaKgSvjiZXQCdLlGg9WYQst+/GRUjmXaiB5kVkeQMRtPc7Q2t93XZcJfBMSwzs/XS9UZw==",
+			"dependencies": {
+				"cluster-key-slot": "1.1.2",
+				"generic-pool": "3.9.0",
+				"yallist": "4.0.0"
+			},
+			"engines": {
+				"node": ">=14"
+			}
+		},
+		"node_modules/@redis/graph": {
+			"version": "1.1.0",
+			"resolved": "https://registry.npmjs.org/@redis/graph/-/graph-1.1.0.tgz",
+			"integrity": "sha512-16yZWngxyXPd+MJxeSr0dqh2AIOi8j9yXKcKCwVaKDbH3HTuETpDVPcLujhFYVPtYrngSco31BUcSa9TH31Gqg==",
+			"peerDependencies": {
+				"@redis/client": "^1.0.0"
+			}
+		},
+		"node_modules/@redis/json": {
+			"version": "1.0.4",
+			"resolved": "https://registry.npmjs.org/@redis/json/-/json-1.0.4.tgz",
+			"integrity": "sha512-LUZE2Gdrhg0Rx7AN+cZkb1e6HjoSKaeeW8rYnt89Tly13GBI5eP4CwDVr+MY8BAYfCg4/N15OUrtLoona9uSgw==",
+			"peerDependencies": {
+				"@redis/client": "^1.0.0"
+			}
+		},
+		"node_modules/@redis/search": {
+			"version": "1.1.2",
+			"resolved": "https://registry.npmjs.org/@redis/search/-/search-1.1.2.tgz",
+			"integrity": "sha512-/cMfstG/fOh/SsE+4/BQGeuH/JJloeWuH+qJzM8dbxuWvdWibWAOAHHCZTMPhV3xIlH4/cUEIA8OV5QnYpaVoA==",
+			"peerDependencies": {
+				"@redis/client": "^1.0.0"
+			}
+		},
+		"node_modules/@redis/time-series": {
+			"version": "1.0.4",
+			"resolved": "https://registry.npmjs.org/@redis/time-series/-/time-series-1.0.4.tgz",
+			"integrity": "sha512-ThUIgo2U/g7cCuZavucQTQzA9g9JbDDY2f64u3AbAoz/8vE2lt2U37LamDUVChhaDA3IRT9R6VvJwqnUfTJzng==",
+			"peerDependencies": {
+				"@redis/client": "^1.0.0"
+			}
+		},
 		"node_modules/@scure/base": {
 			"version": "1.1.1",
 			"resolved": "https://registry.npmjs.org/@scure/base/-/base-1.1.1.tgz",
@@ -2016,11 +2068,6 @@
 				"readable-stream": "^3.4.0"
 			}
 		},
-		"node_modules/bluebird": {
-			"version": "3.7.2",
-			"resolved": "https://registry.npmjs.org/bluebird/-/bluebird-3.7.2.tgz",
-			"integrity": "sha512-XpNj6GDQzdfW+r2Wnn7xiSAd7TM3jzkxGXBGTtWKuSXv1xUV+azxAm8jdWZN06QTQk+2N2XB9jRDkvbmQmcRtg=="
-		},
 		"node_modules/body-parser": {
 			"version": "1.20.2",
 			"resolved": "https://registry.npmjs.org/body-parser/-/body-parser-1.20.2.tgz",
@@ -2301,6 +2348,14 @@
 				"string-width": "^4.2.0",
 				"strip-ansi": "^6.0.0",
 				"wrap-ansi": "^6.2.0"
+			}
+		},
+		"node_modules/cluster-key-slot": {
+			"version": "1.1.2",
+			"resolved": "https://registry.npmjs.org/cluster-key-slot/-/cluster-key-slot-1.1.2.tgz",
+			"integrity": "sha512-RMr0FhtfXemyinomL4hrWcYJxmX6deFdCxpJzhDttxgO1+bcCnkk+9drydLVDmAMG7NE6aN/fl4F7ucU/90gAA==",
+			"engines": {
+				"node": ">=0.10.0"
 			}
 		},
 		"node_modules/color": {
@@ -2715,14 +2770,6 @@
 			"integrity": "sha512-ZySD7Nf91aLB0RxL4KGrKHBXl7Eds1DAmEdcoVawXnLD7SDhpNgtuII2aAkg7a7QS41jxPSZ17p4VdGnMHk3MQ==",
 			"engines": {
 				"node": ">=0.4.0"
-			}
-		},
-		"node_modules/denque": {
-			"version": "1.5.1",
-			"resolved": "https://registry.npmjs.org/denque/-/denque-1.5.1.tgz",
-			"integrity": "sha512-XwE+iZ4D6ZUB7mfYRMb5wByE8L74HCn30FBN7sWnXksWc1LO1bPDl67pBR9o/kC4z/xSNAwkMYcGgqDV3BE3Hw==",
-			"engines": {
-				"node": ">=0.10"
 			}
 		},
 		"node_modules/depd": {
@@ -3552,6 +3599,14 @@
 			"dev": true,
 			"funding": {
 				"url": "https://github.com/sponsors/ljharb"
+			}
+		},
+		"node_modules/generic-pool": {
+			"version": "3.9.0",
+			"resolved": "https://registry.npmjs.org/generic-pool/-/generic-pool-3.9.0.tgz",
+			"integrity": "sha512-hymDOu5B53XvN4QT9dBmZxPX4CWhBPPLguTZ9MMFeFa/Kg0xWVfylOVNlJji/E7yTZWFd/q9GO5TxDLq156D7g==",
+			"engines": {
+				"node": ">= 4"
 			}
 		},
 		"node_modules/get-caller-file": {
@@ -5847,45 +5902,16 @@
 			}
 		},
 		"node_modules/redis": {
-			"version": "3.1.2",
-			"resolved": "https://registry.npmjs.org/redis/-/redis-3.1.2.tgz",
-			"integrity": "sha512-grn5KoZLr/qrRQVwoSkmzdbw6pwF+/rwODtrOr6vuBRiR/f3rjSTGupbF90Zpqm2oenix8Do6RV7pYEkGwlKkw==",
+			"version": "4.6.6",
+			"resolved": "https://registry.npmjs.org/redis/-/redis-4.6.6.tgz",
+			"integrity": "sha512-aLs2fuBFV/VJ28oLBqYykfnhGGkFxvx0HdCEBYdJ99FFbSEMZ7c1nVKwR6ZRv+7bb7JnC0mmCzaqu8frgOYhpA==",
 			"dependencies": {
-				"denque": "^1.5.0",
-				"redis-commands": "^1.7.0",
-				"redis-errors": "^1.2.0",
-				"redis-parser": "^3.0.0"
-			},
-			"engines": {
-				"node": ">=10"
-			},
-			"funding": {
-				"type": "opencollective",
-				"url": "https://opencollective.com/node-redis"
-			}
-		},
-		"node_modules/redis-commands": {
-			"version": "1.7.0",
-			"resolved": "https://registry.npmjs.org/redis-commands/-/redis-commands-1.7.0.tgz",
-			"integrity": "sha512-nJWqw3bTFy21hX/CPKHth6sfhZbdiHP6bTawSgQBlKOVRG7EZkfHbbHwQJnrE4vsQf0CMNE+3gJ4Fmm16vdVlQ=="
-		},
-		"node_modules/redis-errors": {
-			"version": "1.2.0",
-			"resolved": "https://registry.npmjs.org/redis-errors/-/redis-errors-1.2.0.tgz",
-			"integrity": "sha512-1qny3OExCf0UvUV/5wpYKf2YwPcOqXzkwKKSmKHiE6ZMQs5heeE/c8eXK+PNllPvmjgAbfnsbpkGZWy8cBpn9w==",
-			"engines": {
-				"node": ">=4"
-			}
-		},
-		"node_modules/redis-parser": {
-			"version": "3.0.0",
-			"resolved": "https://registry.npmjs.org/redis-parser/-/redis-parser-3.0.0.tgz",
-			"integrity": "sha512-DJnGAeenTdpMEH6uAJRK/uiyEIH9WVsUmoLwzudwGJUwZPp80PDBWPHXSAGNPwNvIXAbe7MSUB1zQFugFml66A==",
-			"dependencies": {
-				"redis-errors": "^1.0.0"
-			},
-			"engines": {
-				"node": ">=4"
+				"@redis/bloom": "1.2.0",
+				"@redis/client": "1.5.7",
+				"@redis/graph": "1.1.0",
+				"@redis/json": "1.0.4",
+				"@redis/search": "1.1.2",
+				"@redis/time-series": "1.0.4"
 			}
 		},
 		"node_modules/regexp.prototype.flags": {
