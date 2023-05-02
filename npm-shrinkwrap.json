@@ -11,56 +11,56 @@
 			"dependencies": {
 				"@janoside/app-utils": "github:janoside/app-utils#0f52c7028951c1c2b67b06b2ce50fd74001bba93",
 				"async": "^3.2.4",
-				"axios": "^1.3.4",
+				"axios": "^1.4.0",
 				"basic-auth": "^2.0.1",
 				"bech32": "2.0.0",
 				"bip32": "^4.0.0",
-				"bitcoinjs-lib": "^6.0.0",
-				"body-parser": "^1.19.0",
+				"bitcoinjs-lib": "^6.1.0",
+				"body-parser": "^1.20.2",
 				"bootstrap": "^5.2.3",
 				"bs58check": "^3.0.1",
-				"chart.js": "^3.5.0",
+				"chart.js": "^3.9.1",
 				"compression": "^1.7.4",
-				"cookie-parser": "^1.4.5",
-				"crypto-js": "^4.0.0",
+				"cookie-parser": "^1.4.6",
+				"crypto-js": "^4.1.1",
 				"csurf": "^1.11.0",
-				"debug": "^4.3.1",
-				"decimal.js": "^10.2.1",
-				"dotenv": "^13.0.0",
+				"debug": "^4.3.4",
+				"decimal.js": "^10.4.3",
+				"dotenv": "^13.0.1",
 				"electrum-client": "github:janoside/electrum-client",
-				"express": "^4.17.1",
-				"express-async-handler": "^1.1.4",
-				"express-session": "^1.17.2",
-				"jayson": "^4.0.0",
-				"lru-cache": "^9.0.0",
-				"markdown-it": "^13.0.0",
+				"express": "^4.18.2",
+				"express-async-handler": "^1.2.0",
+				"express-session": "^1.17.3",
+				"jayson": "^4.1.0",
+				"lru-cache": "^9.1.1",
+				"markdown-it": "^13.0.1",
 				"md5": "^2.3.0",
 				"memorystore": "^1.6.7",
 				"meow": "^9.0.0",
-				"moment": "^2.29.1",
+				"moment": "^2.29.4",
 				"moment-duration-format": "^2.3.2",
 				"morgan": "^1.10.0",
 				"on-headers": "^1.0.2",
-				"pidusage": "^3.0.0",
+				"pidusage": "^3.0.2",
 				"pug": "^3.0.2",
-				"qrcode": "^1.4.4",
+				"qrcode": "^1.5.3",
 				"redis": "^4.6.6",
-				"semver": "^7.3.5",
+				"semver": "^7.5.0",
 				"serve-favicon": "^2.5.0",
-				"simple-git": "^3.7.1",
-				"tiny-secp256k1": "^2.0.0",
-				"zeromq": "^5.2.8"
+				"simple-git": "^3.18.0",
+				"tiny-secp256k1": "^2.2.1",
+				"zeromq": "^5.3.1"
 			},
 			"bin": {
 				"btc-rpc-explorer": "bin/cli.js"
 			},
 			"devDependencies": {
-				"eslint": "^8.0.0",
+				"eslint": "^8.39.0",
 				"npm-run-all": "^4.1.5",
-				"sass": "^1.51.0"
+				"sass": "^1.62.1"
 			},
 			"optionalDependencies": {
-				"event-loop-stats": "^1.3.0"
+				"event-loop-stats": "^1.4.1"
 			}
 		},
 		"node_modules/@aws-crypto/crc32": {
@@ -1455,9 +1455,9 @@
 			}
 		},
 		"node_modules/@babel/parser": {
-			"version": "7.21.5",
-			"resolved": "https://registry.npmjs.org/@babel/parser/-/parser-7.21.5.tgz",
-			"integrity": "sha512-J+IxH2IsxV4HbnTrSWgMAQj0UEo61hDA4Ny8h8PCX0MLXiibqHbqIOVneqdocemSBc22VpBKxt4J6FQzy9HarQ==",
+			"version": "7.21.8",
+			"resolved": "https://registry.npmjs.org/@babel/parser/-/parser-7.21.8.tgz",
+			"integrity": "sha512-6zavDGdzG3gUqAdWvlLFfk+36RilI+Pwyuuh7HItyeScCWP3k6i8vKclAQ0bM/0y/Kz/xiwvxhMv9MgTJP5gmA==",
 			"bin": {
 				"parser": "bin/babel-parser.js"
 			},
