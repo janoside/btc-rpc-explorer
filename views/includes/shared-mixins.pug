@@ -561,6 +561,10 @@ mixin timeAgo(timeAgoTime, options={oneElement:false, agoText:true})
 	- let agoText = true;
 	if (options && "agoText" in options)
 		- agoText = options.agoText;
+
+	- let hideHoverText = false;
+	if (options && "hideHoverText" in options)
+		- hideHoverText = options.hideHoverText;
 	
 	- let timeAgo = moment.duration(moment.utc(new Date()).diff(moment.utc(new Date(parseInt(timeAgoTime) * 1000))));
 	- let future = false;
@@ -589,7 +593,10 @@ mixin timeAgo(timeAgoTime, options={oneElement:false, agoText:true})
 
 		else
 			if (oneElement)
-				span.border-dotted(title=utils.summarizeDuration(timeAgo), data-bs-toggle="tooltip") #{utils.summarizeDuration(timeAgo, options)}
+				if (hideHoverText)
+					span #{utils.summarizeDuration(timeAgo, options)}
+				else
+					span.border-dotted(title=utils.summarizeDuration(timeAgo), data-bs-toggle="tooltip") #{utils.summarizeDuration(timeAgo, options)}
 			else
 				span #{utils.summarizeDuration(timeAgo, options)}
 

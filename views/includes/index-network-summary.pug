@@ -133,7 +133,7 @@ if (exchangeRates)
 				small.text-muted.ms-2
 					| (
 					span.border-dotted(title=`${utils.summarizeDuration(halvingDt)} (${new Decimal(halvingDt.asDays()).toDP(1)} d) <br/> ${titleStr}`, data-bs-toggle="tooltip", data-bs-html="true")
-						+timeAgo(nextHalvingData.nextHalvingDate.getTime() / 1000, {oneElement:true})
+						+timeAgo(nextHalvingData.nextHalvingDate.getTime() / 1000, {oneElement:true, hideHoverText:true})
 					| )
 
 				.progress.mt-1.mx-7(style="height: 2px;", role="progressbar", aria-label="Difficulty adjustment progress", aria-valuenow=halvingProgressPercent.toDP(0), aria-valuemin="0" aria-valuemax="100")
