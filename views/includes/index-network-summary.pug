@@ -127,11 +127,12 @@ if (exchangeRates)
 
 				- var utcMoment = moment.utc(nextHalvingData.nextHalvingDate);
 				- var titleStr = `${utcMoment.format("Y-MM-DD, HH:mm:ss")} utc`;
+				- let halvingDt = moment.duration(moment.utc(nextHalvingData.nextHalvingDate).diff(moment.utc(new Date())));
 				
 				i.text-tiny.bi-box.ms-2
 				small.text-muted.ms-2
 					| (
-					span.border-dotted(title=titleStr, data-bs-toggle="tooltip")
+					span.border-dotted(title=`${utils.summarizeDuration(halvingDt)} (${new Decimal(halvingDt.asDays()).toDP(1)} d) <br/> ${titleStr}`, data-bs-toggle="tooltip", data-bs-html="true")
 						+timeAgo(nextHalvingData.nextHalvingDate.getTime() / 1000, {oneElement:true})
 					| )
 
