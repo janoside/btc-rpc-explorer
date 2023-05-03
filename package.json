@@ -41,7 +41,7 @@
 		"body-parser": "^1.20.2",
 		"bootstrap": "^5.2.3",
 		"bs58check": "^3.0.1",
-		"chart.js": "^3.9.1",
+		"chart.js": "^4.3.0",
 		"compression": "^1.7.4",
 		"cookie-parser": "^1.4.6",
 		"crypto-js": "^4.1.1",
