@@ -49,7 +49,7 @@ function createCache(keyPrefix, onCacheEvent) {
 			
 			const prefixedKey = `${keyPrefix}-${key}`;
 
-			await redisClient.set(prefixedKey, JSON.stringify(obj), "PX", maxAgeMillis);
+			await redisClient.set(prefixedKey, JSON.stringify(obj), {"PX": maxAgeMillis});
 		}
 	};
 }
