@@ -251,7 +251,7 @@ block content
 							| #{global.rpcClient.host}
 							span.text-muted :#{global.rpcClient.port}
 
-						+summaryItem("Peers")
+						+summaryItem("Peers", "Number of peers connected to this node.", null, null, "icon:bi-diagram-3", "./peers", "Details about the peers connected to this node")
 							| #{getnetworkinfo.connections.toLocaleString()}
 
 							if (getnetworkinfo.connections_in)
