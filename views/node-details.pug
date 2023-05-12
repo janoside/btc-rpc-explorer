@@ -247,9 +247,9 @@ block content
 
 				+contentSection("Network")
 					+summaryRow(4)
-						+summaryItem("Host")
-							| #{global.rpcClient.host}
-							span.text-muted :#{global.rpcClient.port}
+						+summaryItem("Host", "IP address and port number of RPC node")
+							| #{global.rpcClient.options.host}
+							span.text-muted :#{global.rpcClient.options.port}
 
 						+summaryItem("Peers", "Number of peers connected to this node.", null, null, "icon:bi-diagram-3", "./peers", "Details about the peers connected to this node")
 							| #{getnetworkinfo.connections.toLocaleString()}
