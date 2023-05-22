@@ -4,7 +4,7 @@ module.exports = {
 		{
 			name: "Bitcoin Pizza Day",
 			date: "2010-05-22",
-			desc: "On this day in 2010, Lazlo Hanyecz, paid Jeremy Sturdivant 10,000 BTC for two pizzas costing ~41 USD. The famous <a href='./tx/a1075db55d416d3ca199f55b6084e2115b9345e16c5cf302fc80e9d5fbf5d48d@57043'>\"Bitcoin Pizza\" transaction</a> was one of the earliest real-world BTC transactions and is celebrated as helping start the Bitcoin economy."
+			desc: "On this day in 2010, Laszlo Hanyecz, paid Jeremy Sturdivant 10,000 BTC for two pizzas costing ~41 USD. The famous <a href='./tx/a1075db55d416d3ca199f55b6084e2115b9345e16c5cf302fc80e9d5fbf5d48d@57043'>\"Bitcoin Pizza\" transaction</a> was one of the earliest real-world BTC transactions and is celebrated as helping start the Bitcoin economy."
 		},
 		{
 			name: "SegWit Lock-In Day",
@@ -69,7 +69,7 @@ module.exports = {
 		{
 			name: "Lightning Pizza Day",
 			date: "2018-02-25",
-			desc: "On this day in 2018, eight years after buying pizza with the famous <a href='./tx/a1075db55d416d3ca199f55b6084e2115b9345e16c5cf302fc80e9d5fbf5d48d@57043'>\"Bitcoin Pizza\" transaction</a>, Lazlo Hanyecz returned to buy pizza over the Lightning Network."
+			desc: "On this day in 2018, eight years after buying pizza with the famous <a href='./tx/a1075db55d416d3ca199f55b6084e2115b9345e16c5cf302fc80e9d5fbf5d48d@57043'>\"Bitcoin Pizza\" transaction</a>, Laszlo Hanyecz returned to buy pizza over the Lightning Network."
 		},
 		{
 			name: "Mt. Gox Death Day",
