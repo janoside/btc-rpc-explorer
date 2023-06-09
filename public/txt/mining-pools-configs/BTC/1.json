@@ -902,6 +902,10 @@
       "name": "Luxor",
       "link": "https://mining.luxor.tech"
     },
+    "/Mara Pool/": {
+      "name": "MARA Pool",
+      "link": "https://marathondh.com"
+    },
     "/Mined by HashBX.io/": {
       "name": "HashBX",
       "link": "https://hashbx.io"
@@ -1285,6 +1289,10 @@
     "cointerra": {
       "name": "Cointerra",
       "link": "https://cointerra.com"
+    },
+    "emcd.io": {
+      "name": "EMCDPool",
+      "link": "https://pool.emcd.io"
     },
     "get___emcd": {
       "name": "EMCDPool",
