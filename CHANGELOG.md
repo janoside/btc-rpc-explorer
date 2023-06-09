@@ -1,5 +1,5 @@
 ##### v3.4.0
-###### Unreleased (beta)
+###### 2023-06-09
 
 * Breaking changes to the API (see [./api/changelog](/api/changlog))
 * Homepage
