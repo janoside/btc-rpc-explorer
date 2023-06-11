@@ -510,6 +510,15 @@ module.exports = {
 			alertBodyHtml: "A controversial 'digital artifact' project named Ordinals embeds content, named 'inscriptions', in the witness fields of transactions. This transaction includes the first such inscription, a PNG image, ever embedded in the mainnet BTC blockchain.",
 			referenceUrl: "https://ordinals.com/inscription/6fb976ab49dcec017f1e201e84395983204ae1a7c2abf7ced0a85d692e442799i0"
 		},
+		{
+			type: "extendedPubKey",
+			date: "2016-06-27",
+			chain: "main",
+			extendedPubKey: "xpub661MyMwAqRbcGrauUKWQDx9dVvF5315xiT2AbxNrn5hF8gtrjAjtpYq7LmfyGFex1TjJWHihNtzDXVwCYSUy3LdfvbtuBDSADx4exncXSda",
+			summary: "Decentralization of Power project fiasco",
+			alertBodyHtml: "How things can wrong when an eXtended Pub Key is leaked together with a derived private key.",
+			referenceUrl: "http://www.ztohoven.com/?lang=en"
+		},
 
 
 
