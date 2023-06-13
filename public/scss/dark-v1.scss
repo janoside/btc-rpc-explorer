@@ -161,7 +161,7 @@ $header-footer-bg: #112138;
 }
 
 .bg-tx-separator {
-	background-color: #131a24;
+	background-color: darken($body-bg, 10%);
 }
 
 .border-card-highlight-badge {

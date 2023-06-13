@@ -58,7 +58,7 @@ $nav-tabs-border-color: lighten($body-color, 45%);
 }
 
 .bg-tx-separator {
-	background-color: #dce1e5;
+	background-color: darken($body-bg, 30%);
 }
 
 .border-card-highlight-badge {

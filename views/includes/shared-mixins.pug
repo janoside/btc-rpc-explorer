@@ -147,7 +147,7 @@ mixin txList(visibleTxs, txCount, limit, offset, inputsByTxid, options={})
 					
 	
 		//.mb-4.mb-md-3
-		.pb-4.pb-md-3.bg-tx-separator
+		.pb-4.pb-md-2.bg-tx-separator
 
 
 	each tx, txIndex in visibleTxs
@@ -228,7 +228,7 @@ mixin txList(visibleTxs, txCount, limit, offset, inputsByTxid, options={})
 								+infoBadge
 									span(data-bs-toggle="tooltip", title="Data truncated by performance settings. See transaction details for fee info.")
 										span.fw-light …
-										
+
 							else if (txFee)
 								+infoBadge
 									span.border-dotted.fw-bold.me-1(title="The miner fee (and fee rate) paid by this transaction. The fee equals the difference between the total input value and the total output value.", data-bs-toggle="tooltip") fee
@@ -327,7 +327,7 @@ mixin txList(visibleTxs, txCount, limit, offset, inputsByTxid, options={})
 				+txIoDetails(tx, txInputs, totalIOValues, blockHeight, {highlightAddress:options.highlightAddress, maxTxOutputDisplayCount:maxTxOutputDisplayCount})
 
 		if (txIndex < (visibleTxs.length - 1) || txCount > limit)
-			.pb-4.pb-md-3.bg-tx-separator
+			.pb-4.pb-md-2.bg-tx-separator
 
 
 	if (txCount > limit && !options.hidePagination)
