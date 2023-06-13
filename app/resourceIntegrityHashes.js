@@ -13,7 +13,7 @@ module.exports =
     "site.js": "sha384-G8o2io5zIdQiiVN+4CAGGXPO4UvV8jGkSMlfddSPbqIUd3x5Rv01pNH6ec8QOATu",
     "bootstrap-icons.css": "sha384-rJFhkIguED0Z4GX6r6ReHpTCkwWtiPHZnQtWVP0DQWcKHzeJAlYb1m/xdYkeEk+f",
     "dark-v1.min.css": "sha384-N4vpIzX+w8OiVt/PRWfSTxIBA/r/2wp/9H3d3Qxmb/6woHCt9/HZQl9Nc3XByIqU",
-    "dark.min.css": "sha384-D2gq3AeUGFAfKC5n33CFEqSj59O3kcAVAo//tvF9XQ3NYyk6uMtcoUiVOsVOJ5/5",
+    "dark.min.css": "sha384-CZz6XiKcNpqio2wvNlCOZ/wEbjjS0Z7W7+zn6bzl5kfs5VS9nFi/jzIAxIobXrtg",
     "dataTables.bootstrap4.min.css": "sha384-EkHEUZ6lErauT712zSr0DZ2uuCmi3DoQj6ecNdHQXpMpFNGAQ48WjfXCE5n20W+R",
     "highlight.min.css": "sha384-s4RLYRjGGbVqKOyMGGwfxUTMOO6D7r2eom7hWZQ6BjK2Df4ZyfzLXEkonSm0KLIQ",
     "light.min.css": "sha384-oFtx78mBk7Y/IOR4rl1Ij5Wf3/5FnXjwqcmvYpdvI/piekQkeaq72KSZjWUc3Uaw",
