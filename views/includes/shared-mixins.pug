@@ -234,7 +234,7 @@ mixin txList(visibleTxs, txCount, limit, offset, inputsByTxid, options={})
 										span.text-tiny.ms-1 sat/vB
 										span )
 
-							else if (Object.keys(txInputs).length < tx.vin.length)
+							else if (!coinbaseTx && Object.keys(txInputs).length < tx.vin.length)
 								+infoBadge
 									span(data-bs-toggle="tooltip", title="Data truncated by performance settings. See transaction details for fee info.")
 										span.fw-light …
