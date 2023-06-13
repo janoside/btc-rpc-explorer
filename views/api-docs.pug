@@ -19,7 +19,9 @@ block content
 	+dismissableInfoAlert("apiDocsNoteDismissed", "About the API...")
 		h6.mb-2 About the API
 
-		| The API documented below is made available by btc-rpc-explorer. All actions return JSON content. The actions are organized by category. From this documentation you can directly click on an action's link to see the output format in your browser.
+		p The API documented below is made available by BitcoinExplorer. All actions return JSON content. The actions are organized by category. From this documentation you can directly click on an action's link to see the output format in your browser.
+
+		| Note that the output from any given action may vary, depending on the capabilities of your node. BitcoinExplorer does its best to maximize data returned, while also gracefully falling back when data is unavailable (e.g. when older node software simply doesn't have a particular piece of data).
 
 
 	each cat, catIndex in categories
