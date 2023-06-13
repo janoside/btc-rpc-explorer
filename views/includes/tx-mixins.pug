@@ -1,0 +1,362 @@
+
+
+mixin inputValueDisplay(tx, txVin, vout)
+	if (txVin.coinbase)
+		span.border-dotted.me-1(title="This is the <b>block subsidy</b> - newly created coins awarded (automatically, by the network protocol) to the miner that found this block.", data-bs-toggle="tooltip", data-bs-html="true")
+			i.bi-asterisk.text-success
+
+		span(class=(tx.vin.length == 1 ? "fw-bold" : false))
+			- var currencyValue = coinConfig.blockRewardFunction(blockHeight, activeBlockchain);
+			+valueDisplay(currencyValue)
+
+	else
+		if (vout && vout.value)
+			span(class=(tx.vin.length == 1 ? "fw-bold" : "fw-light"))
+				+valueDisplay(vout.value)
+
+		else if (!global.txindexAvailable)
+			span(title="This data is unavailable. Your node must have its transaction index (txindex) setting enabled to view it.", data-bs-toggle="tooltip")
+				i.bi-backspace.text-danger
+
+
+mixin outputValueDisplay(tx, vout, voutIndex, nonZeroVoutValueCount)
+	if (vout.value > 0 && vout.scriptPubKey.asm.startsWith('OP_RETURN '))
+		span(title="Burned output - as an OP_RETURN output, this value is provably unspendable." data-bs-toggle="tooltip")
+			i.bi-fire.text-danger.me-2
+
+	if (vout.value > 0)
+		span(class=(nonZeroVoutValueCount == 1 ? "fw-bold" : "fw-light"))
+			+valueDisplay(vout.value)
+
+	if (!vout.scriptPubKey.asm.startsWith('OP_RETURN '))
+		if (utxos)
+			if (utxos[voutIndex])
+				span(title="This output remains unspent (a valid UTXO)." data-bs-toggle="tooltip")
+					i.bi-check-circle.text-success.ms-2
+
+			else if (utxos[voutIndex] == null)
+				if (tx.txid == "4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b")
+					span(title="This output is UNSPENDABLE, and therefore these coins do not exist!" data-bs-toggle="tooltip")
+						i.bi-flag.text-warning.ms-2
+
+				else
+					span(title="This output has been spent (destroyed)." data-bs-toggle="tooltip")
+						i.bi-x-circle.text-danger.ms-2
+
+
+
+mixin txIoDetails(tx, txInputs, totalIOValues, blockHeight, options={})
+	if (options.highlightAddress)
+		- txIOHighlightAddress = options.highlightAddress
+
+	if (options.maxTxOutputDisplayCount)
+		- maxTxOutputDisplayCount = options.maxTxOutputDisplayCount
+
+	.row
+		.col-lg-6(class=(tx.vin.length >= tx.vout.length ? "border-lg-end" : false))
+			if (txInputs || !global.txindexAvailable)
+				- var extraInputCount = 0;
+				each txVin, txVinIndex in tx.vin
+					if (!txVin.coinbase)
+						- var vout = null;
+						if (txInputs && txInputs[txVinIndex])
+							- var txInput = txInputs[txVinIndex];
+							- var vout = txInput;
+
+						else if (!global.txindexAvailable)
+							- var txInput = {txid:txVin.txid, vout:txVin.vout};
+							- var vout = {};
+
+					if (txVin.coinbase || vout || !global.txindexAvailable)
+						.clearfix
+							a.sz-xs-hidden.d-none.d-sm-inline.badge.fw-normal.card-highlight.border.text-decoration-none.me-2(data-bs-toggle="tooltip", title=`Input #${txVinIndex.toLocaleString()}`, style="white-space: nowrap;")
+								i.d-inline.bi-arrow-right.text-danger
+								
+								span.d-none.d-sm-inline.font-monospace.ms-1 #{txVinIndex.toLocaleString()}
+
+							a.sz-xs-only.d-inline.d-sm-none.text-decoration-none.me-1(data-bs-toggle="tooltip", title=`Input #${txVinIndex.toLocaleString()}`, style="white-space: nowrap;")
+								i.d-inline.bi-arrow-right.text-danger
+
+
+							if (vout && vout.scriptPubKey && vout.scriptPubKey.type)
+								span.d-none.d-sm-inline(title=`Input Type: ${utils.outputTypeName(vout.scriptPubKey.type)}`, data-bs-toggle="tooltip")
+									+darkBadge(utils.outputTypeAbbreviation(vout.scriptPubKey.type))
+
+							if (vout && vout.coinbaseSpend)
+								span.d-none.d-sm-inline
+									+successBadge
+										span(title=`This input spends a coinbase output (mining reward), meaning that this represents the first time these coins have been spent.`, data-bs-toggle="tooltip") 1<sup>st</sup> spend
+
+							span.ms-1.float-end
+								+inputValueDisplay(tx, txVin, vout)
+
+
+							if (txVin.coinbase)
+								+successBadge
+									span(title="Coinbase transactions are special transactions created by the miner of a block. They distribute the block reward (subsidy) as the miner chooses, along with all of the fees paid by transactions included in the block.", data-bs-toggle="tooltip") coinbase
+								
+								.mt-2
+									+hexDataDisplay(txVin.coinbase)
+
+
+							else
+								span.word-wrap
+									if (vout.utxoTime)
+										- var deltaT = tx.time - vout.utxoTime
+										- var deltaTYears = deltaT / 60 / 60 / 24 / 365
+
+										if (deltaTYears > 5)
+											span.me-2.d-none.d-sm-inline(title=`This UTXO was very old! It existed for ${parseInt(deltaTYears)}+ years - from ${moment.utc(new Date(vout.utxoTime * 1000)).format('MMM D, Y')} until ${moment.utc(new Date(tx.time * 1000)).format('MMM D, Y')} - before being spent (destroyed) in this transaction!`, data-bs-toggle="tooltip")
+												+funItemIcon
+										
+									
+									span.mt-1
+										a.sz-xl-plus.d-none.d-xl-inline(href=`./tx/${txInput.txid}#output-${txVin.vout}`) #{utils.ellipsizeMiddle(txInput.txid, 22)}
+											span.text-muted  ##{txVin.vout}
+
+										a.sz-md-lg.d-none.d-md-inline.d-xl-none(href=`./tx/${txInput.txid}#output-${txVin.vout}`) #{utils.ellipsizeMiddle(txInput.txid, 14)}
+											span.text-muted  ##{txVin.vout}
+
+										a.sz-xs-sm.small.d-inline.d-md-none(href=`./tx/${txInput.txid}#output-${txVin.vout}`) #{utils.ellipsizeMiddle(txInput.txid, 14)}
+											span.text-muted  ##{txVin.vout}
+
+								if (vout && vout.scriptPubKey)
+									- var voutAddresses = utils.getVoutAddresses(vout);
+
+									if (voutAddresses.length > 0)
+										.word-wrap.mt-2.d-none.d-sm-block
+											a.sz-md-plus.d-none.d-md-inline(href=`./address/${voutAddresses[0]}`, class=(txIOHighlightAddress == voutAddresses[0] ? "text-info" : null)) #{utils.ellipsizeMiddle(voutAddresses[0], 44)}
+											a.sz-xs-sm.small.d-inline.d-md-none(href=`./address/${voutAddresses[0]}`, class=(txIOHighlightAddress == voutAddresses[0] ? "text-info" : null)) #{utils.ellipsizeMiddle(voutAddresses[0], 24)}
+
+
+											if (txIOHighlightAddress == voutAddresses[0])
+												span(title="Current address", data-bs-toggle="tooltip")
+													i.bi-arrow-left.text-warning.ms-1.text-info
+
+											if (global.specialAddresses[voutAddresses[0]])
+												- var specialAddressInfo = global.specialAddresses[voutAddresses[0]];
+												if (specialAddressInfo.type == "minerPayout")
+													span  
+													a.d-none.d-sm-inline(data-bs-toggle="tooltip", title=`Miner payout address: ${specialAddressInfo.minerInfo.name}`)
+														+funItemIcon
+
+										.d-block.d-sm-none
+											div(class=`tx-input-address-${tx.txid}`, style="display: none;")
+												a.sz-xs-sm.small(href=`./address/${voutAddresses[0]}`, class=(txIOHighlightAddress == voutAddresses[0] ? "text-info" : null)) #{utils.ellipsizeMiddle(voutAddresses[0], 24)}
+												
+												if (txIOHighlightAddress == voutAddresses[0])
+													span(title="Current address", data-bs-toggle="tooltip")
+														i.bi-arrow-left.text-warning.ms-1.text-info
+														
+												if (tx.vin.length > 1 || txVinIndex > 0)
+													hr.mb-1
+
+										if (false)
+											small
+												span.border-dotted(title="Transaction output", data-bs-toggle="tooltip") txo
+												span.me-1 :
+												a(href=`./tx/${txInput.txid}#output-${txVin.vout}`) #{utils.ellipsize(txInput.txid, 20)}[#{txVin.vout}]
+
+								else
+										
+
+						if (tx.vin.length > 1)
+							hr.d-none.d-sm-block
+
+					else
+						- extraInputCount = extraInputCount + 1;
+
+				if (extraInputCount > 0)
+					.clearfix.mb-sm-2
+						a.sz-md-plus.d-none.d-sm-inline.badge.fw-normal.card-highlight.border.text-decoration-none(data-bs-toggle="tooltip", title=`Input #${(tx.vin.length - extraInputCount + 1).toLocaleString()} - ${tx.vin.length.toLocaleString()}`, style="white-space: nowrap;")
+							i.bi-arrow-right.text-danger.me-sm-2
+							span.d-none.d-sm-inline …
+
+						a.sz-xs-only.d-inline.d-sm-none.text-decoration-none.me-1(data-bs-toggle="tooltip", title=`Input #${(tx.vin.length - extraInputCount + 1).toLocaleString()} - ${tx.vin.length.toLocaleString()}`, style="white-space: nowrap;")
+							i.d-inline.bi-arrow-right.text-danger
+
+						small.text-muted.border-dotted.ms-0.ms-sm-2(data-bs-toggle="tooltip", title="The details for the remaining inputs were truncated for performance purposes. Click through to the transaction details to see all inputs.") (#{extraInputCount.toLocaleString()} truncated)
+
+						.float-end
+							- var currencyValue = new Decimal(totalIOValues.output).minus(new Decimal(totalIOValues.input));
+							span.border-dotted.me-1(title="The total amounts for other inputs are approximately equal to this value, plus the mining fee paid.", data-bs-toggle="tooltip") ~+
+							+valueDisplay(currencyValue)
+
+					hr.d-none.d-sm-block
+
+				if (totalIOValues.input && totalIOValues.input > 0 && tx.vin.length > 1)
+					.row.mb-0.mb-md-0
+						.col
+							.text-end.mt-1.mt-sm-n1
+								if (totalIOValues.input > 0 && extraInputCount == 0)
+									i.d-inline.d-lg-none.bi-arrow-right.text-danger.me-2
+									span.fw-bold
+										+valueDisplay(totalIOValues.input)
+
+								else if (extraInputCount > 0)
+									i.d-inline.d-lg-none.bi-arrow-right.text-danger.me-2
+									span.border-dotted.me-1(title="The total input amount for this transaction is approximately equal to this value, plus the mining fee paid.", data-bs-toggle="tooltip") ~+
+									span.fw-bold
+										+valueDisplay(totalIOValues.output)
+			
+
+
+		.d-xs-block.d-sm-none
+			.my-3
+				hr
+
+		if (tx.vin.length == 1)
+			.d-none.d-sm-block.d-md-block.d-lg-none
+				.my-4
+					hr
+
+		else
+			.d-none.d-sm-block.d-lg-none
+				.mb-4
+					| &nbsp;
+
+		.col-lg-6(class=(tx.vout.length > tx.vin.length ? "border-lg-start" : false))
+			- var maxRegularRowCount = maxTxOutputDisplayCount || options.maxTxOutputDisplayCount || 15;
+			- var regularRowCount = 0;
+			- var hiddenRowCount = 0;
+			- var nonZeroVoutValueCount = tx.vout.filter(vout => { return vout.value > 0; }).length;
+
+			each vout, voutIndex in tx.vout
+				- var voutAddresses = utils.getVoutAddresses(vout);
+
+				- var highlightRow = false;
+				if (txIOHighlightAddress != null && voutAddresses.length > 0 && voutAddresses[0] == txIOHighlightAddress)
+					- highlightRow = true;
+
+				if (!highlightRow)
+					- regularRowCount++;
+
+				- var hiddenRow = false;
+				if (!highlightRow && regularRowCount > maxRegularRowCount)
+					- hiddenRow = true;
+					- hiddenRowCount++;
+
+				div(data-txid=tx.txid, class=(hiddenRow ? "d-none" : ""))
+					.clearfix.mb-0.mb-sm-2.mb-md-3
+						a.xs-hidden.d-none.d-sm-inline.badge.card-highlight.border.text-decoration-none.fw-normal.me-2(data-bs-toggle="tooltip", title=`Output #${voutIndex.toLocaleString()}`, style="white-space: nowrap;")
+							i.d-inline.bi-arrow-right.text-success
+							
+							span.d-none.d-sm-inline.font-monospace.ms-1 #{voutIndex.toLocaleString()}
+
+						a.xs-only.d-inline.d-sm-none.text-decoration-none.fw-normal.me-1(data-bs-toggle="tooltip", title=`Output #${voutIndex.toLocaleString()}`, style="white-space: nowrap;")
+							i.d-inline.bi-arrow-right.text-success
+
+						if (vout && vout.scriptPubKey)
+							if (vout.scriptPubKey.hex && vout.scriptPubKey.hex.startsWith('6a24aa21a9ed'))
+								span
+									+primaryBadge("OP_RETURN")
+									
+									a(href="https://github.com/bitcoin/bips/blob/master/bip-0141.mediawiki#commitment-structure", data-bs-toggle="tooltip", title="Read about the SegWit Commitment", target="_blank")
+										+darkBadge
+											span.small SegWit
+											i.bi-box-arrow-up-right.ms-1
+
+								.my-2
+									+hexDataDisplay(vout.scriptPubKey.asm.substring("OP_RETURN ".length))
+
+							else if (vout.scriptPubKey.asm && vout.scriptPubKey.asm.startsWith('OP_RETURN '))
+								span
+									+primaryBadge("OP_RETURN")
+
+								.my-2
+									+hexDataDisplay(vout.scriptPubKey.asm.substring("OP_RETURN ".length))
+							
+							else if (vout.scriptPubKey.type)
+								span.d-none.d-sm-inline
+									+darkBadge
+										span(title=`Output Type: ${utils.outputTypeName(vout.scriptPubKey.type)}`, data-bs-toggle="tooltip") #{utils.outputTypeAbbreviation(vout.scriptPubKey.type)}
+
+							
+
+							if (voutAddresses.length == 0)
+								// xs display only, output type when we have no address (e.g. op_return)
+
+								if (vout.scriptPubKey.asm && vout.scriptPubKey.asm.startsWith('OP_RETURN '))
+									if (false)
+										span.small.xs-only.d-inline.d-sm-none
+											+primaryBadge("OP_RETURN")
+
+										.xs-sm.d-inline-block.d-md-none.small.border.rounded-1.px-1.card-highlight.mt-1
+											- var asm = vout.scriptPubKey.asm.substring("OP_RETURN ".length);
+											span.text-tiny.fw-light #{utils.formatHex(asm, "utf8")}
+								
+								else if (vout.scriptPubKey.type)
+									span.small.xs-only.d-inline.d-sm-none
+										+darkBadge
+											span(title=`Output Type: ${utils.outputTypeName(vout.scriptPubKey.type)}`, data-bs-toggle="tooltip") #{utils.outputTypeAbbreviation(vout.scriptPubKey.type)}
+								
+
+						span.ms-2.float-end
+							+outputValueDisplay(tx, vout, voutIndex, nonZeroVoutValueCount)
+
+						if (vout && vout.scriptPubKey.asm && !vout.scriptPubKey.asm.startsWith("OP_RETURN "))
+							if (voutAddresses.length == 0)
+								.my-2
+									+hexDataDisplay(vout.scriptPubKey.hex)
+
+
+						if (voutAddresses.length > 0)
+							.d-inline.d-lg-block.mt-lg-2
+								each addr in voutAddresses
+									a.sz-lg-plus.d-none.d-lg-inline(id=`output-${voutIndex}`, href=`./address/${addr}`)
+										span(class=(highlightRow ? "text-info" : null)) #{utils.ellipsizeMiddle(addr, 44)}
+
+									a.sz-md.d-none.d-md-inline.d-lg-none(id=`output-${voutIndex}`, href=`./address/${addr}`)
+										span(class=(highlightRow ? "text-info" : null)) #{utils.ellipsizeMiddle(addr, 24)}
+
+									a.sz-xs-sm.d-inline.d-md-none(id=`output-${voutIndex}`, href=`./address/${addr}`)
+										span.small(class=(highlightRow ? "text-info" : null)) #{utils.ellipsizeMiddle(addr, 18)}
+
+									if (highlightRow)
+										span(title="Current address", data-bs-toggle="tooltip")
+											i.bi-arrow-left.ms-1.text-warning
+
+									if (global.specialAddresses[addr])
+										- var specialAddressInfo = global.specialAddresses[addr];
+										if (specialAddressInfo.type == "minerPayout")
+											span  
+											a.d-none.d-sm-inline(data-bs-toggle="tooltip", title=`Miner payout address: ${specialAddressInfo.minerInfo.name}`)
+												+funItemIcon
+
+									.d-none.d-sm-block.mb-2
+
+						
+
+						if (vout.scriptPubKey)
+							if (voutAddresses.length > 0)
+								
+
+							else if (false)
+								.mb-tiny
+									span(title=`Output Type: ${utils.outputTypeName(vout.scriptPubKey.type)}`, data-bs-toggle="tooltip")
+										+darkBadge(utils.outputTypeAbbreviation(vout.scriptPubKey.type))
+
+								+hexDataDisplay(vout.scriptPubKey.asm)
+
+
+					if (voutIndex < (tx.vout.length - 1) || nonZeroVoutValueCount > 1)
+						hr.d-none.d-md-block
+
+					else
+						.mb-0
+
+			if (hiddenRowCount > 0)
+				a.small(href="javascript:void(0)", onclick=("showAllTxOutputs(this, '" + tx.txid + "');")) 
+					i.bi-plus-square.text-card-highlight.me-1
+					| Show remaining #{hiddenRowCount.toLocaleString()} outputs
+
+			if (nonZeroVoutValueCount > 1)
+				.row.mb-0.mb-lg-0
+					.col
+						.text-end.mt-1.mt-sm-n1(style=(utxos ? "margin-right: 1.39rem !important;" : false))
+							span.fw-bold
+								i.d-inline.d-lg-none.bi-arrow-right.text-success.me-2
+								+valueDisplay(totalIOValues.output)
+
+
+

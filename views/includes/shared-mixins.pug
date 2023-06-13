@@ -159,6 +159,11 @@ mixin txList(visibleTxs, txCount, limit, offset, inputsByTxid, options={})
 
 		- var tx_height_param = (!global.txindexAvailable && txBlockHeight) ? `@${txBlockHeight}` : '';
 
+		- var txInputs = inputsByTxid[tx.txid];
+		- var blockHeight = txBlockHeight != undefined ? txBlockHeight : -1;
+		- var totalIOValues = utils.getTxTotalInputOutputValues(tx, txInputs, blockHeight);
+
+
 		.border.bg-content.p-3(class=(txIndex == 0 && txCount <= limit ? "rounded-top" : false), class=(txCount <= limit && txIndex == (visibleTxs.length - 1) ? "rounded-bottom" : false))
 			if (tx && tx.txid)
 				.clearfix
@@ -179,6 +184,7 @@ mixin txList(visibleTxs, txCount, limit, offset, inputsByTxid, options={})
 
 
 					- var hasInputAddresses = false;
+					- var coinbaseTx = false;
 					if (tx && tx.vin && inputsByTxid && inputsByTxid[tx.txid])
 						- var txInputs = inputsByTxid[tx.txid];
 						each txVin, txVinIndex in tx.vin
@@ -190,6 +196,9 @@ mixin txList(visibleTxs, txCount, limit, offset, inputsByTxid, options={})
 									if (voutAddresses.length > 0)
 										- hasInputAddresses = true;
 
+							else
+								- coinbaseTx = true;
+
 					if (hasInputAddresses)
 						.float-end
 							.d-block.d-sm-none
@@ -199,24 +208,80 @@ mixin txList(visibleTxs, txCount, limit, offset, inputsByTxid, options={})
 
 					.float-start.float-sm-end.mt-n2.mt-sm-0.mb-2.mb-sm-0
 						.me-5.me-sm-n2
+							- let txFee = null;
+							- let txFeeRate = null;
+							
 							if (options.mempoolDetailsByTxid && options.mempoolDetailsByTxid[tx.txid])
 								- var mempoolDetails = options.mempoolDetailsByTxid[tx.txid].entry;
 								- var mempoolDetailsFee = ((mempoolDetails.fees && mempoolDetails.fees.modified) ? mempoolDetails.fees.modified : (mempoolDetails.fee ? mempoolDetails.fee : 0));
-								- var feeRate = new Decimal(mempoolDetailsFee).times(coinConfig.baseCurrencyUnit.multiplier).dividedBy(mempoolDetails.vsize);
 								
-								+lightBadge
-									| #{parseInt(feeRate).toLocaleString()}
-									span.text-tiny.ms-tiny sat/vB
+								- txFee = new Decimal(mempoolDetailsFee);
+								- txFeeRate = txFee.times(coinConfig.baseCurrencyUnit.multiplier).dividedBy(mempoolDetails.vsize);
+
+
+							if (!coinbaseTx && totalIOValues.input && totalIOValues.output)
+								- txFee = new Decimal(totalIOValues.input).minus(totalIOValues.output);
+								- txFeeRate = txFee.dividedBy(tx.vsize).times(coinConfig.baseCurrencyUnit.multiplier);
+
+							
+							if (txFee && txFee > 0)
+								+infoBadge
+									span.border-dotted.fw-bold.me-1(title="The miner fee (and fee rate) paid by this transaction. The fee equals the difference between the total input value and the total output value.", data-bs-toggle="tooltip") fee
+									+_valueDisplaySat(txFee, 1000)
+
+									span.ms-2 (
+										| #{parseInt(txFee.dividedBy(tx.vsize).times(coinConfig.baseCurrencyUnit.multiplier)).toLocaleString()}
+										span.text-tiny.ms-1 sat/vB
+										span )
+
+							else if (Object.keys(txInputs).length < tx.vin.length)
+								+infoBadge
+									span(data-bs-toggle="tooltip", title="Data truncated by performance settings. See transaction details for fee info.")
+										span.fw-light …
+								
+
+							- let addrGain = null;
+							- let addrLoss = null;
 
 							if (options.addrGainsByTxid && options.addrGainsByTxid[tx.txid])
-								+successBadge
-									span.me-tiny +
-									+valueDisplay(options.addrGainsByTxid[tx.txid])
+								- addrGain = new Decimal(options.addrGainsByTxid[tx.txid]);
+								
+								if (false)
+									+successBadge
+										span +
+										+valueDisplay(options.addrGainsByTxid[tx.txid])
 
 							if (options.addrLossesByTxid && options.addrLossesByTxid[tx.txid])
-								span.badge.bg-danger.me-2
-									span.me-tiny -
-									+valueDisplay(options.addrLossesByTxid[tx.txid])
+								- addrLoss = new Decimal(options.addrLossesByTxid[tx.txid]);
+								
+								if (false)
+									span.badge.bg-danger.me-2
+										span -
+										+valueDisplay(options.addrLossesByTxid[tx.txid])
+
+							- let addrDelta = null;
+
+							if (addrGain && addrLoss)
+								- addrDelta = addrGain.minus(addrLoss);
+
+							else if (addrGain)
+								- addrDelta = addrGain;
+
+							else if (addrLoss)
+								- addrDelta = addrLoss.times(-1);
+
+							if (addrDelta)
+								+darkBadge
+									span.border-dotted.fw-bold.me-1(title="Net change to the balance of the current address caused by this transaction", data-bs-toggle="tooltip") net
+
+									if (addrDelta > 0)
+										span.text-success
+											span +
+											+valueDisplay(addrDelta)
+									else
+										span.text-danger
+											span -
+											+valueDisplay(addrDelta.times(-1))
 
 							if (options.addrGainsByTxid && options.addrLossesByTxid && !options.addrGainsByTxid[tx.txid] && !options.addrLossesByTxid[tx.txid])
 								span.badge.bg-danger.me-2(data-bs-toggle="tooltip", title="See transaction details for spent-from-this-address amount")
@@ -249,7 +314,7 @@ mixin txList(visibleTxs, txCount, limit, offset, inputsByTxid, options={})
 									+darkBadge
 										i.bi-clock.me-1
 
-										span.fw-light(title=titleStr, data-bs-toggle="tooltip")
+										span.fw-light
 											+timeAgo(tx.time, {oneElement:true})
 
 			
@@ -258,14 +323,7 @@ mixin txList(visibleTxs, txCount, limit, offset, inputsByTxid, options={})
 			.d-none.d-lg-block.border-end.mt-n4.mb-2(style="border-color: currentColor !important; height: 10px; width: 50%; opacity: 0.25;")
 
 			div
-				- var txInputs = inputsByTxid[tx.txid];
-				- var blockHeight = txBlockHeight != undefined ? txBlockHeight : -1;
-				- options.maxTxOutputDisplayCount = maxTxOutputDisplayCount;
-				
-				if (options.highlightAddress)
-					- var txIOHighlightAddress = options.highlightAddress;
-
-				include ./transaction-io-details.pug
+				+txIoDetails(tx, txInputs, totalIOValues, blockHeight, {highlightAddress:options.highlightAddress, maxTxOutputDisplayCount:maxTxOutputDisplayCount})
 
 		if (txIndex < (visibleTxs.length - 1) || txCount > limit)
 			.pb-4.pb-md-3.bg-tx-separator
@@ -336,16 +394,17 @@ mixin _valueDisplayBtc(val, options={})
 
 
 mixin _valueDisplaySat(val, summarizeMin=Infinity, summarizeDecimals=3)
-	- var parts = utils.formatCurrencyAmount(val, localCurrencyDisplay ? userSettings.localCurrency : userSettings.displayCurrency);
+	- var localCurrencyDisplay = userSettings.displayCurrency == "local";
+	- var parts = utils.formatCurrencyAmount(val, "sat");
 
 	//span #{JSON.stringify(parts)}
 	
-	if (parts.intVal >= summarizeMin)
+	if (Math.abs(parts.intVal) >= summarizeMin)
 		//span #{JSON.stringify(parts)}
 		- var largeNumberData = utils.formatLargeNumberSignificant(parts.intVal, summarizeDecimals >= 0 ? summarizeDecimals : 3);
 		//span #{JSON.stringify(largeNumberData)} #{parts.intVal}
 		span(title=parts.intVal.toLocaleString(), data-bs-toggle="tooltip") #{largeNumberData[0]}
-		span.ms-1 #{largeNumberData[1].textDesc}
+		span #{largeNumberData[1].abbreviation}
 		
 	else
 		span(class=(localCurrencyDisplay ? "border-dotted" : false), title=(localCurrencyDisplay ? `${utils.formatCurrencyAmount(val, coinConfig.defaultCurrencyUnit.name.toLowerCase()).simpleVal} BTC` : false), data-bs-toggle=(localCurrencyDisplay ? "tooltip" : false)) #{parts.intVal.toLocaleString()}
@@ -368,7 +427,7 @@ mixin _valueDisplayLocal(val, summarizeMin=Infinity, summarizeDecimals=3)
 	//span #{JSON.stringify(parts)}
 	span.fw-light.me-tiny #{global.currencySymbols[userSettings.localCurrency]}
 
-	if (parts.intVal >= summarizeMin)
+	if (Math.abs(parts.intVal) >= summarizeMin)
 		- var largeNumberData = utils.formatLargeNumberSignificant(parts.intVal, summarizeDecimals >= 0 ? summarizeDecimals : 3);
 		//span #{JSON.stringify(largeNumberData)} #{parts.intVal}
 		span.border-dotted(title=`${global.currencySymbols[userSettings.localCurrency]}${parts.intVal.toLocaleString()}<br/>${utils.formatCurrencyAmount(val, coinConfig.defaultCurrencyUnit.name.toLowerCase()).simpleVal} BTC`, data-bs-toggle="tooltip", data-bs-html="true")
@@ -441,8 +500,13 @@ mixin confirmations(confirmations, abbreviated=true)
 
 
 
+mixin bodyBgBadge(text)
+	span.small.badge.bg-body.border.border-card-highlight-badge.text-reset.mb-tiny.me-1 #{text ? text : ""}
+		if (block)
+			block
+
 mixin cardHighlightBadge(text)
-	span.small.badge.bg-card-highlight-badge.border.border-card-highlight-badge.text-reset.mb-tiny.me-1 #{text ? text : ""}
+	span.small.badge.card-highlight.border.border-card-highlight-badge.text-reset.mb-tiny.me-1 #{text ? text : ""}
 		if (block)
 			block
 
@@ -454,7 +518,7 @@ mixin hexDataDisplay(hex, order="utf8,ascii,hex")
 
 	.d-flex.flex-row
 		.d-inline-block.small.border.rounded-1.p-1.px-2.card-highlight.word-wrap
-			+cardHighlightBadge(items[0])
+			+bodyBgBadge(items[0])
 			span.text-tiny.d-inline.d-sm-none #{utils.formatHex(hex, items[0])}
 			span.small.d-none.d-sm-inline #{utils.formatHex(hex, items[0])}
 			
@@ -468,7 +532,7 @@ mixin hexDataDisplay(hex, order="utf8,ascii,hex")
 						if (itemIndex > 1)
 							br
 						
-						+cardHighlightBadge(item)
+						+bodyBgBadge(item)
 						
 						span.text-tiny.d-inline.d-sm-none #{utils.formatHex(hex, item)}
 						span.small.d-none.d-sm-inline #{utils.formatHex(hex, item)}
@@ -566,7 +630,8 @@ mixin timeAgo(timeAgoTime, options={oneElement:false, agoText:true})
 	if (options && "hideHoverText" in options)
 		- hideHoverText = options.hideHoverText;
 	
-	- let timeAgo = moment.duration(moment.utc(new Date()).diff(moment.utc(new Date(parseInt(timeAgoTime) * 1000))));
+	- let utcMoment = moment.utc(new Date(parseInt(timeAgoTime) * 1000));
+	- let timeAgo = moment.duration(moment.utc(new Date()).diff(utcMoment));
 	- let future = false;
 
 	if (timeAgo.asSeconds() < 0)
@@ -596,7 +661,7 @@ mixin timeAgo(timeAgoTime, options={oneElement:false, agoText:true})
 				if (hideHoverText)
 					span #{utils.summarizeDuration(timeAgo, options)}
 				else
-					span.border-dotted(title=utils.summarizeDuration(timeAgo), data-bs-toggle="tooltip") #{utils.summarizeDuration(timeAgo, options)}
+					span.border-dotted(title=`${utils.summarizeDuration(timeAgo)}<br>${utcMoment.format("Y-MM-DD HH:mm:ss")} utc`, data-bs-toggle="tooltip", data-bs-html="true") #{utils.summarizeDuration(timeAgo, options)}
 			else
 				span #{utils.summarizeDuration(timeAgo, options)}
 
@@ -606,25 +671,35 @@ mixin timeAgo(timeAgoTime, options={oneElement:false, agoText:true})
 
 
 mixin darkBadge(text)
-	span.badge.bg-dark.border.border-dark.me-2 #{text ? text : ""}
+	span.badge.text-bg-dark.border.border-dark.me-2 #{text ? text : ""}
 		if (block)
 			block
 
 
 mixin lightBadge(text)
-	span.badge.bg-light.text-dark.border.me-2 #{text ? text : ""}
+	span.badge.text-bg-light.text-dark.border.me-2 #{text ? text : ""}
 		if (block)
 			block
 
 
 mixin successBadge(text)
-	span.badge.bg-success.me-2 #{text ? text : ""}
+	span.badge.text-bg-success.me-2 #{text ? text : ""}
 		if (block)
 			block
 
 
 mixin primaryBadge(text, endMargin=true)
-	span.badge.bg-primary(class=(endMargin ? "me-2" : false)) #{text ? text : ""}
+	span.badge.text-bg-primary(class=(endMargin ? "me-2" : false)) #{text ? text : ""}
+		if (block)
+			block
+
+mixin secondaryBadge(text, endMargin=true)
+	span.badge.text-bg-secondary(class=(endMargin ? "me-2" : false)) #{text ? text : ""}
+		if (block)
+			block
+
+mixin infoBadge(text, endMargin=true)
+	span.badge.text-bg-info(class=(endMargin ? "me-2" : false)) #{text ? text : ""}
 		if (block)
 			block
 

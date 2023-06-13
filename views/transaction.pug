@@ -273,7 +273,9 @@ block content
 					if (result && result.getblock)
 						- blockHeight = result.getblock.height;
 
-					include includes/transaction-io-details.pug
+					- var totalIOValues = utils.getTxTotalInputOutputValues(tx, txInputs, blockHeight);
+
+					+txIoDetails(tx, txInputs, totalIOValues, blockHeight)
 						
 
 				if (mempoolDetails)

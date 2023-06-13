@@ -871,7 +871,7 @@ function formatLargeNumber(n, decimalPlaces) {
 			let item = exponentScales[i];
 
 			let fraction = new Decimal(n / item.val);
-			if (fraction >= 1) {
+			if (Math.abs(fraction) >= 1) {
 				return [fraction.toDP(decimalPlaces), item];
 			}
 		}
@@ -891,7 +891,7 @@ function formatLargeNumberSignificant(n, significantDigits) {
 			let item = exponentScales[i];
 
 			let fraction = new Decimal(n / item.val);
-			if (fraction >= 1) {
+			if (Math.abs(fraction) >= 1) {
 				return [fraction.toDP(Math.max(0, significantDigits - `${Math.floor(fraction)}`.length)), item];
 			}
 		}
