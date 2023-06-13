@@ -1058,6 +1058,7 @@ function buildQrCodeUrl(str, results) {
 function outputTypeAbbreviation(outputType) {
 	const map = {
 		"pubkey": "P2PK",
+		"multisig": "P2MS",
 		"pubkeyhash": "P2PKH",
 		"scripthash": "P2SH",
 		"witness_v0_keyhash": "P2WPKH",
@@ -1078,6 +1079,7 @@ function outputTypeAbbreviation(outputType) {
 function outputTypeName(outputType) {
 	const map = {
 		"pubkey": "Pay to Public Key",
+		"multisig": "Pay to MultiSig",
 		"pubkeyhash": "Pay to Public Key Hash",
 		"scripthash": "Pay to Script Hash",
 		"witness_v0_keyhash": "Witness, v0 Key Hash",

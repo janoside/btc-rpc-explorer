@@ -6,7 +6,7 @@ module.exports = {
 			chain: "main",
 			blockHeight: 0,
 			blockHash: "000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f",
-			summary: "The Bitcoin Genesis Block.",
+			summary: "Bitcoin Genesis Block",
 			alertBodyHtml: "This is the first block in the Bitcoin blockchain, known as the <b>Genesis Block</b>. This block was mined by Bitcoin's creator <b>Satoshi Nakamoto</b>.<br/>Read more here: <a href='https://en.bitcoin.it/wiki/Genesis_block'>bitcoin.it/wiki/Genesis_block</a>.",
 			referenceUrl: "https://en.bitcoin.it/wiki/Genesis_block"
 		},
@@ -16,7 +16,7 @@ module.exports = {
 			chain: "main",
 			txid: "4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b",
 			blockHeight: 0,
-			summary: "The coinbase transaction of the Genesis Block.",
+			summary: "Coinbase transaction of the Genesis Block",
 			alertBodyHtml: "This transaction doesn't really exist! This is the <b>coinbase transaction</b> of the <a href='./block/000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f'>Bitcoin Genesis Block</a>. For more background about this special-case transaction, you can read <a href='https://github.com/bitcoin/bitcoin/issues/3303'>this brief discussion</a> among some of the <a href='https://bitcoin.org'>Bitcoin</a> developers.",
 			referenceUrl: "https://github.com/bitcoin/bitcoin/issues/3303"
 		},
@@ -26,7 +26,7 @@ module.exports = {
 			chain: "main",
 			txid: "e411dbebd2f7d64dafeef9b14b5c59ec60c36779d43f850e5e347abee1e1a455",
 			blockHeight: 71036,
-			summary: "Early transaction with MANY (4,000+) OP_CHECKSIG commands, before this DoS vector was fixed.",
+			summary: "Early transaction with MANY (4,000+) OP_CHECKSIG commands, before this DoS vector was fixed",
 			alertBodyHtml: "Multiple transactions in Block #71,036, including this one, included MANY OP_CHECKSIG commands, causing nodes to perform unnecessary work, and helped identify a possible denial-of-service (DoS) attack. A new version of Bitcoin was quickly released. The new version did not cause a fork on the main network, though it did cause one on the test network (where someone had played around with the attack more)." ,
 			referenceUrl: "https://en.bitcoin.it/wiki/Common_Vulnerabilities_and_Exposures#CVE-2010-5138"
 		},
@@ -36,7 +36,7 @@ module.exports = {
 			chain: "main",
 			txid: "7dff938918f07619abd38e4510890396b1cef4fbeca154fb7aafba8843295ea2",
 			blockHeight: 24835,
-			summary: "First bitcoin traded for fiat currency.",
+			summary: "First bitcoin traded for fiat currency",
 			alertBodyHtml: "In this first-known BTC-to-fiat transaction, 5,050 BTC were exchanged for 5.02 USD, at an effective exchange rate of ~0.001 USD/BTC.",
 			referenceUrl: "https://twitter.com/marttimalmi/status/423455561703624704"
 		},
@@ -91,7 +91,7 @@ module.exports = {
 			chain: "main",
 			blockHeight: 481824,
 			blockHash: "0000000000000000001c8018d9cb3b742ef25114f27563e3fc4a1902167f9893",
-			summary: "First SegWit block.",
+			summary: "First SegWit block",
 			referenceUrl: "https://twitter.com/conio/status/900722226911219712"
 		},
 		{
@@ -100,7 +100,7 @@ module.exports = {
 			chain: "main",
 			blockHeight: 210000,
 			blockHash: "000000000000048b95347e83192f69cf0366076336c639f9b7228e9ba171342e",
-			summary: "First block of subsidy era #2 (25 BTC).",
+			summary: "First block of subsidy era #2 (25 BTC)",
 			referenceUrl: "https://github.com/bitcoin/bitcoin/blob/master/src/validation.cpp#L1240"
 		},
 		{
@@ -119,7 +119,7 @@ module.exports = {
 			chain: "main",
 			blockHeight: 420000,
 			blockHash: "000000000000000002cce816c0ab2c5c269cb081896b7dcb34b8422d6b74ffa1",
-			summary: "First block of subsidy era #3 (12.5 BTC).",
+			summary: "First block of subsidy era #3 (12.5 BTC)",
 			referenceUrl: "https://github.com/bitcoin/bitcoin/blob/master/src/validation.cpp#L1240"
 		},
 		{
@@ -128,7 +128,7 @@ module.exports = {
 			chain: "main",
 			blockHeight: 630000,
 			blockHash: "000000000000000000024bead8df69990852c202db0e0097c1a12ea637d7e96d",
-			summary: "First block of subsidy era #4 (6.25 BTC).",
+			summary: "First block of subsidy era #4 (6.25 BTC)",
 			referenceUrl: "https://github.com/bitcoin/bitcoin/blob/master/src/validation.cpp#L1240"
 		},
 		{
@@ -146,7 +146,7 @@ module.exports = {
 			chain: "main",
 			txid: "8f907925d2ebe48765103e6845c06f1f2bb77c6adc1cc002865865eb5cfd5c1c",
 			blockHeight: 481824,
-			summary: "First SegWit transaction.",
+			summary: "First SegWit transaction",
 			referenceUrl: "https://twitter.com/KHS9NE/status/900553902923362304"
 		},
 		{
@@ -164,7 +164,7 @@ module.exports = {
 			chain: "main",
 			txid: "a1075db55d416d3ca199f55b6084e2115b9345e16c5cf302fc80e9d5fbf5d48d",
 			blockHeight: 57043,
-			summary: "The \"Bitcoin Pizza\" transaction.",
+			summary: "The \"Bitcoin Pizza\" transaction",
 			alertBodyHtml: "This is the famous \"Bitcoin Pizza\" transaction, one of the earliest real-world transactions, in which 10,000 BTC was paid for 2 large pizzas worth ~41 USD (at an effective exchange rate of ~$0.004/BTC).",
 			referenceUrl: "https://bitcointalk.org/index.php?topic=137.0"
 		},
@@ -185,7 +185,7 @@ module.exports = {
 			chain: "main",
 			blockHeight: 170,
 			blockHash: "00000000d1145790a8694403d4063f323d499e655c83426834d4ce2f8dd4a2ee",
-			summary: "First block containing a (non-coinbase) transaction.",
+			summary: "First block containing a non-coinbase transaction",
 			alertBodyHtml: "This block comes 9 days after the genesis block and is the first to contain a transfer of bitcoin. Before this block all blocks contained only coinbase transactions, which mint new bitcoin.<br/>See transaction #1 (f4184fc…) below for more info.",
 			referenceUrl: "https://bitcointalk.org/index.php?topic=91806.msg1012234#msg1012234"
 		},
@@ -195,7 +195,7 @@ module.exports = {
 			chain: "main",
 			txid: "f4184fc596403b9d638783cf57adfe4c75c605f6356fbc91338530e9831e9e16",
 			blockHeight: 170,
-			summary: "The first transfer of bitcoin.",
+			summary: "First transfer of bitcoin",
 			alertBodyHtml: "This transaction represents the first ever transfer of bitcoin from one person to another. It also has the added distinction of being (one of?) the only known transfers of bitcoin from Satoshi Nakamoto, in this case sending bitcoin to Hal Finney as a test."
 		},
 		{
@@ -204,7 +204,7 @@ module.exports = {
 			chain: "main",
 			blockHeight: 481947,
 			blockHash: "00000000000000000139cb443e16442fcd07a4a0e0788dd045ee3cf268982016",
-			summary: "First block mined that was greater than 1MB.",
+			summary: "First > 1MB block",
 			referenceUrl: "https://en.bit.news/bitfury-mined-first-segwit-block-size-1-mb/"
 		},
 		{
@@ -213,7 +213,7 @@ module.exports = {
 			chain: "main",
 			blockHeight: 505225,
 			blockHash: "0000000000000000001bbb529c64ddf55edec8f4ebc0a0ccf1d3bb21c278bfa7",
-			summary: "First block mined that was greater than 2MB.",
+			summary: "First > 2MB block",
 			referenceUrl: "https://twitter.com/BitGo/status/954998877920247808"
 		},
 		{
@@ -261,7 +261,7 @@ module.exports = {
 			chain: "main",
 			txid: "eeea72f5c9fe07178013eac84c3705443321d5453befd7591f52d22ac39b3963",
 			blockHeight: 621259,
-			summary: "500+ million USD transferred for < 1 USD fee (2020 prices)."
+			summary: "500+ million USD transferred for < 1 USD fee (2020 prices)"
 		},
 		{
 			type: "tx",
@@ -288,7 +288,7 @@ module.exports = {
 			chain: "main",
 			txid: "29a3efd3ef04f9153d47a990bd7b048a4b2d213daaa5fb8ed670fb85f13bdbcf",
 			blockHeight: 153509,
-			summary: "The current largest output transaction.",
+			summary: "Current largest output transaction",
 			alertBodyHtml: "This transaction from November 2011 spends 11 UTXOs worth 50,000 BTC to create a single 550,000 BTC UTXO. This is currently the largest output transaction.",
 			referenceUrl: "https://blockchair.com/bitcoin/transactions?s=output_total(desc)#"
 		},
@@ -298,7 +298,7 @@ module.exports = {
 			chain: "main",
 			txid: "54e48e5f5c656b26c3bca14a8c95aa583d07ebe84dde3b7dd4a78f4e4186e713",
 			blockHeight: 230009,
-			summary: "The Bitcoin whitepaper embedded in the Bitcoin blockchain.",
+			summary: "Bitcoin whitepaper, embedded in the Bitcoin blockchain",
 			alertBodyHtml: "This transaction encodes the Bitcoin whitepaper PDF in 945 of its 947 outputs. You can view the PDF, decoded from data served by your own node here: <a href='./bitcoin-whitepaper'>bitcoin whitepaper</a>. Or read more about the technical details - ",
 			referenceUrl: "https://bitcoin.stackexchange.com/questions/35959/how-is-the-whitepaper-decoded-from-the-blockchain-tx-with-1000x-m-of-n-multisi"
 		},
@@ -318,7 +318,7 @@ module.exports = {
 			chain: "main",
 			blockHeight: 227835,
 			blockHash: "00000000000001aa077d7aa84c532a4d69bdbff519609d1da0835261b7a74eb6",
-			summary: "The last 'Version 1' block.",
+			summary: "Last 'Version 1' block",
 			alertBodyHtml: "This block was the last 'Version 1' block to be mined. <a href='https://github.com/bitcoin/bips/blob/master/bip-0034.mediawiki'>BIP-34</a> defined 'Version 2' blocks and the 'bip34' soft fork was officially locked in 96 blocks after this one, in block #<a href='./block-height/227931'>227,931</a>.",
 			referenceUrl: "https://github.com/bitcoin/bips/blob/master/bip-0034.mediawiki"
 		},
@@ -368,7 +368,7 @@ module.exports = {
 			chain: "main",
 			blockHeight: 687455,
 			blockHash: "00000000000000000001464428893b618817bff3128a6e17a2c043de53ca4673",
-			summary: "Taproot Lock-In via Speedy Trial mechanism.",
+			summary: "Taproot Lock-In via \"Speedy Trial\" mechanism",
 			alertBodyHtml: "As the last block of epoch #340, wherein over 90% of blocks were flagged by their miners to indicate Taproot acceptance/readiness, the mining of this block represents the lock-in of the Taproot soft fork on the network via the Speedy Trial activation mechanism. After lock-in, there was a delay period of 11 epochs before nodes began enforcing Taproot's rules in <a href='./block-height/709632'>Block #709,632</a>.",
 			referenceUrl: "https://github.com/bitcoin/bitcoin/pull/21686"
 		},
@@ -378,7 +378,7 @@ module.exports = {
 			chain: "main",
 			blockHeight: 709632,
 			blockHash: "0000000000000000000687bca986194dc2c1f949318629b44bb54ec0a94d8244",
-			summary: "The first Taproot-enforcing block",
+			summary: "First Taproot-enforcing block",
 			alertBodyHtml: "Nearly 4 years after the Taproot upgrade was conceived, and after a contentious process of deciding how to safely upgrade the network, the Taproot soft fork locked in with the mining of <a href='./block-height/687455'>Block #687,455</a> and then finally began to be enforced by nodes in this block.",
 			referenceUrl: "https://twitter.com/pwuille/status/1403725170993336322"
 		},
@@ -388,7 +388,7 @@ module.exports = {
 			chain: "main",
 			txid: "777c998695de4b7ecec54c058c73b2cab71184cf1655840935cd9388923dc288",
 			blockHeight: 709632,
-			summary: "The first (post-activation) Pay-to-Taproot (P2TR) transaction in Bitcoin's history.",
+			summary: "First *post-activation* Pay-to-Taproot (P2TR) transaction in Bitcoin's history",
 			alertBodyHtml: "Saluting the network's upgrade with a cheerful OP_RETURN message 'gm taproot 🥕', <a href='https://twitter.com/FedericoTenga'>@FedericoTenga</a> overpaid by ~3.3x (a fee rate of ~2,500 sat/vB) for the historic honor of sending the first (post-activation) mainnet Pay-to-Taproot (P2TR) transaction. (Note that there exist several quirky pre-activation P2TR outputs, including <a href='./tx/b53e3bc5edbb41b34a963ecf67eb045266cf841cab73a780940ce6845377f141'>the true 'first-ever' P2TR output</a>.)",
 			referenceUrl: "https://twitter.com/FedericoTenga/status/1459755752080519168"
 		},
@@ -398,7 +398,7 @@ module.exports = {
 			chain: "main",
 			txid: "33e794d097969002ee05d336686fc03c9e15a597c1b9827669460fac98799036",
 			blockHeight: 709635,
-			summary: "The first mainnet spend of a Pay-to-Taproot (P2TR) output.",
+			summary: "First post-activation mainnet spend of a Pay-to-Taproot (P2TR) output",
 			referenceUrl: "https://twitter.com/achow101/status/1459759674723651585"
 		},
 		{
@@ -407,7 +407,7 @@ module.exports = {
 			chain: "main",
 			txid: "2eb8dbaa346d4be4e82fe444c2f0be00654d8cfd8c4a9a61b11aeaab8c00b272",
 			blockHeight: 709635,
-			summary: "The first use of OP_CHECKSIGADD",
+			summary: "First use of OP_CHECKSIGADD",
 			alertBodyHtml: "Created by a modified version of <a href='https://twitter.com/bitcoindevkit'>@bitcoindevkit</a>, this Taproot script-spend with a 1-of-2 multisig is the first mainnet transaction to use OP_CHECKSIGADD.",
 			referenceUrl: "https://twitter.com/afilini/status/1459763243556163584"
 		},
@@ -417,7 +417,7 @@ module.exports = {
 			chain: "main",
 			txid: "b10c007c60e14f9d087e0291d4d0c7869697c6681d979c6639dbd960792b4d41",
 			blockHeight: 692261,
-			summary: "The (real) first mainnet spend of Pay-to-Taproot (P2TR) outputs.",
+			summary: "First experimental (pre-activation) mainnet SPEND (!) of a Pay-to-Taproot (P2TR) output",
 			alertBodyHtml: "This interesting transaction exists in the blockchain only because of special coordination with F2Pool. Because this transaction spends Pay-to-Taproot outputs, and because it was created before Taproot activation, it was considered \"non-standard\" and would not be relayed across the Bitcoin network, despite technically being valid. Therefore, as a technical demonstration, <a href='https://b10c.me'>https://b10c.me</a> coordinated with F2Pool to mine this non-standard transaction, wherein the P2TR outputs were effectively anyone-can-spend outputs.",
 			referenceUrl: "https://b10c.me/blog/007-spending-p2tr-pre-activation/"
 		},
@@ -427,7 +427,7 @@ module.exports = {
 			chain: "main",
 			txid: "b53e3bc5edbb41b34a963ecf67eb045266cf841cab73a780940ce6845377f141",
 			blockHeight: 608548,
-			summary: "The (real) first mainnet Pay-to-Taproot output.",
+			summary: "First experimental (pre-activation) mainnet send to a Pay-to-Taproot (P2TR) output",
 			alertBodyHtml: "Created LONG before Taproot lock-in, let alone activation, this transaction's #0 output is the first ever P2TR output. It was created by Matthew Zipkin to test sending support for bech32 witness version 1. Interestingly, this output, along with 3 other pre-Activation P2TR outputs, was also SPENT before activation in <a href='./tx/b10c007c60e14f9d087e0291d4d0c7869697c6681d979c6639dbd960792b4d41'>Transaction b10c007...</a>, which required special coordination with F2Pool.",
 			referenceUrl: "https://b10c.me/blog/007-spending-p2tr-pre-activation/"
 		},
@@ -437,7 +437,7 @@ module.exports = {
 			chain: "main",
 			txid: "562ff53512901dfdd0fca0d6b6a79444aad5767db716ece7c0a1bd15482b6384",
 			blockHeight: 712928,
-			summary: "Far-future dated Locktime value.",
+			summary: "Far-future dated Locktime value",
 			alertBodyHtml: "The 'locktime' value of a transaction usually specifies the earliest time that a transaction may be mined (included in a block). The value can take one of two forms: a block height (if the value is &leq; 500M), or a unix timestamp. The locktime value of this transaction seemingly indicates that the transaction cannot be mined until the year 2076. But, because this is a coinbase transaction (created by a miner in the process of mining a block), its locktime value does not need to honor the usual purpose, and may instead be representing some other data from the miner. This situation arises fairly regularly in coinbase transactions."
 		},
 		{
@@ -446,7 +446,7 @@ module.exports = {
 			chain: "main",
 			txid: "71c3da4e13f5b61c2cf05e9b5a22f3be989142b870c1cf7779a1d7b3f139d422",
 			blockHeight: 361935,
-			summary: "Value provably destroyed in OP_RETURN output.",
+			summary: "Value provably destroyed in OP_RETURN output",
 			alertBodyHtml: "OP_RETURN outputs are special-case outputs that immediately abort script evaluation with a failure result. Therefore, any value assigned to an OP_RETURN output is provably unspendable. In fact, as an optimization, such values are purged from node software's databases since they are certain to be unspendable in all future transactions.",
 			referenceUrl: "https://bitcoin.stackexchange.com/a/109748/3397"
 		},
@@ -456,7 +456,7 @@ module.exports = {
 			chain: "main",
 			txid: "37d5ec4bca7bd077992a6dd8679ab676a22986e63ebaf2c6ea1aebe5e5f5e817",
 			blockHeight: 718448,
-			summary: "Unspendable output due to invalid public key.",
+			summary: "Unspendable output due to invalid public key",
 			alertBodyHtml: "The Script for Output #0 of this transaction has a public key that does not conform to the <a href='https://github.com/bitcoin/bips/blob/master/bip-0340.mediawiki#Public_Key_Generation'>BIP-340</a> specification (\"Schnorr Signatures for secp256k1\"). The value assinged to this output (0.0002 BTC) is therefore burned forever.",
 			referenceUrl: "https://suredbits.com/taproot-funds-burned-on-the-bitcoin-blockchain/"
 		},
@@ -510,6 +510,66 @@ module.exports = {
 			alertBodyHtml: "A controversial 'digital artifact' project named Ordinals embeds content, named 'inscriptions', in the witness fields of transactions. This transaction includes the first such inscription, a PNG image, ever embedded in the mainnet BTC blockchain.",
 			referenceUrl: "https://ordinals.com/inscription/6fb976ab49dcec017f1e201e84395983204ae1a7c2abf7ced0a85d692e442799i0"
 		},
+		{
+			type: "tx",
+			date: "2009-01-16",
+			chain: "main",
+			txid: "6f7cf9580f1c2dfb3c4d5d043cdbb128c640e3f20161245aa7372e9666168516",
+			blockHeight: 728,
+			summary: "First send to a Pay-to-Public Key Hash (P2PKH) address",
+			alertBodyHtml: "This is the first send to a P2PKH Bitcoin address. Before this transaction, all outputs had been sent to P2PK outputs.",
+			referenceUrl: "https://unchained.com/blog/bitcoin-address-types-compared/"
+		},
+		{
+			type: "tx",
+			date: "2012-01-30",
+			chain: "main",
+			txid: "60a20bd93aa49ab4b28d514ec10b06e1829ce6818ec06cd3aabd013ebcdc4bb1",
+			blockHeight: 164467,
+			summary: "First send to a Pay-to-MultiSig (P2MS) output",
+			alertBodyHtml: "This is the first send to a P2MS output. This obscure and obsolete output type has hardly ever been used, but an example can be seen in output #0 of this transaction.",
+			referenceUrl: "https://unchained.com/blog/bitcoin-address-types-compared/"
+		},
+		{
+			type: "tx",
+			date: "2012-04-08",
+			chain: "main",
+			txid: "2597f4819e1902750b9e1fa1515df22bbf14f3a78a2b82aa7d62a8109d83289d",
+			blockHeight: 174717,
+			summary: "First *post-activation* send to a P2SH output",
+			alertBodyHtml: "This is the first send to a P2SH output, after the soft-fork enabling this output type was activated on April 1, 2012. For an example of a pre-soft-fork experiment with the output type, see <a href='./tx/9c08a4d78931342b37fd5f72900fb9983087e6f46c4a097d8a1f52c74e28eaf6'>transaction 9c08a4...</a>.",
+			referenceUrl: "https://unchained.com/blog/bitcoin-address-types-compared/"
+		},
+		{
+			type: "tx",
+			date: "2012-03-07",
+			chain: "main",
+			txid: "9c08a4d78931342b37fd5f72900fb9983087e6f46c4a097d8a1f52c74e28eaf6",
+			blockHeight: 170052,
+			summary: "First experimental (pre-activation) send to a Pay-to-Script Hash (P2SH) output, before the P2SH soft-fork activated",
+			alertBodyHtml: "This is the actual first send to a P2SH output. It occurred nearly a month before the soft-fork enabling the feature (BIP 16) activated on April 1, 2012. For the first post-soft-fork send, see <a href='./tx/2597f4819e1902750b9e1fa1515df22bbf14f3a78a2b82aa7d62a8109d83289d'>transaction 2597f4...</a>.",
+			referenceUrl: "https://unchained.com/blog/bitcoin-address-types-compared/"
+		},
+		{
+			type: "tx",
+			date: "2017-08-24",
+			chain: "main",
+			txid: "461e8a4aa0a0e75c06602c505bd7aa06e7116ba5cd98fd6e046e8cbeb00379d6",
+			blockHeight: 481824,
+			summary: "First send to a Pay-to-Witness Script Hash (P2WSH) output",
+			alertBodyHtml: "This is the first send to a P2WSH output and occurred in the <a href='./block-height/481824'>first SegWit-supporting block</a>.",
+			referenceUrl: "https://unchained.com/blog/bitcoin-address-types-compared/"
+		},
+		{
+			type: "tx",
+			date: "2017-08-24",
+			chain: "main",
+			txid: "dfcec48bb8491856c353306ab5febeb7e99e4d783eedf3de98f3ee0812b92bad",
+			blockHeight: 481824,
+			summary: "First send to a Pay-to-Witness Public Key Hash (P2WPKH) output",
+			alertBodyHtml: "This is the first send to a P2WPKH output and occurred in the <a href='./block-height/481824'>first SegWit-supporting block</a>.",
+			referenceUrl: "https://unchained.com/blog/bitcoin-address-types-compared/"
+		},
 
 
 
@@ -520,7 +580,7 @@ module.exports = {
 			chain: "test",
 			blockHeight: 0,
 			blockHash: "000000000933ea01ad0ee984209779baaec3ced90fa3f408719526f8d77f4943",
-			summary: "The Bitcoin (regtest) Genesis Block.",
+			summary: "The Bitcoin (testnet) Genesis Block",
 			alertBodyHtml: "This is the first block in the Bitcoin blockchain, known as the 'Genesis Block'. You can read more about <a href='https://en.bitcoin.it/wiki/Genesis_block'>the genesis block</a>.",
 			referenceUrl: "https://en.bitcoin.it/wiki/Genesis_block"
 		},
@@ -530,7 +590,7 @@ module.exports = {
 			chain: "test",
 			txid: "4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b",
 			blockHeight: 0,
-			summary: "The coinbase transaction of the Genesis Block.",
+			summary: "The coinbase transaction of the Genesis Block",
 			alertBodyHtml: "This transaction doesn't really exist! This is the coinbase transaction of the <a href='./block/000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f'>Bitcoin Genesis Block</a>. For more background about this special-case transaction, you can read <a href='https://github.com/bitcoin/bitcoin/issues/3303'>this brief discussion</a> among some of the <a href='https://bitcoin.org'>Bitcoin</a> developers.",
 			referenceUrl: "https://github.com/bitcoin/bitcoin/issues/3303"
 		},
@@ -543,7 +603,7 @@ module.exports = {
 			chain: "regtest",
 			blockHeight: 0,
 			blockHash: "0f9188f13cb7b2c71f2a335e3a4fc328bf5beb436012afca590b1a11466e2206",
-			summary: "The Bitcoin (regtest) Genesis Block.",
+			summary: "The Bitcoin (regtest) Genesis Block",
 			alertBodyHtml: "This is the first block in the Bitcoin blockchain, known as the 'Genesis Block'. You can read more about <a href='https://en.bitcoin.it/wiki/Genesis_block'>the genesis block</a>.",
 			referenceUrl: "https://en.bitcoin.it/wiki/Genesis_block"
 		},
@@ -553,7 +613,7 @@ module.exports = {
 			chain: "regtest",
 			txid: "4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b",
 			blockHeight: 0,
-			summary: "The coinbase transaction of the Genesis Block.",
+			summary: "The coinbase transaction of the Genesis Block",
 			alertBodyHtml: "This transaction doesn't really exist! This is the coinbase transaction of the <a href='./block/000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f'>Bitcoin Genesis Block</a>. For more background about this special-case transaction, you can read <a href='https://github.com/bitcoin/bitcoin/issues/3303'>this brief discussion</a> among some of the <a href='https://bitcoin.org'>Bitcoin</a> developers.",
 			referenceUrl: "https://github.com/bitcoin/bitcoin/issues/3303"
 		}
