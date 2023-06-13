@@ -53,9 +53,6 @@ $tooltip-bg: lighten($body-bg, 15%);
 $tooltip-color: $body-color;
 
 
-$nav-tabs-link-active-color:		darken($body-color, 5%);
-//$nav-tabs-link-active-bg:			$body-bg !default;
-$nav-tabs-link-active-border-color:	#ced4da #ced4da $body-bg !important;
 
 
 $btn-close-color: #fff;
@@ -98,6 +95,12 @@ $toast-header-border-color:         rgba(0, 0, 0, .05) !default;
 
 
 $progress-bg: darken($body-bg, 8%);
+
+
+
+$nav-tabs-border-color: $body-color;
+
+
 
 
 

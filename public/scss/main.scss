@@ -77,12 +77,23 @@ $dropdown-min-width: 11rem;
 @import "../../node_modules/bootstrap/scss/bootstrap";
 
 
-.table > :not(:first-child) {
-	border-top: 0px;
+
+.nav-tabs {
+	--bs-nav-tabs-link-active-color:		#{$body-color} !important;
+	--bs-nav-tabs-border-color:				#{$nav-tabs-border-color} !important;
+	//$nav-tabs-link-active-bg:			$body-bg !default;
+	--bs-nav-tabs-link-active-border-color:	#{$nav-tabs-border-color} #{$nav-tabs-border-color} #{$body-bg} !important;
 }
 
-.nav-item .nav-link:hover {
-	background-color: $bg-nav-link-hover;
+.nav-tabs .nav-link.active, .nav-tabs .nav-item.show .nav-link {
+	border-color: $nav-tabs-border-color $nav-tabs-border-color $body-bg !important;
+}
+
+
+
+
+.table > :not(:first-child) {
+	border-top: 0px;
 }
 
 

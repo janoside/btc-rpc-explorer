@@ -87,6 +87,9 @@ $toast-header-background-color:     lighten($body-bg, 7%);
 $toast-header-border-color:         rgba(0, 0, 0, .05) !default;
 
 
+$nav-tabs-border-color: $body-color;
+
+
 
 @import "./main";
 
