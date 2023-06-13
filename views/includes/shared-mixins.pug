@@ -224,15 +224,16 @@ mixin txList(visibleTxs, txCount, limit, offset, inputsByTxid, options={})
 								- txFeeRate = txFee.dividedBy(tx.vsize).times(coinConfig.baseCurrencyUnit.multiplier);
 
 							
-							if (txFee && txFee > 0)
+							if (txFee)
 								+infoBadge
 									span.border-dotted.fw-bold.me-1(title="The miner fee (and fee rate) paid by this transaction. The fee equals the difference between the total input value and the total output value.", data-bs-toggle="tooltip") fee
 									+_valueDisplaySat(txFee, 1000)
 
-									span.ms-2 (
-										| #{parseInt(txFee.dividedBy(tx.vsize).times(coinConfig.baseCurrencyUnit.multiplier)).toLocaleString()}
-										span.text-tiny.ms-1 sat/vB
-										span )
+									if (txFee > 0)
+										span.ms-2 (
+											| #{parseInt(txFee.dividedBy(tx.vsize).times(coinConfig.baseCurrencyUnit.multiplier)).toLocaleString()}
+											span.text-tiny.ms-1 sat/vB
+											span )
 
 							else if (!coinbaseTx && Object.keys(txInputs).length < tx.vin.length)
 								+infoBadge
