@@ -1,7 +1,7 @@
 This changelog specifically tracks changes to the Public API available at `/api` and is maintained separately from the app CHANGELOG such that it can properly adhere to semantic versioning.
 
 ##### v2.0.0
-###### Unreleased
+###### 2023-06-14
 
 * BREAKING: All actions now return JSON content
 * Added:
