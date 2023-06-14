@@ -1,5 +1,5 @@
 ##### v3.4.0
-###### 2023-06-09
+###### 2023-06-14
 
 * Breaking changes to the API (see [./api/changelog](/api/changlog))
 * Homepage
