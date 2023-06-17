@@ -246,23 +246,59 @@ if (exchangeRates)
 
 	+summaryRow((mempoolInfo == undefined ? 0 : 1) + (smartFeeEstimateStrings.length > 0 ? 1 : 0) + ((mempoolInfo && global.activeBlockchain != "signet") ? 1 : 0))
 		if (mempoolInfo)
-			- var thresholds = [11000, 7000];
-			- var colorClass_txCount = (mempoolInfo.size > 11000) ? "text-danger" : (mempoolInfo.size > 7000 ? "text-warning" : "text-success");
-			- var blockCount = new Decimal(mempoolInfo.bytes).dividedBy(coinConfig.maxBlockSize);
-			- var colorClass_blockCount = (blockCount > 20) ? "text-danger" : (blockCount > 10 ? "text-warning" : "text-success");
+			- const thresholds_txCount = {warning: 7000, danger: 11000}
+			- const colorClass_txCount = (mempoolInfo.size > thresholds_txCount.danger) ? "text-danger" : (mempoolInfo.size > thresholds_txCount.warning ? "text-warning" : "text-success")
+			- const blockCount = new Decimal(mempoolInfo.bytes).dividedBy(coinConfig.maxBlockSize)
+			- const thresholds_blockCount = {warning: 10, danger: 20}
+			- const colorClass_blockCount = (blockCount > thresholds_blockCount.danger) ? "text-danger" : (blockCount > thresholds_blockCount.warning ? "text-warning" : "text-success");
+			- const thresholds_totalFees = {warning: 1, danger: 5}
+			- const colorClass_totalFees = (mempoolInfo.total_fee > thresholds_totalFees.danger) ? "text-danger" : (mempoolInfo.total_fee > thresholds_totalFees.warning ? "text-warning" : "text-success");
 			
 			+summaryItem("Mempool", "The number of unconfirmed transactions in your node's mempool, and the number of blocks needed to confirm those transactions", null, null, "icon:bi-hourglass-split", "./mempool-summary", "View mempool summary details")
 				
-				span(class=colorClass_txCount) #{mempoolInfo.size.toLocaleString()}
-				span.text-tiny.text-muted.ms-1 tx
+				span.border-dotted(title=`<b>Number of unconfirmed transactions</b><br/>Highlight colors: <span class='text-success'>Low (≤ ${thresholds_txCount.warning})</span>, <span class='text-warning'>High (between ${thresholds_txCount.warning} and ${thresholds_txCount.danger})</span> and <span class='text-danger'>Very High (> ${thresholds_txCount.danger})</span>`, data-bs-toggle="tooltip", data-bs-html="true")
+					span(class=colorClass_txCount) #{mempoolInfo.size.toLocaleString()}
+					span.text-tiny.text-muted.ms-1 tx
 
-				span.small.text-muted.ms-2
-					| (
-					span.border-dotted(title="Number of blocks needed to clear your node's mempool.", data-bs-toggle="tooltip")
+				span.mx-2.text-muted /
+
+				span.small
+					span.border-dotted(title=`<b>Number of blocks needed to clear the mempool</b><br/>Highlight colors: <span class='text-success'>Low (≤ ${thresholds_blockCount.warning})</span>, <span class='text-warning'>High (between ${thresholds_blockCount.warning} and ${thresholds_blockCount.danger})</span> and <span class='text-danger'>Very High (> ${thresholds_blockCount.danger})</span>`, data-bs-toggle="tooltip", data-bs-html="true")
 						span(class=colorClass_blockCount) #{blockCount.toDP(2)}
 						span.text-tiny.text-muted.ms-1
 							i.bi-box
-					| )
+
+				span.mx-2.text-muted /
+
+				span.small
+					-
+						// Code inspired from shared-mixins.pug and adapted for inclusion in a tooltip
+						const formatFees = (inputVal) => {
+							const displayCurrency = userSettings.displayCurrency == "local" ? userSettings.localCurrency : userSettings.displayCurrency;
+							const parts = utils.formatCurrencyAmount(inputVal, displayCurrency)
+							const currencyType = currencyTypes[parts.currencyUnit.toLowerCase()]
+							let val = parts.val
+							if (currencyType.type == "exchanged") {
+								// Remove any decimals
+								val = val.split('.')[0]
+								// Currency symbol followed by amount with a non-breaking space in-between
+								// so that the two elements remain on the same line
+								return `${currencyType.symbol}&nbsp;${val}`
+							}
+							if (parts.currencyUnit == "sat") {
+								// Add K, M, G, ... suffix to amount
+								const largeNumberData = utils.formatLargeNumberSignificant(parts.intVal, 3);
+								val = `${largeNumberData[0]}${largeNumberData[1].abbreviation}`
+							}
+							// Amount followed by minimized currency name (BTC or sat) with a non-breaking space in-between
+							return `${val}&nbsp;<span class='text-tiny'>${currencyType.name}</span>`
+						}
+					- const warningFees = formatFees(thresholds_totalFees.warning)
+					- const dangerFees = formatFees(thresholds_totalFees.danger)
+					span.border-dotted(title=`<b>Unconfirmed transactions total fees</b><br/>Highlight colors: <span class='text-success'>Low (≤ ${warningFees})</span>, <span class='text-warning'>High (between ${warningFees} and ${dangerFees})</span> and <span class='text-danger'>Very High (> ${dangerFees})</span>`, data-bs-toggle="tooltip", data-bs-html="true") &Sigma;
+					// Don't embed this span inside previous one to avoid collision of their tooltips
+					span.ms-1(class=colorClass_totalFees)
+						+valueDisplay(mempoolInfo.total_fee, {hideLessSignificantDigits:true})
 
 		if (mempoolInfo && global.activeBlockchain != "signet")
 			+summaryRow
