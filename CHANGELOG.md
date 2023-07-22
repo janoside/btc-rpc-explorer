@@ -1,7 +1,7 @@
 ##### v3.4.0
 ###### 2023-06-14
 
-* Breaking changes to the API (see [./api/changelog](/api/changelog))
+* Breaking changes to the API (see [./api/changelog](/api/changlog))
 * Homepage
 	* New "Next Halving" widget in Network Summary
 	* Show difficulty ATH comparison
