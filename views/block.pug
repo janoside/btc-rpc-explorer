@@ -7,6 +7,7 @@ block headContent
 		title Block: Error
 
 block content
+	//span #{result.getblock.height.toLocaleString()}
 	div(align="center")
 		script(async, src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2900084726921838", crossorigin="anonymous")
 		ins.adsbygoogle(style="display:inline-block;width:728px;height:90px", data-ad-client="ca-pub-2900084726921838", data-ad-slot="1164912161")
@@ -299,4 +300,3 @@ block content
 								div.highlight
 									pre
 										code.json #{JSON.stringify(result.blockstats, null, 4)}
-

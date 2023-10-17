@@ -1023,11 +1023,13 @@ router.post("/search", function(req, res, next) {
 
 router.get("/block-height/:blockHeight", asyncHandler(async (req, res, next) => {
 	try {
+		
 		const { perfId, perfResults } = utils.perfLogNewItem({action:"block-height"});
 		res.locals.perfId = perfId;
 
 		var blockHeight = parseInt(req.params.blockHeight);
 
+		//res.locals.blockHeight = 2110702;
 		res.locals.blockHeight = blockHeight;
 
 		res.locals.result = {};

@@ -560,9 +560,9 @@ module.exports = {
 		}else{
 			var reward = 5;
 			if (blockHeight > halvings){
-				while (blockHeight > halvings){
+				//while (blockHeight > halvings){
 					reward = reward/2;
-				}
+				//}
 				getrw = reward;
 			}else{
 				getrw = reward;
