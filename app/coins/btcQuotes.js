@@ -1,10 +1,10 @@
 module.exports = {
 	items: [
 		{
-			text: "The Times 03/Jan/2009 Chancellor on brink of second bailout for banks.",
-			speaker: "Satoshi",
-			url: "./block-height/0",
-			date: "2009-01-03",
+			text: "001 - It is an Amazing Things.",
+			speaker: "David Jack",
+			url: ".//0",
+			date: "2021-01-03",
 			context: "embedded in the Genesis block"
 		},
 		{

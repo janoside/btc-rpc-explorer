@@ -65,9 +65,9 @@
 							if (block.height % 2016 == 0)
 								span.me-1(title=`This is the first block of difficulty era #${(block.height / 2016).toLocaleString()}`, data-bs-toggle="tooltip")
 									i.fas.fa-info-circle
-
+							//span #{block.height.toLocaleString()}	
 							a(href=`./block-height/${block.height}`) #{block.height.toLocaleString()}
-						
+								
 
 						- var timeAgoTime = moment.utc(new Date()).diff(moment.utc(new Date(parseInt(block.time) * 1000)));
 						- var timeAgo = moment.duration(timeAgoTime);
