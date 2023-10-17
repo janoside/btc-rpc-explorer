@@ -154,11 +154,11 @@
 							td.text-end.d-none.d-lg-table-cell
 								if (blockstatsByHeight[block.height])
 									- var satValue = new Decimal(blockstatsByHeight[block.height].total_out).plus(blockstatsByHeight[block.height].subsidy).plus(blockstatsByHeight[block.height].totalfee);
-									- var currencyValue = parseInt(satValue.dividedBy(coinConfig.baseCurrencyUnit.multiplier));
+									- var currencyValue = Decimal(satValue.dividedBy(coinConfig.baseCurrencyUnit.multiplier));
 									- var currencyValueDecimals = 0;
 
 									if (userSettings.displayCurrency == "wcn")
-										+valueDisplaySpecial(currencyValue, 0)
+										+valueDisplaySpecial(currencyValue, 1)
 
 									else
 										+valueDisplay(currencyValue)
