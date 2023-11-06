@@ -623,6 +623,41 @@ module.exports = {
 			url: "https://thebitcoinlayer.substack.com/p/bitcoin-is-swallowing-the-world",
 			date: "2023-04-27"
 		},
+		{
+			// 88
+			text: "You can't stop Bitcoin. It's like trying to stop Gunpowder.",
+			speaker: "John McAfee",
+			url: "https://twitter.com/pete_rizzo_/status/1698663357140631674?s=20",
+			date: "2014-09-08"
+		},
+		{
+			// 89
+			text: "BTC is like a game of musical chairs, except you can sit down before the music stops if you want. And many of us sat down a long time ago.",
+			speaker: "https://twitter.com/stackhodler",
+			url: "https://x.com/BenJustman/status/1715366852623241628",
+			date: "2023-10-20"
+		},
+		{
+			// 90
+			text: "I'll be buying at the top forever.",
+			speaker: "Michael Saylor",
+			url: "https://x.com/ronin21btc/status/1715980793850294641",
+			date: "2023-10-22"
+		},
+		{
+			// 91
+			text: "Money is a long story and #Bitcoin is the last chapter.",
+			speaker: "Robert Breedlove",
+			url: "https://x.com/TheBitcoinConf/status/1719772123101794765",
+			date: "2023-11-01"
+		},
+		{
+			// 92
+			text: "Bitcoin is simply a technology that, if adopted, moves society to an economic coordination point that can't be controlled by the powers that be.",
+			speaker: "Naval Ravikant",
+			url: "https://x.com/SimplyBitcoinTV/status/1721580708538552674",
+			date: "2023-11-06"
+		}
 		/*{
 			text: "Bitcoin is a technological tour de force.",
 			speaker: "Bill Gates",
