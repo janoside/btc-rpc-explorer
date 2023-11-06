@@ -44,7 +44,7 @@
 		"chart.js": "^4.3.0",
 		"compression": "^1.7.4",
 		"cookie-parser": "^1.4.6",
-		"crypto-js": "^4.1.1",
+		"crypto-js": "^4.2.0",
 		"csurf": "^1.11.0",
 		"debug": "^4.3.4",
 		"decimal.js": "^10.4.3",
