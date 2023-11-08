@@ -133,10 +133,16 @@
 
 								else
 									.d-inline.d-sm-none
-										span.badge.bg-primary(data-bs-toggle="tooltip", data-bs-html="true", title=`Identified by: ${block.miner.identifiedBy}${block.miner.note ? ("<br/><br/>" + block.miner.note) : ""}`) #{utils.ellipsize(block.miner.name, 12)}
+										span.badge.bg-primary(data-bs-toggle="tooltip", data-bs-html="true", title=`Identified by: ${block.miner.identifiedBy}`) #{utils.ellipsize(block.miner.name, 12)}
+
+										if (block.miner.note)
+											i.bi-asterisk.ms-2(data-bs-toggle="tooltip", title=block.miner.note)
 
 									.d-none.d-sm-inline
-										span.badge.bg-primary(data-bs-toggle="tooltip", data-bs-html="true", title=`Identified by: ${block.miner.identifiedBy}${block.miner.note ? ("<br/><br/>" + block.miner.note) : ""}`) #{utils.ellipsize(block.miner.name, 14)}
+										span.badge.bg-primary(data-bs-toggle="tooltip", data-bs-html="true", title=`Identified by: ${block.miner.identifiedBy}`) #{utils.ellipsize(block.miner.name, 14)}
+
+										if (block.miner.note)
+											i.bi-asterisk.ms-2(data-bs-toggle="tooltip", title=block.miner.note)
 
 							else if (block.height < global.pruneHeight)
 								span(title="This data is unavailable due to blockchain pruning", data-bs-toggle="tooltip")

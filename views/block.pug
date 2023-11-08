@@ -82,7 +82,10 @@ block content
 										+copyTextButton(result.getblock.miner.name)
 
 								else if (result.getblock.miner.identifiedBy)
-									span.badge.bg-primary(data-bs-toggle="tooltip", data-bs-html="true", title=`Identified by: ${result.getblock.miner.identifiedBy}${result.getblock.miner.note ? ("<br/><br/>" + result.getblock.miner.note) : ""}`) #{result.getblock.miner.name}
+									span.badge.bg-primary(data-bs-toggle="tooltip", data-bs-html="true", title=`Identified by: ${result.getblock.miner.identifiedBy}`) #{result.getblock.miner.name}
+
+									if (result.getblock.miner.note)
+										i.bi-asterisk.ms-2(data-bs-toggle="tooltip", title=result.getblock.miner.note)
 
 								else
 									small.badge.bg-primary #{result.getblock.miner.name}
