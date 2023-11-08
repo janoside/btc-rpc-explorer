@@ -94,6 +94,12 @@ $nav-tabs-border-color: $body-color;
 @import "./main";
 
 
+.table {
+	--bs-table-color-state: $body-color;
+}
+
+
+
 
 
 .alert-primary {

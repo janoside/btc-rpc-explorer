@@ -33,6 +33,10 @@ $nav-tabs-border-color: lighten($body-color, 45%);
 	background-color: $main-bg !important;
 }
 
+.bg-darken {
+	background-color: darken($body-bg, 6%) !important;
+}
+
 .bg-header-footer {
 	background-color: #212529 !important;
 }
@@ -77,4 +81,19 @@ $nav-tabs-border-color: lighten($body-color, 45%);
 	background-color: darken($card-bg, 3%);
 	border: solid 1px darken($card-bg, 10%) !important;
 	color: $body-color;
+}
+
+
+
+.bs-callout-danger {
+	background-color: #f8d7da;
+	border-color: #f1aeb5;
+}
+.bs-callout-warning {
+	background-color: #fff3cd;
+	border-color: #ffe69c;
+}
+.bs-callout-info {
+	background-color: #cff4fc;
+	border-color: #9eeaf9;
 }

@@ -104,9 +104,13 @@ $nav-tabs-border-color: $body-color;
 
 
 
+
 @import "./main";
 
 
+.table {
+	--bs-table-color-state: $body-color;
+}
 
 
 
@@ -154,6 +158,10 @@ $nav-tabs-border-color: $body-color;
 
 .bg-main {
 	background-color: $main-bg !important;
+}
+
+.bg-darken {
+	background-color: darken($body-bg, 4%) !important;
 }
 
 
@@ -206,6 +214,21 @@ $header-footer-bg: #112138;
 code {
 	padding: 0px 3px;
 	border-radius: 3px;
-	background-color: lighten($card-bg, 15%);
 	color: #198754;
+}
+
+
+
+
+.bs-callout-danger {
+	background-color: #66121a;
+	border-color: #921925;
+}
+.bs-callout-warning {
+	background-color: #876500;
+	border-color: #ba8b00;
+}
+.bs-callout-info {
+	background-color: #08798f;
+	border-color: #0aa1c0;
 }
