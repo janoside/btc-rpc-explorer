@@ -570,6 +570,24 @@ module.exports = {
 			alertBodyHtml: "This is the first send to a P2WPKH output and occurred in the <a href='./block-height/481824'>first SegWit-supporting block</a>.",
 			referenceUrl: "https://unchained.com/blog/bitcoin-address-types-compared/"
 		},
+		{
+			type: "address",
+			chain: "main",
+			date: "2011-06-14",
+			address: "1HB5XMLmzFVj8ALj6mfBsbifRoD4miY36v",
+			summary: "WikiLeaks began collecting public donations at this address on June 14, 2011. They collected over 4,000 BTC.",
+			referenceUrl: "https://blog.lopp.net/annals-bitcoin-twitter-history/"
+		},
+		{
+			type: "tx",
+			date: "2009-04-18",
+			chain: "main",
+			txid: "6a679898780f5d99f0ffa12573b855e0dc470956406eb8b82690b688fa19200f",
+			blockHeight: 11408,
+			summary: "One of very few transactions sent by Satoshi, this was sent to Mike Hearn.",
+			alertBodyHtml: "This transaction, sent from Satoshi Nakamoto to Mike Hearn is one of very few transactions originating from Satoshi. Jameson Lopp has also convincingly refuted that Hal Finney and Satoshi Nakamoto are the same person using blockchain and external evidence, including this particular transaction.",
+			referenceUrl: "https://blog.lopp.net/hal-finney-was-not-satoshi-nakamoto/"
+		},
 
 
 

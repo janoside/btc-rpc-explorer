@@ -657,6 +657,13 @@ module.exports = {
 			speaker: "Naval Ravikant",
 			url: "https://x.com/SimplyBitcoinTV/status/1721580708538552674",
 			date: "2023-11-06"
+		},
+		{
+			// 93
+			text: "Bitcoin is a path-dependent, one-time invention; its critical breakthrough is the discovery of absolute scarcity—a monetary property never before (and never again) achievable by mankind.",
+			speaker: "Robert Breedlove",
+			url: "https://x.com/Swan/status/1723049733420097996",
+			date: "2023-11-10"
 		}
 		/*{
 			text: "Bitcoin is a technological tour de force.",
