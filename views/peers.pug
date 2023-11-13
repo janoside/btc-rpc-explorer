@@ -135,7 +135,7 @@ block content
 								td
 									if (item.servicesnames)
 										- var serviceItems = item.servicesnames;
-										- var abbreviations = {"NETWORK":"NET", "NETWORK_LIMITED":"NET_LIM", "WITNESS":"WIT", "BLOOM":"BLM"};
+										- var abbreviations = {"NETWORK":"NET", "NETWORK_LIMITED":"NET_LIM", "WITNESS":"WIT", "BLOOM":"BLM", "P2P_V2":"P2P_V2"};
 
 										each itemAbbr, itemName in abbreviations
 											if (item.servicesnames.includes(itemName))
