@@ -256,14 +256,14 @@ if (exchangeRates)
 			
 			+summaryItem("Mempool", "The number of unconfirmed transactions in your node's mempool, and the number of blocks needed to confirm those transactions", null, null, "icon:bi-hourglass-split", "./mempool-summary", "View mempool summary details")
 				
-				span.border-dotted(title=`<b>Number of unconfirmed transactions</b><br/>Highlight colors: <span class='text-success'>Low (≤ ${thresholds_txCount.warning})</span>, <span class='text-warning'>High (between ${thresholds_txCount.warning} and ${thresholds_txCount.danger})</span> and <span class='text-danger'>Very High (> ${thresholds_txCount.danger})</span>`, data-bs-toggle="tooltip", data-bs-html="true")
+				span.border-dotted(title=`<b># Unconfirmed Transactions</b><br/><span class='text-success'>Low (N ≤ ${thresholds_txCount.warning.toLocaleString()})</span><br/><span class='text-warning'>High (${thresholds_txCount.warning.toLocaleString()} < N ≤ ${thresholds_txCount.danger.toLocaleString()})</span><br/><span class='text-danger'>Very High (N > ${thresholds_txCount.danger.toLocaleString()})</span>`, data-bs-toggle="tooltip", data-bs-html="true")
 					span(class=colorClass_txCount) #{mempoolInfo.size.toLocaleString()}
 					span.text-tiny.text-muted.ms-1 tx
 
 				span.mx-2.text-muted /
 
 				span.small
-					span.border-dotted(title=`<b>Number of blocks needed to clear the mempool</b><br/>Highlight colors: <span class='text-success'>Low (≤ ${thresholds_blockCount.warning})</span>, <span class='text-warning'>High (between ${thresholds_blockCount.warning} and ${thresholds_blockCount.danger})</span> and <span class='text-danger'>Very High (> ${thresholds_blockCount.danger})</span>`, data-bs-toggle="tooltip", data-bs-html="true")
+					span.border-dotted(title=`<b># Blocks to clear this node's mempool</b><br/><span class='text-success'>Low (N ≤ ${thresholds_blockCount.warning.toLocaleString()})</span><br/><span class='text-warning'>High (${thresholds_blockCount.warning.toLocaleString()} < N ≤ ${thresholds_blockCount.danger.toLocaleString()})</span><br/><span class='text-danger'>Very High (N > ${thresholds_blockCount.danger.toLocaleString()})</span>`, data-bs-toggle="tooltip", data-bs-html="true")
 						span(class=colorClass_blockCount) #{blockCount.toDP(2)}
 						span.text-tiny.text-muted.ms-1
 							i.bi-box
@@ -295,7 +295,7 @@ if (exchangeRates)
 						}
 					- const warningFees = formatFees(thresholds_totalFees.warning)
 					- const dangerFees = formatFees(thresholds_totalFees.danger)
-					span.border-dotted(title=`<b>Unconfirmed transactions total fees</b><br/>Highlight colors: <span class='text-success'>Low (≤ ${warningFees})</span>, <span class='text-warning'>High (between ${warningFees} and ${dangerFees})</span> and <span class='text-danger'>Very High (> ${dangerFees})</span>`, data-bs-toggle="tooltip", data-bs-html="true") &Sigma;
+					span.border-dotted(title=`<b>Unconfirmed Transactions' total fees</b><br/><span class='text-success'>Low (N ≤ ${warningFees})</span><br/><span class='text-warning'>High (${warningFees} < N ≤ ${dangerFees})</span><br/><span class='text-danger'>Very High (N > ${dangerFees})</span>`, data-bs-toggle="tooltip", data-bs-html="true") &Sigma;
 					// Don't embed this span inside previous one to avoid collision of their tooltips
 					span.ms-1(class=colorClass_totalFees)
 						+valueDisplay(mempoolInfo.total_fee, {hideLessSignificantDigits:true})
