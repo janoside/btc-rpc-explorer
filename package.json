@@ -35,7 +35,7 @@
 		"url": "git+https://github.com/janoside/btc-rpc-explorer.git"
 	},
 	"dependencies": {
-		"@janoside/app-utils": "github:janoside/app-utils#0f52c7028951c1c2b67b06b2ce50fd74001bba93",
+		"@janoside/app-utils": "github:janoside/app-utils#ba4c23d3f",
 		"async": "^3.2.4",
 		"axios": "^1.4.0",
 		"basic-auth": "^2.0.1",
