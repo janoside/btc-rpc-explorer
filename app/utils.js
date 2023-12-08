@@ -156,9 +156,11 @@ function getcurrentsupply() {
 	});
 	//----------
 	try {  
-		var data = fs.readFileSync('/root/explorer/supply.log', 'utf8');
+		var data = fs.readFileSync('/root/explorerv3.3/supply.log', 'utf8');
 		//console.log("Read Total Supply:"+ data.toString());
 		totalcurrentsupply = (data/100000000);
+		console.log('Override Total Supply!');
+		//console.log(data.toString());
 	} catch(e) {
 		console.log('Error:', e.stack);
 	}
