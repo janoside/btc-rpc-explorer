@@ -20,15 +20,17 @@ const debugErrorLog = debug("btcexp:error");
 const debugPerfLog = debug("btcexp:actionPerformace");
 const debugAccessLog = debug("btcexp:access");
 
+const xdgHome = process.env.XDG_CONFIG_HOME || path.join(os.homedir(), ".config");
 const configPaths = [
-	path.join(os.homedir(), ".config", "btc-rpc-explorer.env"),
-	path.join("/etc", "btc-rpc-explorer", ".env"),
 	path.join(process.cwd(), ".env"),
+	path.join(xdgHome, "btc-rpc-explorer.env"),
+	path.join(xdgHome, "btc-rpc-explorer", ".env"),
+	path.join("/etc", "btc-rpc-explorer", ".env"),
 ];
 
 debugLog("Searching for config files...");
 let configFileLoaded = false;
-configPaths.forEach(path => {
+for (const path of configPaths) {
 	if (fs.existsSync(path)) {
 		debugLog(`Config file found at ${path}, loading...`);
 
@@ -43,11 +45,11 @@ configPaths.forEach(path => {
 		}
 
 		configFileLoaded = true;
-
+		break
 	} else {
 		debugLog(`Config file not found at ${path}, continuing...`);
 	}
-});
+};
 
 if (!configFileLoaded) {
 	debugLog("No config files found. Using all defaults.");
