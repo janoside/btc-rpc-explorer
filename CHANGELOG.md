@@ -2,6 +2,7 @@
 ###### Unreleased
 
 * Tweak display of miner "notes" (disclaimer for Patoshi)
+* Fix for display of JSON-data content
 * Updated miner IDs (including removal of 3 probably false positives from the "Patoshi" list)
 * Updated dependencies
 
