@@ -1,5 +1,10 @@
 This changelog specifically tracks changes to the Public API available at `/api` and is maintained separately from the app CHANGELOG such that it can properly adhere to semantic versioning.
 
+##### v2.1.0
+###### Unreleased
+
+* Changed `/api/mempool/fees` to include more details pertaining to `nextBlock` (nextBlock.smart is where the previous "nextBlock" scalar value used to be)
+
 ##### v2.0.0
 ###### 2023-06-14
 
