@@ -290,7 +290,7 @@ mixin txList(visibleTxs, txCount, limit, offset, inputsByTxid, options={})
 
 							if (options.showConfirmations)
 								+darkBadge
-									if (txBlockHeight)
+									if (txBlockHeight > 0 || tx.txid == '4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b')
 										span(title=`${(options.currentBlockHeight - txBlockHeight + 1).toLocaleString()} confirmation${(options.currentBlockHeight - txBlockHeight > 1) ? "s" :""}`, data-bs-toggle="tooltip")
 											i.bi-lock.me-1
 											- var confCount = options.currentBlockHeight - txBlockHeight + 1;
