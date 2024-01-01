@@ -169,7 +169,7 @@ mixin txList(visibleTxs, txCount, limit, offset, inputsByTxid, options={})
 				.clearfix
 					.float-start
 						.mb-3.word-wrap
-							span.badge.bg-primary.fw-normal.me-2(title=`Index in Block: #${(txIndex + offset).toLocaleString()}`, data-bs-toggle="tooltip")
+							span.badge.bg-primary.fw-normal.me-2(title=`#${(txIndex + offset).toLocaleString()}`, data-bs-toggle="tooltip")
 								span.d-inline.d-sm-none.me-1 tx
 								| ##{(txIndex + offset).toLocaleString()}
 							
