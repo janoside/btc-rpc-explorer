@@ -145,6 +145,11 @@ module.exports = {
 			name: "Running Bitcoin Day",
 			date: "2009-01-10",
 			desc: "On this day in 2009, Hal Finney tweeted his iconic '<a href=\"https://x.com/halfin/status/1110302988\">Running bitcoin</a>' tweet, as he joined the network."
+		},
+		{
+			name: "Bitcoin ETFs Day",
+			date: "2024-01-10",
+			desc: "On this day in 2024, after 10 years of denials, the US SEC approved 11 ETF products, enabling BTC price exposure to previously inaccessible capital markets."
 		}
 	]
 };
