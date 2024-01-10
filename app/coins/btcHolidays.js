@@ -140,6 +140,11 @@ module.exports = {
 			name: "Bitcoin.org Registration Day",
 			date: "2008-08-18",
 			desc: "On this day in 2008, Satoshi Nakamoto registered the first Bitcoin website, bitcoin.org. It has hosted the Satoshi-based-node source code ever since."
+		},
+		{
+			name: "Running Bitcoin Day",
+			date: "2009-01-10",
+			desc: "On this day in 2009, Hal Finney tweeted his iconic '<a href=\"https://x.com/halfin/status/1110302988\">Running bitcoin</a>' tweet, as he joined the network."
 		}
 	]
 };
