@@ -150,6 +150,11 @@ module.exports = {
 			name: "Bitcoin ETFs Day",
 			date: "2024-01-10",
 			desc: "On this day in 2024, after 10 years of denials, the US SEC approved 11 ETF products, enabling BTC price exposure to previously inaccessible capital markets."
+		},
+		{
+			name: "First Transaction Day",
+			date: "2009-01-11",
+			desc: "On this day in 2009, Satoshi transferred BTC via <a href='./tx/f4184fc596403b9d638783cf57adfe4c75c605f6356fbc91338530e9831e9e16'>the first ever (non-coinbase) transaction</a>. The recipient of that historic transaction is none other than Hal Finney."
 		}
 	]
 };
