@@ -153,7 +153,7 @@ module.exports = {
 		},
 		{
 			name: "First Transaction Day",
-			date: "2009-01-11",
+			date: "2009-01-12",
 			desc: "On this day in 2009, Satoshi transferred BTC via <a href='./tx/f4184fc596403b9d638783cf57adfe4c75c605f6356fbc91338530e9831e9e16'>the first ever (non-coinbase) transaction</a>. The recipient of that historic transaction is none other than Hal Finney."
 		}
 	]
