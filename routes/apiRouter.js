@@ -867,32 +867,37 @@ router.get("/mempool/summary", function(req, res, next) {
 	}).catch(next);
 });
 
-router.get("/mempool/fees", function(req, res, next) {
-	let feeConfTargets = [1, 3, 6, 144];
-	coreApi.getSmartFeeEstimates("CONSERVATIVE", feeConfTargets).then(function(rawSmartFeeEstimates){
-		let smartFeeEstimates = {};
+router.get("/mempool/fees", asyncHandler(async (req, res, next) => {
+	let feeConfTargets = [1, 3, 6, 144];	
+	let rawSmartFeeEstimates = await coreApi.getSmartFeeEstimates("CONSERVATIVE", feeConfTargets);
+	let smartFeeEstimates = {};
+	
+	for (let i = 0; i < feeConfTargets.length; i++) {
+		let rawSmartFeeEstimate = rawSmartFeeEstimates[i];
+		if (rawSmartFeeEstimate.errors) {
+			smartFeeEstimates[feeConfTargets[i]] = "?";
+		} else {
+			smartFeeEstimates[feeConfTargets[i]] = parseInt(new Decimal(rawSmartFeeEstimate.feerate).times(coinConfig.baseCurrencyUnit.multiplier).dividedBy(1000));
+		}
+	}		
 		
-		for (let i = 0; i < feeConfTargets.length; i++) {
-			let rawSmartFeeEstimate = rawSmartFeeEstimates[i];
-			if (rawSmartFeeEstimate.errors) {
-				smartFeeEstimates[feeConfTargets[i]] = "?";
+	let results = {
+		"nextBlock":{"smart":smartFeeEstimates[1]},
+		"30min":smartFeeEstimates[3],
+		"60min":smartFeeEstimates[6],
+		"1day":smartFeeEstimates[144]
+	};
 
-			} else {
-				smartFeeEstimates[feeConfTargets[i]] = parseInt(new Decimal(rawSmartFeeEstimate.feerate).times(coinConfig.baseCurrencyUnit.multiplier).dividedBy(1000));
-			}
-		}		
-		
-		let results = {
-			"nextBlock":smartFeeEstimates[1],
-			"30min":smartFeeEstimates[3],
-			"60min":smartFeeEstimates[6],
-			"1day":smartFeeEstimates[144]
-		};
+	let nextBlockEstimate = await coreApi.getNextBlockEstimate();
+	if (nextBlockEstimate != undefined && nextBlockEstimate.minFeeRate != undefined) {
+		console.log("abc: " + JSON.stringify(nextBlockEstimate));
+		results.nextBlock.min = parseInt(nextBlockEstimate.minFeeRate);
+		results.nextBlock.max = parseInt(nextBlockEstimate.maxFeeRate);
+		results.nextBlock.median = parseInt(nextBlockEstimate.medianFeeRate);
+	}
 
-		res.json(results);
-
-	}).catch(next);
-});
+	res.json(results);
+}));
 
 
 

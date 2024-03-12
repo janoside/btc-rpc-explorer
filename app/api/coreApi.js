@@ -90,7 +90,8 @@ if (!config.noInmemoryRpcCache) {
 	global.cacheStats.memory = {
 		try: 0,
 		hit: 0,
-		miss: 0
+		miss: 0,
+		error: 0
 	};
 
 	const onMemoryCacheEvent = function(cacheType, eventType, cacheKey) {

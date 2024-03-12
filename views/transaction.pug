@@ -20,7 +20,7 @@ block content
 
 					+summaryItem("Date / Time")
 						if (block.time)
-							+timestamp(block.time)
+							+timestamp(block.time, {agoOptions:{oneElement:true}})
 
 						else
 							| ?
@@ -124,7 +124,7 @@ block content
 							
 							+summaryItem("Date / Time")
 								if (tx.time)
-									+timestamp(result.getrawtransaction.time)
+									+timestamp(result.getrawtransaction.time, {agoOptions:{oneElement:true}})
 										
 
 						if (isCoinbaseTx)
@@ -273,7 +273,9 @@ block content
 					if (result && result.getblock)
 						- blockHeight = result.getblock.height;
 
-					include includes/transaction-io-details.pug
+					- var totalIOValues = utils.getTxTotalInputOutputValues(tx, txInputs, blockHeight);
+
+					+txIoDetails(tx, txInputs, totalIOValues, blockHeight)
 						
 
 				if (mempoolDetails)

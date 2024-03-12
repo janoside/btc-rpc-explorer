@@ -1,15 +1,26 @@
-##### v3.4.0
-###### Unreleased (beta)
+##### v3.5.0
+###### Unreleased
 
-* Breaking changes to the API (see [./api/changelog](/api/changlog))
-* Include median fee rate for next-block estimates, on homepage and at [/next-block](./next-block)
+* Tweak display of miner "notes" (disclaimer for Patoshi)
+* Fix for display of JSON-data content
+* Updated miner IDs (including removal of 3 probably false positives from the "Patoshi" list)
+* Updated dependencies
+
+
+##### v3.4.0
+###### 2023-06-14
+
+* Breaking changes to the API (see [./api/changelog](/api/changelog))
+* Homepage
+	* New "Next Halving" widget in Network Summary
+	* Show difficulty ATH comparison
+	* Show "Next Block" fullness
+	* Progress bar for difficulty adjustment estimate
+	* Include median fee rate for next-block estimates (also on [/next-block](./next-block))
+	* Show a banner if 'today' is a Bitcoin 'Holiday' (see more below)
 * Minor fixes for running against Bitcoin Core v23
 * Block Analysis: include top "days destroyed" transactions
 * URL change: /mining-template -> /next-block (redirect is included for compatibility)
-* Homepage additions
-	* Show difficulty ATH comparison
-	* Show "Next Block" fullness
-	* Show a banner if 'today' is a Bitcoin 'Holiday' (see more below)
 * On Extended PubKey pages, include balance data for various address (if Electrum server is configured)
 * New [/next-halving](./next-halving) tool
 * Several new API actions/changes; see [/api/changelog](./api/changelog)

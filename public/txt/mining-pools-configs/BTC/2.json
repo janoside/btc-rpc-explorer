@@ -4,7 +4,7 @@
             "name": "Terra Pool",
             "link": "https://terrapool.io"
         },
-        "/Powered by Luxor/": {
+        "Luxor": {
             "name": "Luxor",
             "link": "https://mining.luxor.tech"
         },
@@ -492,6 +492,10 @@
             "name" : "Binance Pool",
             "link" : "https://pool.binance.com/"
         },
+        "binance": {
+            "name" : "Binance Pool",
+            "link" : "https://pool.binance.com/"
+        },
         "/Mined in the USA by: /Minerium.com/" : {
             "name" : "Minerium",
             "link" : "https://www.minerium.com/"
@@ -587,6 +591,10 @@
             "link": "https://mining.luxor.tech"
         },
         "39bitUyBcUu3y3hRTtYprKbTp712t4ZWqK": {
+            "name": "Luxor",
+            "link": "https://mining.luxor.tech"
+        },
+        "1Mp82mJt6d8XzX8bN2GAkpDqBukiwLuKrA": {
             "name": "Luxor",
             "link": "https://mining.luxor.tech"
         },
@@ -690,7 +698,15 @@
             "name" : "EMCDPool",
             "link" : "https://pool.emcd.io"
         },
-	"1MAAUXNSJEDaPtECd955CQct65BmTzwhj6" : {
+	    "1MAAUXNSJEDaPtECd955CQct65BmTzwhj6" : {
+            "name" : "EMCDPool",
+            "link" : "https://pool.emcd.io"
+        },
+        "3LwoXDToPiq2rBaQzoe2ZnaUvhGykFp2LM" : {
+            "name" : "EMCDPool",
+            "link" : "https://pool.emcd.io"
+        },
+        "15h4MFgMs3yGiGfXA7fqhpsTWMkQ95EFBB" : {
             "name" : "EMCDPool",
             "link" : "https://pool.emcd.io"
         },
@@ -1218,6 +1234,10 @@
             "name" : "Binance Pool",
             "link" : "https://pool.binance.com/"
         },
+        "bc1qzes26t5h05zpaan9rjcu8zhdvyfedu6927r9jv":{
+            "name" : "Binance Pool",
+            "link" : "https://pool.binance.com/"
+        },
         "34Jpa4Eu3ApoPVUKNTN2WeuXVVq1jzxgPi": {
             "name" : "Lubian.com",
             "link" : "http://www.lubian.com/"
@@ -1300,7 +1320,7 @@
         },
         "1BGFwRzjCfRR7EvRHnzfHyFjGR8XiBDFKa" : {
             "name" : "PEGA Pool",
-            "link" : "https://www.pega-pool.com"
+            "link" : "https://www.pega-pool.com/"
         }
     }
 }

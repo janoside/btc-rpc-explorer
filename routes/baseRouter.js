@@ -207,10 +207,17 @@ router.get("/", asyncHandler(async (req, res, next) => {
 
 		await utils.awaitPromises(promises);
 
+
+
 		let eraStartBlockHeader = res.locals.difficultyPeriodFirstBlockHeader;
 		let currentBlock = res.locals.latestBlocks[0];
 
 		res.locals.difficultyAdjustmentData = utils.difficultyAdjustmentEstimates(eraStartBlockHeader, currentBlock);
+
+		res.locals.nextHalvingData = utils.nextHalvingEstimates(
+			res.locals.difficultyPeriodFirstBlockHeader,
+			res.locals.latestBlocks[0],
+			res.locals.difficultyAdjustmentData);
 
 
 

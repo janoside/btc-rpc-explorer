@@ -632,6 +632,10 @@
       "name": "SpiderPool",
       "link": "https://www.spiderpool.com"
     },
+    "39bitUyBcUu3y3hRTtYprKbTp712t4ZWqK": {
+      "name": "Luxor",
+      "link": "https://mining.luxor.tech"
+    },
     "39m5Wvn9ZqyhYmCYpsyHuGMt5YYw4Vmh1Z": {
       "name": "BytePool",
       "link": "https://www.bytepool.com"
@@ -639,6 +643,10 @@
     "3A2dwyVPbZc41vvmJVYxYsrkvNKnz2B4wN": {
       "name": "Poolin",
       "link": "https://www.poolin.com"
+    },
+    "3Awm3FNpmwrbvAFVThRUFqgpbVuqWisni9": {
+      "name": "SecPool",
+      "link": "https://www.secpool.com/"
     },
     "3Bmb9Jig8A5kHdDSxvDZ6eryj3AXd3swuJ": {
       "name": "NovaBlock",
@@ -723,6 +731,14 @@
     "bc1qjl8uwezzlech723lpnyuza0h2cdkvxvh54v3dn": {
       "name": "BTC.com",
       "link": "https://pool.btc.com"
+    },
+    "bc1qrm09asqsxh2l7pjxjlltm53tx689dp2amzupzq": {
+      "name": "CleanIncentive",
+      "link": "cleanincentive.com"
+    },
+    "bc1qvfzssz36y4gxcg9gh234rzem9k0vrdlx4kq5sg": {
+      "name": "NiceHash",
+      "link": "https://nicehash.com"
     },
     "bc1qwlrsvgtn99rqp3fgaxq6f6jkgms80rnej0a8tc": {
       "name": "TogetherPool",
@@ -894,6 +910,10 @@
       "name": "Luxor",
       "link": "https://mining.luxor.tech"
     },
+    "/Mara Pool/": {
+      "name": "MARA Pool",
+      "link": "https://marathondh.com"
+    },
     "/Mined by HashBX.io/": {
       "name": "HashBX",
       "link": "https://hashbx.io"
@@ -906,9 +926,13 @@
       "name": "Nexious",
       "link": "https://nexious.com"
     },
+    "/NiceHash/": {
+      "name": "NiceHash",
+      "link": "https://nicehash.com"
+    },
     "/NiceHashSolo": {
       "name": "NiceHash",
-      "link": "https://solo.nicehash.com"
+      "link": "https://nicehash.com"
     },
     "/NovaBlock/": {
       "name": "NovaBlock",
@@ -1190,6 +1214,14 @@
       "name": "MiningCity",
       "link": "https://www.miningcity.com"
     },
+    "OCEAN.XYZ": {
+      "name": "Ocean.xyz",
+      "link": "https://ocean.xyz/"
+    },
+    "Powered by Luxor Tech": {
+      "name": "Luxor",
+      "link": "https://mining.luxor.tech"
+    },
     "SBI Crypto": {
       "name": "SBI Crypto",
       "link": "https://sbicrypto.com"
@@ -1197,6 +1229,10 @@
     "SBICrypto": {
       "name": "SBI Crypto",
       "link": "https://sbicrypto.com"
+    },
+    "SecPool": {
+      "name": "SecPool",
+      "link": "https://www.secpool.com/"
     },
     "TBDice": {
       "name": "TBDice",
@@ -1217,6 +1253,10 @@
     "Ukrpool.com": {
       "name": "UKRPool",
       "link": "https://ukrpool.com"
+    },
+    "Validated with Clean Energy": {
+      "name": "CleanIncentive",
+      "link": "cleanincentive.com"
     },
     "bcpool.io": {
       "name": "bcpool.io",
@@ -1269,6 +1309,10 @@
     "cointerra": {
       "name": "Cointerra",
       "link": "https://cointerra.com"
+    },
+    "emcd.io": {
+      "name": "EMCDPool",
+      "link": "https://pool.emcd.io"
     },
     "get___emcd": {
       "name": "EMCDPool",
