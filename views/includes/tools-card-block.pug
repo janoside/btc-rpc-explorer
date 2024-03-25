@@ -1,6 +1,6 @@
 - var siteTool = config.siteTools[toolsItemIndex];
 li.mb-2
 	span(title=siteTool.desc, data-bs-toggle="tooltip")
-		i.me-1.fa-sm(class=siteTool.fontawesome, style="width: 24px;")
+		i.me-1(class=siteTool.iconClass, style="width: 24px;")
 	a(href=siteTool.url)
 		span #{siteTool.name}

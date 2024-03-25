@@ -1,14 +1,24 @@
 mixin themeCss
-	link(id="light-theme-link-tag", rel="stylesheet", href=`./style/light.css?v=${cacheId}`, integrity="")
-	link(id="dark-theme-link-tag", rel=(userSettings.uiTheme == "dark" ? "stylesheet" : false), href=`./style/dark.css?v=${cacheId}`, integrity="")
+	link(id="dark-v1-theme-link-tag", rel=(userSettings.uiTheme == "dark-v1" ? "stylesheet" : false), href=assetUrl(`./style/dark-v1.min.css`), integrity="", crossorigin="anonymous")
+	link(id="light-theme-link-tag", rel=(userSettings.uiTheme == "light" ? "stylesheet" : false), href=assetUrl(`./style/light.min.css`), integrity="", crossorigin="anonymous")
+	link(id="dark-theme-link-tag", rel=(userSettings.uiTheme == "dark" ? "stylesheet" : false), href=assetUrl(`./style/dark.min.css`), integrity="", crossorigin="anonymous")
+
+	style.
+		@font-face {
+			font-family: "bootstrap-icons";
+
+			src:	url("!{assetUrl("./font/bootstrap-icons.woff2")}") format("woff2"),
+					url("!{assetUrl("./font/bootstrap-icons.woff")}") format("woff");
+		}
+
+	link(rel="stylesheet", href=assetUrl(`./style/bootstrap-icons.css`), integrity="", crossorigin="anonymous")
 
 
 mixin sharedScriptTags
-	script(src=`./js/jquery.min.js?v=${cacheId}`, integrity="")
-	script(src=`./js/bootstrap.bundle.min.js?v=${cacheId}`, integrity="")
-	script(defer, src=`./js/fontawesome.min.js?v=${cacheId}`, integrity="")
-
-	script(src=`./js/site.js?v=${cacheId}`, integrity="")
+	script(src=assetUrl(`./js/jquery.min.js`), integrity="", crossorigin="anonymous")
+	script(src=assetUrl(`./js/bootstrap.bundle.min.js`), integrity="", crossorigin="anonymous")
+	
+	script(src=assetUrl(`./js/site.js`), integrity="", crossorigin="anonymous")
 
 
 mixin pageTitle(text, subtext, copyableSubtext=false)
@@ -49,7 +59,7 @@ mixin sectionTitle(text, toggle=false, toggleUniqueClass, toggleUserSettingName,
 		if (toggle)
 			small(title=`Toggle ${text}`, data-bs-toggle="tooltip")
 				a.text-card-highlight.fs-6(href=`./changeSetting?name=${toggleUserSettingName}&value=false`)
-					i.toggle-plus-minus.far.ms-2(class=(toggleOpen ? "fa-minus-square" : "fa-plus-square"))
+					i.toggle-plus-minus.ms-2(class=(toggleOpen ? "bi-dash-square" : "bi-plus-square"))
 
 
 mixin contentSection(title, toggleable=false, toggleUserSettingName, defaultOpen=true, cardUi=true)
@@ -81,11 +91,11 @@ mixin summaryRow(itemCount)
 
 	//h1 #{itemCount} #{JSON.stringify(locals.rowCounts)}
 
-	.row.row-cols-1(class=utils.objectProperties(locals.colCounts).map(x => `row-cols-${x}-${locals.colCounts[x]}`).join(" "))
+	.row.row-cols-1.summary-row(class=utils.objectProperties(locals.colCounts).map(x => `row-cols-${x}-${locals.colCounts[x]}`).join(" "))
 		block
 
 
-mixin summaryTitle(title, titleDesc, subtitle, subtitleDesc)
+mixin summaryTitle(title, titleDesc, subtitle, subtitleDesc, linkText, linkUrl, linkDesc)
 	span.fs-6.text-uppercase.fw-light.text-card-highlight(class=(titleDesc ? "border-dotted" : false), class=(subtitle ? "me-2" : false), title=titleDesc, data-bs-toggle="tooltip", data-bs-html="true") #{title}
 	if (subtitle)
 		small.text-card-highlight.fw-light
@@ -93,14 +103,23 @@ mixin summaryTitle(title, titleDesc, subtitle, subtitleDesc)
 			span(class=(subtitleDesc ? "border-dotted" : false), title=subtitleDesc, data-bs-toggle="tooltip", data-bs-html="true") #{subtitle}
 			| )
 
+	if (linkText && linkUrl)
+		if (linkText.startsWith("text:"))
+			a.ms-2.text-tiny(href=linkUrl, data-bs-toggle="tooltip", title=linkDesc) #{linkText.substring("text:".length)}
 
-mixin summaryItem(title, titleDesc, subtitle, subtitleDesc)
+		else if (linkText.startsWith("icon:"))
+			small
+				a.ms-2(href=linkUrl, data-bs-toggle="tooltip", title=linkDesc)
+					i(class=linkText.substring("icon:".length))
+
+
+mixin summaryItem(title, titleDesc, subtitle, subtitleDesc, linkText, linkUrl, linkDesc)
 	- var rowIndexes = utils.objectProperties(locals.colCounts).map(x => [x, locals.colCounts[x]]).map(x => [x[0], Math.floor(locals.summaryItemIndex / x[1])]);
 
 	.col(class=(locals.summaryItemIndex == (locals.summaryItemCount - 1) ? "mb-0" : "mb-3"), class=rowIndexes.map(x => `mb-${x[0]}-${(x[1] < (locals.rowCounts[x[0]] - 1) ? "4" : "0")}`))
 		//span.text-danger (#{JSON.stringify(locals.rowCounts)})
 		.text-start.text-md-center
-			+summaryTitle(title, titleDesc, subtitle, subtitleDesc)
+			+summaryTitle(title, titleDesc, subtitle, subtitleDesc, linkText, linkUrl, linkDesc)
 			
 
 		.lead.text-start.text-md-center
@@ -128,7 +147,7 @@ mixin txList(visibleTxs, txCount, limit, offset, inputsByTxid, options={})
 					
 	
 		//.mb-4.mb-md-3
-		.pb-4.pb-md-3.bg-tx-separator
+		.pb-4.pb-md-2.bg-tx-separator
 
 
 	each tx, txIndex in visibleTxs
@@ -139,6 +158,11 @@ mixin txList(visibleTxs, txCount, limit, offset, inputsByTxid, options={})
 			- txBlockHeight = options.sharedBlockHeight;
 
 		- var tx_height_param = (!global.txindexAvailable && txBlockHeight) ? `@${txBlockHeight}` : '';
+
+		- var txInputs = inputsByTxid[tx.txid];
+		- var blockHeight = txBlockHeight != undefined ? txBlockHeight : -1;
+		- var totalIOValues = utils.getTxTotalInputOutputValues(tx, txInputs, blockHeight);
+
 
 		.border.bg-content.p-3(class=(txIndex == 0 && txCount <= limit ? "rounded-top" : false), class=(txCount <= limit && txIndex == (visibleTxs.length - 1) ? "rounded-bottom" : false))
 			if (tx && tx.txid)
@@ -160,6 +184,7 @@ mixin txList(visibleTxs, txCount, limit, offset, inputsByTxid, options={})
 
 
 					- var hasInputAddresses = false;
+					- var coinbaseTx = false;
 					if (tx && tx.vin && inputsByTxid && inputsByTxid[tx.txid])
 						- var txInputs = inputsByTxid[tx.txid];
 						each txVin, txVinIndex in tx.vin
@@ -171,33 +196,93 @@ mixin txList(visibleTxs, txCount, limit, offset, inputsByTxid, options={})
 									if (voutAddresses.length > 0)
 										- hasInputAddresses = true;
 
+							else
+								- coinbaseTx = true;
+
 					if (hasInputAddresses)
 						.float-end
 							.d-block.d-sm-none
-								a(href="javascript:void(0)", onclick=`$(this).find(".toggle-icon").toggleClass("fa-plus-square").toggleClass("fa-minus-square"); $(".tx-input-address-${tx.txid}").toggle();`)
-									i.toggle-icon.far.fa-plus-square.text-card-highlight.text-end.fa-lg
+								a(href="javascript:void(0)", onclick=`$(this).find(".toggle-icon").toggleClass("bi-plus-square").toggleClass("bi-dash-square"); $(".tx-input-address-${tx.txid}").toggle();`)
+									i.toggle-icon.bi-plus-square.text-card-highlight.text-end
 
 
 					.float-start.float-sm-end.mt-n2.mt-sm-0.mb-2.mb-sm-0
 						.me-5.me-sm-n2
+							- let txFee = null;
+							- let txFeeRate = null;
+							
 							if (options.mempoolDetailsByTxid && options.mempoolDetailsByTxid[tx.txid])
 								- var mempoolDetails = options.mempoolDetailsByTxid[tx.txid].entry;
-								//- var feeRate = new Decimal(mempoolDetails.fee).times(coinConfig.baseCurrencyUnit.multiplier).dividedBy(mempoolDetails.vsize);
-								- var feeRate = 0
+								- var mempoolDetailsFee = ((mempoolDetails.fees && mempoolDetails.fees.modified) ? mempoolDetails.fees.modified : (mempoolDetails.fee ? mempoolDetails.fee : 0));
 								
-								//-+lightBadge
-									| #{parseInt(feeRate).toLocaleString()}
-									span.text-tiny.ms-tiny sat/vB
+								- txFee = new Decimal(mempoolDetailsFee);
+								- txFeeRate = txFee.times(coinConfig.baseCurrencyUnit.multiplier).dividedBy(mempoolDetails.vsize);
+
+
+							if (!coinbaseTx && totalIOValues.input && totalIOValues.output)
+								- txFee = new Decimal(totalIOValues.input).minus(totalIOValues.output);
+								- txFeeRate = txFee.dividedBy(tx.vsize).times(coinConfig.baseCurrencyUnit.multiplier);
+
+							
+							if (!coinbaseTx && Object.keys(txInputs).length < tx.vin.length)
+								+infoBadge
+									span(data-bs-toggle="tooltip", title="Data truncated by performance settings. See transaction details for fee info.")
+										span.fw-light …
+
+							else if (txFee)
+								+infoBadge
+									span.border-dotted.fw-bold.me-1(title="The miner fee (and fee rate) paid by this transaction. The fee equals the difference between the total input value and the total output value.", data-bs-toggle="tooltip") fee
+									+_valueDisplaySat(txFee, 1000)
+
+									if (txFee > 0)
+										span.ms-2 (
+											| #{parseInt(txFee.dividedBy(tx.vsize).times(coinConfig.baseCurrencyUnit.multiplier)).toLocaleString()}
+											span.text-tiny.ms-1 sat/vB
+											span )
+								
+
+							- let addrGain = null;
+							- let addrLoss = null;
 
 							if (options.addrGainsByTxid && options.addrGainsByTxid[tx.txid])
-								+successBadge
-									span.me-tiny +
-									+valueDisplay(options.addrGainsByTxid[tx.txid])
+								- addrGain = new Decimal(options.addrGainsByTxid[tx.txid]);
+								
+								if (false)
+									+successBadge
+										span +
+										+valueDisplay(options.addrGainsByTxid[tx.txid])
 
 							if (options.addrLossesByTxid && options.addrLossesByTxid[tx.txid])
-								span.badge.bg-danger.me-2
-									span.me-tiny -
-									+valueDisplay(options.addrLossesByTxid[tx.txid])
+								- addrLoss = new Decimal(options.addrLossesByTxid[tx.txid]);
+								
+								if (false)
+									span.badge.bg-danger.me-2
+										span -
+										+valueDisplay(options.addrLossesByTxid[tx.txid])
+
+							- let addrDelta = null;
+
+							if (addrGain && addrLoss)
+								- addrDelta = addrGain.minus(addrLoss);
+
+							else if (addrGain)
+								- addrDelta = addrGain;
+
+							else if (addrLoss)
+								- addrDelta = addrLoss.times(-1);
+
+							if (addrDelta)
+								+darkBadge
+									span.border-dotted.fw-bold.me-1(title="Net change to the balance of the current address caused by this transaction", data-bs-toggle="tooltip") net
+
+									if (addrDelta > 0)
+										span.text-success
+											span +
+											+valueDisplay(addrDelta)
+									else
+										span.text-danger
+											span -
+											+valueDisplay(addrDelta.times(-1))
 
 							if (options.addrGainsByTxid && options.addrLossesByTxid && !options.addrGainsByTxid[tx.txid] && !options.addrLossesByTxid[tx.txid])
 								span.badge.bg-danger.me-2(data-bs-toggle="tooltip", title="See transaction details for spent-from-this-address amount")
@@ -207,7 +292,7 @@ mixin txList(visibleTxs, txCount, limit, offset, inputsByTxid, options={})
 								+darkBadge
 									if (txBlockHeight)
 										span(title=`${(options.currentBlockHeight - txBlockHeight + 1).toLocaleString()} confirmation${(options.currentBlockHeight - txBlockHeight > 1) ? "s" :""}`, data-bs-toggle="tooltip")
-											i.fas.fa-lock.fa-sm.me-1
+											i.bi-lock.me-1
 											- var confCount = options.currentBlockHeight - txBlockHeight + 1;
 											- var confData = utils.formatLargeNumber(confCount);
 											
@@ -219,7 +304,7 @@ mixin txList(visibleTxs, txCount, limit, offset, inputsByTxid, options={})
 
 									else
 										span(title=`Unconfirmed`, data-bs-toggle="tooltip")
-											i.fas.fa-lock.fa-sm.me-1
+											i.bi-unlock.text-danger.me-1
 											span.fw-light.text-danger 0
 
 							if (options.showDates && tx.time)
@@ -228,10 +313,10 @@ mixin txList(visibleTxs, txCount, limit, offset, inputsByTxid, options={})
 
 								.d-none.d-md-inline
 									+darkBadge
-										i.far.fa-clock.fa-sm.me-1
+										i.bi-clock.me-1
 
-										span.fw-light(title=titleStr, data-bs-toggle="tooltip")
-											+timeAgo(tx.time, true)
+										span.fw-light
+											+timeAgo(tx.time, {oneElement:true})
 
 			
 			hr.mb-4.mx-n3
@@ -239,17 +324,10 @@ mixin txList(visibleTxs, txCount, limit, offset, inputsByTxid, options={})
 			.d-none.d-lg-block.border-end.mt-n4.mb-2(style="border-color: currentColor !important; height: 10px; width: 50%; opacity: 0.25;")
 
 			div
-				- var txInputs = inputsByTxid[tx.txid];
-				- var blockHeight = txBlockHeight != undefined ? txBlockHeight : -1;
-				- options.maxTxOutputDisplayCount = maxTxOutputDisplayCount;
-				
-				if (options.highlightAddress)
-					- var txIOHighlightAddress = options.highlightAddress;
-
-				include ./transaction-io-details.pug
+				+txIoDetails(tx, txInputs, totalIOValues, blockHeight, {highlightAddress:options.highlightAddress, maxTxOutputDisplayCount:maxTxOutputDisplayCount})
 
 		if (txIndex < (visibleTxs.length - 1) || txCount > limit)
-			.pb-4.pb-md-3.bg-tx-separator
+			.pb-4.pb-md-2.bg-tx-separator
 
 
 	if (txCount > limit && !options.hidePagination)
@@ -281,10 +359,10 @@ mixin pageTab(name, defaultActive=false)
 		block
 
 
-mixin valueDisplay(val)
+mixin valueDisplay(val, options={})
 	if (val > 0)
 		if (userSettings.displayCurrency == "wcn")
-			+_valueDisplayBtc(val)
+			+_valueDisplayBtc(val, options)
 
 		else if (userSettings.displayCurrency == "sat")
 			+_valueDisplaySat(val, 1000000)
@@ -296,7 +374,7 @@ mixin valueDisplay(val)
 		span 0
 
 
-mixin _valueDisplayBtc(val)
+mixin _valueDisplayBtc(val, options={})
 	- var parts = utils.formatCurrencyAmount(val, userSettings.displayCurrency);
 
 	//span #{JSON.stringify(parts)}
@@ -304,7 +382,7 @@ mixin _valueDisplayBtc(val)
 	//span.d-inline.d-sm-none.fw-light.me-tiny ₿
 	
 	span #{parts.val}
-		if (parts.lessSignificantDigits)
+		if (parts.lessSignificantDigits && !options.hideLessSignificantDigits)
 			span.text-small.text-darken.ms-1 #{parts.lessSignificantDigits}
 
 	if (exchangeRates)
@@ -317,19 +395,20 @@ mixin _valueDisplayBtc(val)
 
 
 mixin _valueDisplaySat(val, summarizeMin=Infinity, summarizeDecimals=3)
-	- var parts = utils.formatCurrencyAmount(val, localCurrencyDisplay ? userSettings.localCurrency : userSettings.displayCurrency);
+	- var localCurrencyDisplay = userSettings.displayCurrency == "local";
+	- var parts = utils.formatCurrencyAmount(val, "sat");
 
 	//span #{JSON.stringify(parts)}
 	
-	if (parts.intVal >= summarizeMin)
+	if (Math.abs(parts.intVal) >= summarizeMin)
 		//span #{JSON.stringify(parts)}
 		- var largeNumberData = utils.formatLargeNumberSignificant(parts.intVal, summarizeDecimals >= 0 ? summarizeDecimals : 3);
 		//span #{JSON.stringify(largeNumberData)} #{parts.intVal}
 		span(title=parts.intVal.toLocaleString(), data-bs-toggle="tooltip") #{largeNumberData[0]}
-		span.ms-1 #{largeNumberData[1].textDesc}
+		span #{largeNumberData[1].abbreviation}
 		
 	else
-		span(class=(localCurrencyDisplay ? "border-dotted" : false), title=(localCurrencyDisplay ? `${utils.formatCurrencyAmount(val, coinConfig.defaultCurrencyUnit.name.toLowerCase()).simpleVal} BTC` : false), data-bs-toggle=(localCurrencyDisplay ? "tooltip" : false)) #{parts.intVal.toLocaleString()}
+		span(class=(localCurrencyDisplay ? "border-dotted" : false), title=(localCurrencyDisplay ? `${utils.formatCurrencyAmount(val, coinConfig.defaultCurrencyUnit.name.toLowerCase()).simpleVal} WCN` : false), data-bs-toggle=(localCurrencyDisplay ? "tooltip" : false)) #{parts.intVal.toLocaleString()}
 
 
 	if (exchangeRates)
@@ -349,15 +428,15 @@ mixin _valueDisplayLocal(val, summarizeMin=Infinity, summarizeDecimals=3)
 	//span #{JSON.stringify(parts)}
 	span.fw-light.me-tiny #{global.currencySymbols[userSettings.localCurrency]}
 
-	if (parts.intVal >= summarizeMin)
+	if (Math.abs(parts.intVal) >= summarizeMin)
 		- var largeNumberData = utils.formatLargeNumberSignificant(parts.intVal, summarizeDecimals >= 0 ? summarizeDecimals : 3);
 		//span #{JSON.stringify(largeNumberData)} #{parts.intVal}
-		span.border-dotted(title=`${global.currencySymbols[userSettings.localCurrency]}${parts.intVal.toLocaleString()}<br/>${utils.formatCurrencyAmount(val, coinConfig.defaultCurrencyUnit.name.toLowerCase()).simpleVal} BTC`, data-bs-toggle="tooltip", data-bs-html="true")
+		span.border-dotted(title=`${global.currencySymbols[userSettings.localCurrency]}${parts.intVal.toLocaleString()}<br/>${utils.formatCurrencyAmount(val, coinConfig.defaultCurrencyUnit.name.toLowerCase()).simpleVal} WCN`, data-bs-toggle="tooltip", data-bs-html="true")
 			span #{largeNumberData[0]}
 			span.ms-1 #{largeNumberData[1].textDesc}
 
 	else
-		span.border-dotted(title=`${utils.formatCurrencyAmount(val, coinConfig.defaultCurrencyUnit.name.toLowerCase()).simpleVal} BTC`, data-bs-toggle="tooltip") #{parts.val}
+		span.border-dotted(title=`${utils.formatCurrencyAmount(val, coinConfig.defaultCurrencyUnit.name.toLowerCase()).simpleVal} WCN`, data-bs-toggle="tooltip") #{parts.val}
 	
 
 mixin valueDisplaySpecial(val, maxDecimals=-1, summarizeAlways=false, summarizeMin=Infinity, summarizeDecimals=-1)
@@ -383,16 +462,16 @@ mixin valueDisplaySpecial(val, maxDecimals=-1, summarizeAlways=false, summarizeM
 				//span #{JSON.stringify(parts)}
 				- var largeNumberData = utils.formatLargeNumberSignificant(parts.intVal, summarizeDecimals >= 0 ? summarizeDecimals : 2);
 				//span #{JSON.stringify(largeNumberData)} #{parts.intVal}
-				span(class=(localCurrencyDisplay ? "border-dotted" : false), title=(localCurrencyDisplay ? `${utils.formatCurrencyAmount(val, coinConfig.defaultCurrencyUnit.name.toLowerCase()).simpleVal} BTC` : false), data-bs-toggle=(localCurrencyDisplay ? "tooltip" : false)) #{largeNumberData[0]} #{largeNumberData[1].textDesc}
+				span(class=(localCurrencyDisplay ? "border-dotted" : false), title=(localCurrencyDisplay ? `${utils.formatCurrencyAmount(val, coinConfig.defaultCurrencyUnit.name.toLowerCase()).simpleVal} WCN` : false), data-bs-toggle=(localCurrencyDisplay ? "tooltip" : false)) #{largeNumberData[0]} #{largeNumberData[1].textDesc}
 			
 			else if (maxDecimals == 0)
-				span(class=(localCurrencyDisplay ? "border-dotted" : false), title=(localCurrencyDisplay ? `${utils.formatCurrencyAmount(val, coinConfig.defaultCurrencyUnit.name.toLowerCase()).simpleVal} BTC` : false), data-bs-toggle=(localCurrencyDisplay ? "tooltip" : false)) #{parts.intVal.toLocaleString()}
+				span(class=(localCurrencyDisplay ? "border-dotted" : false), title=(localCurrencyDisplay ? `${utils.formatCurrencyAmount(val, coinConfig.defaultCurrencyUnit.name.toLowerCase()).simpleVal} WCN` : false), data-bs-toggle=(localCurrencyDisplay ? "tooltip" : false)) #{parts.intVal.toLocaleString()}
 
 			else if (maxDecimals > 0)
-				span(class=(localCurrencyDisplay ? "border-dotted" : false), title=(localCurrencyDisplay ? `${utils.formatCurrencyAmount(val, coinConfig.defaultCurrencyUnit.name.toLowerCase()).simpleVal} BTC` : false), data-bs-toggle=(localCurrencyDisplay ? "tooltip" : false)) #{parts.val}
+				span(class=(localCurrencyDisplay ? "border-dotted" : false), title=(localCurrencyDisplay ? `${utils.formatCurrencyAmount(val, coinConfig.defaultCurrencyUnit.name.toLowerCase()).simpleVal} WCN` : false), data-bs-toggle=(localCurrencyDisplay ? "tooltip" : false)) #{parts.val}
 			
 			else
-				span(class=(localCurrencyDisplay ? "border-dotted" : false), title=(localCurrencyDisplay ? `${utils.formatCurrencyAmount(val, coinConfig.defaultCurrencyUnit.name.toLowerCase()).simpleVal} BTC` : false), data-bs-toggle=(localCurrencyDisplay ? "tooltip" : false)) #{parts.val}
+				span(class=(localCurrencyDisplay ? "border-dotted" : false), title=(localCurrencyDisplay ? `${utils.formatCurrencyAmount(val, coinConfig.defaultCurrencyUnit.name.toLowerCase()).simpleVal} WCN` : false), data-bs-toggle=(localCurrencyDisplay ? "tooltip" : false)) #{parts.val}
 					if (parts.lessSignificantDigits)
 						span.text-small.text-muted.ms-1 #{parts.lessSignificantDigits}
 
@@ -414,16 +493,21 @@ mixin valueDisplaySpecial(val, maxDecimals=-1, summarizeAlways=false, summarizeM
 mixin confirmations(confirmations, abbreviated=true)
 	if (confirmations < 6)
 		span.text-warning.border-dotted(title="Fewer than 6 confirmations is generally considered <b>unsettled</b> for high-value transactions because block <b>re-organizations</b> that could affect them have reasonable probability.", data-bs-toggle="tooltip", data-bs-html="true") #{confirmations.toLocaleString()}
-			i.fas.fa-unlock-alt.fa-sm.ms-1
+			i.bi-unlock.ms-1
 	else
 		span.border-dotted.text-success(title="6 confirmations is generally considered <b>settled</b>. High-value transactions may require more;<br/>Low-value transactions may require fewer.", data-bs-toggle="tooltip", data-bs-html="true")
 			| #{abbreviated && confirmations > 1000 ? `${Math.floor(confirmations/1000)}k` : confirmations.toLocaleString()}
-			i.fas.fa-check.ms-1
+			i.bi-check2.ms-1
 
 
+
+mixin bodyBgBadge(text)
+	span.small.badge.bg-body.border.border-card-highlight-badge.text-reset.mb-tiny.me-1 #{text ? text : ""}
+		if (block)
+			block
 
 mixin cardHighlightBadge(text)
-	span.small.badge.bg-card-highlight-badge.border.border-card-highlight-badge.text-reset.mb-tiny.me-1 #{text ? text : ""}
+	span.small.badge.card-highlight.border.border-card-highlight-badge.text-reset.mb-tiny.me-1 #{text ? text : ""}
 		if (block)
 			block
 
@@ -435,7 +519,7 @@ mixin hexDataDisplay(hex, order="utf8,ascii,hex")
 
 	.d-flex.flex-row
 		.d-inline-block.small.border.rounded-1.p-1.px-2.card-highlight.word-wrap
-			+cardHighlightBadge(items[0])
+			+bodyBgBadge(items[0])
 			span.text-tiny.d-inline.d-sm-none #{utils.formatHex(hex, items[0])}
 			span.small.d-none.d-sm-inline #{utils.formatHex(hex, items[0])}
 			
@@ -449,7 +533,7 @@ mixin hexDataDisplay(hex, order="utf8,ascii,hex")
 						if (itemIndex > 1)
 							br
 						
-						+cardHighlightBadge(item)
+						+bodyBgBadge(item)
 						
 						span.text-tiny.d-inline.d-sm-none #{utils.formatHex(hex, item)}
 						span.small.d-none.d-sm-inline #{utils.formatHex(hex, item)}
@@ -460,13 +544,16 @@ mixin hexDataDisplay(hex, order="utf8,ascii,hex")
 		
 
 		div
-			a.text-muted.ms-2(href="javascript:void(0)", onclick=`$('#hex-display-expanded-${uniqueId}').toggle(); $(this).find(".toggle-plus-minus").toggleClass("fa-plus-square"); $(this).find(".toggle-plus-minus").toggleClass("fa-minus-square"); return false;`, title="Toggle More Encodings")
-				i.toggle-plus-minus.far.fa-plus-square.text-card-highlight
+			a.text-muted.ms-2(href="javascript:void(0)", onclick=`$('#hex-display-expanded-${uniqueId}').toggle(); $(this).find(".toggle-plus-minus").toggleClass("bi-plus-square"); $(this).find(".toggle-plus-minus").toggleClass("bi-dash-square"); return false;`, title="Toggle More Encodings")
+				i.toggle-plus-minus.bi-plus-square.text-card-highlight
 
 	
 
 
-mixin timestamp(timestamp, includeAgo=true, formatString)
+mixin timestamp(timestamp, options={includeAgo:true, agoOptions:{}})
+	- let includeAgo = "includeAgo" in options ? options.includeAgo : true;
+	- let agoOptions = "agoOptions" in options ? options.agoOptions : {};
+	
 	- var tzDiff = -parseFloat(browserTzOffset);
 	
 	if (userTzOffset != "unset")
@@ -489,10 +576,10 @@ mixin timestamp(timestamp, includeAgo=true, formatString)
 	else
 		- var titleStr = `${utcMoment.format("Y-MM-DD, HH:mm:ss")} utc`;
 
-	if (formatString)
+	if (options.formatString)
 		span.border-dotted(title=titleStr, data-bs-toggle="tooltip", data-bs-html="true")
-			span.date-text(id=`xyz-${utils.getRandomString(10, "aA1")}`, data-timestamp-utc=`${parseInt(timestamp)}`, data-date-format=formatString, data-date-ago=includeAgo.toString()) #{momentObj.format(formatString)}
-				if (["H", "m", "s"].some(str => formatString.includes(str)))
+			span.date-text(id=`xyz-${utils.getRandomString(10, "aA1")}`, data-timestamp-utc=`${parseInt(timestamp)}`, data-date-format=options.formatString, data-date-ago=includeAgo.toString()) #{momentObj.format(options.formatString)}
+				if (["H", "m", "s"].some(str => options.formatString.includes(str)))
 					span.text-tiny.text-tight-spacing.text-muted.ms-tiny UTC
 
 	else if (dateStr == nowDateStr)
@@ -524,47 +611,103 @@ mixin timestamp(timestamp, includeAgo=true, formatString)
 				span #{momentObj.format("YYYY-MM-DD")}
 
 	if (includeAgo)
-		- var timeAgo = moment.duration(moment.utc(new Date()).diff(moment.utc(new Date(parseInt(timestamp) * 1000))));
-		
-		if (timeAgo.asSeconds() < 0)
-			- timeAgo = moment.duration(moment.utc(new Date(parseInt(timestamp) * 1000)).diff(moment.utc(new Date())));
+		small.text-muted.ms-1 (
+			+timeAgo(timestamp, agoOptions)
+			| )
 
-			small.text-muted.ms-2 (+
-				| #{timeAgo.format()}
-				span )
+
+
+
+mixin timeAgo(timeAgoTime, options={oneElement:false, agoText:true})
+	- let oneElement = false;
+	if (options && "oneElement" in options)
+		- oneElement = options.oneElement;
+
+	- let agoText = true;
+	if (options && "agoText" in options)
+		- agoText = options.agoText;
+
+	- let hideHoverText = false;
+	if (options && "hideHoverText" in options)
+		- hideHoverText = options.hideHoverText;
+	
+	- let utcMoment = moment.utc(new Date(parseInt(timeAgoTime) * 1000));
+	- let timeAgo = moment.duration(moment.utc(new Date()).diff(utcMoment));
+	- let future = false;
+
+	if (timeAgo.asSeconds() < 0)
+		- future = true;
+		- timeAgo = moment.duration(moment.utc(new Date(parseInt(timeAgoTime) * 1000)).diff(moment.utc(new Date())));
+
+
+	if (future)
+		span +
+
+		
+	if (timeAgo.asHours() < 1)
+		if (timeAgo.asMinutes() < 1)
+			span #{timeAgo.seconds()}s
 		else
-			small.text-muted.ms-2 (
-				+timeAgo(timestamp, true)
-				span  ago)
+			span #{timeAgo.minutes()}m
+
+	else
+		if (timeAgo.asHours() >= 1 && timeAgo.asHours() < 24)
+			span #{timeAgo.hours()}h
+
+			if (!oneElement && timeAgo.minutes() > 0)
+				span.ms-1 #{timeAgo.minutes()}m
+
+		else
+			if (oneElement)
+				if (hideHoverText)
+					span #{utils.summarizeDuration(timeAgo, options)}
+				else
+					span.border-dotted(title=`${utils.summarizeDuration(timeAgo)}<br>${utcMoment.format("Y-MM-DD HH:mm:ss")} utc`, data-bs-toggle="tooltip", data-bs-html="true") #{utils.summarizeDuration(timeAgo, options)}
+			else
+				span #{utils.summarizeDuration(timeAgo, options)}
+
+	if (!future && agoText)
+		|  ago
+
 
 
 mixin darkBadge(text)
-	span.badge.bg-dark.border.border-dark.me-2 #{text ? text : ""}
+	span.badge.text-bg-dark.border.border-dark.me-2 #{text ? text : ""}
 		if (block)
 			block
 
 
 mixin lightBadge(text)
-	span.badge.bg-light.text-dark.border.me-2 #{text ? text : ""}
+	span.badge.text-bg-light.text-dark.border.me-2 #{text ? text : ""}
 		if (block)
 			block
 
 
 mixin successBadge(text)
-	span.badge.bg-success.me-2 #{text ? text : ""}
+	span.badge.text-bg-success.me-2 #{text ? text : ""}
 		if (block)
 			block
 
 
 mixin primaryBadge(text, endMargin=true)
-	span.badge.bg-primary(class=(endMargin ? "me-2" : false)) #{text ? text : ""}
+	span.badge.text-bg-primary(class=(endMargin ? "me-2" : false)) #{text ? text : ""}
+		if (block)
+			block
+
+mixin secondaryBadge(text, endMargin=true)
+	span.badge.text-bg-secondary(class=(endMargin ? "me-2" : false)) #{text ? text : ""}
+		if (block)
+			block
+
+mixin infoBadge(text, endMargin=true)
+	span.badge.text-bg-info(class=(endMargin ? "me-2" : false)) #{text ? text : ""}
 		if (block)
 			block
 
 
 mixin funAlert(html, text, referenceUrl)
 	.alert.alert-primary.shadow-sm.pb-0(role="alert", style="padding-left: 4rem;")
-		i.fas.fa-flag.fa-2x.fontawesome-shadow.text-warning.d-inline-block(style="position: absolute; top: 0; left: 0; width: 40px; margin-left: 0.8rem; margin-top: 1.2rem;")
+		i.bi-flag.fs-4.text-warning.d-inline-block(style="position: absolute; top: 0; left: 0; width: 40px; margin-left: 1.2rem; margin-top: 1.2rem;")
 
 		h5.mb-2.fw-light #{coinConfig.name} Fun
 
@@ -590,30 +733,8 @@ mixin funAlert(html, text, referenceUrl)
 
 
 mixin funItemIcon
-	i.fas.fa-flag.text-warning
+	i.bi-flag.text-warning
 
-
-mixin timeAgo(timeAgoTime, only1Element=false)
-	- var timeAgo = moment.duration(moment.utc(new Date()).diff(moment.utc(new Date(parseInt(timeAgoTime) * 1000))));
-
-	if (timeAgo.asHours() < 1)
-		if (timeAgo.asMinutes() < 1)
-			span #{timeAgo.seconds()}s
-		else
-			span #{timeAgo.minutes()}m
-
-	else
-		if (timeAgo.asHours() >= 1 && timeAgo.asHours() < 24)
-			span #{timeAgo.hours()}h
-
-			if (!only1Element && timeAgo.minutes() > 0)
-				span.ms-1 #{timeAgo.minutes()}m
-
-		else
-			if (only1Element)
-				span #{utils.shortenTimeDiff(timeAgo.format()).split(/,?\s+/)[0]}
-			else
-				span #{utils.shortenTimeDiff(timeAgo.format())}
 
 
 mixin blockCountdown(title, blocksLeft)
@@ -666,8 +787,8 @@ mixin blockCountdown(title, blocksLeft)
 
 			if (block)
 				a.text-body(href="javascript:void(0);", onclick=`$("#countdown-block-${countdownId}").toggle(); $(".countdown-togglers-${countdownId}").toggle();`)
-					i.far.fa-plus-square(class=`countdown-togglers-${countdownId}`)
-					i.far.fa-minus-square(class=`countdown-togglers-${countdownId}`, style="display: none;")
+					i.bi-plus-square(class=`countdown-togglers-${countdownId}`)
+					i.bi-dash-square(class=`countdown-togglers-${countdownId}`, style="display: none;")
 
 		if (block)
 			div(id=`countdown-block-${countdownId}`, style="display: none;")
@@ -681,11 +802,11 @@ mixin copyTextButton(text)
 	small.ms-2
 		if (false)
 			a(href="javascript:void(0)", title="Copy", data-clipboard-text=text, data-bs-toggle="tooltip", onclick=`copyTextToClipboard("${text}"); $(".icon-copy").toggle(); $(this).find(".icon-copied").toggle(); setTimeout(() => { $(this).find(".icon-copy").toggle(); $(this).find(".icon-copied").toggle(); }, 2000); return false;`)
-				i.far.fa-copy.text-info.icon-copy
-				i.fas.fa-check.text-success.icon-copied(style="display: none;")
+				i.bi-clipboard2.text-info.icon-copy
+				i.bi-clipboard2-check.text-success.icon-copied(style="display: none;")
 
 		a(href="javascript:void(0)", title="Copy", data-clipboard-text=text, data-bs-toggle="tooltip", onclick=`copyTextToClipboard("${text}"); $(this).attr("title", "Copied!").tooltip("_fixTitle").tooltip("show"); $(this).mouseleave(function() { $(this).tooltip("hide"); $(this).attr("data-bs-original-title", "Copy"); });`)
-			i.far.fa-copy.text-info
+			i.bi-clipboard2.text-info
 
 
 mixin dismissableInfoAlert(userSettingDismissedName, textToShowWhenClosed)
@@ -693,7 +814,7 @@ mixin dismissableInfoAlert(userSettingDismissedName, textToShowWhenClosed)
 	if (!hiddenByEnvVar && (!userSettings.hideInfoNotes || userSettings.hideInfoNotes == "false"))
 		if (userSettings[userSettingDismissedName] != "true")
 			.alert.alert-primary.alert-dismissible.shadow-sm.mb-4.ps-3.ps-md-7(role="alert")
-				i.d-none.d-md-inline.fas.fa-info-circle.fa-lg.d-inline-block(style="position: absolute; top: 0; left: 0; width: 36px; margin-left: 0.4rem; margin-top: 1.3rem;")
+				i.d-none.d-md-inline.bi-info-circle.fs-5.d-inline-block(style="position: absolute; top: 0; left: 0; width: 36px; margin-left: 0.75rem; margin-top: 1.0rem;")
 
 				block
 
@@ -704,12 +825,12 @@ mixin dismissableInfoAlert(userSettingDismissedName, textToShowWhenClosed)
 			.alert.alert-primary.shadow-sm.mb-4(role="alert")
 				.clearfix
 					.float-start
-						i.fas.fa-info-circle.fa-lg.me-3
+						i.bi-info-circle.me-3
 						| #{textToShowWhenClosed}
 
 					.float-end
 						a.text-muted(href=`./changeSetting?name=${userSettingDismissedName}&value=false`, aria-label="Close", style="text-decoration: none;", title="Open this note", data-bs-toggle="tooltip")
-							i.far.fa-plus-square.fa-lg
+							i.bi-plus-square
 
 
 mixin dismissableAlert(userSettingDismissedName, textToShowWhenClosed)
@@ -725,17 +846,17 @@ mixin dismissableAlert(userSettingDismissedName, textToShowWhenClosed)
 			.alert.alert-primary.shadow-sm.mb-4(role="alert")
 				.clearfix
 					.float-start
-						i.fas.fa-info-circle.fa-lg.me-3
+						i.bi-info-circle.me-3
 						| #{textToShowWhenClosed}
 
 					.float-end
 						a.text-muted(href=`./changeSetting?name=${userSettingDismissedName}&value=false`, aria-label="Close", style="text-decoration: none;", title="Open this note", data-bs-toggle="tooltip")
-							i.far.fa-plus-square.fa-lg
+							i.bi-plus-square
 
 
 mixin warningAlert
 	.alert.alert-warning.shadow-sm.mb-4.ps-3.ps-md-7(role="alert")
-		i.d-none.d-md-inline.fas.fa-exclamation-triangle.fa-lg.d-inline-block(style="position: absolute; top: 0; left: 0; width: 36px; margin-left: 0.4rem; margin-top: 1.3rem;")
+		i.d-none.d-md-inline.bi-exclamation-triangle.fs-5.d-inline-block(style="position: absolute; top: 0; left: 0; width: 36px; margin-left: 0.7rem; margin-top: 1.0rem;")
 
 		block
 
@@ -745,11 +866,11 @@ mixin numWithMutedDecimals(numString)
 		- var n = numString.substring(0, numString.indexOf("."));
 		- var dec = numString.substring(numString.indexOf("."));
 
-		span #{n}
+		span #{n.toLocaleString()}
 		small.text-muted #{dec}
 
 	else
-		span #{numString}
+		span #{parseInt(numString).toLocaleString()}
 				
 
 mixin blockRangeFilters
@@ -833,13 +954,13 @@ mixin pagination(limit, offset, sort, itemCount, baseUrl, justification="start",
 
 
 mixin graphPageScriptSetup(dateAdapterNeeded=false)
-	script(src=`./js/chart.min.js?v=${cacheId}`, integrity="")
+	script(src=assetUrl(`./js/chart.min.js`), integrity="", crossorigin="anonymous")
 	
 	if (dateAdapterNeeded)
-		script(src=`./js/moment.min.js?v=${cacheId}`, integrity="")
-		script(src=`./js/chartjs-adapter-moment.min.js?v=${cacheId}`, integrity="")
+		script(src=assetUrl(`./js/moment.min.js`), integrity="", crossorigin="anonymous")
+		script(src=assetUrl(`./js/chartjs-adapter-moment.min.js`), integrity="", crossorigin="anonymous")
 	
-	if (userSettings.uiTheme && userSettings.uiTheme == "dark")
+	if (userSettings.uiTheme && ["dark", "dark-v1"].includes(userSettings.uiTheme.toLowerCase()))
 		script.
 			Chart.defaults.color='white';
 			var gridLineColor = "#1a4280";
@@ -848,36 +969,43 @@ mixin graphPageScriptSetup(dateAdapterNeeded=false)
 			Chart.defaults.color='black';
 			var gridLineColor = "#dddddd";
 
+	script(src=assetUrl('./js/decimal.js'))
 
-mixin quote(quote, quoteIndex=-1)
-	blockquote.blockquote
-		span.fs-4.font-serif "
+
+mixin quote(quote, quoteIndex=-1, options={fontSize: 3, align:"start", includeQuotes:false})
+	- let fontSize = (options && options.fontSize) ? options.fontSize : 3;
+	- let align = (options && options.align) ? options.align : "start";
+	- let includeQuotes = (options && options.includeQuotes != null) ? options.includeQuotes : false;
+
+	blockquote.blockquote.mb-0(class=((align == "center") ? "text-center" : false ))
+		span.font-serif.fw-light(class=`fs-${fontSize}`)
+			
+			if (options && options.includeQuotes)
+				span(style="font-size: 110%;") "&nbsp;
+			
+			if (quoteIndex >= 0)
+				a.text-reset(href=`./quote/${quoteIndex}`) #{quote.text}
+			else
+				span #{quote.text}
 		
-		if (quoteIndex >= 0)
-			a.fs-5.font-serif.text-reset(href=`./quote/${quoteIndex}`) #{quote.text}
-		else
-			span.fs-5.font-serif #{quote.text}
-		
-		span.fs-4.font-serif "
-		br
-		.ms-8.mt-2
+			if (options && options.includeQuotes)
+				span(style="font-size: 110%;") &nbsp;"
+
+		.ms-8.mt-2(class=`fs-${fontSize + 2}`)
 			if (quote.speaker.indexOf("https://twitter.com") >= 0)
 				- var account = quote.speaker.substring("https://twitter.com/".length);
 				| — 
 				a.fs-5(href=quote.speaker, target="_blank") @#{account}
 
 			else
-				span.fs-5 — #{quote.speaker}
+				span — #{quote.speaker}
 
-			if (quote.date)
-				small.fw-light , #{quote.date}
+			small.fw-light ,&nbsp;
+				if (quote.url)
+					a(href=quote.url, target="_blank") #{quote.date}
 
-			
-			if (quote.url)
-				small.text-muted.ms-2 (
-					a(href=quote.url, target="_blank") ref
-						i.fas.fa-external-link-alt.fa-sm.ms-1
-					| )
+				else
+					| #{quote.date}
 
 			if (quote.context)
 				div

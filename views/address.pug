@@ -4,14 +4,6 @@ block headContent
 	title Address #{address}
 
 block content
-	div(align="center")
-		script(async, src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2900084726921838", crossorigin="anonymous")
-		ins.adsbygoogle(style="display:inline-block;width:728px;height:90px", data-ad-client="ca-pub-2900084726921838", data-ad-slot="1164912161")
-		script.
-			(adsbygoogle = window.adsbygoogle || []).push({});
-		a(href=`https://chhuornouodom.com/`,target="_blank") 
-			img(src="https://www.widecoin.org/public/images/cnoads-720x90.gif", alt="books", style="border: solid 0px #ccc;")
-	div(style="text-align: center; padding-bottom:10px;")
 	if (result && result.validateaddress)
 		if (!result.validateaddress.isvalid)
 			div.alert.alert-danger.mb-huge
@@ -65,7 +57,7 @@ block content
 						.float-end
 							if (`${userSettings["addressPageShowTechDetails"]}` == "false")
 								a.btn.btn-primary.btn-sm.me-2(href=`./changeSetting?name=addressPageShowTechDetails&value=true`, title="Display technical details for this address.", data-bs-toggle="tooltip")
-									i.far.fa-plus-square.me-2
+									i.bi-plus-square.me-2
 									| Technical Details
 
 
@@ -195,11 +187,11 @@ block content
 									div.dropdown-menu.dropdown-menu-end
 										a.dropdown-item(href=`./address/${address}`)
 											if (sort == "desc")
-												i.fa.fa-check 
+												i.bi-check2 
 											span  Newest First
 										a.dropdown-item(href=`./address/${address}?sort=asc`)
 											if (sort != "desc")
-												i.fa.fa-check 
+												i.bi-check2 
 											span  Oldest First
 
 							else if (txids && txids.length > 1 && addressApiSupport.sortDesc && !addressApiSupport.sortAsc)
@@ -210,7 +202,7 @@ block content
 						if (conflictedTxidResults)
 							div.alert.alert-warning.pb-0
 								div.float-start(style="width: 55px; height: 50px; font-size: 18px;")
-									i.fas.fa-exclamation-triangle.fa-2x(style="margin-top: 10px;")
+									i.bi-exclamation-triangle(style="margin-top: 10px;")
 								h4.alert-heading.h6.fw-bold Trust Warning
 								p
 									span The transaction history for this address was requested from mulitple Electrum servers and the results did not match. The results below were obtained only from 
@@ -231,12 +223,16 @@ block content
 							else if (addressDetailsErrors && addressDetailsErrors.length > 0)
 								+contentSection
 									each err, errIndex in addressDetailsErrors
-										if (err.e && err.e && err.e.message == "history too large")
+										- let errorMsg = "";
+										if (err.e && err.e.message)
+											- errorMsg = err.e.message;
+											
+										if (errorMsg == "history too large")
 											span Failed to retrieve transaction history from ElectrumX because this address is involved in too many transactions (more than ElectrumX currently supports retrieving). See 
 											a(href="https://github.com/janoside/btc-rpc-explorer/issues/67") Issue #67
 											span  for more information.
-										
-										else if (err.e && err.e.message && err.e.message == "failed to get confirmed status") 
+
+										else if (errorMsg == "failed to get confirmed status") 
 											span Failed to retrieve transaction history from Electrum Rust Server (electrs). See&nbsp;
 											a(href="https://github.com/janoside/btc-rpc-explorer/issues/67") Issue #67
 											span  for more information.
@@ -245,6 +241,13 @@ block content
 												span.font-plaintext --txid-limit
 												span  argument, to support longer transaction histories.
 											
+
+										else if (errorMsg.endsWith("index entries, query may take too long"))
+											span Failed to retrieve transaction history from Electrum Rust Server (electrs). 
+												| Consider starting electrs with a custom 
+												span.font-plaintext --index-lookup-limit
+												span  argument, to support longer transaction histories.
+
 										else if (err == "No address API configured")
 											.mb-2 No address API is configured.
 											.mb-0 See 

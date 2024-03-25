@@ -1,8 +1,17 @@
 "use strict";
 
-const LRU = require("lru-cache");
+const debug = require("debug");
+const debugLog = debug("btcexp:cache");
 
-function createMemoryLruCache(cacheObj, onCacheEvent) {
+const utils = require("./utils.js");
+
+
+const { LRUCache } = require("lru-cache");
+
+
+const watchKeysRegex = /regexToMatchCacheKeysForDebugLogging/;
+
+function createMemoryLruCache(cacheName, cacheObj, onCacheEvent) {
 	return {
 		get: (key) => {
 			return new Promise((resolve, reject) => {
@@ -13,22 +22,37 @@ function createMemoryLruCache(cacheObj, onCacheEvent) {
 				if (val != null) {
 					onCacheEvent("memory", "hit", key);
 
+					if (key.match(watchKeysRegex)) {
+						debugLog(`cache.${cacheName}[${key}]: HIT  (${utils.addThousandsSeparators(JSON.stringify(val).length)} B)`);
+					}
 				} else {
 					onCacheEvent("memory", "miss", key);
+
+					if (key.match(watchKeysRegex)) {
+						debugLog(`cache.${cacheName}[${key}]: MISS`);
+					}
 				}
 
-				resolve(cacheObj.get(key));
+				resolve(val);
 			});
 		},
 		set: (key, obj, maxAge) => {
-			cacheObj.set(key, obj, maxAge);
+			cacheObj.set(key, obj, {ttl: maxAge});
+
+			if (key.match(watchKeysRegex)) {
+				debugLog(`cache.${cacheName}[${key}]: SET  (${utils.addThousandsSeparators(JSON.stringify(obj).length)} B), T=${maxAge}`);
+			}
 
 			onCacheEvent("memory", "set", key);
 		},
 		del: (key) => {
-			cacheObj.del(key);
+			cacheObj.delete(key);
 
 			onCacheEvent("memory", "del", key);
+
+			if (key.match(watchKeysRegex)) {
+				debugLog(`cache.${cacheName}[${key}]: DEL`);
+			}
 		}
 	}
 }
@@ -66,7 +90,9 @@ function createTieredCache(cacheObjs) {
 }
 
 function lruCache(size) {
-	return new LRU(size);
+	return new LRUCache({
+		max: size
+	});
 }
 
 module.exports = {

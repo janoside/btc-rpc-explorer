@@ -6,7 +6,7 @@ block headContent
 	title OS Stats
 
 block content
-	+adminNav
+	+adminNav("OS Stats")
 
 	
 	+pageTitle("OS Stats")
@@ -23,7 +23,6 @@ block endOfBody
 
 	+graphPageScriptSetup(true)
 	
-	script(src='./js/decimal.js')
 
 	script.
 		var appStatNames = !{JSON.stringify(appStatNames)};

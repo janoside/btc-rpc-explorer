@@ -9,7 +9,7 @@ include ../includes/shared-mixins.pug
 			+contentSection
 				+summaryRow(3)
 					+summaryItem("Last Updated", "The time this UTXO Set snapshot was produced")
-						+timestamp(utxoSetSummary.lastUpdated / 1000, true)
+						+timestamp(utxoSetSummary.lastUpdated / 1000)
 
 					+summaryItem("Block Height", "The top block height at the time this UTXO Set snapshot was produced")
 						a(href=`./block-height/${utxoSetSummary.height}`) #{utxoSetSummary.height.toLocaleString()}
@@ -24,7 +24,7 @@ include ../includes/shared-mixins.pug
 					+summaryItem("UTXO Count", "The total number of UTXOs, or Unspent Transaction Outputs, across the entire blockchain")
 						| #{utxoSetSummary.txouts.toLocaleString()}
 
-					+summaryItem("Coins", "The sum of all spendable BTC units across the entire blockchain")
+					+summaryItem("Coins", "The sum of all spendable WCN units across the entire blockchain")
 						span #{parseFloat(utxoSetSummary.total_amount).toLocaleString()}
 						+copyTextButton(utxoSetSummary.total_amount)
 

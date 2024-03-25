@@ -4,21 +4,14 @@ const debug = require("debug");
 const debugLog = debug("btcexp:router");
 
 const express = require('express');
-const csurf = require('csurf');
 const router = express.Router();
 const util = require('util');
 const moment = require('moment');
-const bitcoinCore = require("btc-rpc-client");
-const qrcode = require('qrcode');
 const bitcoinjs = require('bitcoinjs-lib');
 const bip32 = require('bip32');
 const bs58check = require('bs58check');
 const { bech32, bech32m } = require("bech32");
-const sha256 = require("crypto-js/sha256");
-const hexEnc = require("crypto-js/enc-hex");
 const Decimal = require("decimal.js");
-const semver = require("semver");
-const markdown = require("markdown-it")();
 const asyncHandler = require("express-async-handler");
 
 const utils = require('./../app/utils.js');
@@ -35,7 +28,7 @@ router.get("/tx-display", asyncHandler(async (req, res, next) => {
 	res.locals.txInputsByTransaction = {};
 	res.locals.blockHeightsByTxid = {};
 
-	var txidOrder = [];
+	let txidOrder = [];
 
 	const promises = [];
 	for (const [txid, data] of Object.entries(global.coinConfig.testData.txDisplayTestList)) {

@@ -1,3 +1,34 @@
+##### v3.4.0
+###### 2023-06-14
+
+* Breaking changes to the API (see [./api/changelog](/api/changlog))
+* Homepage
+	* New "Next Halving" widget in Network Summary
+	* Show difficulty ATH comparison
+	* Show "Next Block" fullness
+	* Progress bar for difficulty adjustment estimate
+	* Include median fee rate for next-block estimates (also on [/next-block](./next-block))
+	* Show a banner if 'today' is a Widecoin 'Holiday' (see more below)
+* Minor fixes for running against Widecoin Core v23
+* Block Analysis: include top "days destroyed" transactions
+* URL change: /mining-template -> /next-block (redirect is included for compatibility)
+* On Extended PubKey pages, include balance data for various address (if Electrum server is configured)
+* New [/next-halving](./next-halving) tool
+* Several new API actions/changes; see [/api/changelog](./api/changelog)
+* New [/holidays](./holidays), a curated list of Widecoin 'Holidays'
+* Support for different view options on [/fun](./fun)
+* On [/difficulty-history](./difficulty-history), make delta graph honor timespan filtering
+* Proper use of production-ready MemoryStore for session data
+* Support for serving static assets via a configurable CDN
+* Misc fixes for erroneous data display on non-mainnet nodes
+* Switch from fontawesome to bootstrap-icons v1.8.0
+* Refreshed miner-identification database
+* Refreshed "Dark" theme with blues toned down (legacy dark theme still available)
+* UI/UX tweaks
+* Misc minor fixes
+* Updated dependencies
+
+
 ##### v3.3.0
 ###### 2021-12-07
 
@@ -22,7 +53,7 @@
 	* Caching for [/difficulty-history](./difficulty-history) data
 * Unicode formatting for OP_RETURN and other similar data (with ascii+hex accessible via toggle)
 * New `.env` options for setting defaults (see `.env-sample` for details):
-	* BTCEXP_DISPLAY_CURRENCY (btc,sat,local)
+	* BTCEXP_DISPLAY_CURRENCY (wcn,sat,local)
 	* BTCEXP_LOCAL_CURRENCY (usd,eur,gbp)
 	* BTCEXP_UI_TIMEZONE (utc,local)
 	* BTCEXP_UI_HIDE_INFO_PANELS (true,false)
@@ -52,8 +83,8 @@
 * Better support for BIP9 soft forks shown on [/node-details](./node-details) (e.g. Taproot ST in 0.21.1) (Thanks [@Pantamis](https://github.com/Pantamis))
 * New "Recent" and "Favorites" sections on [/rpc-browser](./rpc-browser)
 * Block lists: show (min, avg, max) fee rates instead of just avg
-* Random Bitcoin-related quote shown in footer on each page load
-* New [/quotes](./quotes), curated list of Bitcoin-related quotes (each quote also having its own page like [this](`./quote/0`))
+* Random Widecoin-related quote shown in footer on each page load
+* New [/quotes](./quotes), curated list of Widecoin-related quotes (each quote also having its own page like [this](`./quote/0`))
 * Preemptive support for upcoming format change to `getrawtransaction` output (thanks [@xanoni](https://github.com/xanoni))
 * Fix for incorrect homepage block count when using `BTCEXP_UI_HOME_PAGE_LATEST_BLOCKS_COUNT`
 * Fix for inaccurate difficulty adjustment estimates
@@ -79,8 +110,8 @@
 ##### v3.1.0
 ###### 2021-04-14
 
-* Improvements to no-`txindex` support: now available for all versions of Bitcoin Core
-* Move public sites to [BitcoinExplorer.org](https://bitcoinexplorer.org) (BIG thanks [@SatoshisDomains](https://twitter.com/SatoshisDomains))
+* Improvements to no-`txindex` support: now available for all versions of Widecoin Core
+* Move public sites to [WidecoinExplorer.org](https://bitcoinexplorer.org) (BIG thanks [@SatoshisDomains](https://twitter.com/SatoshisDomains))
 * Add back the [/peers](./peers) tool in the "Tools" menu
 	* Note: The map on the peers tool now requires users set their own `BTCEXP_MAPBOX_APIKEY` in `.env`
 * Response compression
@@ -105,7 +136,7 @@
 	* Redesigned Dark Mode (now the default)
 	* New app icon
 * Support for pruned nodes and nodes with disabled `txindex`! (HUGE Thanks to [@shesek](https://github.com/shesek))
-	* Note: Currently only Bitcoin Core versions 0.21+ are able to support this feature (a future improvement is planned to make it available to all versions)
+	* Note: Currently only Widecoin Core versions 0.21+ are able to support this feature (a future improvement is planned to make it available to all versions)
 * Mempool Summary improvements
 	* Greatly improved performance for multiple loads via caching
 	* Added: "Blocks Count" column by fee-rate bucket
@@ -140,7 +171,7 @@
 
 * New "Fun" item for the tx containing the whitepaper and new tool to extract the whitepaper and display it
 * New fee rate data on `/block-analysis` pages
-* New minor misc peer data available in Bitcoin Core RPC v0.21+
+* New minor misc peer data available in Widecoin Core RPC v0.21+
 * New gold exchange rate on homepage
 * Fix for SSO token generation URL encoding (Thanks [@shesek](https://github.com/shesek) and [@Kixunil](https://github.com/Kixunil))
 * Fix for [/peers](./peers) map

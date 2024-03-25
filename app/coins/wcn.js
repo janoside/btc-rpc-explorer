@@ -63,15 +63,16 @@ module.exports = {
 	name:"Widecoin",
 	ticker:"WCN",
 	logoUrlsByNetwork:{
-		"main":"./img/logo/mainnet/logo.svg",
-		"test":"./img/logo/testnet/logo.svg",
-		"regtest":"./img/logo/regtest/logo.svg",
-		"signet":"./img/logo/signet/logo.svg"
+		"main":"./img/network-mainnet/logo.svg",
+		"test":"./img/network-testnet/logo.svg",
+		"regtest":"./img/network-regtest/logo.svg",
+		"signet":"./img/network-signet/logo.svg"
 	},
 	coinIconUrlsByNetwork:{
-		"main":"./img/logo/mainnet/coin-icon.svg",
-		"test":"./img/logo/testnet/coin-icon.svg",
-		"signet":"./img/logo/signet/coin-icon.svg"
+		"main":"./img/network-mainnet/coin-icon.svg",
+		"test":"./img/network-testnet/coin-icon.svg",
+		"signet":"./img/network-signet/coin-icon.svg",
+		"regtest":"./img/network-regtest/coin-icon.svg"
 	},
 	coinColorsByNetwork: {
 		"main": "#F7931A",
@@ -112,8 +113,8 @@ module.exports = {
 		"regtest": new Decimal(35000000),
 		"signet": new Decimal(35000000)
 	},
-	targetBlockTimeSeconds: 30,
-	targetBlockTimeMinutes: 0.5,
+	targetBlockTimeSeconds: 600,
+	targetBlockTimeMinutes: 10,
 	currencyUnits:currencyUnits,
 	currencyUnitsByName:{"WCN":currencyUnits[0], "mWCN":currencyUnits[1], "bits":currencyUnits[2], "sat":currencyUnits[3]},
 	baseCurrencyUnit:currencyUnits[3],
@@ -124,7 +125,14 @@ module.exports = {
 		"main": 2102400,
 		"test": 2102400,
 		"regtest": 150,
-		"signet": 210000
+		"signet": 2102400
+	},
+
+	terminalHalvingCountByNetwork: {
+		"main": 32,
+		"test": 32,
+		"regtest": 32,
+		"signet": 32
 	},
 
 	// used for supply estimates that don't need full gettxoutset accuracy
@@ -136,7 +144,24 @@ module.exports = {
 	},
 
 	utxoSetCheckpointsByNetwork: {
-		"main": {"height":702329,"bestblock":"0000000000000748f3d619925cb8f20ad02d7c808c2dbbbfeb561affb2918ed4","transactions":45854214,"txouts":75356871,"bogosize":5640223435,"hash_serialized_2":"727879e512dde3c87ec4b3b4185d8212506a5eee517694a34785c0a63a7d78b9","disk_size":4582442992,"total_amount":"18826856.29247566","lastUpdated":1632692076775}
+		// this includes values from running gettxoutsetinfo with both "muhash" and "hash_serialized_2" params
+		"main": {
+			// "muhash"
+			"height": 702329,
+			"bestblock": "0000000000000748f3d619925cb8f20ad02d7c808c2dbbbfeb561affb2918ed4",
+			"txouts": 75356871,
+			"bogosize": 5640223435,
+			"muhash": "727879e512dde3c87ec4b3b4185d8212506a5eee517694a34785c0a63a7d78b9",
+			"total_amount": "18826856.29247566",
+			"total_unspendable_amount": "219.292143",
+
+			// "hash_serialized_2"
+			"transactions": 52250541,
+			"disk_size": 4582442992,
+			"hash_serialized_2": "89afe21688f3a2cc01ef837c2b0454d4039830433d49c264856b2578eff2d62b",
+
+			"lastUpdated": 1632692076775
+		}
 	},
 	
 	genesisBlockHashesByNetwork:{
@@ -171,7 +196,7 @@ module.exports = {
 					"value": 50,
 					"n": 1,
 					"scriptPubKey": {
-						"asm": "OP_DUP OP_HASH160 6b483f98a2e2c1f2a16dd91b5250fee785f76e1a OP_EQUALVERIFY OP_CHECKSIG",
+						"asm": "OP_DUP OP_HASH160 6b483f98a2e2c1f2a16dd91b5250fee785f76e1a OP_EQUALVERIFY OP_CHECKSIG OP_CHECKSIG",
 						"hex": "76a9146b483f98a2e2c1f2a16dd91b5250fee785f76e1a88ac",
 						"reqSigs": 1,
 						"type": "pubkey",
@@ -294,7 +319,7 @@ module.exports = {
 				0,
 				0
 			],
-			"height": 3,
+			"height": 0,
 			"ins": 0,
 			"maxfee": 0,
 			"maxfeerate": 0,
@@ -539,10 +564,9 @@ module.exports = {
 		}
 	},
 	blockRewardFunction:function(blockHeight, chain) {
-		let halvingBlockInterval = (chain == "regtest" ? 150 : 2102400);
+		let halvingBlockInterval = (chain == "regtest" ? 150 : 210000);
 		let index = Math.floor(blockHeight / halvingBlockInterval);
-		//let index2 =Math.floor(blockHeight / halvingBlockInterval).toFixed(2);
-		//console.log(index2);
+
 		return blockRewardEras[index];
 	},
 	// Updated for WCN
@@ -571,5 +595,4 @@ module.exports = {
 		} 
 		return getrw;
 	}
-
 };

@@ -86,7 +86,6 @@ block endOfBody
 	
 	+graphPageScriptSetup
 	
-	script(src='./js/decimal.js')
 	
 	script.
 		var summary = null;
@@ -125,14 +124,15 @@ block endOfBody
 						url: `./internal-api/get-mining-summary?statusId=${statusId}`
 
 					}).done((summaryResult) => {
-						summary = summaryResult;
+						if (summaryResult && summaryResult.overall) {
+							summary = summaryResult;
 
-						$("#json-content").text(JSON.stringify(summary, null, 4));
+							$("#json-content").text(JSON.stringify(summary, null, 4));
 
-						hljs.highlightAll();
+							hljs.highlightAll();
 
-						displaySummaryData(summary);
-
+							displaySummaryData(summary);
+						}
 					}).always(() => {
 						// nothing
 					});

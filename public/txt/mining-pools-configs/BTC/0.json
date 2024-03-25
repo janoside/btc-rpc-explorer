@@ -41,7 +41,7 @@
 			"link" : "http://www.btc.top/"
 		},
 		"pool.bitcoin.com" : {
-			"name" : "Bitcoin.com",
+			"name" : "Widecoin.com",
 			"link" : "https://www.bitcoin.com/"
 		},
 		"Mined By 175btc.com" : {
@@ -64,8 +64,8 @@
 			"name" : "BitMinter",
 			"link" : "https://bitminter.com/"
 		},
-		"/Bitcoin-Russia.ru/" : {
-			"name" : "BitcoinRussia",
+		"/Widecoin-Russia.ru/" : {
+			"name" : "WidecoinRussia",
 			"link" : "https://bitcoin-russia.ru"
 		},
 		"btcserv" : {
@@ -224,12 +224,16 @@
 			"name" : "NiceHash",
 			"link" : "https://solo.nicehash.com/"
 		},
+		"/NiceHash/" : {
+			"name" : "NiceHash",
+			"link" : "https://nicehash.com/"
+		},
 		"/BitClub Network/" : {
 			"name" : "BitClub",
 			"link" : "https://bitclubpool.com/"
 		},
 		"bitcoinaffiliatenetwork.com" : {
-			"name" : "Bitcoin Affiliate Network",
+			"name" : "Widecoin Affiliate Network",
 			"link" : "https://mining.bitcoinaffiliatenetwork.com/"
 		},
 		"BTCChina Pool" : {
@@ -376,8 +380,8 @@
 			"name" : "58COIN",
 			"link" : "https://www.58coin.com"
 		},
-		"/Bitcoin-India/" : {
-			"name": "Bitcoin India",
+		"/Widecoin-India/" : {
+			"name": "Widecoin India",
 			"link": "https://bitcoin-india.org"
 		},
 		"--Nug--" : {
@@ -417,7 +421,11 @@
 			"link" : "http://www.dpool.top/"
 		},
 		"/Rawpool.com/": {
-			"name" : "Rawpool.com",
+			"name" : "Rawpool",
+			"link" : "https://www.rawpool.com/"
+		},
+		"/Rawpool/": {
+			"name" : "Rawpool",
 			"link" : "https://www.rawpool.com/"
 		},
 		"/haominer/": {
@@ -428,8 +436,8 @@
 			"name": "Helix",
 			"link": ""
 		},
-		"/Bitcoin-Ukraine.com.ua/": {
-			"name": "Bitcoin-Ukraine",
+		"/Widecoin-Ukraine.com.ua/": {
+			"name": "Widecoin-Ukraine",
 			"link": "https://bitcoin-ukraine.com.ua/"
 		},
 		"/poolin.com": {
@@ -587,6 +595,34 @@
 		"KuCoinPool": {
 			"name": "KuCoinPool",
 			"link": "https://www.kucoin.com/mining-pool/"
+		},
+		"terrapool.io": {
+			"name": "Terra Pool",
+			"link": "https://terrapool.io/"
+		},
+		"BlockfillsPool": {
+			"name": "BlockFills",
+			"link": "https://www.blockfills.com/mining/"
+		},
+		"/ultimus/": {
+			"name": "Ultimus Pool",
+			"link": "https://www.ultimuspool.com/en"
+		},
+		"/ULTIMUS/": {
+			"name": "Ultimus Pool",
+			"link": "https://www.ultimuspool.com/"
+		},
+		"Entrustus": {
+			"name": "Entrust Charity Pool",
+			"link": "pool.entustus.org"
+		},
+		"/pegapool/" : {
+			"name": "Pega Pool",
+			"link": "https://www.pega-pool.com"
+		},
+		"Titan.io" : {
+			"name": "Titan",
+			"link": "https://titan.io"
 		}
 	},
 	"payout_addresses" : {
@@ -607,11 +643,11 @@
 			"link" : "https://ghash.io/"
 		},
 		"14R2r9FkyDmyxGB9xUVwVLdgsX9YfdVamk" : {
-			"name" : "BitcoinRussia",
+			"name" : "WidecoinRussia",
 			"link" : "https://bitcoin-russia.ru/"
 		},
 		"165GCEAx81wce33FWEnPCRhdjcXCrBJdKn" : {
-			"name" : "BitcoinRussia",
+			"name" : "WidecoinRussia",
 			"link" : "https://bitcoin-russia.ru/"
 		},
 		"17kkmDx8eSwj2JTTULb3HkJhCmexfysExz" : {
@@ -867,7 +903,7 @@
 			"link" : "http://haozhuzhu.com"
 		},
 		"1AZ6BkCo4zgTuuLpRStJH8iNsehXTMp456" : {
-			"name" : "BitcoinIndia",
+			"name" : "WidecoinIndia",
 			"link" : "https://pool.bitcoin-india.org/"
 		},
 		"1FLH1SoLv4U68yUERhDiWzrJn5TggMqkaZ" : {
@@ -955,7 +991,7 @@
 			"link" : "http://www.dpool.top/"
 		},
 		"1FbBbv5oYqFKwiPm4CAqvAy8345n8AQ74b" : {
-			"name" : "Rawpool.com",
+			"name" : "Rawpool",
 			"link" : "https://www.rawpool.com/"
 		},
 		"1LsFmhnne74EmU4q4aobfxfrWY4wfMVd8w" : {
@@ -1305,6 +1341,50 @@
 		"33SAB6pzbhEGPbfY6NVgRDV7jVfspZ3A3Z": {
 			"name" : "Carbon Negative (unidentified)",
 			"link" : "https://github.com/0xB10C/known-mining-pools/issues/48"
+		},
+		"1PzVut5X6Nx7Mv4JHHKPtVM9Jr9LJ4Rbry" : {
+			"name": "BlockFills",
+			"link": "https://www.blockfills.com/mining/"
+		},
+		"32P5KVSbZYAkVmSHxDd2oBXaSk372rbV7L": {
+			"name": "Terra Pool",
+			"link": "https://terrapool.io/"
+		},
+	   	"1EMVSMe1VJUuqv7D7SFzctnVXk4KdjXATi": {
+			"name": "Ultimus Pool",
+			"link": "https://www.ultimuspool.com/en"
+		},
+		"1E8CZo2S3CqWg1VZSJNFCTbtT8hZPuQ2kB" : {
+			"name" : "Poolin",
+			"link" : "https://www.poolin.com/"
+		},
+		"14sA8jqYQgMRQV9zUtGFvpeMEw7YDn77SK" : {
+			"name" : "Poolin",
+			"link" : "https://www.poolin.com/"
+		},
+		"1GNgwA8JfG7Kc8akJ8opdNWJUihqUztfPe" : {
+			"name" : "Poolin",
+			"link" : "https://www.poolin.com/"
+		},
+		"17tUZLvy3X2557JGhceXRiij2TNYuhRr4r" : {
+			"name" : "Poolin",
+			"link" : "https://www.poolin.com/"
+		},
+		"122pN8zvqTxJaA8fRY1PDBu4QYodqE5m2X": {
+			"name" : "Binance Pool",
+			"link" : "https://pool.binance.com/"
+		},
+		"3L8Ck6bm3sve1vJGKo6Ht2k167YKSKi8TZ": {
+			"name" : "Binance Pool",
+			"link" : "https://pool.binance.com/"
+		},
+		"3C9sAKXrBVpJVe3b738yik4LPHpPmceBgd": {
+			"name" : "Ultimus Pool",
+			"link" : "https://www.ultimuspool.com/"
+		},
+		"1BGFwRzjCfRR7EvRHnzfHyFjGR8XiBDFKa":{
+			"name":"Pega Pool",
+			"link":"https://pega-pool.com/"
 		}
 	},
 	"unknown_miner_payout_addresses": {

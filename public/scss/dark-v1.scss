@@ -1,0 +1,194 @@
+$body-bg: #051c3e;
+$body-color: #f7fafa;
+
+$main-bg: darken($body-bg, 6%);
+
+$text-muted: #b2bac2;
+
+$dark: #22272b;
+
+/*$theme-colors: (
+	"dark": #292e33
+);*/
+
+
+$blue: #0d6efd;
+$link-color: $blue;
+$card-highlight-color: #406fb4;
+
+$bg-nav-link-hover: lighten($body-bg, 5%);
+
+
+
+
+$border-color: lighten($body-bg, 4%);
+
+$card-border-color: $border-color;
+
+$link-hover-color:			#408cff;
+
+
+$table-striped-bg: lighten($body-bg, 4%);
+
+
+$pagination-bg: 					$body-bg;
+$pagination-border-color: 			lighten($border-color, 5%);
+$pagination-active-bg: 				$body-bg;
+$pagination-active-border-color: 	lighten($border-color, 5%);
+$pagination-hover-bg: 				lighten($pagination-bg, 15%);
+$pagination-hover-border-color: 	lighten($border-color, 5%);
+$pagination-disabled-bg: 			darken($pagination-bg, 3%);
+$pagination-disabled-border-color: 	lighten($border-color, 5%);
+
+
+$tooltip-bg: lighten($body-bg, 15%);
+
+
+$nav-tabs-link-active-color:		darken($body-color, 5%);
+//$nav-tabs-link-active-bg:			$body-bg !default;
+$nav-tabs-link-active-border-color:	#ced4da #ced4da $body-bg !important;
+
+
+$btn-close-color: #fff;
+
+
+$tooltip-opacity: 1.0;
+
+$dropdown-bg: lighten($body-bg, 10%);
+$dropdown-link-color: $body-color;
+$dropdown-link-hover-bg: lighten($dropdown-bg, 10%);
+$dropdown-link-hover-color: $body-color;
+$dropdown-link-active-bg: lighten($dropdown-bg, 5%);
+$dropdown-dark-bg: #ff0;
+$dropdown-dark-link-hover-bg: #0ff;
+$dropdown-dark-link-active-bg: #f0f;
+$dropdown-link-active-color: lighten($dropdown-bg, 5%);
+
+$dropdown-header-color: darken($body-color, 25%);
+
+$dropdown-box-shadow: 0 1.5rem 1rem rgba(#000, .35);
+
+
+$input-bg: darken(#fff, 0%);
+//$input-border-color: lighten($input-bg, 9%);
+$input-color: #212529;
+
+
+$modal-content-bg: $body-bg;
+$modal-content-color: $body-color;
+
+
+
+$toast-color:                       $body-color;
+$toast-background-color:            lighten($body-bg, 15%);
+$toast-border-color:                rgba(255, 255, 255, .1);
+$toast-header-color:                $body-color;
+$toast-header-background-color:     lighten($body-bg, 7%);
+$toast-header-border-color:         rgba(0, 0, 0, .05) !default;
+
+
+$nav-tabs-border-color: $body-color;
+
+
+
+@import "./main";
+
+
+
+
+.alert-primary {
+	color: $body-color;
+	background-color: lighten($body-bg, 8%);
+	border-color: lighten($body-bg, 20%);
+	border-width: 2px;
+}
+
+.alert-danger {
+	color: $body-color;
+	background-color: #7d323b;
+	border-color: #7d1f29;
+	border-width: 2px;
+}
+
+.alert-danger a {
+	color: $body-color;
+	text-decoration: underline;
+}
+
+.alert-warning {
+	color: $body-color;
+	background-color: #d9962b;
+	border-color: darken(#d9962b, 10%);
+	border-width: 2px;
+}
+
+.alert-success {
+	color: $body-color;
+	background-color: darken(#198754, 10%);
+	border-color: lighten(#198754, 5%);
+	border-width: 2px;
+}
+
+.alert-info {
+	color: $body-color;
+	background-color: darken(#cff4fc, 60%);
+	border-color: darken(#cff4fc, 50%);
+	border-width: 2px;
+}
+
+
+
+.bg-main {
+	background-color: $main-bg !important;
+}
+
+$header-footer-bg: #112138;
+
+.bg-header-footer {
+	background-color: $header-footer-bg !important;
+}
+
+.bg-header-footer-highlight {
+	background-color: lighten($header-footer-bg, 12%) !important;
+}
+
+.bg-gradient-body-to-main {
+	background: linear-gradient(0deg, $main-bg 0%, $body-bg 100%);
+}
+
+.bg-card-highlight-badge {
+	background-color: $body-bg !important;
+}
+
+.bg-tx-separator {
+	background-color: darken($body-bg, 10%);
+}
+
+.border-card-highlight-badge {
+	border-color: #183662 !important;
+}
+
+.border-dark {
+	border-color: lighten($dark, 8%) !important;
+}
+
+.card-highlight {
+	background-color: lighten($card-bg, 5%);
+	border: solid 1px lighten($card-bg, 10%) !important;
+	color: $body-color;
+}
+
+.text-card-highlight {
+	color: $card-highlight-color !important;
+}
+
+.border-dotted {
+	border-bottom: dotted 1px #6688bc;
+}
+
+code {
+	padding: 0px 3px;
+	border-radius: 3px;
+	background-color: lighten($card-bg, 15%);
+	color: #198754;
+}

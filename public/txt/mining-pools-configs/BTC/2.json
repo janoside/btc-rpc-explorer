@@ -1,6 +1,10 @@
 {
     "coinbase_tags" : {
-        "/LUXOR/": {
+        "/terrapool.io/": {
+            "name": "Terra Pool",
+            "link": "https://terrapool.io"
+        },
+        "/Powered by Luxor/": {
             "name": "Luxor",
             "link": "https://mining.luxor.tech"
         },
@@ -22,7 +26,7 @@
         },
         "BITFARMS": {
             "name": "Bitfarms",
-            "link": "https://www.bitarms.io/"
+            "link": "https://www.bitfarms.io/"
         },
         "/Huobi/": {
             "name": "Huobi.pool",
@@ -45,7 +49,7 @@
             "link" : "http://www.btc.top/"
         },
         "pool.bitcoin.com" : {
-            "name" : "Bitcoin.com",
+            "name" : "Widecoin.com",
             "link" : "https://www.bitcoin.com/"
         },
         "Mined By 175btc.com" : {
@@ -68,8 +72,8 @@
             "name" : "BitMinter",
             "link" : "https://bitminter.com/"
         },
-        "/Bitcoin-Russia.ru/" : {
-            "name" : "BitcoinRussia",
+        "/Widecoin-Russia.ru/" : {
+            "name" : "WidecoinRussia",
             "link" : "https://bitcoin-russia.ru"
         },
         "btcserv" : {
@@ -185,8 +189,8 @@
             "link" : "http://give-me-coins.com/"
         },
         "/slush/" : {
-           "name" : "SlushPool",
-           "link" : "https://slushpool.com/"
+           "name" : "Braiins Pool",
+           "link" : "https://braiins.com/pool"
         },
         "Mined by AntPool" : {
             "name" : "AntPool",
@@ -233,7 +237,7 @@
             "link" : "https://bitclubpool.com/"
         },
         "bitcoinaffiliatenetwork.com" : {
-            "name" : "Bitcoin Affiliate Network",
+            "name" : "Widecoin Affiliate Network",
             "link" : "https://mining.bitcoinaffiliatenetwork.com/"
         },
         "BTCChina Pool" : {
@@ -380,8 +384,8 @@
             "name" : "58COIN",
             "link" : "https://www.58coin.com"
         },
-        "/Bitcoin-India/" : {
-            "name": "Bitcoin India",
+        "/Widecoin-India/" : {
+            "name": "Widecoin India",
             "link": "https://bitcoin-india.org"
         },
         "--Nug--" : {
@@ -421,7 +425,7 @@
             "link" : "http://www.dpool.top/"
         },
         "/Rawpool.com/": {
-            "name" : "Rawpool.com",
+            "name" : "Rawpool",
             "link" : "https://www.rawpool.com/"
         },
         "/haominer/": {
@@ -432,8 +436,8 @@
             "name": "Helix",
             "link": ""
         },
-        "/Bitcoin-Ukraine.com.ua/": {
-            "name": "Bitcoin-Ukraine",
+        "/Widecoin-Ukraine.com.ua/": {
+            "name": "Widecoin-Ukraine",
             "link": "https://bitcoin-ukraine.com.ua/"
         },
         "/poolin.com": {
@@ -488,10 +492,14 @@
             "name" : "Binance Pool",
             "link" : "https://pool.binance.com/"
         },
-        "/Minerium.com/" : {
+        "/Mined in the USA by: /Minerium.com/" : {
             "name" : "Minerium",
             "link" : "https://www.minerium.com/"
         },
+        "/Minerium.com/" : {
+            "name" : "Minerium",
+            "link" : "https://www.minerium.com/"
+        },        
         "/Buffett/": {
             "name" : "Lubian.com",
             "link" : ""
@@ -547,10 +555,38 @@
         "KuCoinPool": {
             "name": "KuCoinPool",
             "link": "https://www.kucoin.com/mining-pool/"
+        },
+        "/ULTIMUS/": {
+            "name": "ULTIMUS POOL",
+            "link": "https://www.ultimuspool.com/"
+        },
+        "Entrustus" : {
+            "name": "Entrust Charity Pool",
+            "link": "pool.entustus.org"
+        },
+        "okminer.com/euz" : {
+            "name": "OKMINER",
+            "link": "https://okminer.com/"
+        },
+        "btccom" : {
+            "name" : "BTC.com",
+            "link" : "https://pool.btc.com"
+        },
+        "btccomf" : {
+            "name" : "BTC.com",
+            "link" : "https://pool.btc.com"
+        },
+        "/pegapool/" : {
+            "name" : "PEGA Pool",
+            "link" : "https://www.pega-pool.com"
         }
     },
     "payout_addresses" : {
         "1MkCDCzHpBsYQivp8MxjY5AkTGG1f2baoe": {
+            "name": "Luxor",
+            "link": "https://mining.luxor.tech"
+        },
+        "39bitUyBcUu3y3hRTtYprKbTp712t4ZWqK": {
             "name": "Luxor",
             "link": "https://mining.luxor.tech"
         },
@@ -571,11 +607,11 @@
             "link" : "https://ghash.io/"
         },
         "14R2r9FkyDmyxGB9xUVwVLdgsX9YfdVamk" : {
-            "name" : "BitcoinRussia",
+            "name" : "WidecoinRussia",
             "link" : "https://bitcoin-russia.ru/"
         },
         "165GCEAx81wce33FWEnPCRhdjcXCrBJdKn" : {
-            "name" : "BitcoinRussia",
+            "name" : "WidecoinRussia",
             "link" : "https://bitcoin-russia.ru/"
         },
         "17kkmDx8eSwj2JTTULb3HkJhCmexfysExz" : {
@@ -603,12 +639,12 @@
             "link" : "https://polmine.pl/"
         },
         "1CK6KHY6MHgYvmRQ4PAafKYDrg1ejbH1cE" : {
-            "name" : "SlushPool",
-            "link" : "https://slushpool.com/"
+            "name" : "Braiins Pool",
+            "link" : "https://braiins.com/pool"
         },
         "1AqTMY7kmHZxBuLUR5wJjPFUvqGs23sesr" : {
-            "name" : "SlushPool",
-            "link" : "https://slushpool.com/"
+            "name" : "Braiins Pool",
+            "link" : "https://braiins.com/pool"
         },
         "1AcAj9p6zJn4xLXdvmdiuPCtY7YkBPTAJo" : {
             "name" : "BitFury",
@@ -651,6 +687,10 @@
             "link" : "https://www.hpt.com/"
         },
         "1BDbsWi3Mrcjp1wdop3PWFNCNZtu4R7Hjy" : {
+            "name" : "EMCDPool",
+            "link" : "https://pool.emcd.io"
+        },
+	"1MAAUXNSJEDaPtECd955CQct65BmTzwhj6" : {
             "name" : "EMCDPool",
             "link" : "https://pool.emcd.io"
         },
@@ -851,7 +891,7 @@
             "link" : "http://haozhuzhu.com"
         },
         "1AZ6BkCo4zgTuuLpRStJH8iNsehXTMp456" : {
-            "name" : "BitcoinIndia",
+            "name" : "WidecoinIndia",
             "link" : "https://pool.bitcoin-india.org/"
         },
         "1FLH1SoLv4U68yUERhDiWzrJn5TggMqkaZ" : {
@@ -939,7 +979,7 @@
             "link" : "http://www.dpool.top/"
         },
         "1FbBbv5oYqFKwiPm4CAqvAy8345n8AQ74b" : {
-            "name" : "Rawpool.com",
+            "name" : "Rawpool",
             "link" : "https://www.rawpool.com/"
         },
         "1LsFmhnne74EmU4q4aobfxfrWY4wfMVd8w" : {
@@ -955,6 +995,22 @@
             "link" : "https://www.poolin.com/"
         },
         "3JQSigWTCHyBLRD979JWgEtWP5YiiFwcQB" : {
+            "name" : "Poolin",
+            "link" : "https://www.poolin.com/"
+        },
+        "1E8CZo2S3CqWg1VZSJNFCTbtT8hZPuQ2kB" : {
+            "name" : "Poolin",
+            "link" : "https://www.poolin.com/"
+        },
+        "14sA8jqYQgMRQV9zUtGFvpeMEw7YDn77SK" : {
+            "name" : "Poolin",
+            "link" : "https://www.poolin.com/"
+        },
+        "1GNgwA8JfG7Kc8akJ8opdNWJUihqUztfPe" : {
+            "name" : "Poolin",
+            "link" : "https://www.poolin.com/"
+        },
+        "17tUZLvy3X2557JGhceXRiij2TNYuhRr4r" : {
             "name" : "Poolin",
             "link" : "https://www.poolin.com/"
         },
@@ -1154,6 +1210,14 @@
             "name" : "Binance Pool",
             "link" : "https://pool.binance.com/"
         },
+        "122pN8zvqTxJaA8fRY1PDBu4QYodqE5m2X": {
+            "name" : "Binance Pool",
+            "link" : "https://pool.binance.com/"
+        },
+        "3L8Ck6bm3sve1vJGKo6Ht2k167YKSKi8TZ": {
+            "name" : "Binance Pool",
+            "link" : "https://pool.binance.com/"
+        },
         "34Jpa4Eu3ApoPVUKNTN2WeuXVVq1jzxgPi": {
             "name" : "Lubian.com",
             "link" : "http://www.lubian.com/"
@@ -1206,9 +1270,37 @@
             "name" : "F2Pool",
             "link" : "https://www.f2pool.com/"
         },
-        "1A32KFEX7JNPmU1PVjrtiXRrTQcesT3Nf1": {
+        "1EMVSMe1VJUuqv7D7SFzctnVXk4KdjXATi": {
+            "name" : "ULTIMUS POOL",
+            "link" : "https://www.ultimuspool.com/"
+        },
+        "3C9sAKXrBVpJVe3b738yik4LPHpPmceBgd": {
+            "name" : "ULTIMUS POOL",
+            "link" : "https://www.ultimuspool.com/"
+        },
+        "19VBqLkbMywnX5QMUg7LsHgbzsLh9as4MS": {
             "name": "MARA Pool",
             "link": "https://marapool.com"
+        },
+        "15xcAZ2HfaSwYbCV6GGbasBSAekBRRC5Q2": {
+            "name": "OKMINER",
+            "link": "https://okminer.com/"
+        },
+        "3Qqp7LwxmSjPwRaKkDToysJsM3xA4ThqFk": {
+            "name": "Terra Pool",
+            "link": "https://terrapool.io"
+        },
+        "32P5KVSbZYAkVmSHxDd2oBXaSk372rbV7L": {
+            "name": "Terra Pool",
+            "link": "https://terrapool.io"
+        },
+        "36cWgjEtxQSFgbHTJDw5AB96ZX7fJk1URd" : {
+            "name" : "BTC.com",
+            "link" : "https://pool.btc.com"
+        },
+        "1BGFwRzjCfRR7EvRHnzfHyFjGR8XiBDFKa" : {
+            "name" : "PEGA Pool",
+            "link" : "https://www.pega-pool.com"
         }
     }
 }

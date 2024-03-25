@@ -7,13 +7,6 @@ block headContent
 		title Block: Error
 
 block content
-	//span #{result.getblock.height.toLocaleString()}
-	div(align="center")
-		script(async, src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2900084726921838", crossorigin="anonymous")
-		ins.adsbygoogle(style="display:inline-block;width:728px;height:90px", data-ad-client="ca-pub-2900084726921838", data-ad-slot="1164912161")
-		script.
-			(adsbygoogle = window.adsbygoogle || []).push({});
-			
 	if (result.getblock)
 
 		+pageTitle(`Block #${result.getblock.height.toLocaleString()}`, result.getblock.hash, true)
@@ -37,7 +30,7 @@ block content
 
 			if (result.getblock.tx != null && result.getblock.tx.length > 0)
 				a.btn.btn-primary.btn-sm.d-none.d-md-inline-block.ms-3(href=`./block-analysis/${result.getblock.hash}`, title="See a summary analysis of all transactions in this block.", data-bs-toggle="tooltip")
-					i.fas.fa-angle-double-down.me-2
+					i.bi-chevron-double-down.me-2
 					| Block Analysis
 		
 		
@@ -61,12 +54,12 @@ block content
 					.float-end
 						if (`${userSettings["blockPageShowFeeSummary"]}` == "false")
 							a.btn.btn-primary.btn-sm.me-2.mb-2(href=`./changeSetting?name=blockPageShowFeeSummary&value=true`, title="Display fee details for this block.", data-bs-toggle="tooltip")
-								i.far.fa-plus-square.me-2
+								i.bi-plus-square.me-2
 								| Fee Details
 
 						if (`${userSettings["blockPageShowTechSummary"]}` == "false")
 							a.btn.btn-primary.btn-sm.me-2.mb-2(href=`./changeSetting?name=blockPageShowTechSummary&value=true`, title="Display technical details for this block.", data-bs-toggle="tooltip")
-								i.far.fa-plus-square.me-2
+								i.bi-plus-square.me-2
 								| Technical Details
 
 				
@@ -74,7 +67,7 @@ block content
 				+contentSection("Summary")
 					+summaryRow(2 + (result.getblock.miner ? 1 : 0) + (result.blockstats ? 1 : 0))
 						+summaryItem("Date / Time")
-							+timestamp(result.getblock.time, true)
+							+timestamp(result.getblock.time, {agoOptions:{oneElement:true}})
 							
 
 						+summaryItem("Confirmations")
@@ -258,7 +251,7 @@ block content
 				if (!result.getblock.tx || result.getblock.tx.length == 0)
 					+contentSection(`${txCount.toLocaleString()} Transaction${txCount>1?'s':''}`)
 						span.me-2(title="This data is unavailable due to blockchain pruning", data-bs-toggle="tooltip")
-							i.fas.fa-backspace.text-danger
+							i.bi-backspace.text-danger
 						
 						| Transaction details unavailable due to blockchain pruning
 						
@@ -300,3 +293,4 @@ block content
 								div.highlight
 									pre
 										code.json #{JSON.stringify(result.blockstats, null, 4)}
+

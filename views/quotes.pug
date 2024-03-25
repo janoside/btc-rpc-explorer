@@ -7,13 +7,60 @@ block content
 	+pageTitle(`${coinConfig.name} Quotes`)
 
 
-	+dismissableInfoAlert("quotesNoteDismissed", "About Bitcoin Quotes...")
-		h6.mb-2 About Bitcoin Quotes
+	+dismissableInfoAlert("quotesNoteDismissed", "About Widecoin Quotes...")
+		h6.mb-2 About Widecoin Quotes
 
-		| This is a curated list of quotes that highlight key ideas in Bitcoin and related areas. Suggestions are welcome via an issue or PR on <a href='https://github.com/janoside/btc-rpc-explorer' target='_blank'>GitHub</a>.
+		| This is a curated list of quotes that highlight key ideas in Widecoin and related areas. Suggestions are welcome via an issue or PR on <a href='https://github.com/janoside/btc-rpc-explorer' target='_blank'>GitHub</a>.
+
+
+	- let buttonItems = [["new-first", "Newest First"], ["old-first", "Oldest First"], ["by-year", "By Year"], ["by-month", "By Month"]];
+	.text-center.mb-3
+		.btn-group(role="group")
+			each buttonItem in buttonItems
+				if (viewType == buttonItem[0])
+					a.btn.btn-primary(href="#") #{buttonItem[1]}
+				else
+					a.btn.btn-outline-primary(href=`./quotes?viewType=${buttonItem[0]}`) #{buttonItem[1]}
 
 
 
-	each quote, quoteIndex in btcQuotes
-		.mt-3.mb-4
-			+quote(quote, quoteIndex)
+	if (viewType == "by-year")
+		each itemYear in itemYears
+			h2.fw-light.mb-4 #{itemYear}
+			.ms-5
+				+quoteList(listByYear[itemYear])
+
+	else if (viewType == "by-month")
+		- let months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
+		each itemMonth in itemMonths
+			h2.fw-light.mb-4 #{`${months[parseInt(itemMonth) - 1]}`}
+			.ms-5
+				+quoteList(listByMonth[itemMonth])
+
+	else if (viewType == "old-first")
+		+quoteList(listOldFirst)
+
+	else if (viewType == "new-first")
+		+quoteList(listNewFirst)
+
+	else
+		| Unknown view type
+
+
+
+	if (false)
+		each quote, quoteIndex in btcQuotes
+			if (!quote.duplicateIndex)
+				+contentSection
+					.px-2
+						+quote(quote, quoteIndex, {fontSize: 4, align:"start", includeQuotes:false})
+
+
+
+
+mixin quoteList(list)
+	each item in list
+		+contentSection
+			.px-2
+				+quote(item, item.quoteIndex, {fontSize: 4})

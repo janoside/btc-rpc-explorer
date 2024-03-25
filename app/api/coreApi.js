@@ -15,9 +15,10 @@ const md5 = require("md5");
 const statTracker = require("../statTracker.js");
 const async = require("async");
 
+
 // choose one of the below: RPC to a node, or mock data while testing
 const rpcApi = require("./rpcApi.js");
-//var rpcApi = require("./mockApi.js");
+//const rpcApi = require("./mockApi.js");
 
 
 // this value should be incremented whenever data format changes, to avoid
@@ -31,7 +32,9 @@ const ONE_HR = 60 * ONE_MIN;
 const FIFTEEN_MIN = 15 * ONE_MIN;
 const ONE_DAY = 24 * ONE_HR;
 const ONE_YR = 365 * ONE_DAY;
-
+const SECONDS_PER_MIN = 60;
+const SECONDS_PER_HOUR = SECONDS_PER_MIN * 60;
+const SECONDS_PER_DAY = SECONDS_PER_HOUR * 24;
 
 
 
@@ -53,31 +56,31 @@ global.lruCaches = [ global.miscLruCache, global.blockLruCache, global.txLruCach
 
 (function () {
 	const pruneCaches = () => {
-		let totalLengthBefore = 0;
-		global.lruCaches.forEach(x => (totalLengthBefore += x.length));
+		let totalSizeBefore = 0;
+		global.lruCaches.forEach(x => (totalSizeBefore += x.size));
 
-		global.lruCaches.forEach(x => x.prune());
+		global.lruCaches.forEach(x => x.purgeStale());
 
-		let totalLengthAfter = 0;
-		global.lruCaches.forEach(x => (totalLengthAfter += x.length));
+		let totalSizeAfter = 0;
+		global.lruCaches.forEach(x => (totalSizeAfter += x.size));
 
 
-		statTracker.trackEvent("caches.pruned-items", (totalLengthBefore - totalLengthAfter));
+		statTracker.trackEvent("caches.pruned-items", (totalSizeBefore - totalSizeAfter));
 		
-		statTracker.trackValue("caches.misc.length", global.miscLruCache.length);
+		statTracker.trackValue("caches.misc.size", global.miscLruCache.size);
 		statTracker.trackValue("caches.misc.itemCount", global.miscLruCache.itemCount);
 
-		statTracker.trackValue("caches.block.length", global.blockLruCache.length);
+		statTracker.trackValue("caches.block.size", global.blockLruCache.size);
 		statTracker.trackValue("caches.block.itemCount", global.blockLruCache.itemCount);
 
-		statTracker.trackValue("caches.tx.length", global.txLruCache.length);
+		statTracker.trackValue("caches.tx.size", global.txLruCache.size);
 		statTracker.trackValue("caches.tx.itemCount", global.txLruCache.itemCount);
 
-		statTracker.trackValue("caches.mining.length", global.miningSummaryLruCache.length);
+		statTracker.trackValue("caches.mining.size", global.miningSummaryLruCache.size);
 		statTracker.trackValue("caches.mining.itemCount", global.miningSummaryLruCache.itemCount);
 
 
-		debugLog(`Pruned caches: ${totalLengthBefore.toLocaleString()} -> ${totalLengthAfter.toLocaleString()}`);
+		debugLog(`Pruned caches: ${totalSizeBefore.toLocaleString()} -> ${totalSizeAfter.toLocaleString()}`);
 	};
 
 	setInterval(pruneCaches, 60000);
@@ -87,7 +90,8 @@ if (!config.noInmemoryRpcCache) {
 	global.cacheStats.memory = {
 		try: 0,
 		hit: 0,
-		miss: 0
+		miss: 0,
+		error: 0
 	};
 
 	const onMemoryCacheEvent = function(cacheType, eventType, cacheKey) {
@@ -96,10 +100,10 @@ if (!config.noInmemoryRpcCache) {
 		//debugLog(`cache.${cacheType}.${eventType}: ${cacheKey}`);
 	}
 
-	miscCaches.push(cacheUtils.createMemoryLruCache(global.miscLruCache, onMemoryCacheEvent));
-	blockCaches.push(cacheUtils.createMemoryLruCache(global.blockLruCache, onMemoryCacheEvent));
-	txCaches.push(cacheUtils.createMemoryLruCache(global.txLruCache, onMemoryCacheEvent));
-	miningSummaryCaches.push(cacheUtils.createMemoryLruCache(global.miningSummaryLruCache, onMemoryCacheEvent));
+	miscCaches.push(cacheUtils.createMemoryLruCache("misc", global.miscLruCache, onMemoryCacheEvent));
+	blockCaches.push(cacheUtils.createMemoryLruCache("block", global.blockLruCache, onMemoryCacheEvent));
+	txCaches.push(cacheUtils.createMemoryLruCache("tx", global.txLruCache, onMemoryCacheEvent));
+	miningSummaryCaches.push(cacheUtils.createMemoryLruCache("mining", global.miningSummaryLruCache, onMemoryCacheEvent));
 }
 
 if (redisCache.active) {
@@ -158,9 +162,9 @@ function tryCacheThenRpcApi(cache, cacheKey, cacheMaxAge, rpcApiFunction, cacheC
 	}
 
 	return new Promise(function(resolve, reject) {
-		var cacheResult = null;
+		let cacheResult = null;
 
-		var finallyFunc = function() {
+		let finallyFunc = function() {
 			if (cacheResult != null) {
 				resolve(cacheResult);
 
@@ -223,6 +227,10 @@ function getBlockchainInfo() {
 	return tryCacheThenRpcApi(miscCache, "getBlockchainInfo", 10 * ONE_SEC, rpcApi.getBlockchainInfo);
 }
 
+function getDeploymentInfo() {
+	return tryCacheThenRpcApi(miscCache, "getDeploymentInfo", 10 * ONE_SEC, rpcApi.getDeploymentInfo);
+}
+
 function getNetworkInfo() {
 	return tryCacheThenRpcApi(miscCache, "getNetworkInfo", 10 * ONE_SEC, rpcApi.getNetworkInfo);
 }
@@ -277,7 +285,7 @@ function getBlockStatsByHeight(height) {
 }
 
 
-const utxoSetFileCache = utils.fileCache(config.filesystemCacheDir, `utxo-set.json`);
+const utxoSetFileCache = utils.fileCache(config.filesystemCacheDir, `utxo-set`);
 
 function getUtxoSetSummary(useCoinStatsIndexIfAvailable=true, useCacheIfAvailable=true) {
 	return tryCacheThenRpcApi(miscCache, "getUtxoSetSummary", FIFTEEN_MIN, async () => {
@@ -322,9 +330,13 @@ async function getNextBlockEstimate() {
 	let maxFeeRate = 0;
 	let minFeeTxid = null;
 	let maxFeeTxid = null;
+	let medianFeeRate = 0;
 
-	var parentTxIndexes = new Set();
+	let parentTxIndexes = new Set();
+	let templateWeight = 0;
 	blockTemplate.transactions.forEach(tx => {
+		templateWeight += tx.weight;
+
 		if (tx.depends && tx.depends.length > 0) {
 			tx.depends.forEach(index => {
 				parentTxIndexes.add(index);
@@ -332,12 +344,13 @@ async function getNextBlockEstimate() {
 		}
 	});
 
-	var txIndex = 1;
+	let txIndex = 1;
+	let feeRates = [];
 	blockTemplate.transactions.forEach(tx => {
-		var feeRate = tx.fee / tx.weight * 4;
+		let feeRate = tx.fee / tx.weight * 4;
 		if (tx.depends && tx.depends.length > 0) {
-			var totalFee = tx.fee;
-			var totalWeight = tx.weight;
+			let totalFee = tx.fee;
+			let totalWeight = tx.weight;
 
 			tx.depends.forEach(index => {
 				totalFee += blockTemplate.transactions[index - 1].fee;
@@ -352,6 +365,8 @@ async function getNextBlockEstimate() {
 		// their effective fee rate (which takes descendant fee rates
 		// into account)
 		if (!parentTxIndexes.has(txIndex) && (!tx.depends || tx.depends.length == 0)) {
+			feeRates.push(feeRate);
+
 			if (feeRate < minFeeRate) {
 				minFeeRate = feeRate;
 				minFeeTxid = tx.txid;
@@ -366,9 +381,13 @@ async function getNextBlockEstimate() {
 		txIndex++;
 	});
 
+	if (feeRates.length > 0) {
+		medianFeeRate = feeRates[Math.floor(feeRates.length / 2)];
+	}
+
 	const feeRateGroups = [];
-	var groupCount = 10;
-	for (var i = 0; i < groupCount; i++) {
+	let groupCount = 10;
+	for (let i = 0; i < groupCount; i++) {
 		feeRateGroups.push({
 			minFeeRate: minFeeRate + i * (maxFeeRate - minFeeRate) / groupCount,
 			maxFeeRate: minFeeRate + (i + 1) * (maxFeeRate - minFeeRate) / groupCount,
@@ -378,11 +397,11 @@ async function getNextBlockEstimate() {
 		});
 	}
 
-	var txIncluded = 0;
+	let txIncluded = 0;
 	blockTemplate.transactions.forEach(tx => {
-		var feeRate = tx.avgFeeRate ? tx.avgFeeRate : (tx.fee / tx.weight * 4);
+		let feeRate = tx.avgFeeRate ? tx.avgFeeRate : (tx.fee / tx.weight * 4);
 
-		for (var i = 0; i < feeRateGroups.length; i++) {
+		for (let i = 0; i < feeRateGroups.length; i++) {
 			if (feeRate >= feeRateGroups[i].minFeeRate) {
 				if (feeRate < feeRateGroups[i].maxFeeRate) {
 					feeRateGroups[i].totalWeight += tx.weight;
@@ -406,14 +425,16 @@ async function getNextBlockEstimate() {
 
 	const subsidy = coinConfig.blockRewardFunction(blockTemplate.height, global.activeBlockchain);
 
-	const totalFees = new Decimal(blockTemplate.coinbasevalue).dividedBy(coinConfig.baseCurrencyUnit.multiplier).minus(new Decimal(subsidy));
+	const totalFees = new Decimal(blockTemplate.coinbasevalue).dividedBy(SATS_PER_BTC).minus(new Decimal(subsidy));
 
 	return {
 		blockTemplate: blockTemplate,
+		weight: templateWeight,
 		feeRateGroups: feeRateGroups,
 		totalFees: totalFees,
 		minFeeRate: minFeeRate,
 		maxFeeRate: maxFeeRate,
+		medianFeeRate: medianFeeRate,
 		minFeeTxid: minFeeTxid,
 		maxFeeTxid: maxFeeTxid
 	};
@@ -423,12 +444,62 @@ function getBlockTemplate() {
 	return tryCacheThenRpcApi(miscCache, "getblocktemplate", 5 * ONE_SEC, rpcApi.getBlockTemplate);
 }
 
+
+
+const difficultyFileCache = utils.fileCache(config.filesystemCacheDir, `difficulty-by-blockheight`, 2);
+global.difficultyByBlockheightCache = difficultyFileCache.tryLoadJson() || {};
+global.difficultyByBlockheightCacheDirty = false;
+
+(function () {
+	const writeDifficultyCache = () => {
+		if (global.difficultyByBlockheightCacheDirty) {
+			difficultyFileCache.writeJson(global.difficultyByBlockheightCache);
+		}
+	};
+
+	setInterval(writeDifficultyCache, 60000);
+})();
+
+async function getDifficultyByBlockHeights(blockHeights) {
+	const results = {};
+	const neededBlockHeights = [];
+
+	for (let i = 0; i < blockHeights.length; i++) {
+		let blockHeight = blockHeights[i];
+		let blockHeightStr = `${blockHeight}`;
+
+		if (global.difficultyByBlockheightCache[blockHeightStr]) {
+			results[blockHeight] = global.difficultyByBlockheightCache[blockHeightStr];
+
+		} else {
+			neededBlockHeights.push(blockHeight);
+		}
+	}
+
+	const blockHeaders = await getBlockHeadersByHeight(neededBlockHeights);
+
+	blockHeaders.forEach(header => {
+		global.difficultyByBlockheightCache[`${header.height}`] = {
+			difficulty: header.difficulty,
+			time: header.time
+		};
+
+		global.difficultyByBlockheightCacheDirty = true;
+
+		results[header.height] = {
+			difficulty: header.difficulty,
+			time: header.time
+		};
+	});
+
+	return results;
+}
+
 async function getTxStats(dataPtCount, blockStart, blockEnd) {
 	let cacheKey = `txStats-${dataPtCount}-${blockStart}-${blockEnd}`;
 
 	let cacheResult = await miscCache.get(cacheKey);
 	if (cacheResult) {
-		console.log("CACHE RESULT");
 		return cacheResult;
 	}
 
@@ -517,8 +588,8 @@ async function getTxStats(dataPtCount, blockStart, blockEnd) {
 
 function getSmartFeeEstimates(mode, confTargetBlockCounts) {
 	return new Promise(function(resolve, reject) {
-		var promises = [];
-		for (var i = 0; i < confTargetBlockCounts.length; i++) {
+		let promises = [];
+		for (let i = 0; i < confTargetBlockCounts.length; i++) {
 			promises.push(getSmartFeeEstimate(mode, confTargetBlockCounts[i]));
 		}
 
@@ -540,12 +611,12 @@ function getSmartFeeEstimate(mode, confTargetBlockCount) {
 function getPeerSummary() {
 	return new Promise(function(resolve, reject) {
 		tryCacheThenRpcApi(miscCache, "getpeerinfo", ONE_SEC, rpcApi.getPeerInfo).then(function(getpeerinfo) {
-			var result = {};
+			let result = {};
 			result.getpeerinfo = getpeerinfo;
 
-			var versionSummaryMap = {};
-			for (var i = 0; i < getpeerinfo.length; i++) {
-				var x = getpeerinfo[i];
+			let versionSummaryMap = {};
+			for (let i = 0; i < getpeerinfo.length; i++) {
+				let x = getpeerinfo[i];
 
 				if (versionSummaryMap[x.subver] == null) {
 					versionSummaryMap[x.subver] = 0;
@@ -554,8 +625,8 @@ function getPeerSummary() {
 				versionSummaryMap[x.subver]++;
 			}
 
-			var versionSummary = [];
-			for (var prop in versionSummaryMap) {
+			let versionSummary = [];
+			for (let prop in versionSummaryMap) {
 				if (versionSummaryMap.hasOwnProperty(prop)) {
 					versionSummary.push([prop, versionSummaryMap[prop]]);
 				}
@@ -575,9 +646,9 @@ function getPeerSummary() {
 
 			let serviceNamesAvailable = false;
 
-			var servicesSummaryMap = {};
-			for (var i = 0; i < getpeerinfo.length; i++) {
-				var x = getpeerinfo[i];
+			let servicesSummaryMap = {};
+			for (let i = 0; i < getpeerinfo.length; i++) {
+				let x = getpeerinfo[i];
 
 				if (x.servicesnames) {
 					serviceNamesAvailable = true;
@@ -599,8 +670,8 @@ function getPeerSummary() {
 				}
 			}
 
-			var servicesSummary = [];
-			for (var prop in servicesSummaryMap) {
+			let servicesSummary = [];
+			for (let prop in servicesSummaryMap) {
 				if (servicesSummaryMap.hasOwnProperty(prop)) {
 					servicesSummary.push([prop, servicesSummaryMap[prop]]);
 				}
@@ -621,9 +692,9 @@ function getPeerSummary() {
 
 
 			if (getpeerinfo.length > 0 && getpeerinfo[0].connection_type) {
-				var connectionTypeSummaryMap = {};
-				for (var i = 0; i < getpeerinfo.length; i++) {
-					var x = getpeerinfo[i];
+				let connectionTypeSummaryMap = {};
+				for (let i = 0; i < getpeerinfo.length; i++) {
+					let x = getpeerinfo[i];
 
 					if (connectionTypeSummaryMap[x.connection_type] == null) {
 						connectionTypeSummaryMap[x.connection_type] = 0;
@@ -632,8 +703,8 @@ function getPeerSummary() {
 					connectionTypeSummaryMap[x.connection_type]++;
 				}
 
-				var connectionTypeSummary = [];
-				for (var prop in connectionTypeSummaryMap) {
+				let connectionTypeSummary = [];
+				for (let prop in connectionTypeSummaryMap) {
 					if (connectionTypeSummaryMap.hasOwnProperty(prop)) {
 						connectionTypeSummary.push([prop, connectionTypeSummaryMap[prop]]);
 					}
@@ -656,9 +727,9 @@ function getPeerSummary() {
 
 
 			if (getpeerinfo.length > 0 && getpeerinfo[0].network) {
-				var networkTypeSummaryMap = {};
-				for (var i = 0; i < getpeerinfo.length; i++) {
-					var x = getpeerinfo[i];
+				let networkTypeSummaryMap = {};
+				for (let i = 0; i < getpeerinfo.length; i++) {
+					let x = getpeerinfo[i];
 
 					if (networkTypeSummaryMap[x.network] == null) {
 						networkTypeSummaryMap[x.network] = 0;
@@ -667,8 +738,8 @@ function getPeerSummary() {
 					networkTypeSummaryMap[x.network]++;
 				}
 
-				var networkTypeSummary = [];
-				for (var prop in networkTypeSummaryMap) {
+				let networkTypeSummary = [];
+				for (let prop in networkTypeSummaryMap) {
 					if (networkTypeSummaryMap.hasOwnProperty(prop)) {
 						networkTypeSummary.push([prop, networkTypeSummaryMap[prop]]);
 					}
@@ -705,9 +776,9 @@ function getPeerSummary() {
 function getMempoolTxids(limit, offset) {
 	return new Promise(function(resolve, reject) {
 		tryCacheThenRpcApi(miscCache, "getMempoolTxids", ONE_SEC, rpcApi.getAllMempoolTxids).then(function(resultTxids) {
-			var txids = [];
+			let txids = [];
 
-			for (var i = offset; (i < resultTxids.length && i < (offset + limit)); i++) {
+			for (let i = offset; (i < resultTxids.length && i < (offset + limit)); i++) {
 				txids.push(resultTxids[i]);
 			}
 
@@ -733,8 +804,8 @@ function getBlockHashByHeight(blockHeight) {
 
 function getBlocksByHeight(blockHeights) {
 	return new Promise(function(resolve, reject) {
-		var promises = [];
-		for (var i = 0; i < blockHeights.length; i++) {
+		let promises = [];
+		for (let i = 0; i < blockHeights.length; i++) {
 			promises.push(getBlockByHeight(blockHeights[i]));
 		}
 
@@ -747,6 +818,12 @@ function getBlocksByHeight(blockHeights) {
 	});
 }
 
+function getBlockHeaderByHash(hash) {
+	return tryCacheThenRpcApi(blockCache, "getBlockHeaderByHash-" + hash, FIFTEEN_MIN, function() {
+		return rpcApi.getBlockHeaderByHash(hash);
+	});
+}
+
 function getBlockHeaderByHeight(blockHeight) {
 	return tryCacheThenRpcApi(blockCache, "getBlockHeaderByHeight-" + blockHeight, FIFTEEN_MIN, function() {
 		return rpcApi.getBlockHeaderByHeight(blockHeight);
@@ -755,8 +832,8 @@ function getBlockHeaderByHeight(blockHeight) {
 
 function getBlockHeadersByHeight(blockHeights) {
 	return new Promise(function(resolve, reject) {
-		var promises = [];
-		for (var i = 0; i < blockHeights.length; i++) {
+		let promises = [];
+		for (let i = 0; i < blockHeights.length; i++) {
 			promises.push(getBlockHeaderByHeight(blockHeights[i]));
 		}
 
@@ -771,8 +848,8 @@ function getBlockHeadersByHeight(blockHeights) {
 
 function getBlocksStatsByHeight(blockHeights) {
 	return new Promise(function(resolve, reject) {
-		var promises = [];
-		for (var i = 0; i < blockHeights.length; i++) {
+		let promises = [];
+		for (let i = 0; i < blockHeights.length; i++) {
 			promises.push(getBlockStatsByHeight(blockHeights[i]));
 		}
 
@@ -793,13 +870,13 @@ function getBlockByHash(blockHash) {
 
 function getBlocksByHash(blockHashes) {
 	return new Promise(function(resolve, reject) {
-		var promises = [];
-		for (var i = 0; i < blockHashes.length; i++) {
+		let promises = [];
+		for (let i = 0; i < blockHashes.length; i++) {
 			promises.push(getBlockByHash(blockHashes[i]));
 		}
 
 		Promise.all(promises).then(function(results) {
-			var result = {};
+			let result = {};
 
 			results.forEach(function(item) {
 				result[item.hash] = item;
@@ -814,7 +891,7 @@ function getBlocksByHash(blockHashes) {
 }
 
 function getRawTransaction(txid, blockhash) {
-	var rpcApiFunction = function() {
+	let rpcApiFunction = function() {
 		return rpcApi.getRawTransaction(txid, blockhash);
 	};
 
@@ -825,10 +902,10 @@ function getRawTransaction(txid, blockhash) {
 	This function pulls raw tx data and then summarizes the outputs. It's used in memory-constrained situations.
 */
 function getSummarizedTransactionOutput(txid, voutIndex) {
-	var rpcApiFunction = function() {
+	let rpcApiFunction = function() {
 		return new Promise(function(resolve, reject) {
 			rpcApi.getRawTransaction(txid).then(function(rawTx) {
-				var vout = rawTx.vout[voutIndex];
+				let vout = rawTx.vout[voutIndex];
 				if (vout.scriptPubKey) {
 					if (vout.scriptPubKey.asm) {
 						delete vout.scriptPubKey.asm;
@@ -902,8 +979,8 @@ function getAddress(address) {
 
 function getRawTransactions(txids, blockhash) {
 	return new Promise(function(resolve, reject) {
-		var promises = [];
-		for (var i = 0; i < txids.length; i++) {
+		let promises = [];
+		for (let i = 0; i < txids.length; i++) {
 			promises.push(getRawTransaction(txids[i], blockhash));
 		}
 
@@ -918,8 +995,9 @@ function getRawTransactions(txids, blockhash) {
 
 async function getRawTransactionsByHeights(txids, blockHeightsByTxid) {
 	return Promise.all(txids.map(async txid => {
-		var blockheight = blockHeightsByTxid[txid];
-		var blockhash = blockheight ? await getBlockByHeight(blockheight) : null;
+		let blockheight = blockHeightsByTxid[txid];
+		let blockhash = blockheight ? await getBlockByHeight(blockheight) : null;
+		
 		return getRawTransaction(txid, blockhash);
 	}))
 }
@@ -931,7 +1009,7 @@ function buildBlockAnalysisData(blockHeight, blockHash, txids, txIndex, results,
 		return;
 	}
 
-	var txid = txids[txIndex];
+	let txid = txids[txIndex];
 
 	getRawTransactionsWithInputs([txid], -1, blockHash).then(function(txData) {
 		results.push(summarizeBlockAnalysisData(blockHeight, txData.transactions[0], txData.txInputsByTransaction[txid]));
@@ -941,7 +1019,7 @@ function buildBlockAnalysisData(blockHeight, blockHash, txids, txIndex, results,
 }
 
 function summarizeBlockAnalysisData(blockHeight, tx, inputs) {
-	var txSummary = {};
+	let txSummary = {};
 
 	txSummary.txid = tx.txid;
 	txSummary.version = tx.version;
@@ -961,9 +1039,10 @@ function summarizeBlockAnalysisData(blockHeight, tx, inputs) {
 
 	txSummary.vin = [];
 	txSummary.totalInput = new Decimal(0);
+	txSummary.totalDaysDestroyed = new Decimal(0);
 
 	if (txSummary.coinbase) {
-		var subsidy = global.coinConfig.blockRewardFunction(blockHeight, global.activeBlockchain);
+		let subsidy = global.coinConfig.blockRewardFunction(blockHeight, global.activeBlockchain);
 
 		txSummary.totalInput = txSummary.totalInput.plus(new Decimal(subsidy));
 
@@ -973,19 +1052,27 @@ function summarizeBlockAnalysisData(blockHeight, tx, inputs) {
 		});
 
 	} else {
-		for (var i = 0; i < tx.vin.length; i++) {
-			var vin = tx.vin[i];
+		for (let i = 0; i < tx.vin.length; i++) {
+			let vin = tx.vin[i];
 			
-			var txSummaryVin = {
+			let txSummaryVin = {
 				txid: tx.vin[i].txid,
 				vout: tx.vin[i].vout,
 				sequence: tx.vin[i].sequence
 			};
 
 			if (inputs) {
-				var inputVout = inputs[i];
+				let inputVout = inputs[i];
 
 				txSummary.totalInput = txSummary.totalInput.plus(new Decimal(inputVout.value));
+
+				let timeDestroyed = tx.time - inputVout.utxoTime;
+				let daysDestroyed = timeDestroyed / SECONDS_PER_DAY;
+
+				txSummary.totalDaysDestroyed = txSummary.totalDaysDestroyed.plus(new Decimal(inputVout.value).times(daysDestroyed));
+
+				//console.log(`tx:id=${tx.txid}, tx.time=${tx.time}, inputVout.time=${inputVout.time}, input=${i}, TD=${timeDestroyed}, DD=${daysDestroyed}`);
+				//console.log(`inputVout: ${JSON.stringify(inputVout)}`);
 
 				txSummaryVin.value = inputVout.value;
 				txSummaryVin.type = inputVout.scriptPubKey.type;
@@ -1001,7 +1088,7 @@ function summarizeBlockAnalysisData(blockHeight, tx, inputs) {
 	txSummary.vout = [];
 	txSummary.totalOutput = new Decimal(0);
 
-	for (var i = 0; i < tx.vout.length; i++) {
+	for (let i = 0; i < tx.vout.length; i++) {
 		txSummary.totalOutput = txSummary.totalOutput.plus(new Decimal(tx.vout[i].value));
 
 		txSummary.vout.push({
@@ -1031,7 +1118,7 @@ function getRawTransactionsWithInputs(txids, maxInputs=-1, blockhash) {
 
 	return new Promise(function(resolve, reject) {
 		getRawTransactions(txids, blockhash).then(function(transactions) {
-			var maxInputsTracked = config.site.txMaxInput;
+			let maxInputsTracked = config.site.txMaxInput;
 			
 			if (maxInputs <= 0) {
 				maxInputsTracked = 1000000;
@@ -1040,12 +1127,12 @@ function getRawTransactionsWithInputs(txids, maxInputs=-1, blockhash) {
 				maxInputsTracked = maxInputs;
 			}
 
-			var vinIds = [];
-			for (var i = 0; i < transactions.length; i++) {
-				var transaction = transactions[i];
+			let vinIds = [];
+			for (let i = 0; i < transactions.length; i++) {
+				let transaction = transactions[i];
 
 				if (transaction && transaction.vin) {
-					for (var j = 0; j < Math.min(maxInputsTracked, transaction.vin.length); j++) {
+					for (let j = 0; j < Math.min(maxInputsTracked, transaction.vin.length); j++) {
 						if (transaction.vin[j].txid) {
 							vinIds.push({txid:transaction.vin[j].txid, voutIndex:transaction.vin[j].vout});
 						}
@@ -1053,30 +1140,31 @@ function getRawTransactionsWithInputs(txids, maxInputs=-1, blockhash) {
 				}
 			}
 
-			var promises = [];
+			let promises = [];
 
-			for (var i = 0; i < vinIds.length; i++) {
-				var vinId = vinIds[i];
+			for (let i = 0; i < vinIds.length; i++) {
+				let vinId = vinIds[i];
 
 				promises.push(getSummarizedTransactionOutput(vinId.txid, vinId.voutIndex));
 			}
 
 			Promise.all(promises).then(function(promiseResults) {
-				var summarizedTxOutputs = {};
-				for (var i = 0; i < promiseResults.length; i++) {
-					var summarizedTxOutput = promiseResults[i];
+				let summarizedTxOutputs = {};
+				
+				for (let i = 0; i < promiseResults.length; i++) {
+					let summarizedTxOutput = promiseResults[i];
 
 					summarizedTxOutputs[`${summarizedTxOutput.txid}:${summarizedTxOutput.n}`] = summarizedTxOutput;
 				}
 
-				var txInputsByTransaction = {};
+				let txInputsByTransaction = {};
 
 				transactions.forEach(function(tx) {
 					txInputsByTransaction[tx.txid] = {};
 
 					if (tx && tx.vin) {
-						for (var i = 0; i < Math.min(maxInputsTracked, tx.vin.length); i++) {
-							var summarizedTxOutput = summarizedTxOutputs[`${tx.vin[i].txid}:${tx.vin[i].vout}`];
+						for (let i = 0; i < Math.min(maxInputsTracked, tx.vin.length); i++) {
+							let summarizedTxOutput = summarizedTxOutputs[`${tx.vin[i].txid}:${tx.vin[i].vout}`];
 							if (summarizedTxOutput) {
 								txInputsByTransaction[tx.txid][i] = summarizedTxOutput;
 							}
@@ -1093,14 +1181,14 @@ function getRawTransactionsWithInputs(txids, maxInputs=-1, blockhash) {
 function getBlockByHashWithTransactions(blockHash, txLimit, txOffset) {
 	return new Promise(function(resolve, reject) {
 		getBlockByHash(blockHash).then(function(block) {
-			var txids = [];
+			let txids = [];
 			
 			// to get miner info, always include the coinbase tx in the list
 			if (txOffset > 0) {
 				txids.push(block.tx[0]);
 			}
 
-			for (var i = txOffset; i < Math.min(txOffset + txLimit, block.tx.length); i++) {
+			for (let i = txOffset; i < Math.min(txOffset + txLimit, block.tx.length); i++) {
 				txids.push(block.tx[i]);
 			}
 
@@ -1164,7 +1252,7 @@ function buildMiningSummary(statusId, startBlock, endBlock, statusFunc) {
 			const minerInfoByName = {};
 			
 
-			for (var i = startBlock; i <= endBlock; i++) {
+			for (let i = startBlock; i <= endBlock; i++) {
 				const height = i;
 				const cacheKey = `${height}`;
 
@@ -1197,7 +1285,7 @@ function buildMiningSummary(statusId, startBlock, endBlock, statusFunc) {
 							const totalFees = utils.getBlockTotalFeesFromCoinbaseTxAndBlockHeight(coinbaseTx, height);
 							const subsidy = coinConfig.blockRewardFunction(height, global.activeBlockchain);
 
-							var minerName = "Unknown";
+							let minerName = "Unknown";
 							if (minerInfo) {
 								if (minerInfo.type == "address-only") {
 									minerName = "address-only:" + minerInfo.name;
@@ -1245,7 +1333,7 @@ function buildMiningSummary(statusId, startBlock, endBlock, statusFunc) {
 			}
 			
 			
-			var summary = {
+			let summary = {
 				miners:{},
 				minerNamesSortedByBlockCount: [],
 				overall:{
@@ -1253,7 +1341,7 @@ function buildMiningSummary(statusId, startBlock, endBlock, statusFunc) {
 				}
 			};
 
-			for (var height = startBlock; height <= endBlock; height++) {
+			for (let height = startBlock; height <= endBlock; height++) {
 				const blockSummary = summariesByHeight[height];
 				const miner = blockSummary.mn;
 
@@ -1304,6 +1392,9 @@ function buildMiningSummary(statusId, startBlock, endBlock, statusFunc) {
 
 
 let mempoolTxSummaryCache = {};
+let mempoolCacheKeyForTxid = (txid) => {
+	return txid.substring(0, 10);
+};
 
 function getCachedMempoolTxSummaries() {
 	return new Promise(async (resolve, reject) => {
@@ -1318,9 +1409,9 @@ function getCachedMempoolTxSummaries() {
 			const results = [];
 			const txidKeysForCachePurge = {};
 
-			for (var i = 0; i < txids.length; i++) {
+			for (let i = 0; i < txids.length; i++) {
 				const txid = txids[i];
-				const key = txid.substring(0, 6);
+				const key = mempoolCacheKeyForTxid(txid);
 				txidKeysForCachePurge[key] = 1;
 
 				if (mempoolTxSummaryCache[key]) {
@@ -1338,8 +1429,9 @@ function getCachedMempoolTxSummaries() {
 			// cleanup cache, but we don't need to wait for it to finish before resolving
 			new Promise((resolve, reject) => {
 				// purge items from cache that are no longer present in mempool
-				var keysToDelete = [];
-				for (var key in mempoolTxSummaryCache) {
+				let keysToDelete = [];
+				
+				for (let key in mempoolTxSummaryCache) {
 					if (!txidKeysForCachePurge[key]) {
 						keysToDelete.push(key);
 					}
@@ -1360,7 +1452,7 @@ function getCachedMempoolTxSummaries() {
 }
 
 
-const mempoolTxFileCache = utils.fileCache(config.filesystemCacheDir, `mempool-tx-summaries.json`);
+const mempoolTxFileCache = utils.fileCache(config.filesystemCacheDir, `mempool-tx-summaries`, 2);
 
 function getMempoolTxSummaries(allTxids, statusId, statusFunc) {
 	return new Promise(async (resolve, reject) => {
@@ -1372,7 +1464,7 @@ function getMempoolTxSummaries(allTxids, statusId, statusFunc) {
 			const txids = allTxids;
 
 			const txidCount = txids.length;
-			var doneCount = 0;
+			let doneCount = 0;
 
 			const statusUpdate = () => { statusFunc({count: txidCount, done: doneCount}); };
 
@@ -1380,9 +1472,13 @@ function getMempoolTxSummaries(allTxids, statusId, statusFunc) {
 			const results = [];
 			const txidKeysForCachePurge = {};
 
-			for (var i = 0; i < txids.length; i++) {
+			const btcToSat = (btcFloat) => {
+				return parseInt(new Decimal(btcFloat).times(SATS_PER_BTC).toDP(0));
+			};
+
+			for (let i = 0; i < txids.length; i++) {
 				const txid = txids[i];
-				const key = txid.substring(0, 6);
+				const key = mempoolCacheKeyForTxid(txid);
 				txidKeysForCachePurge[key] = 1;
 
 				if (mempoolTxSummaryCache[key]) {
@@ -1399,12 +1495,12 @@ function getMempoolTxSummaries(allTxids, statusId, statusFunc) {
 						try {
 							const item = await getMempoolTxDetails(txid, false);
 							const itemSummary = {
-								f: item.entry.fees.modified,
+								f: btcToSat(item.entry.fees.modified),
 								
-								af: item.entry.fees.ancestor,
+								af: btcToSat(item.entry.fees.ancestor),
 								asz: item.entry.ancestorsize,
 
-								a: item.entry.depends.map(x => x.substring(0, 6)),
+								a: item.entry.depends.map(x => mempoolCacheKeyForTxid(x)),
 
 								t: item.entry.time,
 								w: item.entry.weight ? item.entry.weight : item.entry.size * 4,
@@ -1441,8 +1537,8 @@ function getMempoolTxSummaries(allTxids, statusId, statusFunc) {
 
 			
 			// purge items from cache that are no longer present in mempool
-			var keysToDelete = [];
-			for (var key in mempoolTxSummaryCache) {
+			let keysToDelete = [];
+			for (let key in mempoolTxSummaryCache) {
 				if (!txidKeysForCachePurge[key]) {
 					keysToDelete.push(key);
 				}
@@ -1479,23 +1575,21 @@ function buildMempoolSummary(statusId, ageBuckets, sizeBuckets, statusFunc) {
 			const txids = allTxids;
 
 			
-			var summary = [];
+			let maxFee = 0;
+			let maxFeePerByte = 0;
+			let maxAge = 0;
+			let maxSize = 0;
+			let ages = [];
+			let sizes = [];
+			let topfees = [];
 
-			var maxFee = 0;
-			var maxFeePerByte = 0;
-			var maxAge = 0;
-			var maxSize = 0;
-			var ages = [];
-			var sizes = [];
-			var topfees = [];
+			for (let i = 0; i < txSummaries.length; i++) {
+				let summary = txSummaries[i];
 
-			for (var i = 0; i < txSummaries.length; i++) {
-				var summary = txSummaries[i];
-
-				var fee = summary.f;
-				var size = summary.w / 4; // TOOD: hack
-				var feePerByte = summary.f / summary.w;
-				var age = Date.now() / 1000 - summary.t;
+				let fee = summary.f;
+				let size = summary.w / 4; // TOOD: hack
+				let feePerByte = summary.f / summary.w;
+				let age = Date.now() / 1000 - summary.t;
 
 				if (fee > maxFee) {
 					maxFee = fee;
@@ -1545,7 +1639,7 @@ function buildMempoolSummary(statusId, ageBuckets, sizeBuckets, statusFunc) {
 				}
 			});
 
-			maxSize = 2000;
+			//maxSize = 2000;
 
 			const feeBucketMaxCount = 250;
 			const feeSatoshiBuckets = [];
@@ -1555,16 +1649,16 @@ function buildMempoolSummary(statusId, ageBuckets, sizeBuckets, statusFunc) {
 
 			let satoshiPerByteBucketMaxima = feeSatoshiBuckets;
 
-			var bucketCount = satoshiPerByteBucketMaxima.length + 1;
+			let bucketCount = satoshiPerByteBucketMaxima.length + 1;
 
-			var satoshiPerByteBuckets = [];
-			var satoshiPerByteBucketLabels = [];
+			let satoshiPerByteBuckets = [];
+			let satoshiPerByteBucketLabels = [];
 
 			//satoshiPerByteBucketLabels[0] = ("[0 - " + satoshiPerByteBucketMaxima[0] + ")");
-			for (var i = 1; i < bucketCount; i++) {
+			for (let i = 1; i < bucketCount; i++) {
 				satoshiPerByteBuckets.push({
 					count: 0,
-					totalFees: 0,
+					totalFees: new Decimal(0),
 					totalBytes: 0,
 					totalWeight: 0,
 					minFeeRate: satoshiPerByteBucketMaxima[i - 1],
@@ -1576,39 +1670,39 @@ function buildMempoolSummary(statusId, ageBuckets, sizeBuckets, statusFunc) {
 				}
 			}
 
-			var ageBucketCount = sizeBuckets;
-			var ageBucketTxCounts = [];
-			var ageBucketLabels = [];
+			let ageBucketCount = sizeBuckets;
+			let ageBucketTxCounts = [];
+			let ageBucketLabels = [];
 
-			var sizeBucketCount = sizeBuckets;
-			var sizeBucketTxCounts = [];
-			var sizeBucketLabels = [];
+			let sizeBucketCount = sizeBuckets;
+			let sizeBucketTxCounts = [];
+			let sizeBucketLabels = [];
 
-			var topfeeBucketCount = sizeBuckets;
-			var topfeeBucketTxCounts = [];
-			var topfeeBucketLabels = [];
+			let topfeeBucketCount = sizeBuckets;
+			let topfeeBucketTxCounts = [];
+			let topfeeBucketLabels = [];
 
-			for (var i = 0; i < ageBucketCount; i++) {
-				var rangeMin = i * maxAge / ageBucketCount;
-				var rangeMax = (i + 1) * maxAge / ageBucketCount;
+			for (let i = 0; i < ageBucketCount; i++) {
+				let rangeMin = i * maxAge / ageBucketCount;
+				let rangeMax = (i + 1) * maxAge / ageBucketCount;
 
 				ageBucketTxCounts.push(0);
 
 				if (maxAge > 60 * 60 * 24) {
-					var rangeMinutesMin = new Decimal(rangeMin / 60 / 60 / 24).toFixed(1);
-					var rangeMinutesMax = new Decimal(rangeMax / 60 / 60 / 24).toFixed(1);
+					let rangeMinutesMin = new Decimal(rangeMin / 60 / 60 / 24).toFixed(1);
+					let rangeMinutesMax = new Decimal(rangeMax / 60 / 60 / 24).toFixed(1);
 
 					ageBucketLabels.push(rangeMinutesMax + "d");
 
 				} else if (maxAge > 60 * 60) {
-					var rangeMinutesMin = new Decimal(rangeMin / 60 / 60).toFixed(1);
-					var rangeMinutesMax = new Decimal(rangeMax / 60 / 60).toFixed(1);
+					let rangeMinutesMin = new Decimal(rangeMin / 60 / 60).toFixed(1);
+					let rangeMinutesMax = new Decimal(rangeMax / 60 / 60).toFixed(1);
 
 					ageBucketLabels.push(rangeMinutesMax + "m");
 
 				} else if (maxAge > 60 * 10) {
-					var rangeMinutesMin = new Decimal(rangeMin / 60).toFixed(1);
-					var rangeMinutesMax = new Decimal(rangeMax / 60).toFixed(1);
+					let rangeMinutesMin = new Decimal(rangeMin / 60).toFixed(1);
+					let rangeMinutesMax = new Decimal(rangeMax / 60).toFixed(1);
 
 					ageBucketLabels.push(rangeMinutesMax + "m");
 
@@ -1617,7 +1711,7 @@ function buildMempoolSummary(statusId, ageBuckets, sizeBuckets, statusFunc) {
 				}
 			}
 
-			for (var i = 0; i < sizeBucketCount; i++) {
+			for (let i = 0; i < sizeBucketCount; i++) {
 				sizeBucketTxCounts.push(0);
 
 				if (i == sizeBucketCount - 1) {
@@ -1635,9 +1729,9 @@ function buildMempoolSummary(statusId, ageBuckets, sizeBuckets, statusFunc) {
 
 			const oldestLargestCount = 20;
 
-			var summary = {
+			let summary = {
 				"count": 0,
-				"totalFees": 0,
+				"totalFees": new Decimal(0),
 				"totalBytes": 0,
 				"totalWeight": 0,
 				"satoshiPerByteBuckets": satoshiPerByteBuckets,
@@ -1652,12 +1746,12 @@ function buildMempoolSummary(statusId, ageBuckets, sizeBuckets, statusFunc) {
 			};
 
 
-			for (var i = 0; i < oldestLargestCount; i++) {
+			for (let i = 0; i < oldestLargestCount; i++) {
 				let oldTx = summary.oldestTxs[i];
 				let largeTx = summary.largestTxs[i];
 				let topfeeTx = summary.highestFeeTxs[i];
 
-				for (var j = 0; j < txSummaries.length; j++) {
+				for (let j = 0; j < txSummaries.length; j++) {
 					if (oldTx && txids[j].startsWith(oldTx.txidKey)) {
 						oldTx.txid = txids[j];
 
@@ -1665,7 +1759,7 @@ function buildMempoolSummary(statusId, ageBuckets, sizeBuckets, statusFunc) {
 					}
 				}
 
-				for (var j = 0; j < txids.length; j++) {
+				for (let j = 0; j < txids.length; j++) {
 					if (largeTx && txids[j].startsWith(largeTx.txidKey)) {
 						largeTx.txid = txids[j];
 
@@ -1673,7 +1767,7 @@ function buildMempoolSummary(statusId, ageBuckets, sizeBuckets, statusFunc) {
 					}
 				}
 
-				for (var j = 0; j < txSummaries.length; j++) {
+				for (let j = 0; j < txSummaries.length; j++) {
 					if (topfeeTx && txids[j].startsWith(topfeeTx.txidKey)) {
 						topfeeTx.txid = txids[j];
 
@@ -1682,20 +1776,20 @@ function buildMempoolSummary(statusId, ageBuckets, sizeBuckets, statusFunc) {
 				}
 			}
 
-			for (var x = 0; x < txSummaries.length; x++) {
-				var txMempoolInfo = txSummaries[x];
-				var fee = txMempoolInfo.f;
-				var size = txMempoolInfo.w / 4;
-				var weight = txMempoolInfo.w;
-				var feePerByte = txMempoolInfo.f / weight;
-				var satoshiPerByte = feePerByte * 100000000; // TODO: magic number - replace with coinConfig.baseCurrencyUnit.multiplier
-				var age = Date.now() / 1000 - txMempoolInfo.t;
+			for (let x = 0; x < txSummaries.length; x++) {
+				let txMempoolInfo = txSummaries[x];
+				let fee = txMempoolInfo.f;
+				let size = txMempoolInfo.w / 4;
+				let weight = txMempoolInfo.w;
+				let feePerByte = new Decimal(txMempoolInfo.f).dividedBy(SATS_PER_BTC).toNumber() / weight;
+				let satoshiPerByte = feePerByte * SATS_PER_BTC;
+				let age = Date.now() / 1000 - txMempoolInfo.t;
 
-				var addedToBucket = false;
-				for (var i = 0; i < satoshiPerByteBuckets.length; i++) {
+				let addedToBucket = false;
+				for (let i = 0; i < satoshiPerByteBuckets.length; i++) {
 					if (satoshiPerByteBuckets[i].maxFeeRate > satoshiPerByte) {
 						satoshiPerByteBuckets[i]["count"]++;
-						satoshiPerByteBuckets[i]["totalFees"] += fee;
+						satoshiPerByteBuckets[i]["totalFees"] = satoshiPerByteBuckets[i]["totalFees"].plus(new Decimal(fee).dividedBy(SATS_PER_BTC));
 						satoshiPerByteBuckets[i]["totalBytes"] += size;
 						satoshiPerByteBuckets[i]["totalWeight"] += weight;
 
@@ -1707,27 +1801,27 @@ function buildMempoolSummary(statusId, ageBuckets, sizeBuckets, statusFunc) {
 
 				if (!addedToBucket) {
 					satoshiPerByteBuckets[bucketCount - 2]["count"]++;
-					satoshiPerByteBuckets[bucketCount - 2]["totalFees"] += fee;
+					satoshiPerByteBuckets[bucketCount - 2]["totalFees"] = satoshiPerByteBuckets[bucketCount - 2]["totalFees"].plus(new Decimal(fee).dividedBy(SATS_PER_BTC));
 					satoshiPerByteBuckets[bucketCount - 2]["totalBytes"] += size;
 					satoshiPerByteBuckets[bucketCount - 2]["totalWeight"] += weight;
 				}
 
 				summary["count"]++;
-				summary["totalFees"] += fee;
+				summary["totalFees"] = summary.totalFees.plus(new Decimal(fee).dividedBy(SATS_PER_BTC));
 				summary["totalBytes"] += size;
 				summary["totalWeight"] += weight;
 
-				var ageBucketIndex = Math.min(ageBucketCount - 1, parseInt(age / (maxAge / ageBucketCount)));
-				var sizeBucketIndex = Math.min(sizeBucketCount - 1, parseInt(size / (maxSize / sizeBucketCount)));
+				let ageBucketIndex = Math.min(ageBucketCount - 1, parseInt(age / (maxAge / ageBucketCount)));
+				let sizeBucketIndex = Math.min(sizeBucketCount - 1, parseInt(size / (maxSize / sizeBucketCount)));
 
 				ageBucketTxCounts[ageBucketIndex]++;
 				sizeBucketTxCounts[sizeBucketIndex]++;
 			}
 
-			var topTargetPercent = 0.25;
-			var totWeight = 0;
-			var topIndex = -1;
-			for (var i = satoshiPerByteBuckets.length - 1; i >= 0; i--) {
+			let topTargetPercent = 0.25;
+			let totWeight = 0;
+			let topIndex = -1;
+			for (let i = satoshiPerByteBuckets.length - 1; i >= 0; i--) {
 				totWeight += satoshiPerByteBuckets[i].totalWeight;
 
 				if (totWeight / summary.totalWeight * 100 > topTargetPercent) {
@@ -1748,9 +1842,9 @@ function buildMempoolSummary(statusId, ageBuckets, sizeBuckets, statusFunc) {
 				satoshiPerByteBuckets[topIndex].buckets = 0;
 
 				// merge the top buckets into one
-				for (var i = topIndex + 1; i < satoshiPerByteBuckets.length; i++) {
+				for (let i = topIndex + 1; i < satoshiPerByteBuckets.length; i++) {
 					satoshiPerByteBuckets[topIndex].count += satoshiPerByteBuckets[i].count;
-					satoshiPerByteBuckets[topIndex].totalFees += satoshiPerByteBuckets[i].totalFees;
+					satoshiPerByteBuckets[topIndex].totalFees = satoshiPerByteBuckets[topIndex].totalFees.plus(satoshiPerByteBuckets[i].totalFees);
 					satoshiPerByteBuckets[topIndex].totalBytes += satoshiPerByteBuckets[i].totalBytes;
 					satoshiPerByteBuckets[topIndex].totalWeight += satoshiPerByteBuckets[i].totalWeight;
 					satoshiPerByteBuckets[topIndex].buckets++;
@@ -1768,7 +1862,7 @@ function buildMempoolSummary(statusId, ageBuckets, sizeBuckets, statusFunc) {
 			summary["satoshiPerByteBucketCounts"] = [];
 			summary["satoshiPerByteBucketTotalFees"] = [];
 
-			for (var i = 0; i < satoshiPerByteBuckets.length; i++) {
+			for (let i = 0; i < satoshiPerByteBuckets.length; i++) {
 				summary["satoshiPerByteBucketCounts"].push(summary["satoshiPerByteBuckets"][i]["count"]);
 				summary["satoshiPerByteBucketTotalFees"].push(summary["satoshiPerByteBuckets"][i]["totalFees"]);
 			}
@@ -1828,7 +1922,7 @@ function buildPredictedBlocks(statusId, statusFunc) {
 
 			for (let i = 0; i < txSummaries.length; i++) {
 				let tx = txSummaries[i];
-				let feeRate = 4 * 100000000 * (tx.f + tx.af) / (tx.w + tx.asz * 4);
+				let feeRate = 4 * (tx.f + tx.af) / (tx.w + tx.asz * 4);
 				//console.log("fr: " + feeRate);
 
 				txSummariesByKey[tx.key] = tx;
@@ -1848,7 +1942,7 @@ function buildPredictedBlocks(statusId, statusFunc) {
 			while (unAddedTxIndexes.length > 0 && blocks.length < 20) {
 				//console.log("txids: " + addedTxids.length);
 
-				var currentBlock = {
+				let currentBlock = {
 					weight: 0,
 					totalFees: new Decimal(0),
 					vB: 0,
@@ -1909,7 +2003,7 @@ function buildPredictedBlocks(statusId, statusFunc) {
 						currentBlock.totalFees = currentBlock.totalFees.plus(new Decimal(tx.f)).plus(new Decimal(tx.af));
 						currentBlock.vB += weightWithAncestors / 4;
 
-						let feeRate = tx.frw * 100000000;
+						let feeRate = tx.frw;
 
 						if (feeRate > currentBlock.maxFeeRate) {
 							currentBlock.maxFeeRate = feeRate;
@@ -2019,18 +2113,18 @@ function getTxOut(txid, vout) {
 function getHelp() {
 	return new Promise(function(resolve, reject) {
 		tryCacheThenRpcApi(miscCache, "getHelp", ONE_DAY, rpcApi.getHelp).then(function(helpContent) {
-			var lines = helpContent.split("\n");
-			var sections = [];
+			let lines = helpContent.split("\n");
+			let sections = [];
 
 			lines.forEach(function(line) {
 				if (line.startsWith("==")) {
-					var sectionName = line.substring(2);
+					let sectionName = line.substring(2);
 					sectionName = sectionName.substring(0, sectionName.length - 2).trim();
 
 					sections.push({name:sectionName, methods:[]});
 
 				} else if (line.trim().length > 0) {
-					var methodName = line.trim();
+					let methodName = line.trim();
 
 					if (methodName.includes(" ")) {
 						methodName = methodName.substring(0, methodName.indexOf(" "));
@@ -2049,20 +2143,20 @@ function getHelp() {
 }
 
 function getRpcMethodHelp(methodName) {
-	var rpcApiFunction = function() {
+	let rpcApiFunction = function() {
 		return rpcApi.getRpcMethodHelp(methodName);
 	};
 
 	return new Promise(function(resolve, reject) {
 		tryCacheThenRpcApi(miscCache, "getHelp-" + methodName, ONE_DAY, rpcApiFunction).then(function(helpContent) {
-			var output = {};
+			let output = {};
 			output.string = helpContent;
 
-			var str = helpContent;
+			let str = helpContent;
 
-			var lines = str.split("\n");
-			var argumentLines = [];
-			var catchArgs = false;
+			let lines = str.split("\n");
+			let argumentLines = [];
+			let catchArgs = false;
 			lines.forEach(function(line) {
 				if (line.trim().length == 0) {
 					catchArgs = false;
@@ -2077,13 +2171,13 @@ function getRpcMethodHelp(methodName) {
 				}
 			});
 
-			var args = [];
-			var argX = null;
+			let args = [];
+			let argX = null;
 			// looking for line starting with "N. " where N is an integer (1-2 digits)
 			argumentLines.forEach(function(line) {
-				var regex = /^([0-9]+)\.\s*"?(\w+)"?\s*\(([^,)]*),?\s*([^,)]*),?\s*([^,)]*),?\s*([^,)]*)?\s*\)\s*(.+)?$/;
+				let regex = /^([0-9]+)\.\s*"?(\w+)"?\s*\(([^,)]*),?\s*([^,)]*),?\s*([^,)]*),?\s*([^,)]*)?\s*\)\s*(.+)?$/;
 
-				var match = regex.exec(line);
+				let match = regex.exec(line);
 
 				if (match) {
 					argX = {};
@@ -2131,9 +2225,9 @@ function getRpcMethodHelp(methodName) {
 }
 
 function logCacheSizes() {
-	var itemCounts = [ miscCache.itemCount, blockCache.itemCount, txCache.itemCount ];
+	let itemCounts = [ miscCache.itemCount, blockCache.itemCount, txCache.itemCount ];
 	
-	var stream = fs.createWriteStream("memoryUsage.csv", {flags:'a'});
+	let stream = fs.createWriteStream("memoryUsage.csv", {flags:'a'});
 	stream.write("itemCounts: " + JSON.stringify(itemCounts) + "\n");
 	stream.end();
 }
@@ -2142,6 +2236,7 @@ module.exports = {
 	getGenesisBlockHash: getGenesisBlockHash,
 	getGenesisCoinbaseTransactionId: getGenesisCoinbaseTransactionId,
 	getBlockchainInfo: getBlockchainInfo,
+	getDeploymentInfo: getDeploymentInfo,
 	getNetworkInfo: getNetworkInfo,
 	getNetTotals: getNetTotals,
 	getMempoolInfo: getMempoolInfo,
@@ -2177,6 +2272,7 @@ module.exports = {
 	getBlockStatsByHeight: getBlockStatsByHeight,
 	getBlocksStatsByHeight: getBlocksStatsByHeight,
 	buildBlockAnalysisData: buildBlockAnalysisData,
+	getBlockHeaderByHash: getBlockHeaderByHash,
 	getBlockHeaderByHeight: getBlockHeaderByHeight,
 	getBlockHeadersByHeight: getBlockHeadersByHeight,
 	getTxOut: getTxOut,
@@ -2186,5 +2282,6 @@ module.exports = {
 	getCachedMempoolTxSummaries: getCachedMempoolTxSummaries,
 	getMempoolTxSummaries: getMempoolTxSummaries,
 	getBlockTemplate: getBlockTemplate,
-	getNextBlockEstimate: getNextBlockEstimate
+	getNextBlockEstimate: getNextBlockEstimate,
+	getDifficultyByBlockHeights: getDifficultyByBlockHeights
 };

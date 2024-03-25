@@ -13,7 +13,7 @@ if (false)
 								li
 									div.float-start(style="height: 50px; width: 40px; margin-right: 10px;")
 										span
-											i.fa-2x.me-2(class=siteTool.fontawesome, style="margin-top: 6px;")
+											i.me-2(class=siteTool.iconClass, style="margin-top: 6px;")
 
 									a(href=siteTool.url) #{siteTool.name}
 									br
@@ -28,7 +28,7 @@ if (false)
 						- var siteTool = config.siteTools[listItem];
 						li.mb-2
 							span(title=siteTool.desc, data-bs-toggle="tooltip")
-								i.me-2.fa-lg(class=siteTool.fontawesome, style="width: 30px;")
+								i.me-2(class=siteTool.iconClass, style="width: 30px;")
 							a(href=siteTool.url)
 								span #{siteTool.name}
 
@@ -41,7 +41,7 @@ if (false)
 						- var siteTool = config.siteTools[listItem];
 						li.mb-2
 							span(title=siteTool.desc, data-bs-toggle="tooltip")
-								i.me-2.fa-sm(class=siteTool.fontawesome, style="width: 30px;")
+								i.me-2(class=siteTool.iconClass, style="width: 30px;")
 							a(href=siteTool.url)
 								span #{siteTool.name}
 
@@ -63,7 +63,7 @@ if (false)
 								
 								div.clearfix
 									div.float-start.pt-1(style="width: 38px;")
-										i.fa-lg(class=item.fontawesome, style="width: 20px; margin-right: 10px;")
+										i(class=item.iconClass, style="width: 20px; margin-right: 10px;")
 
 									div.float-start
 										div
@@ -83,7 +83,7 @@ if (false)
 								
 								div.clearfix
 									div.float-start.pt-1(style="width: 38px;")
-										i.fa-lg(class=item.fontawesome, style="width: 20px; margin-right: 10px;")
+										i(class=item.iconClass, style="width: 20px; margin-right: 10px;")
 
 									div.float-start
 										div
@@ -103,7 +103,7 @@ if (false)
 								
 								div.clearfix
 									div.float-start.pt-1(style="width: 38px;")
-										i.fa-lg(class=item.fontawesome, style="width: 20px; margin-right: 10px;")
+										i(class=item.iconClass, style="width: 20px; margin-right: 10px;")
 
 									div.float-start
 										div
@@ -132,8 +132,8 @@ mixin toolSections(sectionsData)
 								- var item = config.siteTools[itemIndex];
 								
 								.clearfix
-									div.float-start.pt-1(style="width: 38px;")
-										i.fa-lg(class=item.fontawesome, style="width: 20px; margin-right: 10px;")
+									div.float-start(style="width: 38px;")
+										i.fs-5(class=item.iconClass, style="width: 20px; margin-right: 10px;")
 
 									.float-start
 										div

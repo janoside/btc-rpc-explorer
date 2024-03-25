@@ -16,12 +16,12 @@ block content
 					if (userSettings.hideInfoNotes && userSettings.hideInfoNotes == "true")
 						div Yes
 						a(href=`./changeSetting?name=hideInfoNotes&value=false`)
-							i.fas.fa-toggle-on.fa-2x
+							i.bi-toggle2-on.fs-3
 
 					else
 						div No
 						a(href=`./changeSetting?name=hideInfoNotes&value=true`)
-							i.fas.fa-toggle-off.fa-2x
+							i.bi-toggle2-off.fs-3
 
 
 		.row
@@ -33,7 +33,7 @@ block content
 				.d-inline-block.text-end
 					form(method="get", action="./changeSetting")
 						input(type="hidden", name="name", value="userTzOffset")
-						input(type="text", name="value", value=userTzOffset)
+						input.form-control(type="text", name="value", value=userTzOffset)
 
 					span.small.text-muted (Example: for New York, enter "-5")
 

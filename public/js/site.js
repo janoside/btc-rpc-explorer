@@ -33,34 +33,31 @@ function showAllTxOutputs(link, txid) {
 	link.classList.add("d-none");
 }
 
-/*function copyTextToClipboard(text) {
-	navigator.clipboard.writeText(text).then(() => {}, (err) => {
-		console.error('Error copying text: ', err);
-	});
-}*/
-
 function copyTextToClipboard(text) {
-    // navigator clipboard api needs a secure context (https)
-    if (navigator.clipboard && window.isSecureContext) {
-        // navigator clipboard api method'
-        return navigator.clipboard.writeText(text);
-    } else {
-        // text area method
-        let textArea = document.createElement("textarea");
-        textArea.value = text;
-        // make the textarea out of viewport
-        textArea.style.position = "fixed";
-        textArea.style.left = "-999999px";
-        textArea.style.top = "-999999px";
-        document.body.appendChild(textArea);
-        textArea.focus();
-        textArea.select();
-        return new Promise((res, rej) => {
-            // here the magic happens
-            document.execCommand('copy') ? res() : rej();
-            textArea.remove();
-        });
-    }
+	// navigator.clipboard won't exist if it's not secure (i.e. http on non-localhost)
+	// so there's a backup method
+	if (navigator.clipboard) {
+		navigator.clipboard.writeText(text).then(() => {}, (err) => {
+			console.error('Error copying text: ', err);
+		});
+	} else {
+		var inputId = "copy-text-hidden-input";
+
+		var input = document.createElement('input');
+		input.setAttribute("id", inputId);
+		input.setAttribute("class", "hidden");
+		input.setAttribute("value", text);
+
+		document.body.appendChild(input);
+
+		// copy address
+		document.getElementById(inputId).select();
+		document.execCommand('copy');
+
+		// remove element
+		input.remove();
+	}
+	
 }
 
 function enableTooltipsAndPopovers() {
@@ -77,18 +74,22 @@ function enableTooltipsAndPopovers() {
 	});
 }
 
-function toggleTheme() {
-	var darkThemeActivating = ($("#dark-theme-link-tag").attr("rel") != "stylesheet");
+function activateTheme(themeName) {
+	let themeNames = ["dark", "light", "dark-v1"];
+
+	const inactiveClass = "btn-outline-primary";
+	const activeClass = "btn-primary";
+
+	themeNames.forEach(x => {
+		$(`#${x}-theme-link-tag`).attr("rel", null);
+		$(`#theme-toggler-${x}`).removeClass(activeClass).addClass(inactiveClass);
+	});
+
+	$(`#${themeName}-theme-link-tag`).attr("rel", "stylesheet");
+	$(`#theme-toggler-${themeName}`).addClass(activeClass).removeClass(inactiveClass);
 	
-	$("#dark-theme-link-tag").attr("rel", darkThemeActivating ? "stylesheet" : null);
 
-	var c1 = darkThemeActivating ? "btn-outline-primary" : "btn-primary";
-	var c2 = darkThemeActivating ? "btn-primary" : "btn-outline-primary";
-
-	$("#theme-toggler-dark").removeClass(c1).addClass(c2);
-	$("#theme-toggler-light").removeClass(c2).addClass(c1);
-
-	$.get(`./changeSetting?name=uiTheme&value=${darkThemeActivating ? "dark" : "light"}`, function(data) {
+	$.get(`./changeSetting?name=uiTheme&value=${themeName}`, function(data) {
 		console.log("Theme updated.");
 	});
 }

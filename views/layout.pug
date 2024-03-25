@@ -1,4 +1,5 @@
 include ./includes/shared-mixins.pug
+include ./includes/tx-mixins.pug
 
 doctype html
 html(lang="en")
@@ -12,7 +13,7 @@ html(lang="en")
 		meta(name="description" content="Open-source, easy-to-use, educational Widecoin explorer whose only dependency is your Widecoin Core node.")
 		
 		if (!homepage)
-			link(rel="stylesheet", href=`./style/highlight.min.css?v=${appVersion}`, integrity="")
+			link(rel="stylesheet", href=assetUrl(`./style/highlight.min.css`), integrity="", crossorigin="anonymous")
 
 
 		+themeCss
@@ -36,16 +37,16 @@ html(lang="en")
 		if (!network.endsWith("net") && network != "regtest")
 			- network = (network + "net"); // handles "main" -> "mainnet" and "test" -> "testnet"
 
-		link(rel="apple-touch-icon", sizes="180x180", href=`./img/logo/${network}/apple-touch-icon.png`)
-		link(rel="icon", type="image/png", sizes="32x32", href=`./img/logo/${network}/favicon-32x32.png`)
-		link(rel="icon", type="image/png", sizes="16x16", href=`./img/logo/${network}/favicon-16x16.png`)
-		link(rel="manifest", href=`./img/logo/${network}/site.webmanifest`)
-		link(rel="mask-icon", href=`./img/logo/${network}/safari-pinned-tab.svg`, color="#f7931a")
-		link(rel="shortcut icon", href=`./img/logo/${network}/favicon.ico`)
-		meta(name="apple-mobile-web-app-title", content="BTC Explorer")
-		meta(name="application-name", content="BTC Explorer")
+		link(rel="apple-touch-icon", sizes="180x180", href=assetUrl(`./img/network-${network}/apple-touch-icon.png`))
+		link(rel="icon", type="image/png", sizes="32x32", href=assetUrl(`./img/network-${network}/favicon-32x32.png`))
+		link(rel="icon", type="image/png", sizes="16x16", href=assetUrl(`./img/network-${network}/favicon-16x16.png`))
+		link(rel="manifest", href=`./img/network-${network}/site.webmanifest`)
+		link(rel="mask-icon", href=`./img/network-${network}/safari-pinned-tab.svg`, color="#f7931a")
+		link(rel="shortcut icon", href=assetUrl(`./img/network-${network}/favicon.ico`))
+		meta(name="apple-mobile-web-app-title", content="WCN Explorer")
+		meta(name="application-name", content="WCN Explorer")
 		meta(name="msapplication-TileColor", content="#022e70")
-		meta(name="msapplication-config", content=`./img/logo/${network}/browserconfig.xml`)
+		meta(name="msapplication-config", content=`./img/network-${network}/browserconfig.xml`)
 		meta(name="theme-color" content="#022e70")
 
 		include includes/debug-overrides.pug
@@ -59,9 +60,9 @@ html(lang="en")
 				a.navbar-brand(href="./")
 					span
 						if (coinConfig.logoUrlsByNetwork && coinConfig.logoUrlsByNetwork[activeBlockchain])
-							img.header-image(src=coinConfig.logoUrlsByNetwork[activeBlockchain], alt="logo")
+							img.header-image(src=assetUrl(coinConfig.logoUrlsByNetwork[activeBlockchain]), alt="logo")
 						else
-							img.header-image(src="./img/logo/mainnet/logo.svg", alt="logo")
+							img.header-image(src=assetUrl("./img/network-mainnet/logo.svg"), alt="logo")
 
 						if (coinConfig.siteTitlesByNetwork && coinConfig.siteTitlesByNetwork[activeBlockchain])
 							span.fw-light #{coinConfig.siteTitlesByNetwork[activeBlockchain]}
@@ -70,7 +71,7 @@ html(lang="en")
 
 				if (false && config.demoSite)
 					- var networkNameMap = {"main": "Mainnet", "test": "Testnet", "signet": "Signet"};
-					span.badge.bg-primary(title=`This is a public demo, but this tool is designed to be installed and run by all Bitcoiners...<br/><i>Don't Trust, Verify</i>!`, data-bs-toggle="tooltip", data-bs-html="true")
+					span.badge.bg-primary(title=`This is a public demo, but this tool is designed to be installed and run by all Widecoiners...<br/><i>Don't Trust, Verify</i>!`, data-bs-toggle="tooltip", data-bs-html="true")
 						span Public Demo
 						
 				button.navbar-toggler.navbar-toggler-end(type="button", data-bs-toggle="collapse", data-bs-target="#navbarNav", aria-label="collapse navigation")
@@ -93,14 +94,11 @@ html(lang="en")
 							
 							
 						
-
 						ul.navbar-nav
 							if (config.demoSite && homepage)
 								li.nav-item.dropdown.me-0.me-md-2.mt-2.mt-md-0.text-center.text-md-start
 									a.nav-link.dropdown-toggle.bg-header-footer-highlight.rounded(href="javascript:void(0)", role="button", data-bs-toggle="dropdown", aria-haspopup="true", aria-expanded="false")
-										span.fa-layers.fa-fw.me-2.ms-1
-											i.fas.fa-circle.fa-lg.text-white(data-fa-transform="shrink-2")
-											i.fab.fa-bitcoin.fa-lg(style=`color: ${coinConfig.coinColorsByNetwork[activeBlockchain]}`)
+										img.align-text-top.me-1(src=assetUrl(coinConfig.coinIconUrlsByNetwork[activeBlockchain]), style="width: 20px;")
 
 									div.dropdown-menu.dropdown-menu-end.shadow(aria-label="Demo Sites")
 										span.dropdown-header Public Demo Sites
@@ -109,17 +107,14 @@ html(lang="en")
 										
 										each demoSite in demoSites
 											a.dropdown-item(href=coinConfig.demoSiteUrlsByNetwork[demoSite])
-												span.fa-layers.fa-fw.ms-2
-													i.fas.fa-circle.fa-lg.me-2.text-white(data-fa-transform="shrink-2")
-													i.fab.fa-bitcoin.fa-lg.me-2(style=`color: ${coinConfig.coinColorsByNetwork[demoSite]}`)
+												img.align-text-top.me-2(src=assetUrl(coinConfig.coinIconUrlsByNetwork[demoSite]), style="width: 20px;")
 												
-												| #{coinConfig.siteTitlesByNetwork[demoSite].replace("Explorer", "").replace("Bitcoin", "Mainnet")}
+												| #{coinConfig.siteTitlesByNetwork[demoSite].replace("Explorer", "").replace("Widecoin", "Mainnet")}
 
 							if (config.siteTools)
 								li.nav-item.dropdown.me-0.me-md-2.mt-2.mt-md-0.text-center.text-md-start
 									a.nav-link.rounded.bg-header-footer-highlight.text-white.dropdown-toggle(href="javascript:void(0)", role="button", data-bs-toggle="dropdown", aria-haspopup="true", aria-expanded="false")
-										i.fas.fa-tools.me-2.ms-1
-										| Tools
+										i.bi-tools.me-2.ms-1
 
 									div.dropdown-menu.dropdown-menu-end.shadow(aria-label="Tools Items")
 										each section, sectionIndex in config.site.toolSections
@@ -132,12 +127,12 @@ html(lang="en")
 												- var item = config.siteTools[itemIndex];
 
 												a.dropdown-item(href=item.url)
-													i(class=item.fontawesome, style="width: 20px; margin-right: 10px;")
+													i(class=item.iconClass, style="width: 20px; margin-right: 10px;")
 													span  #{item.name}
 
 							li.nav-item.dropdown.me-0.me-md-3.mt-2.mt-md-0.text-center.text-md-start
 								a.nav-link.rounded.bg-header-footer-highlight.text-white.dropdown-toggle(href="javascript:void(0)", id="navbarDropdown", role="button", data-bs-toggle="dropdown", aria-haspopup="true", aria-expanded="false") 
-									i.fas.fa-cog.me-2.ms-1
+									i.bi-gear.me-2.ms-1
 								
 								.dropdown-menu.dropdown-menu-end.shadow(aria-labelledby="navbarDropdown")
 									span.dropdown-header Display Currency
@@ -168,7 +163,7 @@ html(lang="en")
 														span #{item}
 													.float-end
 														if (userSettings.localCurrency == item.toLowerCase())
-															i.fas.fa-check
+															i.bi-check2
 
 									hr.dropdown-divider.mt-2.mb-2
 									span.dropdown-header Theme
@@ -178,13 +173,17 @@ html(lang="en")
 										- items.push("local");
 
 									.btn-group.ms-3
-										a.btn.btn-sm.px-3(id="theme-toggler-light", href=`javascript:void(0);` onclick=`toggleTheme(); return false;`, class=(userSettings.uiTheme == "light" ? "btn-primary" : "btn-outline-primary"))
-											i.fas.fa-sun.text-warning
-										a.btn.btn-sm.px-3(id="theme-toggler-dark",href=`javascript:void(0);` onclick=`toggleTheme(); return false;`, class=(userSettings.uiTheme == "light" ? "btn-outline-primary" : "btn-primary"))
-											i.fas.fa-moon
+										- let themeNames = ["light", "dark", "dark-v1"];
+										- let themeIcons = ["bi-sun-fill", "bi-moon-fill", "bi-moon"];
+										- let themeIconColors = ["text-warning", "", ""];
+
+										each themeName, themeIndex in themeNames
+											a.btn.btn-sm.px-3(id=`theme-toggler-${themeName}`, href=`javascript:void(0);` onclick=`activateTheme('${themeName}'); return false;`, class=(userSettings.uiTheme == themeName ? "btn-primary" : "btn-outline-primary"))
+												i(class=themeIcons[themeIndex], class=themeIconColors[themeIndex])
+
 
 									hr.dropdown-divider.mt-2.mb-2
-									span.dropdown-header Dislay Timezone
+									span.dropdown-header Display Timezone
 
 									- var items = ["fa", "sat"];
 									if (config.queryExchangeRates && global.exchangeRates)
@@ -196,34 +195,29 @@ html(lang="en")
 
 									p.px-3.pt-2.small.text-muted "Local" uses your browser's default offset:
 										span#browser-tz-offset.badge.bg-light.text-dark.ms-1.border
-										i.fas.fa-info-circle.ms-1(title="This value comes from your brower. If you wish to set a custom offset, you can do so below, in 'More settings...'", data-bs-toggle="tooltip")
+										i.bi-info-circle.ms-1(title="This value comes from your brower. If you wish to set a custom offset, you can do so below, in 'More settings...'", data-bs-toggle="tooltip")
 
 									//hr.dropdown-divider.mt-2.mb-2
 
 									//a.dropdown-item(href=`./user-settings`) More settings...
 									//a.dropdown-item(href=`./admin/dashboard`) Admin Dashboard
 
-
-							
-
 				form.form-inline.d-none.d-lg-inline(method="post", action="./search", style="width: 325px;")
 					input(type="hidden", name="_csrf", value=csrfToken)
 					.input-group
-						//input.form-control(type="text", name="query", placeholder="hash, txid, address", value=(query))
 						input.form-control(type="text", name="query", placeholder="block height/hash, txid, address", value=(query))
-						button.btn.btn-primary(type="submit")
-							i.fas.fa-search
+						
+						button.btn.btn-primary(type="submit", aria-label="Search")
+							i.bi-search
 
 				form.form-inline.d-lg-none.w-100.mt-2.mt-md-0(method="post", action="./search")
 					input(type="hidden", name="_csrf", value=csrfToken)
 					.input-group
 						input.form-control(type="text", name="query", placeholder="height/hash/txid...", value=(query))
 						
-						button.btn.btn-primary(type="submit")
-							i.fas.fa-search
+						button.btn.btn-primary(type="submit", aria-label="Search")
+							i.bi-search
 		
-
-
 		div.pb-4.pt-3.pt-md-4.bg-main
 			div.container.px-2.px-sm-3.mb-large
 				if (pageErrors && pageErrors.length > 0)
@@ -246,19 +240,18 @@ html(lang="en")
 				div(style="min-height: 500px;")
 					block content
 
-				div(style="margin-bottom: 30px;")
-
 		footer.footer.border-top.border-primary.bg-header-footer.pt-3.pb-1.px-3.text-white(style="border-width: 0px !important;")
 			.container
 				.row.mb-7
 					.col-7
 						.mb-4
-						h9 <span style="font-weight: bold;color:white;">Thanks for donation either Widecoin or Bitcoin</span> <Br>
-						h9 <span style="font-weight: bold;color:white;">Widecoin</span> (WCN) : WcPNtDxj5UdwZ6JKb92pKFMQ43MboQ4py3 <Br>
-						h9 <span style="font-weight: bold;color:white;">Bitcoin</span> (BTC) : 1KgoViPr71NBqDzojepyt6SmSKncojwbs2 <Br>
+						h9 <span style="font-weight: bold;color:white;">Thanks for donation either Widecoin or Widecoin</span> <Br>
+						h9 <span style="font-weight: bold;color:white;">Widecoin</span> (WCN) : WUCZ63qjR1qxygBbhfobgyV4XXBcsxy43Q <Br>
+						h9 <span style="font-weight: bold;color:white;">Widecoin</span> (BTC) : 1KgoViPr71NBqDzojepyt6SmSKncojwbs2 <Br>
 						h9 <a href="https://widecoin.org/donation/" style="text-decoration: none;" target="_blank"><span style="font-weight: bold;color:white;">Donation with other currencies</span></a><Br>
 						h9 &copy; <script type="text/javascript">document.write(new Date().getFullYear());</script> by Widecoin	<br>	
 						h9 Version: #{global.appVersion}
+
 		+sharedScriptTags
 		
 		script.
@@ -312,7 +305,7 @@ html(lang="en")
 				console.log(`Performance ID: ${perfId}`);
 
 		if (!homepage)
-			script(src="./js/highlight.pack.js", integrity="")
+			script(src=assetUrl(`./js/highlight.min.js`), integrity="", crossorigin="anonymous")
 			script.
 				document.addEventListener("DOMContentLoaded", function(event) {
 					hljs.highlightAll();
@@ -324,7 +317,7 @@ html(lang="en")
 			
 
 		if (config.credentials.sentryUrl && config.credentials.sentryUrl.length > 0)
-			script(src="./js/sentry.min.js", integrity="", crossorigin="anonymous")
+			script(src=assetUrl("./js/sentry.min.js"), integrity="", crossorigin="anonymous")
 			script.
 				Sentry.init({ dsn: '#{config.credentials.sentryUrl}' });
 

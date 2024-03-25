@@ -41,7 +41,7 @@ global.currencyTypes = {
 };
 
 global.currencySymbols = {
-	"wcn": "w",
+	"btc": "w",
 	"usd": "$",
 	"eur": "€",
 	"gbp": "£"

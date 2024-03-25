@@ -7,7 +7,7 @@ block content
 	+pageTitle(`${coinConfig.name} Fun`)
 
 
-	+dismissableInfoAlert("funPageNoteDismissed", "About Bitcoin Fun...")
+	+dismissableInfoAlert("funPageNoteDismissed", "About Widecoin Fun...")
 		.mb-2 This is a curated list of fun and interesting things in the blockchain or related to the underlying data:
 		ul
 			li Historical firsts
@@ -16,45 +16,91 @@ block content
 
 		.mb-0 Help curating this list is welcome! You can submit new items by opening an issue or PR on <a href="https://github.com/janoside/btc-rpc-explorer">Github</a>.
 
+	- let buttonItems = [["new-first", "Newest First"], ["old-first", "Oldest First"], ["by-year", "By Year"], ["by-month", "By Month"]];
+	.text-center.mb-3
+		.btn-group(role="group")
+			each buttonItem in buttonItems
+				if (viewType == buttonItem[0])
+					a.btn.btn-primary(href="#") #{buttonItem[1]}
+				else
+					a.btn.btn-outline-primary(href=`./fun?viewType=${buttonItem[0]}`) #{buttonItem[1]}
 
-	+contentSection
-		.table-responsive
-			table.table.table-borderless.table-striped
-				thead
-					tr
-						th.text-card-highlight.text-uppercase.fw-light Date
-						th.text-card-highlight.text-uppercase.fw-light Item
-						th.text-card-highlight.text-uppercase.fw-light Reference
-				tbody
-					each item, index in coinConfig.historicalData
-						if (item.chain == activeBlockchain)
-							tr
-								td #{item.date}
 
-								if (true)
-									td
-										if (item.type == "tx")
-											a(href=`./tx/${item.txid}@${item.blockHeight}`) #{item.summary}
-										else if (item.type == "block")
-											a(href=`./block/${item.blockHash}`) #{item.summary}
-										else if (item.type == "blockheight")
-											a(href=`./block/${item.blockHash}`) #{item.summary}
-										else if (item.type == "address")
-											a(href=`./address/${item.address}`) #{item.summary}
-										else if (item.type == "link")
-											a(href=item.url) #{item.summary}
-								
+	if (viewType == "by-year")
+		each itemYear in itemYears
+			+contentSection(`${itemYear}`)
+				+itemTable(listByYear[itemYear])
+
+	else if (viewType == "by-month")
+		- let months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
+		each itemMonth in itemMonths
+			- let visibleItemCount = 0;
+			each item, index in listByMonth[itemMonth]
+				if (item.chain == activeBlockchain)
+					- visibleItemCount = visibleItemCount + 1;
+
+			if (visibleItemCount > 0)
+				+contentSection(`${months[parseInt(itemMonth) - 1]}`)
+					+itemTable(listByMonth[itemMonth])
+
+	else if (viewType == "old-first")
+		+contentSection
+			+itemTable(listOldFirst)
+
+	else if (viewType == "new-first")
+		+contentSection
+			+itemTable(listNewFirst)
+
+	else
+		| Unknown view type
+
+
+	if (false)
+		pre #{JSON.stringify(itemsByYear, null, 4)}
+		
+
+
+mixin itemTable(items)
+	.table-responsive
+		table.table.table-borderless.table-striped
+			thead
+				tr
+					th.text-card-highlight.text-uppercase.fw-light Date
+					th.text-card-highlight.text-uppercase.fw-light Item
+					th.text-card-highlight.text-uppercase.fw-light Reference
+			tbody
+				each item, index in items
+					if (item.chain == activeBlockchain)
+						tr
+							td #{item.date}
+
+							if (true)
 								td
-									if (item.referenceUrl && item.referenceUrl.trim().length > 0)
-										- var matches = item.referenceUrl.match(/^https?\:\/\/([^\/:?#]+)(?:[\/:?#]|$)/i);
+									if (item.type == "tx")
+										a(href=`./tx/${item.txid}@${item.blockHeight}`) #{item.summary}
+									else if (item.type == "block")
+										a(href=`./block/${item.blockHash}`) #{item.summary}
+									else if (item.type == "blockheight")
+										a(href=`./block/${item.blockHash}`) #{item.summary}
+									else if (item.type == "address")
+										a(href=`./address/${item.address}`) #{item.summary}
+									else if (item.type == "extendedPubKey")
+										a(href=`./xyzpub/${item.extendedPubKey}`) #{item.summary}
+									else if (item.type == "link")
+										a(href=item.url) #{item.summary}
+							
+							td
+								if (item.referenceUrl && item.referenceUrl.trim().length > 0)
+									- var matches = item.referenceUrl.match(/^https?\:\/\/([^\/:?#]+)(?:[\/:?#]|$)/i);
 
-										- var domain = null;
-										- var domain = matches && matches[1];
+									- var domain = null;
+									- var domain = matches && matches[1];
 
-										if (domain)
-											a(href=item.referenceUrl, rel="nofollow") #{domain} 
-												i.fas.fa-external-link-alt
-										else
-											a(href=item.referenceUrl, rel="nofollow") Reference
+									if (domain)
+										a(href=item.referenceUrl, rel="nofollow") #{domain} 
+											i.bi-box-arrow-up-right
 									else
-										span -
+										a(href=item.referenceUrl, rel="nofollow") Reference
+								else
+									span -

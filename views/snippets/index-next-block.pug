@@ -1,15 +1,61 @@
 include ../includes/shared-mixins.pug
 
-+contentSection
-	+summaryRow(3)
-		+summaryItem("Transactions")
-			| #{txCount.toLocaleString()}
 
-		+summaryItem("Fee Rates", "Minimum and maximum fee rates for transactions that are predicted to be included in the next block.", "sat/vB")
-			+numWithMutedDecimals(new Decimal(minFeeRate).toDP(2).toString())
-			span.mx-2 -
-			+numWithMutedDecimals(new Decimal(maxFeeRate).toDP(2).toString())
+
++summaryRow(1)
+	
+	+summaryItem
+
+		if (minFeeRate && medianFeeRate && maxFeeRate)
+			div
+				span.border-dotted(title="Minimum fee rate", data-bs-toggle="tooltip")
+					+numWithMutedDecimals(new Decimal(minFeeRate).toDP(2).toString())
+				
+				span.text-muted.fw-light.mx-2 /
+				
+				span.border-dotted(title="Median fee rate", data-bs-toggle="tooltip")
+					+numWithMutedDecimals(new Decimal(medianFeeRate).toDP(2).toString())
+
+				span.text-muted.fw-light.mx-2 /
+
+				span.border-dotted(title="Maximum fee rate", data-bs-toggle="tooltip")
+					if (maxFeeRate - minFeeRate > 10)			
+						+numWithMutedDecimals(new Decimal(maxFeeRate).toDP(0).toString())
+
+					else
+						+numWithMutedDecimals(new Decimal(maxFeeRate).toDP(2).toString())
+
+				span.text-tiny.text-muted.ms-1 sat/vB
+
+
+
+		
+			| #{txCount.toLocaleString()}
+			span.text-tiny.text-muted.ms-1 tx
+			span.mx-2.text-muted /
+
+			- var full = new Decimal(totalWeight).dividedBy(coinConfig.maxBlockWeight).times(100);
+			- var full2 = full.toDP(0);
 
 			
-		+summaryItem("Total Fees", "Sum of fees for all transactions that are predicted to be included in the next block.")
-			+valueDisplay(totalFees)
+			if (full >= 99 || full2 == 99)
+				span.text-success.small.border-dotted(title="The predicted next block is full.", data-bs-toggle="tooltip")
+					| Full
+					i.bi-check2.ms-1
+
+			else
+				span.text-primary.small.border-dotted(title=`The predicted next block is ~${full2}% full.`, data-bs-toggle="tooltip")
+					| #{full2}%
+
+
+
+			span.mx-2.text-muted /
+
+			span.small
+				span.me-1.border-dotted(title="Σ fees", data-bs-toggle="tooltip") &Sigma;
+				+valueDisplay(totalFees, {hideLessSignificantDigits:true})
+
+		else
+			span(title="No data available", data-bs-toggle="tooltip") -
+		
+

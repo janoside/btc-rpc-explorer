@@ -3,11 +3,11 @@ extends layout
 block headContent
 	title Peers
 
-	link(rel="stylesheet", href="./style/dataTables.bootstrap4.min.css", integrity="")
+	link(rel="stylesheet", href=assetUrl("./style/dataTables.bootstrap4.min.css"), integrity="", crossorigin="anonymous")
 
-	link(rel="stylesheet", href="./leaflet/leaflet.css", integrity="")
+	link(rel="stylesheet", href=assetUrl("./leaflet/leaflet.css"), integrity="", crossorigin="anonymous")
 
-	script(src="./leaflet/leaflet.js", integrity="")
+	script(src=assetUrl("./leaflet/leaflet.js"), integrity="", crossorigin="anonymous")
 
 	style.
 		.versions-hidden-rows, .services-hidden-rows {
@@ -174,8 +174,8 @@ block content
 			each item, index in peerSummary.getpeerinfo
 				div.border-bottom.p-1
 					a.me-2(href="javascript:void(0)" onclick=`$("#peerinfo_${index}").toggle(); $(this).find(".toggle-buttons").toggle();`)
-						i.far.fa-plus-square.text-muted.toggle-buttons
-						i.far.fa-minus-square.text-muted.toggle-buttons(style="display: none;")
+						i.bi-plus-square.text-muted.toggle-buttons
+						i.bi-dash-square.text-muted.toggle-buttons(style="display: none;")
 
 					span #{item.addr}
 
@@ -193,8 +193,8 @@ block content
 
 	
 block endOfBody
-	script(src="./js/jquery.dataTables.min.js", integrity="")
-	script(src="./js/dataTables.bootstrap4.min.js", integrity="")
+	script(src=assetUrl("./js/jquery.dataTables.min.js"), integrity="", crossorigin="anonymous")
+	script(src=assetUrl("./js/dataTables.bootstrap4.min.js"), integrity="", crossorigin="anonymous")
 
 	script.
 		$(document).ready(function() {

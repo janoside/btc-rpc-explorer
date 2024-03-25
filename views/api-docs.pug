@@ -6,9 +6,9 @@ block headContent
 block content
 	+pageTitle("API Docs")
 	div.fs-4.mt-n3.mb-3 Current Version:
-		a.ms-2(href="./api/version", title="View version API call: /api/version", data-bs-toggle="tooltip", target="_blank") v#{apiDocs.version}
+		a.ms-2(href=`.${apiBaseUrl}/version`, title=`View version API call: ${apiBaseUrl}/version`, data-bs-toggle="tooltip", target="_blank") v#{apiDocs.version}
 		small.ms-2 (
-			a(href="./api/changelog") changelog
+			a(href=`.${apiBaseUrl}/changelog`) changelog
 			| )
 
 	if (false)
@@ -19,40 +19,39 @@ block content
 	+dismissableInfoAlert("apiDocsNoteDismissed", "About the API...")
 		h6.mb-2 About the API
 
-		| The API documented below is made available by wcn-rpc-explorer. The actions are organized by category. From this documentation you can directly click on an action's link to see the output format in your browser.
+		p The API documented below is made available by WidecoinExplorer. All actions return JSON content. The actions are organized by category. From this documentation you can directly click on an action's link to see the output format in your browser.
+
+		| Note that the output from any given action may vary, depending on the capabilities of your node. WidecoinExplorer does its best to maximize data returned, while also gracefully falling back when data is unavailable (e.g. when older node software simply doesn't have a particular piece of data).
 
 
 	each cat, catIndex in categories
 		h3.h5.mb-1.fw-light.text-capitalize #{cat.name}
 		+contentSection
 			each item, itemIndex in cat.items
-				if (itemIndex > 0)
-					hr
+				if (!config.slowDeviceMode || !item.hideInSlowMode)
+					if (itemIndex > 0)
+						hr
 
-				.row.p-2
-					.col-md-3
-						a(href=(item.testUrl ? `.${item.testUrl}` : `.${item.url}`), target="_blank") #{item.url}
+					.row.p-2
+						.col-md-3
+							a(href=(item.testUrl ? `.${apiBaseUrl}${item.testUrl}` : `.${apiBaseUrl}${item.url}`), target="_blank") #{apiBaseUrl}#{item.url}
 
-					.col-md-1
-						span(title=`Return type: ${item.returnType}`, data-bs-toggle="tooltip")
-							+lightBadge(item.returnType)
+						.col-md-9
+							
+							div #{item.desc}
 
-					.col-md-8
-						
-						div #{item.desc}
+							if (item.optionalParams)
+								.mt-2
+									.mb-1
+										small.me-2 Optional parameters
+									
+									each x, xName in item.optionalParams
+										div
+											+lightBadge(xName)
+											span.small #{x}
 
-						if (item.optionalParams)
-							.mt-2
-								.mb-1
-									small.me-2 Optional parameters
-								
-								each x, xName in item.optionalParams
-									div
-										+lightBadge(xName)
-										span.small #{x}
-
-						if (false && item.example)
-							.mt-3
-								span.text-muted Example output:
-								pre
-									code.json #{JSON.stringify(item.example)}
+							if (false && item.example)
+								.mt-3
+									span.text-muted Example output:
+									pre
+										code.json #{JSON.stringify(item.example)}

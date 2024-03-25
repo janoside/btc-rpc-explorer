@@ -7,11 +7,11 @@ block content
 	+pageTitle("Extended Public Key", extendedPubkey, true)
 
 	+dismissableInfoAlert("xpubPageNoteDismissed", "About Extended Public Keys...")
-		.mb-3 !{markdown("**Extended Public Keys** (colloquially \"XPUBs\") are **parent** public keys from which many **children** public keys can be mathematically *derived* using the [BIP32](https://github.com/bitcoin/bips/blob/master/bip-0032.mediawiki) standard. Each **child** key represents a Bitcoin address. Therefore, an XPUB represents a unique set of Bitcoin addresses.")}
+		.mb-3 !{markdown("**Extended Public Keys** (colloquially \"XPUBs\") are **parent** public keys from which many **children** public keys can be mathematically *derived* using the [BIP32](https://github.com/bitcoin/bips/blob/master/bip-0032.mediawiki) standard. Each **child** key represents a Widecoin address. Therefore, an XPUB represents a unique set of Widecoin addresses.")}
 		.mb-n3 !{markdown("Wallet software often presents users with an XPUB. Exposure of your XPUB, although it doesn't risk theft of your bitcoin, **harms your privacy** by allowing anyone with access to your XPUB to know all of your addresses and the details of all transactions sent to and from them. This page is meant to demonstrate that fact - search for any XPUB (xpub, ypub, zpub...) and this tool will display all of the addresses derived from that key.")}
 
 	+contentSection("Summary")
-		+summaryRow(3 + (balance ? 1 : 0) + (changeBalance ? 1 : 0) + (xpub ? 1 : 0))
+		+summaryRow(4)
 			+summaryItem("Key Type", "A simple shorthand for the type of extended public key. Each type (xpub, ypub, zpub...) is interpreted slightly differently, resulting in a different sequence of addresses.")
 				| #{keyType}
 
@@ -24,11 +24,10 @@ block content
 			+summaryItem("BIP32 Path", "BIP32 defines a standard for deriving child keys from an extended parent key. This 'path', also known as the 'derivation path', comes from that standard and instructs software how to generate child keys.")
 				| #{bip32Path}
 
-			if (balance)
-				+summaryItem("Balance")
-
-			if (changeBalance)
-				+summaryItem("Change Balance")
+			+summaryItem(`Balance (addr: ${offset}-${(offset + limit - 1)})`, "Sum of the balances of the current page of addresses (receive and change) derived from this extended public key.")
+				span(class=(balanceSat > 0 ? "text-success" : false))
+					- var currencyValue = new Decimal(balanceSat).dividedBy(coinConfig.baseCurrencyUnit.multiplier);
+					+valueDisplay(currencyValue)
 
 
 	if (relatedKeys)
@@ -51,7 +50,7 @@ block content
 								td #{item.keyType}
 									if (item.key == extendedPubkey)
 										span(title="The current extended public key", data-bs-toggle="tooltip")
-											i.fas.fa-arrow-left.text-warning.ms-2
+											i.bi-arrow-left.text-warning.ms-2
 
 								td
 									a(href=`./xyzpub/${item.key}`, class=((item.key == extendedPubkey) ? "text-info" : false)) #{utils.ellipsizeMiddle(item.key, 16)}
@@ -85,29 +84,34 @@ block content
 				pre
 					code.json #{JSON.stringify(relatedKeys, null, 4)}
 
-	.row
-		.col
-			+contentSection("Receive Addresses")
-				.table-responsive
-					table.table.table-borderless.table-striped.mb-0
-						thead
-							tr
-								th.text-end Index
-								th Address
-								//th N(tx)
-								//th Balance
-						tbody
-							each address, addressIndex in receiveAddresses
+	if (receiveAddresses && changeAddresses)
+		.row
+			.col
+				+contentSection("Receive Addresses")
+					.table-responsive
+						table.table.table-borderless.table-striped.mb-0
+							thead
 								tr
-									td.text-end
-										.text-muted ##{(offset + addressIndex).toLocaleString()}
+									th.text-end Index
+									th Address
+									th.text-end N(tx)
+									th Balance
+							tbody
+								each addressDetails, addressIndex in receiveAddresses
+									tr
+										td.text-end
+											.text-muted ##{(offset + addressIndex).toLocaleString()}
 
-									td
-										a(href=`./address/${address}`) #{utils.ellipsizeMiddle(address, 24)}
-										+copyTextButton(address)
+										td
+											a(href=`./address/${addressDetails.address}`) #{utils.ellipsizeMiddle(addressDetails.address, 24)}
+											+copyTextButton(addressDetails.address)
 
-									//td -
-									//td -
+										td.text-end #{addressDetails.txCount.toLocaleString()}
+
+										td
+											span(class=(addressDetails.balanceSat > 0 ? "text-success" : false))
+												- var currencyValue = new Decimal(addressDetails.balanceSat).dividedBy(coinConfig.baseCurrencyUnit.multiplier);
+												+valueDisplay(currencyValue)
 
 
 		.col
@@ -118,19 +122,23 @@ block content
 							tr
 								th.text-end Index
 								th Address
-								//th N(tx)
-								//th Balance
+								th.text-end N(tx)
+								th Balance
 						tbody
-							each address, addressIndex in changeAddresses
+							each addressDetails, addressIndex in changeAddresses
 								tr
 									td.text-end
 										.text-muted ##{(offset + addressIndex).toLocaleString()}
 									td
-										a(href=`./address/${address}`) #{utils.ellipsizeMiddle(address, 24)}
-										+copyTextButton(address)
+										a(href=`./address/${addressDetails.address}`) #{utils.ellipsizeMiddle(addressDetails.address, 24)}
+										+copyTextButton(addressDetails.address)
 
-									//td -
-									//td -
+									td.text-end #{addressDetails.txCount.toLocaleString()}
+
+									td
+										span(class=(addressDetails.balanceSat > 0 ? "text-success" : false))
+											- var currencyValue = new Decimal(addressDetails.balanceSat).dividedBy(coinConfig.baseCurrencyUnit.multiplier);
+											+valueDisplay(currencyValue)
 
 
 	.mt-4

@@ -20,7 +20,7 @@ const trackAppStats = (name, stats) => {
 			downsampledAppStats[name] = [];
 		}
 
-		dataset = appStats[name];
+		let dataset = appStats[name];
 
 		if (stats.max) {
 			dataset.push({time:new Date().getTime(), value: stats.max});

@@ -1,14 +1,9 @@
-mixin adminNav
+mixin adminNav(activeItemTitle)
+	- let adminNavItems = [ ["./admin/dashboard", "Dashboard"], ["./admin/app-stats", "App Stats"], ["./admin/os-stats", "OS Stats"], ["./admin/perf-log", "Performance Log"] ];
+
 	.card.mb-3.mt-n2.p-0
-		nav.navbar.navbar-expand.p-1
-			.container-fluid
-				.collapse.navbar-collapse
-					ul.navbar-nav
-						li.nav-item.me-2.md-md-3
-							a.nav-link.active(href="./admin/dashboard") Dashboard
-						li.nav-item.me-2.md-md-3
-							a.nav-link(href="./admin/app-stats") App Stats
-						li.nav-item.me-2.md-md-3
-							a.nav-link(href="./admin/os-stats") OS Stats
-						li.nav-item.me-2.md-md-3
-							a.nav-link(href="./admin/perf-log") Performance Log
+		.card-body
+			ul.nav.nav-pills
+				each navItem in adminNavItems
+					li.nav-item.me-2.md-md-3
+						a.nav-link(href=navItem[0], class=(navItem[1] == activeItemTitle ? "active" : false)) #{navItem[1]}

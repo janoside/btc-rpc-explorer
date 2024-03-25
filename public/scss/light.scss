@@ -8,18 +8,19 @@ $card-border-color: $border-color;
 $card-highlight-color: #567997;
 
 
-$nav-tabs-border-color: #adb5bd;
-$nav-tabs-link-active-color: lighten($body-color, 5%);
-$nav-tabs-link-active-border-color: #adb5bd #adb5bd $body-bg !important;
-
 
 $alert-bg-scale: -70%;
 $alert-border-scale: -60%;
+
+$bg-nav-link-hover: darken($body-bg, 10%);
 
 
 
 
 $table-striped-bg: rgba(0, 0, 0, 0.04);
+
+
+$nav-tabs-border-color: lighten($body-color, 45%);
 
 
 @import "./main";
@@ -57,7 +58,7 @@ $table-striped-bg: rgba(0, 0, 0, 0.04);
 }
 
 .bg-tx-separator {
-	background-color: #dce1e5;
+	background-color: darken($body-bg, 30%);
 }
 
 .border-card-highlight-badge {

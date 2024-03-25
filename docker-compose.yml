@@ -1,0 +1,28 @@
+version: "3.7"
+
+networks:
+  default:
+    driver: bridge
+
+services:
+  explorer:
+    container_name: btc-rpc-explorer
+    #define $UID, $GID in .env file the user to run docker and write in data folder
+    #user: "1000:1000"
+    environment:
+      BTCEXP_HOST: 0.0.0.0
+      BTCEXP_BITCOIND_URI: $BTCEXP_BITCOIND_URI
+      BTCEXP_ADDRESS_API: $BTCEXP_ADDRESS_API
+      BTCEXP_ELECTRUM_SERVERS: $BTCEXP_ELECTRUM_SERVERS
+      BTCEXP_SLOW_DEVICE_MODE: false
+      #More information mode, including Widecoin exchange rates
+      #More privacy mode, no external queries
+      # BTCEXP_PRIVACY_MODE: true
+      # BTCEXP_NO_RATES: true
+      # BTCEXP_UI_THEME: dark
+    build:
+      context: ./
+    image: btc-rpc-explorer:latest
+    #restart: "no"
+    ports:
+      - "3002:3002"

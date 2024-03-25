@@ -4,6 +4,33 @@ block headContent
 	title Widecoin Explorer
 	
 block content
+
+
+	- var tzDiff = -parseFloat(browserTzOffset);
+	if (userTzOffset != "unset")
+		- tzDiff = parseFloat(userTzOffset);
+
+	- var tzMoment = moment.utc(new Date()).add(tzDiff, "hours");
+	- var tzDay = tzMoment.format("MM-DD");
+
+	if (global.btcHolidays.byDay[tzDay])
+		
+		- var day = tzDay;
+		- var dom = parseInt(day.substring(3));
+		- var months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+		- var currentMonth = parseInt(day.substring(0, 2)) - 1;
+
+		.mb-2
+			+contentSection
+				h5
+					i.bi-star-fill.text-warning
+					span.ms-2.fw-light.text-muted Today is...
+				each item in global.btcHolidays.byDay[tzDay]
+					h6.fs-5.text-uppercase.fw-light.text-card-highlight.mt-3 #{item.name}!
+						span.ms-2 (#{months[currentMonth]} #{dom})
+				
+					.mb-0 !{item.desc}
+
 	if (getblockchaininfo == null)
 		div.alert.alert-danger
 			h5.mb-3 Unable to get basic blockchain data
@@ -17,14 +44,6 @@ block content
 						b If you believe your bitcoind node is already initialized...
 						div Check your RPC connection info and/or check this application's error log for possible hints about the cause of this issue.
 	else
-		div(style="text-align: center; padding-top:-15px;")
-			script(async, src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2900084726921838", crossorigin="anonymous")
-			ins.adsbygoogle(style="display:inline-block;width:728px;height:90px", data-ad-client="ca-pub-2900084726921838", data-ad-slot="1164912161")
-			script.
-				(adsbygoogle = window.adsbygoogle || []).push({});
-			a(href=`https://chhuornouodom.com/`,target="_blank") 
-				img(src="https://www.widecoin.org/public/images/cnoads-720x90.gif", alt="books", style="border: solid 0px #ccc;")
-		div(style="text-align: center; padding-bottom:10px;")
 
 		+dismissableAlert("homepageWelcomeBannerDismissed")
 			.clearfix
@@ -32,21 +51,22 @@ block content
 					h4.fw-light.mb-2 Welcome to Widecoin Explorer!
 					h6.fw-light.mb-2 Join community link below to get latest update from Widecoin
 					h6.fw-light.mb-2 <a href="https://web.facebook.com/widecoin1">Facebook</a> | <a href="https://twitter.com/widecoin1">Twitter</a> | <a href="https://t.me/joinchat/oJ1_N7xtcAtlZGU1">Telegram</a> | <a href="https://discord.gg/GnNaAHra7Q">Discord</a>
-		
-		if (getblockchaininfo.softforks && getblockchaininfo.softforks.taproot && getblockchaininfo.softforks.taproot.bip9)
-			- var minTaprootHeight = getblockchaininfo.softforks.taproot.bip9.min_activation_height;
-			- var blocksLeft = minTaprootHeight - getblockchaininfo.blocks;
-			//- var blocksLeft = -145;
+			
+		if (global.activeBlockchain == "main")
+			if (getblockchaininfo.softforks && getblockchaininfo.softforks.taproot && getblockchaininfo.softforks.taproot.bip9)
+				- var minTaprootHeight = getblockchaininfo.softforks.taproot.bip9.min_activation_height;
+				- var blocksLeft = minTaprootHeight - getblockchaininfo.blocks;
+				//- var blocksLeft = -145;
 
-			if (blocksLeft > 0)
-				+blockCountdown("Taproot Activation", blocksLeft)
-					.mb-2 The softfork known as Taproot will activate on Bitcoin's mainnet at block height 709,632. After activation, any Bitcoin user will be able to use a new address type that enables new features and functionality. The Taproot upgrade has been ~4 years in the making!
-					| Read more about Taproot's history from Pieter Wuille (one of its architects) <a href="https://twitter.com/pwuille/status/1403725170993336322">here</a>.
+				if (blocksLeft > 0)
+					+blockCountdown("Taproot Activation", blocksLeft)
+						.mb-2 The softfork known as Taproot will activate on Widecoin's mainnet at block height 709,632. After activation, any Widecoin user will be able to use a new address type that enables new features and functionality. The Taproot upgrade has been ~4 years in the making!
+						| Read more about Taproot's history from Pieter Wuille (one of its architects) <a href="https://twitter.com/pwuille/status/1403725170993336322">here</a>.
 
-			else if (blocksLeft <= 0 && blocksLeft > -144)
-				.alert.alert-success
-					h5 Taproot: Activation Height Reached 🎉
-					| Taproot has activated on Bitcoin's mainnet as of block height <a href="./block-height/709632">709,632</a>!
+				else if (blocksLeft <= 0 && blocksLeft > -144)
+					.alert.alert-success
+						h5 Taproot: Activation Height Reached 🎉
+						| Taproot has activated on Widecoin's mainnet as of block height <a href="./block-height/709632">709,632</a>!
 				
 
 		if (getblockchaininfo.initialblockdownload && !["regtest", "signet"].includes(global.activeBlockchain))
@@ -58,58 +78,8 @@ block content
 				span.fw-bold Progress: 
 				span #{new Decimal(getblockchaininfo.verificationprogress).times(100).toDP(3)}%
 
-
-		
 		include includes/index-network-summary.pug
 		
-		
-		
-		if (true || nextBlockTemplate)
-			if (false)
-				pre
-					code.json #{JSON.stringify(nextBlockFeeRateGroups, null, 4)}
-
-			.d-flex.justify-content-between
-				div
-					- var desc = "Prediction for the next block, based on the output of the getblocktemplate command";
-					+sectionTitle("Predicted Next Block", false, null, null, null, desc)
-
-				div
-					a.small.ms-2(href="./mining-template") Next block details &raquo;
-			
-			#index-next-block
-				+contentSection
-					+summaryRow(3)
-						+summaryItem("Transactions")
-							.text-center.text-reset
-								.spinner-border.spinner-border-sm
-
-						+summaryItem("Fee Rates", "Minimum and maximum fee rates for transactions that are predicted to be included in the next block.", "sat/vB")
-							.text-center
-								.spinner-border.spinner-border-sm
-							
-						+summaryItem("Total Fees", "Sum of fees for all transactions that are predicted to be included in the next block.")
-							.text-center
-								.spinner-border.spinner-border-sm
-
-				if (false)
-					.mt-4
-						.text-center
-							+summaryTitle("Fee Rate Breakdown")
-
-						.progress.mt-2
-							each group, groupIndex in nextBlockFeeRateGroups
-								if (group.totalWeight > 0)
-									- var intPercent = parseInt(100 * group.weightRatio);
-									if (intPercent < 10)
-										- intPercent = 10;
-									- var color = `hsl(${(333 * (groupIndex / nextBlockFeeRateGroups.length))}, 100%, 35%)`;
-									
-									.progress-bar(role="progressbar", style=`width: ${intPercent}%; background-color: ${color};`, aria-valuenow=`${intPercent}`, aria-valuemin="0", aria-valuemax="100")
-										| #{new Decimal(group.minFeeRate).toDP(1)}
-						
-
-
 		if (latestBlocks)
 			.d-flex.justify-content-between
 				div

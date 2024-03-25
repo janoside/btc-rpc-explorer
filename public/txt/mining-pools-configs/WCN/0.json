@@ -1,82 +1,83 @@
 {
-  "coinbase_tags": {
-    "/nodeStratum/": {
-      "name": "Miningp01",
-      "link": "http://miningp01.widecoin.org"
-    },
-    "KriptoKyng Pool": {
-      "name": "KriptoKyng",
-      "link": "https://kriptokyng.com"
-    },
-    "pool.rplant.xyz": {
-      "name": "Rplant",
-      "link": "https://pool.rplant.xyz"
-    },
-    "/AlphaxCore/": {
-      "name": "Trossmining",
-      "link": "trossmining.de"
-    },
-    "thepool.life": {
-      "name": "Yourpoolasic",
-      "link": "yourpoolasic.uk"
-    },
-    "PoolMine.xyz": {
-      "name": "PoolMine",
-      "link": "PoolMine.xyz"
-    },
-    "MCpool": {
-      "name": "Mc1",
-      "link": "mc1.xyz"
-    },
-    "Cybercore": {
-      "name": "Trossmining",
-      "link": "trossmining.de"
-    },
-    "solopools.net": {
-      "name": "Solopools.net",
-      "link": "solopools.net"
-    },
-    "SOLOPOOLS.ORG": {
-      "name": "Solopools.org",
-      "link": "solopools.org"    
-    },
-    "Cminors-Pools": {
-      "name": "Cminors-pool",
-      "link": "au-merged.mine.cminors-pool.com"    
-    },
-    "Mining4People": {
-      "name": "Mining4People",
-      "link": "mining4people.com"    
-    },
-    "zpool.ca": {
-      "name": "Zpool",
-      "link": "zpool.ca"    
-    },
-    "altcoinpool.ru": {
-      "name": "Altcoinpool",
-      "link": "altcoinpool.ru"    
-    },
-    "koinium.com": {
-      "name": "Koinium",
-      "link": "koinium.com"    
-    },
-    "Miningcore": {
-      "name": "Miningcore",
-      "link": "Miningcore"    
-    }
-  },
-    "payout_addresses": {
-      "WRBwmEmJrQVZpHjpV6HzVxmGDoFi2v2Nv8": {
+    "coinbase_tags": {
+      "/nodeStratum/": {
         "name": "Miningp01",
-        "link": "http://miningp01.widecoin.org/",
-      "wc1qkcgnrpddh8splmlx5atm457dgjeau997c9jln4": {
-          "name": "KriptoKyng",
-          "link": "https://kriptokyng.com"
+        "link": "http://miningp01.widecoin.org"
+      },
+      "KriptoKyng Pool": {
+        "name": "KriptoKyng",
+        "link": "https://kriptokyng.com"
+      },
+      "pool.rplant.xyz": {
+        "name": "Rplant",
+        "link": "https://pool.rplant.xyz"
+      },
+      "/AlphaxCore/": {
+        "name": "Trossmining",
+        "link": "trossmining.de"
+      },
+      "thepool.life": {
+        "name": "Yourpoolasic",
+        "link": "yourpoolasic.uk"
+      },
+      "PoolMine.xyz": {
+        "name": "PoolMine",
+        "link": "PoolMine.xyz"
+      },
+      "MCpool": {
+        "name": "Mc1",
+        "link": "mc1.xyz"
+      },
+      "Cybercore": {
+        "name": "Trossmining",
+        "link": "trossmining.de"
+      },
+      "solopools.net": {
+        "name": "Solopools.net",
+        "link": "solopools.net"
+      },
+      "SOLOPOOLS.ORG": {
+        "name": "Solopools.org",
+        "link": "solopools.org"    
+      },
+      "Cminors-Pools": {
+        "name": "Cminors-pool",
+        "link": "au-merged.mine.cminors-pool.com"    
+      },
+      "Mining4People": {
+        "name": "Mining4People",
+        "link": "mining4people.com"    
+      },
+      "zpool.ca": {
+        "name": "Zpool",
+        "link": "zpool.ca"    
+      },
+      "altcoinpool.ru": {
+        "name": "Altcoinpool",
+        "link": "altcoinpool.ru"    
+      },
+      "koinium.com": {
+        "name": "Koinium",
+        "link": "koinium.com"    
+      },
+      "Miningcore": {
+        "name": "Miningcore",
+        "link": "Miningcore"    
       }
-    }
-  },
-  "unknown_miner_payout_addresses": {
-		"somePayoutAddress": {
-		}
-	}
-}
+    },
+      "payout_addresses": {
+        "WRBwmEmJrQVZpHjpV6HzVxmGDoFi2v2Nv8": {
+          "name": "Miningp01",
+          "link": "http://miningp01.widecoin.org/",
+        "wc1qkcgnrpddh8splmlx5atm457dgjeau997c9jln4": {
+            "name": "KriptoKyng",
+            "link": "https://kriptokyng.com"
+        }
+      }
+    },
+    "unknown_miner_payout_addresses": {
+          "somePayoutAddress": {
+          }
+      }
+  }
+  
