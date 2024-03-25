@@ -970,13 +970,13 @@ router.post("/search", function(req, res, next) {
 
 	let parseAddressData = utils.tryParseAddress(rawCaseQuery);
 
-	/*if (false) {
+	if (false) {
 		if (parseAddressData.errors) {
 			parseAddressData.errors.forEach(err => {
 				utils.logError("19238rfehdusd", err, {address:query});
 			});
 		}
-	}*/
+	}
 
 	if (parseAddressData.parsedAddress) {
 		res.redirect("./address/" + rawCaseQuery);
