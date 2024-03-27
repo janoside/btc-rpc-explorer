@@ -222,7 +222,6 @@ html(lang="en")
 			div.container.px-2.px-sm-3.mb-large
 				if (pageErrors && pageErrors.length > 0)
 					include includes/page-errors-modal.pug
-
 					//div.alert.alert-danger
 						- var errorText = `This page encountered ${pageErrors.length.toLocaleString()} error${pageErrors.length == 1 ? "" : "s"}:`;
 						span.fw-bold #{errorText} 
