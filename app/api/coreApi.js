@@ -2029,7 +2029,7 @@ function buildPredictedBlocks(statusId, statusFunc) {
 							feeRateGroup = Math.floor(feeRateGroup / 5) * 5;
 
 						} else {
-							console.log(JSON.stringify(tx));
+							//console.log(JSON.stringify(tx));
 						}
 
 						feeRateGroup = Math.floor(feeRateGroup);
