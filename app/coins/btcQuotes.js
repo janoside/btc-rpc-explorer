@@ -285,7 +285,7 @@ module.exports = {
 			// 40
 			text: "No one has found the bottom of the Bitcoin rabbit hole.",
 			speaker: "Jameson Lopp",
-			date: "2010-11-10",
+			date: "2018-11-10",
 			url: "https://twitter.com/lopp/status/1061415918616698881"
 		},
 		{
