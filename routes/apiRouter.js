@@ -890,7 +890,7 @@ router.get("/mempool/fees", asyncHandler(async (req, res, next) => {
 
 	let nextBlockEstimate = await coreApi.getNextBlockEstimate();
 	if (nextBlockEstimate != undefined && nextBlockEstimate.minFeeRate != undefined) {
-		console.log("abc: " + JSON.stringify(nextBlockEstimate));
+		//console.log("nextBlockEstimate: " + JSON.stringify(nextBlockEstimate));
 		results.nextBlock.min = parseInt(nextBlockEstimate.minFeeRate);
 		results.nextBlock.max = parseInt(nextBlockEstimate.maxFeeRate);
 		results.nextBlock.median = parseInt(nextBlockEstimate.medianFeeRate);
