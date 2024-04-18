@@ -1458,7 +1458,7 @@ function nextHalvingEstimates(eraStartBlockHeader, currentBlockHeader, difficult
 	}
 
 	let blockCountAffectedByCurrentDifficultyDelta = Math.min(difficultyAdjustmentData.blocksLeft, blocksUntilNextHalving);
-	let currDifficultyEraTimeDifferential = (coinConfig.targetBlockTimeSeconds - difficultyAdjustmentData.timePerBlock2) * blockCountAffectedByCurrentDifficultyDelta;
+	let currDifficultyEraTimeDifferential = (coinConfig.targetBlockTimeSeconds - difficultyAdjustmentData.timePerBlock) * blockCountAffectedByCurrentDifficultyDelta;
 
 
 	let secondsUntilNextHalving = blocksUntilNextHalving * targetBlockTimeSeconds - currDifficultyEraTimeDifferential;
