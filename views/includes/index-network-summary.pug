@@ -132,8 +132,8 @@ if (exchangeRates)
 				i.text-tiny.bi-box.ms-2
 				small.text-muted.ms-2
 					| (
-					span.border-dotted(title=`${utils.summarizeDuration(halvingDt)} (${new Decimal(halvingDt.asDays()).toDP(2)} d) <br/> ${titleStr}`, data-bs-toggle="tooltip", data-bs-html="true")
-						+timeAgo(nextHalvingData.nextHalvingDate.getTime() / 1000, {oneElement:true, hideHoverText:true, decimalPlaces:2})
+					span.border-dotted(title=`${utils.summarizeDuration(halvingDt)} (${new Decimal(halvingDt.asDays()).toDP(3)} d) <br/> ${titleStr}`, data-bs-toggle="tooltip", data-bs-html="true")
+						+timeAgo(nextHalvingData.nextHalvingDate.getTime() / 1000, {hideHoverText:true, decimalPlaces:3})
 					| )
 
 				.progress.mt-1.mx-lg-6.me-6(style="height: 5px;", role="progressbar", aria-label="Difficulty adjustment progress", aria-valuenow=halvingProgressPercent.toDP(0), aria-valuemin="0" aria-valuemax="100")
