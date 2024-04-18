@@ -479,6 +479,7 @@ function summarizeDuration(duration, options={}) {
 	let stripZeroes = "stripZeroes" in options ? options.stripZeroes : true;
 	let shortenDurationNames = "shortenDurationNames" in options ? options.shortenDurationNames : true;
 	let outputCommas = "outputCommas" in options ? options.outputCommas : true;
+	let decimalPlaces = "decimalPlaces" in options ? options.decimalPlaces : 1;
 
 	//console.log(JSON.stringify(options) + " - " + oneElement + " - " + stripZeroes + " - " + shortenDurationNames + " - " + outputCommas);
 
@@ -491,7 +492,7 @@ function summarizeDuration(duration, options={}) {
 
 		for (let i = 0; i < parts.length; i++) {
 			if (parts[i] > 1) {
-				str = `${new Decimal(parts[i]).toDP(1)} ${partNames[i]}`;
+				str = `${new Decimal(parts[i]).toDP(decimalPlaces)} ${partNames[i]}`;
 
 				break;
 			}

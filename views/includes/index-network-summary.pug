@@ -116,7 +116,7 @@ if (exchangeRates)
 			
 			+summaryItem("Next Halving", "Details about when the next block subsidy halving will occur", null, null, "icon:bi-square-half", "./next-halving", "View next halving details")
 
-				span.border-dotted(title=`${nextHalvingData.blocksUntilNextHalving.toLocaleString()} blocks left, ${halvingProgressPercent.toDP(1)}% complete`, data-bs-toggle="tooltip")
+				span.border-dotted(title=`${nextHalvingData.blocksUntilNextHalving.toLocaleString()} blocks left, ${halvingProgressPercent.toDP(2)}% complete`, data-bs-toggle="tooltip")
 					if (nextHalvingData.blocksUntilNextHalving > 10000)
 						- let halvingBlocksData = utils.formatLargeNumber(nextHalvingData.blocksUntilNextHalving)
 						| #{parseInt(halvingBlocksData[0])}#{halvingBlocksData[1].abbreviation}
@@ -132,8 +132,8 @@ if (exchangeRates)
 				i.text-tiny.bi-box.ms-2
 				small.text-muted.ms-2
 					| (
-					span.border-dotted(title=`${utils.summarizeDuration(halvingDt)} (${new Decimal(halvingDt.asDays()).toDP(1)} d) <br/> ${titleStr}`, data-bs-toggle="tooltip", data-bs-html="true")
-						+timeAgo(nextHalvingData.nextHalvingDate.getTime() / 1000, {oneElement:true, hideHoverText:true})
+					span.border-dotted(title=`${utils.summarizeDuration(halvingDt)} (${new Decimal(halvingDt.asDays()).toDP(2)} d) <br/> ${titleStr}`, data-bs-toggle="tooltip", data-bs-html="true")
+						+timeAgo(nextHalvingData.nextHalvingDate.getTime() / 1000, {oneElement:true, hideHoverText:true, decimalPlaces:2})
 					| )
 
 				.progress.mt-1.mx-lg-6.me-6(style="height: 5px;", role="progressbar", aria-label="Difficulty adjustment progress", aria-valuenow=halvingProgressPercent.toDP(0), aria-valuemin="0" aria-valuemax="100")
