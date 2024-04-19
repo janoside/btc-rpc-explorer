@@ -72,7 +72,7 @@ mixin contentSection(title, toggleable=false, toggleUserSettingName, defaultOpen
 
 	.mb-section(class=toggleUniqueClass, style=(toggleable && !toggleOpen ? "display: none;" : false))
 		if (cardUi)
-			.card.mb-section.shadow-sm
+			.card.mb-section.shadow-sm.border-2
 				.card-body
 					block
 
