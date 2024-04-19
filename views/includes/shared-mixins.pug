@@ -618,7 +618,9 @@ mixin timestamp(timestamp, options={includeAgo:true, agoOptions:{}})
 
 
 
-mixin timeAgo(timeAgoTime, options={oneElement:false, agoText:true})
+mixin timeAgo(timeAgoTime, options={oneElement:false, agoText:true, showPlus:true})
+	- let showPlus = "showPlus" in options ? options.showPlus : true;
+
 	- let oneElement = false;
 	if (options && "oneElement" in options)
 		- oneElement = options.oneElement;
@@ -640,7 +642,7 @@ mixin timeAgo(timeAgoTime, options={oneElement:false, agoText:true})
 		- timeAgo = moment.duration(moment.utc(new Date(parseInt(timeAgoTime) * 1000)).diff(moment.utc(new Date())));
 
 
-	if (future)
+	if (future && showPlus)
 		span +
 
 		

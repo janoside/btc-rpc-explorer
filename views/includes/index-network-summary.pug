@@ -5,7 +5,37 @@ if (exchangeRates || networkVolume)
 - var utxoCalculatingDesc = "At startup the app pulls a summary of the UTXO set. Until this summary is retrieved this data can't be displayed. Wait for the summary request to your node to return, then refresh this page.";
 
 
+- let halvingSoon = false;
+- let halvingVerySoon = false;
+- let halvingProgressPercent = 0;
 
+if (nextHalvingData)
+	- halvingProgressPercent = new Decimal(100).minus(new Decimal(nextHalvingData.blocksUntilNextHalving).dividedBy(nextHalvingData.halvingBlockInterval).times(100));
+
+	if (halvingProgressPercent > 65)
+		- halvingSoon = true;
+
+	if (halvingProgressPercent > 98)
+		-halvingVerySoon = true;
+
+
+if (halvingVerySoon)
+	#index-halving-countdown-wrapper
+		.d-flex.justify-content-start
+			.text-success
+				+sectionTitle("Halving Countdown 👀")
+
+			.ms-2
+				span.spinner-border.spinner-border-sm
+		
+		
+		.mb-section
+			.card.mb-section.shadow-sm.border-2.border-success
+				.card-body
+					div#index-halving-countdown
+						.text-center.text-reset
+							.mt-2
+							.spinner-border.spinner-border-sm
 
 if (exchangeRates)
 	+contentSection("Market")
@@ -80,13 +110,7 @@ if (exchangeRates)
 
 
 +contentSection
-	- let halvingShown = false;
-	- let halvingProgressPercent = new Decimal(100).minus(new Decimal(nextHalvingData.blocksUntilNextHalving).dividedBy(nextHalvingData.halvingBlockInterval).times(100));
-
-	if (nextHalvingData && halvingProgressPercent > 65)
-		- halvingShown = true;
-
-	+summaryRow(2 + (halvingShown ? 1 : 0) + (hashrate7d ? 1 : 0) + (chainTxStats && chainTxStats[7 * targetBlocksPerDay] ? 1 : 0) + (difficultyAdjustmentData ? 1 : 0))
+	+summaryRow(2 + (halvingSoon ? 1 : 0) + (hashrate7d ? 1 : 0) + (chainTxStats && chainTxStats[7 * targetBlocksPerDay] ? 1 : 0) + (difficultyAdjustmentData ? 1 : 0))
 		if (hashrate7d)
 			+summaryItem("7d Hashrate", "The average hashrate of the global mining network over the last 7 days. A comparison to the 30-day average is included to help gauge the rate of change.")
 				- var hashrate7dayData = utils.formatLargeNumber(hashrate7d, 1);
@@ -110,7 +134,7 @@ if (exchangeRates)
 
 						| )
 
-		if (halvingShown)
+		if (halvingSoon)
 			if (false)
 				pre #{JSON.stringify(nextHalvingData)}
 			

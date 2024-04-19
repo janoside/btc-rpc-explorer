@@ -127,10 +127,44 @@ block content
 
 block endOfBody
 	script.
+		var audio = new Audio('./audio/609335__kenneth_cooney__levelup.wav');
+		var tipInfo = null;
+
+		function refreshHalvingCountdownUI() {
+			$.get("./snippet/index-halving-countdown", function(data) {
+				$("#index-halving-countdown").html(data);
+				enableTooltipsAndPopovers();
+			});
+		}
+
+		function checkHalvingCountdown() {
+			$.get("./api/blocks/tip", function(data) {
+				if (data.height > tipInfo.height) {
+					tipInfo = data;
+
+					audio.play();
+
+					refreshHalvingCountdownUI();
+				}
+
+				console.log(tipInfo);
+			});
+		}
+
 		$(document).ready(function() {
 			$.get("./snippet/next-block", function(data) {
 				$("#index-next-block").html(data);
 				enableTooltipsAndPopovers();
 			});
+
+			$.get("./api/blocks/tip", function(data) {
+				tipInfo = data;
+			});
+
+			if ($("#index-halving-countdown-wrapper").length) {
+				refreshHalvingCountdownUI();
+
+				setInterval(checkHalvingCountdown, 3000);
+			}
 		});
 		
