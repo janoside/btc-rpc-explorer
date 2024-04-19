@@ -553,6 +553,7 @@ mixin hexDataDisplay(hex, order="utf8,ascii,hex")
 mixin timestamp(timestamp, options={includeAgo:true, agoOptions:{}})
 	- let includeAgo = "includeAgo" in options ? options.includeAgo : true;
 	- let agoOptions = "agoOptions" in options ? options.agoOptions : {};
+	- let separateUtcDateIfNeeded = "separateUtcDateIfNeeded" in options ? options.separateUtcDateIfNeeded : false;
 	
 	- var tzDiff = -parseFloat(browserTzOffset);
 	
@@ -571,8 +572,13 @@ mixin timestamp(timestamp, options={includeAgo:true, agoOptions:{}})
 	- var nowDateStr = nowMoment.format("Y-M-D");
 
 
+	- let differentDateUtc = false;
 	if (tzDiff != 0 && uiTimezone == "local")
 		- var titleStr = `${tzMoment.format("Y-MM-DD, h:mm:ss A")}<br/>(${utcMoment.format("Y-MM-DD, HH:mm:ss")} UTC)`;
+
+		if (tzMoment.format("Y-MM-DD") != utcMoment.format("Y-MM-DD"))
+			- differentDateUtc = true;
+
 	else
 		- var titleStr = `${utcMoment.format("Y-MM-DD, HH:mm:ss")} utc`;
 
@@ -613,6 +619,14 @@ mixin timestamp(timestamp, options={includeAgo:true, agoOptions:{}})
 	if (includeAgo)
 		small.text-muted.ms-1 (
 			+timeAgo(timestamp, agoOptions)
+			| )
+
+	if (differentDateUtc && separateUtcDateIfNeeded)
+		div.text-muted
+			span.ms-2 (
+				span.text-tiny.text-tight-spacing.fw-light UTC:
+			span.ms-1 #{utcMoment.format("M/D h:mm")}
+			span.text-tiny.text-tight-spacing.fw-light.ms-tiny #{utcMoment.format("A")}
 			| )
 
 
