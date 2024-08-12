@@ -241,7 +241,7 @@ expressApp.use(config.baseUrl, express.static(path.join(__dirname, 'public'), {
 
 // https://www.npmjs.com/package/express-rate-limit
 const rateLimitWindowMinutes = 15;
-const rateLimitWindowMaxRequests = 10;
+const rateLimitWindowMaxRequests = 200;
 const rateLimiter = rateLimit({
 	windowMs: rateLimitWindowMinutes * 60 * 1000, // 15 minutes
 	limit: rateLimitWindowMaxRequests, // Limit each IP to 100 requests per `window` (here, per 15 minutes).
