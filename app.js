@@ -97,6 +97,8 @@ const markdown = require("markdown-it")();
 const v8 = require("v8");
 const compression = require("compression");
 const jayson = require('jayson/promise');
+const { rateLimit } = require("express-rate-limit");
+
 
 const appUtils = require("@janoside/app-utils");
 const s3Utils = appUtils.s3Utils;
@@ -235,6 +237,38 @@ expressApp.use(compression());
 expressApp.use(config.baseUrl, express.static(path.join(__dirname, 'public'), {
 	maxAge: 30 * 24 * 60 * 60 * 1000
 }));
+
+
+// https://www.npmjs.com/package/express-rate-limit
+const rateLimitWindowMinutes = 15;
+const rateLimitWindowMaxRequests = 10;
+const rateLimiter = rateLimit({
+	windowMs: rateLimitWindowMinutes * 60 * 1000, // 15 minutes
+	limit: rateLimitWindowMaxRequests, // Limit each IP to 100 requests per `window` (here, per 15 minutes).
+	standardHeaders: 'draft-7', // draft-6: `RateLimit-*` headers; draft-7: combined `RateLimit` header
+	legacyHeaders: false, // Disable the `X-RateLimit-*` headers.
+	skip: function (req, res) {
+		if (req.originalUrl.includes("/snippet/")) {
+			return true;
+		}
+
+		if (req.originalUrl.includes("/api/")) {
+			return true;
+		}
+
+		return false;
+	},
+	handler: function (req, res, next) {
+		debugErrorLog(`Rate-limiting request: ip=${req.ip}, req=${req.originalUrl}`)
+		res.status(429).json({
+			message: "Too many requests, please try again later.",
+		});
+	}
+});
+
+// Apply the rate limiting middleware to all requests.
+expressApp.use(rateLimiter);
+
 
 
 if (config.baseUrl != '/') {

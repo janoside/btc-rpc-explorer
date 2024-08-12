@@ -10,20 +10,17 @@
 		"miners": "node ./bin/refresh-mining-pool-configs.js",
 		"integrity": "node ./bin/frontend-resource-integrity.js",
 		"lint": "eslint app routes",
-		
 		"css-light-debug": "sass --style expanded ./public/scss/light.scss ./public/style/light.css",
 		"css-dark-debug": "sass --style expanded ./public/scss/dark.scss ./public/style/dark.css",
 		"css-dark-v1-debug": "sass --style expanded ./public/scss/dark-v1.scss ./public/style/dark-v1.css",
-		
 		"css-debug": "npm-run-all css-light-debug css-dark-debug css-dark-v1-debug",
-		
 		"css-light": "sass --style compressed ./public/scss/light.scss ./public/style/light.min.css",
 		"css-dark": "sass --style compressed ./public/scss/dark.scss ./public/style/dark.min.css",
 		"css-dark-v1": "sass --style compressed ./public/scss/dark-v1.scss ./public/style/dark-v1.min.css",
-		
 		"css": "npm-run-all css-light css-dark css-dark-v1 integrity"
 	},
-	"keywords": [
+	"keywords":
+	[
 		"bitcoin",
 		"btc",
 		"blockchain"
@@ -44,7 +41,7 @@
 		"bitcoinjs-lib": "^6.1.0",
 		"body-parser": "^1.20.2",
 		"bootstrap": "^5.2.3",
-		"bs58check": "^3.0.1",
+		"bs58check": "^4.0.0",
 		"chart.js": "^4.3.0",
 		"compression": "^1.7.4",
 		"cookie-parser": "^1.4.6",
@@ -56,6 +53,7 @@
 		"electrum-client": "github:janoside/electrum-client",
 		"express": "^4.18.2",
 		"express-async-handler": "^1.2.0",
+		"express-rate-limit": "7.4.0",
 		"express-session": "^1.17.3",
 		"jayson": "^4.1.0",
 		"lru-cache": "^10.0.0",
