@@ -1331,11 +1331,11 @@ function xpubChangeVersionBytes(xpub, targetFormat) {
 	// trim whitespace
 	xpub = xpub.trim();
 
-	let data = bs58check.decode(xpub);
+	let data = bs58check.default.decode(xpub);
 	data = data.slice(4);
 	data = Buffer.concat([Buffer.from(xpubPrefixes.get(targetFormat), 'hex'), data]);
 
-	return bs58check.encode(data);
+	return bs58check.default.encode(data);
 }
 
 // HD wallet addresses
