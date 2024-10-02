@@ -28,7 +28,7 @@ Live demos:
 * Analysis tools for viewing stats on blocks, transactions, and miner activity
 * JSON REST API
 * See raw JSON content from bitcoind used to generate most pages
-* Search by transaction ID, block hash/height, and address
+* Search by transaction ID, block hash/height, and address: bc1qm34lsc65zpw79lxes69zkqmk6eesewf0j77s3h
 * Optional transaction history for addresses by querying from Electrum-protocol servers (e.g. Electrs, ElectrumX), blockchain.com, blockchair.com, or blockcypher.com
 * Mempool summary, with fee, size, and age breakdowns
 * RPC command browser and terminal
