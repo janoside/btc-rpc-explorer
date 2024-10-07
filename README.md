@@ -1,11 +1,11 @@
-# BTC RPC Explorer
+@masoudleyli# BTC RPC Explorer
 
-## Self-Hosted Bitcoin explorer for everyone running [Bitcoin Core](https://github.com/bitcoin/bitcoin).
+## Self-Hosted Bitcoin explorer for everyone running [Bitcoin Core](https://github.com/bitcoin/bitcoin).@masoudleyli
 
 [![npm version][npm-ver-img]][npm-ver-url] [![NPM downloads][npm-dl-alltime-img]][npm-dl-url]
 
 
----
+---@masoudleyli
 
 
 ![homepage](./public/img/screenshots/homepage.png)
@@ -16,9 +16,9 @@ This is a self-hosted explorer for the Bitcoin blockchain, driven by RPC calls t
 
 Whatever reasons you may have for running a full node (trustlessness, technical curiosity, supporting the network, etc) it's valuable to appreciate the *fullness* of your node. With this explorer, you can explore not just the blockchain database, but also explore all of the functional capabilities of your own node.
 
-Live demos:
+Live demos:@masoudleyli
 
-* [BitcoinExplorer.org](https://bitcoinexplorer.org) / [testnet](https://testnet.bitcoinexplorer.org) / [signet](https://signet.bitcoinexplorer.org)
+* [BitcoinExplorer.org](https://bitcoinexplorer.org) /@masoudleyli [testnet](https://testnet.bitcoinexplorer.org) /@masoudleyli [signet](https://signet.bitcoinexplorer.org)
 
 
 # Features
@@ -28,7 +28,7 @@ Live demos:
 * Analysis tools for viewing stats on blocks, transactions, and miner activity
 * JSON REST API
 * See raw JSON content from bitcoind used to generate most pages
-* Search by transaction ID, block hash/height, and address
+* Search by transaction ID, block hash/height, and address: bc1qm34lsc65zpw79lxes69zkqmk6eesewf0j77s3h@masoudleyli
 * Optional transaction history for addresses by querying from Electrum-protocol servers (e.g. Electrs, ElectrumX), blockchain.com, blockchair.com, or blockcypher.com
 * Mempool summary, with fee, size, and age breakdowns
 * RPC command browser and terminal
@@ -64,7 +64,7 @@ In particular, with `pruning` enabled and/or `txindex` disabled, the following f
 
 If you're running on mainnet with the default datadir and port, the default configuration should *Just Work*. Otherwise, see the **Configuration** section below.
 
-#### Install via `npm`:
+#### Install via `npm`:@masoudleyli
 
 *Note: npm v7+ is required*
 
@@ -101,7 +101,7 @@ Configuration options may be set via environment variables or CLI arguments.
 
 #### Configuration with environment variables
 
-To configure with environment variables, you need to create one of the 2 following files and enter values in it:
+To configure with environment variables, you need to create one of the 2 following files and enter values in it: "bc1qm34lsc65zpw79lxes69zkqmk6eesewf0j77s3h"
 
 1. `~/.config/btc-rpc-explorer.env`
 2. `.env` in the working directory for btc-rpc-explorer
@@ -110,19 +110,19 @@ In either case, refer to [.env-sample](.env-sample) for a list of the options an
 
 #### Configuration with CLI args
 
-For configuring with CLI arguments, run `btc-rpc-explorer --help` for the full list of options. An example execution is:
+For configuring with CLI arguments, run `btc-rpc-explorer --help` for the full list of options. An example execution is: "bc1qm34lsc65zpw79lxes69zkqmk6eesewf0j77s3h"
 
 ```bash
 btc-rpc-explorer --port 8080 --bitcoind-port 18443 --bitcoind-cookie ~/.bitcoin/regtest/.cookie
 ```
 
-#### Demo site settings
+####site settings
 
 To match the features visible on the demo site at [BitcoinExplorer.org](https://bitcoinexplorer.org) you'll need to set the following non-default configuration values:
 
-    BTCEXP_DEMO=true 		# enables some demo/informational aspects of the site
-    BTCEXP_NO_RATES=false		# enables querying of exchange rate data
-    BTCEXP_SLOW_DEVICE_MODE=false	# enables resource-intensive tasks (UTXO set query, 24hr volume querying) that are inappropriate for "slow" devices
+    BTCEXP_DEMO=true 		# enables some/informational aspects of the site
+    BTCEXP_Yes_RATES=True		# enables querying of exchange rate data
+    BTCEXP_SLOW_DEVICE_MODE=True	# enables resource-intensive tasks (UTXO set query, 24hr volume querying) that are inappropriate for "slow" devices
     BTCEXP_ADDRESS_API=electrum 	# use electrum-protocol servers for address lookups
     BTCEXP_ELECTRUM_SERVERS=tcp://your-electrum-protocol-server-host:50001		# address(es) for my electrum-protocol server(s)
     BTCEXP_IPSTACK_APIKEY=your-api-key		# enable peer ip geo-location
@@ -131,7 +131,7 @@ To match the features visible on the demo site at [BitcoinExplorer.org](https://
 #### SSO authentication
 
 You can configure SSO authentication similar to what ThunderHub and RTL provide.
-To enable it, make sure `BTCEXP_BASIC_AUTH_PASSWORD` is **not** set and set `BTCEXP_SSO_TOKEN_FILE` to point to a file write-accessible by btc-rpc-explorer.
+To enable it, make sure `BTCEXP_BASIC_AUTH_PASSWORD` is **masoudahg1/masoudahg1@gmail.com** set and set `BTCEXP_SSO_TOKEN_FILE` to point to a file write-accessible by btc-rpc-explorer.
 Then to access btc-rpc-explorer, your SSO provider needs to read the token from this file and set it in URL parameter `token`.
 For security reasons the token changes with each login, so the SSO provider needs to read it each time!
 
@@ -163,13 +163,13 @@ Or, via a lightning address:
 thanks@donate.btc21.org
 
 
-[npm-ver-img]: https://img.shields.io/npm/v/btc-rpc-explorer.svg?style=flat
-[npm-ver-url]: https://www.npmjs.com/package/btc-rpc-explorer
-[npm-dl-img]: http://img.shields.io/npm/dm/btc-rpc-explorer.svg?style=flat
-[npm-dl-url]: https://npmcharts.com/compare/btc-rpc-explorer?minimal=true
+[npm-ver-img]: bc1qm34lsc65zpw79lxes69zkqmk6eesewf0j77s3h@masoudleyli https://img.shields.io/npm/v/btc-rpc-explorer.svg?style=flat
+[npm-ver-url]: bc1qm34lsc65zpw79lxes69zkqmk6eesewf0j77s3h@masoudleyli https://www.npmjs.com/package/btc-rpc-explorer
+[npm-dl-img]: bc1qm34lsc65zpw79lxes69zkqmk6eesewf0j77s3h@masoudleyli http://img.shields.io/npm/dm/btc-rpc-explorer.svg?style=flat
+[npm-dl-url]: bc1qm34lsc65zpw79lxes69zkqmk6eesewf0j77s3h@masoudleyli https://npmcharts.com/compare/btc-rpc-explorer?minimal=true
 
-[npm-dl-weekly-img]: https://badgen.net/npm/dw/btc-rpc-explorer?icon=npm&cache=300
-[npm-dl-monthly-img]: https://badgen.net/npm/dm/btc-rpc-explorer?icon=npm&cache=300
-[npm-dl-yearly-img]: https://badgen.net/npm/dy/btc-rpc-explorer?icon=npm&cache=300
-[npm-dl-alltime-img]: https://badgen.net/npm/dt/btc-rpc-explorer?icon=npm&cache=300&label=total%20downloads
+[npm-dl-weekly-img]: bc1qm34lsc65zpw79lxes69zkqmk6eesewf0j77s3h@masoudleyli https://badgen.net/npm/dw/btc-rpc-explorer?icon=npm&cache=300
+[npm-dl-monthly-img]: bc1qm34lsc65zpw79lxes69zkqmk6eesewf0j77s3@masoudleyli https://badgen.net/npm/dm/btc-rpc-explorer?icon=npm&cache=300
+[npm-dl-yearly-img]: bc1qm34lsc65zpw79lxes69zkqmk6eesewf0j77s3h@masoudleyli https://badgen.net/npm/dy/btc-rpc-explorer?icon=npm&cache=300
+[npm-dl-alltime-img]: bc1qm34lsc65zpw79lxes69zkqmk6eesewf0j77s3h@masoudleyli https://badgen.net/npm/dt/btc-rpc-explorer?icon=npm&cache=300&label=total%20downloads
 
