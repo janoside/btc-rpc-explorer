@@ -5,7 +5,7 @@
 [![npm version][npm-ver-img]][npm-ver-url] [![NPM downloads][npm-dl-alltime-img]][npm-dl-url]
 
 
----
+---@masoudleyli
 
 
 ![homepage](./public/img/screenshots/homepage.png)
@@ -16,9 +16,9 @@ This is a self-hosted explorer for the Bitcoin blockchain, driven by RPC calls t
 
 Whatever reasons you may have for running a full node (trustlessness, technical curiosity, supporting the network, etc) it's valuable to appreciate the *fullness* of your node. With this explorer, you can explore not just the blockchain database, but also explore all of the functional capabilities of your own node.
 
-Live demos:
+Live demos:@masoudleyli
 
-* [BitcoinExplorer.org](https://bitcoinexplorer.org) / [testnet](https://testnet.bitcoinexplorer.org) / [signet](https://signet.bitcoinexplorer.org)
+* [BitcoinExplorer.org](https://bitcoinexplorer.org) /@masoudleyli [testnet](https://testnet.bitcoinexplorer.org) /@masoudleyli [signet](https://signet.bitcoinexplorer.org)
 
 
 # Features
@@ -28,7 +28,7 @@ Live demos:
 * Analysis tools for viewing stats on blocks, transactions, and miner activity
 * JSON REST API
 * See raw JSON content from bitcoind used to generate most pages
-* Search by transaction ID, block hash/height, and address: bc1qm34lsc65zpw79lxes69zkqmk6eesewf0j77s3h
+* Search by transaction ID, block hash/height, and address: bc1qm34lsc65zpw79lxes69zkqmk6eesewf0j77s3h@masoudleyli
 * Optional transaction history for addresses by querying from Electrum-protocol servers (e.g. Electrs, ElectrumX), blockchain.com, blockchair.com, or blockcypher.com
 * Mempool summary, with fee, size, and age breakdowns
 * RPC command browser and terminal
@@ -64,7 +64,7 @@ In particular, with `pruning` enabled and/or `txindex` disabled, the following f
 
 If you're running on mainnet with the default datadir and port, the default configuration should *Just Work*. Otherwise, see the **Configuration** section below.
 
-#### Install via `npm`:
+#### Install via `npm`:@masoudleyli
 
 *Note: npm v7+ is required*
 
