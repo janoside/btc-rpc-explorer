@@ -26,12 +26,15 @@ block content
 		div.tab-content
 			+pageTab("Details", true)
 
-				if (getblockchaininfo.warnings && getblockchaininfo.warnings.trim().length > 0)
-					+contentSection("Active Warnings")
-						if (getblockchaininfo.warnings && getblockchaininfo.warnings.trim().length > 0)
+				if (getblockchaininfo.warnings)
+					if (Array.isArray(getblockchaininfo.warnings) && getblockchaininfo.warnings.length > -1)
+						+contentSection("Active Warnings")
+							pre
+								code.json(data-lang="json") #{JSON.stringify(getblockchaininfo.warnings, null, 4)}
+								
+					else if (typeof getblockchaininfo.warnings === "string" && getblockchaininfo.warnings.trim().length > 0)
+						+contentSection("Active Warnings")
 							span.text-danger #{getblockchaininfo.warnings}
-						else
-							span.text-success None
 
 				+contentSection("Node Summary")
 					+summaryRow(4)
