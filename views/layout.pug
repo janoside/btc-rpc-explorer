@@ -207,7 +207,7 @@ html(lang="en")
 				form.form-inline.d-none.d-lg-inline(method="post", action="./search", style="width: 325px;")
 					input(type="hidden", name="_csrf", value=csrfToken)
 					.input-group
-						input.form-control(type="text", name="query", placeholder="block height/hash, txid, address", value=(query))
+						input.form-control(type="text", name="query", placeholder="block height/hash, txid, address", value=(query), autocapitalize="off", autocomplete="off", autocorrect="off", spellcheck="false")
 						
 						button.btn.btn-primary(type="submit", aria-label="Search")
 							i.bi-search
@@ -215,7 +215,7 @@ html(lang="en")
 				form.form-inline.d-lg-none.w-100.mt-2.mt-md-0(method="post", action="./search")
 					input(type="hidden", name="_csrf", value=csrfToken)
 					.input-group
-						input.form-control(type="text", name="query", placeholder="height/hash/txid...", value=(query))
+						input.form-control(type="text", name="query", placeholder="height/hash/txid...", value=(query), autocapitalize="off", autocomplete="off", autocorrect="off", spellcheck="false")
 						
 						button.btn.btn-primary(type="submit", aria-label="Search")
 							i.bi-search
