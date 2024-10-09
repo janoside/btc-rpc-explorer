@@ -7,11 +7,9 @@ block content
 	+pageTitle("Search")
 
 	+contentSection
-		form.form.form-inline(method="post", action="./search")
+		form.form.form-inline(method="post", action="./search", autocomplete="off")
 			input(type="hidden", name="_csrf", value=csrfToken)
 
 			div.input-group
-				input.form-control(type="text", name="query", placeholder="block height/hash, txid, address", value=(query), style="width: 400px;")
-				
+				input.form-control(type="text", name="query", placeholder="block height/hash, txid, address", tabindex="1", autocapitalize="off", autocorrect="off", style="width: 400px;")
 				button.btn.btn-primary(type="submit") Search
-		
