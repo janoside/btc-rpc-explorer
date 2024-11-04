@@ -565,7 +565,9 @@ module.exports = {
 	blockRewardFunction:function(blockHeight, chain) {
 		let halvingBlockInterval = (chain == "regtest" ? 150 : 210000);
 		let index = Math.floor(blockHeight / halvingBlockInterval);
-
-		return blockRewardEras[index];
+		if (blockRewardEras[index])
+                        return blockRewardEras[index];
+                else
+                        return 0;
 	}
 };
