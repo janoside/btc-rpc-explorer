@@ -124,6 +124,11 @@ module.exports = {
 		baseUrl: cdnBaseUrl
 	},
 
+	rateLimiting: {
+		windowMinutes: process.env.BTCEXP_RATE_LIMIT_WINDOW_MINUTES || 15,
+		windowMaxRequests: process.env.BTCEXP_RATE_LIMIT_WINDOW_MAX_REQUESTS || 200
+	},
+
 	rpcBlacklist:
 		process.env.BTCEXP_RPC_ALLOWALL.toLowerCase() == "true"  ? []
 		: process.env.BTCEXP_RPC_BLACKLIST ? process.env.BTCEXP_RPC_BLACKLIST.split(',').filter(Boolean)

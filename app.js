@@ -240,35 +240,42 @@ expressApp.use(config.baseUrl, express.static(path.join(__dirname, 'public'), {
 
 
 // https://www.npmjs.com/package/express-rate-limit
-const rateLimitWindowMinutes = 15;
-const rateLimitWindowMaxRequests = 200;
-const rateLimiter = rateLimit({
-	windowMs: rateLimitWindowMinutes * 60 * 1000, // 15 minutes
-	limit: rateLimitWindowMaxRequests, // Limit each IP to 100 requests per `window` (here, per 15 minutes).
-	standardHeaders: 'draft-7', // draft-6: `RateLimit-*` headers; draft-7: combined `RateLimit` header
-	legacyHeaders: false, // Disable the `X-RateLimit-*` headers.
-	skip: function (req, res) {
-		if (req.originalUrl.includes("/snippet/")) {
-			return true;
+const rateLimitWindowMinutes = config.rateLimiting.windowMinutes;
+const rateLimitWindowMaxRequests = config.rateLimiting.windowMaxRequests;
+
+if (rateLimitWindowMinutes == -1) {
+	debugLog("Disabling rate limiting");
+
+} else {
+	debugLog(`Enabling rate limiting: ${rateLimitWindowMaxRequests} requests per ${rateLimitWindowMinutes}min`);
+
+	const rateLimiter = rateLimit({
+		windowMs: rateLimitWindowMinutes * 60 * 1000, // 15 minutes
+		limit: rateLimitWindowMaxRequests, // Limit each IP to 100 requests per `window` (here, per 15 minutes).
+		standardHeaders: 'draft-7', // draft-6: `RateLimit-*` headers; draft-7: combined `RateLimit` header
+		legacyHeaders: false, // Disable the `X-RateLimit-*` headers.
+		skip: function (req, res) {
+			if (req.originalUrl.includes("/snippet/")) {
+				return true;
+			}
+
+			if (req.originalUrl.includes("/api/")) {
+				return true;
+			}
+
+			return false;
+		},
+		handler: function (req, res, next) {
+			debugErrorLog(`Rate-limiting request: ip=${req.ip}, req=${req.originalUrl}`)
+			res.status(429).json({
+				message: "Too many requests, please try again later.",
+			});
 		}
+	});
 
-		if (req.originalUrl.includes("/api/")) {
-			return true;
-		}
-
-		return false;
-	},
-	handler: function (req, res, next) {
-		debugErrorLog(`Rate-limiting request: ip=${req.ip}, req=${req.originalUrl}`)
-		res.status(429).json({
-			message: "Too many requests, please try again later.",
-		});
-	}
-});
-
-// Apply the rate limiting middleware to all requests.
-expressApp.use(rateLimiter);
-
+	// Apply the rate limiting middleware to all requests.
+	expressApp.use(rateLimiter);
+}
 
 
 if (config.baseUrl != '/') {
