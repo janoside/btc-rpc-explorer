@@ -1360,6 +1360,12 @@ router.get("/block-analysis", function(req, res, next) {
 	next();
 });
 
+router.get("/tx/tx/:transactionId", asyncHandler(async (req, res, next) => {
+	res.redirect(301, `${config.baseUrl}tx/${req.params.transactionId}`);
+
+	return;
+}));
+
 router.get("/tx/:transactionId@:blockHeight", asyncHandler(async (req, res, next) => {
 	req.query.blockHeight = req.params.blockHeight;
 	req.url = "/tx/" + req.params.transactionId;
