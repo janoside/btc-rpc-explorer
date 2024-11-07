@@ -89,6 +89,22 @@ router.get("/blocks/tip", asyncHandler(async (req, res, next) => {
 	next();
 }));
 
+// undocumented, old url
+router.get("/blocks/tip/height", asyncHandler(async (req, res, next) => {
+	try {
+		const getblockchaininfo = await coreApi.getBlockchainInfo();
+
+		res.send(String(getblockchaininfo.blocks));
+
+	} catch (e) {
+		utils.logError("234508ehede", e);
+
+		res.json({success: false});
+	}
+
+	next();
+}));
+
 router.get("/block/:hashOrHeight", asyncHandler(async (req, res, next) => {
 	const hashOrHeight = req.params.hashOrHeight;
 	let hash = (hashOrHeight.length == 64 ? hashOrHeight : null);
