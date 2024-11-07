@@ -338,8 +338,32 @@ router.get("/blockchain/next-halving", asyncHandler(async (req, res, next) => {
 
 /// ADDRESSES
 
+// encountered huge volume of traffic requesting the balance for top address
+// here, from many different ips, the below page leads me to believe the addresses
+// are associated with malware and the public instance API is being abused to 
+// aid the malware - block the requests
+// ref: https://pberba.github.io/crypto/2024/09/14/malicious-browser-extension-genesis-market/
+const blacklistedAddresses = [
+	"bc1q4fkjqusxsgqzylcagra800cxljal82k6y3ejay",
+	"bc1qvmvz53hdauzxuhs7dkm775tlqtd9vpk8ux7mqj",
+	"bc1qtms60m4fxhp5v229kfxwd3xruu48c4a0tqwafu",
+	"bc1qvkvzfla6wrem2uf4ejkuja8yp3c6f3xf72kyc9",
+	"bc1qnxwt7sr3rqatd6efjyym3nsgxhslyzeqndhjpn"
+];
+
 router.get("/address/:address", asyncHandler(async (req, res, next) => {
 	try {
+		const address = utils.asAddress(req.params.address);
+
+		if (blacklistedAddresses.includes(address)) {
+			debugLog(`Blocking request: ip=${req.ip}, req=${req.originalUrl}`)
+			res.status(418).json({
+				message: "Teapot",
+			});
+
+			return;
+		}
+
 		const { perfId, perfResults } = utils.perfLogNewItem({action:"api.address"});
 		res.locals.perfId = perfId;
 
@@ -362,8 +386,6 @@ router.get("/address/:address", asyncHandler(async (req, res, next) => {
 			sort = req.query.sort;
 		}
 
-
-		const address = utils.asAddress(req.params.address);
 
 		const transactions = [];
 		const addressApiSupport = addressApi.getCurrentAddressApiFeatureSupport();
@@ -481,6 +503,8 @@ router.get("/address/:address", asyncHandler(async (req, res, next) => {
 		next();
 
 	} catch (e) {
+		utils.logError("a39ehudsudese", e);
+
 		res.json({success:false});
 
 		next();
