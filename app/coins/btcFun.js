@@ -588,6 +588,16 @@ module.exports = {
 			alertBodyHtml: "This transaction, sent from Satoshi Nakamoto to Mike Hearn is one of very few transactions originating from Satoshi. Jameson Lopp has also convincingly refuted that Hal Finney and Satoshi Nakamoto are the same person using blockchain and external evidence, including this particular transaction.",
 			referenceUrl: "https://blog.lopp.net/hal-finney-was-not-satoshi-nakamoto/"
 		},
+		{
+			type: "tx",
+			date: "2023-11-23",
+			chain: "main",
+			txid: "b5a2af5845a8d3796308ff9840e567b14cf6bb158ff26c999e6f9a1f5448f9aa",
+			blockHeight: 818087,
+			summary: "High (76,050,000 sat/vB) transaction fee",
+			alertBodyHtml: "This user accidentally paid ~83 BTC ($3.1M at the time) for this transaction. This is one of the highest in Bitcoin's history.",
+			referenceUrl: "https://cointelegraph.com/news/bitcoin-user-pays-3-1m-in-transition-fee-for-one-139-btc-transfer"
+		},
 
 
 
