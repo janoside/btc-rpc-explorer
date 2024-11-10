@@ -615,45 +615,27 @@ function getPeerSummary() {
 			result.getpeerinfo = getpeerinfo;
 
 			let versionSummaryMap = {};
-			for (let i = 0; i < getpeerinfo.length; i++) {
-				let x = getpeerinfo[i];
+			for (const {subver} of getpeerinfo) {
 
-				if (versionSummaryMap[x.subver] == null) {
-					versionSummaryMap[x.subver] = 0;
+				if (versionSummaryMap[subver] == null) {
+					versionSummaryMap[subver] = 0;
 				}
 
-				versionSummaryMap[x.subver]++;
+				versionSummaryMap[subver]++;
 			}
 
-			let versionSummary = [];
-			for (let prop in versionSummaryMap) {
-				if (versionSummaryMap.hasOwnProperty(prop)) {
-					versionSummary.push([prop, versionSummaryMap[prop]]);
-				}
-			}
-
-			versionSummary.sort(function(a, b) {
-				if (b[1] > a[1]) {
-					return 1;
-
-				} else if (b[1] < a[1]) {
-					return -1;
-
-				} else {
-					return a[0].localeCompare(b[0]);
-				}
-			});
+			let versionSummary = Object.entries(versionSummaryMap)
+				.sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]));
 
 			let serviceNamesAvailable = false;
 
 			let servicesSummaryMap = {};
-			for (let i = 0; i < getpeerinfo.length; i++) {
-				let x = getpeerinfo[i];
+			for (const {services, servicesnames} of getpeerinfo) {
 
-				if (x.servicesnames) {
+				if (servicesnames) {
 					serviceNamesAvailable = true;
 
-					x.servicesnames.forEach(name => {
+					servicesnames.forEach(name => {
 						if (servicesSummaryMap[name] == null) {
 							servicesSummaryMap[name] = 0;
 						}
@@ -662,114 +644,59 @@ function getPeerSummary() {
 					});
 
 				} else {
-					if (servicesSummaryMap[x.services] == null) {
-						servicesSummaryMap[x.services] = 0;
+					if (servicesSummaryMap[services] == null) {
+						servicesSummaryMap[services] = 0;
 					}
 
-					servicesSummaryMap[x.services]++;
+					servicesSummaryMap[services]++;
 				}
 			}
 
-			let servicesSummary = [];
-			for (let prop in servicesSummaryMap) {
-				if (servicesSummaryMap.hasOwnProperty(prop)) {
-					servicesSummary.push([prop, servicesSummaryMap[prop]]);
-				}
-			}
-
-			servicesSummary.sort(function(a, b) {
-				if (b[1] > a[1]) {
-					return 1;
-
-				} else if (b[1] < a[1]) {
-					return -1;
-
-				} else {
-					return a[0].localeCompare(b[0]);
-				}
-			});
+			let servicesSummary = Object.entries(servicesSummaryMap)
+				.sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]));
 
 
 
 			if (getpeerinfo.length > 0 && getpeerinfo[0].connection_type) {
 				let connectionTypeSummaryMap = {};
-				for (let i = 0; i < getpeerinfo.length; i++) {
-					let x = getpeerinfo[i];
+				for (const {connection_type} of getpeerinfo) {
 
-					if (connectionTypeSummaryMap[x.connection_type] == null) {
-						connectionTypeSummaryMap[x.connection_type] = 0;
+					if (connectionTypeSummaryMap[connection_type] == null) {
+						connectionTypeSummaryMap[connection_type] = 0;
 					}
 
-					connectionTypeSummaryMap[x.connection_type]++;
+					connectionTypeSummaryMap[connection_type]++;
 				}
-
-				let connectionTypeSummary = [];
-				for (let prop in connectionTypeSummaryMap) {
-					if (connectionTypeSummaryMap.hasOwnProperty(prop)) {
-						connectionTypeSummary.push([prop, connectionTypeSummaryMap[prop]]);
-					}
-				}
-
-				connectionTypeSummary.sort(function(a, b) {
-					if (b[1] > a[1]) {
-						return 1;
-
-					} else if (b[1] < a[1]) {
-						return -1;
-
-					} else {
-						return a[0].localeCompare(b[0]);
-					}
-				});
-
-				result.connectionTypeSummary = connectionTypeSummary;
+				result.connectionTypeSummary = Object.entries(connectionTypeSummaryMap)
+					.sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]));
 			}
 
 
 			if (getpeerinfo.length > 0 && getpeerinfo[0].network) {
 				let networkTypeSummaryMap = {};
-				for (let i = 0; i < getpeerinfo.length; i++) {
-					let x = getpeerinfo[i];
+				for (const {network} of getpeerinfo) {
 
-					if (networkTypeSummaryMap[x.network] == null) {
-						networkTypeSummaryMap[x.network] = 0;
+					if (networkTypeSummaryMap[network] == null) {
+						networkTypeSummaryMap[network] = 0;
 					}
 
-					networkTypeSummaryMap[x.network]++;
+					networkTypeSummaryMap[network]++;
 				}
 
-				let networkTypeSummary = [];
-				for (let prop in networkTypeSummaryMap) {
-					if (networkTypeSummaryMap.hasOwnProperty(prop)) {
-						networkTypeSummary.push([prop, networkTypeSummaryMap[prop]]);
-					}
-				}
-
-				networkTypeSummary.sort(function(a, b) {
-					if (b[1] > a[1]) {
-						return 1;
-
-					} else if (b[1] < a[1]) {
-						return -1;
-
-					} else {
-						return a[0].localeCompare(b[0]);
-					}
-				});
-
-				result.networkTypeSummary = networkTypeSummary;
+				result.networkTypeSummary = Object.entries(networkTypeSummaryMap)
+					.sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]));
 			}
 
 			if (getpeerinfo.length > 0 && getpeerinfo[0].transport_protocol_type) {
-				let transportProtocolSummaryMap = {}
+				let transportProtocolSummaryMap = {};
 				for (const {transport_protocol_type} of getpeerinfo) {
 					if (transportProtocolSummaryMap[transport_protocol_type] == null) {
-						transportProtocolSummaryMap[transport_protocol_type] = 0
+						transportProtocolSummaryMap[transport_protocol_type] = 0;
 					}
-					transportProtocolSummaryMap[transport_protocol_type]++
+					transportProtocolSummaryMap[transport_protocol_type]++;
 				}
-				let transportProtocolSummary = Object.entries(transportProtocolSummaryMap).sort((a,b) => b[1] - a[1] || a[0].localeCompare(b[0]))
-				result.transportProtocolSummary = transportProtocolSummary
+				result.transportProtocolSummary = Object.entries(transportProtocolSummaryMap)
+					.sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]));
 			}
 
 			result.versionSummary = versionSummary;
