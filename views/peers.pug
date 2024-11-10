@@ -67,7 +67,7 @@ block content
 
 			.row
 				if (peerSummary.networkTypeSummary)
-					.col-md-6
+					.col-md-4
 						+contentSection("Network Types")
 							table.table.table-borderless.table-striped.table-responsive-sm
 								thead
@@ -83,8 +83,25 @@ block content
 											td #{item[0]}
 											td.text-end #{item[1].toLocaleString()}
 
+				if (peerSummary.transportProtocolSummary)
+					.col-md-4
+						+contentSection("Transport Protocols")
+							table.table.table-borderless.table-striped.table-responsive-sm
+								thead
+									tr
+										th
+										th.text-card-highlight.text-uppercase.fw-light Connection Type
+										th.text-end.text-card-highlight.text-uppercase.fw-light Count
+								tbody
+									each item, index in peerSummary.transportProtocolSummary
+										tr
+											td.small.text-muted #{index + 1}
+
+											td #{item[0]}
+											td.text-end #{item[1].toLocaleString()}
+
 				if (peerSummary.connectionTypeSummary)
-					.col-md-6
+					.col-md-4
 						+contentSection("Connection Types")
 							table.table.table-borderless.table-striped.table-responsive-sm
 								thead
