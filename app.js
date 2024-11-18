@@ -581,17 +581,28 @@ async function onRpcConnectionVerified(getnetworkinfo, getblockchaininfo) {
 
 
 	if (false) {
-		var zmq = require("zeromq");
-		var sock = zmq.socket("sub");
-
-		sock.connect("tcp://192.168.1.1:28333");
-		console.log("Worker connected to port 28333");
-
-		sock.on("message", function(topic, message) {
-			console.log(Buffer.from(topic).toString("ascii") + " - " + Buffer.from(message).toString("hex"));
-		});
+		monitorNewTransactions().catch(err => console.error(err));
 
 		//sock.subscribe('rawtx');
+	}
+}
+
+async function monitorNewTransactions() {
+	const zmq = require("zeromq");
+	const sock = new zmq.Subscriber();
+
+	sock.connect("tcp://ubuntu:28333");
+	console.log("Worker connected to port 28333");
+
+	// Subscribe to all topics (use sock.subscribe("specific_topic") for specific topics)
+	sock.subscribe();
+
+	for await (const [topic, message] of sock) {
+		console.log(
+			topic.toString("ascii") +
+			" - " +
+			message.toString("hex")
+		);
 	}
 }
 
