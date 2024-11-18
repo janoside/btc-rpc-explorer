@@ -8,10 +8,11 @@ Update and install packages
     
 Install NVM from https://github.com/nvm-sh/nvm
 
+    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash
     nvm ls-remote
     
     # install latest node from output of ls-remote above, e.g.:
-    nvm install 15.13.0 
+    nvm install 22.11.0 
     
     npm install -g pm2
     
