@@ -1646,11 +1646,11 @@ function trackAppEvent(name, count=1, params=null) {
 		let props = objectProperties(params);
 
 		props.forEach(prop => {
-			if (global.appEventStats[name].params[prop] == null) {
-				global.appEventStats[name].params[prop] = {count: 0};
+			if (global.appEventStats[name].params[`${prop}[${params[prop]}]`] == null) {
+				global.appEventStats[name].params[`${prop}[${params[prop]}]`] = {count: 0};
 			}
 
-			global.appEventStats[name].params[prop].count += count;
+			global.appEventStats[name].params[`${prop}[${params[prop]}]`].count += count;
 		});
 	}
 }

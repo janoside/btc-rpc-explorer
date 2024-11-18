@@ -33,7 +33,6 @@ block content
 					code.json #{JSON.stringify(appConfig, null, 4)}
 
 			if (JSON.stringify(appEventStats) != "{}")
-				pre #{JSON.stringify(appEventStats)}
 				+contentSection("App Events")
 					.table-responsive
 						table.table.table-borderless.table-hover.table-striped
