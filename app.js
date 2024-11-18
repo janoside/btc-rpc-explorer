@@ -267,7 +267,8 @@ if (rateLimitWindowMinutes == -1) {
 			return false;
 		},
 		handler: function (req, res, next) {
-			debugErrorLog(`Rate-limiting request: ip=${req.ip}, req=${req.originalUrl}`)
+			debugErrorLog(`Rate-limiting request: req=${JSON.stringify(utils.expressRequestToJson(req))}`);
+			
 			res.status(429).json({
 				message: "Too many requests, please try again later.",
 			});

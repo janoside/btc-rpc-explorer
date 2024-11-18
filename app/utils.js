@@ -1373,6 +1373,26 @@ function bip32Addresses(extPubkey, addressType, account, limit=10, offset=0) {
 	return addresses;
 }
 
+function expressRequestToJson(req) {
+	return {
+		method: req.method,
+		url: req.url,
+		headers: req.headers,
+		query: req.query,
+		params: req.params,
+		body: req.body,
+		cookies: req.cookies,
+		signedCookies: req.signedCookies,
+		ip: req.ip,
+		ips: req.ips,
+		protocol: req.protocol,
+		secure: req.secure,
+		originalUrl: req.originalUrl,
+		hostname: req.hostname,
+		baseUrl: req.baseUrl,
+	};
+}
+
 function difficultyAdjustmentEstimates(eraStartBlockHeader, currentBlockHeader) {
 	let difficultyPeriod = parseInt(Math.floor(currentBlockHeader.height / coinConfig.difficultyAdjustmentBlockCount));
 	let blocksUntilDifficultyAdjustment = ((difficultyPeriod + 1) * coinConfig.difficultyAdjustmentBlockCount) - currentBlockHeader.height;
@@ -1671,5 +1691,6 @@ module.exports = {
 	awaitPromises: awaitPromises,
 	perfLogNewItem: perfLogNewItem,
 	perfLog: perfLog,
-	fileCache: fileCache
+	fileCache: fileCache,
+	expressRequestToJson: expressRequestToJson
 };
