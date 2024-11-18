@@ -1113,7 +1113,7 @@ router.get("/block-height/:blockHeight", asyncHandler(async (req, res, next) => 
 		next();
 
 	} catch (err) {
-		res.locals.userMessageMarkdown = `Failed loading block: height=**${blockHeight}**`;
+		res.locals.userMessageMarkdown = `Failed loading block: height=**${req.params.blockHeight}**`;
 
 		res.locals.pageErrors.push(utils.logError("389wer07eghdd", err));
 
