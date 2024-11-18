@@ -63,6 +63,7 @@ debug.enable(process.env.DEBUG || debugDefaultCategories);
 
 
 global.cacheStats = {};
+global.appEventStats = {};
 
 
 
@@ -256,6 +257,14 @@ if (rateLimitWindowMinutes == -1) {
 		standardHeaders: 'draft-7', // draft-6: `RateLimit-*` headers; draft-7: combined `RateLimit` header
 		legacyHeaders: false, // Disable the `X-RateLimit-*` headers.
 		skip: function (req, res) {
+			// tor traffic all comes in via tor proxy showing 127.0.0.1
+			// for now, until we identify it as a serious problem, let it pass
+			if (req.hostname.includes(".onion")) {
+				utils.trackAppEvent("torRequest");
+
+				return true;
+			}
+
 			if (req.originalUrl.includes("/snippet/")) {
 				return true;
 			}
@@ -268,7 +277,9 @@ if (rateLimitWindowMinutes == -1) {
 		},
 		handler: function (req, res, next) {
 			debugErrorLog(`Rate-limiting request: req=${JSON.stringify(utils.expressRequestToJson(req))}`);
-			
+
+			utils.trackAppEvent("rateLimitedRequest");
+
 			res.status(429).json({
 				message: "Too many requests, please try again later.",
 			});
@@ -600,6 +611,8 @@ async function monitorNewTransactions() {
 	sock.subscribe();
 
 	for await (const [topic, message] of sock) {
+		utils.trackAppEvent("newTransaction");
+
 		console.log(
 			topic.toString("ascii") +
 			" - " +
@@ -1038,6 +1051,8 @@ expressApp.continueStartup = function() {
 };
 
 expressApp.use(function(req, res, next) {
+	utils.trackAppEvent("request");
+
 	req.startTime = Date.now();
 
 	next();
@@ -1187,6 +1202,8 @@ expressApp.use(function(req, res, next) {
 
 /// catch 404 and forwarding to error handler
 expressApp.use(function(req, res, next) {
+	utils.trackAppEvent("error404");
+
 	var err = new Error(`Not Found: ${req ? req.url : 'unknown url'}`);
 	err.status = 404;
 
@@ -1206,6 +1223,8 @@ const sharedErrorHandler = (req, err) => {
 
 		if (crawler) {
 			attributes.crawler = crawler;
+
+			utils.trackAppEvent("crawlRequest", 1, {"crawler": crawler});
 		}
 
 		debugErrorLog(`404 NotFound: path=${path}, ip=${ip}, userAgent=${userAgent} (crawler=${(crawler != null)}${crawler ? crawler : ""})`);

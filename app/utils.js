@@ -1630,6 +1630,35 @@ const perfLogNewItem = (tags) => {
 	};
 };
 
+function trackAppEvent(name, count=1, params=null) {
+	if (!global.appEventStats[name]) {
+		global.appEventStats[name] = {count:0};
+	}
+
+	global.appEventStats[name].count += count;
+	global.appEventStats[name].last = new Date();
+
+	if (params != null) {
+		if (global.appEventStats[name].params == null) {
+			global.appEventStats[name].params = {};
+		}
+
+		let props = objectProperties(params);
+
+		console.log("props=" + JSON.stringify(props));
+
+		props.forEach(prop => {
+			console.log("prop=" + prop);
+
+			if (global.appEventStats[name].params[prop] == null) {
+				global.appEventStats[name].params[prop] = {count: 0};
+			}
+
+			global.appEventStats[name].params[prop].count += count;
+		});
+	}
+}
+
 module.exports = {
 	reflectPromise: reflectPromise,
 	redirectToConnectPageIfNeeded: redirectToConnectPageIfNeeded,
@@ -1693,5 +1722,6 @@ module.exports = {
 	perfLogNewItem: perfLogNewItem,
 	perfLog: perfLog,
 	fileCache: fileCache,
-	expressRequestToJson: expressRequestToJson
+	expressRequestToJson: expressRequestToJson,
+	trackAppEvent: trackAppEvent
 };

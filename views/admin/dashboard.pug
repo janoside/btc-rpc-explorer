@@ -32,6 +32,36 @@ block content
 				pre
 					code.json #{JSON.stringify(appConfig, null, 4)}
 
+			if (JSON.stringify(appEventStats) != "{}")
+				pre #{JSON.stringify(appEventStats)}
+				+contentSection("App Events")
+					.table-responsive
+						table.table.table-borderless.table-hover.table-striped
+							thead
+								tr
+									th.text-start Event
+									th.text-end Count
+									th.text-end Last
+									th.text-end Params
+
+							tbody
+								each item, itemName in appEventStats
+									tr
+										td #{itemName}
+										
+										td.text-end #{item.count}
+
+										td.text-end
+											+timestamp(item.last.getTime() / 1000)
+
+										td.text-end
+											if (item.params)
+												each paramItem, paramKey in item.params
+													div
+														| #{paramKey}: #{paramItem.count}
+
+								
+
 			+contentSection("Memory Stats")
 				.table-responsive
 					table.table.table-borderless.table-hover.table-striped
