@@ -13,14 +13,13 @@
 		"css-light-debug": "sass --style expanded ./public/scss/light.scss ./public/style/light.css",
 		"css-dark-debug": "sass --style expanded ./public/scss/dark.scss ./public/style/dark.css",
 		"css-dark-v1-debug": "sass --style expanded ./public/scss/dark-v1.scss ./public/style/dark-v1.css",
-		"css-debug": "npm-run-all css-light-debug css-dark-debug css-dark-v1-debug",
+		"css-debug": "npm run css-light-debug && npm run css-dark-debug && npm run css-dark-v1-debug",
 		"css-light": "sass --style compressed ./public/scss/light.scss ./public/style/light.min.css",
 		"css-dark": "sass --style compressed ./public/scss/dark.scss ./public/style/dark.min.css",
 		"css-dark-v1": "sass --style compressed ./public/scss/dark-v1.scss ./public/style/dark-v1.min.css",
-		"css": "npm-run-all css-light css-dark css-dark-v1 integrity"
+		"css": "npm run css-light && npm run css-dark && npm run css-dark-v1 && npm run integrity"
 	},
-	"keywords":
-	[
+	"keywords": [
 		"bitcoin",
 		"btc",
 		"blockchain"
@@ -46,7 +45,7 @@
 		"compression": "^1.7.4",
 		"cookie-parser": "^1.4.6",
 		"crypto-js": "^4.2.0",
-		"csurf": "^1.11.0",
+		"csurf": "^1.2.2",
 		"debug": "^4.3.4",
 		"decimal.js": "^10.4.3",
 		"dotenv": "^13.0.1",
@@ -80,7 +79,6 @@
 	},
 	"devDependencies": {
 		"eslint": "^8.39.0",
-		"npm-run-all": "^4.1.5",
-		"sass": "^1.62.1"
+		"sass": "^1.81.0"
 	}
 }
