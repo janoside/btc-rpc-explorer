@@ -66,6 +66,7 @@ const crawlerBotUserAgentStrings = {
 	"unidentifiedCrawler": new RegExp("Test Certificate Info", "i"),
 	"amazon": new RegExp("amazonbot", "i"),
 	"bytedance": new RegExp("bytespider", "i"),
+	"scrapy": new RegExp("Scrapy", "i"),
 };
 
 const ipMemoryCache = {};
