@@ -118,6 +118,7 @@ debugLog(`Default cacheId '${global.cacheId}'`);
 global.btcNodeSemver = "0.0.0";
 
 
+const cleanupRouter = require('./routes/cleanupRouter.js');
 const baseActionsRouter = require('./routes/baseRouter.js');
 const internalApiActionsRouter = require('./routes/internalApiRouter.js');
 const apiActionsRouter = require('./routes/apiRouter.js');
@@ -1153,6 +1154,7 @@ expressApp.use(csrfProtection, (req, res, next) => {
 	next();
 });
 
+expressApp.use(config.baseUrl, cleanupRouter);
 expressApp.use(config.baseUrl, baseActionsRouter);
 expressApp.use(config.baseUrl + 'internal-api/', internalApiActionsRouter);
 expressApp.use(config.baseUrl + 'api/', apiActionsRouter);

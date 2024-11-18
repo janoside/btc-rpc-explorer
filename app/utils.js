@@ -979,7 +979,7 @@ function logError(errorId, err, optionalUserData = {}, logStacktrace=true) {
 		};
 	}
 
-	if (optionalUserData && err.message) {
+	if (optionalUserData && err && err.message) {
 		optionalUserData.errorMsg = err.message;
 	}
 
