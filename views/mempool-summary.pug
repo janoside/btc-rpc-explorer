@@ -687,7 +687,7 @@ block endOfBody
 				if (resultList && resultList.length > 0) {
 					var result = resultList[0];
 
-					var feeRate = new Decimal(result.f).dividedBy(result.sz); // TODO: magic number, sat/BTC
+					var feeRate = new Decimal(result.f).dividedBy(result.sz); // TODO: magic number, sat/BKC
 
 					estimateMempoolDepth(feeRate);
 

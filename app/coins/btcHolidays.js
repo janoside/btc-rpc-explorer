@@ -9,12 +9,12 @@ module.exports = {
 		{
 			name: "SegWit Lock-In Day",
 			date: "2017-08-08",
-			desc: "On this day in 2017, the Segregated Witness upgrade was locked in on the Bitcoin network by the UASF client."
+			desc: "On this day in 2017, the Segregated Witness upgrade was locked in on the Briskcoin network by the UASF client."
 		},
 		{
 			name: "Bitcoin Independence Day (UASF Day)",
 			date: "2017-08-01",
-			desc: "On this day in 2017, members of the community scheduled activation of a User-Activated Soft Fork (UASF) in a modified version of the Bitcoin Core software. This modification represented an ultimatum to SegWit-reluctant miners: either signal for SegWit activation or your blocks will be ignored. This community effort seemingly called the miners \"SegWit2X bluff\" and resulted in SegWit activation on the network in short order. Read more <a href='https://bitcoinmagazine.com/culture/bitcoin-independence-day-how-this-watershed-day-defines-community-consensus'>here</a>."
+			desc: "On this day in 2017, members of the community scheduled activation of a User-Activated Soft Fork (UASF) in a modified version of the Briskcoin Core software. This modification represented an ultimatum to SegWit-reluctant miners: either signal for SegWit activation or your blocks will be ignored. This community effort seemingly called the miners \"SegWit2X bluff\" and resulted in SegWit activation on the network in short order. Read more <a href='https://bitcoinmagazine.com/culture/bitcoin-independence-day-how-this-watershed-day-defines-community-consensus'>here</a>."
 		},
 		{
 			name: "Bitcoin Infinity Day",

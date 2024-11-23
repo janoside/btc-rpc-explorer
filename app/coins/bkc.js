@@ -3,7 +3,7 @@
 const Decimal = require("decimal.js");
 const Decimal8 = Decimal.clone({ precision:8, rounding:8 });
 
-const btcFun = require("./btcFun.js");
+const btcFun = require("./bkcFun.js");
 
 const blockRewardEras = [ new Decimal8(50) ];
 for (let i = 1; i < 34; i++) {
@@ -14,17 +14,17 @@ for (let i = 1; i < 34; i++) {
 const currencyUnits = [
 	{
 		type:"native",
-		name:"BTC",
+		name:"BKC",
 		multiplier:1,
 		default:true,
-		values:["", "btc", "BTC"],
+		values:["", "bkc", "BKC"],
 		decimalPlaces:8
 	},
 	{
 		type:"native",
-		name:"mBTC",
+		name:"mBKC",
 		multiplier:1000,
-		values:["mbtc"],
+		values:["mbkc"],
 		decimalPlaces:5
 	},
 	{
@@ -60,8 +60,8 @@ const currencyUnits = [
 ];
 
 module.exports = {
-	name:"Bitcoin",
-	ticker:"BTC",
+	name:"Briskcoin",
+	ticker:"BKC",
 	logoUrlsByNetwork:{
 		"main":"./img/network-mainnet/logo.svg",
 		"test":"./img/network-testnet/logo.svg",
@@ -75,57 +75,57 @@ module.exports = {
 		"regtest":"./img/network-regtest/coin-icon.svg"
 	},
 	coinColorsByNetwork: {
-		"main": "#F7931A",
+		"main": "#6699ff",
 		"test": "#1daf00",
 		"signet": "#af008c",
 		"regtest": "#777"
 	},
 	siteTitlesByNetwork: {
-		"main":"Bitcoin Explorer",
+		"main":"Briskcoin Explorer",
 		"test":"Testnet Explorer",
 		"regtest":"Regtest Explorer",
 		"signet":"Signet Explorer",
 	},
 	demoSiteUrlsByNetwork: {
-		"main": "https://bitcoinexplorer.org",
+		"main": "http://explorer.briskcoin.org",
 		"test": "https://testnet.bitcoinexplorer.org",
 		"signet": "https://signet.bitcoinexplorer.org",
 	},
 	knownTransactionsByNetwork: {
-		main: "f4184fc596403b9d638783cf57adfe4c75c605f6356fbc91338530e9831e9e16",
-		test: "22e7e860660f368b5c653c272b0445a0625d19fdec02fc158ef9800a5c3a07e8",
-		signet: "39332e10af6fe491e8ae4ba1e2dd674698fedf8aa3c8c42bf71572debc1bb5b9"
+		main: "00000aa939743c8cde8eaf22400462f42388ea665ae391202c7215f22c3ead17"
+		//test: "22e7e860660f368b5c653c272b0445a0625d19fdec02fc158ef9800a5c3a07e8",
+		//signet: "39332e10af6fe491e8ae4ba1e2dd674698fedf8aa3c8c42bf71572debc1bb5b9"
 	},
 	miningPoolsConfigUrls:[
-		"https://raw.githubusercontent.com/btc21/Bitcoin-Known-Miners/master/miners.json",
-		"https://raw.githubusercontent.com/bitcoin-data/mining-pools/generated/pools.json",
-		"https://raw.githubusercontent.com/btccom/Blockchain-Known-Pools/master/pools.json",
-		"https://raw.githubusercontent.com/blockchain/Blockchain-Known-Pools/master/pools.json"
+		"https://raw.githubusercontent.com/btc21/Bitcoin-Known-Miners/master/miners.json"
+		//"https://raw.githubusercontent.com/bitcoin-data/mining-pools/generated/pools.json",
+		//"https://raw.githubusercontent.com/btccom/Blockchain-Known-Pools/master/pools.json",
+		//"https://raw.githubusercontent.com/blockchain/Blockchain-Known-Pools/master/pools.json"
 	],
-	maxBlockWeight: 4000000,
-	maxBlockSize: 1000000,
+	maxBlockWeight: 32000000,
+	maxBlockSize: 8000000,
 	minTxBytes: 166, // ref: https://en.bitcoin.it/wiki/Maximum_transaction_rate
 	minTxWeight: 166 * 4, // hack
-	difficultyAdjustmentBlockCount: 2016,
+	difficultyAdjustmentBlockCount: 120,
 	maxSupplyByNetwork: {
-		"main": new Decimal(20999817.31308491), // ref: https://bitcoin.stackexchange.com/a/38998
-		"test": new Decimal(21000000),
-		"regtest": new Decimal(21000000),
-		"signet": new Decimal(21000000)
+		"main": new Decimal(35000000.31308491), // ref: https://bitcoin.stackexchange.com/a/38998
+		"test": new Decimal(35000000),
+		"regtest": new Decimal(35000000),
+		"signet": new Decimal(35000000)
 	},
-	targetBlockTimeSeconds: 600,
-	targetBlockTimeMinutes: 10,
+	targetBlockTimeSeconds: 30,
+	targetBlockTimeMinutes: 0.5,
 	currencyUnits:currencyUnits,
-	currencyUnitsByName:{"BTC":currencyUnits[0], "mBTC":currencyUnits[1], "bits":currencyUnits[2], "sat":currencyUnits[3]},
+	currencyUnitsByName:{"BKC":currencyUnits[0], "mBKC":currencyUnits[1], "bits":currencyUnits[2], "sat":currencyUnits[3]},
 	baseCurrencyUnit:currencyUnits[3],
 	defaultCurrencyUnit:currencyUnits[0],
 	feeSatoshiPerByteBucketMaxima: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 20, 25, 50, 75, 100, 150],
 	
 	halvingBlockIntervalsByNetwork: {
-		"main": 210000,
-		"test": 210000,
+		"main": 2102400,
+		"test": 2102400,
 		"regtest": 150,
-		"signet": 210000
+		"signet": 2102400
 	},
 
 	terminalHalvingCountByNetwork: {
@@ -137,57 +137,59 @@ module.exports = {
 
 	// used for supply estimates that don't need full gettxoutset accuracy
 	coinSupplyCheckpointsByNetwork: {
-		"main": [ 675046, new Decimal(18656332.38) ],
-		"test": [ 1940614, new Decimal(20963051.112) ],
-		"signet": [ 29472, new Decimal(1473600) ],
-		"regtest": [ 0, new Decimal(0) ]
+		"main": [ 675046, new Decimal(18656332.38) ]
+		//"test": [ 1940614, new Decimal(20963051.112) ],
+		//"signet": [ 29472, new Decimal(1473600) ],
+		//"regtest": [ 0, new Decimal(0) ]
 	},
 
 	utxoSetCheckpointsByNetwork: {
 		// this includes values from running gettxoutsetinfo with both "muhash" and "hash_serialized_2" params
 		"main": {
 			// "muhash"
-			"height": 784796,
-			"bestblock": "000000000000000000026ac332dc8ba0d425b844520acc808af88aac52748281",
-			"txouts": 87769791,
-			"bogosize": 6562752541,
+			"height": 2,
+			"bestblock": "00000f622a1942f072b1128d01ba9861e7df85a7eb22773433f0bd468d9a534d",
+			"txouts": 2,
+			"bogosize": 150,
 			"muhash": "90dc87ec3d3dc46a9883f1ce675cc8bcc3e6697c6c1dbb8665c192af35144099",
-			"total_amount": "19342261.957857",
+			"total_amount": "3500050.00000000",
 			"total_unspendable_amount": "219.292143",
 
 			// "hash_serialized_2"
 			"transactions": 52250541,
 			"disk_size": 5367051020,
-			"hash_serialized_2": "89afe21688f3a2cc01ef837c2b0454d4039830433d49c264856b2578eff2d62b",
+			"hash_serialized_2": "2957f6820c5bf03412a861df4f83a653efcd0fd827747699edd0f63045aae4cd",
 
 			"lastUpdated": 1681140656788
 		}
 	},
-	
+	//./briskcoin-cli getblockhash 2
+	//./briskcoin-cli getblock 00000f622a1942f072b1128d01ba9861e7df85a7eb22773433f0bd468d9a534d
+	//./briskcoin-cli getrawtransaction 447cac493dfcdf432847f49bb6f4b2d0e1137554d6dc0c571973f031421d0de5 1
 	genesisBlockHashesByNetwork:{
-		"main":	"000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f",
-		"test":	"000000000933ea01ad0ee984209779baaec3ced90fa3f408719526f8d77f4943",
-		"regtest": "0f9188f13cb7b2c71f2a335e3a4fc328bf5beb436012afca590b1a11466e2206",
-		"signet":  "00000008819873e925422c1ff0f99f7cc9bbb232af63a077a480a3633bee1ef6", 
+		"main":	"000004ff23fc19ab404c03e1af76ff37403817f60489a0db1e8bd39652f259ec",
+		//"test":	"000000000933ea01ad0ee984209779baaec3ced90fa3f408719526f8d77f4943",
+		//"regtest": "0f9188f13cb7b2c71f2a335e3a4fc328bf5beb436012afca590b1a11466e2206",
+		//"signet":  "00000008819873e925422c1ff0f99f7cc9bbb232af63a077a480a3633bee1ef6", 
 	},
 	genesisCoinbaseTransactionIdsByNetwork: {
-		"main":	"4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b",
-		"test":	"4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b",
-		"regtest": "4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b",
-		"signet":  "4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b"
+		"main":	"447cac493dfcdf432847f49bb6f4b2d0e1137554d6dc0c571973f031421d0de5"
+		//"test":	"4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b",
+		//"regtest": "4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b",
+		//"signet":  "4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b"
 	},
 	genesisCoinbaseTransactionsByNetwork:{
 		"main": {
-			"hex": "01000000010000000000000000000000000000000000000000000000000000000000000000ffffffff0804ffff001d02fd04ffffffff0100f2052a01000000434104f5eeb2b10c944c6b9fbcfff94c35bdeecd93df977882babc7f3a2cf7f5c81d3b09a68db7f0e04f21de5d4230e75e6dbe7ad16eefe0d4325a62067dc6f369446aac00000000",
-			"txid": "4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b",
-			"hash": "4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b",
-			"size": 204,
-			"vsize": 204,
-			"version": 1,
-			"confirmations":475000,
+			"hex": "020000000001010000000000000000000000000000000000000000000000000000000000000000ffffffff025200ffffffff0200f2052a010000001976a914308de579491c528e5a89db28aab01816d202ffff88ac0000000000000000266a24aa21a9ede2f61c3f71d1defd3fa999dfa36953755c690689799962b48bebd836974e8cf90120000000000000000000000000000000000000000000000000000000000000000000000000",
+			"txid": "447cac493dfcdf432847f49bb6f4b2d0e1137554d6dc0c571973f031421d0de5",
+			"hash": "f66d10fec780ef5b64a6ecace1215468d41e22dada8eecfa084d785841429164",
+			"size": 170,
+			"vsize": 143,
+			"version": 2,
+			"confirmations":1,
 			"vin": [
 				{
-					"coinbase": "04ffff001d0104455468652054696d65732030332f4a616e2f32303039204368616e63656c6c6f72206f6e206272696e6b206f66207365636f6e64206261696c6f757420666f722062616e6b73",
+					"coinbase": "5200",
 					"sequence": 4294967295
 				}
 			],
@@ -196,19 +198,19 @@ module.exports = {
 					"value": 50,
 					"n": 0,
 					"scriptPubKey": {
-						"asm": "04f5eeb2b10c944c6b9fbcfff94c35bdeecd93df977882babc7f3a2cf7f5c81d3b09a68db7f0e04f21de5d4230e75e6dbe7ad16eefe0d4325a62067dc6f369446a OP_CHECKSIG",
-						"hex": "4104f5eeb2b10c944c6b9fbcfff94c35bdeecd93df977882babc7f3a2cf7f5c81d3b09a68db7f0e04f21de5d4230e75e6dbe7ad16eefe0d4325a62067dc6f369446aac",
+						"asm": "OP_DUP OP_HASH160 308de579491c528e5a89db28aab01816d202ffff OP_EQUALVERIFY OP_CHECKSIG",
+						"hex": "76a914308de579491c528e5a89db28aab01816d202ffff88ac",
 						"reqSigs": 1,
 						"type": "pubkey",
 						"addresses": [
-							"1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa"
+							"B8sp34FQ36pZ4MoShp6qUB23AnGrG4Doya"
 						]
 					}
 				}
 			],
-			"blockhash": "000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f",
-			"time": 1230988505,
-			"blocktime": 1230988505
+			"blockhash": "00000f622a1942f072b1128d01ba9861e7df85a7eb22773433f0bd468d9a534d",
+			"time": 1732062978,
+			"blocktime": 1732062978
 		},
 		"test": {
 			"hex": "01000000010000000000000000000000000000000000000000000000000000000000000000ffffffff4d04ffff001d0104455468652054696d65732030332f4a616e2f32303039204368616e63656c6c6f72206f6e206272696e6b206f66207365636f6e64206261696c6f757420666f722062616e6b73ffffffff0100f2052a01000000434104678afdb0fe5548271967f1a67130b7105cd6a828e03909a67962e0ea1f61deb649f6bc3f4cef38c4f35504e51ec112de5c384df7ba0b8d578a4c702b6bf11d5fac00000000",
@@ -567,5 +569,29 @@ module.exports = {
 		let index = Math.floor(blockHeight / halvingBlockInterval);
 
 		return blockRewardEras[index];
+	},
+	// Updated for BKC
+	blockRewardFunction2:function(blockHeight, chain) {
+		var getrw= 0;
+		var halvings = 2102400;
+		if (blockHeight > 1 && blockHeight<=50000){
+			getrw = 50;
+		}else if(blockHeight > 50001 && blockHeight <= 100000){
+			getrw = 20;
+		}else if(blockHeight > 100001 && blockHeight <= 500000){
+			getrw = 10;
+		}else{
+			reward = 5;
+			if (blockHeight > halvings){
+				while (blockHeight > halvings){
+					reward = reward/2;
+				}
+				getrw = reward;
+			}else{
+				getrw = reward;
+			}
+			
+		} 
+		return getrw;
 	}
 };

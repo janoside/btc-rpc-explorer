@@ -7,7 +7,7 @@ block content
 	+pageTitle("Extended Public Key", extendedPubkey, true)
 
 	+dismissableInfoAlert("xpubPageNoteDismissed", "About Extended Public Keys...")
-		.mb-3 !{markdown("**Extended Public Keys** (colloquially \"XPUBs\") are **parent** public keys from which many **children** public keys can be mathematically *derived* using the [BIP32](https://github.com/bitcoin/bips/blob/master/bip-0032.mediawiki) standard. Each **child** key represents a Bitcoin address. Therefore, an XPUB represents a unique set of Bitcoin addresses.")}
+		.mb-3 !{markdown("**Extended Public Keys** (colloquially \"XPUBs\") are **parent** public keys from which many **children** public keys can be mathematically *derived* using the [BIP32](https://github.com/bitcoin/bips/blob/master/bip-0032.mediawiki) standard. Each **child** key represents a Briskcoin address. Therefore, an XPUB represents a unique set of Briskcoin addresses.")}
 		.mb-n3 !{markdown("Wallet software often presents users with an XPUB. Exposure of your XPUB, although it doesn't risk theft of your bitcoin, **harms your privacy** by allowing anyone with access to your XPUB to know all of your addresses and the details of all transactions sent to and from them. This page is meant to demonstrate that fact - search for any XPUB (xpub, ypub, zpub...) and this tool will display all of the addresses derived from that key.")}
 
 	+contentSection("Summary")

@@ -14,7 +14,7 @@ const args = require('meow')(`
 	  -p, --port <port>			  port to bind http server [default: 3002]
 	  -i, --host <host>			  host to bind http server [default: 127.0.0.1]
 	  -a, --basic-auth-password <..> protect web interface with a password [default: no password]
-	  -C, --coin <coin>			  crypto-coin to enable [default: BTC]
+	  -C, --coin <coin>			  crypto-coin to enable [default: BKC]
 
 	  -b, --bitcoind-uri <uri>	   connection URI for bitcoind rpc (overrides the options below)
 	  -H, --bitcoind-host <host>	 hostname for bitcoind rpc [default: 127.0.0.1]
