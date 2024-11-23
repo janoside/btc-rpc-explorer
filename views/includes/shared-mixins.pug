@@ -1,7 +1,7 @@
 mixin themeCss
-	link(id="dark-v1-theme-link-tag", rel=(userSettings.uiTheme == "dark-v1" ? "stylesheet" : false), href=assetUrl(`./style/dark-v1.min.css`), integrity=assetIntegrity("dark-v1.min.css"), crossorigin="anonymous")
-	link(id="light-theme-link-tag", rel=(userSettings.uiTheme == "light" ? "stylesheet" : false), href=assetUrl(`./style/light.min.css`), integrity=assetIntegrity("light.min.css"), crossorigin="anonymous")
-	link(id="dark-theme-link-tag", rel=(userSettings.uiTheme == "dark" ? "stylesheet" : false), href=assetUrl(`./style/dark.min.css`), integrity=assetIntegrity("dark.min.css"), crossorigin="anonymous")
+	link(id="dark-v1-theme-link-tag", rel=(userSettings.uiTheme == "dark-v1" ? "stylesheet" : false), href=assetUrl(`./style/dark-v1.min.css`), integrity="", crossorigin="anonymous")
+	link(id="light-theme-link-tag", rel=(userSettings.uiTheme == "light" ? "stylesheet" : false), href=assetUrl(`./style/light.min.css`), integrity="", crossorigin="anonymous")
+	link(id="dark-theme-link-tag", rel=(userSettings.uiTheme == "dark" ? "stylesheet" : false), href=assetUrl(`./style/dark.min.css`), integrity="", crossorigin="anonymous")
 
 	style.
 		@font-face {
@@ -11,14 +11,14 @@ mixin themeCss
 					url("!{assetUrl("./font/bootstrap-icons.woff")}") format("woff");
 		}
 
-	link(rel="stylesheet", href=assetUrl(`./style/bootstrap-icons.css`), integrity=assetIntegrity("bootstrap-icons.css"), crossorigin="anonymous")
+	link(rel="stylesheet", href=assetUrl(`./style/bootstrap-icons.css`), integrity="", crossorigin="anonymous")
 
 
 mixin sharedScriptTags
-	script(src=assetUrl(`./js/jquery.min.js`), integrity=assetIntegrity("jquery.min.js"), crossorigin="anonymous")
-	script(src=assetUrl(`./js/bootstrap.bundle.min.js`), integrity=assetIntegrity("bootstrap.bundle.min.js"), crossorigin="anonymous")
+	script(src=assetUrl(`./js/jquery.min.js`), integrity="", crossorigin="anonymous")
+	script(src=assetUrl(`./js/bootstrap.bundle.min.js`), integrity="", crossorigin="anonymous")
 	
-	script(src=assetUrl(`./js/site.js`), integrity=assetIntegrity("site.js"), crossorigin="anonymous")
+	script(src=assetUrl(`./js/site.js`), integrity="", crossorigin="anonymous")
 
 
 mixin pageTitle(text, subtext, copyableSubtext=false)
@@ -361,7 +361,7 @@ mixin pageTab(name, defaultActive=false)
 
 mixin valueDisplay(val, options={})
 	if (val > 0)
-		if (userSettings.displayCurrency == "btc")
+		if (userSettings.displayCurrency == "bkc")
 			+_valueDisplayBtc(val, options)
 
 		else if (userSettings.displayCurrency == "sat")
@@ -408,7 +408,7 @@ mixin _valueDisplaySat(val, summarizeMin=Infinity, summarizeDecimals=3)
 		span #{largeNumberData[1].abbreviation}
 		
 	else
-		span(class=(localCurrencyDisplay ? "border-dotted" : false), title=(localCurrencyDisplay ? `${utils.formatCurrencyAmount(val, coinConfig.defaultCurrencyUnit.name.toLowerCase()).simpleVal} BTC` : false), data-bs-toggle=(localCurrencyDisplay ? "tooltip" : false)) #{parts.intVal.toLocaleString()}
+		span(class=(localCurrencyDisplay ? "border-dotted" : false), title=(localCurrencyDisplay ? `${utils.formatCurrencyAmount(val, coinConfig.defaultCurrencyUnit.name.toLowerCase()).simpleVal} BKC` : false), data-bs-toggle=(localCurrencyDisplay ? "tooltip" : false)) #{parts.intVal.toLocaleString()}
 
 
 	if (exchangeRates)
@@ -431,12 +431,12 @@ mixin _valueDisplayLocal(val, summarizeMin=Infinity, summarizeDecimals=3)
 	if (Math.abs(parts.intVal) >= summarizeMin)
 		- var largeNumberData = utils.formatLargeNumberSignificant(parts.intVal, summarizeDecimals >= 0 ? summarizeDecimals : 3);
 		//span #{JSON.stringify(largeNumberData)} #{parts.intVal}
-		span.border-dotted(title=`${global.currencySymbols[userSettings.localCurrency]}${parts.intVal.toLocaleString()}<br/>${utils.formatCurrencyAmount(val, coinConfig.defaultCurrencyUnit.name.toLowerCase()).simpleVal} BTC`, data-bs-toggle="tooltip", data-bs-html="true")
+		span.border-dotted(title=`${global.currencySymbols[userSettings.localCurrency]}${parts.intVal.toLocaleString()}<br/>${utils.formatCurrencyAmount(val, coinConfig.defaultCurrencyUnit.name.toLowerCase()).simpleVal} BKC`, data-bs-toggle="tooltip", data-bs-html="true")
 			span #{largeNumberData[0]}
 			span.ms-1 #{largeNumberData[1].textDesc}
 
 	else
-		span.border-dotted(title=`${utils.formatCurrencyAmount(val, coinConfig.defaultCurrencyUnit.name.toLowerCase()).simpleVal} BTC`, data-bs-toggle="tooltip") #{parts.val}
+		span.border-dotted(title=`${utils.formatCurrencyAmount(val, coinConfig.defaultCurrencyUnit.name.toLowerCase()).simpleVal} BKC`, data-bs-toggle="tooltip") #{parts.val}
 	
 
 mixin valueDisplaySpecial(val, maxDecimals=-1, summarizeAlways=false, summarizeMin=Infinity, summarizeDecimals=-1)
@@ -462,16 +462,16 @@ mixin valueDisplaySpecial(val, maxDecimals=-1, summarizeAlways=false, summarizeM
 				//span #{JSON.stringify(parts)}
 				- var largeNumberData = utils.formatLargeNumberSignificant(parts.intVal, summarizeDecimals >= 0 ? summarizeDecimals : 2);
 				//span #{JSON.stringify(largeNumberData)} #{parts.intVal}
-				span(class=(localCurrencyDisplay ? "border-dotted" : false), title=(localCurrencyDisplay ? `${utils.formatCurrencyAmount(val, coinConfig.defaultCurrencyUnit.name.toLowerCase()).simpleVal} BTC` : false), data-bs-toggle=(localCurrencyDisplay ? "tooltip" : false)) #{largeNumberData[0]} #{largeNumberData[1].textDesc}
+				span(class=(localCurrencyDisplay ? "border-dotted" : false), title=(localCurrencyDisplay ? `${utils.formatCurrencyAmount(val, coinConfig.defaultCurrencyUnit.name.toLowerCase()).simpleVal} BKC` : false), data-bs-toggle=(localCurrencyDisplay ? "tooltip" : false)) #{largeNumberData[0]} #{largeNumberData[1].textDesc}
 			
 			else if (maxDecimals == 0)
-				span(class=(localCurrencyDisplay ? "border-dotted" : false), title=(localCurrencyDisplay ? `${utils.formatCurrencyAmount(val, coinConfig.defaultCurrencyUnit.name.toLowerCase()).simpleVal} BTC` : false), data-bs-toggle=(localCurrencyDisplay ? "tooltip" : false)) #{parts.intVal.toLocaleString()}
+				span(class=(localCurrencyDisplay ? "border-dotted" : false), title=(localCurrencyDisplay ? `${utils.formatCurrencyAmount(val, coinConfig.defaultCurrencyUnit.name.toLowerCase()).simpleVal} BKC` : false), data-bs-toggle=(localCurrencyDisplay ? "tooltip" : false)) #{parts.intVal.toLocaleString()}
 
 			else if (maxDecimals > 0)
-				span(class=(localCurrencyDisplay ? "border-dotted" : false), title=(localCurrencyDisplay ? `${utils.formatCurrencyAmount(val, coinConfig.defaultCurrencyUnit.name.toLowerCase()).simpleVal} BTC` : false), data-bs-toggle=(localCurrencyDisplay ? "tooltip" : false)) #{parts.val}
+				span(class=(localCurrencyDisplay ? "border-dotted" : false), title=(localCurrencyDisplay ? `${utils.formatCurrencyAmount(val, coinConfig.defaultCurrencyUnit.name.toLowerCase()).simpleVal} BKC` : false), data-bs-toggle=(localCurrencyDisplay ? "tooltip" : false)) #{parts.val}
 			
 			else
-				span(class=(localCurrencyDisplay ? "border-dotted" : false), title=(localCurrencyDisplay ? `${utils.formatCurrencyAmount(val, coinConfig.defaultCurrencyUnit.name.toLowerCase()).simpleVal} BTC` : false), data-bs-toggle=(localCurrencyDisplay ? "tooltip" : false)) #{parts.val}
+				span(class=(localCurrencyDisplay ? "border-dotted" : false), title=(localCurrencyDisplay ? `${utils.formatCurrencyAmount(val, coinConfig.defaultCurrencyUnit.name.toLowerCase()).simpleVal} BKC` : false), data-bs-toggle=(localCurrencyDisplay ? "tooltip" : false)) #{parts.val}
 					if (parts.lessSignificantDigits)
 						span.text-small.text-muted.ms-1 #{parts.lessSignificantDigits}
 

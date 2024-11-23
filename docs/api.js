@@ -63,7 +63,7 @@ module.exports = {
 		{
 			"category":"blockchain",
 			"url":"/blockchain/coins",
-			"desc":"Returns the current supply of Bitcoin. An estimate using a checkpoint can be returned in 2 cases: on 'slow' devices, and before the UTXO Set snapshot is loaded."
+			"desc":"Returns the current supply of Briskcoin. An estimate using a checkpoint can be returned in 2 cases: on 'slow' devices, and before the UTXO Set snapshot is loaded."
 		},
 		{
 			"category":"blockchain",
@@ -179,12 +179,12 @@ module.exports = {
 		{
 			"category":"mempool",
 			"url":"/mempool/count",
-			"desc":"Returns the number of transactions in Bitcoin Core's mempool."
+			"desc":"Returns the number of transactions in Briskcoin Core's mempool."
 		},
 		{
 			"category":"mempool",
 			"url":"/mempool/summary",
-			"desc":"Returns a summary of Bitcoin Core's mempool (full output from 'getmempoolinfo')",
+			"desc":"Returns a summary of Briskcoin Core's mempool (full output from 'getmempoolinfo')",
 			"example": {"loaded":true,"size":225,"bytes":76209,"usage":410496,"total_fee":0.01763495,"maxmempool":15000000,"mempoolminfee":0.00001,"minrelaytxfee":0.00001,"unbroadcastcount":0}
 		},
 		{
@@ -200,7 +200,7 @@ module.exports = {
 		{
 			"category":"price",
 			"url":"/price",
-			"desc":"Returns the price of 1 BTC, in USD, EUR, GBP, and XAU",
+			"desc":"Returns the price of 1 BKC, in USD, EUR, GBP, and XAU",
 			"optionalParams": {
 				"format":"Set to 'true' to include thousands-separator formatting in results"
 			}
@@ -208,7 +208,7 @@ module.exports = {
 		{
 			"category":"price",
 			"url":"/price/marketcap",
-			"desc":"Returns the market cap of Bitcoin, in USD, EUR, GBP, XAU",
+			"desc":"Returns the market cap of Briskcoin, in USD, EUR, GBP, XAU",
 		},
 		{
 			"category":"price",
@@ -223,28 +223,28 @@ module.exports = {
 		{
 			"category":"fun",
 			"url":"/quotes/all",
-			"desc":"Returns the full curated list of Bitcoin quotes.",
+			"desc":"Returns the full curated list of Briskcoin quotes.",
 		},
 		{
 			"category":"fun",
 			"url":"/quotes/$INDEX",
-			"desc":"Returns the Bitcoin quote with the given index from the curated list.",
+			"desc":"Returns the Briskcoin quote with the given index from the curated list.",
 			"testUrl": "/quotes/0"
 		},
 		{
 			"category":"fun",
 			"url":"/quotes/random",
-			"desc":"Returns a random Bitcoin quote from the curated list."
+			"desc":"Returns a random Briskcoin quote from the curated list."
 		},
 		{
 			"category":"fun",
 			"url":"/holidays/all",
-			"desc":"Returns the full curated list of Bitcoin Holidays."
+			"desc":"Returns the full curated list of Briskcoin Holidays."
 		},
 		{
 			"category":"fun",
 			"url":"/holidays/today",
-			"desc":"Returns the Bitcoin Holidays celebrated 'today' (i.e. at the time the API call is made).",
+			"desc":"Returns the Briskcoin Holidays celebrated 'today' (i.e. at the time the API call is made).",
 			"optionalParams": {
 				"tzOffset":"The number of hours to offset from UTC for the caller's local timezone, e.g. \"-5\" for EST"
 			},
@@ -253,7 +253,7 @@ module.exports = {
 		{
 			"category":"fun",
 			"url":"/holidays/$DAY",
-			"desc":"Returns the Bitcoin Holidays celebrated on the specified day, using one of the following formats: yyyy-MM-DD, MM-DD.",
+			"desc":"Returns the Briskcoin Holidays celebrated on the specified day, using one of the following formats: yyyy-MM-DD, MM-DD.",
 			"testUrl": "/holidays/01-03"
 		},
 

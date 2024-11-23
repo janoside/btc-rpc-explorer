@@ -88,7 +88,7 @@ if (exchangeRates)
 					- var currencyValue = parseInt(networkVolume.d1.amt);
 					- var currencyValueDecimals = 0;
 
-					if (userSettings.displayCurrency == "btc")
+					if (userSettings.displayCurrency == "bkc")
 						+valueDisplaySpecial(networkVolume.d1.amt, 0)
 
 					else
@@ -314,7 +314,7 @@ if (exchangeRates)
 								const largeNumberData = utils.formatLargeNumberSignificant(parts.intVal, 3);
 								val = `${largeNumberData[0]}${largeNumberData[1].abbreviation}`
 							}
-							// Amount followed by minimized currency name (BTC or sat) with a non-breaking space in-between
+							// Amount followed by minimized currency name (BKC or sat) with a non-breaking space in-between
 							return `${val}&nbsp;<span class='text-tiny'>${currencyType.name}</span>`
 						}
 					- const warningFees = formatFees(thresholds_totalFees.warning)

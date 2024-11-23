@@ -33,7 +33,7 @@ while (s3BucketPath.endsWith("/")) {
 const coins = require("./coins.js");
 const credentials = require("./credentials.js");
 
-const currentCoin = process.env.BTCEXP_COIN || "BTC";
+const currentCoin = process.env.BTCEXP_COIN || "BKC";
 
 const rpcCred = credentials.rpc;
 
@@ -96,7 +96,7 @@ module.exports = {
 	coin: currentCoin,
 
 	displayDefaults: {
-		displayCurrency: (process.env.BTCEXP_DISPLAY_CURRENCY || "btc"),
+		displayCurrency: (process.env.BTCEXP_DISPLAY_CURRENCY || "bkc"),
 		localCurrency: (process.env.BTCEXP_LOCAL_CURRENCY || "usd"),
 		theme: (process.env.BTCEXP_UI_THEME || "dark"),
 		timezone: (process.env.BTCEXP_UI_TIMEZONE || "local")
@@ -227,10 +227,13 @@ module.exports = {
 		prioritizedToolIdsList: [0, 10, 11, 9, 3, 4, 16, 12, 2, 5, 15, 1, 6, 7, 13, 8],
 		toolSections: [
 			{name: "Basics", items: [0, 2]},
-			{name: "Mempool", items: [4, 16, 5]},
-			{name: "Analysis", items: [9, 18, 10, 11, 12, 3, 20]},
-			{name: "Technical", items: [15, 6, 7, 1]},
-			{name: "Fun", items: [8, 17, 19, 13]},
+			{name: "Mempool", items: [16, 5]},
+			//{name: "Mempool", items: [4, 16, 5]},
+			{name: "Analysis", items: [18, 10, 11, 12, 20]},
+			//{name: "Analysis", items: [9, 18, 10, 11, 12, 3, 20]},
+			{name: "Technical", items: [15, 1]},
+			/*{name: "Technical", items: [15, 6, 7, 1]},
+			  {name: "Fun", items: [8, 17, 19, 13]},*/
 		]
 	},
 

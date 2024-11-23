@@ -38,7 +38,7 @@ function loadFreshRpcCredentials() {
 
 	return {
 		host: btcUri.hostname || process.env.BTCEXP_BITCOIND_HOST || "127.0.0.1",
-		port: btcUri.port || process.env.BTCEXP_BITCOIND_PORT || 8332,
+		port: btcUri.port || process.env.BTCEXP_BITCOIND_PORT || 8552,
 
 		authType: authType,
 

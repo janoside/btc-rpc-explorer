@@ -150,7 +150,37 @@ const ipCache = {
 	}
 };
 
+// Updated Current Supply for BKC
+function getcurrentsupply() {
+	var currentsupply = 7795829;
+	var totalcurrentsupply = 0;
+	//-----
+	var fs = require('fs');
 
+	var request = require('request');
+	request('http://api.briskcoin.org:1123/supply', function (error, response, body) {
+	  if (!error && response.statusCode == 200) {
+		 var getjson = JSON.parse(body);
+		 console.log(getjson.result.supply);
+		 //-----------
+		 fs.writeFile('supply.log', getjson.result.supply, function (err) {
+			if (err) return console.log(err);
+			console.log('Override Total Supply!');
+		 });
+	  }
+	});
+	//----------
+	try {  
+		var data = fs.readFileSync('/root/bkc-rpc-explorer/supply.log', 'utf8');
+		//console.log("Read Total Supply:"+ data.toString());
+		totalcurrentsupply = (data/100000000);
+	} catch(e) {
+		console.log('Error:', e.stack);
+	}
+
+	currentsupply = totalcurrentsupply; 
+	return currentsupply;
+ } 
 
 function redirectToConnectPageIfNeeded(req, res) {
 	if (!req.session.host) {
@@ -1608,6 +1638,7 @@ const perfLogNewItem = (tags) => {
 };
 
 module.exports = {
+	getcurrentsupply: getcurrentsupply,
 	reflectPromise: reflectPromise,
 	redirectToConnectPageIfNeeded: redirectToConnectPageIfNeeded,
 	formatHex: formatHex,

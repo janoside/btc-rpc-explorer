@@ -1,7 +1,7 @@
 {
-	"name": "btc-rpc-explorer",
+	"name": "bkc-rpc-explorer",
 	"version": "3.4.0",
-	"description": "Open-source, self-hosted Bitcoin explorer",
+	"description": "Open-source, self-hosted Briskcoin explorer",
 	"private": false,
 	"bin": "bin/cli.js",
 	"scripts": {
@@ -19,20 +19,20 @@
 		"css-dark-v1": "sass --style compressed ./public/scss/dark-v1.scss ./public/style/dark-v1.min.css",
 		"css": "npm-run-all css-light css-dark css-dark-v1 integrity"
 	},
-	"keywords":
-	[
-		"bitcoin",
-		"btc",
+	"keywords": [
+		"briskcoin",
+		"bkc",
 		"blockchain"
 	],
-	"author": "Dan Janosik <dan@47.io>",
+	"author": "Jack Levi <jack@briskcoin.rog>",
 	"license": "MIT",
 	"repository": {
 		"type": "git",
-		"url": "git+https://github.com/janoside/btc-rpc-explorer.git"
+		"url": "git+https://github.com/briskcoin-project/bkc-rpc-explorer.git"
 	},
 	"dependencies": {
 		"@janoside/app-utils": "github:janoside/app-utils#ba4c23d3f",
+		"and": "^0.0.3",
 		"async": "^3.2.4",
 		"axios": "^1.7.4",
 		"basic-auth": "^2.0.1",
@@ -55,6 +55,7 @@
 		"express-async-handler": "^1.2.0",
 		"express-rate-limit": "^7.4.0",
 		"express-session": "^1.17.3",
+		"install": "^0.13.0",
 		"jayson": "^4.1.0",
 		"lru-cache": "^10.0.0",
 		"markdown-it": "^14.0.0",
@@ -64,11 +65,13 @@
 		"moment": "^2.29.4",
 		"moment-duration-format": "^2.3.2",
 		"morgan": "^1.10.0",
+		"npm": "^10.9.1",
 		"on-headers": "^1.0.2",
 		"pidusage": "^3.0.2",
 		"pug": "^3.0.2",
 		"qrcode": "^1.5.3",
 		"redis": "^4.6.6",
+		"request": "^2.88.2",
 		"semver": "^7.5.2",
 		"serve-favicon": "^2.5.0",
 		"simple-git": "^3.18.0",

@@ -24,7 +24,7 @@ include ../includes/shared-mixins.pug
 					+summaryItem("UTXO Count", "The total number of UTXOs, or Unspent Transaction Outputs, across the entire blockchain")
 						| #{utxoSetSummary.txouts.toLocaleString()}
 
-					+summaryItem("Coins", "The sum of all spendable BTC units across the entire blockchain")
+					+summaryItem("Coins", "The sum of all spendable BKC units across the entire blockchain")
 						span #{parseFloat(utxoSetSummary.total_amount).toLocaleString()}
 						+copyTextButton(utxoSetSummary.total_amount)
 

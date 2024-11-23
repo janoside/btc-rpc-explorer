@@ -161,8 +161,8 @@
 									- var currencyValue = parseInt(satValue.dividedBy(coinConfig.baseCurrencyUnit.multiplier));
 									- var currencyValueDecimals = 0;
 
-									if (userSettings.displayCurrency == "btc")
-										+valueDisplaySpecial(currencyValue, 0)
+									if (userSettings.displayCurrency == "bkc")
+										+valueDisplaySpecial(currencyValue, 1)
 
 									else
 										+valueDisplay(currencyValue)
@@ -201,7 +201,7 @@
 								- var currencyValue = new Decimal(block.totalFees);
 								- var currencyValueDecimals = 3;
 
-								if (userSettings.displayCurrency == "btc")
+								if (userSettings.displayCurrency == "bkc")
 									+valueDisplaySpecial(block.totalFees, 4)
 
 								else
