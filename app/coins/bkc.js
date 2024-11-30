@@ -583,9 +583,7 @@ module.exports = {
 		}else{
 			reward = 5;
 			if (blockHeight > halvings){
-				while (blockHeight > halvings){
-					reward = reward/2;
-				}
+				reward = reward/2;
 				getrw = reward;
 			}else{
 				getrw = reward;

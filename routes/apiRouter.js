@@ -313,7 +313,7 @@ router.get("/blockchain/next-halving", asyncHandler(async (req, res, next) => {
 		res.json({
 			nextHalvingIndex: nextHalvingData.nextHalvingIndex,
 			nextHalvingBlock: nextHalvingData.nextHalvingBlock,
-			nextHalvingSubsidy: coinConfig.blockRewardFunction(nextHalvingData.nextHalvingBlock, global.activeBlockchain),
+			nextHalvingSubsidy: coinConfig.blockRewardFunction2(nextHalvingData.nextHalvingBlock, global.activeBlockchain),
 			blocksUntilNextHalving: nextHalvingData.blocksUntilNextHalving,
 			timeUntilNextHalving: formatParts.join(", "),
 			nextHalvingEstimatedDate: nextHalvingData.nextHalvingDate,

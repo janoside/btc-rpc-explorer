@@ -547,7 +547,7 @@ async function onRpcConnectionVerified(getnetworkinfo, getblockchaininfo) {
 	// load historical/fun items for this chain
 	loadHistoricalDataForChain(global.activeBlockchain);
 
-	loadHolidays();
+	//loadHolidays();
 
 	if (global.activeBlockchain == "main") {
 		loadDifficultyHistory(getblockchaininfo.blocks);
