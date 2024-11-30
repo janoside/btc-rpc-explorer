@@ -306,7 +306,7 @@ function getAddressBalance(addrScripthash) {
 
 			if (addrScripthash == coinConfig.genesisCoinbaseOutputAddressScripthash) {
 				for (let i = 0; i < results.length; i++) {
-					var coinbaseBlockReward = coinConfig.blockRewardFunction(0, global.activeBlockchain);
+					var coinbaseBlockReward = coinConfig.blockRewardFunction2(0, global.activeBlockchain);
 					
 					results[i].result.confirmed += (coinbaseBlockReward * coinConfig.baseCurrencyUnit.multiplier);
 				}

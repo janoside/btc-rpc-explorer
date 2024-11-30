@@ -228,26 +228,16 @@ if (exchangeRates)
 					small.border-dotted.text-muted(title="Estimate pending...<br/>A new difficulty epoch just started. Difficulty adjustment estimates made with too little data can be very unreliable, so are not calculated.", data-bs-toggle="tooltip", data-bs-html="true")
 						i.bi-hourglass-split
 
-		+summaryItem("Coins", utxoSetSummary ? null : (config.slowDeviceMode ? `Because this app is configured to conserve resources (SLOW_DEVICE_MODE=true), this value is estimated, using a checkpoint.` : `This value is estimated, using a checkpoint.`))
+		+summaryItem("Coins", utxoSetSummary ? null : `Coin Supply.`)
 			- var maxSupply = coinConfig.maxSupplyByNetwork[activeBlockchain];
-
-			if (utxoSetSummary)
-				span #{parseFloat(utxoSetSummary.total_amount).toLocaleString()}
-				span.text-tiny.ms-2.text-muted
-					| (
-					span.border-dotted(title=`${new Decimal(utxoSetSummary.total_amount).dividedBy(maxSupply).times(100).toDP(5)}% have been mined into circulation`, data-bs-toggle="tooltip") #{new Decimal(utxoSetSummary.total_amount).dividedBy(maxSupply).times(100).toDP(2, Decimal.ROUND_DOWN)}%
-					| )
-
-			else
-				- var estimatedSupply = utils.estimatedSupply(getblockchaininfo.blocks);
-
-				span #{parseInt(estimatedSupply).toLocaleString()}
-				span.text-tiny.ms-2.text-muted
-					| (
-					span.border-dotted(title=`${estimatedSupply.dividedBy(maxSupply).times(100).toDP(4)}% have been mined into circulation`, data-bs-toggle="tooltip") #{estimatedSupply.dividedBy(maxSupply).times(100).toDP(1)}%
-					| )
-
-		
+			- var rscurrentSupply = utils.getcurrentsupply();
+			- var rscurrentSupplyPercentage = ((utils.getcurrentsupply()/35000000)*100);
+			- var rscurrentSupplyPercentageRound = parseFloat(rscurrentSupplyPercentage).toFixed(2);
+			span #{parseFloat(rscurrentSupply).toLocaleString()}
+			small.ms-2.text-muted
+				| (
+				span.border-dotted(title=`${parseFloat(rscurrentSupplyPercentageRound).toLocaleString()}% have been mined into circulation`, data-bs-toggle="tooltip") #{parseFloat(rscurrentSupplyPercentageRound).toLocaleString()}%
+				| )
 
 	hr.mt-3.mb-3
 

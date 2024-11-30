@@ -152,29 +152,30 @@ const ipCache = {
 
 // Updated Current Supply for BKC
 function getcurrentsupply() {
-	var currentsupply = 7795829;
+	var currentsupply = 3501950;
 	var totalcurrentsupply = 0;
-	//-----
 	var fs = require('fs');
-
 	var request = require('request');
-	request('http://api.briskcoin.org:1123/supply', function (error, response, body) {
-	  if (!error && response.statusCode == 200) {
-		 var getjson = JSON.parse(body);
-		 console.log(getjson.result.supply);
-		 //-----------
-		 fs.writeFile('supply.log', getjson.result.supply, function (err) {
-			if (err) return console.log(err);
-			console.log('Override Total Supply!');
-		 });
-	  }
+	request('http://api.briskcoin.org/supply', function (error, response, body) {
+		if (!error && response.statusCode == 200) {
+			var getjson = JSON.parse(body);
+			console.log(String(getjson.result.supply));
+			fs.writeFile('supply.log', String(getjson.result.supply), function (err) {
+				if (err) return console.log(err);
+				console.log('Override Total Supply!');
+			});
+		}
 	});
-	//----------
-	try {  
-		var data = fs.readFileSync('/root/bkc-rpc-explorer/supply.log', 'utf8');
-		//console.log("Read Total Supply:"+ data.toString());
-		totalcurrentsupply = (data/100000000);
-	} catch(e) {
+	var data;
+	try {
+		const filePath = '/root/bkc-rpc-explorer/supply.log';
+		if (fs.existsSync(filePath)) {
+			data = fs.readFileSync(filePath, 'utf8');
+			totalcurrentsupply = (data / 100000000);
+		} else {
+			console.log('File does not exist:', filePath);
+		}
+	} catch (e) {
 		console.log('Error:', e.stack);
 	}
 
@@ -664,7 +665,7 @@ function getTxTotalInputOutputValues(tx, txInputs, blockHeight) {
 		if (txInputs) {
 			for (let i = 0; i < tx.vin.length; i++) {
 				if (tx.vin[i].coinbase) {
-					totalInputValue = totalInputValue.plus(new Decimal(coinConfig.blockRewardFunction(blockHeight, global.activeBlockchain)));
+					totalInputValue = totalInputValue.plus(new Decimal(coinConfig.blockRewardFunction2(blockHeight, global.activeBlockchain)));
 
 				} else {
 					let txInput = txInputs[i];
@@ -701,7 +702,7 @@ function getBlockTotalFeesFromCoinbaseTxAndBlockHeight(coinbaseTx, blockHeight) 
 		return 0;
 	}
 
-	let blockReward = coinConfig.blockRewardFunction(blockHeight, global.activeBlockchain);
+	let blockReward = coinConfig.blockRewardFunction2(blockHeight, global.activeBlockchain);
 
 	let totalOutput = new Decimal(0);
 	for (let i = 0; i < coinbaseTx.vout.length; i++) {
@@ -743,12 +744,12 @@ function estimatedSupply(height) {
 			let heightDiff = height - i;
 
 			//console.log(`adding(${heightDiff}): ` + new Decimal(heightDiff).times(coinConfig.blockRewardFunction(i, global.activeBlockchain)));
-			return supply.plus(new Decimal(heightDiff).times(coinConfig.blockRewardFunction(i, global.activeBlockchain)));
+			return supply.plus(new Decimal(heightDiff).times(coinConfig.blockRewardFunction2(i, global.activeBlockchain)));
 		}
 
 		let heightDiff = nextHalvingHeight - i;
 
-		supply = supply.plus(new Decimal(heightDiff).times(coinConfig.blockRewardFunction(i, global.activeBlockchain)));
+		supply = supply.plus(new Decimal(heightDiff).times(coinConfig.blockRewardFunction2(i, global.activeBlockchain)));
 		
 		i += heightDiff;
 	}
