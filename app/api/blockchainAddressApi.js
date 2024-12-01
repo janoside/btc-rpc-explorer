@@ -13,7 +13,7 @@ function getAddressDetails(address, scriptPubkey, sort, limit, offset) {
 		}
 
 		if (sort == "asc") {
-			// need to query the total number of tx first, then build paging info from that value
+			// need to query the total number of tx first, then build  info from that value
 			try {
 				const response = await axios.get(
 					`https://blockchain.info/rawaddr/${address}?limit=1`,

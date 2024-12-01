@@ -47,7 +47,7 @@ block content
 
 		- var totalInputValue = new Decimal(0);
 		if (result.getrawtransaction.vin[0].coinbase)
-			- totalInputValue = totalInputValue.plus(new Decimal(coinConfig.blockRewardFunction2(result.getblock.height, activeBlockchain)));
+			- totalInputValue = totalInputValue.plus(new Decimal(coinConfig.blockRewardFunction(result.getblock.height, activeBlockchain)));
 		each txInput, txInputIndex in result.txInputs
 			if (txInput)
 				- var vout = txInput;
@@ -185,7 +185,7 @@ block content
 
 				+contentSection("Technical Details", true, "txPageShowTechDetails")
 					if (isTxConfirmed)
-						- var blockRewardMax = coinConfig.blockRewardFunction2(result.getblock.height, activeBlockchain);
+						- var blockRewardMax = coinConfig.blockRewardFunction(result.getblock.height, activeBlockchain);
 						- var valueDestroyed = (isCoinbaseTx && parseFloat(totalOutputValue) < parseFloat(blockRewardMax));
 
 					- var showLocktime = false;

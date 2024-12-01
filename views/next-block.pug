@@ -39,7 +39,7 @@ block content
 							span -
 
 					+summaryItem("Total Fees")
-						- var subsidy = coinConfig.blockRewardFunction2(blockTemplate.height, global.activeBlockchain);
+						- var subsidy = coinConfig.blockRewardFunction(blockTemplate.height, global.activeBlockchain);
 						- var totalFees = new Decimal(blockTemplate.coinbasevalue).dividedBy(coinConfig.baseCurrencyUnit.multiplier).minus(subsidy);
 
 						+valueDisplay(totalFees)
