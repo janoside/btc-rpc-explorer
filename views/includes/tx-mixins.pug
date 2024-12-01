@@ -6,9 +6,11 @@ mixin inputValueDisplay(tx, txVin, vout)
 			i.bi-asterisk.text-success
 
 		span(class=(tx.vin.length == 1 ? "fw-bold" : false))
-			- var currencyValue = coinConfig.blockRewardFunction2(blockHeight, activeBlockchain);
-			+valueDisplay(currencyValue)
-
+			if (typeof blockHeight !== "undefined" && blockHeight !== null)
+				- var currencyValue = coinConfig.blockRewardFunction2(blockHeight, activeBlockchain);
+				+valueDisplay(currencyValue)
+			else
+				+valueDisplay("N/A")
 	else
 		if (vout && vout.value)
 			span(class=(tx.vin.length == 1 ? "fw-bold" : "fw-light"))

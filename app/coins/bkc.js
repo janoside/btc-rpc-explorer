@@ -572,8 +572,9 @@ module.exports = {
 	},
 	// Updated for BKC
 	blockRewardFunction2:function(blockHeight, chain) {
-		var getrw= 0;
 		var halvings = 2102400;
+		var getrw= 0;
+		
 		if (blockHeight > 1 && blockHeight<=50000){
 			getrw = 50;
 		}else if(blockHeight > 50001 && blockHeight <= 100000){
