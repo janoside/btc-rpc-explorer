@@ -227,7 +227,7 @@ html(lang="en")
 				if (pageErrors && pageErrors.length > 0)
 					include includes/page-errors-modal.pug
 
-					div.alert.alert-danger
+					//div.alert.alert-danger
 						- var errorText = `This page encountered ${pageErrors.length.toLocaleString()} error${pageErrors.length == 1 ? "" : "s"}:`;
 						span.fw-bold #{errorText} 
 						a(href="javascript:void(0)", data-bs-toggle="modal", data-bs-target="#pageErrorsModal") Error details
