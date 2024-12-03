@@ -2,7 +2,7 @@
 
 Simple, database-free Briskcoin blockchain explorer, via RPC to [Briskcoin Core](https://github.com/briskcoin-project/briskcoin).
 
-This is a simple, self-hosted explorer for the Bitcoin blockchain, driven by RPC calls to your own [Briskcoin](https://github.com/briskcoin-project/briskcoin) node. It is easy to run and can be connected to other tools (like [ElectrumX](https://github.com/spesmilo/electrumx)) to achieve a full-featured explorer.
+This is a simple, self-hosted explorer for the Briskcoin blockchain, driven by RPC calls to your own [Briskcoin](https://github.com/briskcoin-project/briskcoin) node. It is easy to run and can be connected to other tools (like [ElectrumX](https://github.com/spesmilo/electrumx)) to achieve a full-featured explorer.
 
 Whatever reasons one may have for running a full node (trustlessness, technical curiosity, supporting the network, etc) it's helpful to appreciate the "fullness" of your node. With this explorer, you can explore not just the blockchain database, but also explore the functional capabilities of your own node.
 
@@ -32,7 +32,7 @@ See [CHANGELOG.md](/CHANGELOG.md).
 ## Prerequisites
 
 1. Install and run a full, archiving node - [instructions](https://briskcoin.org/en/full-node). Ensure that your briskcoin node has its RPC server enabled (`server=1`).
-2. Synchronize your node with the Bitcoin network (you *can* use this tool while your node is still sychronizing, but some pages may fail).
+2. Synchronize your node with the Briskcoin network (you *can* use this tool while your node is still sychronizing, but some pages may fail).
 3. Install a "recent" version of Node.js (8+ recommended).
 
 ### Note about pruning and indexing configurations
