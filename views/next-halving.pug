@@ -22,8 +22,11 @@ block content
 					| #{nextHalvingData.nextHalvingBlock.toLocaleString()}
 
 				+summaryItem("Subsidy", "The new supply that will be created (and rewarded to the winning miner) for each new block during the next halving's era.")
-					- let subsidy = coinConfig.blockRewardFunction2(nextHalvingData.nextHalvingBlock, global.activeBlockchain);
-					+valueDisplay(subsidy)
+					if (typeof blockHeight !== "undefined" && blockHeight !== null)
+						- let subsidy = coinConfig.blockRewardFunction2(nextHalvingData.nextHalvingBlock, global.activeBlockchain);
+						+valueDisplay(subsidy)
+					else
+						+valueDisplay("N/A")
 
 		+contentSection("Timeline / Progress")
 			+summaryRow(2)
