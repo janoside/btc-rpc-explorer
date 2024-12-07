@@ -10,13 +10,13 @@ html(lang="en")
 		meta(name="viewport", content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0, shrink-to-fit=no")
 
 		meta(name="description" content="Open-source, easy-to-use, educational Bitcoin explorer whose only dependency is your Bitcoin Core node.")
-		
+
 		if (!homepage)
 			link(rel="stylesheet", href=assetUrl(`./style/highlight.min.css`), integrity=assetIntegrity("highlight.min.css"), crossorigin="anonymous")
 
 
 		+themeCss
-		
+
 
 		link(id="canonical" rel="canonical" href="https://bitcoinexplorer.org")
 
@@ -33,7 +33,7 @@ html(lang="en")
 		meta(property="twitter:domain" content="bitcoinexplorer.org")
 
 		- var network = global.activeBlockchain || "main";
-		if (!network.endsWith("net") && network != "regtest")
+		if (!network.endsWith("net") && network != "regtest" && network != "testnet4")
 			- network = (network + "net"); // handles "main" -> "mainnet" and "test" -> "testnet"
 
 		link(rel="apple-touch-icon", sizes="180x180", href=assetUrl(`./img/network-${network}/apple-touch-icon.png`))
@@ -72,10 +72,10 @@ html(lang="en")
 					- var networkNameMap = {"main": "Mainnet", "test": "Testnet", "signet": "Signet"};
 					span.badge.bg-primary(title=`This is a public demo, but this tool is designed to be installed and run by all Bitcoiners...<br/><i>Don't Trust, Verify</i>!`, data-bs-toggle="tooltip", data-bs-html="true")
 						span Public Demo
-						
+
 				button.navbar-toggler.navbar-toggler-end(type="button", data-bs-toggle="collapse", data-bs-target="#navbarNav", aria-label="collapse navigation")
 					span.navbar-toggler-icon
-					
+
 				.collapse.navbar-collapse(id="navbarNav")
 					if (rpcClient)
 						ul.navbar-nav.me-auto
@@ -90,9 +90,9 @@ html(lang="en")
 								li.nav-item
 									span.badge.bg-primary(style="margin-top: 0.75rem;", title=`Current node's chain: ${activeBlockchain}` data-bs-toggle="tooltip") #{chainName}
 
-							
-							
-						
+
+
+
 						ul.navbar-nav
 							if (config.demoSite && homepage)
 								li.nav-item.dropdown.me-0.me-md-2.mt-2.mt-md-0.text-center.text-md-start
@@ -102,12 +102,12 @@ html(lang="en")
 									div.dropdown-menu.dropdown-menu-end.shadow(aria-label="Demo Sites")
 										span.dropdown-header Public Demo Sites
 
-										- var demoSites = ["main", "test", "signet"];
-										
+										- var demoSites = ["main", "test", "testnet4", "signet"];
+
 										each demoSite in demoSites
 											a.dropdown-item(href=coinConfig.demoSiteUrlsByNetwork[demoSite])
 												img.align-text-top.me-2(src=assetUrl(coinConfig.coinIconUrlsByNetwork[demoSite]), style="width: 20px;")
-												
+
 												| #{coinConfig.siteTitlesByNetwork[demoSite].replace("Explorer", "").replace("Bitcoin", "Mainnet")}
 
 							if (config.siteTools)
@@ -130,9 +130,9 @@ html(lang="en")
 													span  #{item.name}
 
 							li.nav-item.dropdown.me-0.me-md-3.mt-2.mt-md-0.text-center.text-md-start
-								a.nav-link.rounded.bg-header-footer-highlight.text-white.dropdown-toggle(href="javascript:void(0)", id="navbarDropdown", role="button", data-bs-toggle="dropdown", aria-haspopup="true", aria-expanded="false") 
+								a.nav-link.rounded.bg-header-footer-highlight.text-white.dropdown-toggle(href="javascript:void(0)", id="navbarDropdown", role="button", data-bs-toggle="dropdown", aria-haspopup="true", aria-expanded="false")
 									i.bi-gear.me-2.ms-1
-								
+
 								.dropdown-menu.dropdown-menu-end.shadow(aria-labelledby="navbarDropdown")
 									span.dropdown-header Display Currency
 
@@ -202,13 +202,13 @@ html(lang="en")
 									a.dropdown-item(href=`./admin/dashboard`) Admin Dashboard
 
 
-							
+
 
 				form.form-inline.d-none.d-lg-inline(method="post", action="./search", style="width: 325px;")
 					input(type="hidden", name="_csrf", value=csrfToken)
 					.input-group
 						input.form-control(type="text", name="query", placeholder="block height/hash, txid, address", value=(query), autocapitalize="off", autocomplete="off", autocorrect="off", spellcheck="false")
-						
+
 						button.btn.btn-primary(type="submit", aria-label="Search")
 							i.bi-search
 
@@ -216,10 +216,10 @@ html(lang="en")
 					input(type="hidden", name="_csrf", value=csrfToken)
 					.input-group
 						input.form-control(type="text", name="query", placeholder="height/hash/txid...", value=(query), autocapitalize="off", autocomplete="off", autocorrect="off", spellcheck="false")
-						
+
 						button.btn.btn-primary(type="submit", aria-label="Search")
 							i.bi-search
-		
+
 
 
 		div.pb-4.pt-3.pt-md-4.bg-main
@@ -229,7 +229,7 @@ html(lang="en")
 
 					div.alert.alert-danger
 						- var errorText = `This page encountered ${pageErrors.length.toLocaleString()} error${pageErrors.length == 1 ? "" : "s"}:`;
-						span.fw-bold #{errorText} 
+						span.fw-bold #{errorText}
 						a(href="javascript:void(0)", data-bs-toggle="modal", data-bs-target="#pageErrorsModal") Error details
 
 				if (userMessageMarkdown)
@@ -254,7 +254,7 @@ html(lang="en")
 
 					hr
 
-				
+
 				.row.mt-4.mb-6
 					.col-lg-3
 						.mb-4
@@ -262,7 +262,7 @@ html(lang="en")
 
 							.ms-2
 								a.footer-link(href="https://github.com/janoside/btc-rpc-explorer") github.com/janoside/btc-rpc-explorer
-									
+
 								if (global.sourcecodeProjectMetadata)
 									div.mt-2
 										a.btn.btn-primary.btn-sm.me-3.mb-1.text-decoration-none(href="https://github.com/janoside/btc-rpc-explorer")
@@ -281,9 +281,9 @@ html(lang="en")
 								span version: #{global.appVersion}
 								if (sourcecodeVersion)
 									br
-									span commit: 
+									span commit:
 										a.footer-link(href=`https://github.com/janoside/btc-rpc-explorer/commit/${sourcecodeVersion}`) #{sourcecodeVersion}
-								
+
 								br
 								span released: #{sourcecodeDate}
 								span(style="font-size: 0.9em;")  (
@@ -306,10 +306,10 @@ html(lang="en")
 									a.footer-link(href="http://btcexpz7xlwrqknqw6p3bok6shf73qtkd6zxct4x4qta2ktvh7ntprad.onion", title="Tor v3 Hidden Service", data-bs-toggle="tooltip") btcexp….onion
 									span.ms-1 (tor v3)
 									+copyTextButton("http://btcexpz7xlwrqknqw6p3bok6shf73qtkd6zxct4x4qta2ktvh7ntprad.onion")
-									
+
 									div.mt-2
-										- var demoSites = ["main", "test", "signet"];
-										
+										- var demoSites = ["main", "test", "testnet4", "signet"];
+
 										each demoSite in demoSites
 											a.me-2(href=coinConfig.demoSiteUrlsByNetwork[demoSite], title=coinConfig.siteTitlesByNetwork[demoSite], data-bs-toggle="tooltip")
 												img(src=assetUrl(coinConfig.logoUrlsByNetwork[demoSite]), alt=coinConfig.siteTitlesByNetwork[demoSite], style="width: 40px; height: 40px;")
@@ -329,17 +329,17 @@ html(lang="en")
 
 									a.text-white.mb-1(href="https://twitter.com/BitcoinExplorer", target="_blank", title="Follow @BitcoinExplorer on Twitter", data-bs-toggle="tooltip")
 										i.bi-twitter.text-twitter
-								
-								
+
+
 
 		+sharedScriptTags
-		
+
 		script.
 			var serverTzOffset = "!{new Decimal(new Date().getTimezoneOffset()).dividedBy(60)}";
 			var browserTzOffset = "!{browserTzOffset}";
 			var currentBrowserTzOffset = (new Date().getTimezoneOffset() / 60).toString();
 			var userTzOffset = "!{userTzOffset}";
-			
+
 			document.addEventListener("DOMContentLoaded", function(event) {''
 				enableTooltipsAndPopovers();
 
@@ -366,7 +366,7 @@ html(lang="en")
 								if (formatStr) {
 									formatStr = `&formatString=${formatStr}`;
 								}
-								
+
 								$.get(`./snippet/timestamp?timestamp=${timestampUtc}&includeAgo=${includeAgo}${formatStr}`, function(data) {
 									$(obj).html(data);
 
@@ -394,7 +394,7 @@ html(lang="en")
 		if (process.env.BTCEXP_PLAUSIBLE_ANALYTICS_DOMAIN && process.env.BTCEXP_PLAUSIBLE_ANALYTICS_SCRIPT_URL)
 			script(async defer data-domain=process.env.BTCEXP_PLAUSIBLE_ANALYTICS_DOMAIN src=process.env.BTCEXP_PLAUSIBLE_ANALYTICS_SCRIPT_URL)
 
-			
+
 
 		if (config.credentials.sentryUrl && config.credentials.sentryUrl.length > 0)
 			script(src=assetUrl("./js/sentry.min.js"), integrity=assetIntegrity("sentry.min.js"), crossorigin="anonymous")
@@ -410,5 +410,5 @@ html(lang="en")
 
 				gtag('config', '#{config.credentials.googleAnalyticsTrackingId}');
 
-		
+
 		block endOfBody
