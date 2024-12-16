@@ -721,6 +721,76 @@ module.exports = {
 			url: "https://x.com/Swan/status/1767646389532540945?s=20",
 			date: "2024-03-12"
 		},
+		{
+			// 102
+			text: "I believe we have countries where you are frightened of your everyday existence, and Bitcoin gives you an opportunity to invest in something that is outside your country's control.",
+			speaker: "Larry Fink",
+			url: "https://x.com/MichaelDell/status/1812895900068442621",
+			date: "2024-07-15"
+		},
+		{
+			// 103
+			text: "Bitcoin isn't 'cool' new tech. It's an ugly contraption optimized to be neutral apolitical money. It's not the toy you want, it's the medicine you need.",
+			speaker: "Saifedean Ammous",
+			url: "https://x.com/pete_rizzo_/status/1868295107583090779",
+			date: "2018-12-05"
+		},
+		{
+			// 104
+			text: "The longer Bitcoin survives, the more ridiculous your government's shitcoin looks.",
+			speaker: "Saifedean Ammous",
+			url: "https://x.com/pete_rizzo_/status/1868295115657150523",
+			date: "2019-03-12"
+		},
+		{
+			// 105
+			text: "Bitcoin is a new invention of the digital age, [but] the problems it purports to solve - are as old as human society itself.",
+			speaker: "Saifedean Ammous",
+			url: "https://x.com/pete_rizzo_/status/1868295123974369715",
+			date: "2018-03-23"
+		},
+		{
+			// 106
+			text: "Bitcoin is the hardest money ever invented: growth in its value cannot possibly increase its supply; it can only make the network more secure and immune to attack.",
+			speaker: "Saifedean Ammous",
+			url: "https://x.com/pete_rizzo_/status/1868295140676075784",
+			date: "2018-03-23"
+		},
+		{
+			// 107
+			text: "Any person who owns Bitcoin achieves a level of economic freedom which was not possible before its invention.",
+			speaker: "Saifedean Ammous",
+			url: "https://x.com/pete_rizzo_/status/1868295157784695147",
+			date: "2018-03-23"
+		},
+		{
+			// 108
+			text: "The Bitcoin ledger of transactions might just be the only objective set of facts in the world.",
+			speaker: "Saifedean Ammous",
+			url: "https://x.com/pete_rizzo_/status/1868295173026800073",
+			date: "2018-03-23"
+		},
+		{
+			// 109
+			text: "Bitcoin doesn't need your intellectual acceptance; your self interest will force you to use it sooner or later.",
+			speaker: "Saifedean Ammous",
+			url: "https://x.com/pete_rizzo_/status/1868295195776696727",
+			date: "2017-12-11"
+		},
+		{
+			// 110
+			text: "Your groceries aren't becoming more expensive, your money is becoming less valuable. Your supermarket is not the problem; your central bank is.",
+			speaker: "Saifedean Ammous",
+			url: "https://x.com/pete_rizzo_/status/1868295211815756036",
+			date: "2024-08-18"
+		},
+		{
+			// 111
+			text: "Bitcoin isn't here to compete for your coffee payments. It can offer international final settlement in under an hour.",
+			speaker: "Saifedean Ammous",
+			url: "https://x.com/pete_rizzo_/status/1868295219403264368",
+			date: "2017-12-08"
+		},
 
 		/*{
 			text: "Bitcoin is a technological tour de force.",
