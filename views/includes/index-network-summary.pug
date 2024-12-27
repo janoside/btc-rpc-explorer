@@ -10,6 +10,10 @@ if (exchangeRates || networkVolume)
 - let halvingProgressPercent = 0;
 
 if (nextHalvingData)
+    	if (!nextHalvingData.blocksUntilNextHalving) 
+                - nextHalvingData.blocksUntilNextHalving = 0;
+                - nextHalvingData.halvingBlockInterval = 0;
+
 	- halvingProgressPercent = new Decimal(100).minus(new Decimal(nextHalvingData.blocksUntilNextHalving).dividedBy(nextHalvingData.halvingBlockInterval).times(100));
 
 	if (halvingProgressPercent > 65)
