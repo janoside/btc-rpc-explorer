@@ -217,9 +217,9 @@ const sessionConfig = {
 	}
 };
 
-if (config.secureSite) {
-	expressApp.set('trust proxy', 1);
-}
+//if (config.secureSite) {
+expressApp.set('trust proxy', 1);
+//}
 
 // Helpful reference for production: nginx HTTPS proxy:
 // https://gist.github.com/nikmartin/5902176
