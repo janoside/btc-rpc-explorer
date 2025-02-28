@@ -7,6 +7,18 @@
       "Miningcore": {
         "name": "Miningcore",
         "link": "Miningcore"    
+      },
+      "/mined by poolsexy_solo/": {
+        "name": "PoolsexySolo",
+        "link": "PoolsexySolo"    
+      },
+      "/mined by splns pool.sexy/": {
+        "name": "Poolsexy",
+        "link": "Poolsexy"    
+      },
+      "koinium.com": {
+        "name": "Koinium",
+        "link": "koinium.com"    
       }
     },
       "payout_addresses": {
