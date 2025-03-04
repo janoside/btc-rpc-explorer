@@ -88,14 +88,14 @@ module.exports = {
 		},
 		{
 			// 12
-			text: "We shouldn't be counting or spending transactions until they have at least 1 confirmation... unconfirmed transactions are very much second class citizens.",
+			text: "We shouldn't be counting or spending transactions until they have at least 1 confirmation… unconfirmed transactions are very much second class citizens.",
 			speaker: "Satoshi",
 			date: "2010-09-30",
 			url: "https://bitcointalk.org/index.php?topic=1306.msg14714#msg14714"
 		},
 		{
 			// 13
-			text: "As computers get faster and the total computing power applied to creating bitcoins increases, the difficulty increases proportionally to keep the total new production constant.",
+			text: "As computers get faster, and the total computing power applied to creating bitcoins increases, the difficulty increases proportionally to keep the total new production constant.",
 			speaker: "Satoshi",
 			date: "2008-11-08",
 			url: "https://www.mail-archive.com/cryptography@metzdowd.com/msg09979.html"
@@ -124,7 +124,7 @@ module.exports = {
 		},
 		{
 			// 17
-			text: "With e-currency based on cryptographic proof, without the need to trust a third party middleman, money can be secure and transactions effortless.",
+			text: "With e-currency based on cryptographic proof, without the need to trust a third-party middleman, money can be secure and transactions effortless.",
 			speaker: "Satoshi",
 			date: "2009-02-11",
 			url: "http://p2pfoundation.ning.com/forum/topics/bitcoin-open-source"
@@ -175,7 +175,7 @@ module.exports = {
 		},
 		{
 			// 24
-			text: "I see Bitcoin as ultimately becoming a reserve currency for banks...",
+			text: "I see Bitcoin as ultimately becoming a reserve currency for banks…",
 			speaker: "Hal Finney",
 			date: "2010-12",
 			url: "https://www.coindesk.com/hal-finney-bitcoin-words"
@@ -217,14 +217,14 @@ module.exports = {
 		},
 		{
 			// 30
-			text: "The project needs to grow gradually so the software can be strengthened along the way.",
+			text: "The project needs to grow gradually, so the software can be strengthened along the way.",
 			speaker: "Satoshi",
 			date: "2010-12-05",
 			url: "https://bitcointalk.org/index.php?topic=1735.msg26999#msg26999"
 		},
 		{
 			// 31
-			text: "#bitcoin blockchain is the new wonder of the world, more work and human ingenuity, than went into the great pyramids of Egypt. The biggest computation ever done, a digital monument, a verifable artefact of digital gold - the foundation of a new digital age",
+			text: "#bitcoin blockchain is the new wonder of the world, more work and human ingenuity, than went into the great pyramids of Egypt. The biggest computation ever done, a digital monument, a verifable artefact of digital gold — the foundation of a new digital age",
 			speaker: "Adam Back",
 			date: "2020-06-04",
 			url: "https://twitter.com/adam3us/status/1268492893414711297"
@@ -245,7 +245,7 @@ module.exports = {
 		},
 		{
 			// 34
-			text: "It might make sense just to get some in case it catches on. If enough people think the same way, that becomes a self fulfilling prophecy.",
+			text: "It might make sense just to get some in case it catches on. If enough people think the same way, that becomes a self-fulfilling prophecy.",
 			speaker: "Satoshi",
 			date: "2009-01-16",
 			url: "https://www.metzdowd.com/pipermail/cryptography/2009-January/015014.html"
@@ -371,7 +371,7 @@ module.exports = {
 		},
 		{
 			// 52
-			text: "Bitcoin is a once in a thousand year monetary innovation and it's too late to ignore that fact.",
+			text: "Bitcoin is a once in a thousand-year monetary innovation, and it's too late to ignore that fact.",
 			speaker: "Nik Bhatia",
 			date: "2021-07-10",
 			url: "https://twitter.com/BitcoinSapiens/status/1413966460997840899"
@@ -392,7 +392,7 @@ module.exports = {
 		},
 		{
 			// 55
-			text: "[Mining is] easy now but it'll get harder as the network grows.",
+			text: "[Mining is] easy now, but it'll get harder as the network grows.",
 			speaker: "Satoshi",
 			date: "2009-12-12",
 			url: "https://bitcointalk.org/index.php?topic=13.msg46#msg46"
@@ -428,14 +428,14 @@ module.exports = {
 		},
 		{
 			// 60
-			text: "...the price gyrations of bitcoins are entertaining to me.",
+			text: "…the price gyrations of bitcoins are entertaining to me.",
 			speaker: "Hal Finney",
 			date: "2013-03-19",
 			url: "https://bitcointalk.org/index.php?topic=155054.msg1643833#msg1643833"
 		},
 		{
 			// 61
-			text: "I ... do think that there is potential value in a form of unforgeable token whose production rate is predictable and can't be influenced by corrupt parties.",
+			text: "I … do think that there is potential value in a form of unforgeable token whose production rate is predictable and can't be influenced by corrupt parties.",
 			speaker: "Hal Finney",
 			date: "2008-11-08",
 			url: "https://www.mail-archive.com/cryptography@metzdowd.com/msg09975.html"
@@ -484,21 +484,21 @@ module.exports = {
 		},
 		{
 			// 68
-			text: "Decentralized digital scarcity is the real innovation... Bitcoin was the first, and... continues to be the only such coin.",
+			text: "Decentralized digital scarcity is the real innovation… Bitcoin was the first, and… continues to be the only such coin.",
 			speaker: "Jimmy Song",
 			url: "https://jimmysong.medium.com/why-bitcoin-is-different-e17b813fd947",
 			date: "2018-04-02"
 		},
 		{
 			// 69
-			text: "There is no link between the informational realm and the physical realm. Proof of work is the only thing that creates this link in a probabilistic fashion, because it creates information that speaks for itself.",
+			text: "There is no link between the informational realm and the physical realm. Proof of work is the only thing that creates this link in a probabilistic fashion because it creates information that speaks for itself.",
 			speaker: "Gigi",
 			url: "https://youtu.be/w6VdgEz0NV4?t=1113",
 			date: "2022-05-12"
 		},
 		{
 			// 70
-			text: "It seems that #bitcoin attracts a great number of very technically gifted people... It also seems to pull in people that are more likely to ask questions or develop their own opinion, and want to make a difference.",
+			text: "It seems that #bitcoin attracts a great number of very technically gifted people… It also seems to pull in people that are more likely to ask questions or develop their own opinion, and want to make a difference.",
 			speaker: "Adam Back",
 			url: "https://twitter.com/TheBestBizzShow/status/1540380367173156866",
 			date: "2022-06-24"
@@ -520,7 +520,7 @@ module.exports = {
 		},
 		{
 			// 73
-			text: "The best way to make Bitcoin fail is to believe that its success is guaranteed... The big compromise in a strongly decentralized system is that it's all of our jobs to look out for it.",
+			text: "The best way to make Bitcoin fail is to believe that its success is guaranteed… The big compromise in a strongly decentralized system is that it's all of our jobs to look out for it.",
 			speaker: "Greg Maxwell",
 			url: "https://twitter.com/Pledditor/status/1604752986554630144",
 			date: "2022-12-19"
@@ -541,7 +541,7 @@ module.exports = {
 		},
 		{
 			// 76
-			text: "The proof-of-work chain is the solution to the synchronisation problem, and to knowing what the globally shared view is without having to trust anyone.",
+			text: "The proof-of-work chain is the solution to the synchronization problem, and to knowing what the globally shared view is without having to trust anyone.",
 			speaker: "Satoshi",
 			url: "https://satoshi.nakamotoinstitute.org/emails/cryptography/threads/1/#014833",
 			date: "2008-11-08"
@@ -576,21 +576,21 @@ module.exports = {
 		},
 		{
 			// 81
-			text: "Bitcoin is absolutely profane, so much so that it hardly bears contemplation. It challenges the State’s most treasured privilege: its ability to finance itself through inflation and seignorage.",
+			text: "Bitcoin is absolutely profane, so much so that it hardly bears contemplation. It challenges the State’s most treasured privilege: its ability to finance itself through inflation and seigniorage.",
 			speaker: "Nic Carter",
 			url: "https://medium.com/@nic__carter/a-most-peaceful-revolution-8b63b64c203e",
 			date: "2019-09-07"
 		},
 		{
 			// 82
-			text: "If it's your keys, it's your bitcoin. If it's not your keys, it's not your bitcoin! That's a lesson that we all learned during Gox, so...let's try not to have to be taught that lesson again.",
+			text: "If it's your keys, it's your bitcoin. If it's not your keys, it's not your bitcoin! That's a lesson that we all learned during Gox, so…let's try not to have to be taught that lesson again.",
 			speaker: "Andreas Antonopolous",
 			url: "https://youtu.be/uLpSM3HWU6U?t=4408",
 			date: "2016-04-14"
 		},
 		{
 			// 83
-			text: "I don't think we can affort two proof-of-work systems on this planet, but I think we might only need one.",
+			text: "I don't think we can afford two proof-of-work systems on this planet, but I think we might only need one.",
 			speaker: "Andreas Antonopolous",
 			url: "https://youtu.be/2T0OUIW89II?t=297",
 			date: "2017-12-12"
@@ -702,14 +702,14 @@ module.exports = {
 		},
 		{
 			// 99
-			text: "If Bitcoin were [to] become the ultimate form of currency [to be] adopted by human society, I can tell you exactly what's gonna happen as the worst scenario...we're all gonna die. This is not a joke.",
+			text: "If Bitcoin were [to] become the ultimate form of currency [to be] adopted by human society, I can tell you exactly what's gonna happen as the worst scenario…we're all gonna die. This is not a joke.",
 			speaker: "Chinese State Broadcaster",
 			url: "https://x.com/RussellOkung/status/1398262571199762433",
 			date: "2021-05-28"
 		},
 		{
 			// 100
-			text: "The lesson of Bitcoin is: bitcoin is the best asset, there is no second best asset, buy bitcoin, keep buying bitcoin, don't sell the bitcoin.",
+			text: "The lesson of Bitcoin is: bitcoin is the best asset, there is no second-best asset, buy bitcoin, keep buying bitcoin, don't sell the bitcoin.",
 			speaker: "Michael Saylor",
 			url: "https://x.com/TheBTCTherapist/status/1765420027837055306?s=20",
 			date: "2024-03-06"
@@ -744,7 +744,7 @@ module.exports = {
 		},
 		{
 			// 105
-			text: "Bitcoin is a new invention of the digital age, [but] the problems it purports to solve - are as old as human society itself.",
+			text: "Bitcoin is a new invention of the digital age, [but] the problems it purports to solve — are as old as human society itself.",
 			speaker: "Saifedean Ammous",
 			url: "https://x.com/pete_rizzo_/status/1868295123974369715",
 			date: "2018-03-23"
@@ -772,7 +772,7 @@ module.exports = {
 		},
 		{
 			// 109
-			text: "Bitcoin doesn't need your intellectual acceptance; your self interest will force you to use it sooner or later.",
+			text: "Bitcoin doesn't need your intellectual acceptance; your self-interest will force you to use it sooner or later.",
 			speaker: "Saifedean Ammous",
 			url: "https://x.com/pete_rizzo_/status/1868295195776696727",
 			date: "2017-12-11"
