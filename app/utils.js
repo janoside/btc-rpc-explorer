@@ -556,34 +556,30 @@ function identifyMiner(coinbaseTx, blockHeight) {
 	}
 	
 	if (global.miningPoolsConfigs) {
-		for (let i = 0; i < global.miningPoolsConfigs.length; i++) {
-			let miningPoolsConfig = global.miningPoolsConfigs[i];
+		const coinbaseVoutAddresses = coinbaseTx.vout?.flatMap(vout => getVoutAddresses(vout))
+		for (const miningPoolsConfig of global.miningPoolsConfigs) {
 
-			for (let payoutAddress in miningPoolsConfig.payout_addresses) {
-				if (miningPoolsConfig.payout_addresses.hasOwnProperty(payoutAddress)) {
-					if (coinbaseTx.vout && coinbaseTx.vout.length > 0) {
-						if (getVoutAddresses(coinbaseTx.vout[0]).includes(payoutAddress)) {
-							let minerInfo = miningPoolsConfig.payout_addresses[payoutAddress];
-							minerInfo.identifiedBy = "payout address " + payoutAddress;
-
-							return minerInfo;
-						}
-					}
-				}
-			}
-
-			for (let coinbaseTag in miningPoolsConfig.coinbase_tags) {
-				if (miningPoolsConfig.coinbase_tags.hasOwnProperty(coinbaseTag)) {
-					if (formatHex(coinbaseTx.vin[0].coinbase, "utf8").indexOf(coinbaseTag) != -1) {
-						let minerInfo = miningPoolsConfig.coinbase_tags[coinbaseTag];
-						minerInfo.identifiedBy = "coinbase tag '" + coinbaseTag + "'";
+			for (const payoutAddress in miningPoolsConfig.payout_addresses) {
+				if (coinbaseVoutAddresses?.length > 0) {
+					if (coinbaseVoutAddresses.includes(payoutAddress)) {
+						let minerInfo = miningPoolsConfig.payout_addresses[payoutAddress];
+						minerInfo.identifiedBy = "payout address " + payoutAddress;
 
 						return minerInfo;
 					}
 				}
 			}
 
-			for (let blockHash in miningPoolsConfig.block_hashes) {
+			for (const coinbaseTag in miningPoolsConfig.coinbase_tags) {
+				if (formatHex(coinbaseTx.vin[0].coinbase, "utf8").indexOf(coinbaseTag) != -1) {
+					let minerInfo = miningPoolsConfig.coinbase_tags[coinbaseTag];
+					minerInfo.identifiedBy = "coinbase tag '" + coinbaseTag + "'";
+
+					return minerInfo;
+				}
+			}
+
+			for (const blockHash in miningPoolsConfig.block_hashes) {
 				if (blockHash == coinbaseTx.blockhash) {
 					let minerInfo = miningPoolsConfig.block_hashes[blockHash];
 					minerInfo.identifiedBy = "known block hash '" + blockHash + "'";
@@ -607,9 +603,8 @@ function identifyMiner(coinbaseTx, blockHeight) {
 		}
 	}
 
-	if (coinbaseTx.vout && coinbaseTx.vout.length > 0) {
-		for (let i = 0; i < coinbaseTx.vout.length; i++) {
-			const vout = coinbaseTx.vout[i];
+	if (coinbaseTx.vout) {
+		for (const vout of coinbaseTx.vout) {
 
 			const voutValue = new Decimal(vout.value);
 			if (voutValue > 0) {
