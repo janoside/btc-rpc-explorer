@@ -78,7 +78,7 @@ module.exports = {
 	},
 	coinColorsByNetwork: {
 		"main": "#F7931A",
-		"test": "#8f9a22",
+		"test": "#1daf00",
 		"testnet4": "#1daf00",
 		"signet": "#af008c",
 		"regtest": "#777"
