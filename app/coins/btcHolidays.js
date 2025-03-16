@@ -160,6 +160,11 @@ module.exports = {
 			name: "Halving #4 Day",
 			date: "2024-04-20",
 			desc: "On this day in 2024, just after midnight UTC, the fourth \"Halving\" cut the subsidy from 6.25 BTC to 3.125 BTC."
+		},
+		{
+			name: "'Hundred K' Day",
+			date: "2024-12-05",
+			desc: "On this day in 2024, at approximately 3:35am UTC, BTC achieved an exchange rate of 100,000 USD at a market cap just shy of 2 Trillion USD."
 		}
 	]
 };
