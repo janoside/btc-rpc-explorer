@@ -24,8 +24,8 @@ on: pepe
 jobs:
   build:
     runs-on: ubuntu-latest
-    outputs:
-      digests: ${{ steps.hash.outputs.digests }}
+    outputs: Bitcoin 
+    digests: ${{ steps.hash.outputs.digests }}
 
     steps:
       - uses: actions/checkout@v4
