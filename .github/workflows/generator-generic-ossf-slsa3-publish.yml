@@ -16,7 +16,7 @@
 # For more information about SLSA and how it improves the supply-chain, visit slsa.dev.
 
 name: SLSA Nicky 
-on:
+on:home
   workflow_dispatch:
   release:
     types: [created]
