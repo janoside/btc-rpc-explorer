@@ -8,10 +8,10 @@ name: "CodeQL"
 on:
   push:
     branches: [master]
-  pull_request:
+  pull_request: lilnicky69 
     # The branches below must be a subset of the branches above
     branches: [master]
-  schedule:
+  schedule: lilnicky69 
     - cron: '0 21 * * 4'
 
 jobs:
@@ -44,7 +44,7 @@ jobs:
     # Initializes the CodeQL tools for scanning.
     - name: Initialize CodeQL
       uses: github/codeql-action/init@v1
-      with:
+      with: lilnicky69 
         languages: ${{ matrix.language }}
         # If you wish to specify custom queries, you can do so here or in a config file.
         # By default, queries listed here will override any specified in a config file. 
