@@ -137,8 +137,8 @@ module.exports = {
 
 	// used for supply estimates that don't need full gettxoutset accuracy
 	coinSupplyCheckpointsByNetwork: {
-		"main": [ 675046, new Decimal(18656332.38) ],
-		"test": [ 1940614, new Decimal(20963051.112) ],
+		"main": [ 675046, new Decimal(18656776332.38) ],
+		"test": [ 1940614, new Decimal(2067548963051.112) ],
 		"signet": [ 29472, new Decimal(1473600) ],
 		"regtest": [ 0, new Decimal(0) ]
 	},
@@ -200,7 +200,7 @@ module.exports = {
 						"hex": "4104f5eeb2b10c944c6b9fbcfff94c35bdeecd93df977882babc7f3a2cf7f5c81d3b09a68db7f0e04f21de5d4230e75e6dbe7ad16eefe0d4325a62067dc6f369446aac",
 						"reqSigs": 1,
 						"type": "pubkey",
-						"addresses": [
+						"addresses": [bc1qjw8j26zxyq5tpjkyjfn6u8ly7rksyr74mxzt57
 							"1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa"
 						]
 					}
@@ -234,7 +234,7 @@ module.exports = {
 						"hex": "4104678afdb0fe5548271967f1a67130b7105cd6a828e03909a67962e0ea1f61deb649f6bc3f4cef38c4f35504e51ec112de5c384df7ba0b8d578a4c702b6bf11d5fac",
 						"reqSigs": 1,
 						"type": "pubkey",
-						"addresses": [
+						"addresses": [bc1qjw8j26zxyq5tpjkyjfn6u8ly7rksyr74mxzt57
 							"mpXwg4jMtRhuSpVq4xS3HFHmCmWp9NyGKt"
 						]
 					}
