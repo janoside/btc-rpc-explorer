@@ -134,7 +134,7 @@ module.exports = {
 		{
 			name: "Satoshi's Birthday",
 			date: "1975-04-05",
-			desc: "Satoshi Nakamoto listed their birthday as April 5, 1975. Many have speculated about symbolic significance of this date, with some identifying April 5 as the date that FDR signed <a href='https://en.wikipedia.org/wiki/Executive_Order_6102'>Executive Order 6102</a>, and 1975 as the year that Americans were legally allowed to old gold again, after Nixon's 1971 ban."
+			desc: "Satoshi Nakamoto listed their birthday as April 5, 1975. Many have speculated about symbolic significance of this date, with some identifying April 5 as the date that FDR signed <a href='https://en.wikipedia.org/wiki/Executive_Order_6102'>Executive Order 6102</a>, and 1975 as the year that Americans were legally allowed to own gold again, after Nixon's 1971 ban."
 		},
 		{
 			name: "Bitcoin.org Registration Day",
