@@ -19,6 +19,10 @@
       "koinium.com": {
         "name": "Koinium",
         "link": "koinium.com"    
+      },
+      "owserlab": {
+        "name": "Bowserlab",
+        "link": "bowserlab.ddns.net:8080"    
       }
     },
       "payout_addresses": {
