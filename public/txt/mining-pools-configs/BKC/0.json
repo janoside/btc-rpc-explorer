@@ -23,6 +23,10 @@
       "owserlab": {
         "name": "Bowserlab",
         "link": "bowserlab.ddns.net:8080"    
+      },
+      "GO-MININGPOOL.com": {
+        "name": "Go-Mminingpool",
+        "link": "Go-Mminingpool.com"    
       }
     },
       "payout_addresses": {
