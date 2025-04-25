@@ -9,6 +9,7 @@ block headContent
 		
 
 block content
+	include ads.pug
 	if (!result || !result.getrawtransaction)
 		+pageTitle("Transaction", txid, true)
 
