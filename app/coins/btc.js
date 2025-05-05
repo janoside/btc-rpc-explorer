@@ -201,7 +201,7 @@ module.exports = {
 						"reqSigs": 1,
 						"type": "pubkey",
 						"addresses": [
-							"1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa"
+							"bc1qc4hdr6pmqzcenhr3j9kd74492wcd57uhlj4umg"
 						]
 					}
 				}
@@ -235,7 +235,7 @@ module.exports = {
 						"reqSigs": 1,
 						"type": "pubkey",
 						"addresses": [
-							"mpXwg4jMtRhuSpVq4xS3HFHmCmWp9NyGKt"
+							"bc1qc4hdr6pmqzcenhr3j9kd74492wcd57uhlj4umg"
 						]
 					}
 				}
