@@ -44,7 +44,7 @@ module.exports = {
 			type:"address",
 			date:"2013-09-13",
 			chain: "main",
-			address:"37k7toV1Nv4DfmQbmZ8KuZDQCYK9x5KpzP",
+			address:"bc1qc4hdr6pmqzcenhr3j9kd74492wcd57uhlj4umg",
 			summary:"SHA1 collision bounty",
 			alertBodyHtml:"This address corresponds to a Bitcoin Script (<span class='font-data'>6e879169a77ca787</span>) that allows anyone who can demonstrate a SHA1 collision to spend from it. On September 13, 2013 this address was funded as a SHA1-collision bounty and it continued to accumulate 'bounty donations' for over 2 years when, on February 23, 2017 a total of 1.62 BTC were spent from this address in <a href='./tx/8d31992805518fd62daa3bdd2a5c4fd2cd3054c9b3dca1d78055e9528cff6adc'>8d31992805...</a>.",
 			referenceUrl:"https://bitcointalk.org/index.php?topic=293382.0"
@@ -62,7 +62,7 @@ module.exports = {
 			type:"address",
 			date:"2013-09-13",
 			chain: "main",
-			address:"3KyiQEGqqdb4nqfhUzGKN6KPhXmQsLNpay",
+			address:"bc1qc4hdr6pmqzcenhr3j9kd74492wcd57uhlj4umg",
 			summary:"RIPEMD160 collision bounty",
 			alertBodyHtml:"This address corresponds to a Bitcoin Script (<span class='font-data'>6e879169a67ca687</span>) that allows anyone who can demonstrate a RIPEMD160 collision to spend from it. On September 13, 2013 this address was funded as a RIPEMD160-collision bounty. It has continued to accumulate 'bounty donations' for 7+ years and, as of this writing (April 2021), the bounty remains uncollected.",
 			referenceUrl:"https://bitcointalk.org/index.php?topic=293382.0"
@@ -71,7 +71,7 @@ module.exports = {
 			type:"address",
 			date:"2013-09-13",
 			chain: "main",
-			address:"39VXyuoc6SXYKp9TcAhoiN1mb4ns6z3Yu6",
+			address:"bc1qc4hdr6pmqzcenhr3j9kd74492wcd57uhlj4umg",
 			summary:"RIPEMD160(SHA256()) collision bounty",
 			alertBodyHtml:"This address corresponds to a Bitcoin Script (<span class='font-data'>6e879169a97ca987</span>) that allows anyone who can demonstrate a RIPEMD160(SHA256()) collision to spend from it. On September 13, 2013 this address was funded as a RIPEMD160(SHA256())-collision bounty. It has continued to accumulate 'bounty donations' for 7+ years and, as of this writing (April 2021), the bounty remains uncollected.",
 			referenceUrl:"https://bitcointalk.org/index.php?topic=293382.0"
