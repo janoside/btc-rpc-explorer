@@ -31,6 +31,10 @@
       "Mined by GO-MININGPOOL": {
         "name": "Go-Mminingpool",
         "link": "Go-Mminingpool.com"    
+      },
+      "PoolMine.xyz": {
+        "name": "PoolMine",
+        "link": "PoolMine.xyz"    
       }
     },
       "payout_addresses": {
