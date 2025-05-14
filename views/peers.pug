@@ -18,7 +18,7 @@ block headContent
 
 block content
 	+pageTitle(`${peerSummary.getpeerinfo.length} Peer${peerSummary.getpeerinfo.length == 1 ? "" : "s"}`)
-	
+	include ads.pug
 	+pageTabs(["Details", "JSON"])
 
 	.tab-content

@@ -4,8 +4,9 @@ block headContent
 	title Mempool Transactions
 
 block content
+	
 	+pageTitle("Mempool Transactions")
-
+	include ads.pug
 	if (false)
 		pre
 			code #{JSON.stringify(transactions, null, 4)}

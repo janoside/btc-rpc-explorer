@@ -4,8 +4,9 @@ block headContent
 	title Node Details
 	
 block content
-	+pageTitle("Node Details")
 
+	+pageTitle("Node Details")
+	include ads.pug
 	if (getblockchaininfo)
 		if (false)
 			p Data from RPC commands 
