@@ -35,6 +35,10 @@
       "PoolMine.xyz": {
         "name": "PoolMine",
         "link": "PoolMine.xyz"    
+      },
+        "thepool.life": {
+        "name": "Thepool.life",
+        "link": "Thepool.life"    
       }
     },
       "payout_addresses": {
