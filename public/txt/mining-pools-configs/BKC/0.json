@@ -39,6 +39,10 @@
         "thepool.life": {
         "name": "Thepool.life",
         "link": "Thepool.life"    
+      },
+        "NitroPool": {
+        "name": "NitroPool",
+        "link": "NitroPool"    
       }
     },
       "payout_addresses": {
