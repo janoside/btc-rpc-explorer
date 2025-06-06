@@ -5,6 +5,7 @@ block headContent
 
 block content
 	+pageTitle("API Docs")
+	include ads.pug
 	div.fs-4.mt-n3.mb-3 Current Version:
 		a.ms-2(href=`.${apiBaseUrl}/version`, title=`View version API call: ${apiBaseUrl}/version`, data-bs-toggle="tooltip", target="_blank") v#{apiDocs.version}
 		small.ms-2 (
