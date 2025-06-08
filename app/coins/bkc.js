@@ -570,27 +570,35 @@ module.exports = {
 
 		return blockRewardEras[index];
 	},
+	/*blockRewardFunction:function(blockHeight, chain) {
+		let halvingBlockInterval = (chain == "regtest" ? 150 : 210000);
+		let index = Math.floor(blockHeight / halvingBlockInterval);
+
+		return blockRewardEras[index];
+	},*/
 	// Updated for BKC
-	blockRewardFunction2:function(blockHeight, chain) {
+	blockRewardFunction2: function(blockHeight, chain) {
+		//console.log("BH" + blockHeight);
 		var halvings = 2102400;
-		var getrw= 0;
-		
-		if (blockHeight > 1 && blockHeight<=50000){
+		var getrw = 0;
+		var reward = 0;
+
+		if (blockHeight > 1 && blockHeight <= 50000) {
 			getrw = 50;
-		}else if(blockHeight > 50001 && blockHeight <= 100000){
+		} else if (blockHeight > 50001 && blockHeight <= 100000) {
 			getrw = 20;
-		}else if(blockHeight > 100001 && blockHeight <= 500000){
+		} else if (blockHeight > 100001 && blockHeight <= 500000) {
 			getrw = 10;
-		}else{
+		} else {
 			reward = 5;
-			if (blockHeight > halvings){
-				reward = reward/2;
-				getrw = reward;
-			}else{
-				getrw = reward;
-			}
-			
-		} 
+			// Compute number of halvings (starting from first full period)
+			var halvingsCount = Math.floor(blockHeight / halvings);
+			// Divide reward accordingly
+			reward = reward / Math.pow(2, halvingsCount);
+
+			getrw = reward;
+		}
+
 		return getrw;
 	}
 };

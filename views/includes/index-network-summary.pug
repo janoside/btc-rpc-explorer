@@ -227,16 +227,15 @@ if (exchangeRates)
 				else
 					small.border-dotted.text-muted(title="Estimate pending...<br/>A new difficulty epoch just started. Difficulty adjustment estimates made with too little data can be very unreliable, so are not calculated.", data-bs-toggle="tooltip", data-bs-html="true")
 						i.bi-hourglass-split
-
-		+summaryItem("Coins", utxoSetSummary ? null : `Coin Supply.`)
+		+summaryItem("Max Supply / Circulation", utxoSetSummary ? null : `Coin Supply.`)
 			- var maxSupply = coinConfig.maxSupplyByNetwork[activeBlockchain];
 			- var rscurrentSupply = utils.getcurrentsupply();
 			- var rscurrentSupplyPercentage = ((utils.getcurrentsupply()/35000000)*100);
 			- var rscurrentSupplyPercentageRound = parseFloat(rscurrentSupplyPercentage).toFixed(2);
-			span #{parseFloat(rscurrentSupply).toLocaleString()}
-			small.ms-2.text-muted
+			span.ms-2.text-muted(style="font-size: 13pt;color: black !important;") 35,000,000 / #{parseFloat(rscurrentSupply).toLocaleString()}
+			small.ms-2.text-muted(style="font-size: 11pt;")
 				| (
-				span.border-dotted(title=`${parseFloat(rscurrentSupplyPercentageRound).toLocaleString()}% have been mined into circulation`, data-bs-toggle="tooltip") #{parseFloat(rscurrentSupplyPercentageRound).toLocaleString()}%
+				span.border-dotted(title=`${parseFloat(rscurrentSupplyPercentageRound).toLocaleString()}% of BKC has been mined into circulation.`, data-bs-toggle="tooltip") #{parseFloat(rscurrentSupplyPercentageRound).toLocaleString()}%
 				| )
 
 	hr.mt-3.mb-3
@@ -258,7 +257,7 @@ if (exchangeRates)
 			- smartFeeEstimateStrings.push(smartFeeEstimates[144]);
 			- smartFeeEstimateTimes.push('day');
 
-	+summaryRow((mempoolInfo == undefined ? 0 : 1) + (smartFeeEstimateStrings.length > 0 ? 1 : 0) + ((mempoolInfo && global.activeBlockchain != "signet") ? 1 : 0))
+	+summaryRow(1+(mempoolInfo == undefined ? 0 : 1) + (smartFeeEstimateStrings.length > 0 ? 1 : 0) + ((mempoolInfo && global.activeBlockchain != "signet") ? 1 : 0))
 		if (mempoolInfo)
 			- const thresholds_txCount = {warning: 7000, danger: 11000}
 			- const colorClass_txCount = (mempoolInfo.size > thresholds_txCount.danger) ? "text-danger" : (mempoolInfo.size > thresholds_txCount.warning ? "text-warning" : "text-success")
@@ -342,8 +341,9 @@ if (exchangeRates)
 
 					| #{x}
 					span.text-tiny.text-muted.ms-1 (#{smartFeeEstimateTimes[xIndex]})
-
-		
+		+summaryItem("Price", utxoSetSummary ? null : `Coin Price.`)
+			- var varfgetprice = parseFloat(utils.getprice()).toFixed(6);
+			span.ms-2.text-muted(style="font-size: 14pt;color: black !important;") $#{varfgetprice.toLocaleString()}
 
 	if (userSettings.homepageShowTechDetails == "true")
 		hr.mt-3.mb-3

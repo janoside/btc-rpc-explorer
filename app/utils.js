@@ -15,7 +15,7 @@ const ecc = require('tiny-secp256k1');
 const { BIP32Factory } = require('bip32');
 const moment = require("moment");
 const { bech32, bech32m } = require("bech32");
-
+const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args));
 // You must wrap a tiny-secp256k1 compatible implementation
 const bip32 = BIP32Factory(ecc);
 
@@ -181,7 +181,47 @@ function getcurrentsupply() {
 
 	currentsupply = totalcurrentsupply; 
 	return currentsupply;
- } 
+ }; 
+
+function getprice() {
+	let fresult = 0;
+	const fs = require('fs');
+	const filePath = '/root/bkc-rpc-explorer/price.log';
+	const getprice = () =>
+	fetch("https://api.briskcoin.org/getprice")
+		.then(r => r.json())
+		.then(d => d?.result
+		? {
+			usd: (+d.result.price_usd).toFixed(10),
+			btc: (+d.result.price_btc).toFixed(10)
+			}
+		: (console.log("No price data."), null)
+		)
+		.catch(e => (console.error("Error fetching price:", e), null));
+	getprice().then(p => {
+		if (p) {
+			console.log(`USD=${p.usd}`);
+			const content = 'Hello, this is some text!';
+
+			if (!fs.existsSync(filePath)) {
+				fs.writeFileSync(filePath, p.usd);
+				console.log('File created and text written.');
+			} else {
+				//fs.writeFileSync(filePath, content); 
+				console.log('File overwritten.');
+			}
+		}
+	});
+	if (fs.existsSync(filePath)) {
+		console.log('File exists.');
+		const content = fs.readFileSync(filePath, 'utf8');
+		fresult = content;
+	} else {
+		console.log('File does not exist.');
+	}
+	console.log('File content 2:', fresult);
+	return fresult;
+};
 
 function redirectToConnectPageIfNeeded(req, res) {
 	if (!req.session.host) {
@@ -701,7 +741,7 @@ function getBlockTotalFeesFromCoinbaseTxAndBlockHeight(coinbaseTx, blockHeight) 
 	if (coinbaseTx == null) {
 		return 0;
 	}
-
+	//prung
 	let blockReward = coinConfig.blockRewardFunction2(blockHeight, global.activeBlockchain);
 
 	let totalOutput = new Decimal(0);
@@ -1639,6 +1679,7 @@ const perfLogNewItem = (tags) => {
 };
 
 module.exports = {
+	getprice: getprice,
 	getcurrentsupply: getcurrentsupply,
 	reflectPromise: reflectPromise,
 	redirectToConnectPageIfNeeded: redirectToConnectPageIfNeeded,

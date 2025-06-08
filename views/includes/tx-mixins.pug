@@ -87,7 +87,7 @@ mixin txIoDetails(tx, txInputs, totalIOValues, blockHeight, options={})
 							if (vout && vout.coinbaseSpend)
 								span.d-none.d-sm-inline
 									+successBadge
-										span(title=`This input spends a coinbase output (mining reward), meaning that this represents the first time these coins have been spent.`, data-bs-toggle="tooltip") 1<sup>st</sup> spend
+										span(title=`This input spends a coinbase output (mining ), meaning that this represents the first time these coins have been spent.`, data-bs-toggle="tooltip") 1<sup>st</sup> spend
 
 							span.ms-1.float-end
 								+inputValueDisplay(tx, txVin, vout)
