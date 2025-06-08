@@ -184,44 +184,33 @@ function getcurrentsupply() {
  }; 
 
 function getprice() {
-	let fresult = 0;
 	const fs = require('fs');
 	const filePath = '/root/bkc-rpc-explorer/price.log';
-	const getprice = () =>
+	let fresult = 0;
 	fetch("https://api.briskcoin.org/getprice")
 		.then(r => r.json())
-		.then(d => d?.result
-		? {
-			usd: (+d.result.price_usd).toFixed(10),
-			btc: (+d.result.price_btc).toFixed(10)
-			}
-		: (console.log("No price data."), null)
-		)
-		.catch(e => (console.error("Error fetching price:", e), null));
-	getprice().then(p => {
-		if (p) {
-			console.log(`USD=${p.usd}`);
-			const content = 'Hello, this is some text!';
-
-			if (!fs.existsSync(filePath)) {
-				fs.writeFileSync(filePath, p.usd);
-				console.log('File created and text written.');
+		.then(d => {
+			const price = d?.result?.price_usd;
+			if (price) {
+				const usd = (+price).toFixed(10);
+				console.log(`USD=${usd}`);
+				fs.writeFileSync(filePath, usd); // Always update
+				console.log('Price written to file.');
 			} else {
-				//fs.writeFileSync(filePath, content); 
-				console.log('File overwritten.');
+				console.log('No price data.');
 			}
-		}
-	});
+		})
+		.catch(e => console.error('Error fetching price:', e));
+
 	if (fs.existsSync(filePath)) {
-		console.log('File exists.');
-		const content = fs.readFileSync(filePath, 'utf8');
-		fresult = content;
+		fresult = fs.readFileSync(filePath, 'utf8');
+		console.log('File content:', fresult);
 	} else {
 		console.log('File does not exist.');
 	}
-	console.log('File content 2:', fresult);
 	return fresult;
-};
+}
+
 
 function redirectToConnectPageIfNeeded(req, res) {
 	if (!req.session.host) {
