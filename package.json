@@ -65,6 +65,7 @@
 		"moment": "^2.29.4",
 		"moment-duration-format": "^2.3.2",
 		"morgan": "^1.10.0",
+		"node-fetch": "^3.3.2",
 		"npm": "^10.9.1",
 		"on-headers": "^1.0.2",
 		"pidusage": "^3.0.2",
