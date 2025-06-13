@@ -174,6 +174,8 @@ function getAddressDetails(address, scriptPubkey, sort, limit, offset) {
 		}
 
 		var addrScripthash = hexEnc.stringify(sha256(hexEnc.parse(scriptPubkey)));
+
+		
 		addrScripthash = addrScripthash.match(/.{2}/g).reverse().join("");
 
 		var promises = [];
