@@ -1614,23 +1614,18 @@ function tryParseAddress(address) {
 	let base58Error = null;
 	let bech32Error = null;
 	let bech32mError = null;
-
 	let parsedAddress = null;
-
 	// Try decoding as base58check no matter the prefix
 	try {
 		// First try with bitcoinjs-lib
 		parsedAddress = bitcoinjs.address.fromBase58Check(address);
 		parsedAddress.hash = parsedAddress.hash.toString("hex");
-
 		return {
 			encoding: "base58",
 			parsedAddress: parsedAddress
 		};
-
 	} catch (err) {
 		base58Error = err;
-
 		// Fallback: manually decode base58check
 		try {
 			const decoded = bs58check.decode(address);
@@ -1638,7 +1633,7 @@ function tryParseAddress(address) {
 			return {
 				encoding: "base58-custom",
 				parsedAddress: {
-					version: decoded[0],                 // This will be 25 or 33 or 153
+					version: decoded[0],
 					hash: decoded.slice(1).toString("hex")
 				}
 			};
@@ -1646,7 +1641,6 @@ function tryParseAddress(address) {
 			base58Error = err2;
 		}
 	}
-
 	// Try bech32
 	try {
 		parsedAddress = bitcoinjs.address.fromBech32(address);
@@ -1660,7 +1654,6 @@ function tryParseAddress(address) {
 	} catch (err) {
 		bech32Error = err;
 	}
-
 	// Try bech32m
 	try {
 		parsedAddress = bech32m.decode(address);
@@ -1674,10 +1667,8 @@ function tryParseAddress(address) {
 	} catch (err) {
 		bech32mError = err;
 	}
-
 	// If all parsing fails, return all errors
 	let returnVal = { errors: [] };
-
 	if (base58Error) {
 		returnVal.errors.push(base58Error);
 	}
@@ -1687,12 +1678,10 @@ function tryParseAddress(address) {
 	if (bech32mError) {
 		returnVal.errors.push(bech32mError);
 	}
-
 	return returnVal;
 }
 
 const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
-
 const awaitPromises = async (promises) => {
 	const promiseResults = await Promise.allSettled(promises);
 
@@ -1703,10 +1692,8 @@ const awaitPromises = async (promises) => {
 			}
 		}
 	});
-
 	return promiseResults;
 };
-
 const obfuscateProperties = (obj, properties) => {
 	if (process.env.BTCEXP_SKIP_LOG_OBFUSCATION) {
 		return obj;
