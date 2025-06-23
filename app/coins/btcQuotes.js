@@ -798,6 +798,13 @@ module.exports = {
 			url: "https://x.com/pete_rizzo_/status/1882775493025714514",
 			date: "2009-01-24"
 		},
+		{
+			// 113
+			text: "We can't achieve human rights without financial freedom, and we can't achieve financial freedom without Bitcoin.",
+			speaker: "Alex Gladstein",
+			url: "https://x.com/gladstein/status/1886491858907599224",
+			date: "2025-02-23"
+		},
 
 		/*{
 			text: "Bitcoin is a technological tour de force.",
