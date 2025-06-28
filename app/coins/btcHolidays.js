@@ -134,7 +134,7 @@ module.exports = {
 		{
 			name: "Goodbye Satoshi Day",
 			date: "2010-12-12",
-			desc: "On this day in 2010, Satoshi sent his final message on the BitcoinTalk forum. Then, he logged off, never to return."
+			desc: "On this day in 2010, Satoshi sent <a href='https://bitcointalk.org/index.php?topic=2228.0'>his final message on the BitcoinTalk forum</a>. Then, he logged off, never to return."
 		},
 		{
 			name: "Satoshi's Birthday",
