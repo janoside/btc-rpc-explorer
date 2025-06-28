@@ -1,8 +1,10 @@
 ##### v3.5.0
-###### Unreleased
+###### 2025-06-23
 
+* Fix for node details page display on 28.0+
 * Tweak display of miner "notes" (disclaimer for Patoshi)
 * Fix for display of JSON-data content
+* New holidays and quotes
 * Updated miner IDs (including removal of 3 probably false positives from the "Patoshi" list)
 * Updated dependencies
 
