@@ -590,7 +590,7 @@ module.exports = {
 		},
 		{
 			// 83
-			text: "I don't think we can affort two proof-of-work systems on this planet, but I think we might only need one.",
+			text: "I don't think we can afford two proof-of-work systems on this planet, but I think we might only need one.",
 			speaker: "Andreas Antonopolous",
 			url: "https://youtu.be/2T0OUIW89II?t=297",
 			date: "2017-12-12"
