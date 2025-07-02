@@ -1,3 +1,10 @@
+##### v3.5.1
+###### 2025-07-02
+
+* Minor cleanup
+* Fix self-identified version number
+
+
 ##### v3.5.0
 ###### 2025-06-23
 
