@@ -309,7 +309,7 @@ html(lang="en")
 									
 									div.mt-2
 										- var demoSites = ["main", "test", "testnet4", "signet"];
-
+										
 										each demoSite in demoSites
 											a.me-2(href=coinConfig.demoSiteUrlsByNetwork[demoSite], title=coinConfig.siteTitlesByNetwork[demoSite], data-bs-toggle="tooltip")
 												img(src=assetUrl(coinConfig.logoUrlsByNetwork[demoSite]), alt=coinConfig.siteTitlesByNetwork[demoSite], style="width: 40px; height: 40px;")

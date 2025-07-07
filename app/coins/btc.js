@@ -171,13 +171,13 @@ module.exports = {
 			"lastUpdated": 1681140656788
 		}
 	},
-
+	
 	genesisBlockHashesByNetwork:{
 		"main":	"000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f",
 		"test":	"000000000933ea01ad0ee984209779baaec3ced90fa3f408719526f8d77f4943",
 		"testnet4": "00000000da84f2bafbbc53dee25a72ae507ff4914b867c565be350b0da8bf043",
 		"regtest": "0f9188f13cb7b2c71f2a335e3a4fc328bf5beb436012afca590b1a11466e2206",
-		"signet":  "00000008819873e925422c1ff0f99f7cc9bbb232af63a077a480a3633bee1ef6",
+		"signet":  "00000008819873e925422c1ff0f99f7cc9bbb232af63a077a480a3633bee1ef6", 
 	},
 	genesisCoinbaseTransactionIdsByNetwork: {
 		"main":	"4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b",
