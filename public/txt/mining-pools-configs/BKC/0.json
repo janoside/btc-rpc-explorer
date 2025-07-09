@@ -43,6 +43,10 @@
         "NitroPool": {
         "name": "NitroPool",
         "link": "https://nitropool.net"    
+      },
+        "ashampool with Retro Mike Tech": {
+        "name": "Ashampool",
+        "link": "ashampool"    
       }
     },
       "payout_addresses": {
