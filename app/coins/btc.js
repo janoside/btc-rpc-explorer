@@ -551,8 +551,8 @@ module.exports = {
 		responseBodySelectorFunction:function(responseBody) {
 			//console.log("Exchange Rate Response: " + JSON.stringify(responseBody));
 
-			if (responseBody[0].topo && responseBody[0].topo.platform == "MT5") {
-				var prices = responseBody[0].spreadProfilePrices[0];
+			if (responseBody[7].topo && responseBody[7].topo.platform == "MT5") {
+				var prices = responseBody[7].spreadProfilePrices[0];
 				
 				return {
 					usd: prices.ask
