@@ -20,8 +20,9 @@ block content
 						li.page-item(class=(sort == "asc" ? "active" : false))
 							a.page-link(href=(sort == "asc" ? "javascript:void(0)" : `./blocks?limit=${limit}&offset=0&sort=asc`))
 								span(aria-hidden="true") Oldest blocks first
-		include ads.pug
+			
 	if (blocks)
+		include ads.pug
 		+contentSection
 			include includes/blocks-list.pug
 
@@ -33,6 +34,5 @@ block content
 
 				.mt-4
 					+pagination(limit, offset, sort, blockCount, paginationBaseUrl, "center", true)
-
 	else
 		p No blocks found
