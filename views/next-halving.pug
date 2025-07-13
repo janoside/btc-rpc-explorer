@@ -4,6 +4,7 @@ block headContent
 	title Next Halving
 
 block content
+	
 	+pageTitle("Next Halving")
 	include ads.pug
 
@@ -20,13 +21,10 @@ block content
 
 				+summaryItem("Block Height", "The block height at which the new block subsidy will begin.")
 					| #{nextHalvingData.nextHalvingBlock.toLocaleString()}
-
 				+summaryItem("Subsidy", "The new supply that will be created (and rewarded to the winning miner) for each new block during the next halving's era.")
-					if (typeof blockHeight !== "undefined" && blockHeight !== null)
-						- let subsidy = coinConfig.blockRewardFunction2(nextHalvingData.nextHalvingBlock, global.activeBlockchain);
-						+valueDisplay(subsidy)
-					else
-						+valueDisplay("N/A")
+					- let subsidy = coinConfig.blockRewardFunction2(blockHeight, global.activeBlockchain);
+					+valueDisplay(2.5)
+					//+valueDisplay(subsidy,1)
 
 		+contentSection("Timeline / Progress")
 			+summaryRow(2)

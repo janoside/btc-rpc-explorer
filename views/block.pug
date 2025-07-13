@@ -7,8 +7,8 @@ block headContent
 		title Block: Error
 
 block content
-	if (result.getblock)
-		include ads.pug
+	include ads.pug
+	if (result.getblock)	
 		+pageTitle(`Block #${result.getblock.height.toLocaleString()}`, result.getblock.hash, true)
 			if (result.getblock.previousblockhash)
 				a.btn.btn-sm.btn-primary.ms-2(href=`./block/${result.getblock.previousblockhash}`, title=`Block ${(result.getblock.height - 1).toLocaleString()}`, data-bs-toggle="tooltip") &larr;

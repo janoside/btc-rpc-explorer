@@ -423,7 +423,7 @@ async function getNextBlockEstimate() {
 
 
 
-	const subsidy = coinConfig.blockRewardFunction2(blockTemplate.height, global.activeBlockchain);
+	const subsidy = coinConfig.blockRewardFunction(blockTemplate.height, global.activeBlockchain);
 
 	const totalFees = new Decimal(blockTemplate.coinbasevalue).dividedBy(SATS_PER_BTC).minus(new Decimal(subsidy));
 
@@ -1042,7 +1042,7 @@ function summarizeBlockAnalysisData(blockHeight, tx, inputs) {
 	txSummary.totalDaysDestroyed = new Decimal(0);
 
 	if (txSummary.coinbase) {
-		let subsidy = global.coinConfig.blockRewardFunction2(blockHeight, global.activeBlockchain);
+		let subsidy = global.coinConfig.blockRewardFunction(blockHeight, global.activeBlockchain);
 
 		txSummary.totalInput = txSummary.totalInput.plus(new Decimal(subsidy));
 
@@ -1283,7 +1283,7 @@ function buildMiningSummary(statusId, startBlock, endBlock, statusFunc) {
 
 							const minerInfo = utils.identifyMiner(coinbaseTx, height);
 							const totalFees = utils.getBlockTotalFeesFromCoinbaseTxAndBlockHeight(coinbaseTx, height);
-							const subsidy = coinConfig.blockRewardFunction2(height, global.activeBlockchain);
+							const subsidy = coinConfig.blockRewardFunction(height, global.activeBlockchain);
 
 							let minerName = "Unknown";
 							if (minerInfo) {

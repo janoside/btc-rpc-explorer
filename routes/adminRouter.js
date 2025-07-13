@@ -37,6 +37,7 @@ router.get("/dashboard", function(req, res, next) {
 	res.locals.electrumStats = global.electrumStats;
 	res.locals.cacheStats = global.cacheStats;
 	res.locals.errorStats = global.errorStats;
+	res.locals.appEventStats = global.appEventStats;
 
 	res.locals.cacheSizes = {
 		misc: {

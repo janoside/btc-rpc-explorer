@@ -174,8 +174,6 @@ function getAddressDetails(address, scriptPubkey, sort, limit, offset) {
 		}
 
 		var addrScripthash = hexEnc.stringify(sha256(hexEnc.parse(scriptPubkey)));
-
-		
 		addrScripthash = addrScripthash.match(/.{2}/g).reverse().join("");
 
 		var promises = [];
@@ -308,7 +306,7 @@ function getAddressBalance(addrScripthash) {
 
 			if (addrScripthash == coinConfig.genesisCoinbaseOutputAddressScripthash) {
 				for (let i = 0; i < results.length; i++) {
-					var coinbaseBlockReward = coinConfig.blockRewardFunction2(0, global.activeBlockchain);
+					var coinbaseBlockReward = coinConfig.blockRewardFunction(0, global.activeBlockchain);
 					
 					results[i].result.confirmed += (coinbaseBlockReward * coinConfig.baseCurrencyUnit.multiplier);
 				}

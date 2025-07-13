@@ -263,7 +263,6 @@ function getBlockByHash(blockHash) {
 				return getRpcDataWithParams({method:"getblockheader", parameters:[blockHash]})
 					.then(function(block) { block.tx = []; return block });
 		}).then(function(block) {
-				//cannot change
 				block.subsidy = coinConfig.blockRewardFunction(block.height, global.activeBlockchain);
 				return block;
 		})

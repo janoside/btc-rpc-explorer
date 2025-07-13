@@ -47,7 +47,7 @@ function loadFreshRpcCredentials() {
 		
 		authCookieFilepath: authCookieFilepath,
 		
-		timeout: parseInt(btcUri.query.timeout || process.env.BTCEXP_BITCOIND_RPC_TIMEOUT || 5000),
+		timeout: parseInt(btcUri.query.timeout || process.env.BTCEXP_BITCOIND_RPC_TIMEOUT || 5100),
 	};
 }
 

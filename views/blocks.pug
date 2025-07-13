@@ -4,7 +4,7 @@ block headContent
 	title Blocks
 
 block content
-	include ads.pug
+	
 	.clearfix
 		.float-start
 			+pageTitle("Blocks")
@@ -20,7 +20,7 @@ block content
 						li.page-item(class=(sort == "asc" ? "active" : false))
 							a.page-link(href=(sort == "asc" ? "javascript:void(0)" : `./blocks?limit=${limit}&offset=0&sort=asc`))
 								span(aria-hidden="true") Oldest blocks first
-
+		include ads.pug
 	if (blocks)
 		+contentSection
 			include includes/blocks-list.pug

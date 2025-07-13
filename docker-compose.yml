@@ -13,7 +13,7 @@ services:
       BTCEXP_ADDRESS_API: $BTCEXP_ADDRESS_API
       BTCEXP_ELECTRUM_SERVERS: $BTCEXP_ELECTRUM_SERVERS
       BTCEXP_SLOW_DEVICE_MODE: false
-      #More information mode, including Bitcoin exchange rates
+      #More information mode, including Briskcoin exchange rates
       #More privacy mode, no external queries
       # BTCEXP_PRIVACY_MODE: true
       # BTCEXP_NO_RATES: true

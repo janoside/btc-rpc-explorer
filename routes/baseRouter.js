@@ -1113,7 +1113,7 @@ router.get("/block-height/:blockHeight", asyncHandler(async (req, res, next) => 
 		next();
 
 	} catch (err) {
-		res.locals.userMessageMarkdown = `Failed loading block: height=**${blockHeight}**`;
+		res.locals.userMessageMarkdown = `Failed loading block: height=**${req.params.blockHeight}**`;
 
 		res.locals.pageErrors.push(utils.logError("389wer07eghdd", err));
 
@@ -1359,13 +1359,6 @@ router.get("/block-analysis", function(req, res, next) {
 
 	next();
 });
-
-/*
-router.get("/tx/tx/:transactionId", asyncHandler(async (req, res, next) => {
-	res.redirect(301, `${config.baseUrl}tx/${req.params.transactionId}`);
-
-	return;
-}));*/
 
 router.get("/tx/:transactionId@:blockHeight", asyncHandler(async (req, res, next) => {
 	req.query.blockHeight = req.params.blockHeight;

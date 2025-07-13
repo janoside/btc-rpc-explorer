@@ -6,11 +6,9 @@ mixin inputValueDisplay(tx, txVin, vout)
 			i.bi-asterisk.text-success
 
 		span(class=(tx.vin.length == 1 ? "fw-bold" : false))
-			if (typeof blockHeight !== "undefined" && blockHeight !== null)
-				- var currencyValue = coinConfig.blockRewardFunction2(blockHeight, activeBlockchain);
-				+valueDisplay(currencyValue)
-			else
-				+valueDisplay("N/A")
+			- var currencyValue = coinConfig.blockRewardFunction(blockHeight, activeBlockchain);
+			+valueDisplay(currencyValue)
+
 	else
 		if (vout && vout.value)
 			span(class=(tx.vin.length == 1 ? "fw-bold" : "fw-light"))
@@ -87,7 +85,7 @@ mixin txIoDetails(tx, txInputs, totalIOValues, blockHeight, options={})
 							if (vout && vout.coinbaseSpend)
 								span.d-none.d-sm-inline
 									+successBadge
-										span(title=`This input spends a coinbase output (mining ), meaning that this represents the first time these coins have been spent.`, data-bs-toggle="tooltip") 1<sup>st</sup> spend
+										span(title=`This input spends a coinbase output (mining reward), meaning that this represents the first time these coins have been spent.`, data-bs-toggle="tooltip") 1<sup>st</sup> spend
 
 							span.ms-1.float-end
 								+inputValueDisplay(tx, txVin, vout)

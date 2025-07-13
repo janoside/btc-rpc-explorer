@@ -5,7 +5,7 @@ block headContent
 
 block content
 	+pageTitle("Mempool Summary")
-
+	include ads.pug
 	
 	+dismissableInfoAlert("mempoolSummaryNoteDismissed", "About Mempool Summary...")
 		.mb-2 This tool summarizes data about the transactions in your node's <b>mempool</b> - the set of transactions that your node has received from the network but are not yet confirmed in a block.

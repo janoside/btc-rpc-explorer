@@ -4,13 +4,11 @@ block headContent
 	title Mempool Transactions
 
 block content
-	
 	+pageTitle("Mempool Transactions")
 	include ads.pug
 	if (false)
 		pre
 			code #{JSON.stringify(transactions, null, 4)}
-
 	if (txCount > 0)
 		+contentSection(`${txCount.toLocaleString()} Transaction${txCount == 1 ? "" : "s"}`, false, null, false, false)
 			+txList(transactions, txCount, limit, offset, txInputsByTransaction, {mempoolDetailsByTxid:mempoolDetailsByTxid})
@@ -18,3 +16,4 @@ block content
 				
 	else
 		p No unconfirmed transactions found
+	

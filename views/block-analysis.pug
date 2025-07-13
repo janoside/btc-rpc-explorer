@@ -5,9 +5,9 @@ block headContent
 
 block content
 	
-
+	
 	+pageTitle(`Block Analysis`, result.getblock.hash, true)
-		include ads.pug
+	include ads.pug
 		if (result.getblock)
 			a.btn.btn-sm.btn-primary.ms-2(href=`./block/${result.getblock.hash}`) &laquo; Back to Block
 
