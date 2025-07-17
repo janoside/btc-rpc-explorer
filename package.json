@@ -72,7 +72,7 @@
 		"serve-favicon": "^2.5.0",
 		"simple-git": "^3.18.0",
 		"tiny-secp256k1": "^2.2.1",
-		"zeromq": "^6.1.2"
+		"zeromq": "^6.3.0"
 	},
 	"optionalDependencies": {
 		"event-loop-stats": "^1.4.1"
