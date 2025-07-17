@@ -66,7 +66,7 @@ global.lruCaches = [ global.miscLruCache, global.blockLruCache, global.txLruCach
 
 
 		statTracker.trackEvent("caches.pruned-items", (totalSizeBefore - totalSizeAfter));
-		
+
 		statTracker.trackValue("caches.misc.size", global.miscLruCache.size);
 		statTracker.trackValue("caches.misc.itemCount", global.miscLruCache.itemCount);
 
@@ -125,7 +125,7 @@ if (redisCache.active) {
 	// a single redis instance peacefully
 	const rpcHostPort = `${config.credentials.rpc.host}:${config.credentials.rpc.port}`;
 	const rpcCredKeyComponent = md5(JSON.stringify(config.credentials.rpc)).substring(0, 8);
-	
+
 	const redisCacheObj = redisCache.createCache(`${cacheKeyVersion}-${rpcCredKeyComponent}`, onRedisCacheEvent);
 
 	miscCaches.push(redisCacheObj);
@@ -154,7 +154,7 @@ function getGenesisCoinbaseTransactionId() {
 
 function tryCacheThenRpcApi(cache, cacheKey, cacheMaxAge, rpcApiFunction, cacheConditionFunction) {
 	//debugLog("tryCache: " + versionedCacheKey + ", " + cacheMaxAge);
-	
+
 	if (cacheConditionFunction == null) {
 		cacheConditionFunction = function(obj) {
 			return true;
@@ -205,7 +205,7 @@ function shouldCacheTransaction(tx) {
 	if (!tx.confirmations) {
 		return false;
 	}
-	
+
 	if (tx.confirmations < 1) {
 		return false;
 	}
@@ -309,7 +309,7 @@ function getUtxoSetSummary(useCoinStatsIndexIfAvailable=true, useCacheIfAvailabl
 
 				try {
 					utxoSetFileCache.writeJson(utxoSetSummary);
-					
+
 				} catch (e) {
 					utils.logError("h32uheifehues", e);
 				}
@@ -406,7 +406,7 @@ async function getNextBlockEstimate() {
 				if (feeRate < feeRateGroups[i].maxFeeRate) {
 					feeRateGroups[i].totalWeight += tx.weight;
 					feeRateGroups[i].txidCount++;
-					
+
 					//res.locals.nextBlockFeeRateGroups[i].txids.push(tx.txid);
 
 					txIncluded++;
@@ -504,7 +504,7 @@ async function getTxStats(dataPtCount, blockStart, blockEnd) {
 	}
 
 	let getblockchaininfo = await getBlockchainInfo();
-	
+
 	if (typeof blockStart === "string") {
 		if (["genesis", "first", "zero"].includes(blockStart)) {
 			blockStart = 0;
@@ -535,10 +535,10 @@ async function getTxStats(dataPtCount, blockStart, blockEnd) {
 	if (dataPtCount > (blockEnd - blockStart)) {
 		dataPtCount = (blockEnd - blockStart);
 	}
-	
+
 	for (let i = 0; i < dataPtCount; i++) {
 		let blockHeightEnd = blockStart + (i + 1) * blockCount;
-		
+
 		promises.push((async () => {
 			let blockhashEnd = await getBlockHashByHeight(blockHeightEnd);
 
@@ -582,7 +582,7 @@ async function getTxStats(dataPtCount, blockStart, blockEnd) {
 	miscCache.set(cacheKey, summary, 60 * ONE_MIN);
 
 	//console.log(summary);
-	
+
 	return summary;
 }
 
@@ -615,45 +615,27 @@ function getPeerSummary() {
 			result.getpeerinfo = getpeerinfo;
 
 			let versionSummaryMap = {};
-			for (let i = 0; i < getpeerinfo.length; i++) {
-				let x = getpeerinfo[i];
+			for (const {subver} of getpeerinfo) {
 
-				if (versionSummaryMap[x.subver] == null) {
-					versionSummaryMap[x.subver] = 0;
+				if (versionSummaryMap[subver] == null) {
+					versionSummaryMap[subver] = 0;
 				}
 
-				versionSummaryMap[x.subver]++;
+				versionSummaryMap[subver]++;
 			}
 
-			let versionSummary = [];
-			for (let prop in versionSummaryMap) {
-				if (versionSummaryMap.hasOwnProperty(prop)) {
-					versionSummary.push([prop, versionSummaryMap[prop]]);
-				}
-			}
-
-			versionSummary.sort(function(a, b) {
-				if (b[1] > a[1]) {
-					return 1;
-
-				} else if (b[1] < a[1]) {
-					return -1;
-
-				} else {
-					return a[0].localeCompare(b[0]);
-				}
-			});
+			let versionSummary = Object.entries(versionSummaryMap)
+				.sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]));
 
 			let serviceNamesAvailable = false;
 
 			let servicesSummaryMap = {};
-			for (let i = 0; i < getpeerinfo.length; i++) {
-				let x = getpeerinfo[i];
+			for (const {services, servicesnames} of getpeerinfo) {
 
-				if (x.servicesnames) {
+				if (servicesnames) {
 					serviceNamesAvailable = true;
 
-					x.servicesnames.forEach(name => {
+					servicesnames.forEach(name => {
 						if (servicesSummaryMap[name] == null) {
 							servicesSummaryMap[name] = 0;
 						}
@@ -662,104 +644,60 @@ function getPeerSummary() {
 					});
 
 				} else {
-					if (servicesSummaryMap[x.services] == null) {
-						servicesSummaryMap[x.services] = 0;
+					if (servicesSummaryMap[services] == null) {
+						servicesSummaryMap[services] = 0;
 					}
 
-					servicesSummaryMap[x.services]++;
+					servicesSummaryMap[services]++;
 				}
 			}
 
-			let servicesSummary = [];
-			for (let prop in servicesSummaryMap) {
-				if (servicesSummaryMap.hasOwnProperty(prop)) {
-					servicesSummary.push([prop, servicesSummaryMap[prop]]);
-				}
-			}
-
-			servicesSummary.sort(function(a, b) {
-				if (b[1] > a[1]) {
-					return 1;
-
-				} else if (b[1] < a[1]) {
-					return -1;
-
-				} else {
-					return a[0].localeCompare(b[0]);
-				}
-			});
+			let servicesSummary = Object.entries(servicesSummaryMap)
+				.sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]));
 
 
 
 			if (getpeerinfo.length > 0 && getpeerinfo[0].connection_type) {
 				let connectionTypeSummaryMap = {};
-				for (let i = 0; i < getpeerinfo.length; i++) {
-					let x = getpeerinfo[i];
+				for (const {connection_type} of getpeerinfo) {
 
-					if (connectionTypeSummaryMap[x.connection_type] == null) {
-						connectionTypeSummaryMap[x.connection_type] = 0;
+					if (connectionTypeSummaryMap[connection_type] == null) {
+						connectionTypeSummaryMap[connection_type] = 0;
 					}
 
-					connectionTypeSummaryMap[x.connection_type]++;
+					connectionTypeSummaryMap[connection_type]++;
 				}
-
-				let connectionTypeSummary = [];
-				for (let prop in connectionTypeSummaryMap) {
-					if (connectionTypeSummaryMap.hasOwnProperty(prop)) {
-						connectionTypeSummary.push([prop, connectionTypeSummaryMap[prop]]);
-					}
-				}
-
-				connectionTypeSummary.sort(function(a, b) {
-					if (b[1] > a[1]) {
-						return 1;
-
-					} else if (b[1] < a[1]) {
-						return -1;
-
-					} else {
-						return a[0].localeCompare(b[0]);
-					}
-				});
-
-				result.connectionTypeSummary = connectionTypeSummary;
+				result.connectionTypeSummary = Object.entries(connectionTypeSummaryMap)
+					.sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]));
 			}
 
 
 			if (getpeerinfo.length > 0 && getpeerinfo[0].network) {
 				let networkTypeSummaryMap = {};
-				for (let i = 0; i < getpeerinfo.length; i++) {
-					let x = getpeerinfo[i];
+				for (const {network} of getpeerinfo) {
 
-					if (networkTypeSummaryMap[x.network] == null) {
-						networkTypeSummaryMap[x.network] = 0;
+					if (networkTypeSummaryMap[network] == null) {
+						networkTypeSummaryMap[network] = 0;
 					}
 
-					networkTypeSummaryMap[x.network]++;
+					networkTypeSummaryMap[network]++;
 				}
 
-				let networkTypeSummary = [];
-				for (let prop in networkTypeSummaryMap) {
-					if (networkTypeSummaryMap.hasOwnProperty(prop)) {
-						networkTypeSummary.push([prop, networkTypeSummaryMap[prop]]);
-					}
-				}
-
-				networkTypeSummary.sort(function(a, b) {
-					if (b[1] > a[1]) {
-						return 1;
-
-					} else if (b[1] < a[1]) {
-						return -1;
-
-					} else {
-						return a[0].localeCompare(b[0]);
-					}
-				});
-
-				result.networkTypeSummary = networkTypeSummary;
+				result.networkTypeSummary = Object.entries(networkTypeSummaryMap)
+					.sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]));
 			}
-			
+
+			if (getpeerinfo.length > 0 && getpeerinfo[0].transport_protocol_type) {
+				let transportProtocolSummaryMap = {};
+				for (const {transport_protocol_type} of getpeerinfo) {
+					if (transportProtocolSummaryMap[transport_protocol_type] == null) {
+						transportProtocolSummaryMap[transport_protocol_type] = 0;
+					}
+					transportProtocolSummaryMap[transport_protocol_type]++;
+				}
+				result.transportProtocolSummary = Object.entries(transportProtocolSummaryMap)
+					.sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]));
+			}
 
 			result.versionSummary = versionSummary;
 			result.servicesSummary = servicesSummary;
@@ -997,7 +935,7 @@ async function getRawTransactionsByHeights(txids, blockHeightsByTxid) {
 	return Promise.all(txids.map(async txid => {
 		let blockheight = blockHeightsByTxid[txid];
 		let blockhash = blockheight ? await getBlockByHeight(blockheight) : null;
-		
+
 		return getRawTransaction(txid, blockhash);
 	}))
 }
@@ -1013,7 +951,7 @@ function buildBlockAnalysisData(blockHeight, blockHash, txids, txIndex, results,
 
 	getRawTransactionsWithInputs([txid], -1, blockHash).then(function(txData) {
 		results.push(summarizeBlockAnalysisData(blockHeight, txData.transactions[0], txData.txInputsByTransaction[txid]));
-		
+
 		buildBlockAnalysisData(blockHeight, blockHash, txids, txIndex + 1, results, callback);
 	});
 }
@@ -1054,7 +992,7 @@ function summarizeBlockAnalysisData(blockHeight, tx, inputs) {
 	} else {
 		for (let i = 0; i < tx.vin.length; i++) {
 			let vin = tx.vin[i];
-			
+
 			let txSummaryVin = {
 				txid: tx.vin[i].txid,
 				vout: tx.vin[i].vout,
@@ -1101,7 +1039,7 @@ function summarizeBlockAnalysisData(blockHeight, tx, inputs) {
 
 	if (txSummary.coinbase) {
 		txSummary.totalFee = new Decimal(0);
-		
+
 	} else {
 		txSummary.totalFee = txSummary.totalInput.minus(txSummary.totalOutput);
 	}
@@ -1119,7 +1057,7 @@ function getRawTransactionsWithInputs(txids, maxInputs=-1, blockhash) {
 	return new Promise(function(resolve, reject) {
 		getRawTransactions(txids, blockhash).then(function(transactions) {
 			let maxInputsTracked = config.site.txMaxInput;
-			
+
 			if (maxInputs <= 0) {
 				maxInputsTracked = 1000000;
 
@@ -1150,7 +1088,7 @@ function getRawTransactionsWithInputs(txids, maxInputs=-1, blockhash) {
 
 			Promise.all(promises).then(function(promiseResults) {
 				let summarizedTxOutputs = {};
-				
+
 				for (let i = 0; i < promiseResults.length; i++) {
 					let summarizedTxOutput = promiseResults[i];
 
@@ -1182,7 +1120,7 @@ function getBlockByHashWithTransactions(blockHash, txLimit, txOffset) {
 	return new Promise(function(resolve, reject) {
 		getBlockByHash(blockHash).then(function(block) {
 			let txids = [];
-			
+
 			// to get miner info, always include the coinbase tx in the list
 			if (txOffset > 0) {
 				txids.push(block.tx[0]);
@@ -1205,7 +1143,7 @@ function getBlockByHashWithTransactions(blockHash, txLimit, txOffset) {
 				}
 
 				resolve({ getblock:block, transactions:txsResult.transactions, txInputsByTransaction:txsResult.txInputsByTransaction });
-				
+
 			}).catch(function(err) {
 				if (!global.txindexAvailable || global.prunedBlockchain) {
 					// likely due to pruning or no txindex, report the error but continue with an empty transaction list
@@ -1250,14 +1188,14 @@ function buildMiningSummary(statusId, startBlock, endBlock, statusFunc) {
 
 			const summariesByHeight = {};
 			const minerInfoByName = {};
-			
+
 
 			for (let i = startBlock; i <= endBlock; i++) {
 				const height = i;
 				const cacheKey = `${height}`;
 
 				let cachedSummary = await miningSummaryCache.get(cacheKey);
-				
+
 				if (cachedSummary) {
 					summariesByHeight[height] = cachedSummary;
 
@@ -1304,14 +1242,14 @@ function buildMiningSummary(statusId, startBlock, endBlock, statusFunc) {
 								s: subsidy,
 								w: block.weight
 							};
-							
+
 							miningSummaryCache.set(cacheKey, heightSummary);
 
 							summariesByHeight[height] = heightSummary;
 
 							itemsDone++;
 							markItemsDone(1);
-							
+
 							callback();
 
 						} catch (e) {
@@ -1331,8 +1269,8 @@ function buildMiningSummary(statusId, startBlock, endBlock, statusFunc) {
 			if (!miningPromiseQueue.idle()) {
 				await miningPromiseQueue.drain();
 			}
-			
-			
+
+
 			let summary = {
 				miners:{},
 				minerNamesSortedByBlockCount: [],
@@ -1400,12 +1338,12 @@ function getCachedMempoolTxSummaries() {
 	return new Promise(async (resolve, reject) => {
 		try {
 			const allTxids = await utils.timePromise("coreApi_mempool_summary_getAllMempoolTxids", getAllMempoolTxids);
-			
+
 			//const txids = allTxids.slice(0, 50); // for debugging
 			const txids = allTxids;
 
 			const txidCount = txids.length;
-			
+
 			const results = [];
 			const txidKeysForCachePurge = {};
 
@@ -1430,7 +1368,7 @@ function getCachedMempoolTxSummaries() {
 			new Promise((resolve, reject) => {
 				// purge items from cache that are no longer present in mempool
 				let keysToDelete = [];
-				
+
 				for (let key in mempoolTxSummaryCache) {
 					if (!txidKeysForCachePurge[key]) {
 						keysToDelete.push(key);
@@ -1439,7 +1377,7 @@ function getCachedMempoolTxSummaries() {
 
 				keysToDelete.forEach(x => { delete mempoolTxSummaryCache[x] });
 			});
-			
+
 
 			resolve(results);
 
@@ -1458,7 +1396,7 @@ function getMempoolTxSummaries(allTxids, statusId, statusFunc) {
 	return new Promise(async (resolve, reject) => {
 		try {
 			mempoolTxSummaryCache = (mempoolTxFileCache.tryLoadJson() || {});
-			
+
 
 			//const txids = allTxids.slice(0, 50); // for debugging
 			const txids = allTxids;
@@ -1496,7 +1434,7 @@ function getMempoolTxSummaries(allTxids, statusId, statusFunc) {
 							const item = await getMempoolTxDetails(txid, false);
 							const itemSummary = {
 								f: btcToSat(item.entry.fees.modified),
-								
+
 								af: btcToSat(item.entry.fees.ancestor),
 								asz: item.entry.ancestorsize,
 
@@ -1515,7 +1453,7 @@ function getMempoolTxSummaries(allTxids, statusId, statusFunc) {
 
 							doneCount++;
 							statusUpdate();
-							
+
 							resolve();
 
 						} catch (e) {
@@ -1535,7 +1473,7 @@ function getMempoolTxSummaries(allTxids, statusId, statusFunc) {
 
 			await Promise.all(promises);
 
-			
+
 			// purge items from cache that are no longer present in mempool
 			let keysToDelete = [];
 			for (let key in mempoolTxSummaryCache) {
@@ -1550,7 +1488,7 @@ function getMempoolTxSummaries(allTxids, statusId, statusFunc) {
 
 			try {
 				mempoolTxFileCache.writeJson(mempoolTxSummaryCache);
-				
+
 			} catch (e) {
 				utils.logError("h32uheifehues", e);
 			}
@@ -1574,7 +1512,7 @@ function buildMempoolSummary(statusId, ageBuckets, sizeBuckets, statusFunc) {
 
 			const txids = allTxids;
 
-			
+
 			let maxFee = 0;
 			let maxFeePerByte = 0;
 			let maxAge = 0;
@@ -1837,7 +1775,7 @@ function buildMempoolSummary(statusId, ageBuckets, sizeBuckets, statusFunc) {
 				summary.satoshiPerByteBucketLabels.push(topIndex + "+");
 			}
 
-			
+
 			if (topIndex < satoshiPerByteBuckets.length) {
 				satoshiPerByteBuckets[topIndex].buckets = 0;
 
@@ -1902,7 +1840,7 @@ function buildPredictedBlocks(statusId, statusFunc) {
 			};
 
 			const blocks = [];
-			
+
 			txSummaries.sort((a, b) => {
 				let aFeeRate = (a.af) / (a.asz * 4);
 				let bFeeRate = (b.af) / (b.asz * 4);
@@ -1934,11 +1872,11 @@ function buildPredictedBlocks(statusId, statusFunc) {
 
 			const unAddedTxIndexes = [];
 			const addedTxids = {};
-			
+
 			for (let i = 0; i < txSummaries.length; i++) {
 				unAddedTxIndexes.push(i);
 			}
-			
+
 			while (unAddedTxIndexes.length > 0 && blocks.length < 20) {
 				//console.log("txids: " + addedTxids.length);
 
@@ -1974,13 +1912,13 @@ function buildPredictedBlocks(statusId, statusFunc) {
 					}
 
 					let weightWithAncestors = (tx.asz * 4);
-					
+
 					// TODO?? check if any of our ancestors have already been added to a block
 					// and if so, exclude their data from being included along with us
-					
+
 
 					tx.frw = (tx.af) / tx.asz; // ancestor fee and size include current tx
-					
+
 					if (currentBlock.weight + coinConfig.minTxWeight > coinConfig.maxBlockWeight) {
 						// no more transactions can possibly be added, break to save time
 						break;
@@ -1990,7 +1928,7 @@ function buildPredictedBlocks(statusId, statusFunc) {
 						//console.log("adding tx: " + JSON.stringify(tx));
 
 						let startSize = currentBlock.txids.size;
-						
+
 						currentBlock.txids.add(tx.key);
 						tx.a.forEach(ancesTxidKey => currentBlock.txids.add(ancesTxidKey));
 
@@ -2016,11 +1954,11 @@ function buildPredictedBlocks(statusId, statusFunc) {
 						}
 
 						let feeRateGroup = feeRate;
-						
+
 						if (feeRateGroup > 100) {
 							feeRateGroup = Math.floor(feeRateGroup / 20) * 20;
 						}
-						
+
 						if (feeRateGroup > 20) {
 							feeRateGroup = Math.floor(feeRateGroup / 10) * 10;
 						}
@@ -2033,7 +1971,7 @@ function buildPredictedBlocks(statusId, statusFunc) {
 						}
 
 						feeRateGroup = Math.floor(feeRateGroup);
-						
+
 						if (!currentBlock.feeRates.includes(feeRateGroup)) {
 							currentBlock.feeRates.push(feeRateGroup);
 							currentBlock.weightByFeeRate[feeRateGroup] = 0;
@@ -2064,7 +2002,7 @@ function buildPredictedBlocks(statusId, statusFunc) {
 									console.log("WTF");
 								}
 
-								
+
 							});
 						}
 					}
@@ -2084,14 +2022,14 @@ function buildPredictedBlocks(statusId, statusFunc) {
 
 				// ...and start a new block
 				//currentBlock = Object.assign({}, blockTemplate);
-				
+
 				console.log("block finished: " + JSON.stringify(currentBlock));
 			}
 
 			console.log("loops: " + loopCounter);
 
 			//console.log("all blocks: " + JSON.stringify(blocks, null, 4));
-			
+
 			// we're done, make sure statusFunc knows it
 			statusFunc({count: txSummaries.length, done: txSummaries.length});
 
@@ -2226,7 +2164,7 @@ function getRpcMethodHelp(methodName) {
 
 function logCacheSizes() {
 	let itemCounts = [ miscCache.itemCount, blockCache.itemCount, txCache.itemCount ];
-	
+
 	let stream = fs.createWriteStream("memoryUsage.csv", {flags:'a'});
 	stream.write("itemCounts: " + JSON.stringify(itemCounts) + "\n");
 	stream.end();

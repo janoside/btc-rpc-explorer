@@ -18,12 +18,12 @@ block headContent
 
 block content
 	+pageTitle(`${peerSummary.getpeerinfo.length} Peer${peerSummary.getpeerinfo.length == 1 ? "" : "s"}`)
-	
+
 	+pageTabs(["Details", "JSON"])
 
 	.tab-content
 		+pageTab("Details", true)
-			
+
 			if (peerIpSummary && peerIpSummary.ips)
 				.mb-3(id="map")
 
@@ -57,7 +57,7 @@ block content
 									tr(class=(index >= 5 ? "services-hidden-rows" : false))
 										td.small.text-muted #{index + 1}
 
-										td 
+										td
 											if (!peerSummary.serviceNamesAvailable)
 												| 0x
 
@@ -67,7 +67,7 @@ block content
 
 			.row
 				if (peerSummary.networkTypeSummary)
-					.col-md-6
+					.col-md-4
 						+contentSection("Network Types")
 							table.table.table-borderless.table-striped.table-responsive-sm
 								thead
@@ -83,8 +83,25 @@ block content
 											td #{item[0]}
 											td.text-end #{item[1].toLocaleString()}
 
+				if (peerSummary.transportProtocolSummary)
+					.col-md-4
+						+contentSection("Transport Protocols")
+							table.table.table-borderless.table-striped.table-responsive-sm
+								thead
+									tr
+										th
+										th.text-card-highlight.text-uppercase.fw-light Connection Type
+										th.text-end.text-card-highlight.text-uppercase.fw-light Count
+								tbody
+									each item, index in peerSummary.transportProtocolSummary
+										tr
+											td.small.text-muted #{index + 1}
+
+											td #{item[0]}
+											td.text-end #{item[1].toLocaleString()}
+
 				if (peerSummary.connectionTypeSummary)
-					.col-md-6
+					.col-md-4
 						+contentSection("Connection Types")
 							table.table.table-borderless.table-striped.table-responsive-sm
 								thead
@@ -99,7 +116,7 @@ block content
 
 											td #{item[0]}
 											td.text-end #{item[1].toLocaleString()}
-							
+
 
 			+contentSection(`${peerSummary.getpeerinfo.length.toLocaleString()} Peer${peerSummary.getpeerinfo.length == 1 ? "" : "s"}`)
 				table.table.table-borderless.table-striped.table-responsive-sm.data-table.mt-4
@@ -110,6 +127,8 @@ block content
 							th.text-card-highlight.text-uppercase.fw-light Address
 							th.text-card-highlight.text-uppercase.fw-light Services
 							th.text-card-highlight.text-uppercase.fw-light Conn. Type
+							th.text-card-highlight.text-uppercase.fw-light
+								span.border-dotted(data-bs-toggle="tooltip", title="P2P transport protocol") P2P
 
 							if (peerIpSummary && peerIpSummary.ips)
 								th.text-card-highlight.text-uppercase.fw-light Location
@@ -148,6 +167,7 @@ block content
 										| 0x#{item.services.replace(/^0+/, '')}
 
 								td #{item.connection_type}
+								td #{item.transport_protocol_type}
 
 								if (peerIpSummary.ips)
 									td
@@ -156,9 +176,9 @@ block content
 											- var ipDetails = peerIpSummary.detailsByIp[ipAddr];
 											if (ipDetails)
 												if (ipDetails.city)
-													span #{ipDetails.city}, 
+													span #{ipDetails.city},
 												if (ipDetails.region_name)
-													span #{ipDetails.region_name}, 
+													span #{ipDetails.region_name},
 												if (ipDetails.country_name)
 													span #{ipDetails.country_name}
 										else
@@ -167,7 +187,7 @@ block content
 										- var ipAddr = null;
 
 								td #{lastSendAgo} / #{lastRecvAgo}
-			
+
 
 
 		+pageTab("JSON")
@@ -183,15 +203,15 @@ block content
 					+contentSection("Peer Details")
 						pre
 							code.json #{JSON.stringify(item, null, 4)}
-								
+
 
 					if (peerIpSummary && peerIpSummary.detailsByIp && peerIpSummary.detailsByIp[item.addr.substring(0, item.addr.lastIndexOf(":"))])
 						+contentSection("Location Info")
 							pre
 								code.json #{JSON.stringify(peerIpSummary.detailsByIp[item.addr.substring(0, item.addr.lastIndexOf(":"))], null, 4)}
-									
 
-	
+
+
 block endOfBody
 	script(src=assetUrl("./js/jquery.dataTables.min.js"), integrity=assetIntegrity("jquery.dataTables.min.js"), crossorigin="anonymous")
 	script(src=assetUrl("./js/dataTables.bootstrap4.min.js"), integrity=assetIntegrity("dataTables.bootstrap4.min.js"), crossorigin="anonymous")
@@ -236,6 +256,3 @@ block endOfBody
 					- var ipDetailsPopupHtml = ipDetailsPopupHtml + ipDetails.country_name + " ";
 
 				script L.marker([#{ipDetails.latitude}, #{ipDetails.longitude}]).addTo(mymap).bindPopup("!{ipDetailsPopupHtml}");
-		
-
-
