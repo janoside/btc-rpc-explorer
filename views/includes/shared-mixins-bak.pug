@@ -1,12 +1,12 @@
 mixin themeCss
-	- var theme = (userSettings && userSettings.uiTheme) ? userSettings.uiTheme : 'light'
-	link(id="dark-v1-theme-link-tag", rel=(theme == "dark-v1" ? "stylesheet" : false), href=assetUrl(`./style/dark-v1.min.css`), integrity="", crossorigin="anonymous")
-	link(id="light-theme-link-tag", rel=(theme == "light" ? "stylesheet" : false), href=assetUrl(`./style/light.min.css`), integrity="", crossorigin="anonymous")
-	link(id="dark-theme-link-tag", rel=(theme == "dark" ? "stylesheet" : false), href=assetUrl(`./style/dark.min.css`), integrity="", crossorigin="anonymous")
+	link(id="dark-v1-theme-link-tag", rel=(userSettings.uiTheme == "dark-v1" ? "stylesheet" : false), href=assetUrl(`./style/dark-v1.min.css`), integrity="", crossorigin="anonymous")
+	link(id="light-theme-link-tag", rel=(userSettings.uiTheme == "light" ? "stylesheet" : false), href=assetUrl(`./style/light.min.css`), integrity="", crossorigin="anonymous")
+	link(id="dark-theme-link-tag", rel=(userSettings.uiTheme == "dark" ? "stylesheet" : false), href=assetUrl(`./style/dark.min.css`), integrity="", crossorigin="anonymous")
 
 	style.
 		@font-face {
 			font-family: "bootstrap-icons";
+
 			src:	url("!{assetUrl("./font/bootstrap-icons.woff2")}") format("woff2"),
 					url("!{assetUrl("./font/bootstrap-icons.woff")}") format("woff");
 		}

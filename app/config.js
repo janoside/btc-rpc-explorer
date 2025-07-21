@@ -228,7 +228,7 @@ module.exports = {
 		toolSections: [
 			{name: "Basics", items: [0, 2]},
 			{name: "Mempool", items: [4, 16, 5]},
-			{name: "Analysis", items: [9, 18, 10, 11, 3, 20]},
+			{name: "Analysis", items: [9, 18, 10, 11, 3, 20, 21]},
 			//{name: "Analysis", items: [9, 18, 10, 11, 12, 3, 20]},
 			{name: "Technical", items: [1]},
 			//{name: "Technical", items: [15, 6, 7, 1]},
@@ -272,6 +272,8 @@ module.exports = {
 	/* 19 */	{name:"Holidays", url:"./holidays", desc:"Curated list of Briskcoin 'Holidays'.", iconClass:"bi-calendar-heart"},
 
 	/* 20 */	{name:"Next Halving", url:"./next-halving", desc:"Estimated details about the next halving.", iconClass:"bi-square-half"},
+
+	/* 21 */	{name:"Top Holders", url:"./top-holders", desc:"View top 100 Briskcoin holders", iconClass:"bi-trophy"},
 	]
 };
 

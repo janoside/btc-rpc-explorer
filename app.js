@@ -8,7 +8,8 @@ const dotenv = require("dotenv");
 const fs = require('fs');
 
 const debug = require("debug");
-
+//edited-top-holder 
+const topHoldersRoute = require("./routes/top-holders");
 
 // start with this, we will update after loading any .env files
 const debugDefaultCategories = "btcexp:app,btcexp:error,btcexp:errorVerbose";
@@ -188,6 +189,8 @@ if (process.env.NODE_ENV != "local") {
 }
 
 expressApp.use(cookieParser());
+//edited-top-holders
+expressApp.use("/top-holders", topHoldersRoute);
 
 expressApp.disable('x-powered-by');
 

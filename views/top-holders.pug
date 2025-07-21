@@ -1,0 +1,75 @@
+extends layout
+
+block content
+  .container.mt-4
+    .card
+      .card-header
+        h2.mb-0.fw-normal Top 150 Briskcoin Holders
+        if hasData
+          small.text-muted Showing #{topHolders.length} of 150 holders
+
+      .card-body
+        if error
+          .alert.alert-danger
+            i.fas.fa-exclamation-triangle.me-2
+            | #{error}
+        else if !hasData
+          .alert.alert-warning
+            i.fas.fa-info-circle.me-2
+            | No holder data available
+        else
+          - // Format balance: add commas, show decimals only if not all zeros
+          - function formatBalance(balanceStr) {
+          -   if (!balanceStr) return '0';
+          -   const parts = balanceStr.split('.');
+          -   const intPart = parts[0];
+          -   const decPart = parts[1];
+          -   const intWithCommas = intPart.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+          -   if (decPart && !/^0+$/.test(decPart)) {
+          -     return intWithCommas + '.' + decPart;
+          -   } else {
+          -     return intWithCommas;
+          -   }
+          - }
+          .table-responsive
+            table.table.table-striped.table-hover
+              thead
+                tr
+                  th(scope="col") #
+                  th(scope="col") Address
+                  th(scope="col") Balance
+                  th(scope="col") Percentage
+              tbody
+                each holder in topHolders
+                  - const percentValue = parseFloat(holder.percent)
+                  - const formattedBalance = formatBalance(holder.balance)
+                  tr
+                    th(scope="row")= holder.rank
+                    td
+                      a(href=`/address/${holder.address}`).text-monospace= holder.address
+                    td= formattedBalance
+                    td= isNaN(percentValue) ? '0.00 %' : `${percentValue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} %`
+
+          nav(aria-label="Pagination")
+            ul.pagination.justify-content-center
+              li.page-item(class=(currentPage === 1 ? 'disabled' : ''))
+                a.page-link(href=(currentPage === 1 ? '#' : `./top-holders?page=${currentPage - 1}`) aria-label="Previous")
+                  span(aria-hidden="true") &laquo;
+                  span.sr-only Previous
+              - for (let i = 1; i <= totalPages; i++)
+                li.page-item(class=(currentPage === i ? 'active' : ''))
+                  a.page-link(href=`./top-holders?page=${i}`)= i
+              li.page-item(class=(currentPage === totalPages ? 'disabled' : ''))
+                a.page-link(href=(currentPage === totalPages ? '#' : `./top-holders?page=${currentPage + 1}`) aria-label="Next")
+                  span(aria-hidden="true") &raquo;
+                  span.sr-only Next
+
+block endOfBody
+  script.
+    document.addEventListener('DOMContentLoaded', function() {
+      document.querySelectorAll('.pagination a').forEach(link => {
+        if (link.getAttribute('href') && link.getAttribute('href').startsWith('?')) {
+          link.setAttribute('href', './top-holders' + link.getAttribute('href'));
+        }
+      });
+    });

@@ -3,338 +3,340 @@ include ./includes/tx-mixins.pug
 
 doctype html
 html(lang="en")
-	head
-		script(async,src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2900084726921838", integrity="", crossorigin="anonymous")
-		meta(charset="utf-8")
-		base(href=config.baseUrl)
-		meta(name="csrf-token", content=csrfToken)
-		meta(name="viewport", content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0, shrink-to-fit=no")
-
-		meta(name="description" content="Open-source, easy-to-use, educational Briskcoin explorer whose only dependency is your Briskcoin Core node.")
-		
-		if (!homepage)
-			link(rel="stylesheet", href=assetUrl(`./style/highlight.min.css`), integrity="", crossorigin="anonymous")
-
-
-		+themeCss
-		
-
-		link(id="canonical" rel="canonical" href="https://explorer.briskcoin.org")
-
-		meta(property="og:title" content=(metaTitle != undefined ? metaTitle : "BriskcoinExplorer.org - Open-Source Briskcoin Explorer"))
-		meta(property="og:description" content=(metaDesc != undefined ? metaDesc : "Open-source, easy-to-use, educational Briskcoin explorer whose only dependency is your Briskcoin Core node."))
-		meta(property="og:image" content="https://explorer.briskcoin.org/img/preview.png")
-
-		meta(property="twitter:card" content="summary_large_image")
-		meta(property="twitter:site" content="@briskcoin")
-		meta(property="twitter:creator" content="@briskcoin")
-		meta(property="twitter:title" content=(metaTitle != undefined ? metaTitle : "explorer.briskcoin.org"))
-		meta(property="twitter:description" content=(metaDesc != undefined ? metaDesc : "Open-source, easy-to-use, educational Briskcoin explorer whose only dependency is your Briskcoin Core node."))
-		meta(property="twitter:image:src" content=(metaImgUrl != undefined ? metaImgUrl : "https://explorer.briskcoin.org/img/preview.png"))
-		meta(property="twitter:domain" content="explorer.briskcoin.org")
-
-		- var network = global.activeBlockchain || "main";
-		if (!network.endsWith("net") && network != "regtest")
-			- network = (network + "net"); // handles "main" -> "mainnet" and "test" -> "testnet"
-
-		link(rel="apple-touch-icon", sizes="180x180", href=assetUrl(`./img/network-${network}/apple-touch-icon.png`))
-		link(rel="icon", type="image/png", sizes="32x32", href=assetUrl(`./img/network-${network}/favicon-32x32.png`))
-		link(rel="icon", type="image/png", sizes="16x16", href=assetUrl(`./img/network-${network}/favicon-16x16.png`))
-		link(rel="manifest", href=`./img/network-${network}/site.webmanifest`)
-		link(rel="mask-icon", href=`./img/network-${network}/safari-pinned-tab.svg`, color="#f7931a")
-		link(rel="shortcut icon", href=assetUrl(`./img/network-${network}/favicon.ico`))
-		meta(name="apple-mobile-web-app-title", content="BKC Explorer")
-		meta(name="application-name", content="BKC Explorer")
-		meta(name="msapplication-TileColor", content="#022e70")
-		meta(name="msapplication-config", content=`./img/network-${network}/browserconfig.xml`)
-		meta(name="theme-color" content="#022e70")
-
-		include includes/debug-overrides.pug
-
-		block headContent
-			title Explorer
-
-	body.bg-header-footer
-		nav.navbar.navbar-expand-md.navbar-dark.bg-header-footer
-			.container
-				a.navbar-brand(href="./")
-					span
-						if (coinConfig.logoUrlsByNetwork && coinConfig.logoUrlsByNetwork[activeBlockchain])
-							img.header-image(src=assetUrl(coinConfig.logoUrlsByNetwork[activeBlockchain]), alt="logo")
-						else
-							img.header-image(src=assetUrl("./img/network-mainnet/logo.svg"), alt="logo")
-
-						if (coinConfig.siteTitlesByNetwork && coinConfig.siteTitlesByNetwork[activeBlockchain])
-							span.fw-light #{coinConfig.siteTitlesByNetwork[activeBlockchain]}
-						else
-							span.fw-light Briskcoin Explorer
-
-				if (false && config.demoSite)
-					- var networkNameMap = {"main": "Mainnet", "test": "Testnet", "signet": "Signet"};
-					span.badge.bg-primary(title=`This is a public demo, but this tool is designed to be installed and run by all Briskcoiners...<br/><i>Don't Trust, Verify</i>!`, data-bs-toggle="tooltip", data-bs-html="true")
-						span Public Demo
-						
-				button.navbar-toggler.navbar-toggler-end(type="button", data-bs-toggle="collapse", data-bs-target="#navbarNav", aria-label="collapse navigation")
-					span.navbar-toggler-icon
-					
-				.collapse.navbar-collapse(id="navbarNav")
-					if (rpcClient)
-						ul.navbar-nav.me-auto
-							if (false)
-								li.nav-item
-									a.nav-link(href="./about")
-										span About
-
-							if (false && activeBlockchain != "main")
-								- var chainName = activeBlockchain == "test" ? "testnet" : activeBlockchain
-
-								li.nav-item
-									span.badge.bg-primary(style="margin-top: 0.75rem;", title=`Current node's chain: ${activeBlockchain}` data-bs-toggle="tooltip") #{chainName}
-
-							
-							
-						
-						ul.navbar-nav
-							if (config.demoSite && homepage)
-								li.nav-item.dropdown.me-0.me-md-2.mt-2.mt-md-0.text-center.text-md-start
-									a.nav-link.dropdown-toggle.bg-header-footer-highlight.rounded(href="javascript:void(0)", role="button", data-bs-toggle="dropdown", aria-haspopup="true", aria-expanded="false")
-										img.align-text-top.me-1(src=assetUrl(coinConfig.coinIconUrlsByNetwork[activeBlockchain]), style="width: 20px;")
-
-									div.dropdown-menu.dropdown-menu-end.shadow(aria-label="Demo Sites")
-										span.dropdown-header Public Demo Sites
-
-										- var demoSites = ["main", "test", "signet"];
-										
-										each demoSite in demoSites
-											a.dropdown-item(href=coinConfig.demoSiteUrlsByNetwork[demoSite])
-												img.align-text-top.me-2(src=assetUrl(coinConfig.coinIconUrlsByNetwork[demoSite]), style="width: 20px;")
-												
-												| #{coinConfig.siteTitlesByNetwork[demoSite].replace("Explorer", "").replace("Briskcoin", "Mainnet")}
-
-							if (config.siteTools)
-								li.nav-item.dropdown.me-0.me-md-2.mt-2.mt-md-0.text-center.text-md-start
-									a.nav-link.rounded.bg-header-footer-highlight.text-white.dropdown-toggle(href="javascript:void(0)", role="button", data-bs-toggle="dropdown", aria-haspopup="true", aria-expanded="false")
-										i.bi-tools.me-2.ms-1
-
-									div.dropdown-menu.dropdown-menu-end.shadow(aria-label="Tools Items")
-										each section, sectionIndex in config.site.toolSections
-											if (sectionIndex > 0)
-												hr.dropdown-divider.mt-2.mb-1
-
-											span.dropdown-header #{section.name}
-
-											each itemIndex in section.items
-												- var item = config.siteTools[itemIndex];
-
-												a.dropdown-item(href=item.url)
-													i(class=item.iconClass, style="width: 20px; margin-right: 10px;")
-													span  #{item.name}
-
-							li.nav-item.dropdown.me-0.me-md-3.mt-2.mt-md-0.text-center.text-md-start
-								a.nav-link.rounded.bg-header-footer-highlight.text-white.dropdown-toggle(href="javascript:void(0)", id="navbarDropdown", role="button", data-bs-toggle="dropdown", aria-haspopup="true", aria-expanded="false") 
-									i.bi-gear.me-2.ms-1
-								
-								.dropdown-menu.dropdown-menu-end.shadow(aria-labelledby="navbarDropdown")
-									span.dropdown-header Display Currency
-
-									- var items = ["BKC", "sat"];
-									if (config.queryExchangeRates && global.exchangeRates)
-										- items.push("local");
-
-									.btn-group.ms-3
-										each item in items
-											if (userSettings.displayCurrency == item.toLowerCase())
-												span.btn.btn-primary.btn-sm #{item}
-
-											else
-												a.btn.btn-outline-primary.btn-sm(href=`./changeSetting?name=displayCurrency&value=${item.toLowerCase()}`) #{item}
-
-									if (config.queryExchangeRates && global.exchangeRates)
-										hr.dropdown-divider.mt-3.mb-1
-
-										span.dropdown-header Local Currency
-
-										- var items = ["USD", "EUR", "GBP"];
-
-										each item in items
-											a.dropdown-item(href=`./changeSetting?name=localCurrency&value=${item.toLowerCase()}`)
-												.clearfix
-													.float-start
-														span #{item}
-													.float-end
-														if (userSettings.localCurrency == item.toLowerCase())
-															i.bi-check2
-
-									hr.dropdown-divider.mt-2.mb-2
-									span.dropdown-header Theme
-
-									- var items = ["fa", "sat"];
-									if (config.queryExchangeRates && global.exchangeRates)
-										- items.push("local");
-
-									.btn-group.ms-3
-										- let themeNames = ["light", "dark", "dark-v1"];
-										- let themeIcons = ["bi-sun-fill", "bi-moon-fill", "bi-moon"];
-										- let themeIconColors = ["text-warning", "", ""];
-
-										each themeName, themeIndex in themeNames
-											a.btn.btn-sm.px-3(id=`theme-toggler-${themeName}`, href=`javascript:void(0);` onclick=`activateTheme('${themeName}'); return false;`, class=(userSettings.uiTheme == themeName ? "btn-primary" : "btn-outline-primary"))
-												i(class=themeIcons[themeIndex], class=themeIconColors[themeIndex])
-
-
-									hr.dropdown-divider.mt-2.mb-2
-									span.dropdown-header Display Timezone
-
-									- var items = ["fa", "sat"];
-									if (config.queryExchangeRates && global.exchangeRates)
-										- items.push("local");
-
-									.btn-group.ms-3
-										a.btn.btn-sm.px-3(href=`./changeSetting?name=uiTimezone&value=utc`, class=(userSettings.uiTimezone == "utc" ? "btn-primary" : "btn-outline-primary")) UTC
-										a.btn.btn-sm.px-3(href=`./changeSetting?name=uiTimezone&value=local`, class=(userSettings.uiTimezone == "utc" ? "btn-outline-primary" : "btn-primary")) Local
-
-									p.px-3.pt-2.small.text-muted "Local" uses your browser's default offset:
-										span#browser-tz-offset.badge.bg-light.text-dark.ms-1.border
-										i.bi-info-circle.ms-1(title="This value comes from your brower. If you wish to set a custom offset, you can do so below, in 'More settings...'", data-bs-toggle="tooltip")
-
-									//hr.dropdown-divider.mt-2.mb-2
-
-									//a.dropdown-item(href=`./user-settings`) More settings...
-									//a.dropdown-item(href=`./admin/dashboard`) Admin Dashboard
-
-
-							
-
-				form.form-inline.d-none.d-lg-inline(method="post", action="./search", style="width: 325px;")
-					input(type="hidden", name="_csrf", value=csrfToken)
-					.input-group
-						input.form-control(type="text", name="query", placeholder="block height/hash, txid, address", value=(query), autocapitalize="off", autocomplete="off", autocorrect="off", spellcheck="false")
-						
-						button.btn.btn-primary(type="submit", aria-label="Search")
-							i.bi-search
-
-				form.form-inline.d-lg-none.w-100.mt-2.mt-md-0(method="post", action="./search")
-					input(type="hidden", name="_csrf", value=csrfToken)
-					.input-group
-						input.form-control(type="text", name="query", placeholder="height/hash/txid...", value=(query), autocapitalize="off", autocomplete="off", autocorrect="off", spellcheck="false")
-						
-						button.btn.btn-primary(type="submit", aria-label="Search")
-							i.bi-search
-		
-
-
-		div.pb-4.pt-3.pt-md-4.bg-main
-			div.container.px-2.px-sm-3.mb-large
-				if (pageErrors && pageErrors.length > 0)
-					include includes/page-errors-modal.pug
-
-					//div.alert.alert-danger
-						- var errorText = `This page encountered ${pageErrors.length.toLocaleString()} error${pageErrors.length == 1 ? "" : "s"}:`;
-						span.fw-bold #{errorText} 
-						a(href="javascript:void(0)", data-bs-toggle="modal", data-bs-target="#pageErrorsModal") Error details
-
-				if (userMessageMarkdown)
-					div.alert(class=(userMessageType ? `alert-${userMessageType}` : "alert-warning"), role="alert")
-						div.user-message-markdown
-							| !{markdown(userMessageMarkdown)}
-
-				if (userMessage)
-					div.alert(class=(userMessageType ? `alert-${userMessageType}` : "alert-warning"), role="alert")
-						span #{userMessage}
-
-				div(style="min-height: 500px;")
-					block content
-
-				div(style="margin-bottom: 30px;")
-
-		footer.footer.border-top.border-primary.bg-header-footer.pt-3.pb-1.px-3.text-white(style="border-width: 0px !important;")
-			.container
-				.row.mb-7
-					.col-7
-						.mb-4
-						h9 <span style="font-weight: bold;color:white;">Bitcoin</span> (BTC) Donation : 12S9zLFnVibtiDSdB6J8ta12Dmr3x85Lot <Br>
-						a.text-danger.mb-1.me-3(href="https://briskcoin.org/donation/", style="text-decoration: none;",target="_blank", title="Support this project with a donation", data-bs-toggle="donation")
-							h9 <span style="font-weight: bold;color:white;">Donate with various currencies...</span><br>
-						h9 &copy; <script type="text/javascript">document.write(new Date().getFullYear());</script> by Briskcoin	<br>	
-						h9 Version: #{global.appVersion}
-
-		+sharedScriptTags
-		
-		script.
-			var serverTzOffset = "!{new Decimal(new Date().getTimezoneOffset()).dividedBy(60)}";
-			var browserTzOffset = "!{browserTzOffset}";
-			var currentBrowserTzOffset = (new Date().getTimezoneOffset() / 60).toString();
-			var userTzOffset = "!{userTzOffset}";
-			
-			document.addEventListener("DOMContentLoaded", function(event) {''
-				enableTooltipsAndPopovers();
-
-				onLoad_tabSelection();
-
-				//console.log(Intl.DateTimeFormat().resolvedOptions().timeZone);
-				console.log("Manual TZ Offset: " + userTzOffset);
-				console.log("Browser TZ Offset: " + browserTzOffset);
-
-				var displayTz = -1 * browserTzOffset;
-				$("#browser-tz-offset").text(`${displayTz >= 0 ? "+" : ""}${displayTz} hr`);
-
-				if (browserTzOffset != currentBrowserTzOffset) {
-					browserTzOffset = currentBrowserTzOffset;
-
-					$.get(`./changeSetting?name=browserTzOffset&value=${browserTzOffset}`, function(data) {
-						console.log("Browser timezone saved.");
-
-						if (userTzOffset == "unset") {
-							$(".date-text").each((i, obj) => {
-								var timestampUtc = $(obj).attr("data-timestamp-utc");
-								var includeAgo = $(obj).attr("data-date-ago");
-								var formatStr = $(obj).attr("data-date-format");
-								if (formatStr) {
-									formatStr = `&formatString=${formatStr}`;
-								}
-								
-								$.get(`./snippet/timestamp?timestamp=${timestampUtc}&includeAgo=${includeAgo}${formatStr}`, function(data) {
-									$(obj).html(data);
-
-									enableTooltipsAndPopovers();
-								});
-							});
-						}
-					});
-				}
-			});
-
-		if (perfResults)
-			script.
-				var perfId = !{JSON.stringify(perfId)};
-
-				console.log(`Performance ID: ${perfId}`);
-
-		if (!homepage)
-			script(src=assetUrl(`./js/highlight.min.js`), integrity="", crossorigin="anonymous")
-			script.
-				document.addEventListener("DOMContentLoaded", function(event) {
-					hljs.highlightAll();
-				});
-
-		if (process.env.BTCEXP_PLAUSIBLE_ANALYTICS_DOMAIN && process.env.BTCEXP_PLAUSIBLE_ANALYTICS_SCRIPT_URL)
-			script(async defer data-domain=process.env.BTCEXP_PLAUSIBLE_ANALYTICS_DOMAIN src=process.env.BTCEXP_PLAUSIBLE_ANALYTICS_SCRIPT_URL)
-
-			
-
-		if (config.credentials.sentryUrl && config.credentials.sentryUrl.length > 0)
-			script(src=assetUrl("./js/sentry.min.js"), integrity="", crossorigin="anonymous")
-			script.
-				Sentry.init({ dsn: '#{config.credentials.sentryUrl}' });
-
-		if (config.credentials.googleAnalyticsTrackingId && config.credentials.googleAnalyticsTrackingId.trim().length > 0)
-			script(async, src=("https://www.googletagmanager.com/gtag/js?id=" + config.credentials.googleAnalyticsTrackingId))
-			script.
-				window.dataLayer = window.dataLayer || [];
-				function gtag(){dataLayer.push(arguments);}
-				gtag('js', new Date());
-
-				gtag('config', '#{config.credentials.googleAnalyticsTrackingId}');
-
-		
-		block endOfBody
+  head
+    script(async,src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2900084726921838", integrity="", crossorigin="anonymous")
+    meta(charset="utf-8")
+    base(href=config.baseUrl)
+    meta(name="csrf-token", content=csrfToken)
+    meta(name="viewport", content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0, shrink-to-fit=no")
+
+    meta(name="description" content="Open-source, easy-to-use, educational Briskcoin explorer whose only dependency is your Briskcoin Core node.")
+    
+    if (!homepage)
+      link(rel="stylesheet", href=assetUrl(`./style/highlight.min.css`), integrity="", crossorigin="anonymous")
+
+    +themeCss
+    
+    style.
+      :root {
+        --content-padding-x: 1rem;
+        --content-padding-x-sm: 1.5rem;
+        --content-max-width: 1320px;
+      }
+      @media (min-width: 576px) {
+        :root {
+          --content-padding-x: 1.5rem;
+        }
+      }
+      .content-container {
+        width: 100%;
+        padding-left: var(--content-padding-x);
+        padding-right: var(--content-padding-x);
+        margin-left: auto;
+        margin-right: auto;
+      }
+      @media (min-width: 576px) {
+        .content-container {
+          padding-left: var(--content-padding-x-sm);
+          padding-right: var(--content-padding-x-sm);
+        }
+      }
+      @media (min-width: 1400px) {
+        .content-container {
+          max-width: var(--content-max-width);
+        }
+      }
+      .navbar .container,
+      .footer .container {
+        padding-left: var(--content-padding-x);
+        padding-right: var(--content-padding-x);
+      }
+      @media (min-width: 576px) {
+        .navbar .container,
+        .footer .container {
+          padding-left: var(--content-padding-x-sm);
+          padding-right: var(--content-padding-x-sm);
+        }
+      }
+
+    link(id="canonical" rel="canonical" href="https://explorer.briskcoin.org")
+
+    meta(property="og:title" content=(metaTitle != undefined ? metaTitle : "BriskcoinExplorer.org - Open-Source Briskcoin Explorer"))
+    meta(property="og:description" content=(metaDesc != undefined ? metaDesc : "Open-source, easy-to-use, educational Briskcoin explorer whose only dependency is your Briskcoin Core node."))
+    meta(property="og:image" content="https://explorer.briskcoin.org/img/preview.png")
+
+    meta(property="twitter:card" content="summary_large_image")
+    meta(property="twitter:site" content="@briskcoin")
+    meta(property="twitter:creator" content="@briskcoin")
+    meta(property="twitter:title" content=(metaTitle != undefined ? metaTitle : "explorer.briskcoin.org"))
+    meta(property="twitter:description" content=(metaDesc != undefined ? metaDesc : "Open-source, easy-to-use, educational Briskcoin explorer whose only dependency is your Briskcoin Core node."))
+    meta(property="twitter:image:src" content=(metaImgUrl != undefined ? metaImgUrl : "https://explorer.briskcoin.org/img/preview.png"))
+    meta(property="twitter:domain" content="explorer.briskcoin.org")
+
+    - var network = global.activeBlockchain || "main";
+    if (!network.endsWith("net") && network != "regtest")
+      - network = (network + "net");
+
+    link(rel="apple-touch-icon", sizes="180x180", href=assetUrl(`./img/network-${network}/apple-touch-icon.png`))
+    link(rel="icon", type="image/png", sizes="32x32", href=assetUrl(`./img/network-${network}/favicon-32x32.png`))
+    link(rel="icon", type="image/png", sizes="16x16", href=assetUrl(`./img/network-${network}/favicon-16x16.png`))
+    link(rel="manifest", href=`./img/network-${network}/site.webmanifest`)
+    link(rel="mask-icon", href=`./img/network-${network}/safari-pinned-tab.svg`, color="#f7931a")
+    link(rel="shortcut icon", href=assetUrl(`./img/network-${network}/favicon.ico`))
+    meta(name="apple-mobile-web-app-title", content="BKC Explorer")
+    meta(name="application-name", content="BKC Explorer")
+    meta(name="msapplication-TileColor", content="#022e70")
+    meta(name="msapplication-config", content=`./img/network-${network}/browserconfig.xml`)
+    meta(name="theme-color" content="#022e70")
+
+    include includes/debug-overrides.pug
+
+    block headContent
+      title Explorer
+
+  body.bg-header-footer
+    nav.navbar.navbar-expand-md.navbar-dark.bg-header-footer
+      .container
+        a.navbar-brand(href="./")
+          span
+            if (coinConfig.logoUrlsByNetwork && coinConfig.logoUrlsByNetwork[activeBlockchain])
+              img.header-image(src=assetUrl(coinConfig.logoUrlsByNetwork[activeBlockchain]), alt="logo")
+            else
+              img.header-image(src=assetUrl("./img/network-mainnet/logo.svg"), alt="logo")
+
+            if (coinConfig.siteTitlesByNetwork && coinConfig.siteTitlesByNetwork[activeBlockchain])
+              span.fw-light #{coinConfig.siteTitlesByNetwork[activeBlockchain]}
+            else
+              span.fw-light Briskcoin Explorer
+
+        if (false && config.demoSite)
+          - var networkNameMap = {"main": "Mainnet", "test": "Testnet", "signet": "Signet"};
+          span.badge.bg-primary(title=`This is a public demo, but this tool is designed to be installed and run by all Briskcoiners...<br/><i>Don't Trust, Verify</i>!`, data-bs-toggle="tooltip", data-bs-html="true")
+            span Public Demo
+            
+        button.navbar-toggler.navbar-toggler-end(type="button", data-bs-toggle="collapse", data-bs-target="#navbarNav", aria-label="collapse navigation")
+          span.navbar-toggler-icon
+          
+        .collapse.navbar-collapse(id="navbarNav")
+          if (rpcClient)
+            ul.navbar-nav.me-auto
+              if (false)
+                li.nav-item
+                  a.nav-link(href="./about")
+                    span About
+
+              if (false && activeBlockchain != "main")
+                - var chainName = activeBlockchain == "test" ? "testnet" : activeBlockchain
+
+                li.nav-item
+                  span.badge.bg-primary(style="margin-top: 0.75rem;", title=`Current node's chain: ${activeBlockchain}` data-bs-toggle="tooltip") #{chainName}
+
+            ul.navbar-nav
+              if (config.demoSite && homepage)
+                li.nav-item.dropdown.me-0.me-md-2.mt-2.mt-md-0.text-center.text-md-start
+                  a.nav-link.dropdown-toggle.bg-header-footer-highlight.rounded(href="javascript:void(0)", role="button", data-bs-toggle="dropdown", aria-haspopup="true", aria-expanded="false")
+                    img.align-text-top.me-1(src=assetUrl(coinConfig.coinIconUrlsByNetwork[activeBlockchain]), style="width: 20px;")
+
+                  div.dropdown-menu.dropdown-menu-end.shadow(aria-label="Demo Sites")
+                    span.dropdown-header Public Demo Sites
+
+                    - var demoSites = ["main", "test", "signet"];
+                    
+                    each demoSite in demoSites
+                      a.dropdown-item(href=coinConfig.demoSiteUrlsByNetwork[demoSite])
+                        img.align-text-top.me-2(src=assetUrl(coinConfig.coinIconUrlsByNetwork[demoSite]), style="width: 20px;")
+                        
+                        | #{coinConfig.siteTitlesByNetwork[demoSite].replace("Explorer", "").replace("Briskcoin", "Mainnet")}
+
+              if (config.siteTools)
+                li.nav-item.dropdown.me-0.me-md-2.mt-2.mt-md-0.text-center.text-md-start
+                  a.nav-link.rounded.bg-header-footer-highlight.text-white.dropdown-toggle(href="javascript:void(0)", role="button", data-bs-toggle="dropdown", aria-haspopup="true", aria-expanded="false")
+                    i.bi-tools.me-2.ms-1
+
+                  div.dropdown-menu.dropdown-menu-end.shadow(aria-label="Tools Items")
+                    each section, sectionIndex in config.site.toolSections
+                      if (sectionIndex > 0)
+                        hr.dropdown-divider.mt-2.mb-1
+
+                      span.dropdown-header #{section.name}
+
+                      each itemIndex in section.items
+                        - var item = config.siteTools[itemIndex];
+
+                        a.dropdown-item(href=item.url)
+                          i(class=item.iconClass, style="width: 20px; margin-right: 10px;")
+                          span  #{item.name}
+
+              li.nav-item.dropdown.me-0.me-md-3.mt-2.mt-md-0.text-center.text-md-start
+                a.nav-link.rounded.bg-header-footer-highlight.text-white.dropdown-toggle(href="javascript:void(0)", id="navbarDropdown", role="button", data-bs-toggle="dropdown", aria-haspopup="true", aria-expanded="false") 
+                  i.bi-gear.me-2.ms-1
+                
+                .dropdown-menu.dropdown-menu-end.shadow(aria-labelledby="navbarDropdown")
+                  span.dropdown-header Display Currency
+
+                  - var items = ["BKC", "sat"];
+                  if (config.queryExchangeRates && global.exchangeRates)
+                    - items.push("local");
+
+                  .btn-group.ms-3
+                    each item in items
+                      - var currentDisplayCurrency = (userSettings && userSettings.displayCurrency) ? userSettings.displayCurrency : 'bkc';
+                      if (currentDisplayCurrency == item.toLowerCase())
+                        span.btn.btn-primary.btn-sm #{item}
+                      else
+                        a.btn.btn-outline-primary.btn-sm(href=`./changeSetting?name=displayCurrency&value=${item.toLowerCase()}`) #{item}
+
+                  if (config.queryExchangeRates && global.exchangeRates)
+                    hr.dropdown-divider.mt-3.mb-1
+
+                    span.dropdown-header Local Currency
+
+                    - var items = ["USD", "EUR", "GBP"];
+
+                    each item in items
+                      a.dropdown-item(href=`./changeSetting?name=localCurrency&value=${item.toLowerCase()}`)
+                        .clearfix
+                          .float-start
+                            span #{item}
+                          .float-end
+                            if (userSettings && userSettings.localCurrency == item.toLowerCase())
+                              i.bi-check2
+
+                  hr.dropdown-divider.mt-2.mb-2
+                  span.dropdown-header Theme
+
+                  - let themeNames = ["light", "dark", "dark-v1"];
+                  - let themeIcons = ["bi-sun-fill", "bi-moon-fill", "bi-moon"];
+                  - let themeIconColors = ["text-warning", "", ""];
+
+                  .btn-group.ms-3
+                    each themeName, themeIndex in themeNames
+                      - var currentUiTheme = (userSettings && userSettings.uiTheme) ? userSettings.uiTheme : 'light';
+                      a.btn.btn-sm.px-3(id=`theme-toggler-${themeName}`, href=`javascript:void(0);` onclick=`activateTheme('${themeName}'); return false;`, class=(currentUiTheme == themeName ? "btn-primary" : "btn-outline-primary"))
+                        i(class=themeIcons[themeIndex], class=themeIconColors[themeIndex])
+
+                  hr.dropdown-divider.mt-2.mb-2
+                  span.dropdown-header Display Timezone
+
+                  .btn-group.ms-3
+                    - var currentUiTimezone = (userSettings && userSettings.uiTimezone) ? userSettings.uiTimezone : 'local';
+                    a.btn.btn-sm.px-3(href=`./changeSetting?name=uiTimezone&value=utc`, class=(currentUiTimezone == "utc" ? "btn-primary" : "btn-outline-primary")) UTC
+                    a.btn.btn-sm.px-3(href=`./changeSetting?name=uiTimezone&value=local`, class=(currentUiTimezone == "utc" ? "btn-outline-primary" : "btn-primary")) Local
+
+                  p.px-3.pt-2.small.text-muted "Local" uses your browser's default offset:
+                    span#browser-tz-offset.badge.bg-light.text-dark.ms-1.border
+                    i.bi-info-circle.ms-1(title="This value comes from your brower. If you wish to set a custom offset, you can do so below, in 'More settings...'", data-bs-toggle="tooltip")
+
+        form.form-inline.d-none.d-lg-inline(method="post", action="./search", style="width: 325px;")
+          input(type="hidden", name="_csrf", value=csrfToken)
+          .input-group
+            input.form-control(type="text", name="query", placeholder="block height/hash, txid, address", value=(query), autocapitalize="off", autocomplete="off", autocorrect="off", spellcheck="false")
+            
+            button.btn.btn-primary(type="submit", aria-label="Search")
+              i.bi-search
+
+        form.form-inline.d-lg-none.w-100.mt-2.mt-md-0(method="post", action="./search")
+          input(type="hidden", name="_csrf", value=csrfToken)
+          .input-group
+            input.form-control(type="text", name="query", placeholder="height/hash/txid...", value=(query), autocapitalize="off", autocomplete="off", autocorrect="off", spellcheck="false")
+            
+            button.btn.btn-primary(type="submit", aria-label="Search")
+              i.bi-search
+    
+    div.pb-4.pt-3.pt-md-4.bg-main
+      div.content-container
+        if (pageErrors && pageErrors.length > 0)
+          include includes/page-errors-modal.pug
+
+        if (userMessageMarkdown)
+          div.alert(class=(userMessageType ? `alert-${userMessageType}` : "alert-warning"), role="alert")
+            div.user-message-markdown
+              | !{markdown(userMessageMarkdown)}
+
+        if (userMessage)
+          div.alert(class=(userMessageType ? `alert-${userMessageType}` : "alert-warning"), role="alert")
+            span #{userMessage}
+
+        div(style="min-height: 500px;")
+          block content
+
+        div(style="margin-bottom: 30px;")
+
+    footer.footer.border-top.border-primary.bg-header-footer.pt-3.pb-1.text-white(style="border-width: 0px !important;")
+      .container
+        .row.mb-7
+          .col-12.col-md-7
+            .mb-4
+            h9 <span style="font-weight: bold;color:white;">Bitcoin</span> (BTC) Donation : 12S9zLFnVibtiDSdB6J8ta12Dmr3x85Lot <Br>
+            a.text-danger.mb-1.me-3(href="https://briskcoin.org/donation/", style="text-decoration: none;",target="_blank", title="Support this project with a donation", data-bs-toggle="donation")
+              h9 <span style="font-weight: bold;color:white;">Donate with various currencies...</span><br>
+            h9 &copy; <script type="text/javascript">document.write(new Date().getFullYear());</script> by Briskcoin <br>  
+            h9 Version: #{global.appVersion}
+
+    +sharedScriptTags
+    
+    script.
+      var serverTzOffset = "!{new Decimal(new Date().getTimezoneOffset()).dividedBy(60)}";
+      var browserTzOffset = "!{browserTzOffset}";
+      var currentBrowserTzOffset = (new Date().getTimezoneOffset() / 60).toString();
+      var userTzOffset = "!{userTzOffset}";
+      
+      document.addEventListener("DOMContentLoaded", function(event) {
+        enableTooltipsAndPopovers();
+        onLoad_tabSelection();
+
+        var displayTz = -1 * browserTzOffset;
+        $("#browser-tz-offset").text(`${displayTz >= 0 ? "+" : ""}${displayTz} hr`);
+
+        if (browserTzOffset != currentBrowserTzOffset) {
+          browserTzOffset = currentBrowserTzOffset;
+          $.get(`./changeSetting?name=browserTzOffset&value=${browserTzOffset}`, function(data) {
+            console.log("Browser timezone saved.");
+            if (userTzOffset == "unset") {
+              $(".date-text").each((i, obj) => {
+                var timestampUtc = $(obj).attr("data-timestamp-utc");
+                var includeAgo = $(obj).attr("data-date-ago");
+                var formatStr = $(obj).attr("data-date-format");
+                if (formatStr) {
+                  formatStr = `&formatString=${formatStr}`;
+                }
+                
+                $.get(`./snippet/timestamp?timestamp=${timestampUtc}&includeAgo=${includeAgo}${formatStr}`, function(data) {
+                  $(obj).html(data);
+                  enableTooltipsAndPopovers();
+                });
+              });
+            }
+          });
+        }
+      });
+
+    if (perfResults)
+      script.
+        var perfId = !{JSON.stringify(perfId)};
+        console.log(`Performance ID: ${perfId}`);
+
+    if (!homepage)
+      script(src=assetUrl(`./js/highlight.min.js`), integrity="", crossorigin="anonymous")
+      script.
+        document.addEventListener("DOMContentLoaded", function(event) {
+          hljs.highlightAll();
+        });
+
+    if (process.env.BTCEXP_PLAUSIBLE_ANALYTICS_DOMAIN && process.env.BTCEXP_PLAUSIBLE_ANALYTICS_SCRIPT_URL)
+      script(async defer data-domain=process.env.BTCEXP_PLAUSIBLE_ANALYTICS_DOMAIN src=process.env.BTCEXP_PLAUSIBLE_ANALYTICS_SCRIPT_URL)
+
+    if (config.credentials.sentryUrl && config.credentials.sentryUrl.length > 0)
+      script(src=assetUrl("./js/sentry.min.js"), integrity="", crossorigin="anonymous")
+      script.
+        Sentry.init({ dsn: '#{config.credentials.sentryUrl}' });
+
+    if (config.credentials.googleAnalyticsTrackingId && config.credentials.googleAnalyticsTrackingId.trim().length > 0)
+      script(async, src=("https://www.googletagmanager.com/gtag/js?id=" + config.credentials.googleAnalyticsTrackingId))
+      script.
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', '#{config.credentials.googleAnalyticsTrackingId}');
+    
+    block endOfBody
