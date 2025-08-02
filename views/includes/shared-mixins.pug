@@ -224,7 +224,7 @@ mixin txList(visibleTxs, txCount, limit, offset, inputsByTxid, options={})
 								- txFeeRate = txFee.dividedBy(tx.vsize).times(coinConfig.baseCurrencyUnit.multiplier);
 
 							
-							if (!coinbaseTx && Object.keys(txInputs).length < tx.vin.length)
+							if (!coinbaseTx && txInputs && Object.keys(txInputs).length < tx.vin.length)
 								+infoBadge
 									span(data-bs-toggle="tooltip", title="Data truncated by performance settings. See transaction details for fee info.")
 										span.fw-light …
