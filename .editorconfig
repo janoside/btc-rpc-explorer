@@ -1,0 +1,18 @@
+# https://editorconfig.org
+root = true
+[*]
+charset = utf-8
+
+end_of_line = lf
+insert_final_newline = true
+
+indent_size = 4
+indent_style = tab
+indent_brace_style = K&R
+
+[*.{js,json}]
+quote_type = double
+
+
+[*.pug]
+trim_trailing_whitespace = false
