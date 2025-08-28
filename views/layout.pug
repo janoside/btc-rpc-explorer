@@ -33,7 +33,7 @@ html(lang="en")
 		meta(property="twitter:domain" content="bitcoinexplorer.org")
 
 		- var network = global.activeBlockchain || "main";
-		if (!network.endsWith("net") && network != "regtest")
+		if (!network.endsWith("net") && network != "regtest" && network != "testnet4")
 			- network = (network + "net"); // handles "main" -> "mainnet" and "test" -> "testnet"
 
 		link(rel="apple-touch-icon", sizes="180x180", href=assetUrl(`./img/network-${network}/apple-touch-icon.png`))
@@ -102,7 +102,7 @@ html(lang="en")
 									div.dropdown-menu.dropdown-menu-end.shadow(aria-label="Demo Sites")
 										span.dropdown-header Public Demo Sites
 
-										- var demoSites = ["main", "test", "signet"];
+										- var demoSites = ["main", "test", "testnet4", "signet"];
 										
 										each demoSite in demoSites
 											a.dropdown-item(href=coinConfig.demoSiteUrlsByNetwork[demoSite])
@@ -308,7 +308,7 @@ html(lang="en")
 									+copyTextButton("http://btcexpz7xlwrqknqw6p3bok6shf73qtkd6zxct4x4qta2ktvh7ntprad.onion")
 									
 									div.mt-2
-										- var demoSites = ["main", "test", "signet"];
+										- var demoSites = ["main", "test", "testnet4", "signet"];
 										
 										each demoSite in demoSites
 											a.me-2(href=coinConfig.demoSiteUrlsByNetwork[demoSite], title=coinConfig.siteTitlesByNetwork[demoSite], data-bs-toggle="tooltip")

@@ -65,30 +65,35 @@ module.exports = {
 	logoUrlsByNetwork:{
 		"main":"./img/network-mainnet/logo.svg",
 		"test":"./img/network-testnet/logo.svg",
+		"testnet4":"./img/network-testnet/logo.svg",
 		"regtest":"./img/network-regtest/logo.svg",
 		"signet":"./img/network-signet/logo.svg"
 	},
 	coinIconUrlsByNetwork:{
 		"main":"./img/network-mainnet/coin-icon.svg",
 		"test":"./img/network-testnet/coin-icon.svg",
+		"testnet4":"./img/network-testnet/coin-icon.svg",
 		"signet":"./img/network-signet/coin-icon.svg",
 		"regtest":"./img/network-regtest/coin-icon.svg"
 	},
 	coinColorsByNetwork: {
 		"main": "#F7931A",
 		"test": "#1daf00",
+		"testnet4": "#1daf00",
 		"signet": "#af008c",
 		"regtest": "#777"
 	},
 	siteTitlesByNetwork: {
 		"main":"Bitcoin Explorer",
-		"test":"Testnet Explorer",
+		"test":"Testnet3 Explorer",
+		"testnet4":"Testnet4 Explorer",
 		"regtest":"Regtest Explorer",
 		"signet":"Signet Explorer",
 	},
 	demoSiteUrlsByNetwork: {
 		"main": "https://bitcoinexplorer.org",
 		"test": "https://testnet.bitcoinexplorer.org",
+		"testnet4": "https://testnet.bitcoinexplorer.org",
 		"signet": "https://signet.bitcoinexplorer.org",
 	},
 	knownTransactionsByNetwork: {
@@ -110,6 +115,7 @@ module.exports = {
 	maxSupplyByNetwork: {
 		"main": new Decimal(20999817.31308491), // ref: https://bitcoin.stackexchange.com/a/38998
 		"test": new Decimal(21000000),
+		"testnet4": new Decimal(21000000),
 		"regtest": new Decimal(21000000),
 		"signet": new Decimal(21000000)
 	},
@@ -124,6 +130,7 @@ module.exports = {
 	halvingBlockIntervalsByNetwork: {
 		"main": 210000,
 		"test": 210000,
+		"testnet4": 210000,
 		"regtest": 150,
 		"signet": 210000
 	},
@@ -131,6 +138,7 @@ module.exports = {
 	terminalHalvingCountByNetwork: {
 		"main": 32,
 		"test": 32,
+		"testnet4": 32,
 		"regtest": 32,
 		"signet": 32
 	},
@@ -167,12 +175,14 @@ module.exports = {
 	genesisBlockHashesByNetwork:{
 		"main":	"000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f",
 		"test":	"000000000933ea01ad0ee984209779baaec3ced90fa3f408719526f8d77f4943",
+		"testnet4": "00000000da84f2bafbbc53dee25a72ae507ff4914b867c565be350b0da8bf043",
 		"regtest": "0f9188f13cb7b2c71f2a335e3a4fc328bf5beb436012afca590b1a11466e2206",
 		"signet":  "00000008819873e925422c1ff0f99f7cc9bbb232af63a077a480a3633bee1ef6", 
 	},
 	genesisCoinbaseTransactionIdsByNetwork: {
 		"main":	"4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b",
 		"test":	"4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b",
+		"testnet4": "7aa0a7ae1e223414cb807e40cd57e667b718e42aaf9306db9102fe28912b7b4e",
 		"regtest": "4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b",
 		"signet":  "4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b"
 	},
@@ -243,6 +253,37 @@ module.exports = {
 			"blockhash": "000000000933ea01ad0ee984209779baaec3ced90fa3f408719526f8d77f4943",
 			"time": 1296688602,
 			"blocktime": 1296688602
+		},
+		"testnet4": {
+			"hex": "01000000010000000000000000000000000000000000000000000000000000000000000000ffffffff5504ffff001d01044c4c30332f4d61792f323032342030303030303030303030303030303030303030303165626435386332343439373062336161396437383362623030313031316662653865613865393865303065ffffffff0100f2052a010000002321000000000000000000000000000000000000000000000000000000000000000000ac00000000",
+			"txid": "7aa0a7ae1e223414cb807e40cd57e667b718e42aaf9306db9102fe28912b7b4e",
+			"hash": "7aa0a7ae1e223414cb807e40cd57e667b718e42aaf9306db9102fe28912b7b4e",
+			"version": 1,
+			"size": 180,
+			"vsize": 180,
+			"weight": 720,
+			"locktime": 0,
+			"vin": [
+				{
+					"coinbase": "04ffff001d01044c4c30332f4d61792f323032342030303030303030303030303030303030303030303165626435386332343439373062336161396437383362623030313031316662653865613865393865303065",
+					"sequence": 4294967295
+				}
+			],
+			"vout": [
+				{
+					"value": 50.00000000,
+					"n": 0,
+					"scriptPubKey": {
+						"asm": "000000000000000000000000000000000000000000000000000000000000000000 OP_CHECKSIG",
+						"desc": "raw(21000000000000000000000000000000000000000000000000000000000000000000ac)#8erpcjk9",
+						"hex": "21000000000000000000000000000000000000000000000000000000000000000000ac",
+						"type": "nonstandard"
+					}
+				}
+			],
+			"blockhash": "00000000da84f2bafbbc53dee25a72ae507ff4914b867c565be350b0da8bf043",
+			"time": 1714777860,
+			"blocktime": 1714777860
 		},
 		"regtest": {
 			"hex": "01000000010000000000000000000000000000000000000000000000000000000000000000ffffffff4d04ffff001d0104455468652054696d65732030332f4a616e2f32303039204368616e63656c6c6f72206f6e206272696e6b206f66207365636f6e64206261696c6f757420666f722062616e6b73ffffffff0100f2052a01000000434104678afdb0fe5548271967f1a67130b7105cd6a828e03909a67962e0ea1f61deb649f6bc3f4cef38c4f35504e51ec112de5c384df7ba0b8d578a4c702b6bf11d5fac00000000",
@@ -379,6 +420,45 @@ module.exports = {
 			"txs": 1,
 			"utxo_increase": 1,
 			"utxo_size_inc": 117
+		},
+		"testnet4": {
+			"avgfee": 0,
+			"avgfeerate": 0,
+			"avgtxsize": 0,
+			"blockhash": "00000000da84f2bafbbc53dee25a72ae507ff4914b867c565be350b0da8bf043",
+			"feerate_percentiles": [
+				0,
+				0,
+				0,
+				0,
+				0
+			],
+			"height": 0,
+			"ins": 0,
+			"maxfee": 0,
+			"maxfeerate": 0,
+			"maxtxsize": 0,
+			"medianfee": 0,
+			"mediantime": 1714777860,
+			"mediantxsize": 0,
+			"minfee": 0,
+			"minfeerate": 0,
+			"mintxsize": 0,
+			"outs": 1,
+			"subsidy": 5000000000,
+			"swtotal_size": 0,
+			"swtotal_weight": 0,
+			"swtxs": 0,
+			"time": 1714777860,
+			"total_out": 0,
+			"total_size": 0,
+			"total_weight": 0,
+			"totalfee": 0,
+			"txs": 1,
+			"utxo_increase": 1,
+			"utxo_size_inc": 85,
+			"utxo_increase_actual": 0,
+			"utxo_size_inc_actual": 0
 		},
 		"regtest": {
 			"avgfee": 0,
