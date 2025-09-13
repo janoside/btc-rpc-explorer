@@ -16,7 +16,7 @@ importers:
         version: 3.2.6
       axios:
         specifier: ^1.11.0
-        version: 1.11.0(debug@4.4.1)
+        version: 1.12.1(debug@4.4.1)
       basic-auth:
         specifier: ^2.0.1
         version: 2.0.1
@@ -134,6 +134,10 @@ importers:
       zeromq:
         specifier: ^6.5.0
         version: 6.5.0
+    optionalDependencies:
+      event-loop-stats:
+        specifier: ^1.4.1
+        version: 1.4.1
     devDependencies:
       eslint:
         specifier: ^9.34.0
@@ -141,10 +145,6 @@ importers:
       sass:
         specifier: ^1.90.0
         version: 1.90.0
-    optionalDependencies:
-      event-loop-stats:
-        specifier: ^1.4.1
-        version: 1.4.1
 
 packages:
 
@@ -813,8 +813,8 @@ packages:
     resolution: {integrity: sha512-wvUjBtSGN7+7SjNpq/9M2Tg350UZD3q62IFZLbRAR1bSMlCo1ZaeW+BJ+D090e4hIIZLBcTDWe4Mh4jvUDajzQ==}
     engines: {node: '>= 0.4'}
 
-  axios@1.11.0:
-    resolution: {integrity: sha512-1Lx3WLFQWm3ooKDYZD1eXmoGO9fxYQjrycfHFC8P0sCfQVXyROp0p9PFWBehewBOdCwHc+f/b8I0fMto5eSfwA==}
+  axios@1.12.1:
+    resolution: {integrity: sha512-Kn4kbSXpkFHCGE6rBFNwIv0GQs4AvDT80jlveJDKFxjbTYMUeB4QtsdPCv6H8Cm19Je7IU6VFtRl2zWZI0rudQ==}
 
   babel-walk@3.0.0-canary-5:
     resolution: {integrity: sha512-GAwkz0AihzY5bkwIY5QDR+LvsRQgB/B+1foMPvi0FZPMl5fjD7ICiznUiBdLYMH1QYe6vqu4gWYytZOccLouFw==}
@@ -2822,7 +2822,7 @@ snapshots:
   '@janoside/app-utils@https://codeload.github.com/janoside/app-utils/tar.gz/ba4c23d3f':
     dependencies:
       '@aws-sdk/client-s3': 3.873.0
-      axios: 1.11.0(debug@4.4.1)
+      axios: 1.12.1(debug@4.4.1)
       debug: 4.4.1
       dotenv: 16.6.1
       luxon: 3.7.1
@@ -3352,7 +3352,7 @@ snapshots:
     dependencies:
       possible-typed-array-names: 1.1.0
 
-  axios@1.11.0(debug@4.4.1):
+  axios@1.12.1(debug@4.4.1):
     dependencies:
       follow-redirects: 1.15.11(debug@4.4.1)
       form-data: 4.0.4
