@@ -33,7 +33,7 @@
 	"dependencies": {
 		"@janoside/app-utils": "github:janoside/app-utils#ba4c23d3f",
 		"async": "^3.2.6",
-		"axios": "^1.11.0",
+		"axios": "^1.12.0",
 		"basic-auth": "^2.0.1",
 		"bech32": "2.0.0",
 		"bip32": "^4.0.0",
