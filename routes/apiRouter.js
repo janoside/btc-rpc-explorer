@@ -917,7 +917,7 @@ router.get("/mempool/fees", asyncHandler(async (req, res, next) => {
 		if (rawSmartFeeEstimate.errors) {
 			smartFeeEstimates[feeConfTargets[i]] = "?";
 		} else {
-			smartFeeEstimates[feeConfTargets[i]] = parseInt(new Decimal(rawSmartFeeEstimate.feerate).times(coinConfig.baseCurrencyUnit.multiplier).dividedBy(1000));
+			smartFeeEstimates[feeConfTargets[i]] = parseFloat(new Decimal(rawSmartFeeEstimate.feerate).times(coinConfig.baseCurrencyUnit.multiplier).dividedBy(1000).toPrecision(3));
 		}
 	}		
 		
