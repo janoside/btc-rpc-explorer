@@ -79,6 +79,11 @@ block content
 							a.btn.btn-primary.btn-sm.me-2(href=`./changeSetting?name=txPageShowTechDetails&value=true`, title="Display technical details for this transaction.", data-bs-toggle="tooltip")
 								i.bi-plus-square.me-2
 								| Technical Details
+
+						if (`${userSettings["txPageShowFingerprints"]}` == "false")
+							a.btn.btn-danger.btn-sm.me-2(href=`./changeSetting?name=txPageShowFingerprints&value=true`, title="Display wallet fingerprint analysis for this transaction.", data-bs-toggle="tooltip")
+								i.bi-plus-square.me-2
+								| Wallet Fingerprints
 					
 
 				- var isTxConfirmed = true;
@@ -277,6 +282,41 @@ block content
 
 					+txIoDetails(tx, txInputs, totalIOValues, blockHeight)
 						
+
+				if (walletFingerprintAnalysis && walletFingerprintAnalysis.available)
+					- var wfa = walletFingerprintAnalysis;
+					+contentSection("Wallet Fingerprints", true, "txPageShowFingerprints", true)
+						p.mb-1
+							span.fw-bold.me-2 Likely wallet:
+							span.badge(class=`text-bg-${wfa.verdictClass}`) #{wfa.verdict}
+						if (wfa.signerVerdict)
+							p.mb-3
+								span.fw-bold.me-2 Signing device:
+								span.badge(class=`text-bg-${wfa.signerVerdictClass}`) #{wfa.signerVerdict}
+						.table-responsive
+							table.table.table-sm.small.mb-2
+								thead
+									tr
+										th Signal
+										th Observed
+										th What it means
+								tbody
+									each signal in wfa.signals
+										tr
+											td.text-nowrap.fw-bold #{signal.label}
+											td #{signal.value}
+											td
+												| #{signal.implication}
+												if (signal.reference)
+													a.ms-1.text-decoration-none(href=signal.reference, target="_blank", rel="noopener noreferrer", title="Learn more")
+														i.bi-book
+												if (signal.privacy)
+													.text-warning.mt-1
+														i.bi-exclamation-triangle.me-1
+														| #{signal.privacy}
+						if (!wfa.haveInputData)
+							p.text-muted.small.fst-italic Some checks were skipped because the previous-output data for this transaction's inputs was not available.
+						p.text-muted.small.fst-italic #{wfa.disclaimer}
 
 				if (mempoolDetails)
 					if (mempoolDetails.ancestors.length > 0)

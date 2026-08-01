@@ -27,6 +27,7 @@ const coreApi = require("./../app/api/coreApi.js");
 const addressApi = require("./../app/api/addressApi.js");
 const rpcApi = require("./../app/api/rpcApi.js");
 const btcQuotes = require("./../app/coins/btcQuotes.js");
+const walletFingerprintAnalysis = require("./../app/walletFingerprintAnalysis.js");
 
 const forceCsrf = csrfApi({ ignoreMethods: [] });
 
@@ -1436,6 +1437,31 @@ router.get("/tx/:transactionId", asyncHandler(async (req, res, next) => {
 		}
 
 		await utils.awaitPromises(promises);
+
+		await utils.timePromise("tx.walletFingerprintAnalysis", async () => {
+			try {
+				const getblockchaininfo = await coreApi.getBlockchainInfo();
+				const tipHeight = getblockchaininfo ? getblockchaininfo.blocks : -1;
+				const txBlockHeight = (res.locals.result.getblock && res.locals.result.getblock.height) || -1;
+
+				const fetchTxWithInputs = async (linkedTxid) => {
+					const linked = await coreApi.getRawTransactionsWithInputs([linkedTxid], -1);
+					return { tx: linked.transactions[0], txInputs: linked.txInputsByTransaction[linkedTxid] || {} };
+				};
+
+				let extraSignatures = { low: 0, high: 0, linkedTxids: [] };
+				try {
+					extraSignatures = await walletFingerprintAnalysis.gatherLinkedSignatures(tx, res.locals.result.txInputs, fetchTxWithInputs, 4);
+				} catch (graphErr) {
+					utils.logError("walletFingerprintAnalysisGraph", graphErr);
+				}
+
+				res.locals.walletFingerprintAnalysis = walletFingerprintAnalysis.analyzeTransaction(tx, res.locals.result.txInputs, txBlockHeight, tipHeight, extraSignatures);
+
+			} catch (err) {
+				utils.logError("walletFingerprintAnalysis", err);
+			}
+		}, perfResults);
 
 		if (global.specialTransactions && global.specialTransactions[txid]) {
 			let funInfo = global.specialTransactions[txid];
