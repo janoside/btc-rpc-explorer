@@ -1,0 +1,54 @@
+{
+	"source": "Schema inspired by https://github.com/arminsabouri/walletfingerprints.info ; wallet values derived by reading each wallet's transaction-construction source, signer values by reading each signing device's firmware.",
+	"vocabulary": {
+		"version": [1, 2],
+		"anti_fee_sniping": ["always", "sometimes", "never"],
+		"rbf": ["always", "sometimes", "never", "native_segwit_only"],
+		"multi_type_vin": ["yes", "no"],
+		"low_r": ["always", "no", "unknown"],
+		"op_return": ["yes", "no"],
+		"batching": ["multi", "single"],
+		"bip69": ["always", "never"],
+		"address_reuse": ["yes", "no"],
+		"change_position": ["last", "any"],
+		"change_type": ["input", "payment"],
+		"nsequence": "list of exact nSequence hex values the wallet uses; omit the field when not known (treated as any)"
+	},
+	"wallets": {
+		"Bitcoin Core": { "version": 2, "anti_fee_sniping": "always", "rbf": "always", "multi_type_vin": "yes", "low_r": "always", "op_return": "yes", "batching": "multi", "bip69": "never", "address_reuse": "no", "change_position": "any", "change_type": "payment", "nsequence": ["0xfffffffd", "0xfffffffe", "0xffffffff"] },
+		"Electrum": { "version": 2, "anti_fee_sniping": "always", "rbf": "always", "multi_type_vin": "no", "low_r": "always", "op_return": "yes", "batching": "multi", "bip69": "always", "address_reuse": "no", "change_position": "any", "change_type": "input", "nsequence": ["0xfffffffd", "0xfffffffe", "0xffffffff"] },
+		"Blue Wallet": { "version": 2, "anti_fee_sniping": "never", "rbf": "native_segwit_only", "multi_type_vin": "no", "low_r": "no", "op_return": "no", "batching": "multi", "bip69": "never", "address_reuse": "no", "change_position": "last", "change_type": "input", "nsequence": ["0x80000000", "0xffffffff"] },
+		"Coinbase Wallet": { "version": 2, "anti_fee_sniping": "never", "rbf": "never", "multi_type_vin": "yes", "low_r": "no", "op_return": "no", "batching": "single", "bip69": "never", "address_reuse": "no", "change_position": "last", "change_type": "input", "nsequence": ["0xffffffff"] },
+		"Exodus Wallet": { "version": 2, "anti_fee_sniping": "never", "rbf": "never", "multi_type_vin": "no", "low_r": "no", "op_return": "no", "batching": "single", "bip69": "never", "address_reuse": "yes", "change_position": "any", "change_type": "input", "nsequence": ["0xffffffff"] },
+		"Trust Wallet": { "version": 1, "anti_fee_sniping": "never", "rbf": "always", "multi_type_vin": "no", "low_r": "no", "op_return": "no", "batching": "single", "bip69": "never", "address_reuse": "yes", "change_position": "any", "change_type": "input" },
+		"Trezor": { "version": 1, "anti_fee_sniping": "never", "rbf": "always", "multi_type_vin": "no", "low_r": "no", "op_return": "yes", "batching": "multi", "bip69": "always", "address_reuse": "no", "change_position": "any", "change_type": "input" },
+		"Ledger": { "version": 1, "anti_fee_sniping": "never", "rbf": "always", "multi_type_vin": "no", "low_r": "no", "op_return": "no", "batching": "single", "bip69": "never", "address_reuse": "no", "change_position": "last", "change_type": "input" },
+		"Sparrow": { "version": 2, "anti_fee_sniping": "always", "rbf": "always", "multi_type_vin": "no", "low_r": "always", "op_return": "yes", "batching": "multi", "bip69": "never", "address_reuse": "no", "change_position": "last", "change_type": "input", "nsequence": ["0xfffffffd", "0xfffffffe", "0xffffffff"] },
+		"Bull Bitcoin": { "version": 2, "anti_fee_sniping": "always", "rbf": "always", "multi_type_vin": "yes", "low_r": "always", "op_return": "no", "batching": "multi", "bip69": "never", "address_reuse": "no", "change_position": "last", "change_type": "input", "nsequence": ["0xfffffffd", "0xfffffffe", "0xffffffff"] },
+		"Cake Wallet": { "version": 2, "anti_fee_sniping": "never", "rbf": "sometimes", "multi_type_vin": "yes", "low_r": "always", "op_return": "yes", "batching": "multi", "bip69": "never", "address_reuse": "no", "change_position": "last", "change_type": "input", "nsequence": ["0xfffffffd", "0xffffffff"] },
+		"Liana": { "version": 2, "anti_fee_sniping": "sometimes", "rbf": "always", "multi_type_vin": "no", "low_r": "always", "op_return": "no", "batching": "multi", "bip69": "never", "address_reuse": "no", "change_position": "last", "change_type": "input", "nsequence": ["0xfffffffd"] },
+		"Nunchuk": { "version": 2, "anti_fee_sniping": "sometimes", "rbf": "always", "multi_type_vin": "yes", "low_r": "no", "op_return": "yes", "batching": "multi", "bip69": "never", "address_reuse": "no", "change_position": "any", "change_type": "input" },
+		"Wasabi": { "version": 2, "anti_fee_sniping": "sometimes", "rbf": "never", "multi_type_vin": "yes", "low_r": "no", "op_return": "no", "batching": "multi", "bip69": "never", "address_reuse": "no", "change_position": "last", "change_type": "input", "nsequence": ["0xfffffffe", "0xffffffff"] }
+	},
+	"signer_vocabulary": {
+		"note": "A signing device does not build the transaction, so version, locktime, nSequence, output order and change selection all come from the coordinator software. Only the fingerprints left by the signing itself are listed here, and they are matched separately from the wallet catalog. The Trezor and Ledger entries in that catalog describe their coordinator apps (Trezor Suite, Ledger Live) building a transaction, which is a different question from the device signing one under any coordinator.",
+		"low_r": ["always", "no", "unknown"],
+		"low_r_since_height": "block height from which low_r applies, approximating the release of the firmware that introduced grinding (Coldcard 4.1.2, July 2021); below it a high-R signature does not rule the signer out",
+		"input_types": "input script types the firmware can spend; an input outside this list rules the signer out",
+		"input_types_note": "caveat appended when an input type excludes this signer, for cases where an alternate firmware edition lifts the limit",
+		"output_types": "output script types the firmware can pay to, or any; an output outside this list rules the signer out",
+		"op_return_max_script_bytes": "largest OP_RETURN scriptPubKey the firmware accepts, null for no limit",
+		"op_return_max_pushes": "most data pushes the firmware accepts inside an OP_RETURN, null for no limit",
+		"op_return_pushdata2": "whether the firmware accepts OP_PUSHDATA2 or OP_PUSHDATA4 inside an OP_RETURN",
+		"op_return_nonzero_value": "whether the firmware accepts an OP_RETURN output that carries value",
+		"max_fee_percent": "firmware refuses when the fee is at least this percent of the total output value",
+		"max_fee_rate_sat_vb": "firmware refuses above this fee rate",
+		"uncompressed_keys": ["yes", "p2pk_only", "no"],
+		"sighash": "list of sighash flags the signer will sign with its default settings"
+	},
+	"signers": {
+		"Coldcard": { "low_r": "always", "low_r_since_height": 694000, "input_types": ["p2pk", "p2pkh", "p2sh", "p2wpkh", "p2wsh"], "input_types_note": "this applies to the mainline firmware every model ships with; the opt-in EDGE build adds taproot spending, so a taproot input excludes a stock Coldcard but not an EDGE one", "output_types": "any", "op_return_max_script_bytes": null, "op_return_max_pushes": null, "op_return_pushdata2": true, "op_return_nonzero_value": true, "max_fee_percent": 10, "uncompressed_keys": "p2pk_only", "sighash": ["SIGHASH_ALL", "SIGHASH_SINGLE", "SIGHASH_ALL|ANYONECANPAY", "SIGHASH_SINGLE|ANYONECANPAY"] },
+		"Trezor device": { "low_r": "no", "input_types": ["p2pkh", "p2sh", "p2wpkh", "p2wsh", "p2tr"], "output_types": ["p2pkh", "p2sh", "p2wpkh", "p2wsh", "p2tr", "op_return"], "op_return_max_script_bytes": null, "op_return_max_pushes": 1, "op_return_pushdata2": true, "op_return_nonzero_value": false, "max_fee_rate_sat_vb": 20000, "uncompressed_keys": "no", "sighash": ["SIGHASH_DEFAULT", "SIGHASH_ALL"] },
+		"Ledger device": { "low_r": "no", "input_types": ["p2pkh", "p2sh", "p2wpkh", "p2wsh", "p2tr"], "output_types": ["p2pkh", "p2sh", "p2wpkh", "p2wsh", "p2tr", "witness_unknown", "anchor", "op_return"], "op_return_max_script_bytes": 83, "op_return_max_pushes": 5, "op_return_pushdata2": false, "op_return_nonzero_value": true, "uncompressed_keys": "no", "sighash": ["SIGHASH_DEFAULT", "SIGHASH_ALL"] }
+	}
+}
