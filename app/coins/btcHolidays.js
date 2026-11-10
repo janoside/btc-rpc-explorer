@@ -23,7 +23,7 @@ module.exports = {
 		},
 		{
 			name: "SegWit Activation Day",
-			date: "2017-08-23",
+			date: "2017-08-24",
 			desc: "On this day in 2017, at 1:57 UTC, SegWit activated on the Bitcoin mainnet in <a href='./block-height/481824'>Block #481,824</a>."
 		},
 		{
@@ -78,8 +78,8 @@ module.exports = {
 		},
 		{
 			name: "Mt. Gox Death Day",
-			date: "2013-02-24",
-			desc: "On this day in 2013, Mt. Gox, the largest bitcoin exchange in the world, went offline due to insolvency, after losing 640,000 BTC."
+			date: "2014-02-24",
+			desc: "On this day in 2014, Mt. Gox, the largest bitcoin exchange in the world, went offline due to insolvency, after losing 640,000 BTC."
 		},
 		{
 			name: "Gold Parity Day",
@@ -108,7 +108,7 @@ module.exports = {
 		},
 		{
 			name: "Bitcoin Logo Day",
-			date: "2011-11-04",
+			date: "2010-11-01",
 			desc: "On this day in 2010, an unknown artist under the username \"bitboy\" offered the Bitcoin community its iconic logo for free on the Bicointalk forum. You can view the original post <a href='https://bitcointalk.org/index.php?topic=1631.0%3Ball'>here</a>."
 		},
 		{
