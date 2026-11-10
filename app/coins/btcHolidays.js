@@ -23,7 +23,7 @@ module.exports = {
 		},
 		{
 			name: "SegWit Activation Day",
-			date: "2017-08-23",
+			date: "2017-08-24",
 			desc: "On this day in 2017, at 1:57 UTC, SegWit activated on the Bitcoin mainnet in <a href='./block-height/481824'>Block #481,824</a>."
 		},
 		{
