@@ -78,8 +78,8 @@ module.exports = {
 		},
 		{
 			name: "Mt. Gox Death Day",
-			date: "2013-02-24",
-			desc: "On this day in 2013, Mt. Gox, the largest bitcoin exchange in the world, went offline due to insolvency, after losing 640,000 BTC."
+			date: "2014-02-24",
+			desc: "On this day in 2014, Mt. Gox, the largest bitcoin exchange in the world, went offline due to insolvency, after losing 640,000 BTC."
 		},
 		{
 			name: "Gold Parity Day",
