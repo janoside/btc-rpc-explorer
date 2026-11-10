@@ -108,7 +108,7 @@ module.exports = {
 		},
 		{
 			name: "Bitcoin Logo Day",
-			date: "2011-11-04",
+			date: "2010-11-01",
 			desc: "On this day in 2010, an unknown artist under the username \"bitboy\" offered the Bitcoin community its iconic logo for free on the Bicointalk forum. You can view the original post <a href='https://bitcointalk.org/index.php?topic=1631.0%3Ball'>here</a>."
 		},
 		{
