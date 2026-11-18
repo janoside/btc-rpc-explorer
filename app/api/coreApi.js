@@ -1818,40 +1818,42 @@ function buildMempoolSummary(statusId, ageBuckets, sizeBuckets, statusFunc) {
 				sizeBucketTxCounts[sizeBucketIndex]++;
 			}
 
-			let topTargetPercent = 0.25;
-			let totWeight = 0;
-			let topIndex = -1;
-			for (let i = satoshiPerByteBuckets.length - 1; i >= 0; i--) {
-				totWeight += satoshiPerByteBuckets[i].totalWeight;
+			// Empty mempools have no top fee-rate bucket to compact.
+			if (summary.totalWeight > 0) {
+				let topTargetPercent = 0.25;
+				let totWeight = 0;
+				let topIndex = -1;
+				for (let i = satoshiPerByteBuckets.length - 1; i >= 0; i--) {
+					totWeight += satoshiPerByteBuckets[i].totalWeight;
 
-				if (totWeight / summary.totalWeight * 100 > topTargetPercent) {
-					topIndex = i;
+					if (totWeight / summary.totalWeight * 100 > topTargetPercent) {
+						topIndex = i;
 
-					break;
-				}
-			}
-
-			summary.satoshiPerByteBucketLabels = summary.satoshiPerByteBucketLabels.slice(0, topIndex);
-
-			if (topIndex < feeBucketMaxCount) {
-				summary.satoshiPerByteBucketLabels.push(topIndex + "+");
-			}
-
-			
-			if (topIndex < satoshiPerByteBuckets.length) {
-				satoshiPerByteBuckets[topIndex].buckets = 0;
-
-				// merge the top buckets into one
-				for (let i = topIndex + 1; i < satoshiPerByteBuckets.length; i++) {
-					satoshiPerByteBuckets[topIndex].count += satoshiPerByteBuckets[i].count;
-					satoshiPerByteBuckets[topIndex].totalFees = satoshiPerByteBuckets[topIndex].totalFees.plus(satoshiPerByteBuckets[i].totalFees);
-					satoshiPerByteBuckets[topIndex].totalBytes += satoshiPerByteBuckets[i].totalBytes;
-					satoshiPerByteBuckets[topIndex].totalWeight += satoshiPerByteBuckets[i].totalWeight;
-					satoshiPerByteBuckets[topIndex].buckets++;
+						break;
+					}
 				}
 
-				satoshiPerByteBuckets = satoshiPerByteBuckets.slice(0, topIndex + 1);
-				satoshiPerByteBucketMaxima = satoshiPerByteBucketMaxima.slice(0, topIndex + 1);
+				summary.satoshiPerByteBucketLabels = summary.satoshiPerByteBucketLabels.slice(0, topIndex);
+
+				if (topIndex < feeBucketMaxCount) {
+					summary.satoshiPerByteBucketLabels.push(topIndex + "+");
+				}
+
+				if (topIndex < satoshiPerByteBuckets.length) {
+					satoshiPerByteBuckets[topIndex].buckets = 0;
+
+					// merge the top buckets into one
+					for (let i = topIndex + 1; i < satoshiPerByteBuckets.length; i++) {
+						satoshiPerByteBuckets[topIndex].count += satoshiPerByteBuckets[i].count;
+						satoshiPerByteBuckets[topIndex].totalFees = satoshiPerByteBuckets[topIndex].totalFees.plus(satoshiPerByteBuckets[i].totalFees);
+						satoshiPerByteBuckets[topIndex].totalBytes += satoshiPerByteBuckets[i].totalBytes;
+						satoshiPerByteBuckets[topIndex].totalWeight += satoshiPerByteBuckets[i].totalWeight;
+						satoshiPerByteBuckets[topIndex].buckets++;
+					}
+
+					satoshiPerByteBuckets = satoshiPerByteBuckets.slice(0, topIndex + 1);
+					satoshiPerByteBucketMaxima = satoshiPerByteBucketMaxima.slice(0, topIndex + 1);
+				}
 			}
 
 			summary["averageFee"] = summary["totalFees"] / summary["count"];

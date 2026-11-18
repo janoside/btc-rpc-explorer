@@ -237,6 +237,12 @@ router.get("/build-mempool-summary", asyncHandler(async (req, res, next) => {
 
 	} catch (err) {
 		utils.logError("329r7whegee", err);
+
+		if (!res.headersSent) {
+			res.status(500).json({success:false, error:"Failed to build mempool summary."});
+		}
+
+		next();
 	}
 }));
 
